@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_link">Agregar enlace</string>
+    <string name="link_dialog_description">Pega un enlace de una canción, video, artículo o página web. MyNotes intentará obtener su portada, título y descripción.</string>
+    <string name="link_url">Enlace</string>
+    <string name="invalid_link">Escribe un enlace válido.</string>
+    <string name="add">Agregar</string>
+    <string name="link">Enlace</string>
+</resources>

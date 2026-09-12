@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#6E72B5"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="72dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingHorizontal="18dp">
+        <TextView android:layout_width="48dp" android:layout_height="48dp" android:gravity="center" android:text="‹" android:textColor="#FFFFFF" android:textSize="38sp" />
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Project source" android:textColor="#FFFFFF" android:textSize="25sp" />
+    </LinearLayout>
+
+    <ScrollView android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:fillViewport="true">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="14dp">
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="&lt;/&gt;  Source-code map" android:textColor="#FFFFFF" android:textSize="21sp" />
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="4dp" android:fontFamily="@font/google_sans_regular" android:text="Real project paths and responsibilities of the main files." android:textColor="#E1E1E8" android:textSize="12sp" />
+
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:background="@drawable/preview_light_group" android:orientation="vertical" android:padding="16dp">
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="GitHub repository" android:textColor="#111111" android:textSize="17sp" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:fontFamily="@font/google_sans_medium" android:text="lxxsnowxxl/Mynotes" android:textColor="#222229" android:textSize="13sp" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:fontFamily="@font/google_sans_regular" android:text="https://github.com/lxxsnowxxl/Mynotes" android:textColor="#55555E" android:textSize="12sp" />
+                <TextView android:layout_width="match_parent" android:layout_height="44dp" android:layout_marginTop="8dp" android:background="@drawable/preview_small_selected" android:gravity="center" android:fontFamily="@font/google_sans_medium" android:text="↗  Open repository on GitHub" android:textColor="#222229" android:textSize="13sp" />
+            </LinearLayout>
+
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="16dp" android:background="@drawable/preview_light_group" android:orientation="vertical" android:padding="16dp">
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Base location" android:textColor="#111111" android:textSize="17sp" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:fontFamily="@font/google_sans_medium" android:text="app/src/main/java/com/example/mynotes/" android:textColor="#222229" android:textSize="13sp" />
+            </LinearLayout>
+
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:background="@drawable/preview_light_group" android:orientation="vertical" android:padding="16dp">
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Core and navigation" android:textColor="#111111" android:textSize="17sp" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:fontFamily="@font/google_sans_medium" android:text="MainActivity.kt" android:textColor="#222229" android:textSize="13sp" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_regular" android:text="Navigation, immersive system bars and global Compose coordination." android:textColor="#55555E" android:textSize="12sp" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:fontFamily="@font/google_sans_medium" android:text="viewmodel/NoteViewModel.kt" android:textColor="#222229" android:textSize="13sp" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_regular" android:text="Note state, actions, attachments and data access." android:textColor="#55555E" android:textSize="12sp" />
+            </LinearLayout>
+
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:background="@drawable/preview_light_group" android:orientation="vertical" android:padding="16dp">
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Interface" android:textColor="#111111" android:textSize="17sp" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:fontFamily="@font/google_sans_regular" android:text="ui/theme/NotesScreen.kt
+ui/theme/NoteEditorScreen.kt
+ui/theme/NoteDetailScreen.kt
+ui/theme/SettingsScreen.kt
+ui/theme/DevelopmentInfoScreen.kt
+ui/theme/SourceCodeInfoScreen.kt
+ui/components/NoteCard.kt
+ui/components/LinkPreviewCard.kt" android:textColor="#33333A" android:textSize="13sp" android:lineSpacingExtra="6dp" />
+            </LinearLayout>
+
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:background="@drawable/preview_light_group" android:orientation="vertical" android:padding="16dp">
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Performance" android:textColor="#111111" android:textSize="17sp" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:fontFamily="@font/google_sans_regular" android:text="performance/AttachmentPreviewCache.kt
+performance/DisplayPerformanceController.kt
+ui/motion/AppMotion.kt" android:textColor="#33333A" android:textSize="13sp" android:lineSpacingExtra="6dp" />
+            </LinearLayout>
+
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:background="@drawable/preview_light_group" android:orientation="vertical" android:padding="16dp">
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Media, system and customization" android:textColor="#111111" android:textSize="17sp" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:fontFamily="@font/google_sans_regular" android:text="ui/AttachmentViewerActivity.kt&#10;data/AppDataBackupManager.kt&#10;ui/components/BackupRestoreSection.kt&#10;ui/sound/UiSoundPlayer.kt + UiHapticPlayer.kt&#10;ui/theme/PaletteCatalog.kt" android:textColor="#33333A" android:textSize="13sp" android:lineSpacingExtra="6dp" />
+            </LinearLayout>
+
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:background="@drawable/preview_light_group" android:orientation="vertical" android:padding="16dp">
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Installed-code note" android:textColor="#111111" android:textSize="17sp" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:fontFamily="@font/google_sans_regular" android:text="Original Kotlin source is compiled to bytecode/Dex and is not stored as readable .kt text inside the installed APK. This screen maps the original project instead of duplicating source files." android:textColor="#55555E" android:textSize="12sp" android:lineSpacingExtra="4dp" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

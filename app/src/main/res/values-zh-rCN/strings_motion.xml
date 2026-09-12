@@ -1,0 +1,42 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="motion_title">动画</string>
+    <string name="motion_enabled">启用动画</string>
+    <string name="motion_style">过渡类型</string>
+    <string name="motion_easing">运动曲线</string>
+    <string name="motion_speed">动画速度</string>
+    <string name="motion_intensity">动画强度</string>
+    <string name="motion_preview">预览</string>
+    <string name="motion_preview_button">测试动画</string>
+    <string name="motion_description">选择过渡方式、缓动曲线、速度和强度。动画过程中背景会始终保持绘制，以避免出现黑屏闪烁。</string>
+    <string name="motion_style_zoom">放大 / 缩小</string>
+    <string name="motion_style_zoom_fade">缩放 + 淡入淡出</string>
+    <string name="motion_style_fade">淡入淡出</string>
+    <string name="motion_style_slide_left">向左滑动</string>
+    <string name="motion_style_slide_right">向右滑动</string>
+    <string name="motion_style_slide_up">向上滑动</string>
+    <string name="motion_style_slide_down">向下滑动</string>
+    <string name="motion_style_slide_zoom_left">滑动 + 横向缩放</string>
+    <string name="motion_style_slide_zoom_up">滑动 + 纵向缩放</string>
+    <string name="motion_style_axis_x">Material X 轴</string>
+    <string name="motion_style_axis_y">Material Y 轴</string>
+    <string name="motion_style_axis_z">Material Z 轴</string>
+    <string name="motion_style_expand">从中心展开</string>
+    <string name="motion_style_expand_horizontal">水平展开</string>
+    <string name="motion_style_expand_vertical">垂直展开</string>
+    <string name="motion_style_bounce">弹跳</string>
+    <string name="motion_style_elastic">弹性</string>
+    <string name="motion_style_pop">弹出</string>
+    <string name="motion_style_subtle">轻微</string>
+    <string name="motion_style_random">随机</string>
+    <string name="motion_easing_standard">标准</string>
+    <string name="motion_easing_linear">线性</string>
+    <string name="motion_easing_accelerate">加速</string>
+    <string name="motion_easing_decelerate">减速</string>
+    <string name="motion_easing_emphasized">强调</string>
+    <string name="performance_mode_title">性能</string>
+    <string name="performance_mode_performance">最高性能</string>
+    <string name="performance_mode_balanced">均衡</string>
+    <string name="performance_mode_quality">最高画质</string>
+    <string name="performance_mode_description">控制动画、屏幕刷新率和缩略图分辨率。最高性能：图片/视频缩略图 360 px，PDF 480 px；均衡：720 px，PDF 960 px；最高画质：图片最高 1280 px、视频 1080 px、PDF 1440 px，并在兼容屏幕上请求最高 120 Hz。</string>
+</resources>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_panel_tone">Tonalidad del panel</string>
+    <string name="surface_panels_intensity">Intensidad de recuadros</string>
+    <string name="surface_panels_intensity_description">Controla el contraste de buscadores, botones y paneles translúcidos en toda la app.</string>
+    <string name="text_black_outline">Borde negro del texto</string>
+    <string name="text_black_outline_description">Añade un contorno negro suave para que las letras claras se distingan mejor.</string>
+</resources>

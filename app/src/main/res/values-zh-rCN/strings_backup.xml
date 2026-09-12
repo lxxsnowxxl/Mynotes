@@ -1,0 +1,17 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="backup_restore_title">备份与恢复</string>
+    <string name="backup_restore_description">将笔记、图片、视频、音频、文件、设置和头像导出到一个 ZIP 文件中。导入时会用备份数据替换当前应用数据。</string>
+    <string name="backup_export_button">导出</string>
+    <string name="backup_import_button">导入</string>
+    <string name="backup_processing">正在处理数据…</string>
+    <string name="backup_export_success">备份已创建：%1$d 条笔记，%2$d 个附件。</string>
+    <string name="backup_export_skipped">有 %1$d 个附件无法包含在备份中。</string>
+    <string name="backup_import_success">已恢复 %1$d 条笔记和 %2$d 个附件。</string>
+    <string name="backup_operation_error">操作无法完成：%1$s</string>
+    <string name="backup_unknown_error">未知错误</string>
+    <string name="backup_import_confirm_title">导入备份？</string>
+    <string name="backup_import_confirm_message">当前笔记、附件和设置将被替换。除非你还有其他备份，否则此操作无法撤销。</string>
+    <string name="backup_import_confirm_action">导入并替换</string>
+    <string name="backup_cancel">取消</string>
+</resources>

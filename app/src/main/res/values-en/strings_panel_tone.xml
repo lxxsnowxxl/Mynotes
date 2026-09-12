@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_panel_tone">Panel tone</string>
+    <string name="surface_panels_intensity">Translucent panels</string>
+    <string name="surface_panels_intensity_description">Controls the contrast of search boxes, buttons and translucent panels across the app.</string>
+    <string name="text_black_outline">Black text outline</string>
+    <string name="text_black_outline_description">Adds a soft black outline so light text is easier to read.</string>
+</resources>

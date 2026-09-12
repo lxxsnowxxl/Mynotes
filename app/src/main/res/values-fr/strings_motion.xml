@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="motion_title">Animations</string>
+    <string name="motion_enabled">Activer les animations</string>
+    <string name="motion_style">Type de transition</string>
+    <string name="motion_easing">Courbe de mouvement</string>
+    <string name="motion_speed">Vitesse d’animation</string>
+    <string name="motion_intensity">Intensité du mouvement</string>
+    <string name="motion_preview">Aperçu</string>
+    <string name="motion_preview_button">Tester l’animation</string>
+    <string name="motion_description">Choisissez la transition, la courbe, la vitesse et l’intensité. L’arrière-plan reste affiché pendant toute l’animation afin d’éviter les flashes noirs.</string>
+
+    <string name="motion_style_zoom">Zoom avant / arrière</string>
+    <string name="motion_style_zoom_fade">Zoom + fondu</string>
+    <string name="motion_style_fade">Fondu</string>
+    <string name="motion_style_slide_left">Glisser à gauche</string>
+    <string name="motion_style_slide_right">Glisser à droite</string>
+    <string name="motion_style_slide_up">Glisser vers le haut</string>
+    <string name="motion_style_slide_down">Glisser vers le bas</string>
+    <string name="motion_style_slide_zoom_left">Glisser + zoom latéral</string>
+    <string name="motion_style_slide_zoom_up">Glisser + zoom vertical</string>
+    <string name="motion_style_axis_x">Material Axis X</string>
+    <string name="motion_style_axis_y">Material Axis Y</string>
+    <string name="motion_style_axis_z">Material Axis Z</string>
+    <string name="motion_style_expand">Déployer depuis le centre</string>
+    <string name="motion_style_expand_horizontal">Déploiement horizontal</string>
+    <string name="motion_style_expand_vertical">Déploiement vertical</string>
+    <string name="motion_style_bounce">Rebond</string>
+    <string name="motion_style_elastic">Élastique</string>
+    <string name="motion_style_pop">Pop</string>
+    <string name="motion_style_subtle">Subtile</string>
+    <string name="motion_style_random">Aléatoire</string>
+
+    <string name="motion_easing_standard">Standard</string>
+    <string name="motion_easing_linear">Linéaire</string>
+    <string name="motion_easing_accelerate">Accélérer</string>
+    <string name="motion_easing_decelerate">Décélérer</string>
+    <string name="motion_easing_emphasized">Accentué</string>
+
+    <string name="performance_mode_title">Performances</string>
+    <string name="performance_mode_performance">Performances maximales</string>
+    <string name="performance_mode_balanced">Équilibré</string>
+    <string name="performance_mode_quality">Qualité maximale</string>
+    <string name="performance_mode_description">Règle les animations, la fréquence d’affichage et la résolution des miniatures. Performances maximales : images/vidéos à 360 px et PDF à 480 px. Équilibré : 720 px et PDF à 960 px. Qualité maximale : images jusqu’à 1280 px, vidéos à 1080 px et PDF à 1440 px ; demande aussi jusqu’à 120 Hz sur les écrans compatibles.</string>
+</resources>

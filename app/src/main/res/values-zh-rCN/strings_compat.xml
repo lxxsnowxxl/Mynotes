@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="open_with_other_app">使用其他应用打开</string>
+    <string name="video_playback_failed">无法播放视频。</string>
+    <string name="audio_playback_failed">无法播放音频。</string>
+    <string name="video_playback_failed_inside">无法在 MyNotes 中播放此视频。</string>
+    <string name="audio_playback_failed_inside">无法在 MyNotes 中播放此音频。</string>
+    <string name="pdf_page_load_failed">无法加载第 %1$d 页。</string>
+    <string name="pdf_page_description">第 %1$d 页</string>
+    <string name="open_with">打开方式</string>
+    <string name="no_compatible_app">未安装兼容的应用。</string>
+    <string name="open_file_failed">无法打开文件。</string>
+</resources>

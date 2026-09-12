@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_link">Ajouter un lien</string>
+    <string name="link_dialog_description">Collez le lien d’une chanson, d’une vidéo, d’un article ou d’une page web. MyNotes essaiera d’obtenir sa miniature, son titre et sa description.</string>
+    <string name="link_url">Lien</string>
+    <string name="invalid_link">Saisissez un lien valide.</string>
+    <string name="add">Ajouter</string>
+    <string name="link">Lien</string>
+</resources>

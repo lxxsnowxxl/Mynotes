@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layer-list xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <!-- Fondo blanco que aparece entre el launcher y MyNotes -->
+    <item android:drawable="@android:color/white" />
+
+    <!-- Icono de la aplicación perfectamente centrado -->
+    <item
+        android:gravity="center"
+        android:width="120dp"
+        android:height="120dp"
+        android:drawable="@mipmap/ic_launcher" />
+
+</layer-list>

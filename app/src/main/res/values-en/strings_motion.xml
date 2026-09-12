@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="motion_title">Animations</string>
+    <string name="motion_enabled">Enable animations</string>
+    <string name="motion_style">Transition type</string>
+    <string name="motion_easing">Motion curve</string>
+    <string name="motion_speed">Animation speed</string>
+    <string name="motion_intensity">Motion intensity</string>
+    <string name="motion_preview">Preview</string>
+    <string name="motion_preview_button">Test animation</string>
+    <string name="motion_description">Choose the transition, easing curve, speed and intensity. The background stays painted during the entire animation to prevent black flashes.</string>
+
+    <string name="motion_style_zoom">Zoom In / Zoom Out</string>
+    <string name="motion_style_zoom_fade">Zoom + fade</string>
+    <string name="motion_style_fade">Fade</string>
+    <string name="motion_style_slide_left">Slide left</string>
+    <string name="motion_style_slide_right">Slide right</string>
+    <string name="motion_style_slide_up">Slide up</string>
+    <string name="motion_style_slide_down">Slide down</string>
+    <string name="motion_style_slide_zoom_left">Slide + side zoom</string>
+    <string name="motion_style_slide_zoom_up">Slide + vertical zoom</string>
+    <string name="motion_style_axis_x">Material Axis X</string>
+    <string name="motion_style_axis_y">Material Axis Y</string>
+    <string name="motion_style_axis_z">Material Axis Z</string>
+    <string name="motion_style_expand">Expand from center</string>
+    <string name="motion_style_expand_horizontal">Horizontal expand</string>
+    <string name="motion_style_expand_vertical">Vertical expand</string>
+    <string name="motion_style_bounce">Bounce</string>
+    <string name="motion_style_elastic">Elastic</string>
+    <string name="motion_style_pop">Pop</string>
+    <string name="motion_style_subtle">Subtle</string>
+    <string name="motion_style_random">Random</string>
+
+    <string name="motion_easing_standard">Standard</string>
+    <string name="motion_easing_linear">Linear</string>
+    <string name="motion_easing_accelerate">Accelerate</string>
+    <string name="motion_easing_decelerate">Decelerate</string>
+    <string name="motion_easing_emphasized">Emphasized</string>
+
+    <string name="performance_mode_title">Performance</string>
+    <string name="performance_mode_performance">Maximum performance</string>
+    <string name="performance_mode_balanced">Balanced</string>
+    <string name="performance_mode_quality">Maximum quality</string>
+    <string name="performance_mode_description">Controls animations, display refresh rate, and thumbnail resolution. Maximum performance: image/video previews at 360 px and PDFs at 480 px. Balanced: 720 px and PDFs at 960 px. Maximum quality: images up to 1280 px, video at 1080 px, and PDFs at 1440 px; it also requests up to 120 Hz on compatible displays.</string>
+</resources>

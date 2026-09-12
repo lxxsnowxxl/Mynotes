@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="motion_title">Animaciones</string>
+    <string name="motion_enabled">Activar animaciones</string>
+    <string name="motion_style">Tipo de transición</string>
+    <string name="motion_easing">Curva de movimiento</string>
+    <string name="motion_speed">Velocidad de animación</string>
+    <string name="motion_intensity">Intensidad del movimiento</string>
+    <string name="motion_preview">Vista previa</string>
+    <string name="motion_preview_button">Probar animación</string>
+    <string name="motion_description">Elige la transición, la curva, la velocidad y la intensidad. El fondo permanece pintado durante toda la animación para evitar destellos negros.</string>
+
+    <string name="motion_style_zoom">Zoom In / Zoom Out</string>
+    <string name="motion_style_zoom_fade">Zoom + desvanecer</string>
+    <string name="motion_style_fade">Desvanecer</string>
+    <string name="motion_style_slide_left">Deslizar a la izquierda</string>
+    <string name="motion_style_slide_right">Deslizar a la derecha</string>
+    <string name="motion_style_slide_up">Deslizar hacia arriba</string>
+    <string name="motion_style_slide_down">Deslizar hacia abajo</string>
+    <string name="motion_style_slide_zoom_left">Deslizar + zoom lateral</string>
+    <string name="motion_style_slide_zoom_up">Deslizar + zoom vertical</string>
+    <string name="motion_style_axis_x">Material Axis X</string>
+    <string name="motion_style_axis_y">Material Axis Y</string>
+    <string name="motion_style_axis_z">Material Axis Z</string>
+    <string name="motion_style_expand">Expandir desde el centro</string>
+    <string name="motion_style_expand_horizontal">Expandir horizontal</string>
+    <string name="motion_style_expand_vertical">Expandir vertical</string>
+    <string name="motion_style_bounce">Rebote</string>
+    <string name="motion_style_elastic">Elástica</string>
+    <string name="motion_style_pop">Pop</string>
+    <string name="motion_style_subtle">Suave</string>
+    <string name="motion_style_random">Aleatoria</string>
+
+    <string name="motion_easing_standard">Estándar</string>
+    <string name="motion_easing_linear">Lineal</string>
+    <string name="motion_easing_accelerate">Acelerar</string>
+    <string name="motion_easing_decelerate">Desacelerar</string>
+    <string name="motion_easing_emphasized">Enfatizada</string>
+
+    <string name="performance_mode_title">Rendimiento</string>
+    <string name="performance_mode_performance">Máximo rendimiento</string>
+    <string name="performance_mode_balanced">Equilibrado</string>
+    <string name="performance_mode_quality">Máxima calidad</string>
+    <string name="performance_mode_description">Ajusta animaciones, frecuencia de pantalla y resolución de miniaturas. Máximo rendimiento: imágenes/vídeo 360 px y PDF 480 px. Equilibrado: 720 px y PDF 960 px. Máxima calidad: imágenes hasta 1280 px, vídeo 1080 px y PDF 1440 px; además solicita hasta 120 Hz en pantallas compatibles.</string>
+</resources>

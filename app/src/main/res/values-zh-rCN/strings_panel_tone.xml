@@ -1,0 +1,8 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="settings_panel_tone">面板色调</string>
+    <string name="surface_panels_intensity">半透明面板</string>
+    <string name="surface_panels_intensity_description">控制应用内搜索框、按钮和半透明面板的对比度。</string>
+    <string name="text_black_outline">黑色文字描边</string>
+    <string name="text_black_outline_description">为浅色文字添加柔和的黑色描边，使其更易阅读。</string>
+</resources>

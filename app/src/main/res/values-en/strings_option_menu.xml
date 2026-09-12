@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="option_menu_customization_title">Options menu</string>
+    <string name="option_menu_customization_description">Hide, reorder and change the appearance of the options menu for each note.</string>
+    <string name="option_menu_show_icons">Show icons</string>
+    <string name="option_menu_text_color">Menu text color</string>
+    <string name="option_menu_text_follow_note">Follow note color</string>
+    <string name="option_menu_text_black">Black</string>
+    <string name="option_menu_text_white">White</string>
+    <string name="option_menu_change">Change</string>
+    <string name="option_menu_opacity">Menu opacity</string>
+    <string name="option_menu_main_actions">Main actions</string>
+    <string name="option_menu_main_actions_hint">Use the arrows to change the order and the switch to show or hide each action.</string>
+    <string name="option_menu_priority_submenu">Priority submenu</string>
+    <string name="option_menu_color_submenu">Color submenu</string>
+    <string name="option_menu_move_up">Move up</string>
+    <string name="option_menu_move_down">Move down</string>
+    <string name="option_menu_reset">Reset menu</string>
+</resources>

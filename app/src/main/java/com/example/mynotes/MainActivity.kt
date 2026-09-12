@@ -1,0 +1,718 @@
+package com.example.mynotes
+
+import android.content.Context
+import android.content.Intent
+import android.content.res.Configuration
+import android.os.Build
+import android.os.Bundle
+import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
+import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowCompat
+import androidx.core.view.WindowInsetsCompat
+import androidx.core.view.WindowInsetsControllerCompat
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.mynotes.data.Attachment
+import com.example.mynotes.data.Note
+import com.example.mynotes.performance.DisplayPerformanceController
+import com.example.mynotes.ui.NoteDetailScreen
+import com.example.mynotes.ui.NoteEditorScreen
+import com.example.mynotes.ui.NotesScreen
+import com.example.mynotes.ui.DevelopmentInfoScreen
+import com.example.mynotes.ui.SourceCodeInfoScreen
+import com.example.mynotes.ui.motion.AnimatedScreenEntry
+import com.example.mynotes.ui.motion.ConfigurableAnimatedContent
+import com.example.mynotes.ui.SettingsScreen
+import com.example.mynotes.ui.sound.UiSoundPlayer
+import com.example.mynotes.ui.theme.MyNotesTheme
+import com.example.mynotes.viewmodel.NoteViewModel
+import com.example.mynotes.viewmodel.SettingsViewModel
+import java.util.Locale
+
+private enum class AppDestination {
+    NOTES, SETTINGS, DEVELOPMENT_INFO, SOURCE_CODE_INFO, EDITOR, DETAIL
+}
+
+private data class NavigationSnapshot(val destination: AppDestination, val note: Note? = null)
+
+class MainActivity : ComponentActivity() {
+    /*
+     * El teclado puede volver a hacer visible la barra de navegación.
+     * Guardamos el estado anterior del IME para detectar exactamente
+     * cuando se cierra y restaurar el modo inmersivo en ese momento.
+     */
+    private var wasImeVisible = false
+    companion object {
+        private const val LOCALE_PREFS = "locale_prefs"
+        private const val LANGUAGE_KEY = "language"
+        private const val DEFAULT_LANGUAGE = "es"
+    }
+    /*
+     * Texto recibido mediante Compartir desde otras aplicaciones
+     * (navegador, YouTube, Spotify, noticias, etc.).
+     */
+    private var pendingSharedText by
+        mutableStateOf<String?>(null)
+    private var pendingSharedTitle by
+        mutableStateOf<String?>(null)
+    private fun handleIncomingShare(incomingIntent: Intent?) {
+        if (incomingIntent?.action != Intent.ACTION_SEND) {
+            return
+        }
+        val sharedText = incomingIntent.getCharSequenceExtra(Intent.EXTRA_TEXT)?.toString()?.trim().orEmpty()
+        if (sharedText.isBlank()) {
+            return
+        }
+        pendingSharedText = sharedText
+        pendingSharedTitle = incomingIntent.getCharSequenceExtra(Intent.EXTRA_SUBJECT)?.toString()?.trim()?.takeIf { it.isNotBlank() }
+    }
+    private fun clearPendingShare() {
+        pendingSharedText = null
+        pendingSharedTitle = null
+    }
+    /*
+     * ==========================================
+     * IDIOMA PARA COMPONENTACTIVITY
+     * ==========================================
+     *
+     * Se aplica antes de crear la Activity.
+     * Esto permite que stringResource() lea
+     * values-es, values-en o values-fr incluso
+     * usando ComponentActivity.
+     */
+    override fun attachBaseContext(newBase: Context) {
+        val preferences = newBase.getSharedPreferences(LOCALE_PREFS, Context.MODE_PRIVATE)
+        val language = preferences.getString(LANGUAGE_KEY, DEFAULT_LANGUAGE) ?: DEFAULT_LANGUAGE
+        val locale = Locale.forLanguageTag(language)
+        Locale.setDefault(locale)
+        val configuration = Configuration(newBase.resources.configuration)
+        configuration.setLocale(locale)
+        val localizedContext = newBase.createConfigurationContext(configuration)
+        super.attachBaseContext(localizedContext)
+    }
+    private fun changeAppLanguage(language: String) {
+        /*
+         * Guardamos también en SharedPreferences porque
+         * attachBaseContext() ocurre antes de que DataStore
+         * pueda entregar AppSettings.
+         *
+         * commit() es intencional: necesitamos que el idioma
+         * ya esté guardado antes de recreate().
+         */
+        getSharedPreferences(LOCALE_PREFS, Context.MODE_PRIVATE).edit().putString(LANGUAGE_KEY, language).commit()
+        recreate()
+    }
+    /*
+     * ==========================================
+     * BARRA DE NAVEGACIÓN DESPLEGABLE
+     * ==========================================
+     *
+     * Oculta los botones de navegación de Android.
+     * Un gesto desde el borde inferior los muestra
+     * temporalmente.
+     */
+    private fun installImeNavigationBarRecovery() {
+        ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { view, insets ->
+            val isImeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
+            /*
+             * No ocultamos la navegación mientras el teclado está abierto.
+             * Solo actuamos en la transición visible -> oculto, que es el
+             * caso en el que Android/Samsung deja los tres botones en pantalla.
+             */
+            if (wasImeVisible && !isImeVisible) {
+                view.post {
+                    applyAndroidNavigationBarPolicy()
+                }
+            }
+            wasImeVisible = isImeVisible
+            insets
+        }
+        ViewCompat.requestApplyInsets(window.decorView)
+    }
+    private fun applyAndroidNavigationBarPolicy() {
+        val controller = WindowCompat.getInsetsController(window, window.decorView)
+        /*
+         * En pantalla completa conservamos el modo inmersivo. En modo
+         * multiventana (disponible desde Android 7) dejamos visible la barra
+         * del sistema: ocultarla dentro de split-screen/desktop windowing
+         * produce saltos de tamaño y controles inaccesibles en algunos OEM.
+         */
+        val isMultiWindow = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && isInMultiWindowMode
+        if (isMultiWindow) {
+            controller.show(WindowInsetsCompat.Type.navigationBars())
+        } else {
+            controller.hide(WindowInsetsCompat.Type.navigationBars())
+            controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
+        }
+        /*
+         * En Android 7.0/7.1 no existe el modo de iconos oscuros para la
+         * barra de navegación. Cuando el sistema la muestra usamos negro
+         * para garantizar contraste con los botones blancos.
+         */
+        if (Build.VERSION.SDK_INT <
+            Build.VERSION_CODES.O) {
+            @Suppress("DEPRECATION")
+            window.navigationBarColor = android.graphics.Color.BLACK
+        }
+    }
+    private fun applySystemBarAppearance(darkMode: Boolean) {
+        val controller = WindowCompat.getInsetsController(window, window.decorView)
+        controller.isAppearanceLightStatusBars = !darkMode
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            controller.isAppearanceLightNavigationBars = !darkMode
+        }
+    }
+    override fun onWindowFocusChanged(hasFocus: Boolean) {
+        super.onWindowFocusChanged(hasFocus)
+        if (hasFocus) {
+            applyAndroidNavigationBarPolicy()
+        }
+    }
+    override fun onResume() {
+        super.onResume()
+        /*
+         * DisplayPerformanceController conserva el último perfil aplicado.
+         * Reaplicamos esa preferencia al volver a primer plano sin duplicar
+         * aquí ninguna regla de frecuencia de refresco.
+         */
+        DisplayPerformanceController.reapplyLastRequest(window)
+        applyAndroidNavigationBarPolicy()
+    }
+    override fun onMultiWindowModeChanged(isInMultiWindowMode: Boolean) {
+        super.onMultiWindowModeChanged(isInMultiWindowMode)
+        applyAndroidNavigationBarPolicy()
+    }
+    override fun onDestroy() {
+        DisplayPerformanceController.release(window)
+        super.onDestroy()
+    }
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        setIntent(intent)
+        handleIncomingShare(intent)
+    }
+    override fun onCreate(savedInstanceState: Bundle?) {
+        /*
+         * El sistema ya mostró Theme.MyNotes.Starting mientras
+         * el proceso arrancaba. Ahora cambiamos al tema normal
+         * antes de crear la Activity.
+         */
+        setTheme(R.style.Theme_MyNotes)
+        super.onCreate(savedInstanceState)
+        handleIncomingShare(intent)
+        /*
+         * La frecuencia de refresco se aplica únicamente cuando AppSettings
+         * entrega performanceMode. MainActivity no conoce valores concretos
+         * de Hz; toda esa política vive en DisplayPerformanceController.
+         * Compose ya sincroniza el renderizado con VSYNC.
+         */
+        enableEdgeToEdge()
+        installImeNavigationBarRecovery()
+        applyAndroidNavigationBarPolicy()
+        setContent {
+            val noteViewModel:
+                    NoteViewModel = viewModel()
+            val settingsViewModel:
+                    SettingsViewModel = viewModel()
+            val notes by noteViewModel.notes.collectAsStateWithLifecycle()
+            val settings by settingsViewModel.settings.collectAsStateWithLifecycle()
+            LaunchedEffect(settings.soundEffectsEnabled, settings.soundEffectsVolume, settings.soundEffectsTheme,
+                settings.hapticEffectsEnabled, settings.hapticEffectsIntensity, settings.hapticEffectsStyle) {
+                UiSoundPlayer.configure(context = this@MainActivity, enabled = settings.soundEffectsEnabled,
+                    volumePercent = settings.soundEffectsVolume, theme = settings.soundEffectsTheme,
+                    hapticEnabled = settings.hapticEffectsEnabled, hapticIntensityPercent = settings.hapticEffectsIntensity,
+                    hapticStyle = settings.hapticEffectsStyle)
+            }
+            LaunchedEffect(settings.darkMode) {
+                applySystemBarAppearance(settings.darkMode)
+            }
+            /*
+             * El controlador traduce el perfil seleccionado a la frecuencia
+             * adecuada y escoge el modo compatible sin cambiar
+             * voluntariamente la resolución física.
+             */
+            LaunchedEffect(settings.performanceMode) {
+                DisplayPerformanceController.requestForPerformanceMode(window = window, performanceMode = settings.performanceMode)
+            }
+            /*
+             * ==========================================
+             * NAVEGACIÓN
+             * ==========================================
+             */
+            var showEditor by remember {
+                mutableStateOf(false)
+            }
+            var showSettings by remember {
+                mutableStateOf(false)
+            }
+            /* Pantalla técnica secundaria abierta desde Configuración. */
+            var showDevelopmentInfo by remember {
+                mutableStateOf(false)
+            }
+            /* Subpantalla informativa con el mapa del código fuente del proyecto. */
+            var showSourceCodeInfo by remember {
+                mutableStateOf(false)
+            }
+            var selectedNote by remember {
+                mutableStateOf<Note?>(null)
+            }
+            /*
+             * null:
+             * crear nota.
+             *
+             * Note:
+             * editar nota existente.
+             */
+            var editingNote by remember {
+                mutableStateOf<Note?>(null)
+            }
+            /*
+             * Cuando llega un enlace mediante Compartir, abrimos una
+             * nueva nota con el texto recibido. También funciona si la
+             * Activity ya estaba abierta gracias a onNewIntent().
+             */
+            LaunchedEffect(pendingSharedText, pendingSharedTitle) {
+                if (!pendingSharedText.isNullOrBlank()) {
+                    showSourceCodeInfo = false
+                    showDevelopmentInfo = false
+                    showSettings = false
+                    selectedNote = null
+                    editingNote = null
+                    showEditor = true
+                }
+            }
+            /*
+             * ==========================================
+             * BOTÓN BACK DE ANDROID
+             * ==========================================
+             *
+             * Mientras estemos en Ajustes, Editor o
+             * Detalle, Back regresa a "Mis notas".
+             *
+             * Solo cuando ya estamos en "Mis notas",
+             * Android puede cerrar la aplicación.
+             */
+            BackHandler(enabled = showSourceCodeInfo || showDevelopmentInfo || showSettings || showEditor || selectedNote != null) {
+                when {
+                    showSourceCodeInfo -> {
+                        showSourceCodeInfo = false
+                    }
+                    showDevelopmentInfo -> {
+                        showDevelopmentInfo = false
+                    }
+                    showSettings -> {
+                        showSettings = false
+                    }
+                    showEditor -> {
+                        editingNote = null
+                        clearPendingShare()
+                        showEditor = false
+                    }
+                    selectedNote != null -> {
+                        selectedNote = null
+                    }
+                }
+            }
+            /*
+             * Guardamos la nota en el estado de navegación para que la
+             * pantalla saliente conserve sus datos durante el Zoom Out.
+             */
+            val currentScreen = when {
+                    showSourceCodeInfo -> NavigationSnapshot(AppDestination.SOURCE_CODE_INFO)
+                    showDevelopmentInfo -> NavigationSnapshot(AppDestination.DEVELOPMENT_INFO)
+                    showSettings -> NavigationSnapshot(AppDestination.SETTINGS)
+                    showEditor -> NavigationSnapshot(AppDestination.EDITOR, editingNote)
+                    selectedNote != null -> NavigationSnapshot(AppDestination.DETAIL, selectedNote)
+                    else -> NavigationSnapshot(AppDestination.NOTES)
+                }
+            MyNotesTheme(darkTheme = settings.darkMode,
+                backgroundColor = settings.backgroundColor,
+                backgroundToneIndex = settings.backgroundToneIndex,
+                backgroundIntensity = settings.backgroundIntensity,
+                surfacePanelIntensity = settings.surfacePanelIntensity,
+                headerIntensity = settings.headerIntensity,
+                /*
+                 * auto adapta el texto al contraste del fondo; negro/blanco
+                 * siguen siendo anulaciones manuales persistentes.
+                 */
+                textColor = settings.textColor,
+                textOutlineEnabled = settings.textOutlineEnabled,
+                accentColor = settings.accentColor) {
+                ConfigurableAnimatedContent(targetState = currentScreen,
+                    animationsEnabled = settings.animationsEnabled,
+                    animationSpeed = settings.animationSpeed,
+                    animationStyle = settings.animationStyle,
+                    animationEasing = settings.animationEasing,
+                    animationIntensity = settings.animationIntensity,
+                    performanceMode = settings.performanceMode) { screen ->
+                    when (screen.destination) {
+                    /*
+                     * ==========================================
+                     * AJUSTES
+                     * ==========================================
+                     */
+                    AppDestination.SETTINGS -> {
+                        SettingsScreen(
+                            settings = settings,
+                            onDarkModeChange = {
+                                settingsViewModel.setDarkMode(it)
+                            },
+                            onBackgroundColorChange = {
+                                settingsViewModel.setBackgroundColor(it)
+                            },
+                            onBackgroundToneIndexChange = {
+                                settingsViewModel.setBackgroundToneIndex(it)
+                            },
+                            onBackgroundIntensityChange = {
+                                settingsViewModel.setBackgroundIntensity(it)
+                            },
+                            onSettingsPanelToneChange = {
+                                settingsViewModel.setSettingsPanelTone(it)
+                            },
+                            onSurfacePanelIntensityChange = {
+                                settingsViewModel.setSurfacePanelIntensity(it)
+                            },
+                            onHeaderIntensityChange = {
+                                settingsViewModel.setHeaderIntensity(it)
+                            },
+                            onTextColorChange = {
+                                settingsViewModel.setTextColor(it)
+                            },
+                            onTextOutlineEnabledChange = {
+                                settingsViewModel.setTextOutlineEnabled(it)
+                            },
+                            onNoteUiTextColorChange = {
+                                settingsViewModel.setNoteUiTextColor(it)
+                            },
+                            onSliderStyleChange = {
+                                settingsViewModel.setSliderStyle(it)
+                            },
+                            onFontChange = {
+                                settingsViewModel.setFont(it)
+                            },
+                            onFontSizeChange = {
+                                settingsViewModel.setFontSize(it)
+                            },
+                            onSoundEffectsEnabledChange = {
+                                settingsViewModel.setSoundEffectsEnabled(it)
+                            },
+                            onSoundEffectsVolumeChange = {
+                                settingsViewModel.setSoundEffectsVolume(it)
+                            },
+                            onSoundEffectsThemeChange = {
+                                settingsViewModel.setSoundEffectsTheme(it)
+                            },
+                            onHapticEffectsEnabledChange = {
+                                settingsViewModel.setHapticEffectsEnabled(it)
+                            },
+                            onHapticEffectsIntensityChange = {
+                                settingsViewModel.setHapticEffectsIntensity(it)
+                            },
+                            onHapticEffectsStyleChange = {
+                                settingsViewModel.setHapticEffectsStyle(it)
+                            },
+                            onLanguageChange = { language ->
+                                settingsViewModel.setLanguage(language)
+                                changeAppLanguage(language)
+                            },
+                            onGridColumnsChange = {
+                                settingsViewModel.setGridColumns(it)
+                            },
+                            onProfileImageUriChange = {
+                                settingsViewModel.setProfileImageUri(it)
+                            },
+                            onProfileImageSizeChange = {
+                                settingsViewModel.setProfileImageSize(it)
+                            },
+                            onIconStyleChange = {
+                                settingsViewModel.setIconStyle(it)
+                            },
+                            onIconSizeChange = {
+                                settingsViewModel.setIconSize(it)
+                            },
+                            onAccentColorChange = {
+                                settingsViewModel.setAccentColor(it)
+                            },
+                            onNoteCardCornerRadiusChange = {
+                                settingsViewModel.setNoteCardCornerRadius(it)
+                            },
+                            onNoteCardElevationChange = {
+                                settingsViewModel.setNoteCardElevation(it)
+                            },
+                            onNoteCardPaddingChange = {
+                                settingsViewModel.setNoteCardPadding(it)
+                            },
+                            onNoteCardImageHeightChange = {
+                                settingsViewModel.setNoteCardImageHeight(it)
+                            },
+                            onNoteTitleMaxLinesChange = {
+                                settingsViewModel.setNoteTitleMaxLines(it)
+                            },
+                            onNoteContentMaxLinesChange = {
+                                settingsViewModel.setNoteContentMaxLines(it)
+                            },
+                            onNoteLineSpacingChange = {
+                                settingsViewModel.setNoteLineSpacing(it)
+                            },
+                            onShowNoteDateChange = {
+                                settingsViewModel.setShowNoteDate(it)
+                            },
+                            onShowCategoryChipChange = {
+                                settingsViewModel.setShowCategoryChip(it)
+                            },
+                            onShowFavoriteIconChange = {
+                                settingsViewModel.setShowFavoriteIcon(it)
+                            },
+                            onFabSizeChange = {
+                                settingsViewModel.setFabSize(it)
+                            },
+                            onOptionMenuOrderChange = {
+                                settingsViewModel.setOptionMenuOrder(it)
+                            },
+                            onOptionMenuHiddenItemsChange = {
+                                settingsViewModel.setOptionMenuHiddenItems(it)
+                            },
+                            onOptionMenuShowIconsChange = {
+                                settingsViewModel.setOptionMenuShowIcons(it)
+                            },
+                            onOptionMenuTextColorChange = {
+                                settingsViewModel.setOptionMenuTextColor(it)
+                            },
+                            onOptionMenuOpacityChange = {
+                                settingsViewModel.setOptionMenuOpacity(it)
+                            },
+                            onPriorityMenuHiddenItemsChange = {
+                                settingsViewModel.setPriorityMenuHiddenItems(it)
+                            },
+                            onColorMenuHiddenItemsChange = {
+                                settingsViewModel.setColorMenuHiddenItems(it)
+                            },
+                            onResetOptionMenu = {
+                                settingsViewModel.resetOptionMenuSettings()
+                            },
+                            onPerformanceModeChange = {
+                                settingsViewModel.setPerformanceMode(it)
+                            },
+                            onAnimationsEnabledChange = {
+                                settingsViewModel.setAnimationsEnabled(it)
+                            },
+                            onAnimationStyleChange = {
+                                settingsViewModel.setAnimationStyle(it)
+                            },
+                            onAnimationEasingChange = {
+                                settingsViewModel.setAnimationEasing(it)
+                            },
+                            onAnimationSpeedChange = {
+                                settingsViewModel.setAnimationSpeed(it)
+                            },
+                            onAnimationIntensityChange = {
+                                settingsViewModel.setAnimationIntensity(it)
+                            },
+                            onOpenDevelopmentInfo = {
+                                showDevelopmentInfo = true
+                            },
+                            onBack = {
+                                showSettings = false
+                            })
+                    }
+                    /*
+                     * ==========================================
+                     * INFORMACIÓN DEL DESARROLLO
+                     * ==========================================
+                     */
+                    AppDestination.DEVELOPMENT_INFO -> {
+                        DevelopmentInfoScreen(settings = settings,
+                            onOpenSourceCode = {
+                                showSourceCodeInfo = true
+                            },
+                            onBack = {
+                                showDevelopmentInfo = false
+                            })
+                    }
+                    /*
+                     * ==========================================
+                     * MAPA DEL CÓDIGO FUENTE
+                     * ==========================================
+                     */
+                    AppDestination.SOURCE_CODE_INFO -> {
+                        SourceCodeInfoScreen(settings = settings, onBack = {
+                            showSourceCodeInfo = false
+                        })
+                    }
+                    /*
+                     * ==========================================
+                     * EDITOR
+                     * ==========================================
+                     */
+                    AppDestination.EDITOR -> {
+                        /*
+                         * Si estamos editando, escuchamos los adjuntos
+                         * que ya pertenecen a esa nota para mostrarlos
+                         * dentro del editor.
+                         */
+                        val existingAttachments:
+                                List<Attachment> = if (screen.note != null) {
+                                val attachmentsFlow = remember(screen.note!!.id) {
+                                        noteViewModel.getAttachments(screen.note!!.id)
+                                    }
+                                val currentAttachments by
+                                    attachmentsFlow.collectAsStateWithLifecycle(initialValue = emptyList())
+                                currentAttachments
+                            } else {
+                                emptyList()
+                            }
+                        AnimatedScreenEntry(animationsEnabled = settings.animationsEnabled,
+                            animationSpeed = settings.animationSpeed) {
+                            NoteEditorScreen(
+                            settings = settings,
+                            initialTitle = screen.note?.title?: pendingSharedTitle.orEmpty(),
+                            initialContent = screen.note?.content?: pendingSharedText.orEmpty(),
+                            initialColor = screen.note?.color?: "default",
+                            isEditing = screen.note != null,
+                            existingAttachments = existingAttachments,
+                            /*
+                             * attachments contiene únicamente
+                             * adjuntos NUEVOS agregados durante
+                             * esta edición.
+                             *
+                             * List<PendingAttachment>
+                             *
+                             * y puede contener:
+                             *
+                             * image
+                             * video
+                             * audio
+                             * voice
+                             * file
+                             */
+                            onSave = {
+                                    title, content, color, attachments, removedAttachments ->
+                                val noteBeingEdited = screen.note
+                                if (noteBeingEdited == null) {
+                                    /*
+                                     * ==========================
+                                     * NUEVA NOTA
+                                     * ==========================
+                                     */
+                                    noteViewModel.addNote(title = title,
+                                            content = content,
+                                            color = color,
+                                            attachments = attachments)
+                                } else {
+                                    /*
+                                     * ==========================
+                                     * EDITAR NOTA
+                                     * ==========================
+                                     *
+                                     * Conserva los adjuntos
+                                     * anteriores y agrega
+                                     * los nuevos.
+                                     */
+                                    noteViewModel.updateNote(note = noteBeingEdited,
+                                            title = title,
+                                            content = content,
+                                            color = color,
+                                            newAttachments = attachments)
+                                    /*
+                                     * Eliminamos únicamente los adjuntos
+                                     * existentes que el usuario marcó con X.
+                                     */
+                                    removedAttachments.forEach {
+                                                attachment ->
+                                            noteViewModel.deleteAttachment(attachment)
+                                        }
+                                }
+                                editingNote = null
+                                clearPendingShare()
+                                showEditor = false
+                            },
+                            onCancel = {
+                                editingNote = null
+                                clearPendingShare()
+                                showEditor = false
+                            })
+                        }
+                    }
+                    /*
+                     * ==========================================
+                     * DETALLE DE NOTA
+                     * ==========================================
+                     */
+                    AppDestination.DETAIL -> {
+                        /*
+                         * Usamos la instancia más reciente de Room para
+                         * reflejar Favorite / Pin / Category / Priority
+                         * sin salir de la pantalla de detalle.
+                         */
+                        val currentSelectedNote = notes.firstOrNull {
+                                    it.id == screen.note!!.id
+                                }?: screen.note!!
+                        NoteDetailScreen(
+                            note = currentSelectedNote,
+                            noteViewModel = noteViewModel,
+                            settings = settings,
+                            onBack = {
+                                selectedNote = null
+                            },
+                            onEdit = {
+                                    note ->
+                                clearPendingShare()
+                                editingNote = note
+                                selectedNote = null
+                                showEditor = true
+                            })
+                    }
+                    /*
+                     * ==========================================
+                     * PANTALLA PRINCIPAL
+                     * ==========================================
+                     */
+                    AppDestination.NOTES -> {
+                        NotesScreen(
+                            notes = notes,
+                            noteViewModel = noteViewModel,
+                            settings = settings,
+                            /*
+                             * Nueva nota.
+                             */
+                            onAddNote = {
+                                clearPendingShare()
+                                editingNote = null
+                                showEditor = true
+                            },
+                            /*
+                             * Ajustes.
+                             */
+                            onOpenSettings = {
+                                showDevelopmentInfo = false
+                                showSettings = true
+                            },
+                            /*
+                             * Abrir nota.
+                             */
+                            onOpenNote = { note ->
+                                selectedNote = note
+                            },
+                            /*
+                             * Editar desde ⋮.
+                             */
+                            onEditNote = { note ->
+                                clearPendingShare()
+                                editingNote = note
+                                showEditor = true
+                            })
+                    }
+                }
+                }
+            }
+        }
+    }
+}
