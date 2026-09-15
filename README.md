@@ -4,7 +4,7 @@ MyNotes is an Android notes application built primarily with **Kotlin + Jetpack 
 
 ## Project screenshots
 
-The screenshots below are stored inside [`doc/images/`](DOCUMENTACION_CODIGO_OBSESIVA/images/) so the repository documentation remains self-contained.
+The screenshots below are stored inside [`doc/images/`](doc/images/) so the repository documentation remains self-contained.
 
 <table>
   <tr>
