@@ -1,8 +1,8 @@
-# MyNotes
+MyNotes
 
 MyNotes is an Android notes application built primarily with **Kotlin + Jetpack Compose**. It focuses on flexible note organization, multimedia attachments, rich link previews, extensive visual customization, adaptive performance profiles, audio feedback, backup/restore, and compatibility starting from Android 7.0.
 
-## Project screenshots
+Project screenshots
 
 The screenshots below are stored inside [`doc/images/`](doc/images/) so the repository documentation remains self-contained.
 
@@ -25,20 +25,20 @@ The screenshots below are stored inside [`doc/images/`](doc/images/) so the repo
   </tr>
 </table>
 
-## Repository
+Repository
 
 - GitHub: `https://github.com/lxxsnowxxl/Mynotes`
 - Main account: `@lxxsnowxxl`
 - Main branch: `main`
 
-## Authorship and credits
+Authorship and credits
 
 - **Primary development:** Snow
 - **Technical development assistance:** OpenAI ChatGPT
 
 OpenAI ChatGPT has been used for code review, documentation, performance analysis, debugging support, and development assistance. The project's direction and primary authorship remain with Snow.
 
-## Technical status
+Technical status
 
 - Application: `MyNotes`
 - Package / application ID: `com.example.mynotes`
@@ -52,7 +52,7 @@ OpenAI ChatGPT has been used for code review, documentation, performance analysi
 - Build system: **Gradle Kotlin DSL + KSP**
 - Release configuration: code minification and resource shrinking enabled
 
-## Main technologies
+Main technologies
 
 - Kotlin
 - Jetpack Compose
@@ -67,7 +67,7 @@ OpenAI ChatGPT has been used for code review, documentation, performance analysi
 - Kotlin Coroutines
 - AndroidX
 
-## Main features
+Main features
 
 - Create, edit, delete, pin, prioritize, and favorite notes.
 - Organize notes by categories and filters.
@@ -82,7 +82,7 @@ OpenAI ChatGPT has been used for code review, documentation, performance analysi
 - XML preview layouts under `app/src/main/res/layout/` for studying the Compose UI from Android Studio Design / Split view.
 - A development-information section inside the application with architecture, technology, authorship, source-code, repository, copyright, and performance information.
 
-## Architecture
+Architecture
 
 The project follows a responsibility-oriented architecture:
 
@@ -98,7 +98,7 @@ Room / DataStore / private files / cache
 
 `MainActivity` coordinates Compose navigation and system/UI policies. ViewModels expose state and user actions. Repositories centralize persistence and data-related behavior. Room stores notes and attachment metadata, while DataStore stores user-configurable preferences.
 
-## Data and storage
+Data and storage
 
 - Notes are stored locally with Room.
 - Attachments are copied into the application's private storage.
@@ -107,9 +107,9 @@ Room / DataStore / private files / cache
 - Link-preview data is handled separately so network or metadata processing does not block the main UI.
 - Maximum-quality mode includes progressive and prewarmed thumbnail strategies to reduce visible image pop-in during fast scrolling.
 
-## Performance profiles
+Performance profiles
 
-### Maximum performance
+Maximum performance
 
 - Preferred display refresh rate: **60 Hz**.
 - Image/video previews: up to **360 px**.
@@ -117,14 +117,14 @@ Room / DataStore / private files / cache
 - PDF previews: **480 px**.
 - Prioritizes lower CPU, memory, I/O, and decoding workload.
 
-### Balanced
+Balanced
 
 - Preferred display refresh rate: **60 Hz**.
 - Image/video previews: up to **720 px**.
 - Audio artwork: **512 px**.
 - PDF previews: **960 px**.
 
-### Maximum quality
+Maximum quality
 
 - Requests up to **120 Hz** when supported by the device/display stack.
 - Image previews: up to **1280 px**.
@@ -135,7 +135,7 @@ Room / DataStore / private files / cache
 
 Refresh rates are requests to Android. The platform can select a different mode if the panel, compositor, or current system conditions do not provide the requested refresh rate.
 
-## Android integration
+Android integration
 
 Relevant permissions and platform integrations include:
 
@@ -149,7 +149,7 @@ Relevant permissions and platform integrations include:
 - Edge-to-edge / immersive UI handling.
 - Compose rendering is synchronized through Android's normal Choreographer / VSYNC pipeline.
 
-## Important source files
+Important source files
 
 ```text
 app/src/main/java/com/example/mynotes/MainActivity.kt
@@ -168,12 +168,11 @@ app/src/main/java/com/example/mynotes/links/LinkPreviewRepository.kt
 app/src/main/java/com/example/mynotes/settings/SettingsRepository.kt
 ```
 
-## Documentation
+Documentation
 
 The repository contains two levels of source documentation:
 
-- [`DOCUMENTACION_CODIGO/`](DOCUMENTACION_CODIGO/) — compact source-code documentation.
-- [`DOCUMENTACION_CODIGO_OBSESIVA/`](DOCUMENTACION_CODIGO_OBSESIVA/) — extremely detailed documentation covering variables, parameters, restrictions, scopes, callbacks, side effects, lifecycle behavior, state, caching, concurrency, Android APIs, and internal relationships.
+- [`doc/`](doc/) — extremely detailed documentation covering variables, parameters, restrictions, scopes, callbacks, side effects, lifecycle behavior, state, caching, concurrency, Android APIs, and internal relationships.
 
 Additional references include:
 
@@ -182,7 +181,7 @@ Additional references include:
 - `CAMBIOS_*.md` / `CAMBIOS_*.txt` implementation notes
 - XML preview layouts under `app/src/main/res/layout/`
 
-## Building the project
+Building the project
 
 1. Clone the repository:
 
@@ -195,7 +194,7 @@ git clone https://github.com/lxxsnowxxl/Mynotes.git
 4. Sync Gradle.
 5. Build and run the app from Android Studio, or use the project's Gradle wrapper.
 
-## Repository hygiene
+Repository hygiene
 
 The root `.gitignore` excludes common local/generated Android files such as:
 
@@ -215,7 +214,7 @@ secrets.properties
 
 Review staged files before each public push, especially when local credentials, signing files, exports, or test data have been added to the workspace.
 
-## Copyright and license
+Copyright and license
 
 © 2026 Snow · MyNotes
 
