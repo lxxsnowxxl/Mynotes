@@ -181,8 +181,16 @@ object UiSoundPlayer {
             pool?.let {
                 return it
             }
-            val audioAttributes = AudioAttributes.Builder().setUsage(AudioAttributes.USAGE_ASSISTANCE_SONIFICATION).setContentType(
-                        AudioAttributes.CONTENT_TYPE_SONIFICATION).build()
+            /*
+             * Los efectos propios de MyNotes usan el canal multimedia en vez
+             * del canal de sonidos de sistema. Así, cuando MainActivity mutea
+             * temporalmente STREAM_SYSTEM para ocultar el clic del teclado,
+             * los sonidos configurados dentro de la app continúan audibles.
+             */
+            val audioAttributes = AudioAttributes.Builder()
+                .setUsage(AudioAttributes.USAGE_MEDIA)
+                .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+                .build()
             val newPool = SoundPool.Builder().setMaxStreams(6).setAudioAttributes(audioAttributes).build()
             val appContext = context.applicationContext
             loadTheme(pool = newPool, context = appContext, theme = "classic", edit = R.raw.ui_edit, delete = R.raw.ui_delete,

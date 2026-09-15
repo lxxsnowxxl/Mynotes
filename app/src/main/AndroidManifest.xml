@@ -12,6 +12,14 @@
         android:name="android.permission.VIBRATE" />
 
     <!--
+        Permite silenciar temporalmente el canal de sonidos de sistema mientras
+        el teclado está visible. Es un permiso normal: no muestra diálogo al
+        usuario y el canal se restaura al cerrar el IME o salir de MyNotes.
+    -->
+    <uses-permission
+        android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
+
+    <!--
         La aplicación funciona sin micrófono. Declararlo como opcional evita
         que Google Play excluya tablets, Chromebooks u otros equipos que no
         dispongan de uno. La grabación de voz se desactiva en tiempo de

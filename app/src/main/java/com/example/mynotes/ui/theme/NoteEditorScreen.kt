@@ -565,8 +565,14 @@ fun NoteEditorScreen(settings: AppSettings, initialTitle: String = "", initialCo
                         Triple("lime", R.string.mock_color_lime, Color(0xFFF1F8D7)),
                         Triple("brown", R.string.mock_color_brown, Color(0xFFEDE2D9)),
                         Triple("gray", R.string.mock_color_gray, Color(0xFFE9ECEF)))
-                FlowRow(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp),
-                    verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                FlowRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(
+                        space = 10.dp,
+                        alignment = Alignment.CenterHorizontally
+                    ),
+                    verticalArrangement = Arrangement.spacedBy(10.dp)
+                ) {
                     editorColorOptions.forEach { option -> val selected = selectedColor == option.first
                         Surface(modifier = Modifier.size(48.dp), shape = CircleShape, color = option.third, border = BorderStroke(
                                 width = if (selected) 3.dp else 1.dp, color = if (selected) {

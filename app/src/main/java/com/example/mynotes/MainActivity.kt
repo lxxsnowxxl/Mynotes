@@ -3,6 +3,7 @@ package com.example.mynotes
 import android.content.Context
 import android.content.Intent
 import android.content.res.Configuration
+import android.media.AudioManager
 import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
@@ -50,6 +51,23 @@ class MainActivity : ComponentActivity() {
      * cuando se cierra y restaurar el modo inmersivo en ese momento.
      */
     private var wasImeVisible = false
+
+    /*
+     * Mientras el IME está visible podemos silenciar temporalmente el canal
+     * de sonidos de sistema que normalmente usa el teclado para sus clics.
+     *
+     * Es importante separar este canal del audio propio de MyNotes: los
+     * efectos de la aplicación se reproducen por el canal multimedia desde
+     * UiSoundPlayer, así que siguen oyéndose aunque STREAM_SYSTEM esté mudo.
+     *
+     * Guardamos si el canal ya estaba silenciado antes de intervenir para no
+     * deshacer una preferencia del usuario cuando el teclado se cierre.
+     */
+    private lateinit var audioManager: AudioManager
+    private var suppressSystemKeyboardSounds = false
+    private var systemStreamMutedByMyNotes = false
+    private var systemStreamWasMutedBeforeIme = false
+    private var activityIsResumed = false
     companion object {
         private const val LOCALE_PREFS = "locale_prefs"
         private const val LANGUAGE_KEY = "language"
@@ -119,9 +137,88 @@ class MainActivity : ComponentActivity() {
      * Un gesto desde el borde inferior los muestra
      * temporalmente.
      */
+    /**
+     * Activa o desactiva la supresión de los clics del teclado del sistema.
+     *
+     * La opción se liga al interruptor general de efectos de sonido de MyNotes:
+     * si los sonidos de la app están desactivados, no alteramos el canal de
+     * sistema. Si están activados y el IME es visible, intentamos mutear solo
+     * STREAM_SYSTEM.
+     */
+    private fun setSystemKeyboardSoundSuppressionEnabled(enabled: Boolean) {
+        suppressSystemKeyboardSounds = enabled
+        updateSystemKeyboardSoundSuppression(wasImeVisible)
+    }
+
+    /**
+     * Sincroniza el estado del canal de sistema con la visibilidad del IME.
+     *
+     * AudioManager controla un canal global del dispositivo, no un teclado
+     * concreto. Por eso esta intervención dura únicamente mientras MyNotes
+     * está en primer plano y el teclado está abierto. Cualquier fallo del OEM
+     * o restricción del sistema se ignora para no afectar la estabilidad de la
+     * aplicación.
+     */
+    private fun updateSystemKeyboardSoundSuppression(isImeVisible: Boolean) {
+        if (!::audioManager.isInitialized) return
+
+        val shouldMuteSystemStream =
+            activityIsResumed && suppressSystemKeyboardSounds && isImeVisible
+
+        if (shouldMuteSystemStream && !systemStreamMutedByMyNotes) {
+            try {
+                if (audioManager.isVolumeFixed) return
+
+                systemStreamWasMutedBeforeIme =
+                    audioManager.isStreamMute(AudioManager.STREAM_SYSTEM)
+
+                if (!systemStreamWasMutedBeforeIme) {
+                    audioManager.adjustStreamVolume(
+                        AudioManager.STREAM_SYSTEM,
+                        AudioManager.ADJUST_MUTE,
+                        0
+                    )
+                }
+                systemStreamMutedByMyNotes = true
+            } catch (_: SecurityException) {
+                systemStreamMutedByMyNotes = false
+            } catch (_: RuntimeException) {
+                systemStreamMutedByMyNotes = false
+            }
+        } else if (!shouldMuteSystemStream) {
+            restoreSystemSoundStreamIfNeeded()
+        }
+    }
+
+    /**
+     * Devuelve STREAM_SYSTEM al estado previo a mostrar el teclado. Si el
+     * usuario ya lo tenía silenciado, se deja exactamente así.
+     */
+    private fun restoreSystemSoundStreamIfNeeded() {
+        if (!::audioManager.isInitialized || !systemStreamMutedByMyNotes) return
+
+        try {
+            if (!systemStreamWasMutedBeforeIme && !audioManager.isVolumeFixed) {
+                audioManager.adjustStreamVolume(
+                    AudioManager.STREAM_SYSTEM,
+                    AudioManager.ADJUST_UNMUTE,
+                    0
+                )
+            }
+        } catch (_: SecurityException) {
+            // Algunos OEM restringen el mute global; nunca debe causar crash.
+        } catch (_: RuntimeException) {
+            // Protección adicional ante implementaciones de audio del fabricante.
+        } finally {
+            systemStreamMutedByMyNotes = false
+            systemStreamWasMutedBeforeIme = false
+        }
+    }
+
     private fun installImeNavigationBarRecovery() {
         ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { view, insets ->
             val isImeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
+            updateSystemKeyboardSoundSuppression(isImeVisible)
             /*
              * No ocultamos la navegación mientras el teclado está abierto.
              * Solo actuamos en la transición visible -> oculto, que es el
@@ -178,6 +275,9 @@ class MainActivity : ComponentActivity() {
     }
     override fun onResume() {
         super.onResume()
+        activityIsResumed = true
+        updateSystemKeyboardSoundSuppression(wasImeVisible)
+        ViewCompat.requestApplyInsets(window.decorView)
         /*
          * DisplayPerformanceController conserva el último perfil aplicado.
          * Reaplicamos esa preferencia al volver a primer plano sin duplicar
@@ -186,11 +286,22 @@ class MainActivity : ComponentActivity() {
         DisplayPerformanceController.reapplyLastRequest(window)
         applyAndroidNavigationBarPolicy()
     }
+    override fun onPause() {
+        /*
+         * Nunca dejamos STREAM_SYSTEM silenciado cuando MyNotes pierde el
+         * primer plano. Esto evita afectar sonidos de otras aplicaciones si
+         * el usuario cambia de app con el teclado todavía abierto.
+         */
+        activityIsResumed = false
+        restoreSystemSoundStreamIfNeeded()
+        super.onPause()
+    }
     override fun onMultiWindowModeChanged(isInMultiWindowMode: Boolean) {
         super.onMultiWindowModeChanged(isInMultiWindowMode)
         applyAndroidNavigationBarPolicy()
     }
     override fun onDestroy() {
+        restoreSystemSoundStreamIfNeeded()
         DisplayPerformanceController.release(window)
         super.onDestroy()
     }
@@ -207,6 +318,7 @@ class MainActivity : ComponentActivity() {
          */
         setTheme(R.style.Theme_MyNotes)
         super.onCreate(savedInstanceState)
+        audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
         handleIncomingShare(intent)
         /*
          * La frecuencia de refresco se aplica únicamente cuando AppSettings
@@ -230,6 +342,7 @@ class MainActivity : ComponentActivity() {
                     volumePercent = settings.soundEffectsVolume, theme = settings.soundEffectsTheme,
                     hapticEnabled = settings.hapticEffectsEnabled, hapticIntensityPercent = settings.hapticEffectsIntensity,
                     hapticStyle = settings.hapticEffectsStyle)
+                setSystemKeyboardSoundSuppressionEnabled(settings.soundEffectsEnabled)
             }
             LaunchedEffect(settings.darkMode) {
                 applySystemBarAppearance(settings.darkMode)
