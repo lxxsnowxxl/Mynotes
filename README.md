@@ -12,16 +12,16 @@ The screenshots below are stored inside [`doc/images/`](doc/images/) so the repo
     <td align="center"><strong>Note editor</strong></td>
   </tr>
   <tr>
-    <td align="center"><img src="DOCUMENTACION_CODIGO_OBSESIVA/images/home_screen.png" alt="MyNotes home screen" width="300"></td>
-    <td align="center"><img src="DOCUMENTACION_CODIGO_OBSESIVA/images/note_editor.png" alt="MyNotes note editor" width="300"></td>
+    <td align="center"><img src="doc/images/home_screen.png" alt="MyNotes home screen" width="300"></td>
+    <td align="center"><img src="doc/images/note_editor.png" alt="MyNotes note editor" width="300"></td>
   </tr>
   <tr>
     <td align="center"><strong>Color palette settings</strong></td>
     <td align="center"><strong>Note options menu</strong></td>
   </tr>
   <tr>
-    <td align="center"><img src="DOCUMENTACION_CODIGO_OBSESIVA/images/settings_color_palette.png" alt="MyNotes color palette settings" width="300"></td>
-    <td align="center"><img src="DOCUMENTACION_CODIGO_OBSESIVA/images/note_options_menu.png" alt="MyNotes note options menu" width="300"></td>
+    <td align="center"><img src="doc/images/settings_color_palette.png" alt="MyNotes color palette settings" width="300"></td>
+    <td align="center"><img src="doc/images/note_options_menu.png" alt="MyNotes note options menu" width="300"></td>
   </tr>
 </table>
 
