@@ -1,0 +1,54 @@
+# SHA-256 del código actual protegido
+
+Archivos: 48
+
+Estos hashes se calcularon antes y después de regenerar la documentación. Un cambio de un solo byte en `app/` altera el hash.
+
+327918a9526b4cd3eb9087e4c20cb4b2cc8d846a4647c6f8ec5e9f3670e5acb0  app/build.gradle.kts
+5211c2be48ea2b206bc768c25b964211cb44728b4ee8e405cc73d93ed8376c17  app/src/androidTest/java/com/example/mynotes/ExampleInstrumentedTest.kt
+cf0f367d632f2795190a87ed22ae2b1731cbd4f1e0e47a08bf6cb90d0a05ce04  app/src/main/java/com/example/mynotes/MainActivity.kt
+4d00600b45e0626e9b71dedaa85474ceceb562ab57fb13c10281fed13b10838a  app/src/main/java/com/example/mynotes/data/AppDataBackupManager.kt
+1fa3a2fe21723358f1effe2847ca51c55e0b5a570ba228dd55d016e0e824fa1d  app/src/main/java/com/example/mynotes/data/AppDatabase.kt
+d84232af3101044da8e2db5fe8ca0039175d6ff21874589361b982eb0ceb42df  app/src/main/java/com/example/mynotes/data/Attachment.kt
+b08c95b65977d9cd903a61de27f1ae385743249f560299c65cae57b7171e1ae1  app/src/main/java/com/example/mynotes/data/AttachmentDao.kt
+9214c204b4c1219e4602869c0d979d961f49b5f2d6e76e20afc4aeaeba7c4544  app/src/main/java/com/example/mynotes/data/Note.kt
+7283d9e987d8038309551a6abb13e8a51068c000411b46fe2bdaeef3e46071d8  app/src/main/java/com/example/mynotes/data/NoteDao.kt
+93815c8c9aadf6631ce116f4a15f609e32db70efa1f70ab3db02f0758a21fd50  app/src/main/java/com/example/mynotes/data/PendingAttachment.kt
+b5e0d23958e75f3e88b21ab5ff8a6b70f66f3b4c7e470a5a1d98d4801a10b65d  app/src/main/java/com/example/mynotes/performance/AttachmentPreviewCache.kt
+18167bab1876feb4905daebe3eab8190e9164dcda090f933a807548759693b90  app/src/main/java/com/example/mynotes/performance/DisplayPerformanceController.kt
+dc653f621bf3bda12c8371d76bc80cb52eb434c19b45425de23a7a3a53eb7078  app/src/main/java/com/example/mynotes/settings/AppSettings.kt
+79429b023ece52b638e9e6e1ffef1f6a04df64a13cd3f0f182aeb9fbb577d856  app/src/main/java/com/example/mynotes/settings/SettingsRepository.kt
+addc44b9b2a1d1c1072a28a5219cdcaca9737411da8e7e1797498a97491a6d50  app/src/main/java/com/example/mynotes/settings/SettingsViewModel.kt
+7eaf143a7f4ee5fd842431af578db28a7e9a6618511c1a209fa0f09575bc156d  app/src/main/java/com/example/mynotes/ui/AttachmentViewerActivity.kt
+7f182fe08bbda18421cd59ce5666b6df12407d4a11c6f3ec2b4f35c99994d6c8  app/src/main/java/com/example/mynotes/ui/components/AppPopupStyles.kt
+02a4cd1294006d450f96ff84ca2d992f00ba900aabd7487bf4ca6b4d93ae1144  app/src/main/java/com/example/mynotes/ui/components/AttachmentPreviewTile.kt
+89e8386c8cf33add82aa9ab4b96f66612c65b0dfbbf62788718af85d5a34f20b  app/src/main/java/com/example/mynotes/ui/components/BackupRestoreSection.kt
+39f943741a422733881e2400505b398bbb1365c061f58dd13432304ccb23300e  app/src/main/java/com/example/mynotes/ui/components/ExtremeCustomizationSection.kt
+b378709c6468100289997cb3027bd6d69820287d9ac94bf13eb91ae1ba4e4908  app/src/main/java/com/example/mynotes/ui/components/InlineNoteAttachment.kt
+dd4ae0d535dfe48cef3dff2ceb2b8b4a74ca1b4b4cfe75d96c6b60a7c560b3a5  app/src/main/java/com/example/mynotes/ui/components/LinkPreviewCard.kt
+bf918f121be99c5320bec6db75ec4e24f5e7de699c76825014a49fa09ab8af7c  app/src/main/java/com/example/mynotes/ui/components/NoteCard.kt
+09bcb88572c382a2d3deb45244c8f411f71804a6b43b0780c84f0dbd973303e2  app/src/main/java/com/example/mynotes/ui/components/NoteCardStyle.kt
+1efc2c1178ca4a0b5f734e21baf96d444186df0d8f1b6983c52165c224c1bf34  app/src/main/java/com/example/mynotes/ui/components/OptionsMenuCustomizationSection.kt
+8bdcf40d3a8561a120df4c0254a220ca6d74836c6b7fd6272d7e04751014fcad  app/src/main/java/com/example/mynotes/ui/components/PaletteSelector.kt
+3fbbffa90be64e618758f3d251b2d14e053e4d409d291f73280e6994b99484a6  app/src/main/java/com/example/mynotes/ui/components/SettingsSectionPanel.kt
+5f322821526286538d40d528b5805436e71f7a231291b1a72c24c505914067e3  app/src/main/java/com/example/mynotes/ui/components/StyledSettingsSlider.kt
+22837809d91b6e1e2958ff293b15165ae6c0be72b704c9ae50e1c167140a1964  app/src/main/java/com/example/mynotes/ui/motion/AppMotion.kt
+b3a702ce9a899a616fa7dbee4d17b07285dc91c2571c0ea20a8145a389506314  app/src/main/java/com/example/mynotes/ui/sound/UiHapticPlayer.kt
+08be2e8dd490cc055c8b648d42a3d6da03644e50c64ac254435a9d1643fd7c8f  app/src/main/java/com/example/mynotes/ui/sound/UiSoundPlayer.kt
+3b9a9b91cd033607fd9ba69a16e099cdc244233374c1471e1d9bed151359c724  app/src/main/java/com/example/mynotes/ui/theme/AppFonts.kt
+985d4a3a3467e6730a5be7a57dc5cfa455d319b2b4a632be69221b5e34418c14  app/src/main/java/com/example/mynotes/ui/theme/Color.kt
+de5fcb4f5434b4a9d1738c6cd25433c5ced3cfa6729990036a6440142519f5a7  app/src/main/java/com/example/mynotes/ui/theme/DevelopmentInfoScreen.kt
+00c3bfa988e73a930635adbc6cd8b8f01565b86b49958ff69772a914d3b809b7  app/src/main/java/com/example/mynotes/ui/theme/NoteColors.kt
+3d042b0eea6bc3d99b7936ec5dbba27b8722b59a35d83a1e75e9a6c8b538df98  app/src/main/java/com/example/mynotes/ui/theme/NoteDetailScreen.kt
+3f744acd955a4e7ebfdfa783ddd461a7abdd40cfa337f76cc16aeb282a881cf9  app/src/main/java/com/example/mynotes/ui/theme/NoteEditorScreen.kt
+41af1f32f96765fd67378df855de90a802e31cf10c5e22857efcb75bf938abd3  app/src/main/java/com/example/mynotes/ui/theme/NotesScreen.kt
+ecb1fb9ea7fc903aa3bde562db11a1420674b98765c81de111b64108329db3cf  app/src/main/java/com/example/mynotes/ui/theme/PaletteCatalog.kt
+fe1d671f4b47d54ad7134b2f1b61772d9ed05d3bf7477902ee648773771a776c  app/src/main/java/com/example/mynotes/ui/theme/SettingsScreen.kt
+5ecc52a515728448c4813dee55972736a4bd13c563b8a3bcefabbc6009f17b57  app/src/main/java/com/example/mynotes/ui/theme/SettingsSectionColors.kt
+e6efafe29f85a786f1466ff28afebb392b13a95061b01941183436d65b24c259  app/src/main/java/com/example/mynotes/ui/theme/SourceCodeInfoScreen.kt
+0c133f3e450d754536248300863f7ac87e323257e287971f8322635cdcc5da0d  app/src/main/java/com/example/mynotes/ui/theme/Theme.kt
+3cbc87c8410800d6a172f0b34d6bf540284bda898aa4e8b4b8f1f58c153264ec  app/src/main/java/com/example/mynotes/ui/theme/Type.kt
+f8e67135f1d6cd75c87a45c2344c3aebd38c40a219d41d7bd6b1f74122664a8f  app/src/main/java/com/example/mynotes/viewmodel/NoteViewModel.kt
+b43e0de71ed0b759a2e74c6a6a04e5a73461ed831376da6f708c125895cfab70  app/src/main/java/com/example/mynotes/viewmodel/SettingsViewModel.kt
+4be77c1c9460e6c4dcfd772f14ec189b7000b826363740951f1858c12a9a3d86  app/src/test/java/com/example/mynotes/ExampleUnitTest.kt
+e2dccc0e0e4d162da41d9446f597bd43d15e7d76c39f09f3ea791ec067d90e2f  app/src/test/java/com/example/mynotes/SettingsSectionColorsTest.kt

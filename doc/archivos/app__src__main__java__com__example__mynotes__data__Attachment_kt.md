@@ -1,35 +1,83 @@
-# Attachment.kt
+# Attachment.kt — documentación exhaustiva por bloques
 
-**Ruta:** `app/src/main/java/com/example/mynotes/data/Attachment.kt`  
-**Paquete:** `com.example.mynotes.data`  
-**Líneas:** 41 → 24 (41.5% menos)
+**Ruta de código real:** `app/src/main/java/com/example/mynotes/data/Attachment.kt`  
+**SHA-256 del archivo ejecutable sin tocar:** `d84232af3101044da8e2db5fe8ca0039175d6ff21874589361b982eb0ceb42df`  
+**Líneas del código real:** 24
 
-## Responsabilidad
+> **Garantía:** esta documentación se genera en una carpeta paralela. El archivo Kotlin/Kotlin DSL anterior no se modifica. Los fragmentos mostrados abajo son copias de lectura; la aplicación compila usando únicamente el archivo original de `app/...`.
+
+## 1. Papel del archivo
 
 Modelo persistente que representa un archivo adjunto asociado a una nota.
 
-## Papel dentro de la arquitectura
+**Arquitectura.** Funciona como contrato de datos entre Room, los DAO, el ViewModel de notas, las vistas previas y el visor de adjuntos.
 
-Funciona como contrato de datos entre Room, los DAO, el ViewModel de notas, las vistas previas y el visor de adjuntos.
+**Flujo general.** El flujo se describe declaración por declaración en este documento.
 
-## Dependencias y relaciones
+## 2. Package e imports
 
-**Dependencias internas de MyNotes:** no importa directamente otras clases del paquete de la app.
+El `package` es `com.example.mynotes.data`. Determina el namespace lógico del archivo, resolución de visibilidad `internal`/package-related tooling y la ruta conceptual desde la que otras clases lo importan.
 
-**Compose:** `androidx.compose.runtime.Immutable`.
+El archivo declara **4 imports**. Cada import evita usar el nombre totalmente calificado en el cuerpo y, además, revela las dependencias técnicas del bloque:
 
-**Android/Jetpack:** `androidx.room.Entity`, `androidx.room.Index`, `androidx.room.PrimaryKey`.
+**Jetpack/Compose:** `androidx.compose.runtime.Immutable`, `androidx.room.Entity`, `androidx.room.Index`, `androidx.room.PrimaryKey`.
 
-## Declaraciones importantes detectadas
+## 3. Restricciones e invariantes visibles en el archivo
 
-| Línea | Tipo | Nombre | Firma / declaración | Qué hace |
+- No se detectaron automáticamente operadores de restricción comunes; las restricciones específicas siguen documentadas dentro de cada declaración.
+
+## 4. Bloques de código, uno por uno
+
+### 4.1 `Attachment` — class, líneas 10–10
+
+```kotlin
+data class Attachment(
+```
+
+#### Qué hace y por qué existe
+
+Modelo persistente que representa un archivo adjunto asociado a una nota.
+
+#### Contrato de la declaración
+
+
+#### Variables y estado dentro del bloque
+
+No declara variables locales simples detectables; trabaja directamente con parámetros, propiedades del contenedor o expresiones encadenadas.
+
+#### Flujo de control y restricciones internas
+
+El bloque es principalmente lineal: no contiene `if/when/for/while/try` relevantes detectados o delega las decisiones a expresiones/funciones llamadas.
+
+#### Efectos secundarios y recursos
+
+No se detecta un efecto externo obvio; el bloque parece calcular/devolver valores o delegar trabajo sin una escritura explícita identificable.
+
+#### Dependencias de ejecución / llamadas relevantes
+
+No se detectaron llamadas de función relevantes fuera de la propia estructura de la declaración.
+
+#### Qué no debe romperse al modificar este bloque
+
+- Conservar orden de llamadas, valores por defecto, visibilidad y tipos: aunque parezcan detalles de estilo, forman parte del contrato actual del bloque.
+
+## 5. Inventario global de propiedades/variables detectadas
+
+| Línea | Identificador | Mutabilidad | Tipo | Explicación |
 |---:|---|---|---|---|
-| 10 | data class | `Attachment` | `data class Attachment(` | Modelo de datos que agrupa valores relacionados con esta responsabilidad. |
+| 12 | `id` | `val` | `Int` | Referencia inmutable: después de inicializarse, este identificador no puede apuntar a otro valor dentro de su ámbito. El tipo declarado es `Int`. No declara nulabilidad explícita. |
+| 13 | `noteId` | `val` | `Int,` | Referencia inmutable: después de inicializarse, este identificador no puede apuntar a otro valor dentro de su ámbito. El tipo declarado es `Int,`. No declara nulabilidad explícita. |
+| 21 | `type` | `val` | `String,` | Referencia inmutable: después de inicializarse, este identificador no puede apuntar a otro valor dentro de su ámbito. El tipo declarado es `String,`. No declara nulabilidad explícita. |
+| 22 | `uri` | `val` | `String,` | Referencia inmutable: después de inicializarse, este identificador no puede apuntar a otro valor dentro de su ámbito. El tipo declarado es `String,`. No declara nulabilidad explícita. Representa una ubicación Android `Uri`; no debe asumirse que siempre corresponde a una ruta de archivo convencional. |
+| 23 | `name` | `val` | `String?` | Referencia inmutable: después de inicializarse, este identificador no puede apuntar a otro valor dentro de su ámbito. El tipo declarado es `String?`. Admite `null`, así que los consumidores deben contemplar ausencia de valor. |
+| 24 | `createdAt` | `val` | `Long` | Referencia inmutable: después de inicializarse, este identificador no puede apuntar a otro valor dentro de su ámbito. El tipo declarado es `Long`. No declara nulabilidad explícita. |
 
-## Cómo leer este archivo
+## 6. Mapa exhaustivo de TODOS los bloques delimitados por `{}`
 
-1. Empieza por las declaraciones públicas o composables: representan el contrato que usa el resto del proyecto. 2. Después revisa las funciones privadas: normalmente encapsulan normalización, cálculo, rendering o acceso a plataforma. 3. Los comentarios existentes se conservaron durante la compactación y explican decisiones específicas allí donde el código necesita contexto. 4. Consulta las dependencias internas anteriores para seguir el flujo hacia la capa que consume o persiste el resultado.
+Esta tabla recorre todas las llaves estructurales detectadas fuera de strings/comentarios. Así se documentan también lambdas de Compose, callbacks, iteraciones y ámbitos locales que no tienen un nombre propio de función.
 
-## Garantía de la compactación
+No hay bloques con llaves estructurales en este archivo.
 
-En este archivo no se cambiaron identificadores, literales, operadores, comentarios, llamadas ni orden de tokens. La reducción proviene exclusivamente de compactar espacios/saltos de línea seguros. El proyecto fue comparado mediante el lexer de Kotlin y validado sintácticamente con PSI después del cambio.
+## 7. Lectura de seguridad antes de tocar este archivo
+
+La documentación describe **lo que el código actual ya hace**. No constituye una propuesta de refactorización. Si se quisiera cambiar algo en el futuro, primero habría que preservar contratos públicos, claves de configuración, restricciones de API Android, comportamiento de Compose, lifecycle, operaciones de I/O y compatibilidad con los datos ya persistidos. En esta entrega no se hizo ninguna de esas modificaciones.
