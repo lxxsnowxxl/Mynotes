@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_action_menu">Crear</string>
+    <string name="create_drawing">Dibujar</string>
+    <string name="drawing_title">Nuevo dibujo</string>
+    <string name="drawing_subtitle">Elige una herramienta, un color y empieza a dibujar</string>
+    <string name="drawing_back">Volver</string>
+    <string name="drawing_save">Guardar dibujo</string>
+    <string name="drawing_eraser">Borrador</string>
+    <string name="drawing_undo">Deshacer</string>
+    <string name="drawing_redo">Rehacer</string>
+    <string name="drawing_clear">Limpiar dibujo</string>
+    <string name="drawing_default_note_title">Dibujo</string>
+    <string name="drawing_tools">Herramientas</string>
+    <string name="drawing_canvas_color">Color del lienzo</string>
+    <string name="drawing_colors">Colores</string>
+    <string name="drawing_thickness">Grosor</string>
+    <string name="drawing_thin">Fino</string>
+    <string name="drawing_medium">Medio</string>
+    <string name="drawing_thick">Grueso</string>
+    <string name="drawing_tool_fine">Punto fino</string>
+    <string name="drawing_tool_pencil">Lápiz</string>
+    <string name="drawing_tool_pen">Pluma</string>
+    <string name="drawing_tool_marker">Plumón</string>
+    <string name="drawing_tool_highlighter">Resaltador</string>
+    <string name="drawing_tool_eraser">Borrador</string>
+    <string name="drawing_expand_canvas">Ampliar lienzo</string>
+    <string name="drawing_restore_canvas">Restaurar lienzo</string>
+</resources>

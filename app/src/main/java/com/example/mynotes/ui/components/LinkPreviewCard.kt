@@ -85,17 +85,51 @@ private val UrlRegex = Regex(
 fun extractLinkUrls(text: String): List<String> = UrlRegex.findAll(text).map { match -> match.value.trimEnd('.', ',', ';', '!', ')', ']',
                 '}')
         }.filter { it.length > 8 }.distinct().toList()
+
+/*
+ * Los enlaces que ya generaron una tarjeta enriquecida se guardan como una
+ * línea de metadatos dentro del contenido persistido. El editor y las tarjetas
+ * nunca muestran esta línea, pero seguimos conservando la URL para reconstruir
+ * la preview al volver a abrir la nota sin añadir una columna nueva a Room.
+ */
+private val EmbeddedLinkMarkerRegex = Regex(
+    pattern = """(?m)^\s*\[\[mynotes-link:(https?://[^\]]+)]]\s*(?:\r?\n)?""",
+    option = RegexOption.IGNORE_CASE
+)
+
+fun extractEmbeddedLinkUrls(text: String): List<String> = EmbeddedLinkMarkerRegex.findAll(text)
+    .mapNotNull { match -> match.groupValues.getOrNull(1)?.trim()?.takeIf { it.isNotBlank() } }
+    .distinct()
+    .toList()
+
+fun stripEmbeddedLinkMetadata(text: String): String = text
+    .replace(EmbeddedLinkMarkerRegex, "")
+    .replace(Regex("""\n{3,}"""), "\n\n")
+    .trimEnd()
+
+fun noteContentForStorage(visibleContent: String, embeddedLinks: List<String>): String {
+    val cleanText = stripEmbeddedLinkMetadata(visibleContent).trimEnd()
+    val markers = embeddedLinks.asSequence().filter { it.startsWith("http://", true) || it.startsWith("https://", true) }
+        .distinct().take(3).joinToString("\n") { url -> "[[mynotes-link:$url]]" }
+    return when {
+        markers.isBlank() -> cleanText
+        cleanText.isBlank() -> markers
+        else -> "$cleanText\n\n$markers"
+    }
+}
+
 /**
- * Si el contenido de la nota es únicamente una URL, evita repetir el enlace
- * como texto cuando ya se va a mostrar su tarjeta enriquecida.
+ * El texto visible nunca repite las URLs que ya tienen una tarjeta de preview.
+ * Esto cubre tanto las notas nuevas con metadatos ocultos como notas antiguas
+ * que todavía conservaban el enlace escrito dentro del contenido.
  */
 fun noteTextForDisplay(content: String, links: List<String>): String {
-    val trimmed = content.trim()
-    return if (links.size == 1 && trimmed == links.first()) {
-        ""
-    } else {
-        content
-    }
+    var visible = stripEmbeddedLinkMetadata(content)
+    links.forEach { url -> visible = visible.replace(url, "") }
+    return visible
+        .replace(Regex("""(?m)^[ \t]+$"""), "")
+        .replace(Regex("""\n{3,}"""), "\n\n")
+        .trim()
 }
 
 private data class LinkPreviewData(val url: String, val title: String?, val description: String?, val imageUrl: String?,
@@ -1518,7 +1552,7 @@ private fun LinkPreviewData.withKnownProviderFallback(): LinkPreviewData {
 
 @Composable
 fun LinkPreviewCard(url: String, modifier: Modifier = Modifier, compact: Boolean = false, textColorMode: String = "auto",
-    deferLoad: Boolean = false) {
+    deferLoad: Boolean = false, onPreviewReady: ((String) -> Unit)? = null) {
     val context = LocalContext.current
     /*
      * La composición solo consulta RAM. La lectura persistida, el JSON, la
@@ -1532,7 +1566,15 @@ fun LinkPreviewCard(url: String, modifier: Modifier = Modifier, compact: Boolean
     }
     LaunchedEffect(url, deferLoad) {
         if (!deferLoad) {
-            preview = LinkPreviewRepository.load(context = context.applicationContext, url = url)
+            val loadedPreview = LinkPreviewRepository.load(context = context.applicationContext, url = url)
+            preview = loadedPreview
+            val hasRichPreview = !loadedPreview.title.isNullOrBlank() ||
+                !loadedPreview.description.isNullOrBlank() ||
+                !loadedPreview.imageUrl.isNullOrBlank() ||
+                !loadedPreview.cachedImagePath.isNullOrBlank()
+            if (hasRichPreview) {
+                onPreviewReady?.invoke(url)
+            }
         }
     }
     val title = preview.title?.takeIf { it.isNotBlank() }?: preview.siteName?.takeIf { it.isNotBlank() }?: preview.host

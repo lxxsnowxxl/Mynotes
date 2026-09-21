@@ -38,7 +38,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.IntOffset
 import kotlin.math.roundToInt
+
+private val EmphasizedEasing = CubicBezierEasing(0.2f, 0f, 0f, 1f)
+private val ExpressiveEasing = CubicBezierEasing(0.16f, 1f, 0.3f, 1f)
+private val EmphasizedAccelerateEasing = CubicBezierEasing(0.3f, 0f, 0.8f, 0.15f)
+private val EmphasizedDecelerateEasing = CubicBezierEasing(0.05f, 0.7f, 0.1f, 1f)
 
 /**
  * Motor central de movimiento de la app.
@@ -52,8 +58,8 @@ object AppMotion {
     const val SLOW = 320
     val supportedStyles = setOf("zoom", "zoom_fade", "fade", "slide_left", "slide_right", "slide_up", "slide_down", "slide_zoom_left",
         "slide_zoom_up", "axis_x", "axis_y", "axis_z", "expand", "expand_horizontal", "expand_vertical", "bounce", "elastic", "pop",
-        "subtle", "random")
-    val supportedEasings = setOf("standard", "linear", "accelerate", "decelerate", "emphasized")
+        "subtle", "expressive_spring", "container_transform", "soft_reveal", "elastic_slide", "predictive", "tonal_pop", "random")
+    val supportedEasings = setOf("standard", "linear", "accelerate", "decelerate", "emphasized", "expressive", "emphasized_accel", "emphasized_decel")
     fun normalizeStyle(value: String): String = if (value in supportedStyles) value else "zoom"
     fun normalizeEasing(value: String): String = if (value in supportedEasings) value else "standard"
     fun normalizePerformanceMode(value: String): String = when (value) {
@@ -69,13 +75,17 @@ object AppMotion {
             "linear" -> LinearEasing
             "accelerate" -> FastOutLinearInEasing
             "decelerate" -> LinearOutSlowInEasing
-            "emphasized" -> CubicBezierEasing(0.2f, 0f, 0f, 1f)
+            "emphasized" -> EmphasizedEasing
+            "expressive" -> ExpressiveEasing
+            "emphasized_accel" -> EmphasizedAccelerateEasing
+            "emphasized_decel" -> EmphasizedDecelerateEasing
             else -> FastOutSlowInEasing
         }
 }
 
 private val randomStylePool = listOf("zoom", "zoom_fade", "fade", "slide_left", "slide_right", "slide_up", "slide_down", "slide_zoom_left",
-    "slide_zoom_up", "axis_x", "axis_y", "axis_z", "expand", "expand_horizontal", "expand_vertical", "bounce", "elastic", "pop", "subtle")
+    "slide_zoom_up", "axis_x", "axis_y", "axis_z", "expand", "expand_horizontal", "expand_vertical", "bounce", "elastic", "pop", "subtle",
+    "expressive_spring", "container_transform", "soft_reveal", "elastic_slide", "predictive", "tonal_pop")
 private fun <T> AnimatedContentTransitionScope<T>.motionTransform(animationsEnabled: Boolean, animationSpeed: Float, animationStyle: String,
     animationEasing: String, animationIntensity: Float, performanceMode: String): ContentTransform {
     if (!animationsEnabled) {
@@ -91,9 +101,10 @@ private fun <T> AnimatedContentTransitionScope<T>.motionTransform(animationsEnab
      */
     val style = when (mode) {
             "performance" -> when (requestedStyle) {
-                    "expand", "axis_z", "bounce", "elastic" -> "zoom_fade"
-                    "expand_horizontal" -> "slide_zoom_left"
+                    "expand", "axis_z", "bounce", "elastic", "expressive_spring", "container_transform", "tonal_pop" -> "zoom_fade"
+                    "expand_horizontal", "elastic_slide", "predictive" -> "slide_zoom_left"
                     "expand_vertical" -> "slide_zoom_up"
+                    "soft_reveal" -> "subtle"
                     else -> requestedStyle
                 }
             "balanced" -> when (requestedStyle) {
@@ -209,6 +220,68 @@ private fun <T> AnimatedContentTransitionScope<T>.motionTransform(animationsEnab
                     fadeIn(initialAlpha = 0.72f, animationSpec = enterSpec())) togetherWith
                 (scaleOut(targetScale = subtleScale, animationSpec = exitSpec()) + fadeOut(targetAlpha = 0.65f, animationSpec = exitSpec())
                     )
+        "expressive_spring" -> {
+            val springFloat = spring<Float>(
+                dampingRatio = 0.72f,
+                stiffness = (Spring.StiffnessMediumLow * speed).coerceAtLeast(80f)
+            )
+            val springInt = spring<IntOffset>(
+                dampingRatio = 0.72f,
+                stiffness = (Spring.StiffnessMediumLow * speed).coerceAtLeast(80f)
+            )
+            (slideInVertically(initialOffsetY = { (it * 0.14f * intensity).roundToInt() }, animationSpec = springInt) +
+                    scaleIn(initialScale = (0.90f - 0.03f * intensity).coerceAtLeast(0.82f), animationSpec = springFloat) +
+                    fadeIn(initialAlpha = 0.22f, animationSpec = enterSpec())) togetherWith
+                (scaleOut(targetScale = 0.97f, animationSpec = exitSpec()) + fadeOut(targetAlpha = 0.08f, animationSpec = exitSpec()))
+        }
+        "container_transform" -> {
+            val containerSpringFloat = spring<Float>(
+                dampingRatio = 0.82f,
+                stiffness = (Spring.StiffnessMedium * speed).coerceAtLeast(100f)
+            )
+            val containerSpringInt = spring<IntOffset>(
+                dampingRatio = 0.82f,
+                stiffness = (Spring.StiffnessMedium * speed).coerceAtLeast(100f)
+            )
+            (scaleIn(initialScale = (0.84f + 0.04f / intensity).coerceIn(0.82f, 0.92f), animationSpec = containerSpringFloat) +
+                    slideInVertically(initialOffsetY = { (it * 0.08f * intensity).roundToInt() }, animationSpec = containerSpringInt) +
+                    fadeIn(initialAlpha = 0.18f, animationSpec = enterSpec())) togetherWith
+                (scaleOut(targetScale = (1.0f + 0.025f * intensity).coerceAtMost(1.06f), animationSpec = exitSpec()) +
+                    fadeOut(targetAlpha = 0.04f, animationSpec = exitSpec()))
+        }
+        "soft_reveal" -> (scaleIn(initialScale = (0.965f - 0.012f * intensity).coerceAtLeast(0.93f), animationSpec = slowSpec()) +
+                    fadeIn(initialAlpha = 0.05f, animationSpec = slowSpec())) togetherWith
+                (scaleOut(targetScale = 0.985f, animationSpec = exitSpec()) + fadeOut(targetAlpha = 0.12f, animationSpec = exitSpec()))
+        "elastic_slide" -> {
+            val elasticSlideFloat = spring<Float>(
+                dampingRatio = 0.58f,
+                stiffness = (Spring.StiffnessMediumLow * speed).coerceAtLeast(75f)
+            )
+            val elasticSlideInt = spring<IntOffset>(
+                dampingRatio = 0.58f,
+                stiffness = (Spring.StiffnessMediumLow * speed).coerceAtLeast(75f)
+            )
+            (slideInHorizontally(initialOffsetX = { (it * 0.34f * intensity).roundToInt() }, animationSpec = elasticSlideInt) +
+                    scaleIn(initialScale = (0.91f - 0.025f * intensity).coerceAtLeast(0.84f), animationSpec = elasticSlideFloat) +
+                    fadeIn(initialAlpha = 0.28f, animationSpec = enterSpec())) togetherWith
+                (slideOutHorizontally(targetOffsetX = { (-it * 0.10f * intensity).roundToInt() }, animationSpec = exitSpec()) +
+                    fadeOut(targetAlpha = 0.08f, animationSpec = exitSpec()))
+        }
+        "predictive" -> (slideInHorizontally(initialOffsetX = { (it * 0.12f * intensity).roundToInt() }, animationSpec = enterSpec()) +
+                    scaleIn(initialScale = (0.955f - 0.015f * intensity).coerceAtLeast(0.92f), animationSpec = enterSpec()) +
+                    fadeIn(initialAlpha = 0.42f, animationSpec = enterSpec())) togetherWith
+                (slideOutHorizontally(targetOffsetX = { (-it * 0.08f * intensity).roundToInt() }, animationSpec = exitSpec()) +
+                    scaleOut(targetScale = 0.98f, animationSpec = exitSpec()) + fadeOut(targetAlpha = 0.15f, animationSpec = exitSpec()))
+        "tonal_pop" -> {
+            val tonalSpring = spring<Float>(
+                dampingRatio = 0.68f,
+                stiffness = (Spring.StiffnessMedium * speed).coerceAtLeast(105f)
+            )
+            (scaleIn(initialScale = (0.76f - 0.04f * intensity).coerceAtLeast(0.66f), animationSpec = tonalSpring) +
+                    fadeIn(initialAlpha = 0.10f, animationSpec = enterSpec())) togetherWith
+                (scaleOut(targetScale = (1.02f + 0.025f * intensity).coerceAtMost(1.08f), animationSpec = exitSpec()) +
+                    fadeOut(targetAlpha = 0.02f, animationSpec = exitSpec()))
+        }
         "zoom_fade" -> (scaleIn(initialScale = zoomScale, animationSpec = enterSpec()) + fadeIn(initialAlpha = 0.35f,
                         animationSpec = enterSpec())) togetherWith
                 (scaleOut(targetScale = zoomScale, animationSpec = exitSpec()) + fadeOut(targetAlpha = 0.10f, animationSpec = exitSpec()))

@@ -236,9 +236,9 @@ fun OptionsMenuCustomizationSection(settings: AppSettings, fontFamily: FontFamil
                 UiSoundPlayer.playAction(context = context, action = UiActionSound.Restore)
                 onReset()
             }) {
-            Icon(imageVector = Icons.Default.Refresh, contentDescription = null, tint = MaterialTheme.colorScheme.onBackground)
+            Icon(imageVector = Icons.Default.Refresh, contentDescription = null, tint = textColor)
             Text(text = stringResource(R.string.option_menu_reset), modifier = Modifier.padding(start = 6.dp), color =
-                    MaterialTheme.colorScheme.onBackground, fontFamily = fontFamily, fontWeight = FontWeight.SemiBold)
+                    textColor, fontFamily = fontFamily, fontWeight = FontWeight.SemiBold)
         }
     }
 }

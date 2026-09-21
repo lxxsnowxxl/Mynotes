@@ -109,4 +109,24 @@
     <string name="development_source_note_section">Installed-code note</string>
     <string name="development_source_note_body">Original .kt files are not stored as readable text inside the installed APK: Android compiles them to bytecode/Dex. This screen is a map of the original project paths and does not keep a second source copy, avoiding duplication and drift.</string>
 
+
+    <string name="update_settings_title">App updates</string>
+    <string name="update_settings_description">Check GitHub Releases for newer versions and download and install the published APK.</string>
+    <string name="update_current_version">Installed version: %1$s</string>
+    <string name="update_check">Check for updates</string>
+    <string name="update_checking">Checking…</string>
+    <string name="update_available">New version available: %1$s</string>
+    <string name="update_up_to_date">MyNotes is up to date. Latest version: %1$s</string>
+    <string name="update_no_release">The repository does not have a published GitHub Release yet.</string>
+    <string name="update_error">Could not check for updates: %1$s</string>
+    <string name="update_download_install">Download and install</string>
+    <string name="update_downloading">Downloading update…</string>
+    <string name="update_open_release">View release on GitHub</string>
+    <string name="update_release_without_apk">The release exists, but it does not contain an attached APK file.</string>
+    <string name="update_permission_required">To install APKs downloaded from GitHub, allow MyNotes to install unknown apps and try again.</string>
+    <string name="update_install_error">The APK was downloaded, but Android could not open the installer.</string>
+    <string name="update_download_error">Could not download the update: %1$s</string>
+
+    <string name="development_source_update_manager">Handles GitHub Release checks, version comparison, secure APK downloading, and handoff to Android’s package installer.</string>
+
 </resources>

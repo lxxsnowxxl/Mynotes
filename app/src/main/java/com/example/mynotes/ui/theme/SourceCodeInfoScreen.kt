@@ -3,6 +3,7 @@ package com.example.mynotes.ui
 import android.content.Intent
 import android.net.Uri
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -39,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.mynotes.R
 import com.example.mynotes.settings.AppSettings
+import com.example.mynotes.ui.components.ScrollPositionCapsule
 import com.example.mynotes.ui.motion.AnimatedScreenEntry
 import com.example.mynotes.ui.sound.UiActionSound
 import com.example.mynotes.ui.sound.UiSoundPlayer
@@ -61,6 +63,7 @@ private const val MYNOTES_SOURCE_REPOSITORY_URL = "https://github.com/lxxsnowxxl
 fun SourceCodeInfoScreen(settings: AppSettings, onBack: () -> Unit) {
     val context = LocalContext.current
     val fontFamily = remember(settings.font) { appFontFamily(settings.font) }
+    val sourceScrollState = rememberScrollState()
     val screenBackground = MaterialTheme.colorScheme.background
     val primaryText = resolveUiTextColor(settings.textColor, screenBackground)
     val secondaryText = resolveSecondaryUiTextColor(settings.textColor, screenBackground)
@@ -81,7 +84,8 @@ fun SourceCodeInfoScreen(settings: AppSettings, onBack: () -> Unit) {
                     }
                 })
             }) { paddingValues ->
-            Column(modifier = Modifier.fillMaxSize().padding(paddingValues).verticalScroll(rememberScrollState())
+            Box(modifier = Modifier.fillMaxSize()) {
+            Column(modifier = Modifier.fillMaxSize().padding(paddingValues).verticalScroll(sourceScrollState)
                 .widthIn(max = 840.dp).padding(horizontal = 14.dp, vertical = 16.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(imageVector = Icons.Default.Code, contentDescription = null, tint = primaryText,
@@ -157,6 +161,8 @@ fun SourceCodeInfoScreen(settings: AppSettings, onBack: () -> Unit) {
                         stringResource(R.string.development_source_backup_restore), settings)
                     SourceCodeRow("ui/theme/PaletteCatalog.kt",
                         stringResource(R.string.development_source_palette_catalog), settings)
+                    SourceCodeRow("update/GitHubUpdateManager.kt",
+                        stringResource(R.string.development_source_update_manager), settings)
                 }
                 SourceSection(title = stringResource(R.string.development_source_resources_section), settings = settings) {
                     SourceCodeRow("res/layout/", stringResource(R.string.development_source_layouts), settings)
@@ -168,6 +174,10 @@ fun SourceCodeInfoScreen(settings: AppSettings, onBack: () -> Unit) {
                     SourceParagraph(text = stringResource(R.string.development_source_note_body), settings = settings)
                 }
                 Spacer(Modifier.height(24.dp))
+            }
+            ScrollPositionCapsule(state = sourceScrollState,
+                modifier = Modifier.align(Alignment.CenterEnd).padding(paddingValues),
+                backgroundColor = screenBackground, preferredColor = primaryText)
             }
         }
     }

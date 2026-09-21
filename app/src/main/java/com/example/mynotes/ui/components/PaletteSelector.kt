@@ -148,6 +148,8 @@ private fun PaletteCard(modifier: Modifier, palette: MyNotesPalette, selected: B
                             PaletteToneCircle(modifier = Modifier.fillMaxWidth(),
                                 color = tone,
                                 selected = selected && selectedToneIndex == index,
+                                frameColor = cardBackground,
+                                indicatorColor = cardGraphicColor,
                                 onClick = {
                                     UiSoundPlayer.playAction(context = context, action = UiActionSound.Color)
                                     onToneSelected(palette.key, index)
@@ -162,34 +164,59 @@ private fun PaletteCard(modifier: Modifier, palette: MyNotesPalette, selected: B
 }
 
 @Composable
-private fun PaletteToneCircle(modifier: Modifier = Modifier, color: Color, selected: Boolean, onClick: () -> Unit,
-    animationsEnabled: Boolean, animationSpeed: Float) {
-    val checkColor = if (color.luminance() >
-            0.48f) {
-            Color.Black
-        } else {
-            Color.White
-        }
-    val toneInteractionSource = remember {
-            MutableInteractionSource()
-        }
+private fun PaletteToneCircle(
+    modifier: Modifier = Modifier,
+    color: Color,
+    selected: Boolean,
+    frameColor: Color,
+    indicatorColor: Color,
+    onClick: () -> Unit,
+    animationsEnabled: Boolean,
+    animationSpeed: Float
+) {
+    val checkColor = if (color.luminance() > 0.48f) Color.Black else Color.White
+    val toneInteractionSource = remember { MutableInteractionSource() }
     val motionDuration = AppMotion.duration(AppMotion.FAST, animationsEnabled, animationSpeed)
-    Box(modifier = modifier.aspectRatio(1f).clip(CircleShape).background(color).then(if (selected) {
-                        Modifier.border(width = 2.dp,
-                                color = MaterialTheme.colorScheme.onSurface,
-                                shape = CircleShape)
-                    } else {
-                        Modifier
-                    }).clickable(interactionSource = toneInteractionSource, indication = null, onClick = onClick),
-        contentAlignment = Alignment.Center) {
-        AnimatedVisibility(visible = selected, enter = fadeIn(animationSpec = tween(durationMillis = motionDuration)) + scaleIn(
-                        animationSpec = tween(durationMillis = motionDuration), initialScale = 0.55f), exit = fadeOut(animationSpec = tween(
-                            durationMillis = motionDuration)) + scaleOut(animationSpec = tween(durationMillis = motionDuration),
-                        targetScale = 0.55f)) {
-            Icon(imageVector = Icons.Default.Check,
-                contentDescription = null,
-                tint = checkColor,
-                modifier = Modifier.fillMaxWidth(0.52f).aspectRatio(1f))
+    Box(
+        modifier = modifier
+            .aspectRatio(1f)
+            .clickable(interactionSource = toneInteractionSource, indication = null, onClick = onClick),
+        contentAlignment = Alignment.Center
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .aspectRatio(1f)
+                .clip(CircleShape)
+                .background(if (selected) frameColor else Color.Transparent)
+                .then(
+                    if (selected) Modifier.border(width = 2.dp, color = indicatorColor, shape = CircleShape)
+                    else Modifier
+                )
+                .padding(if (selected) 4.dp else 0.dp),
+            contentAlignment = Alignment.Center
+        ) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(1f)
+                    .clip(CircleShape)
+                    .background(color)
+            )
+            AnimatedVisibility(
+                visible = selected,
+                enter = fadeIn(animationSpec = tween(durationMillis = motionDuration)) +
+                    scaleIn(animationSpec = tween(durationMillis = motionDuration), initialScale = 0.55f),
+                exit = fadeOut(animationSpec = tween(durationMillis = motionDuration)) +
+                    scaleOut(animationSpec = tween(durationMillis = motionDuration), targetScale = 0.55f)
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Check,
+                    contentDescription = null,
+                    tint = checkColor,
+                    modifier = Modifier.fillMaxWidth(0.48f).aspectRatio(1f)
+                )
+            }
         }
     }
 }

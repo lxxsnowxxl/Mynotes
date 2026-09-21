@@ -1,24 +1,7 @@
-# Método y garantía de no modificación — actualización 2026-09-15
+# Método y garantía documental
 
-## Regla aplicada
+La documentación se generó **fuera de `app/`**. El proceso leyó los 72 archivos `.kt/.kts`, calculó SHA-256 y extrajo package, imports, declaraciones, referencias `R.*` y marcadores de estado/side effects.
 
-La documentación se actualiza **sin insertar comentarios, renombrar símbolos, reordenar imports ni reformatear `app/`**. Todo el material nuevo vive bajo `DOCUMENTACION_CODIGO_OBSESIVA/`.
+No se modificó código para hacerlo coincidir con la documentación. Los hashes de `02_SHA256_CODIGO_INTACTO.txt` son la referencia binaria del árbol usado para esta revisión.
 
-## Estado actual
-
-- Kotlin/Kotlin DSL documentado: **48 archivos**.
-- Fuentes cambiados desde la instantánea documental anterior y re-documentados: **9**.
-- Fuente nuevo incorporado: **1**.
-- Código modificado por esta tarea documental: **0 archivos**.
-
-## Prueba byte a byte
-
-Se calculó SHA-256 de todos los `.kt/.kts` antes de regenerar la documentación y se vuelve a verificar al finalizar. La comparación es binaria: espacios, comentarios y saltos de línea también cuentan. Ver `02_SHA256_CODIGO_INTACTO.txt`.
-
-## Qué se explica
-
-Cada documento actualizado cubre package/imports, declaraciones, parámetros, callbacks, nulabilidad, mutabilidad, variables, estado Compose, límites `coerce*`, bloques de control, efectos, corrutinas, caché, I/O, lifecycle, side effects y relaciones con los cambios recientes. Cuando la intención humana no puede demostrarse desde el código, se describe el comportamiento observable en lugar de inventar motivos.
-
-## Relación documento ↔ código
-
-El código es la fuente de verdad. Si el documento y el fuente discrepan en el futuro, debe actualizarse la documentación; **nunca debe alterarse el código únicamente para hacerlo coincidir con el texto explicativo**.
+La revisión también analizó `AndroidManifest.xml`, recursos `res/`, localizaciones y referencias estáticas a recursos. Las descripciones de comportamiento sólo afirman lo que puede observarse en el fuente; cuando una intención no es demostrable se documenta el contrato observable.

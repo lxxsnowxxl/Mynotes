@@ -1,8 +1,14 @@
 package com.example.mynotes.ui
 
 import android.content.res.Configuration
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import android.net.Uri
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
@@ -15,8 +21,11 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
@@ -27,6 +36,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Brush
+import androidx.compose.material.icons.filled.Close
+import androidx.compose.material.icons.filled.NoteAdd
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
@@ -55,6 +67,8 @@ import androidx.compose.runtime.withFrameNanos
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -71,6 +85,7 @@ import com.example.mynotes.data.Note
 import com.example.mynotes.performance.AttachmentPreviewCache
 import com.example.mynotes.settings.AppSettings
 import com.example.mynotes.ui.components.ModernNoteCard
+import com.example.mynotes.ui.components.ScrollPositionCapsule
 import com.example.mynotes.ui.components.extractLinkUrls
 import com.example.mynotes.ui.components.preloadLinkPreviews
 import com.example.mynotes.ui.components.toNoteCardStyle
@@ -87,7 +102,7 @@ import com.example.mynotes.viewmodel.NoteViewModel
 import kotlinx.coroutines.delay
 
 private enum class NoteFilter {
-    ALL, FAVORITES, WORK, PERSONAL, IMAGES, FILES
+    ALL, FAVORITES, PINNED, PRIORITY, WORK, PERSONAL, IMAGES, FILES
 }
 
 @Immutable
@@ -96,13 +111,42 @@ private data class NoteFilterOption(val filter: NoteFilter, val labelRes: Int)
 @Immutable
 private data class AttachmentIndex(val byNote: Map<Int, List<Attachment>>, val kindsByNote: Map<Int, Set<String>>)
 
-private val FilterOptions = listOf(NoteFilterOption(NoteFilter.ALL, R.string.mock_filter_all), NoteFilterOption(NoteFilter.FAVORITES,
-            R.string.mock_favorites), NoteFilterOption(NoteFilter.WORK, R.string.mock_work), NoteFilterOption(NoteFilter.PERSONAL,
-            R.string.mock_personal), NoteFilterOption(NoteFilter.IMAGES, R.string.mock_images), NoteFilterOption(NoteFilter.FILES,
-            R.string.mock_files))
+private val FilterOptions = listOf(
+    NoteFilterOption(NoteFilter.ALL, R.string.mock_filter_all),
+    NoteFilterOption(NoteFilter.FAVORITES, R.string.mock_favorites),
+    NoteFilterOption(NoteFilter.PINNED, R.string.widget_pinned_collection),
+    NoteFilterOption(NoteFilter.PRIORITY, R.string.widget_high_priority),
+    NoteFilterOption(NoteFilter.WORK, R.string.mock_work),
+    NoteFilterOption(NoteFilter.PERSONAL, R.string.mock_personal),
+    NoteFilterOption(NoteFilter.IMAGES, R.string.mock_images),
+    NoteFilterOption(NoteFilter.FILES, R.string.mock_files)
+)
+
+private fun noteFilterFromWidgetKey(key: String?): NoteFilter = when (key) {
+    "favorites" -> NoteFilter.FAVORITES
+    "pinned" -> NoteFilter.PINNED
+    "priority" -> NoteFilter.PRIORITY
+    "work" -> NoteFilter.WORK
+    "personal" -> NoteFilter.PERSONAL
+    "images" -> NoteFilter.IMAGES
+    "files" -> NoteFilter.FILES
+    else -> NoteFilter.ALL
+}
+
 @Composable
-fun NotesScreen(notes: List<Note>, noteViewModel: NoteViewModel, settings: AppSettings, onAddNote: () -> Unit, onOpenSettings: () -> Unit,
-    onOpenNote: (Note) -> Unit, onEditNote: (Note) -> Unit) {
+fun NotesScreen(
+    notes: List<Note>,
+    noteViewModel: NoteViewModel,
+    settings: AppSettings,
+    initialFilterKey: String? = null,
+    requestSearchFocus: Boolean = false,
+    widgetRequestToken: Int = 0,
+    onAddNote: () -> Unit,
+    onDrawNote: () -> Unit,
+    onOpenSettings: () -> Unit,
+    onOpenNote: (Note) -> Unit,
+    onEditNote: (Note) -> Unit
+) {
     val allAttachments by
         noteViewModel.allAttachments.collectAsStateWithLifecycle()
     /*
@@ -124,8 +168,10 @@ fun NotesScreen(notes: List<Note>, noteViewModel: NoteViewModel, settings: AppSe
     val fontFamily = remember(settings.font) {
             appFontFamily(settings.font)
         }
-    val screenSecondaryTextColor = resolveSecondaryUiTextColor(value = settings.textColor, background = MaterialTheme.colorScheme.background
-        )
+    val screenPrimaryTextColor = resolveUiTextColor(value = settings.textColor, background = MaterialTheme.colorScheme.background)
+    val screenSecondaryTextColor = resolveSecondaryUiTextColor(value = settings.textColor, background = MaterialTheme.colorScheme.background)
+    val quickCreateSurfaceColor = MaterialTheme.colorScheme.surfaceContainerHigh
+    val quickCreateTextColor = resolveUiTextColor(value = settings.textColor, background = quickCreateSurfaceColor)
     val controlSurfaceColor = MaterialTheme.colorScheme.surfaceContainerLow
     val controlTextColor = resolveUiTextColor(value = settings.textColor, background = controlSurfaceColor)
     val controlSecondaryTextColor = resolveSecondaryUiTextColor(value = settings.textColor, background = controlSurfaceColor)
@@ -137,7 +183,8 @@ fun NotesScreen(notes: List<Note>, noteViewModel: NoteViewModel, settings: AppSe
     val fabContainerColor = MaterialTheme.colorScheme.inverseSurface
     val fabContentColor = resolveUiTextColor(value = settings.textColor, background = fabContainerColor)
     val noteCardStyle = remember(settings.noteCardCornerRadius, settings.noteCardElevation, settings.noteCardPadding,
-            settings.noteCardImageHeight, settings.noteTitleMaxLines, settings.noteContentMaxLines, settings.noteLineSpacing,
+            settings.noteCardImageHeight, settings.noteCardOutlineWidth,
+            settings.noteTitleMaxLines, settings.noteContentMaxLines, settings.noteLineSpacing,
             settings.iconSize, settings.showNoteDate, settings.showCategoryChip, settings.showFavoriteIcon, settings.animationsEnabled,
             settings.animationSpeed) {
             settings.toNoteCardStyle()
@@ -164,16 +211,32 @@ fun NotesScreen(notes: List<Note>, noteViewModel: NoteViewModel, settings: AppSe
         delay(90)
         effectiveQuery = query.trim().lowercase()
     }
-    val searchableTextByNote = remember(notes) {
-            notes.associate { note -> note.id to
-                    buildString(note.title.length + note.content.length + 1) {
-                        append(note.title.lowercase())
-                        append('\n')
-                        append(note.content.lowercase())
-                    }
+    /*
+     * Construir el índice de búsqueda implica normalizar título + contenido de
+     * todas las notas. Mientras el buscador está vacío no se utiliza, así que
+     * evitamos ese trabajo por completo. Cuando el usuario empieza a buscar se
+     * crea una sola vez y se reutiliza al seguir escribiendo; solo se reconstruye
+     * si Room entrega una lista de notas nueva o el buscador vuelve a activarse.
+     *
+     * Esto es especialmente útil con notas largas y no modifica el filtrado ni
+     * ninguna ruta de adjuntos/miniaturas.
+     */
+    val searchIsActive = effectiveQuery.isNotBlank()
+    val searchableTextByNote = remember(notes, searchIsActive) {
+            if (!searchIsActive) {
+                emptyMap()
+            } else {
+                notes.associate { note -> note.id to
+                        buildString(note.title.length + note.content.length + 1) {
+                            append(note.title.lowercase())
+                            append('\n')
+                            append(note.content.lowercase())
+                        }
+                }
             }
         }
     val focusManager = LocalFocusManager.current
+    val searchFocusRequester = remember { FocusRequester() }
     val context = LocalContext.current
     /*
      * Estado real del grid. Además de conservar la posición, nos permite
@@ -210,8 +273,9 @@ fun NotesScreen(notes: List<Note>, noteViewModel: NoteViewModel, settings: AppSe
             }
         }
     }
-    val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
-    val currentOrientation = LocalConfiguration.current.orientation
+    val configuration = LocalConfiguration.current
+    val currentOrientation = configuration.orientation
+    val isLandscape = currentOrientation == Configuration.ORIENTATION_LANDSCAPE
     var previousOrientation by
         rememberSaveable {
             mutableIntStateOf(currentOrientation)
@@ -232,6 +296,18 @@ fun NotesScreen(notes: List<Note>, noteViewModel: NoteViewModel, settings: AppSe
         remember {
             mutableStateOf(NoteFilter.ALL)
         }
+
+    LaunchedEffect(widgetRequestToken) {
+        if (widgetRequestToken > 0) {
+            selectedFilter = noteFilterFromWidgetKey(initialFilterKey)
+            if (requestSearchFocus) {
+                withFrameNanos { }
+                searchFocusRequester.requestFocus()
+            } else {
+                focusManager.clearFocus(force = true)
+            }
+        }
+    }
     /*
      * Solo recalculamos el filtro cuando cambian notas, adjuntos,
      * búsqueda o filtro. Los cambios visuales ya no recorren la lista.
@@ -240,19 +316,36 @@ fun NotesScreen(notes: List<Note>, noteViewModel: NoteViewModel, settings: AppSe
         remember(notes, attachmentIndex, searchableTextByNote) {
             derivedStateOf {
                 val normalizedQuery = effectiveQuery
-                notes.filter {
-                        note ->
-                    val attachmentKinds = attachmentIndex.kindsByNote[note.id].orEmpty()
-                    val matchesText = normalizedQuery.isBlank() || searchableTextByNote[note.id].orEmpty().contains(normalizedQuery)
-                    val matchesFilter = when (selectedFilter) {
-                            NoteFilter.ALL -> true
-                            NoteFilter.FAVORITES -> note.isFavorite
-                            NoteFilter.WORK -> note.category == "work"
-                            NoteFilter.PERSONAL -> note.category == "personal"
-                            NoteFilter.IMAGES -> "image" in attachmentKinds
-                            NoteFilter.FILES -> "file" in attachmentKinds
-                        }
-                    matchesText && matchesFilter
+                /*
+                 * Camino caliente de la pantalla principal: cuando no hay
+                 * búsqueda ni filtro devolvemos directamente la lista de Room.
+                 * Antes se recorrían todas las notas y se creaba otra List aun
+                 * cuando el resultado era exactamente el mismo.
+                 */
+                if (normalizedQuery.isBlank() && selectedFilter == NoteFilter.ALL) {
+                    return@derivedStateOf notes
+                }
+                notes.filter { note ->
+                    val matchesText = normalizedQuery.isBlank() ||
+                        searchableTextByNote[note.id].orEmpty().contains(normalizedQuery)
+                    if (!matchesText) {
+                        return@filter false
+                    }
+                    when (selectedFilter) {
+                        NoteFilter.ALL -> true
+                        NoteFilter.FAVORITES -> note.isFavorite
+                        NoteFilter.PINNED -> note.isPinned
+                        NoteFilter.PRIORITY -> note.priority == 3
+                        NoteFilter.WORK -> note.category == "work"
+                        NoteFilter.PERSONAL -> note.category == "personal"
+                        /*
+                         * Solo consultamos el índice de adjuntos cuando el
+                         * filtro seleccionado realmente depende de él. Esto no
+                         * cambia cómo se muestran/cargan previews o miniaturas.
+                         */
+                        NoteFilter.IMAGES -> "image" in attachmentIndex.kindsByNote[note.id].orEmpty()
+                        NoteFilter.FILES -> "file" in attachmentIndex.kindsByNote[note.id].orEmpty()
+                    }
                 }
             }
         }
@@ -347,6 +440,9 @@ fun NotesScreen(notes: List<Note>, noteViewModel: NoteViewModel, settings: AppSe
         }
     }
 
+    var addMenuExpanded by remember { mutableStateOf(false) }
+    BackHandler(enabled = addMenuExpanded) { addMenuExpanded = false }
+
     val motionDuration = AppMotion.duration(AppMotion.NORMAL, settings.animationsEnabled, settings.animationSpeed)
     val animatedFabSize by
         animateDpAsState(targetValue = settings.fabSize.dp, animationSpec = tween(durationMillis = motionDuration), label = "fabSize")
@@ -357,18 +453,65 @@ fun NotesScreen(notes: List<Note>, noteViewModel: NoteViewModel, settings: AppSe
         animationSpeed = settings.animationSpeed) {
         Scaffold(containerColor = MaterialTheme.colorScheme.background,
         floatingActionButton = {
-            FloatingActionButton(onClick = {
-                    UiSoundPlayer.playAction(context = context, action = UiActionSound.Add)
-                    onAddNote()
-                },
-                modifier = Modifier.size(animatedFabSize),
-                containerColor = fabContainerColor,
-                contentColor = fabContentColor,
-                shape = CircleShape) {
-                Icon(imageVector = Icons.Default.Add,
-                    contentDescription = stringResource(R.string.mock_new_note),
-                    modifier = Modifier.size(settings.iconSize.coerceIn(18f, 36f).dp),
-                    tint = fabContentColor)
+            Column(
+                horizontalAlignment = Alignment.End,
+                verticalArrangement = Arrangement.spacedBy(9.dp)
+            ) {
+                AnimatedVisibility(
+                    visible = addMenuExpanded,
+                    enter = fadeIn(animationSpec = tween(motionDuration)) +
+                        expandVertically(animationSpec = tween(motionDuration), expandFrom = Alignment.Bottom),
+                    exit = fadeOut(animationSpec = tween(motionDuration)) +
+                        shrinkVertically(animationSpec = tween(motionDuration), shrinkTowards = Alignment.Bottom)
+                ) {
+                    Column(
+                        horizontalAlignment = Alignment.End,
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        QuickCreateActionButton(
+                            text = stringResource(R.string.mock_new_note),
+                            icon = Icons.Default.NoteAdd,
+                            fontFamily = fontFamily,
+                            containerColor = quickCreateSurfaceColor,
+                            contentColor = quickCreateTextColor,
+                            onClick = {
+                                addMenuExpanded = false
+                                UiSoundPlayer.playAction(context = context, action = UiActionSound.Add)
+                                onAddNote()
+                            }
+                        )
+                        QuickCreateActionButton(
+                            text = stringResource(R.string.create_drawing),
+                            icon = Icons.Default.Brush,
+                            fontFamily = fontFamily,
+                            containerColor = quickCreateSurfaceColor,
+                            contentColor = quickCreateTextColor,
+                            onClick = {
+                                addMenuExpanded = false
+                                UiSoundPlayer.playAction(context = context, action = UiActionSound.Select)
+                                onDrawNote()
+                            }
+                        )
+                    }
+                }
+
+                FloatingActionButton(
+                    onClick = {
+                        UiSoundPlayer.playAction(context = context, action = UiActionSound.Menu)
+                        addMenuExpanded = !addMenuExpanded
+                    },
+                    modifier = Modifier.size(animatedFabSize),
+                    containerColor = fabContainerColor,
+                    contentColor = fabContentColor,
+                    shape = CircleShape
+                ) {
+                    Icon(
+                        imageVector = if (addMenuExpanded) Icons.Default.Close else Icons.Default.Add,
+                        contentDescription = stringResource(R.string.add_action_menu),
+                        modifier = Modifier.size(settings.iconSize.coerceIn(18f, 36f).dp),
+                        tint = fabContentColor
+                    )
+                }
             }
         }) {
             scaffoldPadding ->
@@ -386,7 +529,7 @@ fun NotesScreen(notes: List<Note>, noteViewModel: NoteViewModel, settings: AppSe
                         fontFamily = fontFamily,
                         fontWeight = FontWeight.Bold,
                         fontSize = 30.sp,
-                        color = MaterialTheme.colorScheme.onBackground)
+                        color = screenPrimaryTextColor)
                     Text(text = stringResource(R.string.mock_notes_subtitle),
                         modifier = Modifier.padding(top = 1.dp),
                         fontFamily = fontFamily,
@@ -429,7 +572,9 @@ fun NotesScreen(notes: List<Note>, noteViewModel: NoteViewModel, settings: AppSe
                     }
                     query = it
                 },
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .focusRequester(searchFocusRequester),
                 singleLine = true,
                 leadingIcon = {
                     Icon(imageVector = Icons.Default.Search,
@@ -523,7 +668,9 @@ fun NotesScreen(notes: List<Note>, noteViewModel: NoteViewModel, settings: AppSe
                     modifier = Modifier.fillMaxSize(),
                     verticalItemSpacing = 9.dp,
                     horizontalArrangement = Arrangement.spacedBy(9.dp),
-                    contentPadding = PaddingValues(bottom = 100.dp)) {
+                    contentPadding = PaddingValues(
+                        bottom = 100.dp
+                    )) {
                     items(items = visibleNotes,
                         key = {
                             it.id
@@ -585,10 +732,76 @@ fun NotesScreen(notes: List<Note>, noteViewModel: NoteViewModel, settings: AppSe
                             })
                     }
                 }
+                ScrollPositionCapsule(
+                    state = gridState,
+                    modifier = Modifier
+                        .align(Alignment.CenterEnd)
+                        /*
+                         * El grid termina en el borde derecho de este contenedor.
+                         * La pantalla ya tiene 14 dp de margen exterior, por lo que
+                         * desplazamos la cápsula 9 dp hacia ese margen. De esta
+                         * forma la barra queda completamente FUERA del área del
+                         * LazyVerticalStaggeredGrid y se dibuja sobre el fondo de
+                         * la pantalla, sin cubrir tarjetas ni reducir su anchura.
+                         *
+                         * Con el track interno de 10 dp y la cápsula visual de 4 dp,
+                         * este desplazamiento deja la barra centrada dentro del
+                         * margen exterior en lugar de pegada al contenido o al
+                         * borde físico del dispositivo.
+                         */
+                        .offset(x = 13.dp),
+                    backgroundColor = MaterialTheme.colorScheme.background,
+                    preferredColor = MaterialTheme.colorScheme.onBackground,
+                    fixedThumbHeight = 54.dp,
+                    smoothMovement = true
+                )
                 }
             }
         }
     }
+    }
+}
+
+@Composable
+private fun QuickCreateActionButton(
+    text: String,
+    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    fontFamily: androidx.compose.ui.text.font.FontFamily,
+    containerColor: androidx.compose.ui.graphics.Color,
+    contentColor: androidx.compose.ui.graphics.Color,
+    onClick: () -> Unit
+) {
+    Surface(
+        modifier = Modifier
+            .height(46.dp)
+            .clickable(onClick = onClick),
+        shape = RoundedCornerShape(24.dp),
+        color = containerColor,
+        contentColor = contentColor,
+        tonalElevation = 5.dp,
+        shadowElevation = 5.dp
+    ) {
+        Row(
+            modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.Start
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                modifier = Modifier.size(20.dp),
+                tint = contentColor
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Text(
+                text = text,
+                fontFamily = fontFamily,
+                fontWeight = FontWeight.Bold,
+                fontSize = 14.sp,
+                color = contentColor,
+                maxLines = 1
+            )
+        }
     }
 }
 

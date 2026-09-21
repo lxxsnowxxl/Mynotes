@@ -64,4 +64,14 @@
     <string name="mock_palette_neon_yellow">霓虹黄</string>
     <string name="mock_palette_neon_green">霓虹绿</string>
     <string name="mock_palette_monochrome">单色</string>
+    <string name="extreme_edit_photo">编辑裁剪</string>
+    <string name="extreme_profile_editor_title">调整头像</string>
+    <string name="extreme_profile_editor_hint">拖动可移动图片。双指缩放或使用滑块调整大小。圆形区域会准确显示最终头像效果。</string>
+    <string name="extreme_profile_zoom">缩放：%1$d%%</string>
+    <string name="extreme_profile_reset">重置构图</string>
+    <string name="extreme_profile_apply">使用此照片</string>
+    <string name="extreme_profile_loading">正在加载图片…</string>
+    <string name="extreme_profile_error">无法打开此图片。</string>
+    <string name="extreme_note_outline">笔记边框</string>
+    <string name="extreme_note_outline_width">边框粗细</string>
 </resources>

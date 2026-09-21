@@ -39,4 +39,13 @@
     <string name="performance_mode_balanced">均衡</string>
     <string name="performance_mode_quality">最高画质</string>
     <string name="performance_mode_description">控制动画、屏幕刷新率和缩略图分辨率。最高性能：图片/视频缩略图 360 px，PDF 480 px；均衡：720 px，PDF 960 px；最高画质：图片最高 1280 px、视频 1080 px、PDF 1440 px，并在兼容屏幕上请求最高 120 Hz。</string>
+    <string name="motion_style_expressive_spring">灵动弹簧</string>
+    <string name="motion_style_container_transform">容器变换</string>
+    <string name="motion_style_soft_reveal">柔和显现</string>
+    <string name="motion_style_elastic_slide">弹性滑动</string>
+    <string name="motion_style_predictive">预测式</string>
+    <string name="motion_style_tonal_pop">色调弹出</string>
+    <string name="motion_easing_expressive">灵动</string>
+    <string name="motion_easing_emphasized_accel">强调加速</string>
+    <string name="motion_easing_emphasized_decel">强调减速</string>
 </resources>

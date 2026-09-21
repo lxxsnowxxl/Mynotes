@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_quick_capture">Quick note</string>
+    <string name="widget_quick_capture_hint">Create a note quickly.</string>
+    <string name="widget_search">Search notes</string>
+    <string name="widget_favorites">Favorites</string>
+    <string name="widget_empty_favorites">You don’t have favorite notes yet</string>
+    <string name="widget_toggle_favorite">Toggle favorite</string>
+    <string name="widget_focus_note">Focus note</string>
+    <string name="widget_focus_note_hint">Pinned and high-priority notes come first</string>
+    <string name="widget_open_note">Open note</string>
+    <string name="widget_toggle_pin">Toggle pin</string>
+    <string name="widget_collections">Collections</string>
+    <string name="widget_collections_hint">Jump straight to what you need</string>
+    <string name="widget_note_collage">Collage</string>
+    <string name="widget_note_collage_hint">Your notes in mini view</string>
+    <string name="widget_pinned_collection">Pinned</string>
+    <string name="widget_category_work">Work</string>
+    <string name="widget_category_personal">Personal</string>
+    <string name="widget_images">Images</string>
+    <string name="widget_files">Files</string>
+    <string name="widget_stats">Overview</string>
+    <string name="widget_stats_hint">Your notes at a glance</string>
+    <string name="widget_high_priority">High priority</string>
+    <string name="widget_all_notes">All</string>
+    <string name="widget_badge_pinned">PIN</string>
+    <string name="widget_badge_work">W</string>
+    <string name="widget_badge_personal">P</string>
+    <string name="widget_meta_pinned">Pinned</string>
+    <string name="widget_meta_favorite">Favorite</string>
+    <plurals name="widget_note_count"><item quantity="one">%d note</item><item quantity="other">%d notes</item></plurals>
+    <plurals name="widget_favorite_count"><item quantity="one">%d favorite</item><item quantity="other">%d favorites</item></plurals>
+</resources>

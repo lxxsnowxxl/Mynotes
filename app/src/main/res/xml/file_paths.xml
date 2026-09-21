@@ -9,4 +9,9 @@
         name="voice_notes"
         path="voice_notes/" />
 
+    <!-- APK temporal descargado desde GitHub Releases para el instalador del sistema. -->
+    <cache-path
+        name="app_updates"
+        path="app_updates/" />
+
 </paths>

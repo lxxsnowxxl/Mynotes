@@ -64,4 +64,14 @@
     <string name="mock_palette_neon_yellow">Neon Yellow</string>
     <string name="mock_palette_neon_green">Neon Green</string>
     <string name="mock_palette_monochrome">Monochrome</string>
+    <string name="extreme_edit_photo">Edit crop</string>
+    <string name="extreme_profile_editor_title">Adjust profile photo</string>
+    <string name="extreme_profile_editor_hint">Drag to reposition the image. Pinch or use the control to zoom in and out. The circle shows exactly how the avatar will look.</string>
+    <string name="extreme_profile_zoom">Zoom: %1$d%%</string>
+    <string name="extreme_profile_reset">Reset framing</string>
+    <string name="extreme_profile_apply">Use photo</string>
+    <string name="extreme_profile_loading">Loading image…</string>
+    <string name="extreme_profile_error">This image could not be opened.</string>
+    <string name="extreme_note_outline">Note outline</string>
+    <string name="extreme_note_outline_width">Outline thickness</string>
 </resources>

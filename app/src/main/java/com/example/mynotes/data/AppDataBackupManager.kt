@@ -5,6 +5,7 @@ import android.net.Uri
 import androidx.room.withTransaction
 import com.example.mynotes.settings.AppSettings
 import com.example.mynotes.settings.SettingsRepository
+import com.example.mynotes.widget.MyNotesWidgetUpdater
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import org.json.JSONArray
@@ -230,6 +231,7 @@ object AppDataBackupManager {
                     }
                     File(appContext.cacheDir, "viewer_video").deleteRecursively()
                     File(appContext.cacheDir, "viewer_audio").deleteRecursively()
+                    MyNotesWidgetUpdater.requestUpdate(appContext)
                     BackupSummary(noteCount = notes.size, attachmentCount = restoredAttachments.size)
                 } finally {
                     stageDir.deleteRecursively()
@@ -381,6 +383,7 @@ object AppDataBackupManager {
             }
         }
     private fun settingsToJson(settings: AppSettings, profileEntry: String?) = JSONObject().apply {
+        put("configurationMode", settings.configurationMode)
         put("darkMode", settings.darkMode)
         put("backgroundColor", settings.backgroundColor)
         put("backgroundToneIndex", settings.backgroundToneIndex)
@@ -412,6 +415,8 @@ object AppDataBackupManager {
         put("noteCardElevation", settings.noteCardElevation.toDouble())
         put("noteCardPadding", settings.noteCardPadding.toDouble())
         put("noteCardImageHeight", settings.noteCardImageHeight.toDouble())
+        put("noteCardOutlineEnabled", settings.noteCardOutlineWidth > 0.01f)
+        put("noteCardOutlineWidth", settings.noteCardOutlineWidth.coerceIn(0f, 6f).toDouble())
         put("noteTitleMaxLines", settings.noteTitleMaxLines)
         put("noteContentMaxLines", settings.noteContentMaxLines)
         put("noteLineSpacing", settings.noteLineSpacing.toDouble())
@@ -435,7 +440,8 @@ object AppDataBackupManager {
     }
     private fun jsonToSettings(json: JSONObject): AppSettings {
         val defaults = AppSettings()
-        return AppSettings(darkMode = json.optBoolean("darkMode", defaults.darkMode),
+        return AppSettings(configurationMode = json.optString("configurationMode", "advanced"),
+            darkMode = json.optBoolean("darkMode", defaults.darkMode),
             backgroundColor = json.optString("backgroundColor", defaults.backgroundColor),
             backgroundToneIndex = json.optInt("backgroundToneIndex", defaults.backgroundToneIndex),
             backgroundIntensity = json.optDouble("backgroundIntensity", defaults.backgroundIntensity.toDouble()).toFloat(),
@@ -463,6 +469,12 @@ object AppDataBackupManager {
             noteCardElevation = json.optDouble("noteCardElevation", defaults.noteCardElevation.toDouble()).toFloat(),
             noteCardPadding = json.optDouble("noteCardPadding", defaults.noteCardPadding.toDouble()).toFloat(),
             noteCardImageHeight = json.optDouble("noteCardImageHeight", defaults.noteCardImageHeight.toDouble()).toFloat(),
+            noteCardOutlineEnabled = json.optBoolean("noteCardOutlineEnabled", defaults.noteCardOutlineEnabled),
+            noteCardOutlineWidth = if (json.optBoolean("noteCardOutlineEnabled", defaults.noteCardOutlineEnabled)) {
+                    json.optDouble("noteCardOutlineWidth", 1.0).toFloat().coerceIn(0f, 6f)
+                } else {
+                    0f
+                },
             noteTitleMaxLines = json.optInt("noteTitleMaxLines", defaults.noteTitleMaxLines),
             noteContentMaxLines = json.optInt("noteContentMaxLines", defaults.noteContentMaxLines),
             noteLineSpacing = json.optDouble("noteLineSpacing", defaults.noteLineSpacing.toDouble()).toFloat(),

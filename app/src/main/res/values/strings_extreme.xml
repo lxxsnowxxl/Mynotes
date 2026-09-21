@@ -64,4 +64,14 @@
     <string name="mock_palette_neon_yellow">Amarillo neón</string>
     <string name="mock_palette_neon_green">Verde neón</string>
     <string name="mock_palette_monochrome">Monocromo</string>
+    <string name="extreme_edit_photo">Editar recorte</string>
+    <string name="extreme_profile_editor_title">Ajustar foto de perfil</string>
+    <string name="extreme_profile_editor_hint">Arrastra para mover la imagen. Pellizca o usa el control para acercar y alejar. El círculo muestra exactamente cómo se verá el avatar.</string>
+    <string name="extreme_profile_zoom">Zoom: %1$d%%</string>
+    <string name="extreme_profile_reset">Restablecer encuadre</string>
+    <string name="extreme_profile_apply">Usar foto</string>
+    <string name="extreme_profile_loading">Cargando imagen…</string>
+    <string name="extreme_profile_error">No se pudo abrir esta imagen.</string>
+    <string name="extreme_note_outline">Contorno de notas</string>
+    <string name="extreme_note_outline_width">Grosor del contorno</string>
 </resources>

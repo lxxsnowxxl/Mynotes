@@ -74,16 +74,22 @@ fun automaticUiTextColor(background: Color): Color {
 /**
  * Resolución segura del color principal.
  *
- * auto  -> contraste calculado
- * black -> elección manual absoluta
- * white -> elección manual absoluta
- * valor desconocido -> auto (fallback seguro)
+ * auto  -> contraste calculado.
+ * black / white -> respeta la elección mientras conserve al menos 4.5:1.
+ * Si el color manual se vuelve ilegible sobre la superficie real, usa de
+ * forma automática negro o blanco. Esto evita texto blanco sobre tarjetas
+ * claras y texto negro sobre fondos oscuros.
  */
 fun resolveUiTextColor(value: String, background: Color): Color {
-    return when (value) {
+    val preferred = when (value) {
         "black" -> Color.Black
         "white" -> Color.White
-        else -> automaticUiTextColor(background)
+        else -> return automaticUiTextColor(background)
+    }
+    return if (uiContrastRatio(preferred, background) >= 4.5f) {
+        preferred
+    } else {
+        automaticUiTextColor(background)
     }
 }
 
@@ -158,6 +164,164 @@ fun ensureUiContrast(preferred: Color, background: Color, minimumContrast: Float
     } else {
         automaticUiTextColor(background)
     }
+}
+
+
+/**
+ * Contorno adaptado a la paleta: conserva la familia cromática del fondo
+ * y sólo lo desplaza hacia blanco o negro lo necesario para alcanzar
+ * contraste visible. Si una combinación extrema no puede mantener el tono
+ * con suficiente contraste, usa el monocromo automático como respaldo.
+ */
+fun paletteMatchedOutlineColor(background: Color, minimumContrast: Float = 3f): Color {
+    val backgroundOpaque = background.copy(alpha = 1f)
+    val target = if (backgroundOpaque.luminance() > 0.5f) AccessibleBlack else AccessibleWhite
+    var low = 0f
+    var high = 1f
+    var best: Color? = null
+    repeat(20) {
+        val amount = (low + high) / 2f
+        val candidate = mixOpaqueUiColor(backgroundOpaque, target, amount)
+        if (uiContrastRatio(candidate, backgroundOpaque) >= minimumContrast) {
+            best = candidate
+            high = amount
+        } else {
+            low = amount
+        }
+    }
+    return best ?: automaticUiTextColor(backgroundOpaque)
+}
+
+
+/**
+ * Construye un color de botón que conserve el color de texto ya resuelto para
+ * la interfaz (por ejemplo blanco en fondos oscuros o negro en fondos claros),
+ * pero también se diferencie visualmente del panel que lo contiene.
+ *
+ * A diferencia de resolver el texto a partir del botón, esta función mantiene
+ * coherencia con el modo de texto Automático/Negro/Blanco seleccionado por el
+ * usuario y adapta el FONDO del botón hasta alcanzar los dos contrastes.
+ */
+fun adaptiveUiButtonContainer(
+    preferred: Color,
+    background: Color,
+    contentColor: Color,
+    minimumContentContrast: Float = 4.5f,
+    minimumSurfaceContrast: Float = 1.55f
+): Color {
+    val preferredOpaque = preferred.copy(alpha = 1f)
+    val backgroundOpaque = background.copy(alpha = 1f)
+    val contentOpaque = contentColor.copy(alpha = 1f)
+
+    fun distanceSquared(first: Color, second: Color): Float {
+        val dr = first.red - second.red
+        val dg = first.green - second.green
+        val db = first.blue - second.blue
+        return dr * dr + dg * dg + db * db
+    }
+
+    val candidates = ArrayList<Color>(220)
+    fun add(candidate: Color) {
+        candidates += candidate.copy(alpha = 1f)
+    }
+    fun addBlendSeries(from: Color, to: Color, steps: Int = 48) {
+        for (index in 0..steps) {
+            add(mixOpaqueUiColor(from, to, index.toFloat() / steps.toFloat()))
+        }
+    }
+
+    add(preferredOpaque)
+    addBlendSeries(preferredOpaque, AccessibleBlack)
+    addBlendSeries(preferredOpaque, AccessibleWhite)
+    addBlendSeries(backgroundOpaque, AccessibleBlack)
+    addBlendSeries(backgroundOpaque, AccessibleWhite)
+
+    // Serie neutra de respaldo. Evita que una combinación extrema de paleta,
+    // acento y texto manual quede sin un candidato utilizable.
+    for (index in 0..48) {
+        val value = index.toFloat() / 48f
+        add(Color(value, value, value, 1f))
+    }
+
+    val valid = candidates.filter { candidate ->
+        uiContrastRatio(contentOpaque, candidate) >= minimumContentContrast &&
+            uiContrastRatio(candidate, backgroundOpaque) >= minimumSurfaceContrast
+    }
+
+    return valid.minByOrNull { candidate ->
+        distanceSquared(candidate, preferredOpaque)
+    } ?: run {
+        /*
+         * En la práctica siempre existe un gris que satisface ambos límites.
+         * Este fallback conserva una salida segura incluso ante parámetros de
+         * contraste imposibles introducidos en futuras modificaciones.
+         */
+        val fallbackTarget = if (uiContrastRatio(AccessibleBlack, contentOpaque) >
+            uiContrastRatio(AccessibleWhite, contentOpaque)) AccessibleBlack else AccessibleWhite
+        mixOpaqueUiColor(backgroundOpaque, fallbackTarget, 0.55f)
+    }
+}
+
+
+
+data class AdaptiveUiButtonColors(
+    val container: Color,
+    val content: Color
+)
+
+/**
+ * Resuelve de forma conjunta el fondo y el texto de un botón.
+ *
+ * En modo Automático el texto se calcula CONTRA el fondo final del botón,
+ * no contra el panel padre. Así un cambio de Accent color puede cambiar de
+ * forma segura entre texto negro/blanco sin perder legibilidad.
+ *
+ * En modos manuales (black/white) el color solicitado por el usuario se
+ * mantiene y se adapta únicamente el fondo del botón.
+ */
+fun resolveAdaptiveUiButtonColors(
+    preferred: Color,
+    background: Color,
+    textColorMode: String,
+    minimumContentContrast: Float = 4.5f,
+    minimumSurfaceContrast: Float = 1.55f
+): AdaptiveUiButtonColors {
+    if (textColorMode == "black" || textColorMode == "white") {
+        val content = resolveUiTextColor(textColorMode, background)
+        val container = adaptiveUiButtonContainer(
+            preferred = preferred,
+            background = background,
+            contentColor = content,
+            minimumContentContrast = minimumContentContrast,
+            minimumSurfaceContrast = minimumSurfaceContrast
+        )
+        return AdaptiveUiButtonColors(container = container, content = content)
+    }
+
+    // Primera pasada usando el color preferido (normalmente el accent actual).
+    var content = automaticUiTextColor(preferred.copy(alpha = 1f))
+    var container = adaptiveUiButtonContainer(
+        preferred = preferred,
+        background = background,
+        contentColor = content,
+        minimumContentContrast = minimumContentContrast,
+        minimumSurfaceContrast = minimumSurfaceContrast
+    )
+
+    // Recalcula el texto contra el fondo REAL resultante y estabiliza una vez
+    // más el contenedor. Esto evita combinaciones grises con poco contraste
+    // cuando el usuario cambia Accent color o la paleta de fondo.
+    content = automaticUiTextColor(container)
+    container = adaptiveUiButtonContainer(
+        preferred = preferred,
+        background = background,
+        contentColor = content,
+        minimumContentContrast = minimumContentContrast,
+        minimumSurfaceContrast = minimumSurfaceContrast
+    )
+    content = automaticUiTextColor(container)
+
+    return AdaptiveUiButtonColors(container = container, content = content)
 }
 
 /** Compatibilidad con llamadas antiguas. */

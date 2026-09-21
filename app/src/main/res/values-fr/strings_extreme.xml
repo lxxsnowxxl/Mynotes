@@ -64,4 +64,14 @@
     <string name="mock_palette_neon_yellow">Jaune néon</string>
     <string name="mock_palette_neon_green">Vert néon</string>
     <string name="mock_palette_monochrome">Monochrome</string>
+    <string name="extreme_edit_photo">Modifier le recadrage</string>
+    <string name="extreme_profile_editor_title">Ajuster la photo de profil</string>
+    <string name="extreme_profile_editor_hint">Faites glisser pour déplacer l’image. Pincez ou utilisez le contrôle pour zoomer. Le cercle montre exactement le rendu de l’avatar.</string>
+    <string name="extreme_profile_zoom">Zoom : %1$d%%</string>
+    <string name="extreme_profile_reset">Réinitialiser le cadrage</string>
+    <string name="extreme_profile_apply">Utiliser la photo</string>
+    <string name="extreme_profile_loading">Chargement de l’image…</string>
+    <string name="extreme_profile_error">Impossible d’ouvrir cette image.</string>
+    <string name="extreme_note_outline">Contour des notes</string>
+    <string name="extreme_note_outline_width">Épaisseur du contour</string>
 </resources>

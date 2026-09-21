@@ -81,6 +81,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
@@ -89,7 +90,11 @@ import com.example.mynotes.data.Attachment
 import com.example.mynotes.data.PendingAttachment
 import com.example.mynotes.performance.AttachmentPreviewCache
 import com.example.mynotes.ui.components.LinkPreviewCard
+import com.example.mynotes.ui.components.ScrollPositionCapsule
 import com.example.mynotes.ui.components.extractLinkUrls
+import com.example.mynotes.ui.components.extractEmbeddedLinkUrls
+import com.example.mynotes.ui.components.stripEmbeddedLinkMetadata
+import com.example.mynotes.ui.components.noteContentForStorage
 import com.example.mynotes.ui.openAttachmentViewer
 import com.example.mynotes.settings.AppSettings
 import com.example.mynotes.ui.sound.UiActionSound
@@ -102,6 +107,34 @@ import com.example.mynotes.ui.theme.ensureUiContrast
 import com.example.mynotes.ui.theme.noteBackgroundColor
 import kotlinx.coroutines.delay
 import java.io.File
+
+private fun removeProcessedUrl(value: TextFieldValue, url: String): TextFieldValue {
+    val index = value.text.indexOf(url)
+    if (index < 0) return value
+
+    var removeStart = index
+    var removeEnd = index + url.length
+    val lineStart = value.text.lastIndexOf('\n', startIndex = (index - 1).coerceAtLeast(0)).let { if (it < 0) 0 else it + 1 }
+    val nextNewLine = value.text.indexOf('\n', startIndex = removeEnd)
+    val lineEnd = if (nextNewLine < 0) value.text.length else nextNewLine
+    if (value.text.substring(lineStart, lineEnd).trim() == url) {
+        removeStart = lineStart
+        removeEnd = if (nextNewLine >= 0) nextNewLine + 1 else lineEnd
+    }
+
+    val newText = value.text.removeRange(removeStart, removeEnd)
+    val removedLength = removeEnd - removeStart
+    fun shifted(position: Int): Int = when {
+        position <= removeStart -> position
+        position >= removeEnd -> position - removedLength
+        else -> removeStart
+    }.coerceIn(0, newText.length)
+
+    return value.copy(
+        text = newText,
+        selection = TextRange(shifted(value.selection.start), shifted(value.selection.end))
+    )
+}
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
@@ -136,16 +169,23 @@ fun NoteEditorScreen(settings: AppSettings, initialTitle: String = "", initialCo
         mutableStateOf(initialColor)
     }
     val editorBackground = noteBackgroundColor(selectedColor)
-    val editorTextColor = resolveUiTextColor(value = settings.textColor, background = editorBackground)
-    val editorSecondaryTextColor = resolveSecondaryUiTextColor(value = settings.textColor, background = editorBackground)
-    val editorGraphicColor = resolveUiGraphicColor(value = settings.textColor, background = editorBackground)
+    val editorTextColor = resolveUiTextColor(value = settings.noteUiTextColor, background = editorBackground)
+    val editorSecondaryTextColor = resolveSecondaryUiTextColor(value = settings.noteUiTextColor, background = editorBackground)
+    val editorGraphicColor = resolveUiGraphicColor(value = settings.noteUiTextColor, background = editorBackground)
     val editorAccentOutline = ensureUiContrast(preferred = MaterialTheme.colorScheme.primary, background = editorBackground,
             minimumContrast = 3f)
     var title by rememberSaveable(initialTitle, stateSaver = TextFieldValue.Saver) {
         mutableStateOf(TextFieldValue(initialTitle))
     }
+    val initialVisibleContent = remember(initialContent) { stripEmbeddedLinkMetadata(initialContent) }
     var content by rememberSaveable(initialContent, stateSaver = TextFieldValue.Saver) {
-        mutableStateOf(TextFieldValue(initialContent))
+        mutableStateOf(TextFieldValue(initialVisibleContent))
+    }
+    var embeddedLinkState by rememberSaveable(initialContent) {
+        mutableStateOf(extractEmbeddedLinkUrls(initialContent).take(3).joinToString("\u001F"))
+    }
+    val embeddedLinkUrls = remember(embeddedLinkState) {
+        embeddedLinkState.split("\u001F").map { it.trim() }.filter { it.isNotBlank() }.distinct().take(3)
     }
     /*
      * Solo contiene adjuntos NUEVOS agregados durante esta
@@ -439,6 +479,7 @@ fun NoteEditorScreen(settings: AppSettings, initialTitle: String = "", initialCo
      * PANTALLA
      * ==========================================
      */
+    val editorScrollState = rememberScrollState()
     MaterialTheme(colorScheme = MaterialTheme.colorScheme, typography = appTypography, shapes = MaterialTheme.shapes) {
         Scaffold(containerColor = editorBackground,
             topBar = {
@@ -474,7 +515,7 @@ fun NoteEditorScreen(settings: AppSettings, initialTitle: String = "", initialCo
                             IconButton(enabled = !isRecording,
                                 onClick = {
                                     UiSoundPlayer.playAction(context = context, action = UiActionSound.Save)
-                                    onSave(title.text, content.text, selectedColor, newAttachments, removedExistingAttachments)
+                                    onSave(title.text, noteContentForStorage(content.text, embeddedLinkUrls), selectedColor, newAttachments, removedExistingAttachments)
                                 }) {
                                 Icon(imageVector = Icons.Default.Check,
                                     contentDescription = stringResource(R.string.save),
@@ -485,7 +526,7 @@ fun NoteEditorScreen(settings: AppSettings, initialTitle: String = "", initialCo
             }
         ) { paddingValues ->
             Box(modifier = Modifier.fillMaxSize().padding(paddingValues), contentAlignment = Alignment.TopCenter) {
-                Column(modifier = Modifier.widthIn(max = 760.dp).fillMaxWidth().verticalScroll(rememberScrollState()).padding(
+                Column(modifier = Modifier.widthIn(max = 760.dp).fillMaxWidth().verticalScroll(editorScrollState).padding(
                             horizontal = 18.dp)) {
                 Spacer(modifier = Modifier.height(12.dp))
                 /*
@@ -538,13 +579,29 @@ fun NoteEditorScreen(settings: AppSettings, initialTitle: String = "", initialCo
                             cursorColor = editorGraphicColor, focusedBorderColor = editorAccentOutline,
                             unfocusedBorderColor = editorGraphicColor, focusedContainerColor = Color.Transparent,
                             unfocusedContainerColor = Color.Transparent))
-                val editorLinkUrls = remember(content.text) {
-                        extractLinkUrls(content.text).take(3)
+                val editorLinkUrls = remember(content.text, embeddedLinkState) {
+                        (embeddedLinkUrls + extractLinkUrls(content.text)).distinct().take(3)
                     }
                 if (editorLinkUrls.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(14.dp))
-                    editorLinkUrls.forEach { linkUrl -> LinkPreviewCard(url = linkUrl, compact = false,
-                            textColorMode = settings.noteUiTextColor)
+                    editorLinkUrls.forEach { linkUrl ->
+                        LinkPreviewCard(
+                            url = linkUrl,
+                            compact = false,
+                            textColorMode = settings.noteUiTextColor,
+                            onPreviewReady = { readyUrl ->
+                                val currentEmbeddedLinks = embeddedLinkState.split("\u001F")
+                                    .map { it.trim() }
+                                    .filter { it.isNotBlank() }
+                                    .distinct()
+                                if (readyUrl !in currentEmbeddedLinks) {
+                                    embeddedLinkState = (currentEmbeddedLinks + readyUrl).distinct().take(3).joinToString("\u001F")
+                                }
+                                if (content.text.contains(readyUrl)) {
+                                    content = removeProcessedUrl(content, readyUrl)
+                                }
+                            }
+                        )
                         Spacer(modifier = Modifier.height(10.dp))
                     }
                 }
@@ -793,7 +850,7 @@ fun NoteEditorScreen(settings: AppSettings, initialTitle: String = "", initialCo
                         enabled = !isRecording,
                         onClick = {
                             UiSoundPlayer.playAction(context = context, action = UiActionSound.Save)
-                            onSave(title.text, content.text, selectedColor, newAttachments, removedExistingAttachments)
+                            onSave(title.text, noteContentForStorage(content.text, embeddedLinkUrls), selectedColor, newAttachments, removedExistingAttachments)
                         },
                         shape = RoundedCornerShape(14.dp)) {
                         Text(if (isEditing) {
@@ -805,6 +862,7 @@ fun NoteEditorScreen(settings: AppSettings, initialTitle: String = "", initialCo
                 }
                 Spacer(modifier = Modifier.height(24.dp))
                 }
+                ScrollPositionCapsule(state = editorScrollState, modifier = Modifier.align(Alignment.CenterEnd), backgroundColor = editorBackground, preferredColor = editorGraphicColor)
             }
         }
     }

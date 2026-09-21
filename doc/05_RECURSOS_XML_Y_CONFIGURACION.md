@@ -1,23 +1,21 @@
-# Recursos, Manifest, XML y configuración alrededor del código Kotlin
+# Recursos XML, Manifest y configuración
 
-La carpeta obsesiva se centra en `.kt/.kts`, pero los cambios recientes también dependen de recursos Android. Este documento evita que esas relaciones queden fuera del mapa técnico.
+## AndroidManifest
 
-## AndroidManifest.xml
+Permisos actuales detectados: `INTERNET`, `RECORD_AUDIO`, `VIBRATE`, `POST_NOTIFICATIONS`, `RECEIVE_BOOT_COMPLETED`, `MODIFY_AUDIO_SETTINGS`, `REQUEST_INSTALL_PACKAGES`. El micrófono se declara como feature opcional.
 
-**Permisos declarados:** `android.permission.INTERNET`, `android.permission.RECORD_AUDIO`, `android.permission.VIBRATE`, `android.permission.MODIFY_AUDIO_SETTINGS`.
+Activities: `MainActivity` y `AttachmentViewerActivity`.
 
-**Activities declaradas:** `.ui.AttachmentViewerActivity`, `.MainActivity`.
+Receivers funcionales: `ReminderReceiver`, `QuickNoteWidgetProvider`, `RecentNotesWidgetProvider`, `FavoritesWidgetProvider`, `FocusNoteWidgetProvider`, `WidgetActionReceiver`.
 
-El permiso de modificación de ajustes de audio debe entenderse junto con la lógica de `MainActivity`: la app no intenta apagar sus propios efectos, sino restaurar el stream de sistema después del ciclo de visibilidad del teclado.
+Provider: `androidx.core.content.FileProvider`.
 
-## XML de `res/layout`
+## Recursos
 
-Los layouts `preview_*` son una representación visual para Android Studio Design/Split. La UI ejecutada por la app sigue implementada principalmente con Jetpack Compose. Por eso un XML puede quedar desactualizado visualmente sin que afecte la ejecución, pero debe sincronizarse documentalmente cuando cambia la pantalla real.
+Total de archivos en `src/main/res`: **632**. Principales directorios: `drawable`=316, `drawable-nodpi`=5, `font`=7, `layout`=46, `mipmap-anydpi-v26`=2, `mipmap-hdpi`=4, `mipmap-mdpi`=4, `mipmap-xhdpi`=4, `mipmap-xxhdpi`=4, `mipmap-xxxhdpi`=4, `raw`=156, `values`=19, `values-en`=13, `values-es`=13, `values-fr`=13, `values-v26`=2, `values-v31`=1, `values-zh-rCN`=12, `xml`=7.
 
-## Recursos de strings
+Localizaciones: `values, values-en, values-es, values-fr, values-v26, values-v31, values-zh-rCN`.
 
-Los textos de desarrollo, créditos, copyright, repositorio y pantallas secundarias viven en recursos localizados. `stringResource(...)` hace que el texto visible dependa del locale activo en vez de quedar hardcodeado en los composables.
+Los widgets Collage/Overview no están registrados. Existen cuatro cadenas legacy (`widget_note_collage*`, `widget_stats*`) únicamente como compatibilidad frente a XML antiguos que puedan quedar al descomprimir encima de una carpeta previa.
 
-## README / DEVELOPMENT
-
-`README.md` describe el proyecto hacia GitHub/usuarios; `DEVELOPMENT.md` explica detalles técnicos de compilación y arquitectura. No participan en runtime Android, pero forman parte de la documentación del repositorio.
+Inventario completo: `inventarios/RECURSOS.csv`.

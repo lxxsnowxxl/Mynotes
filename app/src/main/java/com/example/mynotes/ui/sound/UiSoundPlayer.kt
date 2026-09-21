@@ -31,18 +31,26 @@ enum class UiActionSound {
 object UiSoundPlayer {
     const val DEFAULT_THEME = "classic"
     val availableThemes: List<String> = listOf("classic", "soft", "digital", "glass", "retro", "pop", "mechanical", "bubble", "arcade",
-            "wood", "synth", "minimal", "camera", "typewriter", "metal", "pixel", "space", "chime", "paper", "neon")
+            "wood", "synth", "minimal", "camera", "typewriter", "metal", "pixel", "space", "chime", "paper", "neon",
+            "material", "expressive", "prism", "aurora", "fluid", "pulse")
+    private val availableThemeSet = availableThemes.toHashSet()
+    private val layeredThemes: Set<String> = emptySet()
     @Volatile
     private var pool: SoundPool? = null
     private val soundIds = mutableMapOf<String, EnumMap<UiSound, Int>>()
     private val lastPlayAt = EnumMap<UiSound, Long>(UiSound::class.java)
+    private val previewLock = Any()
+    @Volatile
+    private var previewPrimaryStreamId: Int = 0
+    @Volatile
+    private var previewAccentStreamId: Int = 0
     @Volatile
     private var enabled: Boolean = true
     @Volatile
     private var volume: Float = 0.65f
     @Volatile
     private var theme: String = DEFAULT_THEME
-    fun normalizeTheme(value: String): String = value.trim().lowercase().takeIf { it in availableThemes }?: DEFAULT_THEME
+    fun normalizeTheme(value: String): String = value.trim().lowercase().takeIf { it in availableThemeSet }?: DEFAULT_THEME
     fun configure(context: Context, enabled: Boolean, volumePercent: Float, theme: String = DEFAULT_THEME, hapticEnabled: Boolean = true,
         hapticIntensityPercent: Float = 55f, hapticStyle: String = UiHapticPlayer.DEFAULT_STYLE) {
         this.enabled = enabled
@@ -76,6 +84,26 @@ object UiSoundPlayer {
         val spec = actionSpec(action)
         playInternal(context = context, sound = spec.sound, theme = theme, volume = (volume * spec.volumeScale).coerceIn(0f, 1f),
             rate = spec.rate)
+        playAccentLayer(context = context, action = action)
+    }
+    /**
+     * Variante exclusivamente auditiva. Se usa cuando la misma acción ya
+     * reproduce una respuesta háptica específica por separado; así evitamos
+     * duplicar o mezclar dos vibraciones al tocar un mismo control.
+     */
+    fun playActionAudioOnly(context: Context, action: UiActionSound) {
+        if (!enabled || volume <= 0f) {
+            return
+        }
+        val spec = actionSpec(action)
+        playInternal(
+            context = context,
+            sound = spec.sound,
+            theme = theme,
+            volume = (volume * spec.volumeScale).coerceIn(0f, 1f),
+            rate = spec.rate
+        )
+        playAccentLayer(context = context, action = action)
     }
     fun playActionThrottled(context: Context, action: UiActionSound, minimumIntervalMs: Long = 45L) {
         UiHapticPlayer.playForAction(context = context, action = action, throttled = true, minimumIntervalMs = minimumIntervalMs)
@@ -85,6 +113,7 @@ object UiSoundPlayer {
         val spec = actionSpec(action)
         playThrottledInternal(context = context, sound = spec.sound, minimumIntervalMs = minimumIntervalMs, rate = spec.rate,
             volumeScale = spec.volumeScale)
+        playAccentLayer(context = context, action = action)
     }
     /**
      * Sonido específico para interruptores. El encendido se reproduce un poco
@@ -99,70 +128,145 @@ object UiSoundPlayer {
         if ((!enabled && !force) || volume <= 0f) {
             return
         }
-        playInternal(context = context, sound = UiSound.Toggle, theme = theme, volume = volume, rate = if (checked) 1.08f else 0.88f)
+        playInternal(context = context, sound = UiSound.Toggle, theme = theme, volume = volume, rate = if (checked) 1.03f else 0.96f)
+    }
+    /** Reproduce únicamente el sonido del interruptor, sin disparar hápticos. */
+    fun playToggleAudioOnly(context: Context, checked: Boolean, force: Boolean = false) {
+        if ((!enabled && !force) || volume <= 0f) {
+            return
+        }
+        playInternal(
+            context = context,
+            sound = UiSound.Toggle,
+            theme = theme,
+            volume = volume,
+            rate = if (checked) 1.03f else 0.96f
+        )
     }
     /**
      * Reproduce un ejemplo del paquete seleccionado sin esperar a que DataStore
      * termine de propagar el cambio. Se usa únicamente desde Configuración.
      */
     fun previewTheme(context: Context, theme: String, sound: UiSound = UiSound.Edit, volumePercent: Float = 65f) {
-        playInternal(context = context, sound = sound, theme = normalizeTheme(theme), volume = (volumePercent / 100f).coerceIn(0f, 1f))
+        val previewVolume = (volumePercent / 100f).coerceIn(0f, 1f)
+        if (previewVolume <= 0f) {
+            stopThemePreview()
+            return
+        }
+        val soundPool = ensureInitialized(context)
+        val normalizedTheme = normalizeTheme(theme)
+        val soundId = soundIds[normalizedTheme]?.get(sound)
+            ?: soundIds[DEFAULT_THEME]?.get(sound)
+            ?: return
+
+        synchronized(previewLock) {
+            /*
+             * SoundPool permite varias reproducciones simultáneas. Para un
+             * selector de paquetes eso no es deseable: si el usuario cambia
+             * rápidamente de Classic a Soft, etc., los previews se superponen
+             * y parecen distorsionados. Detenemos exclusivamente el preview
+             * anterior; los demás sonidos normales de la UI no se alteran.
+             */
+            if (previewPrimaryStreamId > 0) soundPool.stop(previewPrimaryStreamId)
+            if (previewAccentStreamId > 0) soundPool.stop(previewAccentStreamId)
+            previewPrimaryStreamId = soundPool.play(soundId, previewVolume, previewVolume, 2, 0, 1f)
+            previewAccentStreamId = 0
+            if (normalizedTheme in layeredThemes) {
+                val accentId = soundIds[normalizedTheme]?.get(UiSound.Priority)
+                if (accentId != null) {
+                    val accentVolume = (previewVolume * 0.24f).coerceIn(0f, 0.35f)
+                    previewAccentStreamId = soundPool.play(accentId, accentVolume, accentVolume, 1, 0, 1.32f)
+                }
+            }
+        }
+    }
+
+    private fun stopThemePreview() {
+        val soundPool = pool ?: return
+        synchronized(previewLock) {
+            if (previewPrimaryStreamId > 0) soundPool.stop(previewPrimaryStreamId)
+            if (previewAccentStreamId > 0) soundPool.stop(previewAccentStreamId)
+            previewPrimaryStreamId = 0
+            previewAccentStreamId = 0
+        }
     }
     fun playThrottled(context: Context, sound: UiSound, minimumIntervalMs: Long = 45L) {
         UiHapticPlayer.playForSound(context = context, sound = sound, throttled = true, minimumIntervalMs = minimumIntervalMs)
         if (!enabled || volume <= 0f) {
             return
         }
-        val now = SystemClock.uptimeMillis()
-        val previous = synchronized(lastPlayAt) {
-                lastPlayAt[sound] ?: 0L
-            }
-        if (now - previous < minimumIntervalMs) {
+        if (!acquireThrottleSlot(sound = sound, minimumIntervalMs = minimumIntervalMs)) {
             return
-        }
-        synchronized(lastPlayAt) {
-            lastPlayAt[sound] = now
         }
         playInternal(context = context, sound = sound, theme = theme, volume = volume)
     }
     private data class ActionSpec(val sound: UiSound, val rate: Float = 1f, val volumeScale: Float = 1f)
-    private fun actionSpec(action: UiActionSound): ActionSpec = when (action) {
-            UiActionSound.Open -> ActionSpec(UiSound.Edit, 1.05f, 0.88f)
-            UiActionSound.Back -> ActionSpec(UiSound.Toggle, 0.82f, 0.82f)
-            UiActionSound.Save -> ActionSpec(UiSound.Edit, 1.18f, 1.00f)
-            UiActionSound.Search -> ActionSpec(UiSound.SliderTick, 1.25f, 0.55f)
-            UiActionSound.TextInput -> ActionSpec(UiSound.SliderTick, 1.36f, 0.42f)
-            UiActionSound.Menu -> ActionSpec(UiSound.Toggle, 1.02f, 0.70f)
-            UiActionSound.Select -> ActionSpec(UiSound.Toggle, 1.10f, 0.78f)
-            UiActionSound.Favorite -> ActionSpec(UiSound.Priority, 1.28f, 0.92f)
-            UiActionSound.Pin -> ActionSpec(UiSound.Toggle, 0.94f, 0.92f)
-            UiActionSound.Share -> ActionSpec(UiSound.Edit, 1.32f, 0.88f)
-            UiActionSound.Move -> ActionSpec(UiSound.Toggle, 0.92f, 0.82f)
-            UiActionSound.Color -> ActionSpec(UiSound.Priority, 1.10f, 0.82f)
-            UiActionSound.Category -> ActionSpec(UiSound.Toggle, 1.16f, 0.82f)
-            UiActionSound.Add -> ActionSpec(UiSound.Attachment, 1.16f, 0.92f)
-            UiActionSound.Confirm -> ActionSpec(UiSound.Edit, 1.22f, 0.95f)
-            UiActionSound.Cancel -> ActionSpec(UiSound.Toggle, 0.80f, 0.78f)
-            UiActionSound.Navigation -> ActionSpec(UiSound.Toggle, 1.05f, 0.72f)
-            UiActionSound.Sort -> ActionSpec(UiSound.SliderTick, 1.10f, 0.68f)
-            UiActionSound.Layout -> ActionSpec(UiSound.SliderTick, 0.95f, 0.72f)
-            UiActionSound.Language -> ActionSpec(UiSound.Edit, 0.94f, 0.78f)
-            UiActionSound.Theme -> ActionSpec(UiSound.Priority, 0.98f, 0.84f)
-            UiActionSound.Link -> ActionSpec(UiSound.Edit, 1.12f, 0.84f)
-            UiActionSound.PlayPause -> ActionSpec(UiSound.Toggle, 1.20f, 0.78f)
-            UiActionSound.Zoom -> ActionSpec(UiSound.SliderTick, 1.08f, 0.58f)
-            UiActionSound.Backup -> ActionSpec(UiSound.Attachment, 0.90f, 0.88f)
-            UiActionSound.Restore -> ActionSpec(UiSound.Attachment, 1.05f, 0.88f)
-            UiActionSound.Settings -> ActionSpec(UiSound.Edit, 0.90f, 0.76f)
+    private data class AccentSpec(val sound: UiSound, val rate: Float, val volumeScale: Float)
+
+    private val accentSpecs = EnumMap<UiActionSound, AccentSpec>(UiActionSound::class.java).apply {
+        put(UiActionSound.Save, AccentSpec(UiSound.Priority, 1.34f, 0.28f))
+        put(UiActionSound.Confirm, AccentSpec(UiSound.Priority, 1.46f, 0.24f))
+        put(UiActionSound.Favorite, AccentSpec(UiSound.SliderTick, 1.58f, 0.25f))
+        put(UiActionSound.Add, AccentSpec(UiSound.Edit, 1.24f, 0.22f))
+        put(UiActionSound.Open, AccentSpec(UiSound.SliderTick, 1.30f, 0.16f))
+        put(UiActionSound.Navigation, AccentSpec(UiSound.SliderTick, 1.16f, 0.13f))
+        put(UiActionSound.Theme, AccentSpec(UiSound.Priority, 1.16f, 0.20f))
+    }
+
+    /*
+     * Las especificaciones de acciones son constantes. Antes se construía un
+     * ActionSpec nuevo en cada toque; al mantenerlos en un EnumMap eliminamos
+     * esas asignaciones del camino caliente de botones, búsqueda y navegación.
+     */
+    private val actionSpecs = EnumMap<UiActionSound, ActionSpec>(UiActionSound::class.java).apply {
+        put(UiActionSound.Open, ActionSpec(UiSound.Edit, 1.05f, 0.88f))
+        put(UiActionSound.Back, ActionSpec(UiSound.Toggle, 0.82f, 0.82f))
+        put(UiActionSound.Save, ActionSpec(UiSound.Edit, 1.18f, 1.00f))
+        put(UiActionSound.Search, ActionSpec(UiSound.SliderTick, 1.25f, 0.55f))
+        put(UiActionSound.TextInput, ActionSpec(UiSound.SliderTick, 1.36f, 0.42f))
+        put(UiActionSound.Menu, ActionSpec(UiSound.Toggle, 1.02f, 0.70f))
+        put(UiActionSound.Select, ActionSpec(UiSound.Toggle, 1.10f, 0.78f))
+        put(UiActionSound.Favorite, ActionSpec(UiSound.Priority, 1.28f, 0.92f))
+        put(UiActionSound.Pin, ActionSpec(UiSound.Toggle, 0.94f, 0.92f))
+        put(UiActionSound.Share, ActionSpec(UiSound.Edit, 1.32f, 0.88f))
+        put(UiActionSound.Move, ActionSpec(UiSound.Toggle, 0.92f, 0.82f))
+        put(UiActionSound.Color, ActionSpec(UiSound.Priority, 1.10f, 0.82f))
+        put(UiActionSound.Category, ActionSpec(UiSound.Toggle, 1.16f, 0.82f))
+        put(UiActionSound.Add, ActionSpec(UiSound.Attachment, 1.16f, 0.92f))
+        put(UiActionSound.Confirm, ActionSpec(UiSound.Edit, 1.22f, 0.95f))
+        put(UiActionSound.Cancel, ActionSpec(UiSound.Toggle, 0.80f, 0.78f))
+        put(UiActionSound.Navigation, ActionSpec(UiSound.Toggle, 1.05f, 0.72f))
+        put(UiActionSound.Sort, ActionSpec(UiSound.SliderTick, 1.10f, 0.68f))
+        put(UiActionSound.Layout, ActionSpec(UiSound.SliderTick, 0.95f, 0.72f))
+        put(UiActionSound.Language, ActionSpec(UiSound.Edit, 0.94f, 0.78f))
+        put(UiActionSound.Theme, ActionSpec(UiSound.Priority, 0.98f, 0.84f))
+        put(UiActionSound.Link, ActionSpec(UiSound.Edit, 1.12f, 0.84f))
+        put(UiActionSound.PlayPause, ActionSpec(UiSound.Toggle, 1.20f, 0.78f))
+        put(UiActionSound.Zoom, ActionSpec(UiSound.SliderTick, 1.08f, 0.58f))
+        put(UiActionSound.Backup, ActionSpec(UiSound.Attachment, 0.90f, 0.88f))
+        put(UiActionSound.Restore, ActionSpec(UiSound.Attachment, 1.05f, 0.88f))
+        put(UiActionSound.Settings, ActionSpec(UiSound.Edit, 0.90f, 0.76f))
+    }
+
+    private fun actionSpec(action: UiActionSound): ActionSpec = actionSpecs[action] ?: actionSpecs.getValue(UiActionSound.Select)
+
+    private fun acquireThrottleSlot(sound: UiSound, minimumIntervalMs: Long): Boolean {
+        val now = SystemClock.uptimeMillis()
+        return synchronized(lastPlayAt) {
+            val previous = lastPlayAt[sound] ?: 0L
+            if (now - previous < minimumIntervalMs) {
+                false
+            } else {
+                lastPlayAt[sound] = now
+                true
+            }
         }
+    }
     private fun playThrottledInternal(context: Context, sound: UiSound, minimumIntervalMs: Long, rate: Float, volumeScale: Float) {
         if (!enabled || volume <= 0f) {
             return
         }
-        val now = SystemClock.uptimeMillis()
-        val previous = synchronized(lastPlayAt) { lastPlayAt[sound] ?: 0L }
-        if (now - previous < minimumIntervalMs) return
-        synchronized(lastPlayAt) { lastPlayAt[sound] = now }
+        if (!acquireThrottleSlot(sound = sound, minimumIntervalMs = minimumIntervalMs)) return
         playInternal(context = context, sound = sound, theme = theme, volume = (volume * volumeScale).coerceIn(0f, 1f), rate = rate)
     }
     private fun playInternal(context: Context, sound: UiSound, theme: String, volume: Float, rate: Float = 1f) {
@@ -173,6 +277,15 @@ object UiSoundPlayer {
         val soundId = soundIds[normalizeTheme(theme)]?.get(sound)?: soundIds[DEFAULT_THEME]?.get(sound)?: return
         soundPool.play(soundId, volume, volume, 1, 0, rate.coerceIn(0.5f, 2f))
     }
+    private fun playAccentLayer(context: Context, action: UiActionSound) {
+        if (theme !in layeredThemes || !enabled || volume <= 0f) return
+        val accent = accentSpecs[action] ?: return
+        val soundPool = ensureInitialized(context)
+        val soundId = soundIds[theme]?.get(accent.sound) ?: return
+        val accentVolume = (volume * accent.volumeScale).coerceIn(0f, 0.42f)
+        soundPool.play(soundId, accentVolume, accentVolume, 0, 0, accent.rate.coerceIn(0.5f, 2f))
+    }
+
     private fun ensureInitialized(context: Context): SoundPool {
         pool?.let {
             return it
@@ -253,6 +366,24 @@ object UiSoundPlayer {
             loadTheme(pool = newPool, context = appContext, theme = "neon", edit = R.raw.ui_neon_edit, delete = R.raw.ui_neon_delete,
                 priority = R.raw.ui_neon_priority, sliderTick = R.raw.ui_neon_slider_tick, attachment = R.raw.ui_neon_attachment,
                 toggle = R.raw.ui_neon_toggle)
+            loadTheme(pool = newPool, context = appContext, theme = "material", edit = R.raw.ui_material_edit, delete = R.raw.ui_material_delete,
+                priority = R.raw.ui_material_priority, sliderTick = R.raw.ui_material_slider_tick, attachment = R.raw.ui_material_attachment,
+                toggle = R.raw.ui_material_toggle)
+            loadTheme(pool = newPool, context = appContext, theme = "expressive", edit = R.raw.ui_expressive_edit,
+                delete = R.raw.ui_expressive_delete, priority = R.raw.ui_expressive_priority, sliderTick = R.raw.ui_expressive_slider_tick,
+                attachment = R.raw.ui_expressive_attachment, toggle = R.raw.ui_expressive_toggle)
+            loadTheme(pool = newPool, context = appContext, theme = "prism", edit = R.raw.ui_prism_edit, delete = R.raw.ui_prism_delete,
+                priority = R.raw.ui_prism_priority, sliderTick = R.raw.ui_prism_slider_tick, attachment = R.raw.ui_prism_attachment,
+                toggle = R.raw.ui_prism_toggle)
+            loadTheme(pool = newPool, context = appContext, theme = "aurora", edit = R.raw.ui_aurora_edit, delete = R.raw.ui_aurora_delete,
+                priority = R.raw.ui_aurora_priority, sliderTick = R.raw.ui_aurora_slider_tick, attachment = R.raw.ui_aurora_attachment,
+                toggle = R.raw.ui_aurora_toggle)
+            loadTheme(pool = newPool, context = appContext, theme = "fluid", edit = R.raw.ui_fluid_edit, delete = R.raw.ui_fluid_delete,
+                priority = R.raw.ui_fluid_priority, sliderTick = R.raw.ui_fluid_slider_tick, attachment = R.raw.ui_fluid_attachment,
+                toggle = R.raw.ui_fluid_toggle)
+            loadTheme(pool = newPool, context = appContext, theme = "pulse", edit = R.raw.ui_pulse_edit, delete = R.raw.ui_pulse_delete,
+                priority = R.raw.ui_pulse_priority, sliderTick = R.raw.ui_pulse_slider_tick, attachment = R.raw.ui_pulse_attachment,
+                toggle = R.raw.ui_pulse_toggle)
             pool = newPool
             return newPool
         }

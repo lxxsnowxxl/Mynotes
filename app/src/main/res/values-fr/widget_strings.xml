@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="widget_quick_capture">Note rapide</string>
+    <string name="widget_quick_capture_hint">Créez une note rapidement.</string>
+    <string name="widget_search">Rechercher des notes</string>
+    <string name="widget_favorites">Favoris</string>
+    <string name="widget_empty_favorites">Vous n’avez encore aucune note favorite</string>
+    <string name="widget_toggle_favorite">Ajouter ou retirer des favoris</string>
+    <string name="widget_focus_note">Note en vedette</string>
+    <string name="widget_focus_note_hint">Les notes épinglées et prioritaires passent en premier</string>
+    <string name="widget_open_note">Ouvrir la note</string>
+    <string name="widget_toggle_pin">Changer l’épinglage</string>
+    <string name="widget_collections">Collections</string>
+    <string name="widget_collections_hint">Accédez directement à ce qu’il vous faut</string>
+    <string name="widget_note_collage">Collage</string>
+    <string name="widget_note_collage_hint">Vos notes en miniature</string>
+    <string name="widget_pinned_collection">Épinglées</string>
+    <string name="widget_category_work">Travail</string>
+    <string name="widget_category_personal">Personnel</string>
+    <string name="widget_images">Images</string>
+    <string name="widget_files">Fichiers</string>
+    <string name="widget_stats">Aperçu</string>
+    <string name="widget_stats_hint">Vos notes en un coup d’œil</string>
+    <string name="widget_high_priority">Priorité haute</string>
+    <string name="widget_all_notes">Toutes</string>
+    <string name="widget_badge_pinned">PIN</string>
+    <string name="widget_badge_work">T</string>
+    <string name="widget_badge_personal">P</string>
+    <string name="widget_meta_pinned">Épinglée</string>
+    <string name="widget_meta_favorite">Favorite</string>
+    <plurals name="widget_note_count"><item quantity="one">%d note</item><item quantity="other">%d notes</item></plurals>
+    <plurals name="widget_favorite_count"><item quantity="one">%d favorite</item><item quantity="other">%d favorites</item></plurals>
+</resources>

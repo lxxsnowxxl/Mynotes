@@ -42,11 +42,13 @@ private fun resolvedTextColor(textColor: String, background: Color): Color = res
  * tonos 1-2 -> negro, tonos 3-4 -> blanco.
  * Negro/Blanco manuales siguen teniendo prioridad absoluta.
  */
-private fun resolvedPaletteTextColor(textColor: String, toneIndex: Int, background: Color): Color = when (textColor) {
-        "black" -> Color.Black
-        "white" -> Color.White
-        else -> if (toneIndex.coerceIn(0, 3) <= 1) Color.Black else Color.White
+private fun resolvedPaletteTextColor(textColor: String, toneIndex: Int, background: Color): Color {
+    if (textColor == "black" || textColor == "white") {
+        return resolveUiTextColor(value = textColor, background = background)
     }
+    val preferred = if (toneIndex.coerceIn(0, 3) <= 1) Color.Black else Color.White
+    return if (uiContrastRatio(preferred, background) >= 4.5f) preferred else automaticUiTextColor(background)
+}
 private fun resolvedPaletteSecondaryTextColor(textColor: String, toneIndex: Int, background: Color): Color {
     val primary = resolvedPaletteTextColor(textColor, toneIndex, background)
     return if (textColor == "black" || textColor == "white") {

@@ -13,6 +13,7 @@
     <string name="monospace">等宽字体</string>
     <string name="text_size">文字大小：%1$d</string>
     <string name="language">语言</string>
+    <string name="language_system">设备语言</string>
     <string name="notes_view">笔记视图</string>
     <string name="one_column">1 列</string>
     <string name="two_columns">2 列</string>
@@ -119,7 +120,7 @@
     <string name="mock_auto">自动</string>
 
     <string name="sound_effects">音效</string>
-    <string name="sound_effects_description">为应用中的所有操作提供音效。可从二十种风格中选择并在此试听。</string>
+    <string name="sound_effects_description">为应用操作提供音效。选择现代音效包并在这里试听。</string>
     <string name="sound_effects_enabled">启用音效</string>
     <string name="sound_effects_volume">音效音量</string>
     <string name="sound_effects_theme">音效风格</string>
@@ -143,6 +144,12 @@
     <string name="sound_theme_space">太空</string>
     <string name="sound_theme_chime">铃音</string>
     <string name="sound_theme_paper">纸张</string>
+    <string name="sound_theme_material">Material</string>
+    <string name="sound_theme_expressive">灵动</string>
+    <string name="sound_theme_prism">棱镜</string>
+    <string name="sound_theme_aurora">极光</string>
+    <string name="sound_theme_fluid">流体</string>
+    <string name="sound_theme_pulse">脉冲</string>
     <string name="sound_theme_neon">霓虹</string>
 
     <string name="haptic_effects">振动效果</string>
@@ -167,4 +174,23 @@
     <string name="haptic_style_heavy">强劲</string>
     <string name="haptic_style_spring">弹簧</string>
     <string name="haptic_style_echo">回声</string>
+
+    <string name="configuration_mode_welcome_title">你希望如何配置 MyNotes？</string>
+    <string name="configuration_mode_welcome_description">选择你希望在设置中看到的选项数量。这不会更改你的笔记，也不会创建不同版本的应用。</string>
+    <string name="configuration_mode_basic">基础版</string>
+    <string name="configuration_mode_basic_description">仅显示必要选项：配色、头像、字体大小、语言、更新，以及之后加入的基础选项。</string>
+    <string name="configuration_mode_advanced">高级版</string>
+    <string name="configuration_mode_advanced_description">保留当前所有自定义分类和高级控制项。</string>
+    <string name="configuration_mode_change_later">之后可以随时在设置中切换基础版和高级版。</string>
+    <string name="configuration_mode_settings_title">配置模式</string>
+    <string name="configuration_mode_settings_description">选择精简设置或显示全部高级控制项。</string>
+    <string name="configuration_mode_confirm">确定</string>
+
+    <string name="widget_new_note">新建笔记</string>
+    <string name="widget_recent_notes">最近笔记</string>
+    <string name="widget_empty_notes">你还没有任何笔记</string>
+    <string name="widget_untitled_note">无标题笔记</string>
+    <string name="widget_pinned_note">置顶笔记</string>
+    <string name="widget_favorite_note">收藏笔记</string>
+    <string name="widget_tap_to_open">点按即可打开</string>
 </resources>

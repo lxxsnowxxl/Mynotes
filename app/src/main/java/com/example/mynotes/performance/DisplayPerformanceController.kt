@@ -31,6 +31,16 @@ object DisplayPerformanceController {
     private val lastRequestedMode = WeakHashMap<Window, String>()
     fun requestForPerformanceMode(window: Window, performanceMode: String) {
         val normalizedMode = normalizePerformanceMode(performanceMode)
+        /*
+         * DataStore/Compose puede volver a entregar el mismo perfil durante
+         * recreaciones internas. Si esta misma Window ya tiene exactamente la
+         * misma solicitud no reescribimos LayoutParams ni recorremos de nuevo
+         * todos los modos de pantalla soportados.
+         *
+         * reapplyLastRequest() sigue forzando la reaplicación al volver a
+         * primer plano, por lo que no perdemos la recuperación frente a OEMs.
+         */
+        if (lastRequestedMode[window] == normalizedMode) return
         lastRequestedMode[window] = normalizedMode
         requestRefreshRate(window = window, targetRefreshRate = refreshRateFor(normalizedMode))
     }

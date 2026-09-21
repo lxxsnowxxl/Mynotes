@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--
+        Android 12+ always shows the platform splash screen before the first
+        Activity frame.  Defining these attributes explicitly prevents the
+        system/OEM from rebuilding the splash from the adaptive launcher icon
+        with vendor-specific insets.
+
+        The platform owns the final placement and centers windowSplashScreen-
+        AnimatedIcon in the splash viewport.  We feed it the same full-resolution drawable-nodpi artwork
+        used by the legacy starting window so the visual result is consistent
+        across phones, aspect ratios, navigation modes and display densities.
+    -->
+    <style
+        name="Theme.MyNotes.Starting"
+        parent="@style/Theme.MyNotes">
+
+        <item name="android:windowSplashScreenBackground">@android:color/white</item>
+        <item name="android:windowSplashScreenAnimatedIcon">@drawable/splash_icon_hires</item>
+        <item name="android:windowSplashScreenIconBackgroundColor">@android:color/transparent</item>
+        <item name="android:windowSplashScreenAnimationDuration">0</item>
+
+        <!-- Safe starting-window fallback; also keeps transition colors equal. -->
+        <item name="android:windowBackground">@drawable/splash_window_background</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:statusBarColor">@android:color/white</item>
+        <item name="android:navigationBarColor">@android:color/white</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
+    </style>
+
+</resources>

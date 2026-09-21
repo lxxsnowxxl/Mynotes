@@ -109,4 +109,24 @@
     <string name="development_source_note_section">Nota sobre el código instalado</string>
     <string name="development_source_note_body">Los archivos .kt originales no se almacenan como texto legible dentro del APK instalado: Android compila el código a bytecode/Dex. Esta pantalla funciona como mapa de las rutas del proyecto original y no mantiene una segunda copia del código, evitando duplicación y desincronización.</string>
 
+
+    <string name="update_settings_title">Actualizaciones</string>
+    <string name="update_settings_description">Busca nuevas versiones en GitHub Releases y permite descargar e instalar el APK publicado.</string>
+    <string name="update_current_version">Versión instalada: %1$s</string>
+    <string name="update_check">Buscar actualizaciones</string>
+    <string name="update_checking">Comprobando…</string>
+    <string name="update_available">Nueva versión disponible: %1$s</string>
+    <string name="update_up_to_date">MyNotes está actualizado. Última versión: %1$s</string>
+    <string name="update_no_release">El repositorio todavía no tiene una versión publicada en GitHub Releases.</string>
+    <string name="update_error">No se pudo comprobar la actualización: %1$s</string>
+    <string name="update_download_install">Descargar e instalar</string>
+    <string name="update_downloading">Descargando actualización…</string>
+    <string name="update_open_release">Ver versión en GitHub</string>
+    <string name="update_release_without_apk">La versión existe, pero no contiene un archivo APK adjunto.</string>
+    <string name="update_permission_required">Para instalar APK descargados desde GitHub, permite a MyNotes instalar apps desconocidas y vuelve a intentarlo.</string>
+    <string name="update_install_error">El APK se descargó, pero Android no pudo abrir el instalador.</string>
+    <string name="update_download_error">No se pudo descargar la actualización: %1$s</string>
+
+    <string name="development_source_update_manager">Gestiona la comprobación de GitHub Releases, comparación de versiones, descarga segura del APK y apertura del instalador de Android.</string>
+
 </resources>

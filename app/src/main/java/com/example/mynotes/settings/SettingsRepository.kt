@@ -15,6 +15,7 @@ private val Context.dataStore by
     preferencesDataStore(name = "app_settings")
 class SettingsRepository(private val context: Context) {
     companion object {
+        private val CONFIGURATION_MODE = stringPreferencesKey("configuration_mode")
         private val DARK_MODE = booleanPreferencesKey("dark_mode")
         private val BACKGROUND_COLOR = stringPreferencesKey("background_color")
         private val BACKGROUND_TONE_INDEX = intPreferencesKey("background_tone_index")
@@ -46,6 +47,8 @@ class SettingsRepository(private val context: Context) {
         private val NOTE_CARD_ELEVATION = floatPreferencesKey("note_card_elevation")
         private val NOTE_CARD_PADDING = floatPreferencesKey("note_card_padding")
         private val NOTE_CARD_IMAGE_HEIGHT = floatPreferencesKey("note_card_image_height")
+        private val NOTE_CARD_OUTLINE_ENABLED = booleanPreferencesKey("note_card_outline_enabled")
+        private val NOTE_CARD_OUTLINE_WIDTH = floatPreferencesKey("note_card_outline_width")
         private val NOTE_TITLE_MAX_LINES = intPreferencesKey("note_title_max_lines")
         private val NOTE_CONTENT_MAX_LINES = intPreferencesKey("note_content_max_lines")
         private val NOTE_LINE_SPACING = floatPreferencesKey("note_line_spacing")
@@ -90,7 +93,8 @@ class SettingsRepository(private val context: Context) {
                     } else {
                         rawTone.coerceIn(0, 3)
                     }
-                AppSettings(darkMode = preferences[DARK_MODE]?: false,
+                AppSettings(configurationMode = normalizeConfigurationMode(preferences[CONFIGURATION_MODE] ?: "unset"),
+                    darkMode = preferences[DARK_MODE]?: false,
                     backgroundColor = normalizePaletteKey(rawPalette),
                     backgroundToneIndex = normalizedTone,
                     backgroundIntensity = (preferences[BACKGROUND_INTENSITY]?: 0f).coerceIn(0f, 100f),
@@ -100,8 +104,8 @@ class SettingsRepository(private val context: Context) {
                     textColor = normalizeUiTextColor(preferences[TEXT_COLOR]?: "auto"),
                     textOutlineEnabled = preferences[TEXT_OUTLINE_ENABLED]?: false,
                     noteUiTextColor = normalizeUiTextColor(preferences[NOTE_UI_TEXT_COLOR]?: "auto"),
-                    sliderStyle = normalizeSliderStyle(preferences[SLIDER_STYLE]?: "minimal"),
-                    font = preferences[FONT]?: "default",
+                    sliderStyle = normalizeSliderStyle(preferences[SLIDER_STYLE]?: "capsule"),
+                    font = preferences[FONT]?: "google_sans_bold",
                     fontSize = (preferences[FONT_SIZE]?: 16f).coerceIn(12f, 28f),
                     soundEffectsEnabled = preferences[SOUND_EFFECTS_ENABLED]?: true,
                     soundEffectsVolume = (preferences[SOUND_EFFECTS_VOLUME]?: 65f).coerceIn(0f, 100f),
@@ -109,7 +113,7 @@ class SettingsRepository(private val context: Context) {
                     hapticEffectsEnabled = preferences[HAPTIC_EFFECTS_ENABLED]?: true,
                     hapticEffectsIntensity = (preferences[HAPTIC_EFFECTS_INTENSITY]?: 55f).coerceIn(0f, 100f),
                     hapticEffectsStyle = normalizeHapticEffectsStyle(preferences[HAPTIC_EFFECTS_STYLE]?: "soft"),
-                    language = preferences[LANGUAGE]?: "es",
+                    language = preferences[LANGUAGE]?: "system",
                     gridColumns = (preferences[GRID_COLUMNS]?: 2).coerceIn(1, 3),
                     sortOrder = preferences[SORT_ORDER]?: "newest",
                     profileImageUri = preferences[PROFILE_IMAGE_URI]?: "",
@@ -121,6 +125,15 @@ class SettingsRepository(private val context: Context) {
                     noteCardElevation = (preferences[NOTE_CARD_ELEVATION]?: 1.5f).coerceIn(0f, 12f),
                     noteCardPadding = (preferences[NOTE_CARD_PADDING]?: 12f).coerceIn(6f, 24f),
                     noteCardImageHeight = (preferences[NOTE_CARD_IMAGE_HEIGHT]?: 112f).coerceIn(72f, 220f),
+                    noteCardOutlineEnabled = (preferences[NOTE_CARD_OUTLINE_ENABLED]?: false) &&
+                        (preferences[NOTE_CARD_OUTLINE_WIDTH]?: 1f) > 0f,
+                    noteCardOutlineWidth = if (preferences[NOTE_CARD_OUTLINE_ENABLED] == false) {
+                            0f
+                        } else if (preferences[NOTE_CARD_OUTLINE_ENABLED] == true) {
+                            (preferences[NOTE_CARD_OUTLINE_WIDTH]?: 1f).coerceIn(0f, 6f)
+                        } else {
+                            0f
+                        },
                     noteTitleMaxLines = (preferences[NOTE_TITLE_MAX_LINES]?: 4).coerceIn(1, 8),
                     noteContentMaxLines = (preferences[NOTE_CONTENT_MAX_LINES]?: 6).coerceIn(2, 14),
                     noteLineSpacing = (preferences[NOTE_LINE_SPACING]?: 1.20f).coerceIn(1f, 1.8f),
@@ -145,6 +158,11 @@ class SettingsRepository(private val context: Context) {
                     animationSpeed = (preferences[ANIMATION_SPEED]?: 1f).coerceIn(0.5f, 2f),
                     animationIntensity = (preferences[ANIMATION_INTENSITY]?: 1f).coerceIn(0.5f, 1.5f))
             }.distinctUntilChanged()
+    suspend fun setConfigurationMode(value: String) {
+        context.dataStore.edit {
+            it[CONFIGURATION_MODE] = normalizeConfigurationMode(value)
+        }
+    }
     suspend fun setDarkMode(value: Boolean) {
         context.dataStore.edit {
                 it[DARK_MODE] = value
@@ -307,6 +325,20 @@ class SettingsRepository(private val context: Context) {
             it[NOTE_CARD_IMAGE_HEIGHT] = value.coerceIn(72f, 220f)
         }
     }
+    suspend fun setNoteCardOutlineEnabled(value: Boolean) {
+        context.dataStore.edit {
+            it[NOTE_CARD_OUTLINE_ENABLED] = value
+        }
+    }
+    suspend fun setNoteCardOutlineWidth(value: Float) {
+        val normalized = value.coerceIn(0f, 6f)
+        context.dataStore.edit {
+            it[NOTE_CARD_OUTLINE_WIDTH] = normalized
+            // v38 removes the visible switch. Zero thickness is now the
+            // disabled state, while any positive width enables the outline.
+            it[NOTE_CARD_OUTLINE_ENABLED] = normalized > 0.01f
+        }
+    }
     suspend fun setNoteTitleMaxLines(value: Int) {
         context.dataStore.edit {
             it[NOTE_TITLE_MAX_LINES] = value.coerceIn(1, 8)
@@ -424,7 +456,8 @@ class SettingsRepository(private val context: Context) {
      * usados por los setters normales se aplican aquí.
      */
     suspend fun restoreFromBackup(value: AppSettings) {
-        context.dataStore.edit { preferences -> preferences[DARK_MODE] = value.darkMode
+        context.dataStore.edit { preferences -> preferences[CONFIGURATION_MODE] = normalizeConfigurationMode(value.configurationMode)
+            preferences[DARK_MODE] = value.darkMode
             preferences[BACKGROUND_COLOR] = normalizePaletteKey(value.backgroundColor)
             preferences[BACKGROUND_TONE_INDEX] = value.backgroundToneIndex.coerceIn(0, 3)
             preferences[BACKGROUND_INTENSITY] = value.backgroundIntensity.coerceIn(0f, 100f)
@@ -455,6 +488,9 @@ class SettingsRepository(private val context: Context) {
             preferences[NOTE_CARD_ELEVATION] = value.noteCardElevation.coerceIn(0f, 12f)
             preferences[NOTE_CARD_PADDING] = value.noteCardPadding.coerceIn(6f, 24f)
             preferences[NOTE_CARD_IMAGE_HEIGHT] = value.noteCardImageHeight.coerceIn(72f, 220f)
+            val outlineWidth = value.noteCardOutlineWidth.coerceIn(0f, 6f)
+            preferences[NOTE_CARD_OUTLINE_ENABLED] = outlineWidth > 0.01f
+            preferences[NOTE_CARD_OUTLINE_WIDTH] = outlineWidth
             preferences[NOTE_TITLE_MAX_LINES] = value.noteTitleMaxLines.coerceIn(1, 8)
             preferences[NOTE_CONTENT_MAX_LINES] = value.noteContentMaxLines.coerceIn(2, 14)
             preferences[NOTE_LINE_SPACING] = value.noteLineSpacing.coerceIn(1f, 1.8f)
@@ -503,6 +539,10 @@ class SettingsRepository(private val context: Context) {
             "note", "black", "white" -> value
             else -> "note"
         }
+    private fun normalizeConfigurationMode(value: String): String = when (value) {
+            "basic", "advanced", "unset" -> value
+            else -> "unset"
+        }
     private fun normalizePerformanceMode(value: String): String = when (value) {
             "performance", "balanced", "quality" -> value
             else -> "balanced"
@@ -511,13 +551,13 @@ class SettingsRepository(private val context: Context) {
         return when (value) {
             "zoom", "zoom_fade", "fade", "slide_left", "slide_right", "slide_up", "slide_down", "slide_zoom_left", "slide_zoom_up",
             "axis_x", "axis_y", "axis_z", "expand", "expand_horizontal", "expand_vertical", "bounce", "elastic", "pop", "subtle",
-            "random" -> value
+            "expressive_spring", "container_transform", "soft_reveal", "elastic_slide", "predictive", "tonal_pop", "random" -> value
             else -> "zoom"
         }
     }
     private fun normalizeAnimationEasing(value: String): String {
         return when (value) {
-            "standard", "linear", "accelerate", "decelerate", "emphasized" -> value
+            "standard", "linear", "accelerate", "decelerate", "emphasized", "expressive", "emphasized_accel", "emphasized_decel" -> value
             else -> "standard"
         }
     }
@@ -576,23 +616,25 @@ class SettingsRepository(private val context: Context) {
         }
     }
     private fun normalizeSoundEffectsTheme(value: String): String {
-        return when (value.trim().lowercase()) {
+        val normalized = value.trim().lowercase()
+        return when (normalized) {
             "soft", "digital", "glass", "retro", "pop", "mechanical", "bubble", "arcade", "wood", "synth", "minimal", "camera",
-            "typewriter", "metal", "pixel", "space", "chime", "paper", "neon" -> value.trim().lowercase()
+            "typewriter", "metal", "pixel", "space", "chime", "paper", "neon", "material", "expressive", "prism", "aurora", "fluid", "pulse" -> normalized
             else -> "classic"
         }
     }
     private fun normalizeHapticEffectsStyle(value: String): String {
-        return when (value.trim().lowercase()) {
+        val normalized = value.trim().lowercase()
+        return when (normalized) {
             "crisp", "deep", "double", "pulse", "stepped", "mechanical", "minimal", "triple", "ripple", "heartbeat", "snap", "wave",
-            "heavy", "spring", "echo" -> value.trim().lowercase()
+            "heavy", "spring", "echo" -> normalized
             else -> "soft"
         }
     }
     private fun normalizeSliderStyle(value: String): String {
         return when (value) {
             "minimal", "capsule", "glow", "glass", "segmented", "dots", "gradient", "neumorphic", "line_pill", "floating" -> value
-            else -> "minimal"
+            else -> "capsule"
         }
     }
 }

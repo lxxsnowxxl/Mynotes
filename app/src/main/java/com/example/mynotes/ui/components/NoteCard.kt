@@ -10,6 +10,7 @@ import androidx.compose.animation.scaleOut
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -82,12 +83,14 @@ import com.example.mynotes.ui.components.AppDropdownMenu
 import com.example.mynotes.data.Attachment
 import com.example.mynotes.data.Note
 import com.example.mynotes.performance.AttachmentPreviewCache
+import com.example.mynotes.ui.theme.automaticUiTextColor
 import com.example.mynotes.ui.theme.resolveUiTextColor
 import com.example.mynotes.ui.theme.resolveSecondaryUiTextColor
 import com.example.mynotes.ui.theme.resolveUiGraphicColor
 import com.example.mynotes.ui.theme.compositeUiColor
 import com.example.mynotes.ui.theme.ensureUiContrast
 import com.example.mynotes.ui.theme.noteBackgroundColor
+import com.example.mynotes.ui.theme.paletteMatchedOutlineColor
 import com.example.mynotes.ui.motion.AppMotion
 import com.example.mynotes.ui.sound.UiActionSound
 import com.example.mynotes.ui.sound.UiSoundPlayer
@@ -169,6 +172,12 @@ fun ModernNoteCard(note: Note, attachments: List<Attachment>, fontFamily: FontFa
     val popupAlpha = (optionMenuOpacity / 100f).coerceIn(0.35f, 1f)
     val popupColor = popupBaseColor.copy(alpha = popupAlpha)
     val popupVisualBackground = compositeUiColor(foreground = popupColor, background = cardColor)
+    /*
+     * The outline now stays tied to the palette of the note itself.
+     * Light cards get a deeper version of the same hue; dark cards get a
+     * lighter version. Only extreme cases fall back to black/white.
+     */
+    val noteOutlineColor = paletteMatchedOutlineColor(animatedCardColor)
     val menuTextColor = resolveUiTextColor(value = optionMenuTextColor, background = popupVisualBackground)
     val mainMenuOrder = remember(optionMenuOrder) {
             normalizedMenuOrder(optionMenuOrder, MainOptionMenuKeys)
@@ -214,11 +223,25 @@ fun ModernNoteCard(note: Note, attachments: List<Attachment>, fontFamily: FontFa
                     onClick = onOpen),
         shape = RoundedCornerShape(style.cornerRadius.dp),
         colors = CardDefaults.cardColors(containerColor = animatedCardColor),
+        border = if (style.outlineEnabled) BorderStroke(style.outlineWidth.dp, noteOutlineColor) else null,
         elevation = CardDefaults.cardElevation(defaultElevation = style.elevation.dp)) {
         val cardContentModifier = if (isScrolling) {
             Modifier
         } else {
             Modifier.animateContentSize(animationSpec = tween(durationMillis = motionDuration))
+        }
+        /*
+         * Un borde grueso se dibuja hacia el interior de Card. Sin compensación,
+         * el contenido de la nota puede quedar visualmente pegado al contorno,
+         * sobre todo en el lateral derecho y en la fila inferior.
+         *
+         * El inset solo afecta al contenido textual/controles de la tarjeta.
+         * La composición de adjuntos y miniaturas permanece intacta.
+         */
+        val outlineContentInset = if (style.outlineEnabled) {
+            (style.outlineWidth * 0.90f).coerceIn(0f, 5.4f)
+        } else {
+            0f
         }
         Column(modifier = cardContentModifier) {
             if (previewAttachments.isNotEmpty()) {
@@ -241,8 +264,12 @@ fun ModernNoteCard(note: Note, attachments: List<Attachment>, fontFamily: FontFa
                     deferHeavyLoads = isScrolling && performanceMode != "quality",
                     isScrolling = isScrolling)
             }
-            Column(modifier = Modifier.fillMaxWidth().padding(start = style.padding.dp, end = (style.padding * 0.55f).dp,
-                            top = (style.padding * 0.75f).dp, bottom = (style.padding * 0.90f).dp)) {
+            Column(modifier = Modifier.fillMaxWidth().padding(
+                    start = (style.padding + outlineContentInset).dp,
+                    end = (style.padding + outlineContentInset).dp,
+                    top = (style.padding * 0.75f + outlineContentInset * 0.45f).dp,
+                    bottom = (style.padding * 0.90f + outlineContentInset).dp
+                )) {
                 Row(modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.Top) {
                     Spacer(modifier = Modifier.weight(1f))
@@ -477,33 +504,51 @@ fun ModernNoteCard(note: Note, attachments: List<Attachment>, fontFamily: FontFa
                         }
                     }
                 }
+                /*
+                 * Tipografía de la tarjeta:
+                 * - el título conserva el tamaño configurado, pero recibe un
+                 *   line-height explícito para que las líneas no se amontonen;
+                 * - el contenido usa su propio tamaño como base del line-height.
+                 *   Antes se calculaba con fontSize (más grande), dejando el
+                 *   cuerpo demasiado alto y provocando cortes prematuros en
+                 *   tarjetas estrechas de dos/tres columnas;
+                 * - el texto aprovecha todo el ancho útil del bloque. El margen
+                 *   lateral ya lo proporciona el padding exterior de la tarjeta.
+                 */
+                val cardTitleFontSize = (fontSize + 1f).coerceAtLeast(12f)
+                val cardBodyFontSize = (fontSize - 2f).coerceAtLeast(11f)
+                val cardTitleLineHeight = (cardTitleFontSize * 1.22f).coerceAtLeast(cardTitleFontSize + 2f)
+                val cardBodyLineHeight = (cardBodyFontSize * style.lineSpacing)
+                    .coerceAtLeast(cardBodyFontSize + 1f)
+
                 Text(text = note.title.ifBlank {
                                 stringResource(R.string.mock_untitled)
                             },
-                    modifier = Modifier.fillMaxWidth().padding(top = 2.dp, end = 8.dp),
+                    modifier = Modifier.fillMaxWidth().padding(top = 2.dp),
                     color = textColor,
                     fontFamily = fontFamily,
                     fontWeight = FontWeight.Bold,
-                    fontSize = (fontSize + 1f).sp,
+                    fontSize = cardTitleFontSize.sp,
+                    lineHeight = cardTitleLineHeight.sp,
                     maxLines = style.titleMaxLines,
                     overflow = TextOverflow.Ellipsis)
                 if (displayContent.isNotBlank()) {
                     Text(text = displayContent,
-                        modifier = Modifier.padding(top = 3.dp, end = 8.dp),
+                        modifier = Modifier.fillMaxWidth().padding(top = 5.dp),
                         color = secondaryTextColor,
                         fontFamily = fontFamily,
-                        fontSize = (fontSize - 2f).coerceAtLeast(11f).sp,
-                        lineHeight = (fontSize * style.lineSpacing).sp,
+                        fontSize = cardBodyFontSize.sp,
+                        lineHeight = cardBodyLineHeight.sp,
                         maxLines = style.contentMaxLines,
                         overflow = TextOverflow.Ellipsis)
                 }
                 if (noteLinks.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(10.dp))
                     LinkPreviewCard(url = noteLinks.first(), compact = true, textColorMode = noteUiTextColor,
-                        deferLoad = isScrolling, modifier = Modifier.padding(end = 8.dp))
+                        deferLoad = isScrolling)
                 }
                 Spacer(modifier = Modifier.height(10.dp))
-                Row(modifier = Modifier.fillMaxWidth().padding(end = 8.dp),
+                Row(modifier = Modifier.fillMaxWidth().padding(bottom = (outlineContentInset * 0.20f).dp),
                     verticalAlignment = Alignment.CenterVertically) {
                     if (style.showCategory) {
                         CategoryPill(category = note.category)

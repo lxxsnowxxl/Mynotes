@@ -109,4 +109,24 @@
     <string name="development_source_note_section">Note sur le code installé</string>
     <string name="development_source_note_body">Les fichiers .kt originaux ne sont pas stockés comme texte lisible dans l’APK installé : Android les compile en bytecode/Dex. Cet écran cartographie les chemins du projet original sans conserver une seconde copie du code.</string>
 
+
+    <string name="update_settings_title">Mises à jour</string>
+    <string name="update_settings_description">Recherchez de nouvelles versions dans GitHub Releases et téléchargez puis installez l’APK publié.</string>
+    <string name="update_current_version">Version installée : %1$s</string>
+    <string name="update_check">Rechercher des mises à jour</string>
+    <string name="update_checking">Vérification…</string>
+    <string name="update_available">Nouvelle version disponible : %1$s</string>
+    <string name="update_up_to_date">MyNotes est à jour. Dernière version : %1$s</string>
+    <string name="update_no_release">Le dépôt ne contient pas encore de GitHub Release publiée.</string>
+    <string name="update_error">Impossible de vérifier les mises à jour : %1$s</string>
+    <string name="update_download_install">Télécharger et installer</string>
+    <string name="update_downloading">Téléchargement de la mise à jour…</string>
+    <string name="update_open_release">Voir la version sur GitHub</string>
+    <string name="update_release_without_apk">La version existe, mais aucun fichier APK n’y est joint.</string>
+    <string name="update_permission_required">Pour installer les APK téléchargés depuis GitHub, autorisez MyNotes à installer des applications inconnues puis réessayez.</string>
+    <string name="update_install_error">L’APK a été téléchargé, mais Android n’a pas pu ouvrir le programme d’installation.</string>
+    <string name="update_download_error">Impossible de télécharger la mise à jour : %1$s</string>
+
+    <string name="development_source_update_manager">Gère la vérification des GitHub Releases, la comparaison des versions, le téléchargement sécurisé de l’APK et l’ouverture du programme d’installation Android.</string>
+
 </resources>

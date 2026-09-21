@@ -12,6 +12,7 @@ import com.example.mynotes.data.Note
 import com.example.mynotes.data.PendingAttachment
 import com.example.mynotes.performance.AttachmentPreviewCache
 import com.example.mynotes.settings.SettingsRepository
+import com.example.mynotes.widget.MyNotesWidgetUpdater
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -66,6 +67,7 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
             val note = Note(title = title, content = content, color = color)
             val noteId = noteDao.insertNote(note).toInt()
             saveAttachments(noteId = noteId, attachments = attachments)
+            MyNotesWidgetUpdater.requestUpdate(getApplication<Application>())
         }
     }
     /*
@@ -367,6 +369,7 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
             val updatedNote = note.copy(title = title, content = content, color = color)
             if (newAttachments.isEmpty()) {
                 noteDao.updateNote(updatedNote)
+                MyNotesWidgetUpdater.requestUpdate(getApplication<Application>())
                 return@launch
             }
             val currentAttachments = attachmentDao.getAttachmentsOnce(note.id)
@@ -382,6 +385,7 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
             if (prepared.isNotEmpty()) {
                 prewarmAttachments(prepared)
             }
+            MyNotesWidgetUpdater.requestUpdate(getApplication<Application>())
         }
     }
     /*
@@ -392,6 +396,7 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
     fun changeNoteColor(note: Note, color: String) {
         viewModelScope.launch {
             noteDao.updateColor(noteId = note.id, color = color)
+            MyNotesWidgetUpdater.requestUpdate(getApplication<Application>())
         }
     }
     /*
@@ -402,6 +407,7 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
     fun changePriority(note: Note, priority: Int) {
         viewModelScope.launch {
             noteDao.updatePriority(noteId = note.id, priority = priority)
+            MyNotesWidgetUpdater.requestUpdate(getApplication<Application>())
         }
     }
     /*
@@ -412,6 +418,7 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
     fun toggleFavorite(note: Note) {
         viewModelScope.launch {
             noteDao.updateFavorite(noteId = note.id, isFavorite = !note.isFavorite)
+            MyNotesWidgetUpdater.requestUpdate(getApplication<Application>())
         }
     }
     /*
@@ -422,6 +429,7 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
     fun togglePinned(note: Note) {
         viewModelScope.launch {
             noteDao.updatePinned(noteId = note.id, isPinned = !note.isPinned)
+            MyNotesWidgetUpdater.requestUpdate(getApplication<Application>())
         }
     }
     /*
@@ -438,6 +446,7 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
             }
         viewModelScope.launch {
             noteDao.updateCategory(noteId = note.id, category = normalized)
+            MyNotesWidgetUpdater.requestUpdate(getApplication<Application>())
         }
     }
     /*
@@ -492,6 +501,7 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
                     attachmentDao.deleteAttachmentsForNote(note.id)
                     noteDao.deleteNote(note)
                 }
+            MyNotesWidgetUpdater.requestUpdate(getApplication<Application>())
             attachments.forEach { attachment -> AttachmentPreviewCache.invalidate(context = getApplication<Application>(),
                     uri = Uri.parse(attachment.uri))
             }

@@ -13,6 +13,7 @@
     <string name="monospace">Monospace</string>
     <string name="text_size">Taille du texte : %1$d</string>
     <string name="language">Langue</string>
+    <string name="language_system">Langue de l’appareil</string>
     <string name="notes_view">Affichage des notes</string>
     <string name="one_column">1 colonne</string>
     <string name="two_columns">2 colonnes</string>
@@ -119,7 +120,7 @@
     <string name="mock_auto">Automatique</string>
 
     <string name="sound_effects">Effets sonores</string>
-    <string name="sound_effects_description">Sons pour toutes les actions de l’application. Choisissez parmi vingt styles et écoutez-les ici.</string>
+    <string name="sound_effects_description">Sons pour les actions de l’application. Choisissez un pack moderne et écoutez-le ici.</string>
     <string name="sound_effects_enabled">Activer les sons</string>
     <string name="sound_effects_volume">Volume des effets</string>
     <string name="sound_effects_theme">Style sonore</string>
@@ -143,6 +144,12 @@
     <string name="sound_theme_space">Spatial</string>
     <string name="sound_theme_chime">Carillon</string>
     <string name="sound_theme_paper">Papier</string>
+    <string name="sound_theme_material">Material</string>
+    <string name="sound_theme_expressive">Expressif</string>
+    <string name="sound_theme_prism">Prisme</string>
+    <string name="sound_theme_aurora">Aurore</string>
+    <string name="sound_theme_fluid">Fluide</string>
+    <string name="sound_theme_pulse">Pulsation</string>
     <string name="sound_theme_neon">Néon</string>
 
     <string name="haptic_effects">Effets de vibration</string>
@@ -167,4 +174,23 @@
     <string name="haptic_style_heavy">Intense</string>
     <string name="haptic_style_spring">Ressort</string>
     <string name="haptic_style_echo">Écho</string>
+
+    <string name="configuration_mode_welcome_title">Comment souhaitez-vous configurer MyNotes ?</string>
+    <string name="configuration_mode_welcome_description">Choisissez le nombre d’options à afficher dans les paramètres. Cela ne modifie pas vos notes et ne crée pas une autre édition de l’application.</string>
+    <string name="configuration_mode_basic">Version basique</string>
+    <string name="configuration_mode_basic_description">Affiche uniquement l’essentiel : palette de couleurs, image de profil, taille de police, langue, mises à jour et futures options basiques.</string>
+    <string name="configuration_mode_advanced">Version avancée</string>
+    <string name="configuration_mode_advanced_description">Conserve toutes les sections et tous les contrôles de personnalisation disponibles actuellement.</string>
+    <string name="configuration_mode_change_later">Vous pourrez passer du mode Basique au mode Avancé plus tard dans les paramètres.</string>
+    <string name="configuration_mode_settings_title">Mode de configuration</string>
+    <string name="configuration_mode_settings_description">Choisissez des paramètres simplifiés ou tous les contrôles avancés.</string>
+    <string name="configuration_mode_confirm">Valider</string>
+
+    <string name="widget_new_note">Nouvelle note</string>
+    <string name="widget_recent_notes">Notes récentes</string>
+    <string name="widget_empty_notes">Vous n’avez pas encore de notes</string>
+    <string name="widget_untitled_note">Note sans titre</string>
+    <string name="widget_pinned_note">Note épinglée</string>
+    <string name="widget_favorite_note">Note favorite</string>
+    <string name="widget_tap_to_open">Touchez pour ouvrir</string>
 </resources>

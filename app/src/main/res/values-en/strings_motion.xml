@@ -42,4 +42,13 @@
     <string name="performance_mode_balanced">Balanced</string>
     <string name="performance_mode_quality">Maximum quality</string>
     <string name="performance_mode_description">Controls animations, display refresh rate, and thumbnail resolution. Maximum performance: image/video previews at 360 px and PDFs at 480 px. Balanced: 720 px and PDFs at 960 px. Maximum quality: images up to 1280 px, video at 1080 px, and PDFs at 1440 px; it also requests up to 120 Hz on compatible displays.</string>
+    <string name="motion_style_expressive_spring">Expressive spring</string>
+    <string name="motion_style_container_transform">Container transform</string>
+    <string name="motion_style_soft_reveal">Soft reveal</string>
+    <string name="motion_style_elastic_slide">Elastic slide</string>
+    <string name="motion_style_predictive">Predictive</string>
+    <string name="motion_style_tonal_pop">Tonal pop</string>
+    <string name="motion_easing_expressive">Expressive</string>
+    <string name="motion_easing_emphasized_accel">Emphasized accelerate</string>
+    <string name="motion_easing_emphasized_decel">Emphasized decelerate</string>
 </resources>

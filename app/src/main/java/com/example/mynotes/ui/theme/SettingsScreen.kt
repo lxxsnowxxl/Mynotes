@@ -1,5 +1,7 @@
 package com.example.mynotes.ui
 
+import android.content.Intent
+import android.net.Uri
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -26,12 +28,17 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Code
+import androidx.compose.material.icons.filled.Download
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.ExpandMore
+import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
@@ -45,10 +52,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.graphics.lerp
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -58,6 +68,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.PopupProperties
 import com.example.mynotes.R
+import com.example.mynotes.update.GitHubUpdateManager
 import com.example.mynotes.ui.components.AppDropdownMenu
 import com.example.mynotes.settings.AppSettings
 import com.example.mynotes.ui.components.BackupRestoreSection
@@ -66,6 +77,10 @@ import com.example.mynotes.ui.components.OptionsMenuCustomizationSection
 import com.example.mynotes.ui.components.PaletteSelector
 import com.example.mynotes.ui.components.StyledSettingsSlider
 import com.example.mynotes.ui.components.SettingsSectionPanel
+import com.example.mynotes.ui.components.ScrollPositionCapsule
+import com.example.mynotes.ui.components.ProfileImageEditorDialog
+import com.example.mynotes.ui.components.clearManagedProfileImages
+import com.example.mynotes.ui.components.managedProfileSourceUri
 import com.example.mynotes.ui.motion.AnimatedScreenEntry
 import com.example.mynotes.ui.sound.UiActionSound
 import com.example.mynotes.ui.sound.UiSound
@@ -73,15 +88,25 @@ import com.example.mynotes.ui.sound.UiSoundPlayer
 import com.example.mynotes.ui.sound.UiHaptic
 import com.example.mynotes.ui.sound.UiHapticPlayer
 import com.example.mynotes.ui.theme.PaletteCatalog
+import com.example.mynotes.ui.theme.adaptiveUiButtonContainer
+import com.example.mynotes.ui.theme.resolveAdaptiveUiButtonColors
 import com.example.mynotes.ui.theme.appFontFamily
 import com.example.mynotes.ui.theme.resolveUiTextColor
 import com.example.mynotes.ui.theme.resolveSecondaryUiTextColor
 import com.example.mynotes.ui.theme.resolveUiGraphicColor
 import com.example.mynotes.ui.theme.ensureUiContrast
 import kotlin.math.roundToInt
+import kotlinx.coroutines.launch
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import coil3.compose.AsyncImage
 
 @Immutable
 private data class SliderStyleOption(val key: String, val labelRes: Int)
+
+private val PreviewButtonVerticalGap = 4.dp
+private val PreviewToSliderGap = 10.dp
+private val SoundHapticPanelBottomPadding = 18.dp
 
 private val SliderStyleOptions = listOf(SliderStyleOption("minimal", R.string.mock_slider_minimal), SliderStyleOption("capsule",
             R.string.mock_slider_capsule), SliderStyleOption("glow", R.string.mock_slider_glow), SliderStyleOption("glass",
@@ -91,7 +116,7 @@ private val SliderStyleOptions = listOf(SliderStyleOption("minimal", R.string.mo
             R.string.mock_slider_floating))
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun SettingsScreen(settings: AppSettings, onDarkModeChange: (Boolean) -> Unit, onBackgroundColorChange: (String) -> Unit,
+fun SettingsScreen(settings: AppSettings, onConfigurationModeChange: (String) -> Unit, onDarkModeChange: (Boolean) -> Unit, onBackgroundColorChange: (String) -> Unit,
     onBackgroundToneIndexChange: (Int) -> Unit, onBackgroundIntensityChange: (Float) -> Unit, onSettingsPanelToneChange: (Float) -> Unit,
     onSurfacePanelIntensityChange: (Float) -> Unit, onHeaderIntensityChange: (Float) -> Unit, onTextColorChange: (String) -> Unit,
     onTextOutlineEnabledChange: (Boolean) -> Unit, onNoteUiTextColorChange: (String) -> Unit, onSliderStyleChange: (String) -> Unit,
@@ -102,6 +127,7 @@ fun SettingsScreen(settings: AppSettings, onDarkModeChange: (Boolean) -> Unit, o
     onProfileImageUriChange: (String) -> Unit, onProfileImageSizeChange: (Float) -> Unit, onIconStyleChange: (String) -> Unit,
     onIconSizeChange: (Float) -> Unit, onAccentColorChange: (String) -> Unit, onNoteCardCornerRadiusChange: (Float) -> Unit,
     onNoteCardElevationChange: (Float) -> Unit, onNoteCardPaddingChange: (Float) -> Unit, onNoteCardImageHeightChange: (Float) -> Unit,
+    onNoteCardOutlineWidthChange: (Float) -> Unit,
     onNoteTitleMaxLinesChange: (Int) -> Unit, onNoteContentMaxLinesChange: (Int) -> Unit, onNoteLineSpacingChange: (Float) -> Unit,
     onShowNoteDateChange: (Boolean) -> Unit, onShowCategoryChipChange: (Boolean) -> Unit, onShowFavoriteIconChange: (Boolean) -> Unit,
     onFabSizeChange: (Float) -> Unit, onOptionMenuOrderChange: (String) -> Unit, onOptionMenuHiddenItemsChange: (String) -> Unit,
@@ -139,6 +165,10 @@ fun SettingsScreen(settings: AppSettings, onDarkModeChange: (Boolean) -> Unit, o
         remember {
             mutableFloatStateOf(settings.fontSize)
         }
+    var localProfileSize by
+        remember {
+            mutableFloatStateOf(settings.profileImageSize)
+        }
     var localSoundEffectsVolume by
         remember {
             mutableFloatStateOf(settings.soundEffectsVolume)
@@ -164,6 +194,9 @@ fun SettingsScreen(settings: AppSettings, onDarkModeChange: (Boolean) -> Unit, o
     }
     LaunchedEffect(settings.fontSize) {
         localFontSize = settings.fontSize
+    }
+    LaunchedEffect(settings.profileImageSize) {
+        localProfileSize = settings.profileImageSize
     }
     LaunchedEffect(settings.soundEffectsVolume) {
         localSoundEffectsVolume = settings.soundEffectsVolume
@@ -195,17 +228,85 @@ fun SettingsScreen(settings: AppSettings, onDarkModeChange: (Boolean) -> Unit, o
     val settingsTextColor = resolveUiTextColor(value = settings.textColor, background = settingsPanelColor)
     val settingsSecondaryTextColor = resolveSecondaryUiTextColor(value = settings.textColor, background = settingsPanelColor)
     val settingsGraphicColor = resolveUiGraphicColor(value = settings.textColor, background = settingsPanelColor)
+    val settingsScreenTextColor = resolveUiTextColor(value = settings.textColor, background = MaterialTheme.colorScheme.background)
+    val settingsScreenSecondaryTextColor = resolveSecondaryUiTextColor(value = settings.textColor,
+        background = MaterialTheme.colorScheme.background)
+    val settingsScreenGraphicColor = resolveUiGraphicColor(value = settings.textColor, background = MaterialTheme.colorScheme.background)
+    val settingsTopBarTextColor = resolveUiTextColor(value = settings.textColor, background = MaterialTheme.colorScheme.surface)
     val menuBackground = when (settings.textColor) {
             "white" -> MaterialTheme.colorScheme.inverseSurface
             else -> MaterialTheme.colorScheme.surfaceContainerHigh
         }
     val settingsMenuTextColor = resolveUiTextColor(value = settings.textColor, background = menuBackground)
+    val settingsScrollState = rememberScrollState()
+    val isAdvancedMode = settings.configurationMode == "advanced"
+
+    /*
+     * ==========================================================
+     * ACTUALIZACIONES DESDE GITHUB RELEASES
+     * ==========================================================
+     *
+     * El estado del actualizador vive sólo mientras Settings está compuesto.
+     * No se guarda en DataStore porque comprobar/descargar una actualización
+     * es una operación temporal, no una preferencia del usuario.
+     */
+    val updateScope = rememberCoroutineScope()
+    val installedVersion = remember(context) { GitHubUpdateManager.currentVersionName(context) }
+    var updateResult by remember { mutableStateOf<GitHubUpdateManager.CheckResult?>(null) }
+    var checkingForUpdate by remember { mutableStateOf(false) }
+    var downloadingUpdate by remember { mutableStateOf(false) }
+    var updateActionMessage by remember { mutableStateOf<String?>(null) }
+    var pendingReleasePermission by remember { mutableStateOf<GitHubUpdateManager.Release?>(null) }
+
+    val downloadAndOpenInstaller: (GitHubUpdateManager.Release) -> Unit = { release ->
+        updateScope.launch {
+            downloadingUpdate = true
+            updateActionMessage = null
+            runCatching { GitHubUpdateManager.downloadApk(context, release) }
+                .onSuccess { apk ->
+                    if (!GitHubUpdateManager.launchSystemInstaller(context, apk)) {
+                        updateActionMessage = context.getString(R.string.update_install_error)
+                    }
+                }
+                .onFailure { error ->
+                    updateActionMessage = context.getString(
+                        R.string.update_download_error,
+                        error.message ?: error.javaClass.simpleName
+                    )
+                }
+            downloadingUpdate = false
+        }
+    }
+
+    val unknownSourcesLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.StartActivityForResult()
+    ) {
+        val pendingRelease = pendingReleasePermission
+        pendingReleasePermission = null
+        if (pendingRelease != null) {
+            if (GitHubUpdateManager.canInstallDownloadedPackages(context)) {
+                downloadAndOpenInstaller(pendingRelease)
+            } else {
+                updateActionMessage = context.getString(R.string.update_permission_required)
+            }
+        }
+    }
+
+    val requestDownloadAndInstall: (GitHubUpdateManager.Release) -> Unit = { release ->
+        if (GitHubUpdateManager.canInstallDownloadedPackages(context)) {
+            downloadAndOpenInstaller(release)
+        } else {
+            pendingReleasePermission = release
+            unknownSourcesLauncher.launch(GitHubUpdateManager.unknownSourcesSettingsIntent(context))
+        }
+    }
     AnimatedScreenEntry(animationsEnabled = settings.animationsEnabled,
         animationSpeed = settings.animationSpeed) {
         Scaffold(containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(title = {
                     Text(text = stringResource(R.string.mock_settings),
+                        color = settingsTopBarTextColor,
                         fontFamily = fontFamily,
                         fontWeight = FontWeight.Bold,
                         fontSize = 25.sp)
@@ -215,7 +316,7 @@ fun SettingsScreen(settings: AppSettings, onDarkModeChange: (Boolean) -> Unit, o
                             UiSoundPlayer.playAction(context = context, action = UiActionSound.Back)
                             onBack()
                         },
-                        colors = ButtonDefaults.textButtonColors(contentColor = MaterialTheme.colorScheme.onSurface)) {
+                        colors = ButtonDefaults.textButtonColors(contentColor = settingsTopBarTextColor)) {
                         Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(R.string.mock_back),
                             modifier = Modifier.size(25.dp))
@@ -224,7 +325,7 @@ fun SettingsScreen(settings: AppSettings, onDarkModeChange: (Boolean) -> Unit, o
         }) {
             paddingValues ->
         Box(modifier = Modifier.fillMaxSize().padding(paddingValues), contentAlignment = Alignment.TopCenter) {
-            Column(modifier = Modifier.widthIn(max = 840.dp).fillMaxWidth().verticalScroll(rememberScrollState()).padding(start = 14.dp,
+            Column(modifier = Modifier.widthIn(max = 840.dp).fillMaxWidth().verticalScroll(settingsScrollState).padding(start = 14.dp,
                             end = 14.dp, bottom = 32.dp)) {
             Surface(modifier = Modifier.fillMaxWidth(),
                 shape = RoundedCornerShape(22.dp),
@@ -241,31 +342,48 @@ fun SettingsScreen(settings: AppSettings, onDarkModeChange: (Boolean) -> Unit, o
                         color = settingsSecondaryTextColor,
                         fontFamily = fontFamily,
                         fontSize = 13.sp)
-                    Spacer(modifier = Modifier.height(20.dp))
-                    ExtremeCustomizationSection(settings = settings, fontFamily = fontFamily, textColor = settingsTextColor,
-                        secondaryTextColor = settingsSecondaryTextColor, graphicColor = settingsGraphicColor,
-                        onProfileImageUriChange = onProfileImageUriChange, onProfileImageSizeChange = onProfileImageSizeChange,
-                        onIconStyleChange = onIconStyleChange, onIconSizeChange = onIconSizeChange,
-                        onAccentColorChange = onAccentColorChange, onNoteCardCornerRadiusChange = onNoteCardCornerRadiusChange,
-                        onNoteCardElevationChange = onNoteCardElevationChange, onNoteCardPaddingChange = onNoteCardPaddingChange,
-                        onNoteCardImageHeightChange = onNoteCardImageHeightChange, onNoteTitleMaxLinesChange = onNoteTitleMaxLinesChange,
-                        onNoteContentMaxLinesChange = onNoteContentMaxLinesChange, onNoteLineSpacingChange = onNoteLineSpacingChange,
-                        onShowNoteDateChange = onShowNoteDateChange, onShowCategoryChipChange = onShowCategoryChipChange,
-                        onShowFavoriteIconChange = onShowFavoriteIconChange, onFabSizeChange = onFabSizeChange,
-                        onPerformanceModeChange = onPerformanceModeChange, onAnimationsEnabledChange = onAnimationsEnabledChange,
-                        onAnimationStyleChange = onAnimationStyleChange, onAnimationEasingChange = onAnimationEasingChange,
-                        onAnimationSpeedChange = onAnimationSpeedChange, onAnimationIntensityChange = onAnimationIntensityChange)
-                    Spacer(modifier = Modifier.height(18.dp))
-                    OptionsMenuCustomizationSection(settings = settings, fontFamily = fontFamily, textColor = settingsTextColor,
-                        secondaryTextColor = settingsSecondaryTextColor, graphicColor = settingsGraphicColor,
-                        onOrderChange = onOptionMenuOrderChange, onHiddenItemsChange = onOptionMenuHiddenItemsChange,
-                        onShowIconsChange = onOptionMenuShowIconsChange, onTextColorChange = onOptionMenuTextColorChange,
-                        onOpacityChange = onOptionMenuOpacityChange, onPriorityHiddenItemsChange = onPriorityMenuHiddenItemsChange,
-                        onColorHiddenItemsChange = onColorMenuHiddenItemsChange, onReset = onResetOptionMenu)
-                    Spacer(modifier = Modifier.height(22.dp))
-                    BackupRestoreSection(settings = settings, fontFamily = fontFamily, textColor = settingsTextColor,
-                        secondaryTextColor = settingsSecondaryTextColor, graphicColor = settingsGraphicColor)
-                    Spacer(modifier = Modifier.height(22.dp))
+                    Spacer(modifier = Modifier.height(16.dp))
+                    ProfileAndModePanel(
+                        settings = settings,
+                        fontFamily = fontFamily,
+                        isAdvancedMode = isAdvancedMode,
+                        profileSize = localProfileSize,
+                        onProfileSizeValueChange = { localProfileSize = it },
+                        onConfigurationModeChange = onConfigurationModeChange,
+                        onProfileImageUriChange = onProfileImageUriChange,
+                        onProfileImageSizeChange = { onProfileImageSizeChange(localProfileSize) }
+                    )
+                    if (isAdvancedMode) {
+                        Spacer(modifier = Modifier.height(18.dp))
+                        ExtremeCustomizationSection(settings = settings, fontFamily = fontFamily, textColor = settingsScreenTextColor,
+                            secondaryTextColor = settingsScreenSecondaryTextColor, graphicColor = settingsScreenGraphicColor,
+                            profileOnly = false, showProfileSection = false,
+                            onProfileImageUriChange = onProfileImageUriChange, onProfileImageSizeChange = onProfileImageSizeChange,
+                            onIconStyleChange = onIconStyleChange, onIconSizeChange = onIconSizeChange,
+                            onAccentColorChange = onAccentColorChange, onNoteCardCornerRadiusChange = onNoteCardCornerRadiusChange,
+                            onNoteCardElevationChange = onNoteCardElevationChange, onNoteCardPaddingChange = onNoteCardPaddingChange,
+                            onNoteCardImageHeightChange = onNoteCardImageHeightChange,
+                            onNoteCardOutlineWidthChange = onNoteCardOutlineWidthChange,
+                            onNoteTitleMaxLinesChange = onNoteTitleMaxLinesChange,
+                            onNoteContentMaxLinesChange = onNoteContentMaxLinesChange, onNoteLineSpacingChange = onNoteLineSpacingChange,
+                            onShowNoteDateChange = onShowNoteDateChange, onShowCategoryChipChange = onShowCategoryChipChange,
+                            onShowFavoriteIconChange = onShowFavoriteIconChange, onFabSizeChange = onFabSizeChange,
+                            onPerformanceModeChange = onPerformanceModeChange, onAnimationsEnabledChange = onAnimationsEnabledChange,
+                            onAnimationStyleChange = onAnimationStyleChange, onAnimationEasingChange = onAnimationEasingChange,
+                            onAnimationSpeedChange = onAnimationSpeedChange, onAnimationIntensityChange = onAnimationIntensityChange)
+                    }
+                    if (isAdvancedMode) {
+                        Spacer(modifier = Modifier.height(18.dp))
+                        OptionsMenuCustomizationSection(settings = settings, fontFamily = fontFamily, textColor = settingsScreenTextColor,
+                            secondaryTextColor = settingsScreenSecondaryTextColor, graphicColor = settingsScreenGraphicColor,
+                            onOrderChange = onOptionMenuOrderChange, onHiddenItemsChange = onOptionMenuHiddenItemsChange,
+                            onShowIconsChange = onOptionMenuShowIconsChange, onTextColorChange = onOptionMenuTextColorChange,
+                            onOpacityChange = onOptionMenuOpacityChange, onPriorityHiddenItemsChange = onPriorityMenuHiddenItemsChange,
+                            onColorHiddenItemsChange = onColorMenuHiddenItemsChange, onReset = onResetOptionMenu)
+                        Spacer(modifier = Modifier.height(22.dp))
+                    } else {
+                        Spacer(modifier = Modifier.height(16.dp))
+                    }
                     /*
                      * -------------------------------------------------
                      * COLOR PALETTE
@@ -301,30 +419,33 @@ fun SettingsScreen(settings: AppSettings, onDarkModeChange: (Boolean) -> Unit, o
                             animationSpeed = settings.animationSpeed,
                             textColorMode = settings.textColor,
                             fontFamily = fontFamily)
-                        Spacer(modifier = Modifier.height(20.dp))
-                        /*
-                         * Palette tone permanece como control secundario.
-                         * La barra ya no utiliza el mismo tono de fondo,
-                         * así no desaparece visualmente.
-                         */
-                        SettingTitleRow(title = stringResource(R.string.mock_palette_tone),
-                            value = "${localTone.roundToInt() + 1}/4",
-                            color = panelColors.text,
-                            fontFamily = fontFamily)
-                        StyledSettingsSlider(value = localTone,
-                            onValueChange = {
-                                localTone = it
-                            },
-                            onValueChangeFinished = {
-                                onBackgroundToneIndexChange(localTone.roundToInt().coerceIn(0, 3))
-                            },
-                            valueRange = 0f..3f,
-                            steps = 2,
-                            activeColor = MaterialTheme.colorScheme.primary,
-                            inactiveColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.35f),
-                            style = settings.sliderStyle,
-                            valueLabel = "${localTone.roundToInt() + 1}/4")
+                        if (isAdvancedMode) {
+                            Spacer(modifier = Modifier.height(20.dp))
+                            /*
+                             * En modo avanzado se conserva la barra secundaria
+                             * de tono. En modo básico el tono se elige tocando
+                             * directamente uno de los cuatro círculos de la paleta.
+                             */
+                            SettingTitleRow(title = stringResource(R.string.mock_palette_tone),
+                                value = "${localTone.roundToInt() + 1}/4",
+                                color = panelColors.text,
+                                fontFamily = fontFamily)
+                            StyledSettingsSlider(value = localTone,
+                                onValueChange = {
+                                    localTone = it
+                                },
+                                onValueChangeFinished = {
+                                    onBackgroundToneIndexChange(localTone.roundToInt().coerceIn(0, 3))
+                                },
+                                valueRange = 0f..3f,
+                                steps = 2,
+                                activeColor = MaterialTheme.colorScheme.primary,
+                                inactiveColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.35f),
+                                style = settings.sliderStyle,
+                                valueLabel = "${localTone.roundToInt() + 1}/4")
+                        }
                     }
+                    if (isAdvancedMode) {
                     Spacer(modifier = Modifier.height(8.dp))
                     /*
                      * -------------------------------------------------
@@ -441,7 +562,7 @@ fun SettingsScreen(settings: AppSettings, onDarkModeChange: (Boolean) -> Unit, o
                     }
                     Spacer(modifier = Modifier.height(12.dp))
                     SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(vertical = 0.dp),
-                        horizontalOutset = 0.dp) { panelColors ->
+                        horizontalOutset = 8.dp) { panelColors ->
                         Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 14.dp, vertical = 12.dp),
                             verticalAlignment = Alignment.CenterVertically) {
                             Column(modifier = Modifier.weight(1f)) {
@@ -471,6 +592,7 @@ fun SettingsScreen(settings: AppSettings, onDarkModeChange: (Boolean) -> Unit, o
                             onSelected = onNoteUiTextColorChange,
                             fontKey = settings.font)
                     }
+                    }
                     Spacer(modifier = Modifier.height(20.dp))
                     /*
                      * -------------------------------------------------
@@ -478,7 +600,9 @@ fun SettingsScreen(settings: AppSettings, onDarkModeChange: (Boolean) -> Unit, o
                      * -------------------------------------------------
                      */
                     SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(start = 6.dp, top = 14.dp, end = 0.dp, bottom = 14.dp),
-                        horizontalOutset = 8.dp) { panelColors -> SettingDropdown(title = stringResource(R.string.mock_font),
+                        horizontalOutset = 8.dp) { panelColors ->
+                        if (isAdvancedMode) {
+                            SettingDropdown(title = stringResource(R.string.mock_font),
                             selectedLabel = when (settings.font) {
                                     "google_sans" -> "Google Sans (Auto)"
                                     "google_sans_regular" -> "Google Sans Regular"
@@ -510,7 +634,8 @@ fun SettingsScreen(settings: AppSettings, onDarkModeChange: (Boolean) -> Unit, o
                             menuTextColor = settingsMenuTextColor,
                             fontFamily = fontFamily,
                             onSelected = onFontChange)
-                        Spacer(modifier = Modifier.height(14.dp))
+                            Spacer(modifier = Modifier.height(14.dp))
+                        }
                         SettingTitleRow(title = stringResource(R.string.mock_font_size),
                             value = "${localFontSize.roundToInt()} sp",
                             color = panelColors.text,
@@ -525,16 +650,20 @@ fun SettingsScreen(settings: AppSettings, onDarkModeChange: (Boolean) -> Unit, o
                             valueRange = 12f..28f,
                             activeColor = MaterialTheme.colorScheme.primary,
                             inactiveColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.35f),
-                            style = settings.sliderStyle,
+                            // En la configuración básica el tamaño de fuente usa siempre
+                            // el diseño Capsule. En modo avanzado se respeta el estilo
+                            // elegido por el usuario desde la personalización de sliders.
+                            style = if (isAdvancedMode) settings.sliderStyle else "capsule",
                             valueLabel = "${localFontSize.roundToInt()} sp")
                     }
+                    if (isAdvancedMode) {
                     Spacer(modifier = Modifier.height(14.dp))
                     /*
                      * -------------------------------------------------
                      * SOUND EFFECTS
                      * -------------------------------------------------
                      */
-                    SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(start = 6.dp, top = 10.dp, end = 0.dp, bottom = 10.dp),
+                    SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(start = 6.dp, top = 10.dp, end = 0.dp, bottom = SoundHapticPanelBottomPadding),
                         horizontalOutset = 8.dp) { panelColors -> Text(text = stringResource(R.string.sound_effects),
                             color = panelColors.text,
                             fontFamily = fontFamily,
@@ -580,6 +709,12 @@ fun SettingsScreen(settings: AppSettings, onDarkModeChange: (Boolean) -> Unit, o
                                         "chime" -> stringResource(R.string.sound_theme_chime)
                                         "paper" -> stringResource(R.string.sound_theme_paper)
                                         "neon" -> stringResource(R.string.sound_theme_neon)
+                                        "material" -> stringResource(R.string.sound_theme_material)
+                                        "expressive" -> stringResource(R.string.sound_theme_expressive)
+                                        "prism" -> stringResource(R.string.sound_theme_prism)
+                                        "aurora" -> stringResource(R.string.sound_theme_aurora)
+                                        "fluid" -> stringResource(R.string.sound_theme_fluid)
+                                        "pulse" -> stringResource(R.string.sound_theme_pulse)
                                         else -> stringResource(R.string.sound_theme_classic)
                                     },
                                 options = listOf("classic" to stringResource(R.string.sound_theme_classic),
@@ -601,23 +736,46 @@ fun SettingsScreen(settings: AppSettings, onDarkModeChange: (Boolean) -> Unit, o
                                         "space" to stringResource(R.string.sound_theme_space),
                                         "chime" to stringResource(R.string.sound_theme_chime),
                                         "paper" to stringResource(R.string.sound_theme_paper),
-                                        "neon" to stringResource(R.string.sound_theme_neon)),
+                                        "neon" to stringResource(R.string.sound_theme_neon),
+                                        "material" to stringResource(R.string.sound_theme_material),
+                                        "expressive" to stringResource(R.string.sound_theme_expressive),
+                                        "prism" to stringResource(R.string.sound_theme_prism),
+                                        "aurora" to stringResource(R.string.sound_theme_aurora),
+                                        "fluid" to stringResource(R.string.sound_theme_fluid),
+                                        "pulse" to stringResource(R.string.sound_theme_pulse)),
                                 textColor = panelColors.text,
                                 textColorMode = settings.textColor,
                                 menuBackground = menuBackground,
                                 menuTextColor = settingsMenuTextColor,
                                 fontFamily = fontFamily,
-                                onSelected = { selectedTheme -> onSoundEffectsThemeChange(selectedTheme)
-                                    UiSoundPlayer.previewTheme(context = context, theme = selectedTheme, sound = UiSound.Edit,
-                                        volumePercent = localSoundEffectsVolume)
+                                playDefaultSelectionFeedback = false,
+                                onSelected = { selectedTheme ->
+                                    UiHapticPlayer.play(context = context, haptic = UiHaptic.Selection)
+                                    onSoundEffectsThemeChange(selectedTheme)
+                                    UiSoundPlayer.previewTheme(
+                                        context = context,
+                                        theme = selectedTheme,
+                                        sound = UiSound.Edit,
+                                        volumePercent = localSoundEffectsVolume
+                                    )
                                 })
-                            TextButton(onClick = {
-                                    UiSoundPlayer.previewTheme(context = context, theme = settings.soundEffectsTheme,
-                                        sound = UiSound.Attachment, volumePercent = localSoundEffectsVolume)
-                                }, colors = ButtonDefaults.textButtonColors(contentColor = panelColors.text)) {
-                                Text(text = stringResource(R.string.sound_effects_preview), fontFamily = fontFamily)
-                            }
-                            Spacer(modifier = Modifier.height(4.dp))
+                            Spacer(modifier = Modifier.height(PreviewButtonVerticalGap))
+                            RoundedPreviewButton(
+                                text = stringResource(R.string.sound_effects_preview),
+                                panelBackground = panelColors.background,
+                                panelContentColor = panelColors.text,
+                                textColorMode = settings.textColor,
+                                fontFamily = fontFamily,
+                                onClick = {
+                                    UiSoundPlayer.previewTheme(
+                                        context = context,
+                                        theme = settings.soundEffectsTheme,
+                                        sound = UiSound.Attachment,
+                                        volumePercent = localSoundEffectsVolume
+                                    )
+                                }
+                            )
+                            Spacer(modifier = Modifier.height(PreviewToSliderGap))
                             SettingTitleRow(title = stringResource(R.string.sound_effects_volume),
                                 value = "${localSoundEffectsVolume.roundToInt()}%",
                                 color = panelColors.text,
@@ -643,7 +801,7 @@ fun SettingsScreen(settings: AppSettings, onDarkModeChange: (Boolean) -> Unit, o
                      * HAPTIC / VIBRATION EFFECTS
                      * -------------------------------------------------
                      */
-                    SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(start = 6.dp, top = 10.dp, end = 0.dp, bottom = 10.dp),
+                    SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(start = 6.dp, top = 10.dp, end = 0.dp, bottom = SoundHapticPanelBottomPadding),
                         horizontalOutset = 8.dp) { panelColors -> Text(text = stringResource(R.string.haptic_effects),
                             color = panelColors.text,
                             fontFamily = fontFamily,
@@ -661,11 +819,14 @@ fun SettingsScreen(settings: AppSettings, onDarkModeChange: (Boolean) -> Unit, o
                                 color = panelColors.text,
                                 fontFamily = fontFamily,
                                 fontSize = 14.sp)
-                            Switch(checked = settings.hapticEffectsEnabled,
-                                onCheckedChange = { checked -> UiHapticPlayer.playToggle(context = context, checked = checked, force = true
-                                    )
+                            Switch(
+                                checked = settings.hapticEffectsEnabled,
+                                onCheckedChange = { checked ->
+                                    UiSoundPlayer.playToggleAudioOnly(context = context, checked = checked)
+                                    UiHapticPlayer.playToggle(context = context, checked = checked, force = true)
                                     onHapticEffectsEnabledChange(checked)
-                                })
+                                }
+                            )
                         }
                         if (settings.hapticEffectsEnabled) {
                             Spacer(modifier = Modifier.height(8.dp))
@@ -709,17 +870,35 @@ fun SettingsScreen(settings: AppSettings, onDarkModeChange: (Boolean) -> Unit, o
                                 menuBackground = menuBackground,
                                 menuTextColor = settingsMenuTextColor,
                                 fontFamily = fontFamily,
-                                onSelected = { selectedStyle -> onHapticEffectsStyleChange(selectedStyle)
-                                    UiHapticPlayer.previewStyle(context = context, style = selectedStyle,
-                                        intensityPercent = localHapticEffectsIntensity, haptic = UiHaptic.Confirm)
+                                playDefaultSelectionFeedback = false,
+                                onSelected = { selectedStyle ->
+                                    UiSoundPlayer.playActionAudioOnly(context = context, action = UiActionSound.Select)
+                                    onHapticEffectsStyleChange(selectedStyle)
+                                    UiHapticPlayer.previewStyle(
+                                        context = context,
+                                        style = selectedStyle,
+                                        intensityPercent = localHapticEffectsIntensity,
+                                        haptic = UiHaptic.Confirm
+                                    )
                                 })
-                            TextButton(onClick = {
-                                    UiHapticPlayer.previewStyle(context = context, style = settings.hapticEffectsStyle,
-                                        intensityPercent = localHapticEffectsIntensity, haptic = UiHaptic.Confirm)
-                                }, colors = ButtonDefaults.textButtonColors(contentColor = panelColors.text)) {
-                                Text(text = stringResource(R.string.haptic_effects_preview), fontFamily = fontFamily)
-                            }
-                            Spacer(modifier = Modifier.height(4.dp))
+                            Spacer(modifier = Modifier.height(PreviewButtonVerticalGap))
+                            RoundedPreviewButton(
+                                text = stringResource(R.string.haptic_effects_preview),
+                                panelBackground = panelColors.background,
+                                panelContentColor = panelColors.text,
+                                textColorMode = settings.textColor,
+                                fontFamily = fontFamily,
+                                onClick = {
+                                    UiSoundPlayer.playActionAudioOnly(context = context, action = UiActionSound.PlayPause)
+                                    UiHapticPlayer.previewStyle(
+                                        context = context,
+                                        style = settings.hapticEffectsStyle,
+                                        intensityPercent = localHapticEffectsIntensity,
+                                        haptic = UiHaptic.Confirm
+                                    )
+                                }
+                            )
+                            Spacer(modifier = Modifier.height(PreviewToSliderGap))
                             SettingTitleRow(title = stringResource(R.string.haptic_effects_intensity),
                                 value = "${localHapticEffectsIntensity.roundToInt()}%",
                                 color = panelColors.text,
@@ -741,6 +920,7 @@ fun SettingsScreen(settings: AppSettings, onDarkModeChange: (Boolean) -> Unit, o
                                 valueLabel = "${localHapticEffectsIntensity.roundToInt()}%")
                         }
                     }
+                    }
                     Spacer(modifier = Modifier.height(18.dp))
                     /*
                      * -------------------------------------------------
@@ -750,13 +930,14 @@ fun SettingsScreen(settings: AppSettings, onDarkModeChange: (Boolean) -> Unit, o
                     SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(start = 6.dp, top = 14.dp, end = 0.dp, bottom = 14.dp),
                         horizontalOutset = 8.dp) { panelColors -> SettingDropdown(title = stringResource(R.string.mock_language),
                             selectedLabel = when (settings.language) {
+                                    "system" -> stringResource(R.string.language_system)
                                     "en" -> "English"
                                     "fr" -> "Français"
                                     "zh-CN" -> "中文（简体）"
                                     else -> "Español"
                                 },
-                            options = listOf("es" to
-                                        "Español", "en" to
+                            options = listOf("system" to stringResource(R.string.language_system),
+                                        "es" to "Español", "en" to
                                         "English", "fr" to
                                         "Français", "zh-CN" to
                                         "中文（简体）"),
@@ -767,6 +948,7 @@ fun SettingsScreen(settings: AppSettings, onDarkModeChange: (Boolean) -> Unit, o
                             fontFamily = fontFamily,
                             onSelected = onLanguageChange)
                     }
+                    if (isAdvancedMode) {
                     Spacer(modifier = Modifier.height(14.dp))
                     SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(start = 6.dp, top = 14.dp, end = 0.dp, bottom = 14.dp),
                         horizontalOutset = 8.dp) { panelColors -> SettingDropdown(title = stringResource(R.string.mock_columns),
@@ -821,6 +1003,10 @@ fun SettingsScreen(settings: AppSettings, onDarkModeChange: (Boolean) -> Unit, o
                                 })
                         }
                     }
+                    Spacer(modifier = Modifier.height(18.dp))
+                    BackupRestoreSection(settings = settings, fontFamily = fontFamily, textColor = settingsTextColor,
+                        secondaryTextColor = settingsSecondaryTextColor, graphicColor = settingsGraphicColor)
+                    }
                     Spacer(modifier = Modifier.height(22.dp))
                     /*
                      * -------------------------------------------------
@@ -849,11 +1035,515 @@ fun SettingsScreen(settings: AppSettings, onDarkModeChange: (Boolean) -> Unit, o
                                 tint = panelColors.graphic, modifier = Modifier.size(22.dp))
                         }
                     }
+                    Spacer(modifier = Modifier.height(14.dp))
+                    /*
+                     * -------------------------------------------------
+                     * ACTUALIZACIONES DE LA APLICACIÓN
+                     * -------------------------------------------------
+                     * Consulta la última Release estable de GitHub. Si la etiqueta
+                     * es superior a versionName y existe un asset .apk, permite
+                     * descargarlo y pasarlo al instalador oficial de Android.
+                     */
+                    SettingsSectionPanel(
+                        textColorMode = settings.textColor,
+                        contentPadding = PaddingValues(horizontal = 14.dp, vertical = 14.dp),
+                        horizontalOutset = 8.dp
+                    ) { panelColors ->
+                        Column(modifier = Modifier.fillMaxWidth()) {
+                            Row(verticalAlignment = Alignment.CenterVertically) {
+                                Icon(
+                                    imageVector = Icons.Default.Download,
+                                    contentDescription = null,
+                                    tint = panelColors.graphic,
+                                    modifier = Modifier.size(23.dp)
+                                )
+                                Column(modifier = Modifier.weight(1f).padding(start = 12.dp)) {
+                                    Text(
+                                        text = stringResource(R.string.update_settings_title),
+                                        color = panelColors.text,
+                                        fontFamily = fontFamily,
+                                        fontWeight = FontWeight.SemiBold,
+                                        fontSize = 15.sp
+                                    )
+                                    Text(
+                                        text = stringResource(R.string.update_settings_description),
+                                        modifier = Modifier.padding(top = 2.dp),
+                                        color = panelColors.secondaryText,
+                                        fontFamily = fontFamily,
+                                        fontSize = 12.sp
+                                    )
+                                }
+                            }
+
+                            Text(
+                                text = stringResource(R.string.update_current_version, installedVersion),
+                                modifier = Modifier.padding(top = 10.dp),
+                                color = panelColors.secondaryText,
+                                fontFamily = fontFamily,
+                                fontSize = 12.sp
+                            )
+
+                            Button(
+                                onClick = {
+                                    UiSoundPlayer.playAction(context = context, action = UiActionSound.Menu)
+                                    updateScope.launch {
+                                        checkingForUpdate = true
+                                        updateActionMessage = null
+                                        updateResult = GitHubUpdateManager.checkForUpdate(context)
+                                        checkingForUpdate = false
+                                    }
+                                },
+                                enabled = !checkingForUpdate && !downloadingUpdate,
+                                modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
+                                shape = RoundedCornerShape(14.dp)
+                            ) {
+                                if (checkingForUpdate) {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier.size(17.dp),
+                                        strokeWidth = 2.dp,
+                                        color = MaterialTheme.colorScheme.onPrimary
+                                    )
+                                    Spacer(modifier = Modifier.width(8.dp))
+                                }
+                                Text(
+                                    text = stringResource(
+                                        if (checkingForUpdate) R.string.update_checking else R.string.update_check
+                                    ),
+                                    fontFamily = fontFamily,
+                                    fontWeight = FontWeight.SemiBold
+                                )
+                            }
+
+                            when (val result = updateResult) {
+                                is GitHubUpdateManager.CheckResult.UpdateAvailable -> {
+                                    Text(
+                                        text = stringResource(R.string.update_available, result.release.version),
+                                        modifier = Modifier.padding(top = 12.dp),
+                                        color = panelColors.text,
+                                        fontFamily = fontFamily,
+                                        fontWeight = FontWeight.SemiBold,
+                                        fontSize = 13.sp
+                                    )
+                                    if (result.release.title.isNotBlank() && result.release.title != result.release.version) {
+                                        Text(
+                                            text = result.release.title,
+                                            modifier = Modifier.padding(top = 2.dp),
+                                            color = panelColors.secondaryText,
+                                            fontFamily = fontFamily,
+                                            fontSize = 12.sp
+                                        )
+                                    }
+                                    if (result.release.apkDownloadUrl != null) {
+                                        Button(
+                                            onClick = { requestDownloadAndInstall(result.release) },
+                                            enabled = !downloadingUpdate,
+                                            modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                                            shape = RoundedCornerShape(14.dp)
+                                        ) {
+                                            if (downloadingUpdate) {
+                                                CircularProgressIndicator(
+                                                    modifier = Modifier.size(17.dp),
+                                                    strokeWidth = 2.dp,
+                                                    color = MaterialTheme.colorScheme.onPrimary
+                                                )
+                                                Spacer(modifier = Modifier.width(8.dp))
+                                            }
+                                            Text(
+                                                text = stringResource(
+                                                    if (downloadingUpdate) R.string.update_downloading
+                                                    else R.string.update_download_install
+                                                ),
+                                                fontFamily = fontFamily,
+                                                fontWeight = FontWeight.SemiBold
+                                            )
+                                        }
+                                    } else {
+                                        Text(
+                                            text = stringResource(R.string.update_release_without_apk),
+                                            modifier = Modifier.padding(top = 6.dp),
+                                            color = panelColors.secondaryText,
+                                            fontFamily = fontFamily,
+                                            fontSize = 12.sp
+                                        )
+                                    }
+                                    TextButton(
+                                        onClick = { GitHubUpdateManager.openReleasePage(context, result.release.htmlUrl) },
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        Text(text = stringResource(R.string.update_open_release), fontFamily = fontFamily)
+                                    }
+                                }
+
+                                is GitHubUpdateManager.CheckResult.UpToDate -> Text(
+                                    text = stringResource(R.string.update_up_to_date, result.latestVersion),
+                                    modifier = Modifier.padding(top = 10.dp),
+                                    color = panelColors.secondaryText,
+                                    fontFamily = fontFamily,
+                                    fontSize = 12.sp
+                                )
+
+                                is GitHubUpdateManager.CheckResult.NoPublishedRelease -> {
+                                    Text(
+                                        text = stringResource(R.string.update_no_release),
+                                        modifier = Modifier.padding(top = 10.dp),
+                                        color = panelColors.secondaryText,
+                                        fontFamily = fontFamily,
+                                        fontSize = 12.sp
+                                    )
+                                    TextButton(
+                                        onClick = { GitHubUpdateManager.openReleasePage(context) },
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        Text(text = stringResource(R.string.update_open_release), fontFamily = fontFamily)
+                                    }
+                                }
+
+                                is GitHubUpdateManager.CheckResult.Failure -> Text(
+                                    text = stringResource(R.string.update_error, result.reason),
+                                    modifier = Modifier.padding(top = 10.dp),
+                                    color = MaterialTheme.colorScheme.error,
+                                    fontFamily = fontFamily,
+                                    fontSize = 12.sp
+                                )
+
+                                null -> Unit
+                            }
+
+                            updateActionMessage?.let { message ->
+                                Text(
+                                    text = message,
+                                    modifier = Modifier.padding(top = 8.dp),
+                                    color = MaterialTheme.colorScheme.error,
+                                    fontFamily = fontFamily,
+                                    fontSize = 12.sp
+                                )
+                            }
+                        }
+                    }
                 }
             }
         }
+        /*
+         * El indicador debe ser hermano del contenido desplazable, no un hijo
+         * de la Column con verticalScroll. De esa forma permanece visible en
+         * todo momento mientras Settings se desplaza y no termina colocado al
+         * final del contenido, fuera del viewport actual.
+         */
+        Box(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(end = 2.dp),
+            contentAlignment = Alignment.CenterEnd
+        ) {
+            ScrollPositionCapsule(
+                state = settingsScrollState,
+                backgroundColor = MaterialTheme.colorScheme.background,
+                preferredColor = MaterialTheme.colorScheme.onBackground
+            )
+        }
         }
     }
+    }
+}
+
+@Composable
+private fun ProfileAndModePanel(
+    settings: AppSettings,
+    fontFamily: androidx.compose.ui.text.font.FontFamily,
+    isAdvancedMode: Boolean,
+    profileSize: Float,
+    onProfileSizeValueChange: (Float) -> Unit,
+    onConfigurationModeChange: (String) -> Unit,
+    onProfileImageUriChange: (String) -> Unit,
+    onProfileImageSizeChange: () -> Unit,
+) {
+    val context = LocalContext.current
+    var profileEditorUri by remember { mutableStateOf<Uri?>(null) }
+    val picker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
+        if (uri != null) {
+            try {
+                context.contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            } catch (_: SecurityException) {
+            }
+            UiSoundPlayer.play(context = context, sound = UiSound.Attachment)
+            profileEditorUri = uri
+        }
+    }
+
+    profileEditorUri?.let { sourceUri ->
+        ProfileImageEditorDialog(
+            sourceUri = sourceUri,
+            fontFamily = fontFamily,
+            onDismissRequest = { profileEditorUri = null },
+            onImageSaved = { croppedUri ->
+                UiSoundPlayer.playAction(context = context, action = UiActionSound.Select)
+                onProfileImageUriChange(croppedUri.toString())
+                profileEditorUri = null
+            }
+        )
+    }
+
+    SettingsSectionPanel(
+        textColorMode = settings.textColor,
+        contentPadding = PaddingValues(14.dp),
+        horizontalOutset = 8.dp
+    ) { panelColors ->
+        /*
+         * El texto de los controles conserva EXACTAMENTE el color resuelto para
+         * el panel. En Automático esto significa blanco sobre familias oscuras
+         * y negro sobre familias claras. Adaptamos el fondo del botón, no el
+         * texto, para evitar botones grises con letras negras dentro de una UI
+         * oscura (o el caso inverso en paletas claras).
+         */
+        val primaryColor = MaterialTheme.colorScheme.primary
+        val accentTonalButtonBase = MaterialTheme.colorScheme.primaryContainer
+        val secondaryButtonBase = MaterialTheme.colorScheme.surfaceContainerHigh
+        val actionButtonColors = remember(accentTonalButtonBase, panelColors.background, settings.textColor) {
+            resolveAdaptiveUiButtonColors(
+                preferred = accentTonalButtonBase,
+                background = panelColors.background,
+                textColorMode = settings.textColor,
+                minimumContentContrast = 4.5f,
+                minimumSurfaceContrast = 1.65f
+            )
+        }
+        val actionButtonContainerColor = actionButtonColors.container
+        val actionButtonContentColor = actionButtonColors.content
+        val actionButtonBorderColor = remember(actionButtonContentColor, actionButtonContainerColor) {
+            ensureUiContrast(
+                preferred = actionButtonContentColor,
+                background = actionButtonContainerColor,
+                minimumContrast = 3f
+            )
+        }
+        val modeSelectedColors = remember(primaryColor, panelColors.background, settings.textColor) {
+            resolveAdaptiveUiButtonColors(
+                preferred = primaryColor,
+                background = panelColors.background,
+                textColorMode = settings.textColor,
+                minimumContentContrast = 4.5f,
+                minimumSurfaceContrast = 1.85f
+            )
+        }
+        val modeSelectedContainerColor = modeSelectedColors.container
+        val modeSelectedContentColor = modeSelectedColors.content
+        val modeUnselectedColors = remember(secondaryButtonBase, panelColors.background, settings.textColor) {
+            resolveAdaptiveUiButtonColors(
+                preferred = secondaryButtonBase,
+                background = panelColors.background,
+                textColorMode = settings.textColor,
+                minimumContentContrast = 4.5f,
+                minimumSurfaceContrast = 1.35f
+            )
+        }
+        val modeUnselectedContainerColor = modeUnselectedColors.container
+        val modeUnselectedContentColor = modeUnselectedColors.content
+        Text(
+            text = stringResource(R.string.extreme_profile),
+            color = panelColors.text,
+            fontFamily = fontFamily,
+            fontWeight = FontWeight.Bold,
+            fontSize = 15.sp
+        )
+        Spacer(modifier = Modifier.height(10.dp))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            /*
+             * Vista previa del tamaño del avatar en tiempo real.
+             *
+             * profileSize usa el estado local que actualiza el slider en cada
+             * movimiento. El valor persistente se guarda únicamente al terminar
+             * de arrastrar, evitando escrituras continuas en DataStore mientras
+             * la previsualización sigue respondiendo de forma inmediata.
+             */
+            val previewAvatarSize = profileSize.coerceIn(36f, 84f).dp
+            val previewIconSize = (profileSize * 0.46f).coerceIn(20f, 38f).dp
+            Surface(
+                modifier = Modifier.size(previewAvatarSize).clickable(enabled = settings.profileImageUri.isNotBlank()) {
+                    UiSoundPlayer.playAction(context = context, action = UiActionSound.Open)
+                    profileEditorUri = managedProfileSourceUri(context, settings.profileImageUri)
+                        ?: Uri.parse(settings.profileImageUri)
+                },
+                shape = CircleShape,
+                color = MaterialTheme.colorScheme.surfaceContainerHigh
+            ) {
+                if (settings.profileImageUri.isNotBlank()) {
+                    AsyncImage(
+                        model = Uri.parse(settings.profileImageUri),
+                        contentDescription = null,
+                        modifier = Modifier.fillMaxSize().clip(CircleShape),
+                        contentScale = ContentScale.Crop
+                    )
+                } else {
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Icon(
+                            imageVector = Icons.Default.Person,
+                            contentDescription = null,
+                            modifier = Modifier.size(previewIconSize),
+                            tint = panelColors.text
+                        )
+                    }
+                }
+            }
+            Column(
+                modifier = Modifier.padding(start = 12.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                OutlinedButton(
+                    onClick = {
+                        UiSoundPlayer.playAction(context = context, action = UiActionSound.Add)
+                        picker.launch(arrayOf("image/*"))
+                    },
+                    shape = RoundedCornerShape(18.dp),
+                    border = BorderStroke(1.dp, actionButtonBorderColor),
+                    contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp),
+                    colors = ButtonDefaults.outlinedButtonColors(
+                        containerColor = actionButtonContainerColor,
+                        contentColor = actionButtonContentColor
+                    )
+                ) {
+                    Text(
+                        text = stringResource(R.string.extreme_change_photo),
+                        color = actionButtonContentColor,
+                        fontFamily = fontFamily,
+                        fontWeight = FontWeight.SemiBold,
+                        fontSize = 14.sp
+                    )
+                }
+                if (settings.profileImageUri.isNotBlank()) {
+                    OutlinedButton(
+                        onClick = {
+                            UiSoundPlayer.playAction(context = context, action = UiActionSound.Open)
+                            profileEditorUri = managedProfileSourceUri(context, settings.profileImageUri)
+                                ?: Uri.parse(settings.profileImageUri)
+                        },
+                        shape = RoundedCornerShape(18.dp),
+                        border = BorderStroke(1.dp, actionButtonBorderColor),
+                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            containerColor = actionButtonContainerColor,
+                            contentColor = actionButtonContentColor
+                        )
+                    ) {
+                        Text(
+                            text = stringResource(R.string.extreme_edit_photo),
+                            color = actionButtonContentColor,
+                            fontFamily = fontFamily,
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 14.sp
+                        )
+                    }
+                    OutlinedButton(
+                        onClick = {
+                            UiSoundPlayer.play(context = context, sound = UiSound.Delete)
+                            clearManagedProfileImages(context)
+                            onProfileImageUriChange("")
+                        },
+                        shape = RoundedCornerShape(18.dp),
+                        border = BorderStroke(1.dp, actionButtonBorderColor),
+                        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp),
+                        colors = ButtonDefaults.outlinedButtonColors(
+                            containerColor = actionButtonContainerColor,
+                            contentColor = actionButtonContentColor
+                        )
+                    ) {
+                        Text(
+                            text = stringResource(R.string.extreme_remove_photo),
+                            color = actionButtonContentColor,
+                            fontFamily = fontFamily,
+                            fontWeight = FontWeight.SemiBold,
+                            fontSize = 14.sp
+                        )
+                    }
+                }
+            }
+        }
+
+        if (isAdvancedMode) {
+            Spacer(modifier = Modifier.height(12.dp))
+            SettingTitleRow(
+                title = stringResource(R.string.extreme_profile_size),
+                value = "${profileSize.roundToInt()} dp",
+                color = panelColors.text,
+                fontFamily = fontFamily
+            )
+            StyledSettingsSlider(
+                value = profileSize,
+                onValueChange = onProfileSizeValueChange,
+                onValueChangeFinished = onProfileImageSizeChange,
+                valueRange = 36f..84f,
+                steps = 23,
+                activeColor = MaterialTheme.colorScheme.primary,
+                inactiveColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.35f),
+                style = settings.sliderStyle,
+                valueLabel = "${profileSize.roundToInt()} dp"
+            )
+        }
+
+        Spacer(modifier = Modifier.height(18.dp))
+        Text(
+            text = stringResource(R.string.configuration_mode_settings_title),
+            color = panelColors.text,
+            fontFamily = fontFamily,
+            fontWeight = FontWeight.Bold,
+            fontSize = 15.sp
+        )
+        Text(
+            text = stringResource(R.string.configuration_mode_settings_description),
+            modifier = Modifier.padding(top = 2.dp),
+            color = panelColors.secondaryText,
+            fontFamily = fontFamily,
+            fontSize = 12.sp
+        )
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
+            horizontalArrangement = Arrangement.spacedBy(10.dp)
+        ) {
+            val basicSelected = settings.configurationMode == "basic"
+            Button(
+                onClick = {
+                    UiSoundPlayer.playAction(context = context, action = UiActionSound.Select)
+                    onConfigurationModeChange("basic")
+                },
+                modifier = Modifier.weight(1f),
+                shape = RoundedCornerShape(13.dp),
+                contentPadding = PaddingValues(horizontal = 6.dp, vertical = 10.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (basicSelected) modeSelectedContainerColor else modeUnselectedContainerColor,
+                    contentColor = if (basicSelected) modeSelectedContentColor else modeUnselectedContentColor
+                )
+            ) {
+                Text(
+                    text = stringResource(R.string.configuration_mode_basic),
+                    color = if (basicSelected) modeSelectedContentColor else modeUnselectedContentColor,
+                    fontFamily = fontFamily,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 13.sp,
+                    maxLines = 1
+                )
+            }
+            Button(
+                onClick = {
+                    UiSoundPlayer.playAction(context = context, action = UiActionSound.Select)
+                    onConfigurationModeChange("advanced")
+                },
+                modifier = Modifier.weight(1f),
+                shape = RoundedCornerShape(13.dp),
+                contentPadding = PaddingValues(horizontal = 6.dp, vertical = 10.dp),
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (settings.configurationMode == "advanced") modeSelectedContainerColor else modeUnselectedContainerColor,
+                    contentColor = if (settings.configurationMode == "advanced") modeSelectedContentColor else modeUnselectedContentColor
+                )
+            ) {
+                Text(
+                    text = stringResource(R.string.configuration_mode_advanced),
+                    color = if (settings.configurationMode == "advanced") modeSelectedContentColor else modeUnselectedContentColor,
+                    fontFamily = fontFamily,
+                    fontWeight = FontWeight.SemiBold,
+                    fontSize = 13.sp,
+                    maxLines = 1
+                )
+            }
+        }
     }
 }
 
@@ -865,6 +1555,47 @@ private fun SettingTitle(text: String, color: Color, fontFamily:
         fontFamily = fontFamily,
         fontWeight = FontWeight.SemiBold,
         fontSize = 15.sp)
+}
+
+
+@Composable
+private fun RoundedPreviewButton(
+    text: String,
+    panelBackground: Color,
+    panelContentColor: Color,
+    textColorMode: String,
+    fontFamily: androidx.compose.ui.text.font.FontFamily,
+    onClick: () -> Unit
+) {
+    val primaryColor = MaterialTheme.colorScheme.primary
+    val resolvedButtonColors = remember(primaryColor, panelBackground, textColorMode) {
+        resolveAdaptiveUiButtonColors(
+            preferred = primaryColor,
+            background = panelBackground,
+            textColorMode = textColorMode,
+            minimumContentContrast = 4.5f,
+            minimumSurfaceContrast = 1.55f
+        )
+    }
+    val containerColor = resolvedButtonColors.container
+    val buttonContentColor = resolvedButtonColors.content
+    Button(
+        onClick = onClick,
+        modifier = Modifier.defaultMinSize(minWidth = 0.dp, minHeight = 40.dp),
+        shape = RoundedCornerShape(18.dp),
+        contentPadding = PaddingValues(horizontal = 10.dp, vertical = 8.dp),
+        colors = ButtonDefaults.buttonColors(
+            containerColor = containerColor,
+            contentColor = buttonContentColor
+        )
+    ) {
+        Text(
+            text = text,
+            fontFamily = fontFamily,
+            color = buttonContentColor,
+            fontWeight = FontWeight.SemiBold
+        )
+    }
 }
 
 @Composable
@@ -979,7 +1710,7 @@ private fun TextColorButton(modifier: Modifier, label: String, sampleColor: Colo
 @Composable
 private fun SettingDropdown(title: String, selectedLabel: String, options: List<Pair<String, String>>, textColor: Color,
     textColorMode: String, menuBackground: Color, menuTextColor: Color, fontFamily:
-        androidx.compose.ui.text.font.FontFamily, onSelected: (String) -> Unit) {
+        androidx.compose.ui.text.font.FontFamily, playDefaultSelectionFeedback: Boolean = true, onSelected: (String) -> Unit) {
     val context = LocalContext.current
     var expanded by
         remember {
@@ -1072,7 +1803,9 @@ private fun SettingDropdown(title: String, selectedLabel: String, options: List<
                                     overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis)
                             },
                             onClick = {
-                                UiSoundPlayer.playAction(context = context, action = UiActionSound.Select)
+                                if (playDefaultSelectionFeedback) {
+                                    UiSoundPlayer.playAction(context = context, action = UiActionSound.Select)
+                                }
                                 expanded = false
                                 onSelected(option.first)
                             })

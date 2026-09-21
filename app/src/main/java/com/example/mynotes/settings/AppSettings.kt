@@ -3,7 +3,15 @@ package com.example.mynotes.settings
 import androidx.compose.runtime.Immutable
 
 @Immutable
-data class AppSettings(val darkMode: Boolean = false,
+data class AppSettings(
+    /*
+     * Modo de configuración de la interfaz:
+     * unset    = todavía no se ha elegido en el primer inicio
+     * basic    = muestra únicamente los controles esenciales
+     * advanced = conserva todos los apartados de Configuración
+     */
+    val configurationMode: String = "unset",
+    val darkMode: Boolean = false,
     /*
      * Paleta global. PaletteCatalog contiene actualmente 46 paletas,
      * cada una con exactamente cuatro tonalidades seleccionables.
@@ -55,8 +63,8 @@ data class AppSettings(val darkMode: Boolean = false,
     /*
      * Diseños conservados para las barras.
      */
-    val sliderStyle: String = "minimal",
-    val font: String = "default",
+    val sliderStyle: String = "capsule",
+    val font: String = "google_sans_bold",
     val fontSize: Float = 16f,
     /*
      * Efectos cortos de interfaz: editar, borrar, prioridad, sliders
@@ -77,7 +85,7 @@ data class AppSettings(val darkMode: Boolean = false,
     val hapticEffectsEnabled: Boolean = true,
     val hapticEffectsIntensity: Float = 55f,
     val hapticEffectsStyle: String = "soft",
-    val language: String = "es",
+    val language: String = "system",
     val gridColumns: Int = 2,
     val sortOrder: String = "newest",
     // Personalización extrema
@@ -86,6 +94,8 @@ data class AppSettings(val darkMode: Boolean = false,
     val accentColor: String = "palette",
     val noteCardCornerRadius: Float = 18f, val noteCardElevation: Float = 1.5f, val noteCardPadding: Float = 12f,
     val noteCardImageHeight: Float = 112f,
+    val noteCardOutlineEnabled: Boolean = false,
+    val noteCardOutlineWidth: Float = 0f,
     // 4 líneas por defecto para evitar cortar títulos como antes.
     val noteTitleMaxLines: Int = 4, val noteContentMaxLines: Int = 6, val noteLineSpacing: Float = 1.20f,
     val showNoteDate: Boolean = true, val showCategoryChip: Boolean = true, val showFavoriteIcon: Boolean = true,

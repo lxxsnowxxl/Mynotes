@@ -1,14 +1,24 @@
 <?xml version="1.0" encoding="utf-8"?>
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- Fondo blanco que aparece entre el launcher y MyNotes -->
+    <!--
+        Android 7-11 starting window.
+
+        IMPORTANT:
+        The splash artwork now lives in drawable-nodpi as the original
+        1254 x 1254 PNG. Android therefore does not choose a mdpi/hdpi/xhdpi
+        bitmap and does not upscale a small density-specific file.
+
+        The visible size is controlled only by splash_icon_size. Changing the
+        phone density is not the correct way to resize this icon; edit the
+        dimension resource instead.
+    -->
     <item android:drawable="@android:color/white" />
 
-    <!-- Icono de la aplicación perfectamente centrado -->
     <item
         android:gravity="center"
-        android:width="120dp"
-        android:height="120dp"
-        android:drawable="@mipmap/ic_launcher" />
+        android:width="@dimen/splash_icon_size"
+        android:height="@dimen/splash_icon_size"
+        android:drawable="@drawable/splash_icon_hires" />
 
 </layer-list>

@@ -6,12 +6,18 @@ import android.content.res.Configuration
 import android.media.AudioManager
 import android.os.Build
 import android.os.Bundle
+import android.net.Uri
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.ui.Modifier
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -21,25 +27,34 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.mynotes.data.AppDatabase
 import com.example.mynotes.data.Attachment
 import com.example.mynotes.data.Note
+import com.example.mynotes.data.PendingAttachment
 import com.example.mynotes.performance.DisplayPerformanceController
+import com.example.mynotes.ui.DrawingScreen
 import com.example.mynotes.ui.NoteDetailScreen
 import com.example.mynotes.ui.NoteEditorScreen
 import com.example.mynotes.ui.NotesScreen
 import com.example.mynotes.ui.DevelopmentInfoScreen
 import com.example.mynotes.ui.SourceCodeInfoScreen
+import com.example.mynotes.ui.components.ConfigurationModeDialog
 import com.example.mynotes.ui.motion.AnimatedScreenEntry
 import com.example.mynotes.ui.motion.ConfigurableAnimatedContent
 import com.example.mynotes.ui.SettingsScreen
 import com.example.mynotes.ui.sound.UiSoundPlayer
 import com.example.mynotes.ui.theme.MyNotesTheme
+import com.example.mynotes.ui.theme.appFontFamily
 import com.example.mynotes.viewmodel.NoteViewModel
 import com.example.mynotes.viewmodel.SettingsViewModel
+import com.example.mynotes.widget.WidgetActions
+import com.example.mynotes.widget.MyNotesWidgetUpdater
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 import java.util.Locale
 
 private enum class AppDestination {
-    NOTES, SETTINGS, DEVELOPMENT_INFO, SOURCE_CODE_INFO, EDITOR, DETAIL
+    NOTES, SETTINGS, DEVELOPMENT_INFO, SOURCE_CODE_INFO, EDITOR, DRAWING, DETAIL
 }
 
 private data class NavigationSnapshot(val destination: AppDestination, val note: Note? = null)
@@ -71,7 +86,7 @@ class MainActivity : ComponentActivity() {
     companion object {
         private const val LOCALE_PREFS = "locale_prefs"
         private const val LANGUAGE_KEY = "language"
-        private const val DEFAULT_LANGUAGE = "es"
+        private const val DEFAULT_LANGUAGE = "system"
     }
     /*
      * Texto recibido mediante Compartir desde otras aplicaciones
@@ -81,6 +96,56 @@ class MainActivity : ComponentActivity() {
         mutableStateOf<String?>(null)
     private var pendingSharedTitle by
         mutableStateOf<String?>(null)
+
+    private var pendingWidgetNewNote by
+        mutableStateOf(false)
+    private var pendingWidgetNoteId by
+        mutableStateOf<Int?>(null)
+    private var pendingWidgetCollection by
+        mutableStateOf<String?>(null)
+    private var pendingWidgetSearch by
+        mutableStateOf(false)
+    private var widgetNavigationToken by
+        mutableIntStateOf(0)
+
+    private fun handleWidgetIntent(incomingIntent: Intent?) {
+        when (incomingIntent?.action) {
+            WidgetActions.ACTION_NEW_NOTE -> {
+                clearPendingShare()
+                pendingWidgetCollection = null
+                pendingWidgetSearch = false
+                pendingWidgetNoteId = null
+                pendingWidgetNewNote = true
+                widgetNavigationToken++
+            }
+            WidgetActions.ACTION_OPEN_NOTE -> {
+                clearPendingShare()
+                pendingWidgetCollection = null
+                pendingWidgetSearch = false
+                pendingWidgetNewNote = false
+                pendingWidgetNoteId = incomingIntent.getIntExtra(WidgetActions.EXTRA_NOTE_ID, -1)
+                    .takeIf { it > 0 }
+                widgetNavigationToken++
+            }
+            WidgetActions.ACTION_OPEN_COLLECTION -> {
+                clearPendingShare()
+                pendingWidgetNewNote = false
+                pendingWidgetNoteId = null
+                pendingWidgetSearch = false
+                pendingWidgetCollection = incomingIntent.getStringExtra(WidgetActions.EXTRA_COLLECTION)
+                    ?: WidgetActions.COLLECTION_ALL
+                widgetNavigationToken++
+            }
+            WidgetActions.ACTION_SEARCH -> {
+                clearPendingShare()
+                pendingWidgetNewNote = false
+                pendingWidgetNoteId = null
+                pendingWidgetCollection = WidgetActions.COLLECTION_ALL
+                pendingWidgetSearch = true
+                widgetNavigationToken++
+            }
+        }
+    }
     private fun handleIncomingShare(incomingIntent: Intent?) {
         if (incomingIntent?.action != Intent.ACTION_SEND) {
             return
@@ -109,6 +174,13 @@ class MainActivity : ComponentActivity() {
     override fun attachBaseContext(newBase: Context) {
         val preferences = newBase.getSharedPreferences(LOCALE_PREFS, Context.MODE_PRIVATE)
         val language = preferences.getString(LANGUAGE_KEY, DEFAULT_LANGUAGE) ?: DEFAULT_LANGUAGE
+        if (language == "system") {
+            // En una instalación nueva MyNotes respeta directamente el idioma
+            // configurado en Android. Al no forzar Locale, el sistema elige el
+            // recurso values-* compatible y usa el fallback normal de Android.
+            super.attachBaseContext(newBase)
+            return
+        }
         val locale = Locale.forLanguageTag(language)
         Locale.setDefault(locale)
         val configuration = Configuration(newBase.resources.configuration)
@@ -126,6 +198,7 @@ class MainActivity : ComponentActivity() {
          * ya esté guardado antes de recreate().
          */
         getSharedPreferences(LOCALE_PREFS, Context.MODE_PRIVATE).edit().putString(LANGUAGE_KEY, language).commit()
+        MyNotesWidgetUpdater.requestUpdate(this)
         recreate()
     }
     /*
@@ -309,6 +382,7 @@ class MainActivity : ComponentActivity() {
         super.onNewIntent(intent)
         setIntent(intent)
         handleIncomingShare(intent)
+        handleWidgetIntent(intent)
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         /*
@@ -320,6 +394,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
         handleIncomingShare(intent)
+        handleWidgetIntent(intent)
         /*
          * La frecuencia de refresco se aplica únicamente cuando AppSettings
          * entrega performanceMode. MainActivity no conoce valores concretos
@@ -334,7 +409,6 @@ class MainActivity : ComponentActivity() {
                     NoteViewModel = viewModel()
             val settingsViewModel:
                     SettingsViewModel = viewModel()
-            val notes by noteViewModel.notes.collectAsStateWithLifecycle()
             val settings by settingsViewModel.settings.collectAsStateWithLifecycle()
             LaunchedEffect(settings.soundEffectsEnabled, settings.soundEffectsVolume, settings.soundEffectsTheme,
                 settings.hapticEffectsEnabled, settings.hapticEffectsIntensity, settings.hapticEffectsStyle) {
@@ -344,8 +418,25 @@ class MainActivity : ComponentActivity() {
                     hapticStyle = settings.hapticEffectsStyle)
                 setSystemKeyboardSoundSuppressionEnabled(settings.soundEffectsEnabled)
             }
-            LaunchedEffect(settings.darkMode) {
-                applySystemBarAppearance(settings.darkMode)
+            /*
+             * En Configuración básica el tema claro/oscuro pertenece al
+             * sistema del teléfono. Esto hace que MyNotes cambie en tiempo
+             * real cuando Android cambia entre modo claro y oscuro.
+             *
+             * El modo avanzado conserva el interruptor manual existente y,
+             * por tanto, sigue usando settings.darkMode.
+             * Mientras el usuario todavía no ha elegido modo (primer inicio),
+             * también seguimos al sistema para evitar un destello claro en un
+             * teléfono configurado en oscuro.
+             */
+            val systemDarkTheme = isSystemInDarkTheme()
+            val effectiveDarkTheme = if (settings.configurationMode == "advanced") {
+                settings.darkMode
+            } else {
+                systemDarkTheme
+            }
+            LaunchedEffect(effectiveDarkTheme) {
+                applySystemBarAppearance(effectiveDarkTheme)
             }
             /*
              * El controlador traduce el perfil seleccionado a la frecuencia
@@ -361,6 +452,9 @@ class MainActivity : ComponentActivity() {
              * ==========================================
              */
             var showEditor by remember {
+                mutableStateOf(false)
+            }
+            var showDrawing by remember {
                 mutableStateOf(false)
             }
             var showSettings by remember {
@@ -388,6 +482,61 @@ class MainActivity : ComponentActivity() {
                 mutableStateOf<Note?>(null)
             }
             /*
+             * Acciones lanzadas desde los widgets de la pantalla de inicio.
+             * Se consumen una sola vez para que una recomposición no vuelva a
+             * abrir el editor o el detalle.
+             */
+            LaunchedEffect(pendingWidgetNewNote) {
+                if (pendingWidgetNewNote) {
+                    clearPendingShare()
+                    showSourceCodeInfo = false
+                    showDevelopmentInfo = false
+                    showSettings = false
+                    showDrawing = false
+                    selectedNote = null
+                    editingNote = null
+                    showEditor = true
+                    pendingWidgetNewNote = false
+                }
+            }
+
+            LaunchedEffect(pendingWidgetNoteId) {
+                val noteId = pendingWidgetNoteId ?: return@LaunchedEffect
+                val note = withContext(Dispatchers.IO) {
+                    AppDatabase.getDatabase(applicationContext)
+                        .noteDao()
+                        .getNoteByIdOnce(noteId)
+                }
+                pendingWidgetNoteId = null
+
+                if (note != null) {
+                    clearPendingShare()
+                    showSourceCodeInfo = false
+                    showDevelopmentInfo = false
+                    showSettings = false
+                    showDrawing = false
+                    editingNote = null
+                    showEditor = false
+                    selectedNote = note
+                }
+            }
+
+            LaunchedEffect(widgetNavigationToken) {
+                if (widgetNavigationToken > 0 &&
+                    (pendingWidgetCollection != null || pendingWidgetSearch)
+                ) {
+                    clearPendingShare()
+                    showSourceCodeInfo = false
+                    showDevelopmentInfo = false
+                    showSettings = false
+                    showDrawing = false
+                    editingNote = null
+                    showEditor = false
+                    selectedNote = null
+                }
+            }
+
+            /*
              * Cuando llega un enlace mediante Compartir, abrimos una
              * nueva nota con el texto recibido. También funciona si la
              * Activity ya estaba abierta gracias a onNewIntent().
@@ -397,6 +546,7 @@ class MainActivity : ComponentActivity() {
                     showSourceCodeInfo = false
                     showDevelopmentInfo = false
                     showSettings = false
+                    showDrawing = false
                     selectedNote = null
                     editingNote = null
                     showEditor = true
@@ -413,7 +563,7 @@ class MainActivity : ComponentActivity() {
              * Solo cuando ya estamos en "Mis notas",
              * Android puede cerrar la aplicación.
              */
-            BackHandler(enabled = showSourceCodeInfo || showDevelopmentInfo || showSettings || showEditor || selectedNote != null) {
+            BackHandler(enabled = showSourceCodeInfo || showDevelopmentInfo || showSettings || showEditor || showDrawing || selectedNote != null) {
                 when {
                     showSourceCodeInfo -> {
                         showSourceCodeInfo = false
@@ -429,6 +579,9 @@ class MainActivity : ComponentActivity() {
                         clearPendingShare()
                         showEditor = false
                     }
+                    showDrawing -> {
+                        showDrawing = false
+                    }
                     selectedNote != null -> {
                         selectedNote = null
                     }
@@ -438,15 +591,26 @@ class MainActivity : ComponentActivity() {
              * Guardamos la nota en el estado de navegación para que la
              * pantalla saliente conserve sus datos durante el Zoom Out.
              */
-            val currentScreen = when {
+            val currentScreen = remember(
+                showSourceCodeInfo,
+                showDevelopmentInfo,
+                showSettings,
+                showEditor,
+                showDrawing,
+                editingNote,
+                selectedNote
+            ) {
+                when {
                     showSourceCodeInfo -> NavigationSnapshot(AppDestination.SOURCE_CODE_INFO)
                     showDevelopmentInfo -> NavigationSnapshot(AppDestination.DEVELOPMENT_INFO)
                     showSettings -> NavigationSnapshot(AppDestination.SETTINGS)
+                    showDrawing -> NavigationSnapshot(AppDestination.DRAWING)
                     showEditor -> NavigationSnapshot(AppDestination.EDITOR, editingNote)
                     selectedNote != null -> NavigationSnapshot(AppDestination.DETAIL, selectedNote)
                     else -> NavigationSnapshot(AppDestination.NOTES)
                 }
-            MyNotesTheme(darkTheme = settings.darkMode,
+            }
+            MyNotesTheme(darkTheme = effectiveDarkTheme,
                 backgroundColor = settings.backgroundColor,
                 backgroundToneIndex = settings.backgroundToneIndex,
                 backgroundIntensity = settings.backgroundIntensity,
@@ -459,6 +623,7 @@ class MainActivity : ComponentActivity() {
                 textColor = settings.textColor,
                 textOutlineEnabled = settings.textOutlineEnabled,
                 accentColor = settings.accentColor) {
+                Box(modifier = Modifier.fillMaxSize()) {
                 ConfigurableAnimatedContent(targetState = currentScreen,
                     animationsEnabled = settings.animationsEnabled,
                     animationSpeed = settings.animationSpeed,
@@ -475,6 +640,9 @@ class MainActivity : ComponentActivity() {
                     AppDestination.SETTINGS -> {
                         SettingsScreen(
                             settings = settings,
+                            onConfigurationModeChange = {
+                                settingsViewModel.setConfigurationMode(it)
+                            },
                             onDarkModeChange = {
                                 settingsViewModel.setDarkMode(it)
                             },
@@ -565,6 +733,9 @@ class MainActivity : ComponentActivity() {
                             },
                             onNoteCardImageHeightChange = {
                                 settingsViewModel.setNoteCardImageHeight(it)
+                            },
+                            onNoteCardOutlineWidthChange = {
+                                settingsViewModel.setNoteCardOutlineWidth(it)
                             },
                             onNoteTitleMaxLinesChange = {
                                 settingsViewModel.setNoteTitleMaxLines(it)
@@ -756,16 +927,52 @@ class MainActivity : ComponentActivity() {
                     }
                     /*
                      * ==========================================
+                     * DIBUJO
+                     * ==========================================
+                     */
+                    AppDestination.DRAWING -> {
+                        DrawingScreen(
+                            settings = settings,
+                            onCancel = {
+                                showDrawing = false
+                            },
+                            onSave = { drawingUri: Uri ->
+                                noteViewModel.addNote(
+                                    title = getString(R.string.drawing_default_note_title),
+                                    content = "",
+                                    color = "default",
+                                    attachments = listOf(
+                                        PendingAttachment(
+                                            uri = drawingUri,
+                                            type = "image",
+                                            name = "drawing_${System.currentTimeMillis()}.png",
+                                            mimeType = "image/png"
+                                        )
+                                    )
+                                )
+                                showDrawing = false
+                            }
+                        )
+                    }
+                    /*
+                     * ==========================================
                      * DETALLE DE NOTA
                      * ==========================================
                      */
                     AppDestination.DETAIL -> {
                         /*
+                         * La lista de notas se observa únicamente mientras la
+                         * pantalla de detalle la necesita. Así una escritura en
+                         * Room no recompone Settings/Editor/Info cuando esas
+                         * pantallas están activas.
+                         */
+                        val detailNotes by noteViewModel.notes.collectAsStateWithLifecycle()
+                        /*
                          * Usamos la instancia más reciente de Room para
                          * reflejar Favorite / Pin / Category / Priority
                          * sin salir de la pantalla de detalle.
                          */
-                        val currentSelectedNote = notes.firstOrNull {
+                        val currentSelectedNote = detailNotes.firstOrNull {
                                     it.id == screen.note!!.id
                                 }?: screen.note!!
                         NoteDetailScreen(
@@ -789,29 +996,48 @@ class MainActivity : ComponentActivity() {
                      * ==========================================
                      */
                     AppDestination.NOTES -> {
+                        /*
+                         * Room solo se colecciona mientras la lista principal
+                         * está en composición. Esto evita recomposiciones raíz
+                         * innecesarias en Configuración, Editor e Información.
+                         */
+                        val notes by noteViewModel.notes.collectAsStateWithLifecycle()
                         NotesScreen(
                             notes = notes,
                             noteViewModel = noteViewModel,
                             settings = settings,
+                            initialFilterKey = pendingWidgetCollection,
+                            requestSearchFocus = pendingWidgetSearch,
+                            widgetRequestToken = widgetNavigationToken,
                             /*
                              * Nueva nota.
                              */
                             onAddNote = {
                                 clearPendingShare()
                                 editingNote = null
+                                showDrawing = false
                                 showEditor = true
+                            },
+                            onDrawNote = {
+                                clearPendingShare()
+                                editingNote = null
+                                selectedNote = null
+                                showEditor = false
+                                showDrawing = true
                             },
                             /*
                              * Ajustes.
                              */
                             onOpenSettings = {
                                 showDevelopmentInfo = false
+                                showDrawing = false
                                 showSettings = true
                             },
                             /*
                              * Abrir nota.
                              */
                             onOpenNote = { note ->
+                                showDrawing = false
                                 selectedNote = note
                             },
                             /*
@@ -819,10 +1045,23 @@ class MainActivity : ComponentActivity() {
                              */
                             onEditNote = { note ->
                                 clearPendingShare()
+                                showDrawing = false
                                 editingNote = note
                                 showEditor = true
                             })
                     }
+                }
+                }
+                if (settings.configurationMode == "unset") {
+                    ConfigurationModeDialog(
+                        fontFamily = appFontFamily(settings.font),
+                        onBasicSelected = {
+                            settingsViewModel.setConfigurationMode("basic")
+                        },
+                        onAdvancedSelected = {
+                            settingsViewModel.setConfigurationMode("advanced")
+                        }
+                    )
                 }
                 }
             }

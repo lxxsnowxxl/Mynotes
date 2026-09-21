@@ -20,6 +20,14 @@
         android:name="android.permission.MODIFY_AUDIO_SETTINGS" />
 
     <!--
+        Necesario únicamente para entregar al instalador del sistema los APK
+        descargados desde GitHub Releases. En Android 8+ el usuario debe
+        autorizar explícitamente a MyNotes en "Instalar apps desconocidas".
+    -->
+    <uses-permission
+        android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
+
+    <!--
         La aplicación funciona sin micrófono. Declararlo como opcional evita
         que Google Play excluya tablets, Chromebooks u otros equipos que no
         dispongan de uno. La grabación de voz se desactiva en tiempo de
@@ -84,6 +92,82 @@
             </intent-filter>
 
         </activity>
+
+        <receiver
+            android:name=".widget.QuickNoteWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_new_note">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/quick_note_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".widget.RecentNotesWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_recent_notes">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/recent_notes_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".widget.FavoritesWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_favorites">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/favorites_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".widget.FocusNoteWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_focus_note">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/focus_note_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".widget.CollectionsWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_collections">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/collections_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".widget.StatsWidgetProvider"
+            android:exported="true"
+            android:label="@string/widget_stats">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/stats_widget_info" />
+        </receiver>
+
+        <receiver
+            android:name=".widget.WidgetActionReceiver"
+            android:exported="false" />
 
         <provider
             android:name="androidx.core.content.FileProvider"

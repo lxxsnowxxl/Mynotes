@@ -13,6 +13,7 @@
     <string name="monospace">Monospace</string>
     <string name="text_size">Text size: %1$d</string>
     <string name="language">Language</string>
+    <string name="language_system">Device language</string>
     <string name="notes_view">Notes view</string>
     <string name="one_column">1 column</string>
     <string name="two_columns">2 columns</string>
@@ -119,7 +120,7 @@
     <string name="mock_auto">Automatic</string>
 
     <string name="sound_effects">Sound effects</string>
-    <string name="sound_effects_description">Sounds for all app actions. Choose from twenty styles and preview them here.</string>
+    <string name="sound_effects_description">Sounds for app actions. Choose from modern sound packs and preview them here.</string>
     <string name="sound_effects_enabled">Enable sounds</string>
     <string name="sound_effects_volume">Effects volume</string>
     <string name="sound_effects_theme">Sound style</string>
@@ -143,6 +144,12 @@
     <string name="sound_theme_space">Space</string>
     <string name="sound_theme_chime">Chime</string>
     <string name="sound_theme_paper">Paper</string>
+    <string name="sound_theme_material">Material</string>
+    <string name="sound_theme_expressive">Expressive</string>
+    <string name="sound_theme_prism">Prism</string>
+    <string name="sound_theme_aurora">Aurora</string>
+    <string name="sound_theme_fluid">Fluid</string>
+    <string name="sound_theme_pulse">Pulse</string>
     <string name="sound_theme_neon">Neon</string>
 
     <string name="haptic_effects">Vibration effects</string>
@@ -167,4 +174,23 @@
     <string name="haptic_style_heavy">Heavy</string>
     <string name="haptic_style_spring">Spring</string>
     <string name="haptic_style_echo">Echo</string>
+
+    <string name="configuration_mode_welcome_title">How would you like to configure MyNotes?</string>
+    <string name="configuration_mode_welcome_description">Choose how many options you want to see in Settings. This does not change your notes or create a different edition of the app.</string>
+    <string name="configuration_mode_basic">Basic version</string>
+    <string name="configuration_mode_basic_description">Shows only the essentials: color palette, profile image, font size, language, updates, and basic options added later.</string>
+    <string name="configuration_mode_advanced">Advanced version</string>
+    <string name="configuration_mode_advanced_description">Keeps every customization section and control currently available.</string>
+    <string name="configuration_mode_change_later">You can switch between Basic and Advanced later from Settings.</string>
+    <string name="configuration_mode_settings_title">Configuration mode</string>
+    <string name="configuration_mode_settings_description">Choose a simplified Settings screen or all advanced controls.</string>
+    <string name="configuration_mode_confirm">OK</string>
+
+    <string name="widget_new_note">New note</string>
+    <string name="widget_recent_notes">Recent notes</string>
+    <string name="widget_empty_notes">You don’t have any notes yet</string>
+    <string name="widget_untitled_note">Untitled note</string>
+    <string name="widget_pinned_note">Pinned note</string>
+    <string name="widget_favorite_note">Favorite note</string>
+    <string name="widget_tap_to_open">Tap to open</string>
 </resources>

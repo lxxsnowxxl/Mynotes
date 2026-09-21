@@ -20,6 +20,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -34,6 +35,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
@@ -100,6 +102,7 @@ import coil3.size.Precision
 import coil3.size.Scale
 import coil3.size.Size
 import com.example.mynotes.R
+import com.example.mynotes.ui.components.ScrollPositionCapsule
 import com.example.mynotes.performance.DisplayPerformanceController
 import com.example.mynotes.ui.sound.UiActionSound
 import com.example.mynotes.ui.sound.UiSoundPlayer
@@ -205,10 +208,18 @@ class AttachmentViewerActivity : ComponentActivity() {
             LaunchedEffect(settings.performanceMode) {
                 DisplayPerformanceController.requestForPerformanceMode(window = window, performanceMode = settings.performanceMode)
             }
-            LaunchedEffect(settings.darkMode) {
-                applySystemBarAppearance(settings.darkMode)
+            /* Igual que la Activity principal: Básico = tema del teléfono;
+             * Avanzado = preferencia manual guardada. */
+            val systemDarkTheme = isSystemInDarkTheme()
+            val effectiveDarkTheme = if (settings.configurationMode == "advanced") {
+                settings.darkMode
+            } else {
+                systemDarkTheme
             }
-            MyNotesTheme(darkTheme = settings.darkMode, backgroundColor = settings.backgroundColor,
+            LaunchedEffect(effectiveDarkTheme) {
+                applySystemBarAppearance(effectiveDarkTheme)
+            }
+            MyNotesTheme(darkTheme = effectiveDarkTheme, backgroundColor = settings.backgroundColor,
                 backgroundToneIndex = settings.backgroundToneIndex, backgroundIntensity = settings.backgroundIntensity,
                 surfacePanelIntensity = settings.surfacePanelIntensity, headerIntensity = settings.headerIntensity,
                 textColor = settings.textColor, textOutlineEnabled = settings.textOutlineEnabled, accentColor = settings.accentColor) {
@@ -759,6 +770,7 @@ private fun AudioFileViewer(uri: Uri, name: String, mimeType: String) {
 private fun PdfViewer(uri: Uri) {
     val context = LocalContext.current
     val density = LocalDensity.current
+    val pdfScrollState = rememberLazyListState()
     val handle = remember(uri) {
         try {
             openPdfHandle(context, uri)
@@ -786,10 +798,11 @@ private fun PdfViewer(uri: Uri) {
         val pages = remember(handle.pageCount) {
             (0 until handle.pageCount).toList()
         }
-        LazyColumn(modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+        LazyColumn(state = pdfScrollState, modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             items(items = pages, key = { it }) { pageIndex -> PdfPage(handle = handle, pageIndex = pageIndex, targetWidth = widthPx)
             }
         }
+        ScrollPositionCapsule(state = pdfScrollState, modifier = Modifier.align(Alignment.CenterEnd))
     }
 }
 
@@ -899,14 +912,18 @@ private fun TextFileViewer(uri: Uri, extension: String) {
             CircularProgressIndicator()
         }
     } else {
-        Column(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp)) {
-            Text(text = text!!, fontFamily = if (extension in setOf("txt", "log", "json", "xml", "csv", "md",
-                        "kt", "java", "gradle", "kts", "py", "js", "ts", "css", "html", "htm", "sh", "c", "cpp",
-                        "h", "hpp", "ini", "cfg", "yaml", "yml")) {
-                    FontFamily.Monospace
-                } else {
-                    FontFamily.Default
-                }, fontSize = 14.sp, lineHeight = 20.sp, color = MaterialTheme.colorScheme.onBackground)
+        val textScrollState = rememberScrollState()
+        Box(modifier = Modifier.fillMaxSize()) {
+            Column(modifier = Modifier.fillMaxSize().verticalScroll(textScrollState).padding(16.dp)) {
+                Text(text = text!!, fontFamily = if (extension in setOf("txt", "log", "json", "xml", "csv", "md",
+                            "kt", "java", "gradle", "kts", "py", "js", "ts", "css", "html", "htm", "sh", "c", "cpp",
+                            "h", "hpp", "ini", "cfg", "yaml", "yml")) {
+                        FontFamily.Monospace
+                    } else {
+                        FontFamily.Default
+                    }, fontSize = 14.sp, lineHeight = 20.sp, color = MaterialTheme.colorScheme.onBackground)
+            }
+            ScrollPositionCapsule(state = textScrollState, modifier = Modifier.align(Alignment.CenterEnd))
         }
     }
 }
@@ -929,11 +946,15 @@ private fun OfficeTextViewer(uri: Uri, extension: String, name: String, mimeType
         GenericFileViewer(uri = uri, name = name, extension = extension, mimeType = mimeType)
         return
     }
-    Column(modifier = Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(18.dp)) {
-        Text(text = "Vista de texto extraída del documento", fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.primary,
-            fontSize = 13.sp)
-        Spacer(modifier = Modifier.height(12.dp))
-        Text(text = extracted!!, color = MaterialTheme.colorScheme.onBackground, fontSize = 15.sp, lineHeight = 22.sp)
+    val officeScrollState = rememberScrollState()
+    Box(modifier = Modifier.fillMaxSize()) {
+        Column(modifier = Modifier.fillMaxSize().verticalScroll(officeScrollState).padding(18.dp)) {
+            Text(text = "Vista de texto extraída del documento", fontWeight = FontWeight.SemiBold, color = MaterialTheme.colorScheme.primary,
+                fontSize = 13.sp)
+            Spacer(modifier = Modifier.height(12.dp))
+            Text(text = extracted!!, color = MaterialTheme.colorScheme.onBackground, fontSize = 15.sp, lineHeight = 22.sp)
+        }
+        ScrollPositionCapsule(state = officeScrollState, modifier = Modifier.align(Alignment.CenterEnd))
     }
 }
 

@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Build
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -44,6 +45,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.mynotes.R
 import com.example.mynotes.settings.AppSettings
+import com.example.mynotes.ui.components.ScrollPositionCapsule
 import com.example.mynotes.ui.motion.AnimatedScreenEntry
 import com.example.mynotes.ui.sound.UiActionSound
 import com.example.mynotes.ui.sound.UiSoundPlayer
@@ -69,6 +71,7 @@ private const val MYNOTES_JAVA_COMPATIBILITY = 11
 fun DevelopmentInfoScreen(settings: AppSettings, onOpenSourceCode: () -> Unit, onBack: () -> Unit) {
     val context = LocalContext.current
     val fontFamily = remember(settings.font) { appFontFamily(settings.font) }
+    val developmentScrollState = rememberScrollState()
     val packageInfo = remember(context.packageName) {
         @Suppress("DEPRECATION")
         context.packageManager.getPackageInfo(context.packageName, 0)
@@ -108,7 +111,8 @@ fun DevelopmentInfoScreen(settings: AppSettings, onOpenSourceCode: () -> Unit, o
                         }
                     })
             }) { paddingValues ->
-            Column(modifier = Modifier.fillMaxSize().padding(paddingValues).verticalScroll(rememberScrollState())
+            Box(modifier = Modifier.fillMaxSize()) {
+            Column(modifier = Modifier.fillMaxSize().padding(paddingValues).verticalScroll(developmentScrollState)
                     .widthIn(max = 840.dp).padding(horizontal = 14.dp, vertical = 16.dp)) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(imageVector = Icons.Default.Info, contentDescription = null, tint = primaryText,
@@ -240,6 +244,10 @@ fun DevelopmentInfoScreen(settings: AppSettings, onOpenSourceCode: () -> Unit, o
                 }
 
                 Spacer(Modifier.height(24.dp))
+            }
+            ScrollPositionCapsule(state = developmentScrollState,
+                modifier = Modifier.align(Alignment.CenterEnd).padding(paddingValues),
+                backgroundColor = screenBackground, preferredColor = primaryText)
             }
         }
     }

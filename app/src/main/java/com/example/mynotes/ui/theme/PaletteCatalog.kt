@@ -60,7 +60,12 @@ object PaletteCatalog {
         p("olive", R.string.mock_palette_olive, 0xFFF1F2E3, 0xFFD5D7A6, 0xFF6D703E, 0xFF555A29, 0xFF797E3D),
         p("mustard", R.string.mock_palette_mustard, 0xFFFFF5D9, 0xFFF0D788, 0xFF846922, 0xFF7C5D12, 0xFFA77E21),
         p("monochrome", R.string.mock_palette_monochrome, 0xFFF5F5F5, 0xFFD5D5D5, 0xFF6C6C6C, 0xFF303030, 0xFF606060))
-    fun find(key: String): MyNotesPalette = palettes.firstOrNull {
-            it.key == key
-        } ?: palettes.first()
+    /*
+     * PaletteCatalog se consulta desde el tema, Configuración y los widgets.
+     * Mantener un índice evita recorrer las 46 paletas cada vez que cambia una
+     * preferencia visual.
+     */
+    private val palettesByKey: Map<String, MyNotesPalette> = palettes.associateBy { it.key }
+
+    fun find(key: String): MyNotesPalette = palettesByKey[key] ?: palettes.first()
 }

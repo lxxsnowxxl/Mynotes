@@ -22,13 +22,14 @@ import com.example.mynotes.ui.theme.settingsSectionColors
  * El mismo fondo y radio de las tarjetas Perfil / Iconos de la referencia.
  * Usa el color del tema: conserva la paleta y la intensidad elegidas.
  *
- * Los grupos que antes no tenían tarjeta usan horizontalOutset para dibujar
- * dentro del margen disponible, sin quitar ancho a sus controles. Los que ya
- * tenían tarjeta conservan su relleno. No se recorta ni se intercepta contenido.
+ * Todos los paneles de Configuración comparten por defecto un outset horizontal
+ * de 8 dp. Así los recuadros mantienen la misma anchura visual aunque procedan
+ * de secciones distintas (Perfil, Sonido, Vibración, Backup, personalización,
+ * etc.). El parámetro sigue disponible para casos excepcionales.
  */
 @Composable
 internal fun SettingsSectionPanel(textColorMode: String, modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(14.dp), horizontalOutset: Dp = 0.dp,
+    contentPadding: PaddingValues = PaddingValues(14.dp), horizontalOutset: Dp = 8.dp,
     content: @Composable ColumnScope.(SettingsSectionColors) -> Unit) {
     val background = MaterialTheme.colorScheme.surfaceContainerLow
     val colors = remember(background, textColorMode) {

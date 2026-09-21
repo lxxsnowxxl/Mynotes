@@ -42,4 +42,13 @@
     <string name="performance_mode_balanced">Équilibré</string>
     <string name="performance_mode_quality">Qualité maximale</string>
     <string name="performance_mode_description">Règle les animations, la fréquence d’affichage et la résolution des miniatures. Performances maximales : images/vidéos à 360 px et PDF à 480 px. Équilibré : 720 px et PDF à 960 px. Qualité maximale : images jusqu’à 1280 px, vidéos à 1080 px et PDF à 1440 px ; demande aussi jusqu’à 120 Hz sur les écrans compatibles.</string>
+    <string name="motion_style_expressive_spring">Ressort expressif</string>
+    <string name="motion_style_container_transform">Transformation de conteneur</string>
+    <string name="motion_style_soft_reveal">Révélation douce</string>
+    <string name="motion_style_elastic_slide">Glissement élastique</string>
+    <string name="motion_style_predictive">Prédictive</string>
+    <string name="motion_style_tonal_pop">Pop tonal</string>
+    <string name="motion_easing_expressive">Expressive</string>
+    <string name="motion_easing_emphasized_accel">Accélération accentuée</string>
+    <string name="motion_easing_emphasized_decel">Décélération accentuée</string>
 </resources>

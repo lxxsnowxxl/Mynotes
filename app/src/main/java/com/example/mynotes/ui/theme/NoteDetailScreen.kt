@@ -75,6 +75,7 @@ import androidx.compose.ui.window.PopupProperties
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.mynotes.R
 import com.example.mynotes.ui.components.AppAlertDialog
+import com.example.mynotes.ui.components.ScrollPositionCapsule
 import com.example.mynotes.ui.components.AppDropdownMenu
 import com.example.mynotes.data.Note
 import com.example.mynotes.settings.AppSettings
@@ -207,6 +208,7 @@ fun NoteDetailScreen(note: Note, noteViewModel: NoteViewModel, settings: AppSett
     val hiddenColorMenuItems = remember(settings.colorMenuHiddenItems) {
             parseDetailMenuKeys(settings.colorMenuHiddenItems, DetailColorKeys)
         }
+    val detailScrollState = rememberScrollState()
     AnimatedScreenEntry(animationsEnabled = settings.animationsEnabled,
         animationSpeed = settings.animationSpeed) {
         Scaffold(containerColor = detailBackground,
@@ -445,7 +447,7 @@ fun NoteDetailScreen(note: Note, noteViewModel: NoteViewModel, settings: AppSett
         }) {
             paddingValues ->
         Box(modifier = Modifier.fillMaxSize().padding(paddingValues), contentAlignment = Alignment.TopCenter) {
-            Column(modifier = Modifier.widthIn(max = 900.dp).fillMaxWidth().verticalScroll(rememberScrollState()).padding(start = 22.dp,
+            Column(modifier = Modifier.widthIn(max = 900.dp).fillMaxWidth().verticalScroll(detailScrollState).padding(start = 22.dp,
                             end = 22.dp, bottom = 28.dp)) {
             Text(text = note.title.ifBlank {
                             stringResource(R.string.mock_untitled)
@@ -549,6 +551,7 @@ fun NoteDetailScreen(note: Note, noteViewModel: NoteViewModel, settings: AppSett
                 }
                 }
             }
+            ScrollPositionCapsule(state = detailScrollState, modifier = Modifier.align(Alignment.CenterEnd), backgroundColor = detailBackground, preferredColor = noteGraphicColor)
         }
     }
     if (deleteDialogVisible) {
@@ -675,7 +678,7 @@ private fun shareNote(context: Context, note: Note) {
                 append(note.title)
                 append("\n\n")
             }
-            append(note.content)
+            append(noteTextForDisplay(note.content, extractLinkUrls(note.content)))
         }
     val intent = Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_TEXT, text)
     context.startActivity(Intent.createChooser(intent, null))
