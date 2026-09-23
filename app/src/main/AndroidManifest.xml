@@ -11,6 +11,12 @@
     <uses-permission
         android:name="android.permission.VIBRATE" />
 
+    <uses-permission
+        android:name="android.permission.POST_NOTIFICATIONS" />
+
+    <uses-permission
+        android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
     <!--
         Permite silenciar temporalmente el canal de sonidos de sistema mientras
         el teclado está visible. Es un permiso normal: no muestra diálogo al
@@ -94,6 +100,15 @@
         </activity>
 
         <receiver
+            android:name=".reminders.ReminderReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.MY_PACKAGE_REPLACED" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
             android:name=".widget.QuickNoteWidgetProvider"
             android:exported="true"
             android:label="@string/widget_new_note">
@@ -140,32 +155,7 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/focus_note_widget_info" />
         </receiver>
-
-        <receiver
-            android:name=".widget.CollectionsWidgetProvider"
-            android:exported="true"
-            android:label="@string/widget_collections">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/collections_widget_info" />
-        </receiver>
-
-        <receiver
-            android:name=".widget.StatsWidgetProvider"
-            android:exported="true"
-            android:label="@string/widget_stats">
-            <intent-filter>
-                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
-            </intent-filter>
-            <meta-data
-                android:name="android.appwidget.provider"
-                android:resource="@xml/stats_widget_info" />
-        </receiver>
-
-        <receiver
+<receiver
             android:name=".widget.WidgetActionReceiver"
             android:exported="false" />
 

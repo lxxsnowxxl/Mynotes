@@ -39,6 +39,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Brush
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.NoteAdd
+import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
@@ -143,6 +144,7 @@ fun NotesScreen(
     widgetRequestToken: Int = 0,
     onAddNote: () -> Unit,
     onDrawNote: () -> Unit,
+    onOpenReminders: () -> Unit,
     onOpenSettings: () -> Unit,
     onOpenNote: (Note) -> Unit,
     onEditNote: (Note) -> Unit
@@ -468,6 +470,18 @@ fun NotesScreen(
                         horizontalAlignment = Alignment.End,
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
+                        QuickCreateActionButton(
+                            text = stringResource(R.string.reminders),
+                            icon = Icons.Default.NotificationsActive,
+                            fontFamily = fontFamily,
+                            containerColor = quickCreateSurfaceColor,
+                            contentColor = quickCreateTextColor,
+                            onClick = {
+                                addMenuExpanded = false
+                                UiSoundPlayer.playAction(context = context, action = UiActionSound.Select)
+                                onOpenReminders()
+                            }
+                        )
                         QuickCreateActionButton(
                             text = stringResource(R.string.mock_new_note),
                             icon = Icons.Default.NoteAdd,

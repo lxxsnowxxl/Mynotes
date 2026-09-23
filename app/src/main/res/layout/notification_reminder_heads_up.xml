@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/reminder_notification_root"
+    android:layout_width="match_parent"
+    android:layout_height="72dp"
+    android:padding="3dp">
+
+    <ImageView
+        android:id="@+id/reminder_notification_background"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:scaleType="fitXY"
+        android:src="@drawable/reminder_notification_panel" />
+
+    <ImageView
+        android:id="@+id/reminder_notification_accent"
+        android:layout_width="4dp"
+        android:layout_height="48dp"
+        android:layout_gravity="start|center_vertical"
+        android:layout_marginStart="9dp"
+        android:scaleType="fitXY"
+        android:src="@drawable/reminder_notification_accent" />
+
+    <ImageView
+        android:id="@+id/reminder_notification_icon"
+        android:layout_width="22dp"
+        android:layout_height="22dp"
+        android:layout_gravity="start|center_vertical"
+        android:layout_marginStart="20dp"
+        android:src="@drawable/ic_reminder_notification" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="50dp"
+        android:layout_marginEnd="10dp"
+        android:gravity="center_vertical"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/reminder_notification_label"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:fontFamily="@font/google_sans_medium"
+            android:maxLines="1"
+            android:textSize="9sp" />
+
+        <TextView
+            android:id="@+id/reminder_notification_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:ellipsize="end"
+            android:fontFamily="@font/google_sans_bold"
+            android:maxLines="1"
+            android:textSize="15sp" />
+
+        <TextView
+            android:id="@+id/reminder_notification_description"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="1dp"
+            android:ellipsize="end"
+            android:fontFamily="@font/google_sans_regular"
+            android:maxLines="1"
+            android:textSize="11sp" />
+    </LinearLayout>
+</FrameLayout>

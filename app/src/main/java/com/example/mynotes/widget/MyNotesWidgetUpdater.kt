@@ -26,9 +26,7 @@ object MyNotesWidgetUpdater {
         QuickNoteWidgetProvider::class.java,
         RecentNotesWidgetProvider::class.java,
         FavoritesWidgetProvider::class.java,
-        FocusNoteWidgetProvider::class.java,
-        CollectionsWidgetProvider::class.java,
-        StatsWidgetProvider::class.java
+        FocusNoteWidgetProvider::class.java
     )
 
     private val mainHandler = Handler(Looper.getMainLooper())

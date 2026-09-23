@@ -107,7 +107,7 @@ private fun typographyWithBlackOutline(base: MaterialTypography, enabled: Boolea
             base.labelSmall.withBlackOutline(true))
 }
 
-private fun lightScheme(palette:
+internal fun lightScheme(palette:
         MyNotesPalette, toneIndex: Int, backgroundIntensity: Float, surfacePanelIntensity: Float, headerIntensity: Float, textColor: String,
     accentColor: String): ColorScheme {
     val baseTone = palette.tones[toneIndex.coerceIn(0, 3)]
@@ -152,7 +152,7 @@ private fun lightScheme(palette:
         outline = ensureUiContrast(preferred = mixColor(accent, Color.Black, 0.22f), background = body, minimumContrast = 3f))
 }
 
-private fun darkScheme(palette:
+internal fun darkScheme(palette:
         MyNotesPalette, toneIndex: Int, backgroundIntensity: Float, surfacePanelIntensity: Float, headerIntensity: Float, textColor: String,
     accentColor: String): ColorScheme {
     val selected = palette.tones[toneIndex.coerceIn(0, 3)]

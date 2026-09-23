@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="reminders">提醒</string>
+    <string name="reminder_new">新建提醒</string>
+    <string name="reminder_create_title">新建提醒</string>
+    <string name="reminder_edit_title">编辑提醒</string>
+    <string name="reminder_editor_subtitle">设置 MyNotes 提醒你的时间和方式。</string>
+    <string name="reminder_panel_title">你的提醒</string>
+    <string name="reminder_panel_description">使用日期、时间、重复、优先级和颜色创建自定义提醒。</string>
+    <string name="reminder_active_count">%1$d 个已启用</string>
+    <string name="reminder_empty">还没有提醒</string>
+    <string name="reminder_empty_description">创建一个提醒，在需要时收到通知。</string>
+    <string name="reminder_content_section">内容</string>
+    <string name="reminder_title">标题</string>
+    <string name="reminder_description">描述</string>
+    <string name="reminder_tools">提醒工具</string>
+    <string name="reminder_when">日期和时间</string>
+    <string name="reminder_repeat">重复</string>
+    <string name="reminder_repeat_none">不重复</string>
+    <string name="reminder_repeat_daily">每天</string>
+    <string name="reminder_repeat_weekdays">周一至周五</string>
+    <string name="reminder_repeat_weekly">每周</string>
+    <string name="reminder_repeat_monthly">每月</string>
+    <string name="reminder_priority">优先级</string>
+    <string name="reminder_priority_low">低</string>
+    <string name="reminder_priority_normal">普通</string>
+    <string name="reminder_priority_high">高</string>
+    <string name="reminder_color">颜色</string>
+    <string name="reminder_enabled">启用提醒</string>
+    <string name="reminder_enabled_description">在所选日期和时间安排通知。</string>
+    <string name="reminder_delete">删除提醒</string>
+    <string name="reminder_title_required">请输入提醒标题。</string>
+    <string name="reminder_future_time_required">请选择未来的日期和时间。</string>
+    <string name="reminder_untitled">提醒</string>
+    <string name="reminder_notification_channel">MyNotes 提醒</string>
+    <string name="reminder_notification_channel_description">来自 MyNotes 的计划提醒。</string>
+    <string name="reminder_notification_default_text">你有一个待处理的提醒。</string>
+    <string name="reminder_quick_time">几分钟后</string>
+    <string name="reminder_in_minutes">+%1$d 分钟</string>
+</resources>

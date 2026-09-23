@@ -10,18 +10,12 @@
     <string name="widget_focus_note_hint">Fijadas y prioridad aparecen primero</string>
     <string name="widget_open_note">Abrir nota</string>
     <string name="widget_toggle_pin">Cambiar fijación</string>
-    <string name="widget_collections">Colecciones</string>
-    <string name="widget_collections_hint">Salta directo a lo que necesitas</string>
-    <string name="widget_note_collage">Collage</string>
-    <string name="widget_note_collage_hint">Tus notas en pequeño</string>
-    <string name="widget_pinned_collection">Fijadas</string>
+<string name="widget_pinned_collection">Fijadas</string>
     <string name="widget_category_work">Trabajo</string>
     <string name="widget_category_personal">Personal</string>
     <string name="widget_images">Imágenes</string>
     <string name="widget_files">Archivos</string>
-    <string name="widget_stats">Resumen</string>
-    <string name="widget_stats_hint">Tus notas de un vistazo</string>
-    <string name="widget_high_priority">Prioridad alta</string>
+<string name="widget_high_priority">Prioridad alta</string>
     <string name="widget_all_notes">Todas</string>
     <string name="widget_badge_pinned">PIN</string>
     <string name="widget_badge_work">W</string>
@@ -30,4 +24,10 @@
     <string name="widget_meta_favorite">Favorita</string>
     <plurals name="widget_note_count"><item quantity="one">%d nota</item><item quantity="other">%d notas</item></plurals>
     <plurals name="widget_favorite_count"><item quantity="one">%d favorita</item><item quantity="other">%d favoritas</item></plurals>
+
+    <!-- Legacy compatibility only: Collage/Overview providers remain removed. -->
+    <string name="widget_note_collage">Collage de notas</string>
+    <string name="widget_note_collage_hint">Vista combinada de tus notas</string>
+    <string name="widget_stats">Resumen</string>
+    <string name="widget_stats_hint">Resumen de tus notas</string>
 </resources>

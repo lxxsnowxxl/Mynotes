@@ -32,9 +32,13 @@ import com.example.mynotes.data.Attachment
 import com.example.mynotes.data.Note
 import com.example.mynotes.data.PendingAttachment
 import com.example.mynotes.performance.DisplayPerformanceController
+import com.example.mynotes.reminders.ReminderRepository
+import com.example.mynotes.reminders.ReminderFeedbackPreferences
+import com.example.mynotes.reminders.ReminderReceiver
 import com.example.mynotes.ui.DrawingScreen
 import com.example.mynotes.ui.NoteDetailScreen
 import com.example.mynotes.ui.NoteEditorScreen
+import com.example.mynotes.ui.ReminderScreen
 import com.example.mynotes.ui.NotesScreen
 import com.example.mynotes.ui.DevelopmentInfoScreen
 import com.example.mynotes.ui.SourceCodeInfoScreen
@@ -54,7 +58,7 @@ import kotlinx.coroutines.withContext
 import java.util.Locale
 
 private enum class AppDestination {
-    NOTES, SETTINGS, DEVELOPMENT_INFO, SOURCE_CODE_INFO, EDITOR, DRAWING, DETAIL
+    NOTES, SETTINGS, DEVELOPMENT_INFO, SOURCE_CODE_INFO, EDITOR, DRAWING, REMINDERS, DETAIL
 }
 
 private data class NavigationSnapshot(val destination: AppDestination, val note: Note? = null)
@@ -107,6 +111,14 @@ class MainActivity : ComponentActivity() {
         mutableStateOf(false)
     private var widgetNavigationToken by
         mutableIntStateOf(0)
+    private var pendingOpenReminders by
+        mutableStateOf(false)
+
+    private fun handleReminderIntent(incomingIntent: Intent?) {
+        if (incomingIntent?.getBooleanExtra(ReminderReceiver.EXTRA_OPEN_REMINDERS, false) == true) {
+            pendingOpenReminders = true
+        }
+    }
 
     private fun handleWidgetIntent(incomingIntent: Intent?) {
         when (incomingIntent?.action) {
@@ -383,6 +395,7 @@ class MainActivity : ComponentActivity() {
         setIntent(intent)
         handleIncomingShare(intent)
         handleWidgetIntent(intent)
+        handleReminderIntent(intent)
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         /*
@@ -395,6 +408,7 @@ class MainActivity : ComponentActivity() {
         audioManager = getSystemService(Context.AUDIO_SERVICE) as AudioManager
         handleIncomingShare(intent)
         handleWidgetIntent(intent)
+        handleReminderIntent(intent)
         /*
          * La frecuencia de refresco se aplica únicamente cuando AppSettings
          * entrega performanceMode. MainActivity no conoce valores concretos
@@ -410,12 +424,34 @@ class MainActivity : ComponentActivity() {
             val settingsViewModel:
                     SettingsViewModel = viewModel()
             val settings by settingsViewModel.settings.collectAsStateWithLifecycle()
-            LaunchedEffect(settings.soundEffectsEnabled, settings.soundEffectsVolume, settings.soundEffectsTheme,
-                settings.hapticEffectsEnabled, settings.hapticEffectsIntensity, settings.hapticEffectsStyle) {
+            val reminderRepository = remember {
+                ReminderRepository(applicationContext)
+            }
+            val systemDarkTheme = isSystemInDarkTheme()
+            LaunchedEffect(
+                settings.soundEffectsEnabled,
+                settings.soundEffectsVolume,
+                settings.soundEffectsTheme,
+                settings.hapticEffectsEnabled,
+                settings.hapticEffectsIntensity,
+                settings.hapticEffectsStyle,
+                settings.configurationMode,
+                settings.darkMode,
+                settings.backgroundColor,
+                settings.backgroundToneIndex,
+                settings.backgroundIntensity,
+                settings.surfacePanelIntensity,
+                settings.headerIntensity,
+                settings.textColor,
+                settings.accentColor,
+                settings.fontSize,
+                systemDarkTheme
+            ) {
                 UiSoundPlayer.configure(context = this@MainActivity, enabled = settings.soundEffectsEnabled,
                     volumePercent = settings.soundEffectsVolume, theme = settings.soundEffectsTheme,
                     hapticEnabled = settings.hapticEffectsEnabled, hapticIntensityPercent = settings.hapticEffectsIntensity,
                     hapticStyle = settings.hapticEffectsStyle)
+                ReminderFeedbackPreferences.sync(this@MainActivity, settings)
                 setSystemKeyboardSoundSuppressionEnabled(settings.soundEffectsEnabled)
             }
             /*
@@ -429,7 +465,7 @@ class MainActivity : ComponentActivity() {
              * también seguimos al sistema para evitar un destello claro en un
              * teléfono configurado en oscuro.
              */
-            val systemDarkTheme = isSystemInDarkTheme()
+            
             val effectiveDarkTheme = if (settings.configurationMode == "advanced") {
                 settings.darkMode
             } else {
@@ -457,6 +493,12 @@ class MainActivity : ComponentActivity() {
             var showDrawing by remember {
                 mutableStateOf(false)
             }
+            var showReminders by remember {
+                mutableStateOf(false)
+            }
+            var createReminderOnOpen by remember {
+                mutableStateOf(false)
+            }
             var showSettings by remember {
                 mutableStateOf(false)
             }
@@ -481,6 +523,21 @@ class MainActivity : ComponentActivity() {
             var editingNote by remember {
                 mutableStateOf<Note?>(null)
             }
+            LaunchedEffect(pendingOpenReminders) {
+                if (pendingOpenReminders) {
+                    clearPendingShare()
+                    showSourceCodeInfo = false
+                    showDevelopmentInfo = false
+                    showSettings = false
+                    showEditor = false
+                    showDrawing = false
+                    selectedNote = null
+                    editingNote = null
+                    createReminderOnOpen = false
+                    showReminders = true
+                    pendingOpenReminders = false
+                }
+            }
             /*
              * Acciones lanzadas desde los widgets de la pantalla de inicio.
              * Se consumen una sola vez para que una recomposición no vuelva a
@@ -493,6 +550,7 @@ class MainActivity : ComponentActivity() {
                     showDevelopmentInfo = false
                     showSettings = false
                     showDrawing = false
+                    showReminders = false
                     selectedNote = null
                     editingNote = null
                     showEditor = true
@@ -515,6 +573,7 @@ class MainActivity : ComponentActivity() {
                     showDevelopmentInfo = false
                     showSettings = false
                     showDrawing = false
+                    showReminders = false
                     editingNote = null
                     showEditor = false
                     selectedNote = note
@@ -530,6 +589,7 @@ class MainActivity : ComponentActivity() {
                     showDevelopmentInfo = false
                     showSettings = false
                     showDrawing = false
+                    showReminders = false
                     editingNote = null
                     showEditor = false
                     selectedNote = null
@@ -547,6 +607,7 @@ class MainActivity : ComponentActivity() {
                     showDevelopmentInfo = false
                     showSettings = false
                     showDrawing = false
+                    showReminders = false
                     selectedNote = null
                     editingNote = null
                     showEditor = true
@@ -563,7 +624,7 @@ class MainActivity : ComponentActivity() {
              * Solo cuando ya estamos en "Mis notas",
              * Android puede cerrar la aplicación.
              */
-            BackHandler(enabled = showSourceCodeInfo || showDevelopmentInfo || showSettings || showEditor || showDrawing || selectedNote != null) {
+            BackHandler(enabled = showSourceCodeInfo || showDevelopmentInfo || showSettings || showEditor || showDrawing || showReminders || selectedNote != null) {
                 when {
                     showSourceCodeInfo -> {
                         showSourceCodeInfo = false
@@ -582,6 +643,9 @@ class MainActivity : ComponentActivity() {
                     showDrawing -> {
                         showDrawing = false
                     }
+                    showReminders -> {
+                        showReminders = false
+                    }
                     selectedNote != null -> {
                         selectedNote = null
                     }
@@ -597,6 +661,7 @@ class MainActivity : ComponentActivity() {
                 showSettings,
                 showEditor,
                 showDrawing,
+                showReminders,
                 editingNote,
                 selectedNote
             ) {
@@ -605,6 +670,7 @@ class MainActivity : ComponentActivity() {
                     showDevelopmentInfo -> NavigationSnapshot(AppDestination.DEVELOPMENT_INFO)
                     showSettings -> NavigationSnapshot(AppDestination.SETTINGS)
                     showDrawing -> NavigationSnapshot(AppDestination.DRAWING)
+                    showReminders -> NavigationSnapshot(AppDestination.REMINDERS)
                     showEditor -> NavigationSnapshot(AppDestination.EDITOR, editingNote)
                     selectedNote != null -> NavigationSnapshot(AppDestination.DETAIL, selectedNote)
                     else -> NavigationSnapshot(AppDestination.NOTES)
@@ -956,6 +1022,22 @@ class MainActivity : ComponentActivity() {
                     }
                     /*
                      * ==========================================
+                     * RECORDATORIOS
+                     * ==========================================
+                     */
+                    AppDestination.REMINDERS -> {
+                        ReminderScreen(
+                            settings = settings,
+                            repository = reminderRepository,
+                            onBack = {
+                                createReminderOnOpen = false
+                                showReminders = false
+                            },
+                            initialCreate = createReminderOnOpen
+                        )
+                    }
+                    /*
+                     * ==========================================
                      * DETALLE DE NOTA
                      * ==========================================
                      */
@@ -1016,6 +1098,7 @@ class MainActivity : ComponentActivity() {
                                 clearPendingShare()
                                 editingNote = null
                                 showDrawing = false
+                                showReminders = false
                                 showEditor = true
                             },
                             onDrawNote = {
@@ -1023,7 +1106,20 @@ class MainActivity : ComponentActivity() {
                                 editingNote = null
                                 selectedNote = null
                                 showEditor = false
+                                showReminders = false
                                 showDrawing = true
+                            },
+                            onOpenReminders = {
+                                clearPendingShare()
+                                editingNote = null
+                                selectedNote = null
+                                showEditor = false
+                                showDrawing = false
+                                showSettings = false
+                                // El botón Recordatorios abre la lista completa.
+                                // La creación ya no se fuerza al entrar desde el speed dial.
+                                createReminderOnOpen = false
+                                showReminders = true
                             },
                             /*
                              * Ajustes.
@@ -1031,6 +1127,7 @@ class MainActivity : ComponentActivity() {
                             onOpenSettings = {
                                 showDevelopmentInfo = false
                                 showDrawing = false
+                                showReminders = false
                                 showSettings = true
                             },
                             /*
@@ -1038,6 +1135,7 @@ class MainActivity : ComponentActivity() {
                              */
                             onOpenNote = { note ->
                                 showDrawing = false
+                                showReminders = false
                                 selectedNote = note
                             },
                             /*
@@ -1046,6 +1144,7 @@ class MainActivity : ComponentActivity() {
                             onEditNote = { note ->
                                 clearPendingShare()
                                 showDrawing = false
+                                showReminders = false
                                 editingNote = note
                                 showEditor = true
                             })

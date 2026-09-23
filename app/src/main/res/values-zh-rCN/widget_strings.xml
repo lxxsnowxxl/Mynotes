@@ -10,18 +10,12 @@
     <string name="widget_focus_note_hint">置顶和高优先级笔记优先显示</string>
     <string name="widget_open_note">打开笔记</string>
     <string name="widget_toggle_pin">切换置顶</string>
-    <string name="widget_collections">分类快捷入口</string>
-    <string name="widget_collections_hint">直接进入你需要的内容</string>
-    <string name="widget_note_collage">笔记拼贴</string>
-    <string name="widget_note_collage_hint">以四格缩略视图查看笔记</string>
-    <string name="widget_pinned_collection">置顶</string>
+<string name="widget_pinned_collection">置顶</string>
     <string name="widget_category_work">工作</string>
     <string name="widget_category_personal">个人</string>
     <string name="widget_images">图片</string>
     <string name="widget_files">文件</string>
-    <string name="widget_stats">概览</string>
-    <string name="widget_stats_hint">一眼查看你的笔记</string>
-    <string name="widget_high_priority">高优先级</string>
+<string name="widget_high_priority">高优先级</string>
     <string name="widget_all_notes">全部</string>
     <string name="widget_badge_pinned">置顶</string>
     <string name="widget_badge_work">工</string>
@@ -30,4 +24,10 @@
     <string name="widget_meta_favorite">已收藏</string>
     <plurals name="widget_note_count"><item quantity="other">%d 条笔记</item></plurals>
     <plurals name="widget_favorite_count"><item quantity="other">%d 条收藏</item></plurals>
+
+    <!-- Legacy compatibility only: Collage/Overview providers remain removed. -->
+    <string name="widget_note_collage">笔记拼贴</string>
+    <string name="widget_note_collage_hint">笔记的组合视图</string>
+    <string name="widget_stats">概览</string>
+    <string name="widget_stats_hint">笔记概览</string>
 </resources>

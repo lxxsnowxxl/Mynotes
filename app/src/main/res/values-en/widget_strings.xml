@@ -10,18 +10,12 @@
     <string name="widget_focus_note_hint">Pinned and high-priority notes come first</string>
     <string name="widget_open_note">Open note</string>
     <string name="widget_toggle_pin">Toggle pin</string>
-    <string name="widget_collections">Collections</string>
-    <string name="widget_collections_hint">Jump straight to what you need</string>
-    <string name="widget_note_collage">Collage</string>
-    <string name="widget_note_collage_hint">Your notes in mini view</string>
-    <string name="widget_pinned_collection">Pinned</string>
+<string name="widget_pinned_collection">Pinned</string>
     <string name="widget_category_work">Work</string>
     <string name="widget_category_personal">Personal</string>
     <string name="widget_images">Images</string>
     <string name="widget_files">Files</string>
-    <string name="widget_stats">Overview</string>
-    <string name="widget_stats_hint">Your notes at a glance</string>
-    <string name="widget_high_priority">High priority</string>
+<string name="widget_high_priority">High priority</string>
     <string name="widget_all_notes">All</string>
     <string name="widget_badge_pinned">PIN</string>
     <string name="widget_badge_work">W</string>
@@ -30,4 +24,10 @@
     <string name="widget_meta_favorite">Favorite</string>
     <plurals name="widget_note_count"><item quantity="one">%d note</item><item quantity="other">%d notes</item></plurals>
     <plurals name="widget_favorite_count"><item quantity="one">%d favorite</item><item quantity="other">%d favorites</item></plurals>
+
+    <!-- Legacy compatibility only: Collage/Overview providers remain removed. -->
+    <string name="widget_note_collage">Note collage</string>
+    <string name="widget_note_collage_hint">Combined view of your notes</string>
+    <string name="widget_stats">Overview</string>
+    <string name="widget_stats_hint">Overview of your notes</string>
 </resources>
