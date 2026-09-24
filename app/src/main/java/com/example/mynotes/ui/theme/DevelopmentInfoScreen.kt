@@ -1,10 +1,12 @@
 package com.example.mynotes.ui
 
 import android.content.Intent
-import android.content.pm.ApplicationInfo
 import android.net.Uri
 import android.os.Build
+import android.os.SystemClock
+import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,7 +36,12 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -45,6 +52,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.mynotes.R
 import com.example.mynotes.settings.AppSettings
+import com.example.mynotes.settings.DeveloperFeatures
 import com.example.mynotes.ui.components.ScrollPositionCapsule
 import com.example.mynotes.ui.motion.AnimatedScreenEntry
 import com.example.mynotes.ui.sound.UiActionSound
@@ -76,23 +84,20 @@ fun DevelopmentInfoScreen(settings: AppSettings, onOpenSourceCode: () -> Unit, o
         @Suppress("DEPRECATION")
         context.packageManager.getPackageInfo(context.packageName, 0)
     }
-    val versionName = packageInfo.versionName.orEmpty().ifBlank { "1.0" }
-    val versionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) packageInfo.longVersionCode else {
-        @Suppress("DEPRECATION")
-        packageInfo.versionCode.toLong()
-    }
+    val versionName = packageInfo.versionName.orEmpty().ifBlank { "1.7.0" }
     val applicationInfo = context.applicationInfo
-    val buildType = if ((applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) != 0) {
-        stringResource(R.string.development_build_debug)
-    } else {
-        stringResource(R.string.development_build_release)
-    }
+    val buildType = stringResource(R.string.development_build_release)
     val minSdk = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) applicationInfo.minSdkVersion else 24
     val targetSdk = applicationInfo.targetSdkVersion
     val screenBackground = MaterialTheme.colorScheme.background
     val primaryText = resolveUiTextColor(settings.textColor, screenBackground)
     val secondaryText = resolveSecondaryUiTextColor(settings.textColor, screenBackground)
     val currentYear = remember { Calendar.getInstance().get(Calendar.YEAR) }
+    var applicationTapCount by remember { mutableIntStateOf(0) }
+    var lastApplicationTapAt by remember { mutableLongStateOf(0L) }
+    var developerFontUnlocked by remember(context) {
+        mutableStateOf(DeveloperFeatures.isGoogleSansFlexUnlocked(context))
+    }
 
     AnimatedScreenEntry(animationsEnabled = settings.animationsEnabled, animationSpeed = settings.animationSpeed) {
         Scaffold(containerColor = screenBackground,
@@ -126,10 +131,43 @@ fun DevelopmentInfoScreen(settings: AppSettings, onOpenSourceCode: () -> Unit, o
                 }
                 Spacer(Modifier.height(18.dp))
 
-                DevelopmentSection(title = stringResource(R.string.development_app_section), settings = settings) {
-                    DevelopmentValueRow(stringResource(R.string.development_version), "$versionName ($versionCode)", settings)
+                DevelopmentSection(
+                    title = stringResource(R.string.development_app_section),
+                    settings = settings,
+                    modifier = Modifier.clickable {
+                        val now = SystemClock.elapsedRealtime()
+                        applicationTapCount = if (now - lastApplicationTapAt > 1_500L) 1 else applicationTapCount + 1
+                        lastApplicationTapAt = now
+                        if (applicationTapCount >= 3) {
+                            applicationTapCount = 0
+                            if (!developerFontUnlocked) {
+                                DeveloperFeatures.unlockGoogleSansFlex(context)
+                                developerFontUnlocked = true
+                                Toast.makeText(
+                                    context,
+                                    context.getString(R.string.development_font_unlocked),
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            } else {
+                                Toast.makeText(
+                                    context,
+                                    context.getString(R.string.development_font_already_unlocked),
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        }
+                    }
+                ) {
+                    DevelopmentValueRow(stringResource(R.string.development_version), "v$versionName", settings)
                     DevelopmentValueRow(stringResource(R.string.development_package), context.packageName, settings)
                     DevelopmentValueRow(stringResource(R.string.development_build_type), buildType, settings)
+                    if (developerFontUnlocked) {
+                        DevelopmentValueRow(
+                            stringResource(R.string.development_developer_font),
+                            stringResource(R.string.development_developer_font_enabled),
+                            settings
+                        )
+                    }
                 }
 
                 DevelopmentSection(title = stringResource(R.string.development_sdk_section), settings = settings) {
@@ -239,8 +277,14 @@ fun DevelopmentInfoScreen(settings: AppSettings, onOpenSourceCode: () -> Unit, o
                         stringResource(R.string.development_copyright_value, currentYear), settings)
                     DevelopmentValueRow(stringResource(R.string.development_license),
                         stringResource(R.string.development_license_value), settings)
+                    DevelopmentValueRow(stringResource(R.string.development_third_party_licenses),
+                        stringResource(R.string.development_third_party_licenses_value), settings)
+                    DevelopmentValueRow(stringResource(R.string.development_bundled_fonts),
+                        stringResource(R.string.development_bundled_fonts_value), settings)
                     Spacer(Modifier.height(6.dp))
                     DevelopmentParagraph(stringResource(R.string.development_legal_body), settings)
+                    Spacer(Modifier.height(8.dp))
+                    DevelopmentParagraph(stringResource(R.string.development_mlkit_notice), settings)
                 }
 
                 Spacer(Modifier.height(24.dp))
@@ -254,11 +298,11 @@ fun DevelopmentInfoScreen(settings: AppSettings, onOpenSourceCode: () -> Unit, o
 }
 
 @Composable
-private fun DevelopmentSection(title: String, settings: AppSettings, content: @Composable () -> Unit) {
+private fun DevelopmentSection(title: String, settings: AppSettings, modifier: Modifier = Modifier, content: @Composable () -> Unit) {
     val background = MaterialTheme.colorScheme.surfaceContainerLow
     val text = resolveUiTextColor(settings.textColor, background)
     val border = ensureUiContrast(MaterialTheme.colorScheme.outline.copy(alpha = 0.55f), background, 2.2f)
-    Surface(modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp), shape = RoundedCornerShape(18.dp),
+    Surface(modifier = modifier.fillMaxWidth().padding(bottom = 12.dp), shape = RoundedCornerShape(18.dp),
         color = background, border = BorderStroke(1.dp, border), tonalElevation = 0.dp) {
         Column(modifier = Modifier.padding(16.dp)) {
             Text(text = title, color = text, fontFamily = appFontFamily(settings.font),

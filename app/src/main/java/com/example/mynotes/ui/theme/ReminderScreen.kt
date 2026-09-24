@@ -510,7 +510,7 @@ private fun ReminderEditor(
             item {
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.Top
                 ) {
                     IconButton(onClick = {
                         UiSoundPlayer.playAction(context, UiActionSound.Back)
@@ -523,23 +523,46 @@ private fun ReminderEditor(
                             modifier = Modifier.size(iconSize.dp)
                         )
                     }
-                    Column(modifier = Modifier.weight(1f)) {
+                    Column(
+                        modifier = Modifier
+                            .weight(1f)
+                            .padding(start = 2.dp)
+                    ) {
                         Text(
                             text = stringResource(if (reminder == null) R.string.reminder_create_title else R.string.reminder_edit_title),
                             fontFamily = fontFamily,
                             fontWeight = FontWeight.Bold,
                             fontSize = (baseFontSize + 9f).sp,
-                            color = primaryText
+                            color = primaryText,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis
                         )
+
+                        // Reserve one extra visual line under the title so the
+                        // subtitle starts below the Save button instead of
+                        // competing with it for the same vertical area.
+                        Spacer(modifier = Modifier.height(18.dp))
+
                         Text(
                             stringResource(R.string.reminder_editor_subtitle),
+                            modifier = Modifier.padding(end = 4.dp),
                             fontFamily = fontFamily,
                             color = secondaryText,
-                            fontSize = (baseFontSize - 3f).coerceAtLeast(11f).sp
+                            fontSize = (baseFontSize - 3f).coerceAtLeast(11f).sp,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis
                         )
                     }
-                    Button(onClick = ::saveReminder) {
-                        Text(stringResource(R.string.save), fontFamily = fontFamily, fontSize = (baseFontSize - 2f).coerceAtLeast(11f).sp)
+                    Button(
+                        onClick = ::saveReminder,
+                        modifier = Modifier.padding(start = 12.dp)
+                    ) {
+                        Text(
+                            stringResource(R.string.save),
+                            fontFamily = fontFamily,
+                            fontSize = (baseFontSize - 2f).coerceAtLeast(11f).sp,
+                            maxLines = 1
+                        )
                     }
                 }
             }

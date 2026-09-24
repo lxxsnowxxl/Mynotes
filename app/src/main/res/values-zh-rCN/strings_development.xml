@@ -65,8 +65,13 @@
     <string name="development_copyright">版权</string>
     <string name="development_copyright_value">© %1$d Snow · MyNotes</string>
     <string name="development_license">许可证</string>
-    <string name="development_license_value">未声明 LICENSE 文件</string>
-    <string name="development_legal_body">MyNotes 自有代码的权利归其作者所有。Android、Kotlin、Jetpack Compose、Material、Coil、Media3 以及其他第三方库或商标均保留各自的权利、许可与所有者。</string>
+    <string name="development_license_value">专有许可证 — 保留所有权利</string>
+    <string name="development_legal_body">MyNotes 原创代码受专有许可证保护。合法获得的应用可用于个人或内部安装和使用；再分发、再许可、销售或分发原创代码需要事先获得版权所有者的书面许可。第三方库继续适用其各自的许可证和权利人。项目和应用 assets 中均包含 LICENSE 文件及第三方声明。</string>
+    <string name="development_mlkit_notice">ML Kit Subject Segmentation 在设备端处理图像。Google 说明 ML Kit 可能连接其服务器以获取模型、修复和兼容性信息，并可能发送性能和使用情况指标。请参阅随附的法律声明。</string>
+    <string name="development_bundled_fonts_value">通过 Google Fonts 使用 Google Sans Flex（运行时下载 · OFL 1.1）</string>
+    <string name="development_bundled_fonts">字体来源</string>
+    <string name="development_third_party_licenses_value">已包含声明</string>
+    <string name="development_third_party_licenses">第三方许可证</string>
     <string name="development_source_title">项目代码</string>
     <string name="development_source_heading">源代码地图</string>
     <string name="development_source_subtitle">项目真实路径与主要文件职责。</string>
@@ -129,4 +134,8 @@
 
     <string name="development_source_update_manager">负责检查 GitHub Releases、比较版本、安全下载 APK，并交给 Android 系统安装程序。</string>
 
+    <string name="development_font_unlocked">开发者字体已解锁：现在可在设置中使用 Google Sans Flex。</string>
+    <string name="development_font_already_unlocked">开发者字体已解锁。</string>
+    <string name="development_developer_font">开发者字体</string>
+    <string name="development_developer_font_enabled">Google Sans Flex 已解锁</string>
 </resources>

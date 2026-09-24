@@ -101,8 +101,6 @@
     <string name="palette_lavender">Lavanda</string>
     <string name="palette_violet">Violeta</string>
     <string name="palette_peach">Durazno</string>
-    <string name="note_ui_text_color">Texto de notas y menú</string>
-    <string name="note_ui_text_color_description">Solo cambia el texto de las notas y del menú de tres puntos.</string>
     <string name="slider_style">Diseño de barras</string>
     <string name="slider_style_description">Elige el estilo visual de todas las barras deslizadoras.</string>
     <string name="slider_style_minimal">Minimalista</string>
@@ -118,7 +116,6 @@
     <string name="microphone_not_available">Este dispositivo no tiene micrófono disponible.</string>
     <string name="image_format_not_supported">No se pudo mostrar esta imagen en este dispositivo.</string>
     <string name="mock_auto">Automático</string>
-
     <string name="sound_effects">Efectos de sonido</string>
     <string name="sound_effects_description">Sonidos para todas las acciones. Elige entre paquetes modernos y escúchalos aquí.</string>
     <string name="sound_effects_enabled">Activar sonidos</string>
@@ -151,7 +148,56 @@
     <string name="sound_theme_fluid">Fluido</string>
     <string name="sound_theme_pulse">Pulso</string>
     <string name="sound_theme_neon">Neón</string>
-
+    <string name="reminder_tones">Sonidos de alerta</string>
+    <string name="reminder_tones_description">44 sonidos de alerta para los recordatorios: señales directas, repetitivas y de alta atención. Sustituyen por completo los tonos anteriores y no reutilizan los efectos de sonido de la interfaz.</string>
+    <string name="reminder_sound_enabled">Alertas sonoras</string>
+    <string name="reminder_tone">Sonido de alerta</string>
+    <string name="reminder_tone_preview">Probar alerta</string>
+    <string name="reminder_sound_volume">Volumen del recordatorio</string>
+    <string name="reminder_tone_classic">Alerta estándar</string>
+    <string name="reminder_tone_bell">Alerta doble</string>
+    <string name="reminder_tone_crystal">Barrido descendente</string>
+    <string name="reminder_tone_pulse">Pulso crítico</string>
+    <string name="reminder_tone_sunrise">Barrido ascendente</string>
+    <string name="reminder_tone_digital">Código urgente</string>
+    <string name="reminder_tone_alert">Alterna rápida</string>
+    <string name="reminder_tone_urgent">Prioridad máxima</string>
+    <string name="reminder_tone_beacon">Baliza de alerta</string>
+    <string name="reminder_tone_radar">Barrido radar</string>
+    <string name="reminder_tone_warning">Advertencia triple</string>
+    <string name="reminder_tone_signal">Señal corta-larga</string>
+    <string name="reminder_tone_pager">Aviso pager</string>
+    <string name="reminder_tone_double_alarm">Alarma alterna</string>
+    <string name="reminder_tone_serenity">Atención suave</string>
+    <string name="reminder_tone_soft_bell">Escalera de alerta</string>
+    <string name="reminder_tone_breeze">Ráfaga de aviso</string>
+    <string name="reminder_tone_dew">Descenso rápido</string>
+    <string name="reminder_tone_bamboo">Golpe seco</string>
+    <string name="reminder_tone_horizon">Alerta amplia</string>
+    <string name="reminder_tone_calm">Sincopada</string>
+    <string name="reminder_tone_moonlight">Flash de alerta</string>
+    <string name="reminder_tone_orbit">Barrido repetido</string>
+    <string name="reminder_tone_droplet">Pulso alto-bajo</string>
+    <string name="reminder_tone_glass_tap">Metal corto</string>
+    <string name="reminder_tone_clockwork">Cuenta de alerta</string>
+    <string name="reminder_tone_spark">Ráfaga rápida</string>
+    <string name="reminder_tone_bubble_pop">Código de cinco</string>
+    <string name="reminder_tone_comet">Ascenso de emergencia</string>
+    <string name="reminder_tone_echo_ping">Eco de atención</string>
+    <string name="reminder_tone_woodblock">Golpe 3 + 1</string>
+    <string name="reminder_tone_starlight">Patrón irregular</string>
+    <string name="reminder_tone_sentinel">Destello triple</string>
+    <string name="reminder_tone_siren">Cristal urgente</string>
+    <string name="reminder_tone_cascade">Chispa descendente</string>
+    <string name="reminder_tone_escalation">Escala brillante</string>
+    <string name="reminder_tone_distress">Código agudo</string>
+    <string name="reminder_tone_interlock">Alternancia digital</string>
+    <string name="reminder_tone_scanner">Escáner cristalino</string>
+    <string name="reminder_tone_command">Pulso prioritario</string>
+    <string name="reminder_tone_rapid_triple">Trío brillante</string>
+    <string name="reminder_tone_priority_sequence">Secuencia luminosa</string>
+    <string name="reminder_tone_double_sweep">Doble destello</string>
+    <string name="reminder_tone_attention_burst">Ráfaga cristalina</string>
     <string name="haptic_effects">Efectos de vibración</string>
     <string name="haptic_effects_description">Respuesta háptica para botones, interruptores, barras deslizantes y otras acciones. Puedes elegir el estilo y la intensidad.</string>
     <string name="haptic_effects_enabled">Activar vibración</string>
@@ -174,7 +220,6 @@
     <string name="haptic_style_heavy">Intensa</string>
     <string name="haptic_style_spring">Resorte</string>
     <string name="haptic_style_echo">Eco</string>
-
     <string name="configuration_mode_welcome_title">¿Cómo prefieres configurar MyNotes?</string>
     <string name="configuration_mode_welcome_description">Elige cuántas opciones quieres ver en Configuración. Esto no cambia tus notas ni crea una edición diferente de la app.</string>
     <string name="configuration_mode_basic">Versión básica</string>
@@ -185,7 +230,6 @@
     <string name="configuration_mode_settings_title">Modo de configuración</string>
     <string name="configuration_mode_settings_description">Elige entre una Configuración simplificada o todos los controles avanzados.</string>
     <string name="configuration_mode_confirm">Aceptar</string>
-
     <string name="widget_new_note">Nueva nota</string>
     <string name="widget_recent_notes">Notas recientes</string>
     <string name="widget_empty_notes">Todavía no tienes notas</string>

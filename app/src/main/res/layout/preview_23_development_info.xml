@@ -21,7 +21,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/google_sans_bold"
+            android:fontFamily="sans-serif"
             android:text="Development"
             android:textColor="#FFFFFF"
             android:textSize="25sp" />
@@ -61,14 +61,14 @@
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/google_sans_bold"
+                        android:fontFamily="sans-serif"
                         android:text="MyNotes"
                         android:textColor="#FFFFFF"
                         android:textSize="24sp" />
                     <TextView
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:fontFamily="@font/google_sans_regular"
+                        android:fontFamily="sans-serif"
                         android:text="Technical information about the application and its internal operation."
                         android:textColor="#E1E1E8"
                         android:textSize="12sp" />
@@ -81,8 +81,8 @@
                 android:background="@drawable/preview_light_group"
                 android:orientation="vertical"
                 android:padding="16dp">
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Application" android:textColor="#111111" android:textSize="17sp" />
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:fontFamily="@font/google_sans_regular" android:text="Version                         1.0 (1)\nPackage                         com.example.mynotes\nBuild type                      Debug" android:textColor="#33333A" android:textSize="13sp" android:lineSpacingExtra="8dp" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Application" android:textColor="#111111" android:textSize="17sp" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:fontFamily="sans-serif" android:text="Version                         1.0 (1)\nPackage                         com.example.mynotes\nBuild type                      Debug" android:textColor="#33333A" android:textSize="13sp" android:lineSpacingExtra="8dp" />
             </LinearLayout>
 
             <LinearLayout
@@ -92,8 +92,8 @@
                 android:background="@drawable/preview_light_group"
                 android:orientation="vertical"
                 android:padding="16dp">
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="SDK and environment" android:textColor="#111111" android:textSize="17sp" />
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:fontFamily="@font/google_sans_regular" android:text="Minimum Android              API 24\nTarget Android                 API 36\nCurrent device                 API 28" android:textColor="#33333A" android:textSize="13sp" android:lineSpacingExtra="8dp" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="SDK and environment" android:textColor="#111111" android:textSize="17sp" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:fontFamily="sans-serif" android:text="Minimum Android              API 24\nTarget Android                 API 36\nCurrent device                 API 28" android:textColor="#33333A" android:textSize="13sp" android:lineSpacingExtra="8dp" />
             </LinearLayout>
 
             <LinearLayout
@@ -103,8 +103,8 @@
                 android:background="@drawable/preview_light_group"
                 android:orientation="vertical"
                 android:padding="16dp">
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Build and distribution" android:textColor="#111111" android:textSize="17sp" />
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:fontFamily="@font/google_sans_regular" android:text="Compile Android                 API 37&#10;Build system                    Gradle Kotlin DSL + KSP&#10;Java compatibility             Java 11&#10;Release optimization        Minify + shrink resources" android:textColor="#33333A" android:textSize="13sp" android:lineSpacingExtra="7dp" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Build and distribution" android:textColor="#111111" android:textSize="17sp" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:fontFamily="sans-serif" android:text="Compile Android                 API 37&#10;Build system                    Gradle Kotlin DSL + KSP&#10;Java compatibility             Java 11&#10;Release optimization        Minify + shrink resources" android:textColor="#33333A" android:textSize="13sp" android:lineSpacingExtra="7dp" />
             </LinearLayout>
 
             <LinearLayout
@@ -114,8 +114,8 @@
                 android:background="@drawable/preview_light_group"
                 android:orientation="vertical"
                 android:padding="16dp">
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Architecture" android:textColor="#111111" android:textSize="17sp" />
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:fontFamily="@font/google_sans_regular" android:text="Compose UI · ViewModel · Repository · Room · DataStore. Notes and attachments remain local, while settings are persisted independently." android:textColor="#55555E" android:textSize="12sp" android:lineSpacingExtra="4dp" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Architecture" android:textColor="#111111" android:textSize="17sp" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:fontFamily="sans-serif" android:text="Compose UI · ViewModel · Repository · Room · DataStore. Notes and attachments remain local, while settings are persisted independently." android:textColor="#55555E" android:textSize="12sp" android:lineSpacingExtra="4dp" />
             </LinearLayout>
 
             <LinearLayout
@@ -125,10 +125,10 @@
                 android:background="@drawable/preview_light_group"
                 android:orientation="vertical"
                 android:padding="16dp">
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Performance profiles" android:textColor="#111111" android:textSize="17sp" />
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:background="@drawable/preview_small_unselected" android:padding="10dp" android:fontFamily="@font/google_sans_medium" android:text="Maximum performance\n60 Hz · image/video 360 px · PDF 480 px" android:textColor="#222229" android:textSize="12sp" />
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:background="@drawable/preview_small_selected" android:padding="10dp" android:fontFamily="@font/google_sans_medium" android:text="Balanced   ·   CURRENT\n60 Hz · image/video 720 px · PDF 960 px" android:textColor="#222229" android:textSize="12sp" />
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:background="@drawable/preview_small_unselected" android:padding="10dp" android:fontFamily="@font/google_sans_medium" android:text="Maximum quality\nUp to 120 Hz · image 1280 px · video 1080 px · PDF 1440 px" android:textColor="#222229" android:textSize="12sp" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Performance profiles" android:textColor="#111111" android:textSize="17sp" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:background="@drawable/preview_small_unselected" android:padding="10dp" android:fontFamily="sans-serif" android:text="Maximum performance\n60 Hz · image/video 360 px · PDF 480 px" android:textColor="#222229" android:textSize="12sp" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:background="@drawable/preview_small_selected" android:padding="10dp" android:fontFamily="sans-serif" android:text="Balanced   ·   CURRENT\n60 Hz · image/video 720 px · PDF 960 px" android:textColor="#222229" android:textSize="12sp" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:background="@drawable/preview_small_unselected" android:padding="10dp" android:fontFamily="sans-serif" android:text="Maximum quality\nUp to 120 Hz · image 1280 px · video 1080 px · PDF 1440 px" android:textColor="#222229" android:textSize="12sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -138,8 +138,8 @@
                 android:background="@drawable/preview_light_group"
                 android:orientation="vertical"
                 android:padding="16dp">
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Main technologies" android:textColor="#111111" android:textSize="17sp" />
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:fontFamily="@font/google_sans_regular" android:text="Kotlin · Jetpack Compose · Material 3 · Room + KSP · DataStore · Coil 3 · Media3/ExoPlayer · Coroutines · AndroidX Lifecycle · Java 11" android:textColor="#55555E" android:textSize="12sp" android:lineSpacingExtra="4dp" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Main technologies" android:textColor="#111111" android:textSize="17sp" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:fontFamily="sans-serif" android:text="Kotlin · Jetpack Compose · Material 3 · Room + KSP · DataStore · Coil 3 · Media3/ExoPlayer · Coroutines · AndroidX Lifecycle · Java 11" android:textColor="#55555E" android:textSize="12sp" android:lineSpacingExtra="4dp" />
             </LinearLayout>
 
 
@@ -150,10 +150,10 @@
                 android:background="@drawable/preview_light_group"
                 android:orientation="vertical"
                 android:padding="16dp">
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Authors and credits" android:textColor="#111111" android:textSize="17sp" />
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:fontFamily="@font/google_sans_regular" android:text="Primary development              Snow
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Authors and credits" android:textColor="#111111" android:textSize="17sp" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:fontFamily="sans-serif" android:text="Primary development              Snow
 Development assistance      OpenAI ChatGPT" android:textColor="#33333A" android:textSize="13sp" android:lineSpacingExtra="8dp" />
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:fontFamily="@font/google_sans_regular" android:text="OpenAI ChatGPT is credited as technical assistance for review, documentation and development support." android:textColor="#55555E" android:textSize="12sp" android:lineSpacingExtra="4dp" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:fontFamily="sans-serif" android:text="OpenAI ChatGPT is credited as technical assistance for review, documentation and development support." android:textColor="#55555E" android:textSize="12sp" android:lineSpacingExtra="4dp" />
             </LinearLayout>
 
             <LinearLayout
@@ -163,9 +163,9 @@ Development assistance      OpenAI ChatGPT" android:textColor="#33333A" android:
                 android:background="@drawable/preview_light_group"
                 android:orientation="vertical"
                 android:padding="16dp">
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Project repository" android:textColor="#111111" android:textSize="17sp" />
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:fontFamily="@font/google_sans_regular" android:text="GitHub · lxxsnowxxl/Mynotes&#10;https://github.com/lxxsnowxxl/Mynotes" android:textColor="#33333A" android:textSize="13sp" android:lineSpacingExtra="6dp" />
-                <TextView android:layout_width="match_parent" android:layout_height="44dp" android:layout_marginTop="8dp" android:background="@drawable/preview_small_selected" android:gravity="center" android:fontFamily="@font/google_sans_medium" android:text="↗  Open repository on GitHub" android:textColor="#222229" android:textSize="13sp" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Project repository" android:textColor="#111111" android:textSize="17sp" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:fontFamily="sans-serif" android:text="GitHub · lxxsnowxxl/Mynotes&#10;https://github.com/lxxsnowxxl/Mynotes" android:textColor="#33333A" android:textSize="13sp" android:lineSpacingExtra="6dp" />
+                <TextView android:layout_width="match_parent" android:layout_height="44dp" android:layout_marginTop="8dp" android:background="@drawable/preview_small_selected" android:gravity="center" android:fontFamily="sans-serif" android:text="↗  Open repository on GitHub" android:textColor="#222229" android:textSize="13sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -175,9 +175,9 @@ Development assistance      OpenAI ChatGPT" android:textColor="#33333A" android:
                 android:background="@drawable/preview_light_group"
                 android:orientation="vertical"
                 android:padding="16dp">
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Project source" android:textColor="#111111" android:textSize="17sp" />
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:fontFamily="@font/google_sans_regular" android:text="Open the internal source-code map to see the real paths and responsibilities of the main project files." android:textColor="#55555E" android:textSize="12sp" android:lineSpacingExtra="4dp" />
-                <TextView android:layout_width="match_parent" android:layout_height="44dp" android:layout_marginTop="8dp" android:background="@drawable/preview_small_selected" android:gravity="center" android:fontFamily="@font/google_sans_medium" android:text="&lt;/&gt;  View code structure" android:textColor="#222229" android:textSize="13sp" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Project source" android:textColor="#111111" android:textSize="17sp" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:fontFamily="sans-serif" android:text="Open the internal source-code map to see the real paths and responsibilities of the main project files." android:textColor="#55555E" android:textSize="12sp" android:lineSpacingExtra="4dp" />
+                <TextView android:layout_width="match_parent" android:layout_height="44dp" android:layout_marginTop="8dp" android:background="@drawable/preview_small_selected" android:gravity="center" android:fontFamily="sans-serif" android:text="&lt;/&gt;  View code structure" android:textColor="#222229" android:textSize="13sp" />
             </LinearLayout>
 
             <LinearLayout
@@ -187,8 +187,8 @@ Development assistance      OpenAI ChatGPT" android:textColor="#33333A" android:
                 android:background="@drawable/preview_light_group"
                 android:orientation="vertical"
                 android:padding="16dp">
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Copyright and legal notices" android:textColor="#111111" android:textSize="17sp" />
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:fontFamily="@font/google_sans_regular" android:text="© 2026 Snow · MyNotes&#10;License: no LICENSE file declared&#10;Third-party libraries retain their respective licenses and owners." android:textColor="#33333A" android:textSize="13sp" android:lineSpacingExtra="6dp" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Copyright and legal notices" android:textColor="#111111" android:textSize="17sp" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:fontFamily="sans-serif" android:text="© 2026 Snow · MyNotes&#10;License: proprietary — all rights reserved&#10;Third-party notices: included&#10;Bundled fonts: system sans-serif only." android:textColor="#33333A" android:textSize="13sp" android:lineSpacingExtra="6dp" />
             </LinearLayout>
 
         </LinearLayout>

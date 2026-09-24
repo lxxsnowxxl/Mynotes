@@ -4,18 +4,18 @@
     <FrameLayout android:layout_width="48dp" android:layout_height="48dp" android:background="@drawable/preview_button_light">
       <ImageView android:layout_width="25dp" android:layout_height="25dp" android:src="@drawable/preview_ic_arrow_back" android:tint="#111111" android:contentDescription="@null" android:layout_gravity="center"/>
     </FrameLayout>
-    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Settings" android:textColor="#FFFFFF" android:textSize="25sp" android:layout_weight="1" android:layout_marginStart="10dp"/>
+    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Settings" android:textColor="#FFFFFF" android:textSize="25sp" android:layout_weight="1" android:layout_marginStart="10dp"/>
   </LinearLayout>
   <ScrollView android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:clipToPadding="false" android:fillViewport="true">
     <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:paddingStart="14dp" android:paddingEnd="14dp" android:paddingBottom="32dp">
       <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@drawable/preview_settings_panel" android:orientation="vertical" android:padding="14dp">
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Appearance" android:textColor="#111111" android:textSize="21sp"/>
-        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Customize the application appearance, controls, motion, menus, sounds and behavior." android:textColor="#68686F" android:textSize="12sp" android:fontFamily="@font/google_sans_regular" android:layout_marginTop="3dp"/>
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Appearance" android:textColor="#111111" android:textSize="21sp"/>
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Customize the application appearance, controls, motion, menus, sounds and behavior." android:textColor="#68686F" android:textSize="12sp" android:fontFamily="sans-serif" android:layout_marginTop="3dp"/>
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:background="@drawable/preview_settings_group" android:orientation="vertical" android:padding="14dp">
-          <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Extreme personalization" android:textColor="#FFFFFF" android:textSize="17sp"/>
+          <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Extreme personalization" android:textColor="#FFFFFF" android:textSize="17sp"/>
           <Space android:layout_width="1dp" android:layout_height="9dp"/>
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="0dp" android:background="@drawable/preview_settings_group" android:orientation="vertical" android:padding="14dp">
-            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Profile" android:textColor="#FFFFFF" android:textSize="17sp"/>
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Profile" android:textColor="#FFFFFF" android:textSize="17sp"/>
             <Space android:layout_width="1dp" android:layout_height="9dp"/>
             <LinearLayout android:layout_width="match_parent" android:layout_height="78dp" android:gravity="center_vertical" android:orientation="horizontal">
               <FrameLayout android:layout_width="64dp" android:layout_height="64dp" android:background="@drawable/preview_circle_base">
@@ -23,37 +23,37 @@
               </FrameLayout>
               <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="12dp" android:orientation="vertical">
                 <LinearLayout android:layout_width="match_parent" android:layout_height="52dp" android:background="@drawable/preview_button_light" android:gravity="center" android:orientation="horizontal">
-                  <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Change photo" android:textColor="#111111" android:textSize="14sp"/>
+                  <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Change photo" android:textColor="#111111" android:textSize="14sp"/>
                 </LinearLayout>
               </LinearLayout>
             </LinearLayout>
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:paddingTop="4dp" android:paddingBottom="4dp">
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:orientation="horizontal">
-                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Profile image size" android:textColor="#FFFFFF" android:textSize="13sp" android:layout_weight="1"/>
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="64 dp" android:textColor="#FFFFFF" android:textSize="12sp"/>
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Profile image size" android:textColor="#FFFFFF" android:textSize="13sp" android:layout_weight="1"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="64 dp" android:textColor="#FFFFFF" android:textSize="12sp"/>
               </LinearLayout>
               <SeekBar android:layout_width="match_parent" android:layout_height="34dp" android:max="100" android:progress="65" android:splitTrack="false"/>
             </LinearLayout>
           </LinearLayout>
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:background="@drawable/preview_settings_group" android:orientation="vertical" android:padding="14dp">
-            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Icons" android:textColor="#FFFFFF" android:textSize="17sp"/>
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Icons" android:textColor="#FFFFFF" android:textSize="17sp"/>
             <Space android:layout_width="1dp" android:layout_height="9dp"/>
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="48dp" android:gravity="center_vertical" android:orientation="horizontal">
               <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Icon style" android:textColor="#FFFFFF" android:textSize="13sp"/>
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Icon style" android:textColor="#FFFFFF" android:textSize="13sp"/>
               </LinearLayout>
-              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Rounded  ▾" android:textColor="#FFFFFF" android:textSize="12sp" android:gravity="center" android:background="@drawable/preview_translucent_panel" android:paddingStart="10dp" android:paddingEnd="10dp" android:paddingTop="7dp" android:paddingBottom="7dp"/>
+              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Rounded  ▾" android:textColor="#FFFFFF" android:textSize="12sp" android:gravity="center" android:background="@drawable/preview_translucent_panel" android:paddingStart="10dp" android:paddingEnd="10dp" android:paddingTop="7dp" android:paddingBottom="7dp"/>
             </LinearLayout>
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:paddingTop="4dp" android:paddingBottom="4dp">
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:orientation="horizontal">
-                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Icon size" android:textColor="#FFFFFF" android:textSize="13sp" android:layout_weight="1"/>
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="24 dp" android:textColor="#FFFFFF" android:textSize="12sp"/>
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Icon size" android:textColor="#FFFFFF" android:textSize="13sp" android:layout_weight="1"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="24 dp" android:textColor="#FFFFFF" android:textSize="12sp"/>
               </LinearLayout>
               <SeekBar android:layout_width="match_parent" android:layout_height="34dp" android:max="100" android:progress="65" android:splitTrack="false"/>
             </LinearLayout>
           </LinearLayout>
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:background="@drawable/preview_settings_group" android:orientation="vertical" android:padding="14dp">
-            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Accent color" android:textColor="#FFFFFF" android:textSize="17sp"/>
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Accent color" android:textColor="#FFFFFF" android:textSize="17sp"/>
             <Space android:layout_width="1dp" android:layout_height="9dp"/>
             <LinearLayout android:layout_width="match_parent" android:layout_height="48dp" android:orientation="horizontal">
               <View android:layout_width="38dp" android:layout_height="38dp" android:layout_marginEnd="9dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#686DB1"/>
@@ -65,60 +65,67 @@
             </LinearLayout>
           </LinearLayout>
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:background="@drawable/preview_settings_group" android:orientation="vertical" android:padding="14dp">
-            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Note cards" android:textColor="#FFFFFF" android:textSize="17sp"/>
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Note cards" android:textColor="#FFFFFF" android:textSize="17sp"/>
             <Space android:layout_width="1dp" android:layout_height="9dp"/>
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:paddingTop="4dp" android:paddingBottom="4dp">
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:orientation="horizontal">
-                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Card corner radius" android:textColor="#FFFFFF" android:textSize="13sp" android:layout_weight="1"/>
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="20 dp" android:textColor="#FFFFFF" android:textSize="12sp"/>
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Card corner radius" android:textColor="#FFFFFF" android:textSize="13sp" android:layout_weight="1"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="20 dp" android:textColor="#FFFFFF" android:textSize="12sp"/>
               </LinearLayout>
               <SeekBar android:layout_width="match_parent" android:layout_height="34dp" android:max="100" android:progress="65" android:splitTrack="false"/>
             </LinearLayout>
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:paddingTop="4dp" android:paddingBottom="4dp">
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:orientation="horizontal">
-                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Card elevation" android:textColor="#FFFFFF" android:textSize="13sp" android:layout_weight="1"/>
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="2 dp" android:textColor="#FFFFFF" android:textSize="12sp"/>
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Card elevation" android:textColor="#FFFFFF" android:textSize="13sp" android:layout_weight="1"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="2 dp" android:textColor="#FFFFFF" android:textSize="12sp"/>
               </LinearLayout>
               <SeekBar android:layout_width="match_parent" android:layout_height="34dp" android:max="100" android:progress="65" android:splitTrack="false"/>
             </LinearLayout>
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:paddingTop="4dp" android:paddingBottom="4dp">
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:orientation="horizontal">
-                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Card padding" android:textColor="#FFFFFF" android:textSize="13sp" android:layout_weight="1"/>
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="14 dp" android:textColor="#FFFFFF" android:textSize="12sp"/>
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Card padding" android:textColor="#FFFFFF" android:textSize="13sp" android:layout_weight="1"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="14 dp" android:textColor="#FFFFFF" android:textSize="12sp"/>
               </LinearLayout>
               <SeekBar android:layout_width="match_parent" android:layout_height="34dp" android:max="100" android:progress="65" android:splitTrack="false"/>
             </LinearLayout>
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:paddingTop="4dp" android:paddingBottom="4dp">
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:orientation="horizontal">
-                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Image height" android:textColor="#FFFFFF" android:textSize="13sp" android:layout_weight="1"/>
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="180 dp" android:textColor="#FFFFFF" android:textSize="12sp"/>
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Image height" android:textColor="#FFFFFF" android:textSize="13sp" android:layout_weight="1"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="180 dp" android:textColor="#FFFFFF" android:textSize="12sp"/>
               </LinearLayout>
               <SeekBar android:layout_width="match_parent" android:layout_height="34dp" android:max="100" android:progress="65" android:splitTrack="false"/>
             </LinearLayout>
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:paddingTop="4dp" android:paddingBottom="4dp">
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:orientation="horizontal">
-                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Title max lines" android:textColor="#FFFFFF" android:textSize="13sp" android:layout_weight="1"/>
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="2" android:textColor="#FFFFFF" android:textSize="12sp"/>
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Note outline width" android:textColor="#FFFFFF" android:textSize="13sp" android:layout_weight="1"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="2.0 dp" android:textColor="#FFFFFF" android:textSize="12sp"/>
+              </LinearLayout>
+              <SeekBar android:layout_width="match_parent" android:layout_height="34dp" android:max="100" android:progress="34" android:splitTrack="false"/>
+            </LinearLayout>
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:paddingTop="4dp" android:paddingBottom="4dp">
+              <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:orientation="horizontal">
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Title max lines" android:textColor="#FFFFFF" android:textSize="13sp" android:layout_weight="1"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="2" android:textColor="#FFFFFF" android:textSize="12sp"/>
               </LinearLayout>
               <SeekBar android:layout_width="match_parent" android:layout_height="34dp" android:max="100" android:progress="65" android:splitTrack="false"/>
             </LinearLayout>
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:paddingTop="4dp" android:paddingBottom="4dp">
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:orientation="horizontal">
-                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Content max lines" android:textColor="#FFFFFF" android:textSize="13sp" android:layout_weight="1"/>
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="6" android:textColor="#FFFFFF" android:textSize="12sp"/>
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Content max lines" android:textColor="#FFFFFF" android:textSize="13sp" android:layout_weight="1"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="6" android:textColor="#FFFFFF" android:textSize="12sp"/>
               </LinearLayout>
               <SeekBar android:layout_width="match_parent" android:layout_height="34dp" android:max="100" android:progress="65" android:splitTrack="false"/>
             </LinearLayout>
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:paddingTop="4dp" android:paddingBottom="4dp">
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:orientation="horizontal">
-                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Line spacing" android:textColor="#FFFFFF" android:textSize="13sp" android:layout_weight="1"/>
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="4 dp" android:textColor="#FFFFFF" android:textSize="12sp"/>
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Line spacing" android:textColor="#FFFFFF" android:textSize="13sp" android:layout_weight="1"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="4 dp" android:textColor="#FFFFFF" android:textSize="12sp"/>
               </LinearLayout>
               <SeekBar android:layout_width="match_parent" android:layout_height="34dp" android:max="100" android:progress="65" android:splitTrack="false"/>
             </LinearLayout>
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="48dp" android:gravity="center_vertical" android:orientation="horizontal">
               <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Show note date" android:textColor="#FFFFFF" android:textSize="13sp"/>
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Show note date" android:textColor="#FFFFFF" android:textSize="13sp"/>
               </LinearLayout>
               <FrameLayout android:layout_width="48dp" android:layout_height="28dp" android:background="@drawable/preview_switch_on" android:padding="3dp">
                 <View android:layout_width="22dp" android:layout_height="22dp" android:layout_gravity="center_vertical|end" android:background="@drawable/preview_thumb_white"/>
@@ -126,7 +133,7 @@
             </LinearLayout>
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="48dp" android:gravity="center_vertical" android:orientation="horizontal">
               <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Show category chip" android:textColor="#FFFFFF" android:textSize="13sp"/>
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Show category chip" android:textColor="#FFFFFF" android:textSize="13sp"/>
               </LinearLayout>
               <FrameLayout android:layout_width="48dp" android:layout_height="28dp" android:background="@drawable/preview_switch_on" android:padding="3dp">
                 <View android:layout_width="22dp" android:layout_height="22dp" android:layout_gravity="center_vertical|end" android:background="@drawable/preview_thumb_white"/>
@@ -134,7 +141,7 @@
             </LinearLayout>
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="48dp" android:gravity="center_vertical" android:orientation="horizontal">
               <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Show favorite icon" android:textColor="#FFFFFF" android:textSize="13sp"/>
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Show favorite icon" android:textColor="#FFFFFF" android:textSize="13sp"/>
               </LinearLayout>
               <FrameLayout android:layout_width="48dp" android:layout_height="28dp" android:background="@drawable/preview_switch_on" android:padding="3dp">
                 <View android:layout_width="22dp" android:layout_height="22dp" android:layout_gravity="center_vertical|end" android:background="@drawable/preview_thumb_white"/>
@@ -142,30 +149,30 @@
             </LinearLayout>
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:paddingTop="4dp" android:paddingBottom="4dp">
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:orientation="horizontal">
-                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Add button size" android:textColor="#FFFFFF" android:textSize="13sp" android:layout_weight="1"/>
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="76 dp" android:textColor="#FFFFFF" android:textSize="12sp"/>
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Add button size" android:textColor="#FFFFFF" android:textSize="13sp" android:layout_weight="1"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="76 dp" android:textColor="#FFFFFF" android:textSize="12sp"/>
               </LinearLayout>
               <SeekBar android:layout_width="match_parent" android:layout_height="34dp" android:max="100" android:progress="65" android:splitTrack="false"/>
             </LinearLayout>
           </LinearLayout>
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:background="@drawable/preview_settings_group" android:orientation="vertical" android:padding="14dp">
-            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Performance" android:textColor="#FFFFFF" android:textSize="17sp"/>
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Performance" android:textColor="#FFFFFF" android:textSize="17sp"/>
             <Space android:layout_width="1dp" android:layout_height="9dp"/>
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="48dp" android:gravity="center_vertical" android:orientation="horizontal">
               <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Performance" android:textColor="#FFFFFF" android:textSize="13sp"/>
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Performance" android:textColor="#FFFFFF" android:textSize="13sp"/>
               </LinearLayout>
-              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Maximum quality  ▾" android:textColor="#FFFFFF" android:textSize="12sp" android:gravity="center" android:background="@drawable/preview_translucent_panel" android:paddingStart="10dp" android:paddingEnd="10dp" android:paddingTop="7dp" android:paddingBottom="7dp"/>
+              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Maximum quality  ▾" android:textColor="#FFFFFF" android:textSize="12sp" android:gravity="center" android:background="@drawable/preview_translucent_panel" android:paddingStart="10dp" android:paddingEnd="10dp" android:paddingTop="7dp" android:paddingBottom="7dp"/>
             </LinearLayout>
-            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Controls how much work animations and thumbnails do. Maximum quality requests the best compatible display refresh rate." android:textColor="#9E9EA6" android:textSize="11sp" android:fontFamily="@font/google_sans_regular" android:layout_marginTop="7dp"/>
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Controls how much work animations and thumbnails do. Maximum quality requests the best compatible display refresh rate." android:textColor="#9E9EA6" android:textSize="11sp" android:fontFamily="sans-serif" android:layout_marginTop="7dp"/>
           </LinearLayout>
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:background="@drawable/preview_settings_group" android:orientation="vertical" android:padding="14dp">
-            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Animations" android:textColor="#FFFFFF" android:textSize="17sp"/>
-            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:fontFamily="@font/google_sans_regular" android:text="Configure motion style, curve, speed and intensity." android:textColor="#9E9EA6" android:textSize="11sp"/>
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Animations" android:textColor="#FFFFFF" android:textSize="17sp"/>
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:fontFamily="sans-serif" android:text="Configure motion style, curve, speed and intensity." android:textColor="#9E9EA6" android:textSize="11sp"/>
             <Space android:layout_width="1dp" android:layout_height="9dp"/>
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="48dp" android:gravity="center_vertical" android:orientation="horizontal">
               <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Enable animations" android:textColor="#FFFFFF" android:textSize="13sp"/>
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Enable animations" android:textColor="#FFFFFF" android:textSize="13sp"/>
               </LinearLayout>
               <FrameLayout android:layout_width="48dp" android:layout_height="28dp" android:background="@drawable/preview_switch_on" android:padding="3dp">
                 <View android:layout_width="22dp" android:layout_height="22dp" android:layout_gravity="center_vertical|end" android:background="@drawable/preview_thumb_white"/>
@@ -173,43 +180,43 @@
             </LinearLayout>
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="48dp" android:gravity="center_vertical" android:orientation="horizontal">
               <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Transition type" android:textColor="#FFFFFF" android:textSize="13sp"/>
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Transition type" android:textColor="#FFFFFF" android:textSize="13sp"/>
               </LinearLayout>
-              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Elastic  ▾" android:textColor="#FFFFFF" android:textSize="12sp" android:gravity="center" android:background="@drawable/preview_translucent_panel" android:paddingStart="10dp" android:paddingEnd="10dp" android:paddingTop="7dp" android:paddingBottom="7dp"/>
+              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Elastic  ▾" android:textColor="#FFFFFF" android:textSize="12sp" android:gravity="center" android:background="@drawable/preview_translucent_panel" android:paddingStart="10dp" android:paddingEnd="10dp" android:paddingTop="7dp" android:paddingBottom="7dp"/>
             </LinearLayout>
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="48dp" android:gravity="center_vertical" android:orientation="horizontal">
               <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Motion curve" android:textColor="#FFFFFF" android:textSize="13sp"/>
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Motion curve" android:textColor="#FFFFFF" android:textSize="13sp"/>
               </LinearLayout>
-              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Standard  ▾" android:textColor="#FFFFFF" android:textSize="12sp" android:gravity="center" android:background="@drawable/preview_translucent_panel" android:paddingStart="10dp" android:paddingEnd="10dp" android:paddingTop="7dp" android:paddingBottom="7dp"/>
+              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Standard  ▾" android:textColor="#FFFFFF" android:textSize="12sp" android:gravity="center" android:background="@drawable/preview_translucent_panel" android:paddingStart="10dp" android:paddingEnd="10dp" android:paddingTop="7dp" android:paddingBottom="7dp"/>
             </LinearLayout>
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:paddingTop="4dp" android:paddingBottom="4dp">
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:orientation="horizontal">
-                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Animation speed" android:textColor="#FFFFFF" android:textSize="13sp" android:layout_weight="1"/>
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="0.5x" android:textColor="#FFFFFF" android:textSize="12sp"/>
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Animation speed" android:textColor="#FFFFFF" android:textSize="13sp" android:layout_weight="1"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="0.5x" android:textColor="#FFFFFF" android:textSize="12sp"/>
               </LinearLayout>
               <SeekBar android:layout_width="match_parent" android:layout_height="34dp" android:max="100" android:progress="65" android:splitTrack="false"/>
             </LinearLayout>
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:paddingTop="4dp" android:paddingBottom="4dp">
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:orientation="horizontal">
-                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Motion intensity" android:textColor="#FFFFFF" android:textSize="13sp" android:layout_weight="1"/>
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="1.5x" android:textColor="#FFFFFF" android:textSize="12sp"/>
+                <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Motion intensity" android:textColor="#FFFFFF" android:textSize="13sp" android:layout_weight="1"/>
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="1.5x" android:textColor="#FFFFFF" android:textSize="12sp"/>
               </LinearLayout>
               <SeekBar android:layout_width="match_parent" android:layout_height="34dp" android:max="100" android:progress="65" android:splitTrack="false"/>
             </LinearLayout>
             <LinearLayout android:layout_width="match_parent" android:layout_height="90dp" android:layout_marginTop="8dp" android:background="@drawable/preview_translucent_panel" android:gravity="center" android:orientation="vertical">
-              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Preview" android:textColor="#AFAFB7" android:textSize="12sp"/>
-              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="A" android:textColor="#FFFFFF" android:textSize="32sp"/>
+              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Preview" android:textColor="#AFAFB7" android:textSize="12sp"/>
+              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="A" android:textColor="#FFFFFF" android:textSize="32sp"/>
             </LinearLayout>
           </LinearLayout>
         </LinearLayout>
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:background="@drawable/preview_settings_group" android:orientation="vertical" android:padding="14dp">
-          <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Options menu customization" android:textColor="#FFFFFF" android:textSize="17sp"/>
-          <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:fontFamily="@font/google_sans_regular" android:text="Customize the three-dot menu, its submenus, text color and opacity." android:textColor="#9E9EA6" android:textSize="11sp"/>
+          <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Options menu customization" android:textColor="#FFFFFF" android:textSize="17sp"/>
+          <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:fontFamily="sans-serif" android:text="Customize the three-dot menu, its submenus, text color and opacity." android:textColor="#9E9EA6" android:textSize="11sp"/>
           <Space android:layout_width="1dp" android:layout_height="9dp"/>
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="48dp" android:gravity="center_vertical" android:orientation="horizontal">
             <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Show icons" android:textColor="#FFFFFF" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Show icons" android:textColor="#FFFFFF" android:textSize="13sp"/>
             </LinearLayout>
             <FrameLayout android:layout_width="48dp" android:layout_height="28dp" android:background="@drawable/preview_switch_on" android:padding="3dp">
               <View android:layout_width="22dp" android:layout_height="22dp" android:layout_gravity="center_vertical|end" android:background="@drawable/preview_thumb_white"/>
@@ -217,101 +224,101 @@
           </LinearLayout>
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="48dp" android:gravity="center_vertical" android:orientation="horizontal">
             <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Menu text color" android:textColor="#FFFFFF" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Menu text color" android:textColor="#FFFFFF" android:textSize="13sp"/>
             </LinearLayout>
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Follow note  ▾" android:textColor="#FFFFFF" android:textSize="12sp" android:gravity="center" android:background="@drawable/preview_translucent_panel" android:paddingStart="10dp" android:paddingEnd="10dp" android:paddingTop="7dp" android:paddingBottom="7dp"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Follow note  ▾" android:textColor="#FFFFFF" android:textSize="12sp" android:gravity="center" android:background="@drawable/preview_translucent_panel" android:paddingStart="10dp" android:paddingEnd="10dp" android:paddingTop="7dp" android:paddingBottom="7dp"/>
           </LinearLayout>
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:paddingTop="4dp" android:paddingBottom="4dp">
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:orientation="horizontal">
-              <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Menu opacity" android:textColor="#FFFFFF" android:textSize="13sp" android:layout_weight="1"/>
-              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="92%" android:textColor="#FFFFFF" android:textSize="12sp"/>
+              <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Menu opacity" android:textColor="#FFFFFF" android:textSize="13sp" android:layout_weight="1"/>
+              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="92%" android:textColor="#FFFFFF" android:textSize="12sp"/>
             </LinearLayout>
             <SeekBar android:layout_width="match_parent" android:layout_height="34dp" android:max="100" android:progress="65" android:splitTrack="false"/>
           </LinearLayout>
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:background="@drawable/preview_settings_group" android:orientation="vertical" android:padding="14dp">
-            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Main actions" android:textColor="#FFFFFF" android:textSize="17sp"/>
-            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:fontFamily="@font/google_sans_regular" android:text="Show, hide and reorder the actions." android:textColor="#9E9EA6" android:textSize="11sp"/>
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Main actions" android:textColor="#FFFFFF" android:textSize="17sp"/>
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:fontFamily="sans-serif" android:text="Show, hide and reorder the actions." android:textColor="#9E9EA6" android:textSize="11sp"/>
             <Space android:layout_width="1dp" android:layout_height="9dp"/>
             <LinearLayout android:layout_width="match_parent" android:layout_height="42dp" android:gravity="center_vertical" android:orientation="horizontal">
               <TextView android:layout_width="28dp" android:layout_height="28dp" android:background="@drawable/preview_switch_on" android:gravity="center" android:text="✓" android:textColor="#FFFFFF" android:textSize="12sp"/>
-              <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="10dp" android:fontFamily="@font/google_sans_medium" android:text="Edit" android:textColor="#FFFFFF" android:textSize="12sp"/>
+              <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="10dp" android:fontFamily="sans-serif" android:text="Edit" android:textColor="#FFFFFF" android:textSize="12sp"/>
               <TextView android:layout_width="64dp" android:layout_height="32dp" android:gravity="center" android:text="↑   ↓" android:textColor="#FFFFFF" android:textSize="15sp"/>
             </LinearLayout>
             <LinearLayout android:layout_width="match_parent" android:layout_height="42dp" android:gravity="center_vertical" android:orientation="horizontal">
               <TextView android:layout_width="28dp" android:layout_height="28dp" android:background="@drawable/preview_switch_on" android:gravity="center" android:text="✓" android:textColor="#FFFFFF" android:textSize="12sp"/>
-              <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="10dp" android:fontFamily="@font/google_sans_medium" android:text="Pin" android:textColor="#FFFFFF" android:textSize="12sp"/>
+              <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="10dp" android:fontFamily="sans-serif" android:text="Pin" android:textColor="#FFFFFF" android:textSize="12sp"/>
               <TextView android:layout_width="64dp" android:layout_height="32dp" android:gravity="center" android:text="↑   ↓" android:textColor="#FFFFFF" android:textSize="15sp"/>
             </LinearLayout>
             <LinearLayout android:layout_width="match_parent" android:layout_height="42dp" android:gravity="center_vertical" android:orientation="horizontal">
               <TextView android:layout_width="28dp" android:layout_height="28dp" android:background="@drawable/preview_switch_on" android:gravity="center" android:text="✓" android:textColor="#FFFFFF" android:textSize="12sp"/>
-              <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="10dp" android:fontFamily="@font/google_sans_medium" android:text="Favorites" android:textColor="#FFFFFF" android:textSize="12sp"/>
+              <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="10dp" android:fontFamily="sans-serif" android:text="Favorites" android:textColor="#FFFFFF" android:textSize="12sp"/>
               <TextView android:layout_width="64dp" android:layout_height="32dp" android:gravity="center" android:text="↑   ↓" android:textColor="#FFFFFF" android:textSize="15sp"/>
             </LinearLayout>
             <LinearLayout android:layout_width="match_parent" android:layout_height="42dp" android:gravity="center_vertical" android:orientation="horizontal">
               <TextView android:layout_width="28dp" android:layout_height="28dp" android:background="@drawable/preview_switch_on" android:gravity="center" android:text="✓" android:textColor="#FFFFFF" android:textSize="12sp"/>
-              <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="10dp" android:fontFamily="@font/google_sans_medium" android:text="Priority" android:textColor="#FFFFFF" android:textSize="12sp"/>
+              <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="10dp" android:fontFamily="sans-serif" android:text="Priority" android:textColor="#FFFFFF" android:textSize="12sp"/>
               <TextView android:layout_width="64dp" android:layout_height="32dp" android:gravity="center" android:text="↑   ↓" android:textColor="#FFFFFF" android:textSize="15sp"/>
             </LinearLayout>
             <LinearLayout android:layout_width="match_parent" android:layout_height="42dp" android:gravity="center_vertical" android:orientation="horizontal">
               <TextView android:layout_width="28dp" android:layout_height="28dp" android:background="@drawable/preview_switch_on" android:gravity="center" android:text="✓" android:textColor="#FFFFFF" android:textSize="12sp"/>
-              <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="10dp" android:fontFamily="@font/google_sans_medium" android:text="Color" android:textColor="#FFFFFF" android:textSize="12sp"/>
+              <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="10dp" android:fontFamily="sans-serif" android:text="Color" android:textColor="#FFFFFF" android:textSize="12sp"/>
               <TextView android:layout_width="64dp" android:layout_height="32dp" android:gravity="center" android:text="↑   ↓" android:textColor="#FFFFFF" android:textSize="15sp"/>
             </LinearLayout>
             <LinearLayout android:layout_width="match_parent" android:layout_height="42dp" android:gravity="center_vertical" android:orientation="horizontal">
               <TextView android:layout_width="28dp" android:layout_height="28dp" android:background="@drawable/preview_switch_on" android:gravity="center" android:text="✓" android:textColor="#FFFFFF" android:textSize="12sp"/>
-              <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="10dp" android:fontFamily="@font/google_sans_medium" android:text="Move" android:textColor="#FFFFFF" android:textSize="12sp"/>
+              <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="10dp" android:fontFamily="sans-serif" android:text="Move" android:textColor="#FFFFFF" android:textSize="12sp"/>
               <TextView android:layout_width="64dp" android:layout_height="32dp" android:gravity="center" android:text="↑   ↓" android:textColor="#FFFFFF" android:textSize="15sp"/>
             </LinearLayout>
             <LinearLayout android:layout_width="match_parent" android:layout_height="42dp" android:gravity="center_vertical" android:orientation="horizontal">
               <TextView android:layout_width="28dp" android:layout_height="28dp" android:background="@drawable/preview_switch_on" android:gravity="center" android:text="✓" android:textColor="#FFFFFF" android:textSize="12sp"/>
-              <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="10dp" android:fontFamily="@font/google_sans_medium" android:text="Delete" android:textColor="#FFFFFF" android:textSize="12sp"/>
+              <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="10dp" android:fontFamily="sans-serif" android:text="Delete" android:textColor="#FFFFFF" android:textSize="12sp"/>
               <TextView android:layout_width="64dp" android:layout_height="32dp" android:gravity="center" android:text="↑   ↓" android:textColor="#FFFFFF" android:textSize="15sp"/>
             </LinearLayout>
           </LinearLayout>
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:background="@drawable/preview_settings_group" android:orientation="vertical" android:padding="14dp">
-            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Priority submenu" android:textColor="#FFFFFF" android:textSize="17sp"/>
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Priority submenu" android:textColor="#FFFFFF" android:textSize="17sp"/>
             <Space android:layout_width="1dp" android:layout_height="9dp"/>
             <LinearLayout android:layout_width="match_parent" android:layout_height="42dp" android:orientation="horizontal">
-              <TextView android:layout_width="0dp" android:layout_height="36dp" android:layout_weight="1" android:layout_marginEnd="5dp" android:background="@drawable/preview_small_selected" android:fontFamily="@font/google_sans_medium" android:gravity="center" android:text="None" android:textColor="#2D2D36" android:textSize="10sp"/>
-              <TextView android:layout_width="0dp" android:layout_height="36dp" android:layout_weight="1" android:layout_marginEnd="5dp" android:background="@drawable/preview_small_selected" android:fontFamily="@font/google_sans_medium" android:gravity="center" android:text="Low" android:textColor="#2D2D36" android:textSize="10sp"/>
-              <TextView android:layout_width="0dp" android:layout_height="36dp" android:layout_weight="1" android:layout_marginEnd="5dp" android:background="@drawable/preview_small_selected" android:fontFamily="@font/google_sans_medium" android:gravity="center" android:text="Medium" android:textColor="#2D2D36" android:textSize="10sp"/>
-              <TextView android:layout_width="0dp" android:layout_height="36dp" android:layout_weight="1" android:layout_marginEnd="5dp" android:background="@drawable/preview_small_selected" android:fontFamily="@font/google_sans_medium" android:gravity="center" android:text="High" android:textColor="#2D2D36" android:textSize="10sp"/>
+              <TextView android:layout_width="0dp" android:layout_height="36dp" android:layout_weight="1" android:layout_marginEnd="5dp" android:background="@drawable/preview_small_selected" android:fontFamily="sans-serif" android:gravity="center" android:text="None" android:textColor="#2D2D36" android:textSize="10sp"/>
+              <TextView android:layout_width="0dp" android:layout_height="36dp" android:layout_weight="1" android:layout_marginEnd="5dp" android:background="@drawable/preview_small_selected" android:fontFamily="sans-serif" android:gravity="center" android:text="Low" android:textColor="#2D2D36" android:textSize="10sp"/>
+              <TextView android:layout_width="0dp" android:layout_height="36dp" android:layout_weight="1" android:layout_marginEnd="5dp" android:background="@drawable/preview_small_selected" android:fontFamily="sans-serif" android:gravity="center" android:text="Medium" android:textColor="#2D2D36" android:textSize="10sp"/>
+              <TextView android:layout_width="0dp" android:layout_height="36dp" android:layout_weight="1" android:layout_marginEnd="5dp" android:background="@drawable/preview_small_selected" android:fontFamily="sans-serif" android:gravity="center" android:text="High" android:textColor="#2D2D36" android:textSize="10sp"/>
             </LinearLayout>
           </LinearLayout>
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:background="@drawable/preview_settings_group" android:orientation="vertical" android:padding="14dp">
-            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Color submenu" android:textColor="#FFFFFF" android:textSize="17sp"/>
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Color submenu" android:textColor="#FFFFFF" android:textSize="17sp"/>
             <Space android:layout_width="1dp" android:layout_height="9dp"/>
             <LinearLayout android:layout_width="match_parent" android:layout_height="34dp" android:orientation="horizontal">
-              <TextView android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:layout_marginEnd="4dp" android:background="@drawable/preview_small_selected" android:fontFamily="@font/google_sans_medium" android:gravity="center" android:text="Default" android:textColor="#2D2D36" android:textSize="9sp"/>
-              <TextView android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:layout_marginEnd="4dp" android:background="@drawable/preview_small_selected" android:fontFamily="@font/google_sans_medium" android:gravity="center" android:text="Yellow" android:textColor="#2D2D36" android:textSize="9sp"/>
-              <TextView android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:layout_marginEnd="4dp" android:background="@drawable/preview_small_selected" android:fontFamily="@font/google_sans_medium" android:gravity="center" android:text="Orange" android:textColor="#2D2D36" android:textSize="9sp"/>
-              <TextView android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:layout_marginEnd="4dp" android:background="@drawable/preview_small_selected" android:fontFamily="@font/google_sans_medium" android:gravity="center" android:text="Red" android:textColor="#2D2D36" android:textSize="9sp"/>
+              <TextView android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:layout_marginEnd="4dp" android:background="@drawable/preview_small_selected" android:fontFamily="sans-serif" android:gravity="center" android:text="Default" android:textColor="#2D2D36" android:textSize="9sp"/>
+              <TextView android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:layout_marginEnd="4dp" android:background="@drawable/preview_small_selected" android:fontFamily="sans-serif" android:gravity="center" android:text="Yellow" android:textColor="#2D2D36" android:textSize="9sp"/>
+              <TextView android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:layout_marginEnd="4dp" android:background="@drawable/preview_small_selected" android:fontFamily="sans-serif" android:gravity="center" android:text="Orange" android:textColor="#2D2D36" android:textSize="9sp"/>
+              <TextView android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:layout_marginEnd="4dp" android:background="@drawable/preview_small_selected" android:fontFamily="sans-serif" android:gravity="center" android:text="Red" android:textColor="#2D2D36" android:textSize="9sp"/>
             </LinearLayout>
             <LinearLayout android:layout_width="match_parent" android:layout_height="34dp" android:orientation="horizontal">
-              <TextView android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:layout_marginEnd="4dp" android:background="@drawable/preview_small_selected" android:fontFamily="@font/google_sans_medium" android:gravity="center" android:text="Pink" android:textColor="#2D2D36" android:textSize="9sp"/>
-              <TextView android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:layout_marginEnd="4dp" android:background="@drawable/preview_small_selected" android:fontFamily="@font/google_sans_medium" android:gravity="center" android:text="Purple" android:textColor="#2D2D36" android:textSize="9sp"/>
-              <TextView android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:layout_marginEnd="4dp" android:background="@drawable/preview_small_selected" android:fontFamily="@font/google_sans_medium" android:gravity="center" android:text="Blue" android:textColor="#2D2D36" android:textSize="9sp"/>
-              <TextView android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:layout_marginEnd="4dp" android:background="@drawable/preview_small_selected" android:fontFamily="@font/google_sans_medium" android:gravity="center" android:text="Cyan" android:textColor="#2D2D36" android:textSize="9sp"/>
+              <TextView android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:layout_marginEnd="4dp" android:background="@drawable/preview_small_selected" android:fontFamily="sans-serif" android:gravity="center" android:text="Pink" android:textColor="#2D2D36" android:textSize="9sp"/>
+              <TextView android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:layout_marginEnd="4dp" android:background="@drawable/preview_small_selected" android:fontFamily="sans-serif" android:gravity="center" android:text="Purple" android:textColor="#2D2D36" android:textSize="9sp"/>
+              <TextView android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:layout_marginEnd="4dp" android:background="@drawable/preview_small_selected" android:fontFamily="sans-serif" android:gravity="center" android:text="Blue" android:textColor="#2D2D36" android:textSize="9sp"/>
+              <TextView android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:layout_marginEnd="4dp" android:background="@drawable/preview_small_selected" android:fontFamily="sans-serif" android:gravity="center" android:text="Cyan" android:textColor="#2D2D36" android:textSize="9sp"/>
             </LinearLayout>
             <LinearLayout android:layout_width="match_parent" android:layout_height="34dp" android:orientation="horizontal">
-              <TextView android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:layout_marginEnd="4dp" android:background="@drawable/preview_small_selected" android:fontFamily="@font/google_sans_medium" android:gravity="center" android:text="Teal" android:textColor="#2D2D36" android:textSize="9sp"/>
-              <TextView android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:layout_marginEnd="4dp" android:background="@drawable/preview_small_selected" android:fontFamily="@font/google_sans_medium" android:gravity="center" android:text="Green" android:textColor="#2D2D36" android:textSize="9sp"/>
-              <TextView android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:layout_marginEnd="4dp" android:background="@drawable/preview_small_selected" android:fontFamily="@font/google_sans_medium" android:gravity="center" android:text="Mint" android:textColor="#2D2D36" android:textSize="9sp"/>
-              <TextView android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:layout_marginEnd="4dp" android:background="@drawable/preview_small_selected" android:fontFamily="@font/google_sans_medium" android:gravity="center" android:text="Lime" android:textColor="#2D2D36" android:textSize="9sp"/>
+              <TextView android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:layout_marginEnd="4dp" android:background="@drawable/preview_small_selected" android:fontFamily="sans-serif" android:gravity="center" android:text="Teal" android:textColor="#2D2D36" android:textSize="9sp"/>
+              <TextView android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:layout_marginEnd="4dp" android:background="@drawable/preview_small_selected" android:fontFamily="sans-serif" android:gravity="center" android:text="Green" android:textColor="#2D2D36" android:textSize="9sp"/>
+              <TextView android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:layout_marginEnd="4dp" android:background="@drawable/preview_small_selected" android:fontFamily="sans-serif" android:gravity="center" android:text="Mint" android:textColor="#2D2D36" android:textSize="9sp"/>
+              <TextView android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:layout_marginEnd="4dp" android:background="@drawable/preview_small_selected" android:fontFamily="sans-serif" android:gravity="center" android:text="Lime" android:textColor="#2D2D36" android:textSize="9sp"/>
             </LinearLayout>
             <LinearLayout android:layout_width="match_parent" android:layout_height="34dp" android:orientation="horizontal">
-              <TextView android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:layout_marginEnd="4dp" android:background="@drawable/preview_small_selected" android:fontFamily="@font/google_sans_medium" android:gravity="center" android:text="Brown" android:textColor="#2D2D36" android:textSize="9sp"/>
-              <TextView android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:layout_marginEnd="4dp" android:background="@drawable/preview_small_selected" android:fontFamily="@font/google_sans_medium" android:gravity="center" android:text="Gray" android:textColor="#2D2D36" android:textSize="9sp"/>
+              <TextView android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:layout_marginEnd="4dp" android:background="@drawable/preview_small_selected" android:fontFamily="sans-serif" android:gravity="center" android:text="Brown" android:textColor="#2D2D36" android:textSize="9sp"/>
+              <TextView android:layout_width="0dp" android:layout_height="30dp" android:layout_weight="1" android:layout_marginEnd="4dp" android:background="@drawable/preview_small_selected" android:fontFamily="sans-serif" android:gravity="center" android:text="Gray" android:textColor="#2D2D36" android:textSize="9sp"/>
             </LinearLayout>
           </LinearLayout>
-          <TextView android:layout_width="match_parent" android:layout_height="48dp" android:layout_marginTop="10dp" android:background="@drawable/preview_button_dark" android:fontFamily="@font/google_sans_bold" android:gravity="center" android:text="↻  Reset menu" android:textColor="#FFFFFF" android:textSize="13sp"/>
+          <TextView android:layout_width="match_parent" android:layout_height="48dp" android:layout_marginTop="10dp" android:background="@drawable/preview_button_dark" android:fontFamily="sans-serif" android:gravity="center" android:text="↻  Reset menu" android:textColor="#FFFFFF" android:textSize="13sp"/>
         </LinearLayout>
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:background="@drawable/preview_light_group" android:orientation="vertical" android:padding="12dp">
-          <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Color palette" android:textColor="#111111" android:textSize="17sp"/>
-          <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="46 palettes · 4 selectable tones each" android:textColor="#68686F" android:textSize="11sp" android:layout_marginTop="2dp"/>
+          <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Color palette" android:textColor="#111111" android:textSize="17sp"/>
+          <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="46 palettes · 4 selectable tones each" android:textColor="#68686F" android:textSize="11sp" android:layout_marginTop="2dp"/>
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
             <LinearLayout android:layout_width="0dp" android:layout_height="88dp" android:layout_weight="1" android:background="@drawable/preview_small_unselected" android:orientation="vertical" android:padding="10dp">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="@string/mock_palette_neutral" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="@string/mock_palette_neutral" android:textColor="#111111" android:textSize="13sp"/>
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#F3EFE9"/>
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#D9D0C5"/>
@@ -321,7 +328,7 @@
             </LinearLayout>
             <Space android:layout_width="8dp" android:layout_height="1dp"/>
             <LinearLayout android:layout_width="0dp" android:layout_height="88dp" android:layout_weight="1" android:background="@drawable/preview_small_unselected" android:orientation="vertical" android:padding="10dp">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="@string/mock_palette_warm" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="@string/mock_palette_warm" android:textColor="#111111" android:textSize="13sp"/>
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#FFE8D2"/>
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#F3C59B"/>
@@ -332,7 +339,7 @@
           </LinearLayout>
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
             <LinearLayout android:layout_width="0dp" android:layout_height="88dp" android:layout_weight="1" android:background="@drawable/preview_small_unselected" android:orientation="vertical" android:padding="10dp">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="@string/mock_palette_sage" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="@string/mock_palette_sage" android:textColor="#111111" android:textSize="13sp"/>
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#E7ECE4"/>
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#B9C9B7"/>
@@ -342,7 +349,7 @@
             </LinearLayout>
             <Space android:layout_width="8dp" android:layout_height="1dp"/>
             <LinearLayout android:layout_width="0dp" android:layout_height="88dp" android:layout_weight="1" android:background="@drawable/preview_small_unselected" android:orientation="vertical" android:padding="10dp">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="@string/mock_palette_ocean" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="@string/mock_palette_ocean" android:textColor="#111111" android:textSize="13sp"/>
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#E0F1F9"/>
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#A9D4E8"/>
@@ -353,7 +360,7 @@
           </LinearLayout>
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
             <LinearLayout android:layout_width="0dp" android:layout_height="88dp" android:layout_weight="1" android:background="@drawable/preview_palette_card_selected" android:orientation="vertical" android:padding="10dp">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="@string/mock_palette_lavender" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="@string/mock_palette_lavender" android:textColor="#111111" android:textSize="13sp"/>
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#F1EBFA"/>
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#D6C5EF"/>
@@ -363,7 +370,7 @@
             </LinearLayout>
             <Space android:layout_width="8dp" android:layout_height="1dp"/>
             <LinearLayout android:layout_width="0dp" android:layout_height="88dp" android:layout_weight="1" android:background="@drawable/preview_small_unselected" android:orientation="vertical" android:padding="10dp">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="@string/mock_palette_rose" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="@string/mock_palette_rose" android:textColor="#111111" android:textSize="13sp"/>
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#FBE9E9"/>
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#F3BABA"/>
@@ -374,7 +381,7 @@
           </LinearLayout>
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
             <LinearLayout android:layout_width="0dp" android:layout_height="88dp" android:layout_weight="1" android:background="@drawable/preview_small_unselected" android:orientation="vertical" android:padding="10dp">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="@string/mock_palette_sunset" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="@string/mock_palette_sunset" android:textColor="#111111" android:textSize="13sp"/>
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#FFE3B3"/>
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#FBB931"/>
@@ -384,7 +391,7 @@
             </LinearLayout>
             <Space android:layout_width="8dp" android:layout_height="1dp"/>
             <LinearLayout android:layout_width="0dp" android:layout_height="88dp" android:layout_weight="1" android:background="@drawable/preview_small_unselected" android:orientation="vertical" android:padding="10dp">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="@string/mock_palette_violet_dusk" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="@string/mock_palette_violet_dusk" android:textColor="#111111" android:textSize="13sp"/>
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#F8F4E9"/>
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#F6DBC0"/>
@@ -395,7 +402,7 @@
           </LinearLayout>
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
             <LinearLayout android:layout_width="0dp" android:layout_height="88dp" android:layout_weight="1" android:background="@drawable/preview_small_unselected" android:orientation="vertical" android:padding="10dp">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="@string/mock_palette_marple" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="@string/mock_palette_marple" android:textColor="#111111" android:textSize="13sp"/>
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#FFE3B3"/>
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#FFB173"/>
@@ -405,7 +412,7 @@
             </LinearLayout>
             <Space android:layout_width="8dp" android:layout_height="1dp"/>
             <LinearLayout android:layout_width="0dp" android:layout_height="88dp" android:layout_weight="1" android:background="@drawable/preview_small_unselected" android:orientation="vertical" android:padding="10dp">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="@string/mock_palette_classic" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="@string/mock_palette_classic" android:textColor="#111111" android:textSize="13sp"/>
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#F9F7F2"/>
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#E4E0D8"/>
@@ -416,7 +423,7 @@
           </LinearLayout>
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
             <LinearLayout android:layout_width="0dp" android:layout_height="88dp" android:layout_weight="1" android:background="@drawable/preview_small_unselected" android:orientation="vertical" android:padding="10dp">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="@string/mock_palette_cream" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="@string/mock_palette_cream" android:textColor="#111111" android:textSize="13sp"/>
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#FFF9EA"/>
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#F7EACB"/>
@@ -426,7 +433,7 @@
             </LinearLayout>
             <Space android:layout_width="8dp" android:layout_height="1dp"/>
             <LinearLayout android:layout_width="0dp" android:layout_height="88dp" android:layout_weight="1" android:background="@drawable/preview_small_unselected" android:orientation="vertical" android:padding="10dp">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="@string/mock_palette_graphite" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="@string/mock_palette_graphite" android:textColor="#111111" android:textSize="13sp"/>
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#ECEFF1"/>
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#B0BEC5"/>
@@ -437,7 +444,7 @@
           </LinearLayout>
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
             <LinearLayout android:layout_width="0dp" android:layout_height="88dp" android:layout_weight="1" android:background="@drawable/preview_small_unselected" android:orientation="vertical" android:padding="10dp">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="@string/mock_palette_soft_pink" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="@string/mock_palette_soft_pink" android:textColor="#111111" android:textSize="13sp"/>
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#FFF0F4"/>
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#F9CCD8"/>
@@ -447,7 +454,7 @@
             </LinearLayout>
             <Space android:layout_width="8dp" android:layout_height="1dp"/>
             <LinearLayout android:layout_width="0dp" android:layout_height="88dp" android:layout_weight="1" android:background="@drawable/preview_small_unselected" android:orientation="vertical" android:padding="10dp">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="@string/mock_palette_coral" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="@string/mock_palette_coral" android:textColor="#111111" android:textSize="13sp"/>
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#FFE8E1"/>
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#FFB8A5"/>
@@ -458,7 +465,7 @@
           </LinearLayout>
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
             <LinearLayout android:layout_width="0dp" android:layout_height="88dp" android:layout_weight="1" android:background="@drawable/preview_small_unselected" android:orientation="vertical" android:padding="10dp">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="@string/mock_palette_orange" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="@string/mock_palette_orange" android:textColor="#111111" android:textSize="13sp"/>
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#FFEDD9"/>
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#FFC48B"/>
@@ -468,7 +475,7 @@
             </LinearLayout>
             <Space android:layout_width="8dp" android:layout_height="1dp"/>
             <LinearLayout android:layout_width="0dp" android:layout_height="88dp" android:layout_weight="1" android:background="@drawable/preview_small_unselected" android:orientation="vertical" android:padding="10dp">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="@string/mock_palette_sun" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="@string/mock_palette_sun" android:textColor="#111111" android:textSize="13sp"/>
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#FFF7CC"/>
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#FFE37D"/>
@@ -479,7 +486,7 @@
           </LinearLayout>
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
             <LinearLayout android:layout_width="0dp" android:layout_height="88dp" android:layout_weight="1" android:background="@drawable/preview_small_unselected" android:orientation="vertical" android:padding="10dp">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="@string/mock_palette_blue" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="@string/mock_palette_blue" android:textColor="#111111" android:textSize="13sp"/>
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#E8F1FF"/>
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#B7D3FF"/>
@@ -489,7 +496,7 @@
             </LinearLayout>
             <Space android:layout_width="8dp" android:layout_height="1dp"/>
             <LinearLayout android:layout_width="0dp" android:layout_height="88dp" android:layout_weight="1" android:background="@drawable/preview_small_unselected" android:orientation="vertical" android:padding="10dp">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="@string/mock_palette_sky" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="@string/mock_palette_sky" android:textColor="#111111" android:textSize="13sp"/>
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#EAF9FF"/>
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#B8E7F7"/>
@@ -500,7 +507,7 @@
           </LinearLayout>
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
             <LinearLayout android:layout_width="0dp" android:layout_height="88dp" android:layout_weight="1" android:background="@drawable/preview_small_unselected" android:orientation="vertical" android:padding="10dp">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="@string/mock_palette_cyan" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="@string/mock_palette_cyan" android:textColor="#111111" android:textSize="13sp"/>
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#E5FAFA"/>
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#A9E7E8"/>
@@ -510,7 +517,7 @@
             </LinearLayout>
             <Space android:layout_width="8dp" android:layout_height="1dp"/>
             <LinearLayout android:layout_width="0dp" android:layout_height="88dp" android:layout_weight="1" android:background="@drawable/preview_small_unselected" android:orientation="vertical" android:padding="10dp">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="@string/mock_palette_green" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="@string/mock_palette_green" android:textColor="#111111" android:textSize="13sp"/>
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#E9F6E9"/>
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#B6DDB4"/>
@@ -521,7 +528,7 @@
           </LinearLayout>
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
             <LinearLayout android:layout_width="0dp" android:layout_height="88dp" android:layout_weight="1" android:background="@drawable/preview_small_unselected" android:orientation="vertical" android:padding="10dp">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="@string/mock_palette_mint" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="@string/mock_palette_mint" android:textColor="#111111" android:textSize="13sp"/>
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#E9FAF4"/>
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#B9EAD9"/>
@@ -531,7 +538,7 @@
             </LinearLayout>
             <Space android:layout_width="8dp" android:layout_height="1dp"/>
             <LinearLayout android:layout_width="0dp" android:layout_height="88dp" android:layout_weight="1" android:background="@drawable/preview_small_unselected" android:orientation="vertical" android:padding="10dp">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="@string/mock_palette_peach" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="@string/mock_palette_peach" android:textColor="#111111" android:textSize="13sp"/>
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#FFEFE5"/>
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#FFD0B6"/>
@@ -542,7 +549,7 @@
           </LinearLayout>
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
             <LinearLayout android:layout_width="0dp" android:layout_height="88dp" android:layout_weight="1" android:background="@drawable/preview_small_unselected" android:orientation="vertical" android:padding="10dp">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="@string/mock_palette_neon_pink" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="@string/mock_palette_neon_pink" android:textColor="#111111" android:textSize="13sp"/>
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#FFF0FA"/>
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#FF66C4"/>
@@ -552,7 +559,7 @@
             </LinearLayout>
             <Space android:layout_width="8dp" android:layout_height="1dp"/>
             <LinearLayout android:layout_width="0dp" android:layout_height="88dp" android:layout_weight="1" android:background="@drawable/preview_small_unselected" android:orientation="vertical" android:padding="10dp">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="@string/mock_palette_electric_blue" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="@string/mock_palette_electric_blue" android:textColor="#111111" android:textSize="13sp"/>
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#E8F4FF"/>
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#40A9FF"/>
@@ -563,7 +570,7 @@
           </LinearLayout>
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
             <LinearLayout android:layout_width="0dp" android:layout_height="88dp" android:layout_weight="1" android:background="@drawable/preview_small_unselected" android:orientation="vertical" android:padding="10dp">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="@string/mock_palette_electric_cyan" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="@string/mock_palette_electric_cyan" android:textColor="#111111" android:textSize="13sp"/>
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#E6FFFF"/>
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#20E0FF"/>
@@ -573,7 +580,7 @@
             </LinearLayout>
             <Space android:layout_width="8dp" android:layout_height="1dp"/>
             <LinearLayout android:layout_width="0dp" android:layout_height="88dp" android:layout_weight="1" android:background="@drawable/preview_small_unselected" android:orientation="vertical" android:padding="10dp">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="@string/mock_palette_neon_lime" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="@string/mock_palette_neon_lime" android:textColor="#111111" android:textSize="13sp"/>
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#F3FFD6"/>
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#B6FF36"/>
@@ -584,7 +591,7 @@
           </LinearLayout>
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
             <LinearLayout android:layout_width="0dp" android:layout_height="88dp" android:layout_weight="1" android:background="@drawable/preview_small_unselected" android:orientation="vertical" android:padding="10dp">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="@string/mock_palette_neon_violet" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="@string/mock_palette_neon_violet" android:textColor="#111111" android:textSize="13sp"/>
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#F5EBFF"/>
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#C56BFF"/>
@@ -594,7 +601,7 @@
             </LinearLayout>
             <Space android:layout_width="8dp" android:layout_height="1dp"/>
             <LinearLayout android:layout_width="0dp" android:layout_height="88dp" android:layout_weight="1" android:background="@drawable/preview_small_unselected" android:orientation="vertical" android:padding="10dp">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="@string/mock_palette_vivid_orange" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="@string/mock_palette_vivid_orange" android:textColor="#111111" android:textSize="13sp"/>
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#FFF1DE"/>
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#FF9F1C"/>
@@ -605,7 +612,7 @@
           </LinearLayout>
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
             <LinearLayout android:layout_width="0dp" android:layout_height="88dp" android:layout_weight="1" android:background="@drawable/preview_small_unselected" android:orientation="vertical" android:padding="10dp">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="@string/mock_palette_neon_yellow" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="@string/mock_palette_neon_yellow" android:textColor="#111111" android:textSize="13sp"/>
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#FFFCE0"/>
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#FFE83D"/>
@@ -615,7 +622,7 @@
             </LinearLayout>
             <Space android:layout_width="8dp" android:layout_height="1dp"/>
             <LinearLayout android:layout_width="0dp" android:layout_height="88dp" android:layout_weight="1" android:background="@drawable/preview_small_unselected" android:orientation="vertical" android:padding="10dp">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="@string/mock_palette_neon_green" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="@string/mock_palette_neon_green" android:textColor="#111111" android:textSize="13sp"/>
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#E8FFE9"/>
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#55F26C"/>
@@ -626,7 +633,7 @@
           </LinearLayout>
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
             <LinearLayout android:layout_width="0dp" android:layout_height="88dp" android:layout_weight="1" android:background="@drawable/preview_small_unselected" android:orientation="vertical" android:padding="10dp">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="@string/mock_palette_midnight" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="@string/mock_palette_midnight" android:textColor="#111111" android:textSize="13sp"/>
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#E9EDF7"/>
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#AEBBDD"/>
@@ -636,7 +643,7 @@
             </LinearLayout>
             <Space android:layout_width="8dp" android:layout_height="1dp"/>
             <LinearLayout android:layout_width="0dp" android:layout_height="88dp" android:layout_weight="1" android:background="@drawable/preview_small_unselected" android:orientation="vertical" android:padding="10dp">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="@string/mock_palette_navy" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="@string/mock_palette_navy" android:textColor="#111111" android:textSize="13sp"/>
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#E7EEF8"/>
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#A8BEDA"/>
@@ -647,7 +654,7 @@
           </LinearLayout>
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
             <LinearLayout android:layout_width="0dp" android:layout_height="88dp" android:layout_weight="1" android:background="@drawable/preview_small_unselected" android:orientation="vertical" android:padding="10dp">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="@string/mock_palette_emerald" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="@string/mock_palette_emerald" android:textColor="#111111" android:textSize="13sp"/>
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#E5F5EC"/>
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#AFE0C3"/>
@@ -657,7 +664,7 @@
             </LinearLayout>
             <Space android:layout_width="8dp" android:layout_height="1dp"/>
             <LinearLayout android:layout_width="0dp" android:layout_height="88dp" android:layout_weight="1" android:background="@drawable/preview_small_unselected" android:orientation="vertical" android:padding="10dp">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="@string/mock_palette_forest" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="@string/mock_palette_forest" android:textColor="#111111" android:textSize="13sp"/>
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#E9F0E6"/>
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#BDD0B4"/>
@@ -668,7 +675,7 @@
           </LinearLayout>
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
             <LinearLayout android:layout_width="0dp" android:layout_height="88dp" android:layout_weight="1" android:background="@drawable/preview_small_unselected" android:orientation="vertical" android:padding="10dp">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="@string/mock_palette_turquoise" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="@string/mock_palette_turquoise" android:textColor="#111111" android:textSize="13sp"/>
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#E5F7F5"/>
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#A6DDD7"/>
@@ -678,7 +685,7 @@
             </LinearLayout>
             <Space android:layout_width="8dp" android:layout_height="1dp"/>
             <LinearLayout android:layout_width="0dp" android:layout_height="88dp" android:layout_weight="1" android:background="@drawable/preview_small_unselected" android:orientation="vertical" android:padding="10dp">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="@string/mock_palette_ice" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="@string/mock_palette_ice" android:textColor="#111111" android:textSize="13sp"/>
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#F0FAFD"/>
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#C9EAF2"/>
@@ -689,7 +696,7 @@
           </LinearLayout>
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
             <LinearLayout android:layout_width="0dp" android:layout_height="88dp" android:layout_weight="1" android:background="@drawable/preview_small_unselected" android:orientation="vertical" android:padding="10dp">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="@string/mock_palette_indigo" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="@string/mock_palette_indigo" android:textColor="#111111" android:textSize="13sp"/>
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#EEEFFD"/>
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#C6C8F2"/>
@@ -699,7 +706,7 @@
             </LinearLayout>
             <Space android:layout_width="8dp" android:layout_height="1dp"/>
             <LinearLayout android:layout_width="0dp" android:layout_height="88dp" android:layout_weight="1" android:background="@drawable/preview_small_unselected" android:orientation="vertical" android:padding="10dp">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="@string/mock_palette_plum" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="@string/mock_palette_plum" android:textColor="#111111" android:textSize="13sp"/>
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#F6EBF5"/>
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#E2BEDD"/>
@@ -710,7 +717,7 @@
           </LinearLayout>
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
             <LinearLayout android:layout_width="0dp" android:layout_height="88dp" android:layout_weight="1" android:background="@drawable/preview_small_unselected" android:orientation="vertical" android:padding="10dp">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="@string/mock_palette_wine" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="@string/mock_palette_wine" android:textColor="#111111" android:textSize="13sp"/>
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#F6E9ED"/>
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#E3BCC8"/>
@@ -720,7 +727,7 @@
             </LinearLayout>
             <Space android:layout_width="8dp" android:layout_height="1dp"/>
             <LinearLayout android:layout_width="0dp" android:layout_height="88dp" android:layout_weight="1" android:background="@drawable/preview_small_unselected" android:orientation="vertical" android:padding="10dp">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="@string/mock_palette_cherry" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="@string/mock_palette_cherry" android:textColor="#111111" android:textSize="13sp"/>
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#FFE9EC"/>
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#F7BCC5"/>
@@ -731,7 +738,7 @@
           </LinearLayout>
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
             <LinearLayout android:layout_width="0dp" android:layout_height="88dp" android:layout_weight="1" android:background="@drawable/preview_small_unselected" android:orientation="vertical" android:padding="10dp">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="@string/mock_palette_terracotta" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="@string/mock_palette_terracotta" android:textColor="#111111" android:textSize="13sp"/>
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#F9ECE6"/>
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#E8C1AE"/>
@@ -741,7 +748,7 @@
             </LinearLayout>
             <Space android:layout_width="8dp" android:layout_height="1dp"/>
             <LinearLayout android:layout_width="0dp" android:layout_height="88dp" android:layout_weight="1" android:background="@drawable/preview_small_unselected" android:orientation="vertical" android:padding="10dp">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="@string/mock_palette_coffee" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="@string/mock_palette_coffee" android:textColor="#111111" android:textSize="13sp"/>
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#F3ECE7"/>
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#D8C2B5"/>
@@ -752,7 +759,7 @@
           </LinearLayout>
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
             <LinearLayout android:layout_width="0dp" android:layout_height="88dp" android:layout_weight="1" android:background="@drawable/preview_small_unselected" android:orientation="vertical" android:padding="10dp">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="@string/mock_palette_sand" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="@string/mock_palette_sand" android:textColor="#111111" android:textSize="13sp"/>
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#FBF5E8"/>
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#E8D7B3"/>
@@ -762,7 +769,7 @@
             </LinearLayout>
             <Space android:layout_width="8dp" android:layout_height="1dp"/>
             <LinearLayout android:layout_width="0dp" android:layout_height="88dp" android:layout_weight="1" android:background="@drawable/preview_small_unselected" android:orientation="vertical" android:padding="10dp">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="@string/mock_palette_olive" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="@string/mock_palette_olive" android:textColor="#111111" android:textSize="13sp"/>
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#F1F2E3"/>
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#D5D7A6"/>
@@ -773,7 +780,7 @@
           </LinearLayout>
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
             <LinearLayout android:layout_width="0dp" android:layout_height="88dp" android:layout_weight="1" android:background="@drawable/preview_small_unselected" android:orientation="vertical" android:padding="10dp">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="@string/mock_palette_mustard" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="@string/mock_palette_mustard" android:textColor="#111111" android:textSize="13sp"/>
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#FFF5D9"/>
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#F0D788"/>
@@ -783,7 +790,7 @@
             </LinearLayout>
             <Space android:layout_width="8dp" android:layout_height="1dp"/>
             <LinearLayout android:layout_width="0dp" android:layout_height="88dp" android:layout_weight="1" android:background="@drawable/preview_small_unselected" android:orientation="vertical" android:padding="10dp">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="@string/mock_palette_monochrome" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="@string/mock_palette_monochrome" android:textColor="#111111" android:textSize="13sp"/>
               <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:orientation="horizontal">
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#F5F5F5"/>
                 <View android:layout_width="32dp" android:layout_height="32dp" android:layout_marginEnd="6dp" android:background="@drawable/preview_circle_base" android:backgroundTint="#D5D5D5"/>
@@ -794,79 +801,79 @@
           </LinearLayout>
         </LinearLayout>
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:background="@drawable/preview_light_group" android:orientation="vertical" android:padding="14dp">
-          <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Palette tone" android:textColor="#111111" android:textSize="17sp"/>
+          <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Palette tone" android:textColor="#111111" android:textSize="17sp"/>
           <Space android:layout_width="1dp" android:layout_height="9dp"/>
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:paddingTop="4dp" android:paddingBottom="4dp">
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:orientation="horizontal">
-              <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Tone" android:textColor="#111111" android:textSize="13sp" android:layout_weight="1"/>
-              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="2 / 4" android:textColor="#111111" android:textSize="12sp"/>
+              <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Tone" android:textColor="#111111" android:textSize="13sp" android:layout_weight="1"/>
+              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="2 / 4" android:textColor="#111111" android:textSize="12sp"/>
             </LinearLayout>
             <SeekBar android:layout_width="match_parent" android:layout_height="34dp" android:max="100" android:progress="65" android:splitTrack="false"/>
           </LinearLayout>
         </LinearLayout>
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:background="@drawable/preview_light_group" android:orientation="vertical" android:padding="14dp">
-          <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Settings panel tone" android:textColor="#111111" android:textSize="17sp"/>
+          <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Settings panel tone" android:textColor="#111111" android:textSize="17sp"/>
           <Space android:layout_width="1dp" android:layout_height="9dp"/>
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:paddingTop="4dp" android:paddingBottom="4dp">
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:orientation="horizontal">
-              <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Panel tone" android:textColor="#111111" android:textSize="13sp" android:layout_weight="1"/>
-              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="35%" android:textColor="#111111" android:textSize="12sp"/>
+              <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Panel tone" android:textColor="#111111" android:textSize="13sp" android:layout_weight="1"/>
+              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="35%" android:textColor="#111111" android:textSize="12sp"/>
             </LinearLayout>
             <SeekBar android:layout_width="match_parent" android:layout_height="34dp" android:max="100" android:progress="65" android:splitTrack="false"/>
           </LinearLayout>
         </LinearLayout>
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:background="@drawable/preview_light_group" android:orientation="vertical" android:padding="14dp">
-          <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Background intensity" android:textColor="#111111" android:textSize="17sp"/>
+          <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Background intensity" android:textColor="#111111" android:textSize="17sp"/>
           <Space android:layout_width="1dp" android:layout_height="9dp"/>
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:paddingTop="4dp" android:paddingBottom="4dp">
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:orientation="horizontal">
-              <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Background intensity" android:textColor="#111111" android:textSize="13sp" android:layout_weight="1"/>
-              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="100%" android:textColor="#111111" android:textSize="12sp"/>
+              <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Background intensity" android:textColor="#111111" android:textSize="13sp" android:layout_weight="1"/>
+              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="100%" android:textColor="#111111" android:textSize="12sp"/>
             </LinearLayout>
             <SeekBar android:layout_width="match_parent" android:layout_height="34dp" android:max="100" android:progress="65" android:splitTrack="false"/>
           </LinearLayout>
         </LinearLayout>
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:background="@drawable/preview_light_group" android:orientation="vertical" android:padding="14dp">
-          <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Header intensity" android:textColor="#111111" android:textSize="17sp"/>
+          <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Header intensity" android:textColor="#111111" android:textSize="17sp"/>
           <Space android:layout_width="1dp" android:layout_height="9dp"/>
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:paddingTop="4dp" android:paddingBottom="4dp">
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:orientation="horizontal">
-              <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Header intensity" android:textColor="#111111" android:textSize="13sp" android:layout_weight="1"/>
-              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="100%" android:textColor="#111111" android:textSize="12sp"/>
+              <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Header intensity" android:textColor="#111111" android:textSize="13sp" android:layout_weight="1"/>
+              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="100%" android:textColor="#111111" android:textSize="12sp"/>
             </LinearLayout>
             <SeekBar android:layout_width="match_parent" android:layout_height="34dp" android:max="100" android:progress="65" android:splitTrack="false"/>
           </LinearLayout>
         </LinearLayout>
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:background="@drawable/preview_light_group" android:orientation="vertical" android:padding="14dp">
-          <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Surface panels intensity" android:textColor="#111111" android:textSize="17sp"/>
-          <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:fontFamily="@font/google_sans_regular" android:text="Controls the opacity and strength of secondary panels." android:textColor="#66666D" android:textSize="11sp"/>
+          <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Surface panels intensity" android:textColor="#111111" android:textSize="17sp"/>
+          <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:fontFamily="sans-serif" android:text="Controls the opacity and strength of secondary panels." android:textColor="#66666D" android:textSize="11sp"/>
           <Space android:layout_width="1dp" android:layout_height="9dp"/>
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:paddingTop="4dp" android:paddingBottom="4dp">
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:orientation="horizontal">
-              <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Panel intensity" android:textColor="#111111" android:textSize="13sp" android:layout_weight="1"/>
-              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="100%" android:textColor="#111111" android:textSize="12sp"/>
+              <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Panel intensity" android:textColor="#111111" android:textSize="13sp" android:layout_weight="1"/>
+              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="100%" android:textColor="#111111" android:textSize="12sp"/>
             </LinearLayout>
             <SeekBar android:layout_width="match_parent" android:layout_height="34dp" android:max="100" android:progress="65" android:splitTrack="false"/>
           </LinearLayout>
         </LinearLayout>
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:background="@drawable/preview_light_group" android:orientation="vertical" android:padding="14dp">
-          <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Text color" android:textColor="#111111" android:textSize="17sp"/>
+          <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Text color" android:textColor="#111111" android:textSize="17sp"/>
           <Space android:layout_width="1dp" android:layout_height="9dp"/>
           <LinearLayout android:layout_width="match_parent" android:layout_height="46dp" android:orientation="horizontal">
-            <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:background="@drawable/preview_small_selected" android:fontFamily="@font/google_sans_bold" android:gravity="center" android:text="Automatic" android:textColor="#111111" android:textSize="12sp"/>
+            <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:background="@drawable/preview_small_selected" android:fontFamily="sans-serif" android:gravity="center" android:text="Automatic" android:textColor="#111111" android:textSize="12sp"/>
             <Space android:layout_width="6dp" android:layout_height="1dp"/>
-            <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:background="@drawable/preview_small_unselected" android:fontFamily="@font/google_sans_bold" android:gravity="center" android:text="Black" android:textColor="#111111" android:textSize="12sp"/>
+            <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:background="@drawable/preview_small_unselected" android:fontFamily="sans-serif" android:gravity="center" android:text="Black" android:textColor="#111111" android:textSize="12sp"/>
             <Space android:layout_width="6dp" android:layout_height="1dp"/>
-            <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:background="@drawable/preview_small_unselected" android:fontFamily="@font/google_sans_bold" android:gravity="center" android:text="White" android:textColor="#111111" android:textSize="12sp"/>
+            <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:background="@drawable/preview_small_unselected" android:fontFamily="sans-serif" android:gravity="center" android:text="White" android:textColor="#111111" android:textSize="12sp"/>
           </LinearLayout>
         </LinearLayout>
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:background="@drawable/preview_light_group" android:orientation="vertical" android:padding="14dp">
-          <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Black text outline" android:textColor="#111111" android:textSize="17sp"/>
+          <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Black text outline" android:textColor="#111111" android:textSize="17sp"/>
           <Space android:layout_width="1dp" android:layout_height="9dp"/>
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="48dp" android:gravity="center_vertical" android:orientation="horizontal">
             <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Outline black text" android:textColor="#111111" android:textSize="13sp"/>
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:fontFamily="@font/google_sans_regular" android:text="Adds an outline when black text needs extra separation." android:textColor="#66666D" android:textSize="11sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Outline black text" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:fontFamily="sans-serif" android:text="Adds an outline when black text needs extra separation." android:textColor="#66666D" android:textSize="11sp"/>
             </LinearLayout>
             <FrameLayout android:layout_width="48dp" android:layout_height="28dp" android:background="@drawable/preview_switch_off" android:padding="3dp">
               <View android:layout_width="22dp" android:layout_height="22dp" android:layout_gravity="center_vertical|start" android:background="@drawable/preview_thumb_white"/>
@@ -874,39 +881,39 @@
           </LinearLayout>
         </LinearLayout>
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:background="@drawable/preview_light_group" android:orientation="vertical" android:padding="14dp">
-          <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Note / menu text color" android:textColor="#111111" android:textSize="17sp"/>
+          <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Note / menu text color" android:textColor="#111111" android:textSize="17sp"/>
           <Space android:layout_width="1dp" android:layout_height="9dp"/>
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="48dp" android:gravity="center_vertical" android:orientation="horizontal">
             <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Text color" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Text color" android:textColor="#111111" android:textSize="13sp"/>
             </LinearLayout>
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Automatic  ▾" android:textColor="#111111" android:textSize="12sp" android:gravity="center" android:background="@drawable/preview_translucent_panel" android:paddingStart="10dp" android:paddingEnd="10dp" android:paddingTop="7dp" android:paddingBottom="7dp"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Automatic  ▾" android:textColor="#111111" android:textSize="12sp" android:gravity="center" android:background="@drawable/preview_translucent_panel" android:paddingStart="10dp" android:paddingEnd="10dp" android:paddingTop="7dp" android:paddingBottom="7dp"/>
           </LinearLayout>
         </LinearLayout>
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:background="@drawable/preview_light_group" android:orientation="vertical" android:padding="14dp">
-          <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Font" android:textColor="#111111" android:textSize="17sp"/>
+          <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Font" android:textColor="#111111" android:textSize="17sp"/>
           <Space android:layout_width="1dp" android:layout_height="9dp"/>
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="48dp" android:gravity="center_vertical" android:orientation="horizontal">
             <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Font family" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Font family" android:textColor="#111111" android:textSize="13sp"/>
             </LinearLayout>
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Google Sans  ▾" android:textColor="#111111" android:textSize="12sp" android:gravity="center" android:background="@drawable/preview_translucent_panel" android:paddingStart="10dp" android:paddingEnd="10dp" android:paddingTop="7dp" android:paddingBottom="7dp"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="System Sans  ▾" android:textColor="#111111" android:textSize="12sp" android:gravity="center" android:background="@drawable/preview_translucent_panel" android:paddingStart="10dp" android:paddingEnd="10dp" android:paddingTop="7dp" android:paddingBottom="7dp"/>
           </LinearLayout>
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:paddingTop="4dp" android:paddingBottom="4dp">
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:orientation="horizontal">
-              <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Font size" android:textColor="#111111" android:textSize="13sp" android:layout_weight="1"/>
-              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="16sp" android:textColor="#111111" android:textSize="12sp"/>
+              <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Font size" android:textColor="#111111" android:textSize="13sp" android:layout_weight="1"/>
+              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="16sp" android:textColor="#111111" android:textSize="12sp"/>
             </LinearLayout>
             <SeekBar android:layout_width="match_parent" android:layout_height="34dp" android:max="100" android:progress="65" android:splitTrack="false"/>
           </LinearLayout>
         </LinearLayout>
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:background="@drawable/preview_light_group" android:orientation="vertical" android:padding="14dp">
-          <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Sound effects" android:textColor="#111111" android:textSize="17sp"/>
-          <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:fontFamily="@font/google_sans_regular" android:text="Sounds for taps, menu actions, save, delete and navigation." android:textColor="#66666D" android:textSize="11sp"/>
+          <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Sound effects" android:textColor="#111111" android:textSize="17sp"/>
+          <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:fontFamily="sans-serif" android:text="Sounds for taps, menu actions, save, delete and navigation." android:textColor="#66666D" android:textSize="11sp"/>
           <Space android:layout_width="1dp" android:layout_height="9dp"/>
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="48dp" android:gravity="center_vertical" android:orientation="horizontal">
             <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Enable sound effects" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Enable sound effects" android:textColor="#111111" android:textSize="13sp"/>
             </LinearLayout>
             <FrameLayout android:layout_width="48dp" android:layout_height="28dp" android:background="@drawable/preview_switch_on" android:padding="3dp">
               <View android:layout_width="22dp" android:layout_height="22dp" android:layout_gravity="center_vertical|end" android:background="@drawable/preview_thumb_white"/>
@@ -914,28 +921,28 @@
           </LinearLayout>
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="48dp" android:gravity="center_vertical" android:orientation="horizontal">
             <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Sound theme" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Sound theme" android:textColor="#111111" android:textSize="13sp"/>
             </LinearLayout>
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Classic  ▾" android:textColor="#111111" android:textSize="12sp" android:gravity="center" android:background="@drawable/preview_translucent_panel" android:paddingStart="10dp" android:paddingEnd="10dp" android:paddingTop="7dp" android:paddingBottom="7dp"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Classic  ▾" android:textColor="#111111" android:textSize="12sp" android:gravity="center" android:background="@drawable/preview_translucent_panel" android:paddingStart="10dp" android:paddingEnd="10dp" android:paddingTop="7dp" android:paddingBottom="7dp"/>
           </LinearLayout>
           <LinearLayout android:layout_width="match_parent" android:layout_height="52dp" android:background="@drawable/preview_button_light" android:gravity="center" android:orientation="horizontal">
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Preview sound" android:textColor="#111111" android:textSize="14sp"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Preview sound" android:textColor="#111111" android:textSize="14sp"/>
           </LinearLayout>
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:paddingTop="4dp" android:paddingBottom="4dp">
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:orientation="horizontal">
-              <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Volume" android:textColor="#111111" android:textSize="13sp" android:layout_weight="1"/>
-              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="70%" android:textColor="#111111" android:textSize="12sp"/>
+              <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Volume" android:textColor="#111111" android:textSize="13sp" android:layout_weight="1"/>
+              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="70%" android:textColor="#111111" android:textSize="12sp"/>
             </LinearLayout>
             <SeekBar android:layout_width="match_parent" android:layout_height="34dp" android:max="100" android:progress="65" android:splitTrack="false"/>
           </LinearLayout>
         </LinearLayout>
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:background="@drawable/preview_light_group" android:orientation="vertical" android:padding="14dp">
-          <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Haptic effects" android:textColor="#111111" android:textSize="17sp"/>
-          <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:fontFamily="@font/google_sans_regular" android:text="Vibration feedback for interface actions." android:textColor="#66666D" android:textSize="11sp"/>
+          <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Haptic effects" android:textColor="#111111" android:textSize="17sp"/>
+          <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:fontFamily="sans-serif" android:text="Vibration feedback for interface actions." android:textColor="#66666D" android:textSize="11sp"/>
           <Space android:layout_width="1dp" android:layout_height="9dp"/>
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="48dp" android:gravity="center_vertical" android:orientation="horizontal">
             <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Enable haptics" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Enable haptics" android:textColor="#111111" android:textSize="13sp"/>
             </LinearLayout>
             <FrameLayout android:layout_width="48dp" android:layout_height="28dp" android:background="@drawable/preview_switch_on" android:padding="3dp">
               <View android:layout_width="22dp" android:layout_height="22dp" android:layout_gravity="center_vertical|end" android:background="@drawable/preview_thumb_white"/>
@@ -943,58 +950,58 @@
           </LinearLayout>
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="48dp" android:gravity="center_vertical" android:orientation="horizontal">
             <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Haptic style" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Haptic style" android:textColor="#111111" android:textSize="13sp"/>
             </LinearLayout>
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Soft  ▾" android:textColor="#111111" android:textSize="12sp" android:gravity="center" android:background="@drawable/preview_translucent_panel" android:paddingStart="10dp" android:paddingEnd="10dp" android:paddingTop="7dp" android:paddingBottom="7dp"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Soft  ▾" android:textColor="#111111" android:textSize="12sp" android:gravity="center" android:background="@drawable/preview_translucent_panel" android:paddingStart="10dp" android:paddingEnd="10dp" android:paddingTop="7dp" android:paddingBottom="7dp"/>
           </LinearLayout>
           <LinearLayout android:layout_width="match_parent" android:layout_height="52dp" android:background="@drawable/preview_button_light" android:gravity="center" android:orientation="horizontal">
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Preview vibration" android:textColor="#111111" android:textSize="14sp"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Preview vibration" android:textColor="#111111" android:textSize="14sp"/>
           </LinearLayout>
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:paddingTop="4dp" android:paddingBottom="4dp">
             <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:orientation="horizontal">
-              <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Intensity" android:textColor="#111111" android:textSize="13sp" android:layout_weight="1"/>
-              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="65%" android:textColor="#111111" android:textSize="12sp"/>
+              <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Intensity" android:textColor="#111111" android:textSize="13sp" android:layout_weight="1"/>
+              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="65%" android:textColor="#111111" android:textSize="12sp"/>
             </LinearLayout>
             <SeekBar android:layout_width="match_parent" android:layout_height="34dp" android:max="100" android:progress="65" android:splitTrack="false"/>
           </LinearLayout>
         </LinearLayout>
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:background="@drawable/preview_light_group" android:orientation="vertical" android:padding="14dp">
-          <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Language" android:textColor="#111111" android:textSize="17sp"/>
+          <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Language" android:textColor="#111111" android:textSize="17sp"/>
           <Space android:layout_width="1dp" android:layout_height="9dp"/>
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="48dp" android:gravity="center_vertical" android:orientation="horizontal">
             <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Language" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Language" android:textColor="#111111" android:textSize="13sp"/>
             </LinearLayout>
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="English  ▾" android:textColor="#111111" android:textSize="12sp" android:gravity="center" android:background="@drawable/preview_translucent_panel" android:paddingStart="10dp" android:paddingEnd="10dp" android:paddingTop="7dp" android:paddingBottom="7dp"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="English  ▾" android:textColor="#111111" android:textSize="12sp" android:gravity="center" android:background="@drawable/preview_translucent_panel" android:paddingStart="10dp" android:paddingEnd="10dp" android:paddingTop="7dp" android:paddingBottom="7dp"/>
           </LinearLayout>
         </LinearLayout>
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:background="@drawable/preview_light_group" android:orientation="vertical" android:padding="14dp">
-          <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Columns" android:textColor="#111111" android:textSize="17sp"/>
+          <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Columns" android:textColor="#111111" android:textSize="17sp"/>
           <Space android:layout_width="1dp" android:layout_height="9dp"/>
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="48dp" android:gravity="center_vertical" android:orientation="horizontal">
             <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Grid columns" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Grid columns" android:textColor="#111111" android:textSize="13sp"/>
             </LinearLayout>
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="2  ▾" android:textColor="#111111" android:textSize="12sp" android:gravity="center" android:background="@drawable/preview_translucent_panel" android:paddingStart="10dp" android:paddingEnd="10dp" android:paddingTop="7dp" android:paddingBottom="7dp"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="2  ▾" android:textColor="#111111" android:textSize="12sp" android:gravity="center" android:background="@drawable/preview_translucent_panel" android:paddingStart="10dp" android:paddingEnd="10dp" android:paddingTop="7dp" android:paddingBottom="7dp"/>
           </LinearLayout>
         </LinearLayout>
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:background="@drawable/preview_light_group" android:orientation="vertical" android:padding="14dp">
-          <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Slider style" android:textColor="#111111" android:textSize="17sp"/>
+          <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Slider style" android:textColor="#111111" android:textSize="17sp"/>
           <Space android:layout_width="1dp" android:layout_height="9dp"/>
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="48dp" android:gravity="center_vertical" android:orientation="horizontal">
             <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Slider style" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Slider style" android:textColor="#111111" android:textSize="13sp"/>
             </LinearLayout>
-            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Minimal  ▾" android:textColor="#111111" android:textSize="12sp" android:gravity="center" android:background="@drawable/preview_translucent_panel" android:paddingStart="10dp" android:paddingEnd="10dp" android:paddingTop="7dp" android:paddingBottom="7dp"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Minimal  ▾" android:textColor="#111111" android:textSize="12sp" android:gravity="center" android:background="@drawable/preview_translucent_panel" android:paddingStart="10dp" android:paddingEnd="10dp" android:paddingTop="7dp" android:paddingBottom="7dp"/>
           </LinearLayout>
         </LinearLayout>
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:background="@drawable/preview_light_group" android:orientation="vertical" android:padding="14dp">
-          <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Dark mode" android:textColor="#111111" android:textSize="17sp"/>
+          <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Dark mode" android:textColor="#111111" android:textSize="17sp"/>
           <Space android:layout_width="1dp" android:layout_height="9dp"/>
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="48dp" android:gravity="center_vertical" android:orientation="horizontal">
             <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Dark mode" android:textColor="#111111" android:textSize="13sp"/>
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:fontFamily="@font/google_sans_regular" android:text="Use the dark color scheme throughout the app." android:textColor="#66666D" android:textSize="11sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Dark mode" android:textColor="#111111" android:textSize="13sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:fontFamily="sans-serif" android:text="Use the dark color scheme throughout the app." android:textColor="#66666D" android:textSize="11sp"/>
             </LinearLayout>
             <FrameLayout android:layout_width="48dp" android:layout_height="28dp" android:background="@drawable/preview_switch_off" android:padding="3dp">
               <View android:layout_width="22dp" android:layout_height="22dp" android:layout_gravity="center_vertical|start" android:background="@drawable/preview_thumb_white"/>
@@ -1002,41 +1009,41 @@
           </LinearLayout>
         </LinearLayout>
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:background="@drawable/preview_settings_group" android:orientation="vertical" android:padding="14dp">
-          <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Backup &amp; restore" android:textColor="#FFFFFF" android:textSize="17sp"/>
-          <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:fontFamily="@font/google_sans_regular" android:text="Export notes, attachments and settings, or restore them from a backup." android:textColor="#9E9EA6" android:textSize="11sp"/>
+          <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Backup &amp; restore" android:textColor="#FFFFFF" android:textSize="17sp"/>
+          <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:fontFamily="sans-serif" android:text="Export notes, attachments and settings, or restore them from a backup." android:textColor="#9E9EA6" android:textSize="11sp"/>
           <Space android:layout_width="1dp" android:layout_height="9dp"/>
           <LinearLayout android:layout_width="match_parent" android:layout_height="52dp" android:orientation="horizontal">
             <LinearLayout android:layout_width="0dp" android:layout_height="52dp" android:layout_weight="1" android:background="@drawable/preview_button_light" android:gravity="center" android:orientation="horizontal">
               <ImageView android:layout_width="22dp" android:layout_height="22dp" android:src="@drawable/preview_ic_file" android:tint="#111111" android:contentDescription="@null"/>
               <Space android:layout_width="8dp" android:layout_height="1dp"/>
-              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Export" android:textColor="#111111" android:textSize="14sp"/>
+              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Export" android:textColor="#111111" android:textSize="14sp"/>
             </LinearLayout>
             <Space android:layout_width="10dp" android:layout_height="1dp"/>
             <LinearLayout android:layout_width="0dp" android:layout_height="52dp" android:layout_weight="1" android:background="@drawable/preview_button_light" android:gravity="center" android:orientation="horizontal">
               <ImageView android:layout_width="22dp" android:layout_height="22dp" android:src="@drawable/preview_ic_file" android:tint="#111111" android:contentDescription="@null"/>
               <Space android:layout_width="8dp" android:layout_height="1dp"/>
-              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Import" android:textColor="#111111" android:textSize="14sp"/>
+              <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Import" android:textColor="#111111" android:textSize="14sp"/>
             </LinearLayout>
           </LinearLayout>
         </LinearLayout>
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:background="@drawable/preview_light_group" android:orientation="horizontal" android:gravity="center_vertical" android:paddingStart="20dp" android:paddingTop="16dp" android:paddingEnd="14dp" android:paddingBottom="16dp" android:tag="preview_development_info_bottom">
-          <TextView android:layout_width="42dp" android:layout_height="42dp" android:gravity="center" android:fontFamily="@font/google_sans_bold" android:text="&lt;/&gt;" android:textColor="#8A8C94" android:textSize="17sp"/>
+          <TextView android:layout_width="42dp" android:layout_height="42dp" android:gravity="center" android:fontFamily="sans-serif" android:text="&lt;/&gt;" android:textColor="#8A8C94" android:textSize="17sp"/>
           <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="10dp" android:orientation="vertical">
-            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Development information" android:textColor="#111111" android:textSize="16sp"/>
-            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:fontFamily="@font/google_sans_regular" android:text="Architecture, technologies, compatibility and internal performance of MyNotes." android:textColor="#707178" android:textSize="11sp"/>
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Development information" android:textColor="#111111" android:textSize="16sp"/>
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:fontFamily="sans-serif" android:text="Architecture, technologies, compatibility and internal performance of MyNotes." android:textColor="#707178" android:textSize="11sp"/>
           </LinearLayout>
           <TextView android:layout_width="34dp" android:layout_height="42dp" android:gravity="center" android:text="›" android:textColor="#8A8C94" android:textSize="30sp"/>
         </LinearLayout>
         <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:layout_marginBottom="18dp" android:background="@drawable/preview_light_group" android:orientation="vertical" android:padding="14dp" android:tag="preview_github_updates_bottom">
           <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:gravity="center_vertical" android:orientation="horizontal">
-            <TextView android:layout_width="42dp" android:layout_height="42dp" android:gravity="center" android:fontFamily="@font/google_sans_bold" android:text="↓" android:textColor="#8A8C94" android:textSize="24sp"/>
+            <TextView android:layout_width="42dp" android:layout_height="42dp" android:gravity="center" android:fontFamily="sans-serif" android:text="↓" android:textColor="#8A8C94" android:textSize="24sp"/>
             <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:layout_marginStart="10dp" android:orientation="vertical">
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="App updates" android:textColor="#111111" android:textSize="16sp"/>
-              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:fontFamily="@font/google_sans_regular" android:text="Check GitHub Releases for newer versions and install the published APK." android:textColor="#707178" android:textSize="11sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="App updates" android:textColor="#111111" android:textSize="16sp"/>
+              <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="3dp" android:fontFamily="sans-serif" android:text="Check GitHub Releases for newer versions and install the published APK." android:textColor="#707178" android:textSize="11sp"/>
             </LinearLayout>
           </LinearLayout>
-          <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:fontFamily="@font/google_sans_regular" android:text="Installed version: 1.0" android:textColor="#707178" android:textSize="11sp"/>
-          <TextView android:layout_width="match_parent" android:layout_height="48dp" android:layout_marginTop="10dp" android:background="@drawable/preview_button_light" android:gravity="center" android:fontFamily="@font/google_sans_bold" android:text="Check for updates" android:textColor="#111111" android:textSize="14sp"/>
+          <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:fontFamily="sans-serif" android:text="Installed version: 1.0" android:textColor="#707178" android:textSize="11sp"/>
+          <TextView android:layout_width="match_parent" android:layout_height="48dp" android:layout_marginTop="10dp" android:background="@drawable/preview_button_light" android:gravity="center" android:fontFamily="sans-serif" android:text="Check for updates" android:textColor="#111111" android:textSize="14sp"/>
         </LinearLayout>
       </LinearLayout>
     </LinearLayout>

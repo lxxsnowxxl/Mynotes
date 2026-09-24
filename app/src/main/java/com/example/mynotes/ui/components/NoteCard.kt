@@ -67,6 +67,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
@@ -119,17 +120,17 @@ private val ColorOptionKeys = listOf("default", "yellow", "orange", "red", "pink
  * - menú de prioridad/color/categoría.
  */
 @Composable
-fun ModernNoteCard(note: Note, attachments: List<Attachment>, fontFamily: FontFamily, fontSize: Float, noteUiTextColor: String,
-    style: NoteCardStyle, optionMenuOrder: String, optionMenuHiddenItems: String, optionMenuShowIcons: Boolean, optionMenuTextColor: String,
+fun ModernNoteCard(note: Note, attachments: List<Attachment>, fontFamily: FontFamily, fontSize: Float,
+    style: NoteCardStyle, textColorMode: String, optionMenuOrder: String, optionMenuHiddenItems: String, optionMenuShowIcons: Boolean, optionMenuTextColor: String,
     optionMenuOpacity: Float, priorityMenuHiddenItems: String, colorMenuHiddenItems: String, performanceMode: String,
     isScrolling: Boolean = false, onOpen: () -> Unit, onEdit: () -> Unit, onToggleFavorite: () -> Unit, onTogglePinned: () -> Unit,
     onPriorityChange: (Int) -> Unit,
     onColorChange: (String) -> Unit, onCategoryChange: (String) -> Unit, onDelete: () -> Unit) {
     val context = LocalContext.current
     val cardColor = noteBackgroundColor(note.color)
-    val textColor = resolveUiTextColor(value = noteUiTextColor, background = cardColor)
-    val secondaryTextColor = resolveSecondaryUiTextColor(value = noteUiTextColor, background = cardColor)
-    val graphicColor = resolveUiGraphicColor(value = noteUiTextColor, background = cardColor)
+    val textColor = resolveUiTextColor(value = textColorMode, background = cardColor)
+    val secondaryTextColor = resolveSecondaryUiTextColor(value = textColorMode, background = cardColor)
+    val graphicColor = resolveUiGraphicColor(value = textColorMode, background = cardColor)
     val favoriteIconColor = ensureUiContrast(preferred = FavoriteGold, background = cardColor, minimumContrast = 3f)
     /*
      * Durante un gesto de scroll evitamos animaciones internas de tamaño y
@@ -165,9 +166,13 @@ fun ModernNoteCard(note: Note, attachments: List<Attachment>, fontFamily: FontFa
         remember {
             mutableStateOf(false)
         }
-    val popupBaseColor = when (optionMenuTextColor) {
-            "white" -> MaterialTheme.colorScheme.inverseSurface
-            else -> MaterialTheme.colorScheme.surfaceContainerHigh
+    val effectiveMenuTextColorMode = if (optionMenuTextColor == "note") textColorMode else optionMenuTextColor
+    val defaultPopupSurface = MaterialTheme.colorScheme.surfaceContainerHigh
+    val inversePopupSurface = MaterialTheme.colorScheme.inverseSurface
+    val popupBaseColor = when (effectiveMenuTextColorMode) {
+            "white" -> if (defaultPopupSurface.luminance() < 0.46f) defaultPopupSurface else inversePopupSurface
+            "black" -> if (defaultPopupSurface.luminance() > 0.54f) defaultPopupSurface else inversePopupSurface
+            else -> defaultPopupSurface
         }
     val popupAlpha = (optionMenuOpacity / 100f).coerceIn(0.35f, 1f)
     val popupColor = popupBaseColor.copy(alpha = popupAlpha)
@@ -178,7 +183,7 @@ fun ModernNoteCard(note: Note, attachments: List<Attachment>, fontFamily: FontFa
      * lighter version. Only extreme cases fall back to black/white.
      */
     val noteOutlineColor = paletteMatchedOutlineColor(animatedCardColor)
-    val menuTextColor = resolveUiTextColor(value = optionMenuTextColor, background = popupVisualBackground)
+    val menuTextColor = resolveUiTextColor(value = effectiveMenuTextColorMode, background = popupVisualBackground)
     val mainMenuOrder = remember(optionMenuOrder) {
             normalizedMenuOrder(optionMenuOrder, MainOptionMenuKeys)
         }
@@ -544,7 +549,7 @@ fun ModernNoteCard(note: Note, attachments: List<Attachment>, fontFamily: FontFa
                 }
                 if (noteLinks.isNotEmpty()) {
                     Spacer(modifier = Modifier.height(10.dp))
-                    LinkPreviewCard(url = noteLinks.first(), compact = true, textColorMode = noteUiTextColor,
+                    LinkPreviewCard(url = noteLinks.first(), compact = true, textColorMode = textColorMode,
                         deferLoad = isScrolling)
                 }
                 Spacer(modifier = Modifier.height(10.dp))

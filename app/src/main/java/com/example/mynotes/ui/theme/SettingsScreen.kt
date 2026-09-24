@@ -69,8 +69,10 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.PopupProperties
 import com.example.mynotes.R
 import com.example.mynotes.update.GitHubUpdateManager
+import com.example.mynotes.reminders.ReminderFeedbackPreferences
 import com.example.mynotes.ui.components.AppDropdownMenu
 import com.example.mynotes.settings.AppSettings
+import com.example.mynotes.settings.DeveloperFeatures
 import com.example.mynotes.ui.components.BackupRestoreSection
 import com.example.mynotes.ui.components.ExtremeCustomizationSection
 import com.example.mynotes.ui.components.OptionsMenuCustomizationSection
@@ -119,9 +121,11 @@ private val SliderStyleOptions = listOf(SliderStyleOption("minimal", R.string.mo
 fun SettingsScreen(settings: AppSettings, onConfigurationModeChange: (String) -> Unit, onDarkModeChange: (Boolean) -> Unit, onBackgroundColorChange: (String) -> Unit,
     onBackgroundToneIndexChange: (Int) -> Unit, onBackgroundIntensityChange: (Float) -> Unit, onSettingsPanelToneChange: (Float) -> Unit,
     onSurfacePanelIntensityChange: (Float) -> Unit, onHeaderIntensityChange: (Float) -> Unit, onTextColorChange: (String) -> Unit,
-    onTextOutlineEnabledChange: (Boolean) -> Unit, onNoteUiTextColorChange: (String) -> Unit, onSliderStyleChange: (String) -> Unit,
+    onTextOutlineEnabledChange: (Boolean) -> Unit, onSliderStyleChange: (String) -> Unit,
     onFontChange: (String) -> Unit, onFontSizeChange: (Float) -> Unit, onSoundEffectsEnabledChange: (Boolean) -> Unit,
     onSoundEffectsVolumeChange: (Float) -> Unit, onSoundEffectsThemeChange: (String) -> Unit,
+    onReminderSoundEnabledChange: (Boolean) -> Unit, onReminderSoundVolumeChange: (Float) -> Unit,
+    onReminderRingtoneChange: (String) -> Unit,
     onHapticEffectsEnabledChange: (Boolean) -> Unit, onHapticEffectsIntensityChange: (Float) -> Unit,
     onHapticEffectsStyleChange: (String) -> Unit, onLanguageChange: (String) -> Unit, onGridColumnsChange: (Int) -> Unit,
     onProfileImageUriChange: (String) -> Unit, onProfileImageSizeChange: (Float) -> Unit, onIconStyleChange: (String) -> Unit,
@@ -138,6 +142,7 @@ fun SettingsScreen(settings: AppSettings, onConfigurationModeChange: (String) ->
     onAnimationSpeedChange: (Float) -> Unit, onAnimationIntensityChange: (Float) -> Unit, onOpenDevelopmentInfo: () -> Unit,
     onBack: () -> Unit) {
     val context = LocalContext.current
+    val developerGoogleSansFlexUnlocked = DeveloperFeatures.isGoogleSansFlexUnlocked(context)
     val fontFamily = remember(settings.font) {
             appFontFamily(settings.font)
         }
@@ -173,6 +178,10 @@ fun SettingsScreen(settings: AppSettings, onConfigurationModeChange: (String) ->
         remember {
             mutableFloatStateOf(settings.soundEffectsVolume)
         }
+    var localReminderSoundVolume by
+        remember {
+            mutableFloatStateOf(settings.reminderSoundVolume)
+        }
     var localHapticEffectsIntensity by
         remember {
             mutableFloatStateOf(settings.hapticEffectsIntensity)
@@ -200,6 +209,9 @@ fun SettingsScreen(settings: AppSettings, onConfigurationModeChange: (String) ->
     }
     LaunchedEffect(settings.soundEffectsVolume) {
         localSoundEffectsVolume = settings.soundEffectsVolume
+    }
+    LaunchedEffect(settings.reminderSoundVolume) {
+        localReminderSoundVolume = settings.reminderSoundVolume
     }
     LaunchedEffect(settings.hapticEffectsIntensity) {
         localHapticEffectsIntensity = settings.hapticEffectsIntensity
@@ -583,15 +595,6 @@ fun SettingsScreen(settings: AppSettings, onConfigurationModeChange: (String) ->
                                 })
                         }
                     }
-                    Spacer(modifier = Modifier.height(17.dp))
-                    SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(start = 6.dp, top = 14.dp, end = 0.dp, bottom = 14.dp),
-                        horizontalOutset = 8.dp) { panelColors -> SettingTitle(text = stringResource(R.string.mock_note_menu_text_color),
-                            color = panelColors.text, fontFamily = fontFamily)
-                        Spacer(modifier = Modifier.height(8.dp))
-                        TextColorSelector(selected = settings.noteUiTextColor,
-                            onSelected = onNoteUiTextColorChange,
-                            fontKey = settings.font)
-                    }
                     }
                     Spacer(modifier = Modifier.height(20.dp))
                     /*
@@ -602,32 +605,29 @@ fun SettingsScreen(settings: AppSettings, onConfigurationModeChange: (String) ->
                     SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(start = 6.dp, top = 14.dp, end = 0.dp, bottom = 14.dp),
                         horizontalOutset = 8.dp) { panelColors ->
                         if (isAdvancedMode) {
+                            val systemFontLabel = stringResource(R.string.mock_font_default)
+                            val systemSansLabel = stringResource(R.string.mock_font_system_sans)
+                            val googleSansFlexLabel = stringResource(R.string.mock_font_google_sans_flex)
+                            val serifLabel = stringResource(R.string.mock_font_serif)
+                            val monospaceLabel = stringResource(R.string.mock_font_monospace)
+                            val fontOptions = buildList {
+                                add("system_default" to systemFontLabel)
+                                add("system_sans" to systemSansLabel)
+                                if (developerGoogleSansFlexUnlocked) {
+                                    add("developer_google_sans_flex" to googleSansFlexLabel)
+                                }
+                                add("serif" to serifLabel)
+                                add("monospace" to monospaceLabel)
+                            }
                             SettingDropdown(title = stringResource(R.string.mock_font),
                             selectedLabel = when (settings.font) {
-                                    "google_sans" -> "Google Sans (Auto)"
-                                    "google_sans_regular" -> "Google Sans Regular"
-                                    "google_sans_medium" -> "Google Sans Medium"
-                                    "google_sans_bold" -> "Google Sans Bold"
-                                    "google_sans_italic" -> "Google Sans Italic"
-                                    "google_sans_medium_italic" -> "Google Sans Medium Italic"
-                                    "google_sans_bold_italic" -> "Google Sans Bold Italic"
-                                    "google_sans_flex" -> "Google Sans Flex"
-                                    "serif" -> stringResource(R.string.mock_font_serif)
-                                    "monospace" -> stringResource(R.string.mock_font_monospace)
-                                    else -> stringResource(R.string.mock_font_default)
+                                    "system_default" -> systemFontLabel
+                                    "developer_google_sans_flex" -> googleSansFlexLabel
+                                    "serif" -> serifLabel
+                                    "monospace" -> monospaceLabel
+                                    else -> systemSansLabel
                                 },
-                            options = listOf("default" to
-                                        stringResource(R.string.mock_font_default), "google_sans" to
-                                        "Google Sans (Auto)", "google_sans_regular" to
-                                        "Google Sans Regular", "google_sans_medium" to
-                                        "Google Sans Medium", "google_sans_bold" to
-                                        "Google Sans Bold", "google_sans_italic" to
-                                        "Google Sans Italic", "google_sans_medium_italic" to
-                                        "Google Sans Medium Italic", "google_sans_bold_italic" to
-                                        "Google Sans Bold Italic", "google_sans_flex" to
-                                        "Google Sans Flex", "serif" to
-                                        stringResource(R.string.mock_font_serif), "monospace" to
-                                        stringResource(R.string.mock_font_monospace)),
+                            options = fontOptions,
                             textColor = panelColors.text,
                             textColorMode = settings.textColor,
                             menuBackground = menuBackground,
@@ -794,6 +794,196 @@ fun SettingsScreen(settings: AppSettings, onConfigurationModeChange: (String) ->
                                 style = settings.sliderStyle,
                                 valueLabel = "${localSoundEffectsVolume.roundToInt()}%")
                         }
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+                    /*
+                     * -------------------------------------------------
+                     * REMINDER / ALERT SOUNDS
+                     * -------------------------------------------------
+                     */
+                    SettingsSectionPanel(
+                        textColorMode = settings.textColor,
+                        contentPadding = PaddingValues(start = 6.dp, top = 10.dp, end = 0.dp, bottom = SoundHapticPanelBottomPadding),
+                        horizontalOutset = 8.dp
+                    ) { panelColors ->
+                        Text(
+                            text = stringResource(R.string.reminder_tones),
+                            color = panelColors.text,
+                            fontFamily = fontFamily,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp
+                        )
+                        Text(
+                            text = stringResource(R.string.reminder_tones_description),
+                            modifier = Modifier.padding(top = 2.dp, bottom = 8.dp),
+                            color = panelColors.secondaryText,
+                            fontFamily = fontFamily,
+                            fontSize = 12.sp
+                        )
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.SpaceBetween
+                        ) {
+                            Text(
+                                text = stringResource(R.string.reminder_sound_enabled),
+                                color = panelColors.text,
+                                fontFamily = fontFamily,
+                                fontSize = 14.sp
+                            )
+                            Switch(
+                                checked = settings.reminderSoundEnabled,
+                                onCheckedChange = { checked ->
+                                    UiSoundPlayer.playToggleAudioOnly(context = context, checked = checked)
+                                    UiHapticPlayer.playToggle(context = context, checked = checked)
+                                    onReminderSoundEnabledChange(checked)
+                                }
+                            )
+                        }
+                        Spacer(modifier = Modifier.height(8.dp))
+                        SettingDropdown(
+                            title = stringResource(R.string.reminder_tone),
+                            selectedLabel = when (settings.reminderRingtone) {
+                                "bell" -> stringResource(R.string.reminder_tone_bell)
+                                "crystal" -> stringResource(R.string.reminder_tone_crystal)
+                                "pulse" -> stringResource(R.string.reminder_tone_pulse)
+                                "sunrise" -> stringResource(R.string.reminder_tone_sunrise)
+                                "digital" -> stringResource(R.string.reminder_tone_digital)
+                                "alert" -> stringResource(R.string.reminder_tone_alert)
+                                "urgent" -> stringResource(R.string.reminder_tone_urgent)
+                                "beacon" -> stringResource(R.string.reminder_tone_beacon)
+                                "radar" -> stringResource(R.string.reminder_tone_radar)
+                                "warning" -> stringResource(R.string.reminder_tone_warning)
+                                "signal" -> stringResource(R.string.reminder_tone_signal)
+                                "pager" -> stringResource(R.string.reminder_tone_pager)
+                                "double_alarm" -> stringResource(R.string.reminder_tone_double_alarm)
+                                "serenity" -> stringResource(R.string.reminder_tone_serenity)
+                                "soft_bell" -> stringResource(R.string.reminder_tone_soft_bell)
+                                "breeze" -> stringResource(R.string.reminder_tone_breeze)
+                                "dew" -> stringResource(R.string.reminder_tone_dew)
+                                "bamboo" -> stringResource(R.string.reminder_tone_bamboo)
+                                "horizon" -> stringResource(R.string.reminder_tone_horizon)
+                                "calm" -> stringResource(R.string.reminder_tone_calm)
+                                "moonlight" -> stringResource(R.string.reminder_tone_moonlight)
+                                "orbit" -> stringResource(R.string.reminder_tone_orbit)
+                                "droplet" -> stringResource(R.string.reminder_tone_droplet)
+                                "glass_tap" -> stringResource(R.string.reminder_tone_glass_tap)
+                                "clockwork" -> stringResource(R.string.reminder_tone_clockwork)
+                                "spark" -> stringResource(R.string.reminder_tone_spark)
+                                "bubble_pop" -> stringResource(R.string.reminder_tone_bubble_pop)
+                                "comet" -> stringResource(R.string.reminder_tone_comet)
+                                "echo_ping" -> stringResource(R.string.reminder_tone_echo_ping)
+                                "woodblock" -> stringResource(R.string.reminder_tone_woodblock)
+                                "starlight" -> stringResource(R.string.reminder_tone_starlight)
+                                "sentinel" -> stringResource(R.string.reminder_tone_sentinel)
+                                "siren" -> stringResource(R.string.reminder_tone_siren)
+                                "cascade" -> stringResource(R.string.reminder_tone_cascade)
+                                "escalation" -> stringResource(R.string.reminder_tone_escalation)
+                                "distress" -> stringResource(R.string.reminder_tone_distress)
+                                "interlock" -> stringResource(R.string.reminder_tone_interlock)
+                                "scanner" -> stringResource(R.string.reminder_tone_scanner)
+                                "command" -> stringResource(R.string.reminder_tone_command)
+                                "rapid_triple" -> stringResource(R.string.reminder_tone_rapid_triple)
+                                "priority_sequence" -> stringResource(R.string.reminder_tone_priority_sequence)
+                                "double_sweep" -> stringResource(R.string.reminder_tone_double_sweep)
+                                "attention_burst" -> stringResource(R.string.reminder_tone_attention_burst)
+                                else -> stringResource(R.string.reminder_tone_classic)
+                            },
+                            options = listOf(
+                                "classic" to stringResource(R.string.reminder_tone_classic),
+                                "bell" to stringResource(R.string.reminder_tone_bell),
+                                "crystal" to stringResource(R.string.reminder_tone_crystal),
+                                "pulse" to stringResource(R.string.reminder_tone_pulse),
+                                "sunrise" to stringResource(R.string.reminder_tone_sunrise),
+                                "digital" to stringResource(R.string.reminder_tone_digital),
+                                "alert" to stringResource(R.string.reminder_tone_alert),
+                                "urgent" to stringResource(R.string.reminder_tone_urgent),
+                                "beacon" to stringResource(R.string.reminder_tone_beacon),
+                                "radar" to stringResource(R.string.reminder_tone_radar),
+                                "warning" to stringResource(R.string.reminder_tone_warning),
+                                "signal" to stringResource(R.string.reminder_tone_signal),
+                                "pager" to stringResource(R.string.reminder_tone_pager),
+                                "double_alarm" to stringResource(R.string.reminder_tone_double_alarm),
+                                "serenity" to stringResource(R.string.reminder_tone_serenity),
+                                "soft_bell" to stringResource(R.string.reminder_tone_soft_bell),
+                                "breeze" to stringResource(R.string.reminder_tone_breeze),
+                                "dew" to stringResource(R.string.reminder_tone_dew),
+                                "bamboo" to stringResource(R.string.reminder_tone_bamboo),
+                                "horizon" to stringResource(R.string.reminder_tone_horizon),
+                                "calm" to stringResource(R.string.reminder_tone_calm),
+                                "moonlight" to stringResource(R.string.reminder_tone_moonlight),
+                                "orbit" to stringResource(R.string.reminder_tone_orbit),
+                                "droplet" to stringResource(R.string.reminder_tone_droplet),
+                                "glass_tap" to stringResource(R.string.reminder_tone_glass_tap),
+                                "clockwork" to stringResource(R.string.reminder_tone_clockwork),
+                                "spark" to stringResource(R.string.reminder_tone_spark),
+                                "bubble_pop" to stringResource(R.string.reminder_tone_bubble_pop),
+                                "comet" to stringResource(R.string.reminder_tone_comet),
+                                "echo_ping" to stringResource(R.string.reminder_tone_echo_ping),
+                                "woodblock" to stringResource(R.string.reminder_tone_woodblock),
+                                "starlight" to stringResource(R.string.reminder_tone_starlight),
+                                "sentinel" to stringResource(R.string.reminder_tone_sentinel),
+                                "siren" to stringResource(R.string.reminder_tone_siren),
+                                "cascade" to stringResource(R.string.reminder_tone_cascade),
+                                "escalation" to stringResource(R.string.reminder_tone_escalation),
+                                "distress" to stringResource(R.string.reminder_tone_distress),
+                                "interlock" to stringResource(R.string.reminder_tone_interlock),
+                                "scanner" to stringResource(R.string.reminder_tone_scanner),
+                                "command" to stringResource(R.string.reminder_tone_command),
+                                "rapid_triple" to stringResource(R.string.reminder_tone_rapid_triple),
+                                "priority_sequence" to stringResource(R.string.reminder_tone_priority_sequence),
+                                "double_sweep" to stringResource(R.string.reminder_tone_double_sweep),
+                                "attention_burst" to stringResource(R.string.reminder_tone_attention_burst)
+                            ),
+                            textColor = panelColors.text,
+                            textColorMode = settings.textColor,
+                            menuBackground = menuBackground,
+                            menuTextColor = settingsMenuTextColor,
+                            fontFamily = fontFamily,
+                            playDefaultSelectionFeedback = false,
+                            onSelected = { selectedRingtone ->
+                                UiHapticPlayer.play(context = context, haptic = UiHaptic.Selection)
+                                onReminderRingtoneChange(selectedRingtone)
+                                ReminderFeedbackPreferences.previewRingtone(
+                                    context = context,
+                                    ringtone = selectedRingtone,
+                                    volumePercent = localReminderSoundVolume
+                                )
+                            }
+                        )
+                        Spacer(modifier = Modifier.height(PreviewButtonVerticalGap))
+                        RoundedPreviewButton(
+                            text = stringResource(R.string.reminder_tone_preview),
+                            panelBackground = panelColors.background,
+                            panelContentColor = panelColors.text,
+                            textColorMode = settings.textColor,
+                            fontFamily = fontFamily,
+                            onClick = {
+                                ReminderFeedbackPreferences.previewRingtone(
+                                    context = context,
+                                    ringtone = settings.reminderRingtone,
+                                    volumePercent = localReminderSoundVolume
+                                )
+                            }
+                        )
+                        Spacer(modifier = Modifier.height(PreviewToSliderGap))
+                        SettingTitleRow(
+                            title = stringResource(R.string.reminder_sound_volume),
+                            value = "${localReminderSoundVolume.roundToInt()}%",
+                            color = panelColors.text,
+                            fontFamily = fontFamily
+                        )
+                        StyledSettingsSlider(
+                            value = localReminderSoundVolume,
+                            onValueChange = { localReminderSoundVolume = it },
+                            onValueChangeFinished = { onReminderSoundVolumeChange(localReminderSoundVolume) },
+                            valueRange = 0f..100f,
+                            steps = 19,
+                            activeColor = MaterialTheme.colorScheme.primary,
+                            inactiveColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.35f),
+                            style = settings.sliderStyle,
+                            valueLabel = "${localReminderSoundVolume.roundToInt()}%"
+                        )
                     }
                     Spacer(modifier = Modifier.height(16.dp))
                     /*

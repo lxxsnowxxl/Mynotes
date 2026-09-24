@@ -36,6 +36,7 @@ import com.example.mynotes.reminders.ReminderRepository
 import com.example.mynotes.reminders.ReminderFeedbackPreferences
 import com.example.mynotes.reminders.ReminderReceiver
 import com.example.mynotes.ui.DrawingScreen
+import com.example.mynotes.ui.pdf.PdfLibraryActivity
 import com.example.mynotes.ui.NoteDetailScreen
 import com.example.mynotes.ui.NoteEditorScreen
 import com.example.mynotes.ui.ReminderScreen
@@ -432,6 +433,9 @@ class MainActivity : ComponentActivity() {
                 settings.soundEffectsEnabled,
                 settings.soundEffectsVolume,
                 settings.soundEffectsTheme,
+                settings.reminderSoundEnabled,
+                settings.reminderSoundVolume,
+                settings.reminderRingtone,
                 settings.hapticEffectsEnabled,
                 settings.hapticEffectsIntensity,
                 settings.hapticEffectsStyle,
@@ -688,7 +692,8 @@ class MainActivity : ComponentActivity() {
                  */
                 textColor = settings.textColor,
                 textOutlineEnabled = settings.textOutlineEnabled,
-                accentColor = settings.accentColor) {
+                accentColor = settings.accentColor,
+                fontFamily = appFontFamily(settings.font)) {
                 Box(modifier = Modifier.fillMaxSize()) {
                 ConfigurableAnimatedContent(targetState = currentScreen,
                     animationsEnabled = settings.animationsEnabled,
@@ -736,9 +741,6 @@ class MainActivity : ComponentActivity() {
                             onTextOutlineEnabledChange = {
                                 settingsViewModel.setTextOutlineEnabled(it)
                             },
-                            onNoteUiTextColorChange = {
-                                settingsViewModel.setNoteUiTextColor(it)
-                            },
                             onSliderStyleChange = {
                                 settingsViewModel.setSliderStyle(it)
                             },
@@ -756,6 +758,15 @@ class MainActivity : ComponentActivity() {
                             },
                             onSoundEffectsThemeChange = {
                                 settingsViewModel.setSoundEffectsTheme(it)
+                            },
+                            onReminderSoundEnabledChange = {
+                                settingsViewModel.setReminderSoundEnabled(it)
+                            },
+                            onReminderSoundVolumeChange = {
+                                settingsViewModel.setReminderSoundVolume(it)
+                            },
+                            onReminderRingtoneChange = {
+                                settingsViewModel.setReminderRingtone(it)
                             },
                             onHapticEffectsEnabledChange = {
                                 settingsViewModel.setHapticEffectsEnabled(it)
@@ -1120,6 +1131,10 @@ class MainActivity : ComponentActivity() {
                                 // La creación ya no se fuerza al entrar desde el speed dial.
                                 createReminderOnOpen = false
                                 showReminders = true
+                            },
+                            onAddPdf = {
+                                clearPendingShare()
+                                startActivity(Intent(this@MainActivity, PdfLibraryActivity::class.java))
                             },
                             /*
                              * Ajustes.

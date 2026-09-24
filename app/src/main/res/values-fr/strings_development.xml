@@ -65,8 +65,13 @@
     <string name="development_copyright">Copyright</string>
     <string name="development_copyright_value">© %1$d Snow · MyNotes</string>
     <string name="development_license">Licence</string>
-    <string name="development_license_value">Aucun fichier LICENSE déclaré</string>
-    <string name="development_legal_body">Les droits sur le code original de MyNotes appartiennent à son auteur. Android, Kotlin, Jetpack Compose, Material, Coil, Media3 et les autres bibliothèques ou marques tierces conservent leurs droits, licences et titulaires respectifs.</string>
+    <string name="development_license_value">Licence propriétaire — Tous droits réservés</string>
+    <string name="development_legal_body">Le code original de MyNotes est protégé par une licence propriétaire. Une copie obtenue légalement peut être installée et utilisée à des fins personnelles ou internes ; la redistribution, la sous-licence, la vente ou la distribution du code original nécessitent une autorisation écrite préalable. Les bibliothèques tierces conservent leurs propres licences et titulaires. Le fichier LICENSE et les mentions tierces sont inclus avec le projet et dans les assets de l’application.</string>
+    <string name="development_mlkit_notice">ML Kit Subject Segmentation traite les images sur l’appareil. Google indique que ML Kit peut contacter ses serveurs pour les modèles, correctifs et informations de compatibilité et envoyer des métriques de performance et d’utilisation. Consultez les mentions légales incluses.</string>
+    <string name="development_bundled_fonts_value">Google Sans Flex via Google Fonts (téléchargement à l’exécution · OFL 1.1)</string>
+    <string name="development_bundled_fonts">Police typographique</string>
+    <string name="development_third_party_licenses_value">Mentions incluses</string>
+    <string name="development_third_party_licenses">Licences tierces</string>
     <string name="development_source_title">Code du projet</string>
     <string name="development_source_heading">Carte du code source</string>
     <string name="development_source_subtitle">Chemins réels du projet et rôle des principaux fichiers.</string>
@@ -129,4 +134,8 @@
 
     <string name="development_source_update_manager">Gère la vérification des GitHub Releases, la comparaison des versions, le téléchargement sécurisé de l’APK et l’ouverture du programme d’installation Android.</string>
 
+    <string name="development_font_unlocked">Police développeur déverrouillée : Google Sans Flex est maintenant disponible dans les paramètres.</string>
+    <string name="development_font_already_unlocked">La police développeur est déjà déverrouillée.</string>
+    <string name="development_developer_font">Police développeur</string>
+    <string name="development_developer_font_enabled">Google Sans Flex déverrouillée</string>
 </resources>

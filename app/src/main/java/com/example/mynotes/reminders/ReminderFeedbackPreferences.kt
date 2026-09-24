@@ -2,8 +2,12 @@ package com.example.mynotes.reminders
 
 import android.content.Context
 import android.content.res.Configuration
+import android.media.AudioAttributes
 import android.media.MediaPlayer
+import android.os.Handler
+import android.os.Looper
 import androidx.compose.ui.graphics.toArgb
+import com.example.mynotes.R
 import com.example.mynotes.settings.AppSettings
 import com.example.mynotes.ui.sound.UiHaptic
 import com.example.mynotes.ui.sound.UiHapticPlayer
@@ -27,6 +31,9 @@ object ReminderFeedbackPreferences {
     private const val KEY_SOUND_ENABLED = "sound_enabled"
     private const val KEY_SOUND_VOLUME = "sound_volume"
     private const val KEY_SOUND_THEME = "sound_theme"
+    private const val KEY_REMINDER_SOUND_ENABLED = "reminder_sound_enabled"
+    private const val KEY_REMINDER_SOUND_VOLUME = "reminder_sound_volume"
+    private const val KEY_REMINDER_RINGTONE = "reminder_ringtone"
     private const val KEY_HAPTIC_ENABLED = "haptic_enabled"
     private const val KEY_HAPTIC_INTENSITY = "haptic_intensity"
     private const val KEY_HAPTIC_STYLE = "haptic_style"
@@ -40,6 +47,9 @@ object ReminderFeedbackPreferences {
         val soundEnabled: Boolean,
         val soundVolume: Float,
         val soundTheme: String,
+        val reminderSoundEnabled: Boolean,
+        val reminderSoundVolume: Float,
+        val reminderRingtone: String,
         val hapticEnabled: Boolean,
         val hapticIntensity: Float,
         val hapticStyle: String,
@@ -84,6 +94,9 @@ object ReminderFeedbackPreferences {
             .putBoolean(KEY_SOUND_ENABLED, settings.soundEffectsEnabled)
             .putFloat(KEY_SOUND_VOLUME, settings.soundEffectsVolume.coerceIn(0f, 100f))
             .putString(KEY_SOUND_THEME, UiSoundPlayer.normalizeTheme(settings.soundEffectsTheme))
+            .putBoolean(KEY_REMINDER_SOUND_ENABLED, settings.reminderSoundEnabled)
+            .putFloat(KEY_REMINDER_SOUND_VOLUME, settings.reminderSoundVolume.coerceIn(0f, 100f))
+            .putString(KEY_REMINDER_RINGTONE, normalizeRingtone(settings.reminderRingtone))
             .putBoolean(KEY_HAPTIC_ENABLED, settings.hapticEffectsEnabled)
             .putFloat(KEY_HAPTIC_INTENSITY, settings.hapticEffectsIntensity.coerceIn(0f, 100f))
             .putString(KEY_HAPTIC_STYLE, UiHapticPlayer.normalizeStyle(settings.hapticEffectsStyle))
@@ -101,6 +114,9 @@ object ReminderFeedbackPreferences {
             soundEnabled = prefs.getBoolean(KEY_SOUND_ENABLED, true),
             soundVolume = prefs.getFloat(KEY_SOUND_VOLUME, 65f).coerceIn(0f, 100f),
             soundTheme = UiSoundPlayer.normalizeTheme(prefs.getString(KEY_SOUND_THEME, UiSoundPlayer.DEFAULT_THEME).orEmpty()),
+            reminderSoundEnabled = prefs.getBoolean(KEY_REMINDER_SOUND_ENABLED, true),
+            reminderSoundVolume = prefs.getFloat(KEY_REMINDER_SOUND_VOLUME, 75f).coerceIn(0f, 100f),
+            reminderRingtone = normalizeRingtone(prefs.getString(KEY_REMINDER_RINGTONE, "classic").orEmpty()),
             hapticEnabled = prefs.getBoolean(KEY_HAPTIC_ENABLED, true),
             hapticIntensity = prefs.getFloat(KEY_HAPTIC_INTENSITY, 55f).coerceIn(0f, 100f),
             hapticStyle = UiHapticPlayer.normalizeStyle(prefs.getString(KEY_HAPTIC_STYLE, UiHapticPlayer.DEFAULT_STYLE).orEmpty()),
@@ -113,8 +129,9 @@ object ReminderFeedbackPreferences {
     }
 
     /**
-     * Reproduce el feedback del recordatorio usando exactamente el paquete,
-     * volumen y patrón háptico seleccionados en Configuración.
+     * Reproduce el feedback del recordatorio con el tono dedicado elegido en
+     * Configuración. El audio del recordatorio es independiente de los efectos
+     * cortos de la interfaz, pero conserva el patrón háptico global.
      */
     fun playReminderAlert(context: Context) {
         val config = read(context)
@@ -128,33 +145,65 @@ object ReminderFeedbackPreferences {
             UiHapticPlayer.play(context, UiHaptic.Confirm)
         }
 
-        if (!config.soundEnabled || config.soundVolume <= 0f) return
+        if (!config.reminderSoundEnabled || config.reminderSoundVolume <= 0f) return
+        playRingtoneInternal(
+            context = context,
+            ringtone = config.reminderRingtone,
+            volumePercent = config.reminderSoundVolume
+        )
+    }
 
-        val rawName = if (config.soundTheme == UiSoundPlayer.DEFAULT_THEME) {
-            "ui_priority"
-        } else {
-            "ui_${config.soundTheme}_priority"
-        }
-        var rawId = context.resources.getIdentifier(rawName, "raw", context.packageName)
-        if (rawId == 0) {
-            rawId = context.resources.getIdentifier("ui_priority", "raw", context.packageName)
-        }
-        if (rawId == 0) return
+    /**
+     * Vista previa desde Configuración. Se permite escucharla aunque el switch
+     * esté apagado para que el usuario pueda comparar tonos antes de activarlos.
+     */
+    fun previewRingtone(context: Context, ringtone: String, volumePercent: Float) {
+        playRingtoneInternal(
+            context = context,
+            ringtone = ringtone,
+            volumePercent = volumePercent
+        )
+    }
+
+    private fun playRingtoneInternal(context: Context, ringtone: String, volumePercent: Float) {
+        if (volumePercent <= 0f) return
+        val ringtoneAttributes = AudioAttributes.Builder()
+            .setUsage(AudioAttributes.USAGE_NOTIFICATION_RINGTONE)
+            .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
+            .build()
 
         synchronized(this) {
             activePlayer?.let { previous ->
                 try { previous.stop() } catch (_: IllegalStateException) { }
                 previous.release()
             }
-            val volume = (config.soundVolume / 100f).coerceIn(0f, 1f)
-            val player = MediaPlayer.create(context.applicationContext, rawId) ?: return
+            // Los recordatorios usan ahora sonidos de alerta dedicados, separados de los efectos
+            // de interfaz. Son señales cortas y repetitivas pensadas para llamar la atención
+            // de inmediato sin reutilizar los tonos anteriores.
+            val volume = ((volumePercent / 100f).coerceIn(0f, 1f) * 0.84f)
+            val player = MediaPlayer.create(
+                context.applicationContext,
+                ringtoneResource(normalizeRingtone(ringtone)),
+                ringtoneAttributes,
+                0
+            ) ?: return
             activePlayer = player
+            player.isLooping = false
             player.setVolume(volume, volume)
             player.setOnCompletionListener { finished ->
-                finished.release()
+                // Algunos dispositivos todavía tienen muestras pendientes en el mezclador de audio
+                // cuando MediaPlayer notifica onCompletion. Liberarlo en ese mismo instante puede
+                // hacer que la cola del tono se perciba cortada. Primero soltamos la referencia
+                // activa y dejamos una pequeña ventana para que el hardware termine de vaciarla.
                 synchronized(this) {
                     if (activePlayer === finished) activePlayer = null
                 }
+                completionReleaseHandler.postDelayed({
+                    try {
+                        finished.release()
+                    } catch (_: Exception) {
+                    }
+                }, PLAYER_RELEASE_GRACE_MS)
             }
             player.setOnErrorListener { failed, _, _ ->
                 failed.release()
@@ -167,6 +216,64 @@ object ReminderFeedbackPreferences {
         }
     }
 
-    @Volatile
+    private fun normalizeRingtone(value: String): String = when (value.trim().lowercase()) {
+        "classic", "bell", "crystal", "pulse", "sunrise", "digital",
+        "alert", "urgent", "beacon", "radar", "warning", "signal", "pager", "double_alarm",
+        "serenity", "soft_bell", "breeze", "dew", "bamboo", "horizon", "calm", "moonlight",
+        "orbit", "droplet", "glass_tap", "clockwork", "spark", "bubble_pop", "comet", "echo_ping", "woodblock", "starlight",
+        "sentinel", "siren", "cascade", "escalation", "distress", "interlock", "scanner", "command",
+        "rapid_triple", "priority_sequence", "double_sweep", "attention_burst" -> value.trim().lowercase()
+        else -> "classic"
+    }
+
+    private fun ringtoneResource(value: String): Int = when (value) {
+        "bell" -> R.raw.reminder_ringtone_bell
+        "crystal" -> R.raw.reminder_ringtone_crystal
+        "pulse" -> R.raw.reminder_ringtone_pulse
+        "sunrise" -> R.raw.reminder_ringtone_sunrise
+        "digital" -> R.raw.reminder_ringtone_digital
+        "alert" -> R.raw.reminder_ringtone_alert
+        "urgent" -> R.raw.reminder_ringtone_urgent
+        "beacon" -> R.raw.reminder_ringtone_beacon
+        "radar" -> R.raw.reminder_ringtone_radar
+        "warning" -> R.raw.reminder_ringtone_warning
+        "signal" -> R.raw.reminder_ringtone_signal
+        "pager" -> R.raw.reminder_ringtone_pager
+        "double_alarm" -> R.raw.reminder_ringtone_double_alarm
+        "serenity" -> R.raw.reminder_ringtone_serenity
+        "soft_bell" -> R.raw.reminder_ringtone_soft_bell
+        "breeze" -> R.raw.reminder_ringtone_breeze
+        "dew" -> R.raw.reminder_ringtone_dew
+        "bamboo" -> R.raw.reminder_ringtone_bamboo
+        "horizon" -> R.raw.reminder_ringtone_horizon
+        "calm" -> R.raw.reminder_ringtone_calm
+        "moonlight" -> R.raw.reminder_ringtone_moonlight
+        "orbit" -> R.raw.reminder_ringtone_orbit
+        "droplet" -> R.raw.reminder_ringtone_droplet
+        "glass_tap" -> R.raw.reminder_ringtone_glass_tap
+        "clockwork" -> R.raw.reminder_ringtone_clockwork
+        "spark" -> R.raw.reminder_ringtone_spark
+        "bubble_pop" -> R.raw.reminder_ringtone_bubble_pop
+        "comet" -> R.raw.reminder_ringtone_comet
+        "echo_ping" -> R.raw.reminder_ringtone_echo_ping
+        "woodblock" -> R.raw.reminder_ringtone_woodblock
+        "starlight" -> R.raw.reminder_ringtone_starlight
+        "sentinel" -> R.raw.reminder_ringtone_sentinel
+        "siren" -> R.raw.reminder_ringtone_siren
+        "cascade" -> R.raw.reminder_ringtone_cascade
+        "escalation" -> R.raw.reminder_ringtone_escalation
+        "distress" -> R.raw.reminder_ringtone_distress
+        "interlock" -> R.raw.reminder_ringtone_interlock
+        "scanner" -> R.raw.reminder_ringtone_scanner
+        "command" -> R.raw.reminder_ringtone_command
+        "rapid_triple" -> R.raw.reminder_ringtone_rapid_triple
+        "priority_sequence" -> R.raw.reminder_ringtone_priority_sequence
+        "double_sweep" -> R.raw.reminder_ringtone_double_sweep
+        "attention_burst" -> R.raw.reminder_ringtone_attention_burst
+        else -> R.raw.reminder_ringtone
+    }
+
+    private const val PLAYER_RELEASE_GRACE_MS = 320L
+    private val completionReleaseHandler = Handler(Looper.getMainLooper())
     private var activePlayer: MediaPlayer? = null
 }

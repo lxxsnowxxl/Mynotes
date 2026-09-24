@@ -30,7 +30,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/google_sans_bold"
+                    android:fontFamily="sans-serif"
                     android:text="My notes"
                     android:textColor="#FFFFFF"
                     android:textSize="30sp" />
@@ -38,7 +38,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
-                    android:fontFamily="@font/google_sans_bold"
+                    android:fontFamily="sans-serif"
                     android:text="Small notes. Big life."
                     android:textColor="#F0EEF9"
                     android:textSize="14sp" />
@@ -87,7 +87,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginStart="14dp"
                 android:layout_weight="1"
-                android:fontFamily="@font/google_sans_bold"
+                android:fontFamily="sans-serif"
                 android:text="Search notes..."
                 android:textColor="#858594"
                 android:textSize="17sp" />
@@ -103,11 +103,11 @@
                 android:layout_height="match_parent"
                 android:gravity="center_vertical"
                 android:orientation="horizontal">
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/preview_chip_light_selected" android:fontFamily="@font/google_sans_bold" android:text="All" android:textColor="#101010" android:textSize="15sp" />
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="9dp" android:background="@drawable/preview_chip_dark" android:fontFamily="@font/google_sans_bold" android:text="Favorites" android:textColor="#FFFFFF" android:textSize="15sp" />
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="9dp" android:background="@drawable/preview_chip_dark" android:fontFamily="@font/google_sans_bold" android:text="Work" android:textColor="#FFFFFF" android:textSize="15sp" />
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="9dp" android:background="@drawable/preview_chip_dark" android:fontFamily="@font/google_sans_bold" android:text="Personal" android:textColor="#FFFFFF" android:textSize="15sp" />
-                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="9dp" android:background="@drawable/preview_chip_dark" android:fontFamily="@font/google_sans_bold" android:text="Pinned" android:textColor="#FFFFFF" android:textSize="15sp" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/preview_chip_light_selected" android:fontFamily="sans-serif" android:text="All" android:textColor="#101010" android:textSize="15sp" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="9dp" android:background="@drawable/preview_chip_dark" android:fontFamily="sans-serif" android:text="Favorites" android:textColor="#FFFFFF" android:textSize="15sp" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="9dp" android:background="@drawable/preview_chip_dark" android:fontFamily="sans-serif" android:text="Work" android:textColor="#FFFFFF" android:textSize="15sp" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="9dp" android:background="@drawable/preview_chip_dark" android:fontFamily="sans-serif" android:text="Personal" android:textColor="#FFFFFF" android:textSize="15sp" />
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="9dp" android:background="@drawable/preview_chip_dark" android:fontFamily="sans-serif" android:text="Pinned" android:textColor="#FFFFFF" android:textSize="15sp" />
             </LinearLayout>
         </HorizontalScrollView>
 
@@ -138,12 +138,12 @@
                         <LinearLayout android:layout_width="match_parent" android:layout_height="360dp" android:orientation="vertical">
                             <LinearLayout android:layout_width="match_parent" android:layout_height="180dp" android:orientation="horizontal">
                                 <FrameLayout android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:background="@drawable/preview_media_photo">
-                                    <TextView android:layout_width="match_parent" android:layout_height="match_parent" android:gravity="center" android:text="PHOTO" android:textColor="#EEFFFFFF" android:textSize="12sp" android:fontFamily="@font/google_sans_bold" />
+                                    <TextView android:layout_width="match_parent" android:layout_height="match_parent" android:gravity="center" android:text="PHOTO" android:textColor="#EEFFFFFF" android:textSize="12sp" android:fontFamily="sans-serif" />
                                 </FrameLayout>
                                 <FrameLayout android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:background="@drawable/preview_media_audio">
                                     <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent" android:gravity="center" android:orientation="vertical">
                                         <ImageView android:layout_width="30dp" android:layout_height="30dp" android:src="@drawable/preview_ic_mic" android:tint="#7D86E5" android:contentDescription="@null" />
-                                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="Voice note" android:textColor="#FFFFFF" android:textSize="12sp" android:fontFamily="@font/google_sans_bold" />
+                                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:text="Voice note" android:textColor="#FFFFFF" android:textSize="12sp" android:fontFamily="sans-serif" />
                                     </LinearLayout>
                                 </FrameLayout>
                             </LinearLayout>
@@ -153,7 +153,7 @@
 PDF
 ────────
 ────────
-────────" android:textAlignment="center" android:textColor="#404040" android:textSize="10sp" android:fontFamily="@font/google_sans_medium" />
+────────" android:textAlignment="center" android:textColor="#404040" android:textSize="10sp" android:fontFamily="sans-serif" />
                                 </FrameLayout>
                                 <FrameLayout android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:background="@drawable/preview_media_video">
                                     <ImageView android:layout_width="40dp" android:layout_height="40dp" android:layout_gravity="center" android:src="@drawable/preview_ic_video" android:tint="#FFFFFF" android:contentDescription="@null" />
@@ -165,12 +165,12 @@ PDF
                             <ImageView android:layout_width="25dp" android:layout_height="25dp" android:src="@drawable/preview_ic_star_border" android:tint="#85858B" android:contentDescription="@null" />
                             <ImageView android:layout_width="28dp" android:layout_height="28dp" android:layout_marginStart="17dp" android:src="@drawable/preview_ic_more" android:tint="#111111" android:contentDescription="@null" />
                         </LinearLayout>
-                        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingStart="14dp" android:paddingEnd="14dp" android:fontFamily="@font/google_sans_bold" android:text="El conflicto de lo irreal" android:textColor="#111111" android:textSize="20sp" />
-                        <TextView android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:ellipsize="end" android:maxLines="6" android:paddingStart="14dp" android:paddingTop="6dp" android:paddingEnd="14dp" android:fontFamily="@font/google_sans_bold" android:lineSpacingExtra="2dp" android:text="Hay algo curioso con la libertad. Todos decimos que la queremos, que la defendemos y que es uno de los derechos más importantes..." android:textColor="#70757A" android:textSize="16sp" />
+                        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:paddingStart="14dp" android:paddingEnd="14dp" android:fontFamily="sans-serif" android:text="El conflicto de lo irreal" android:textColor="#111111" android:textSize="20sp" />
+                        <TextView android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:ellipsize="end" android:maxLines="6" android:paddingStart="14dp" android:paddingTop="6dp" android:paddingEnd="14dp" android:fontFamily="sans-serif" android:lineSpacingExtra="2dp" android:text="Hay algo curioso con la libertad. Todos decimos que la queremos, que la defendemos y que es uno de los derechos más importantes..." android:textColor="#70757A" android:textSize="16sp" />
                         <LinearLayout android:layout_width="match_parent" android:layout_height="45dp" android:gravity="center_vertical" android:orientation="horizontal" android:paddingStart="14dp" android:paddingEnd="14dp">
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/preview_tag_personal" android:fontFamily="@font/google_sans_medium" android:text="Personal" android:textColor="#A2494E" android:textSize="11sp" />
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/preview_tag_personal" android:fontFamily="sans-serif" android:text="Personal" android:textColor="#A2494E" android:textSize="11sp" />
                             <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" />
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_medium" android:text="Sep 10, 2026" android:textColor="#6A6D74" android:textSize="11sp" />
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Sep 10, 2026" android:textColor="#6A6D74" android:textSize="11sp" />
                         </LinearLayout>
                     </LinearLayout>
                 </LinearLayout>
@@ -193,21 +193,21 @@ PDF
                             <Space android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="1" />
                             <ImageView android:layout_width="27dp" android:layout_height="27dp" android:src="@drawable/preview_ic_more" android:tint="#FFFFFF" android:contentDescription="@null" />
                         </LinearLayout>
-                        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:fontFamily="@font/google_sans_bold" android:text="Untitled" android:textColor="#FFFFFF" android:textSize="20sp" />
-                        <TextView android:layout_width="match_parent" android:layout_height="126dp" android:layout_marginTop="6dp" android:ellipsize="end" android:maxLines="6" android:fontFamily="@font/google_sans_bold" android:lineSpacingExtra="2dp" android:text="1.02 复制打开抖音，看看【Uuuuuuu.的作品】这大概就是大家喜欢向往loft的原因吧！
+                        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="8dp" android:fontFamily="sans-serif" android:text="Untitled" android:textColor="#FFFFFF" android:textSize="20sp" />
+                        <TextView android:layout_width="match_parent" android:layout_height="126dp" android:layout_marginTop="6dp" android:ellipsize="end" android:maxLines="6" android:fontFamily="sans-serif" android:lineSpacingExtra="2dp" android:text="1.02 复制打开抖音，看看【Uuuuuuu.的作品】这大概就是大家喜欢向往loft的原因吧！
 # 个人...
 https://v.douyin.com/..." android:textColor="#74747D" android:textSize="14sp" />
                         <LinearLayout android:layout_width="match_parent" android:layout_height="194dp" android:background="@drawable/preview_link_card" android:orientation="vertical">
                             <FrameLayout android:layout_width="match_parent" android:layout_height="100dp" android:background="#343652">
-                                <TextView android:layout_width="match_parent" android:layout_height="match_parent" android:gravity="center" android:fontFamily="@font/google_sans_bold" android:text="D" android:textColor="#FFFFFF" android:textSize="16sp" />
+                                <TextView android:layout_width="match_parent" android:layout_height="match_parent" android:gravity="center" android:fontFamily="sans-serif" android:text="D" android:textColor="#FFFFFF" android:textSize="16sp" />
                             </FrameLayout>
-                            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginStart="12dp" android:layout_marginTop="10dp" android:layout_marginEnd="12dp" android:fontFamily="@font/google_sans_regular" android:text="Douyin" android:textColor="#85858E" android:textSize="11sp" />
-                            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginStart="12dp" android:layout_marginTop="3dp" android:layout_marginEnd="12dp" android:ellipsize="end" android:maxLines="2" android:fontFamily="@font/google_sans_bold" android:text="在抖音记录美好生活20260911 - ..." android:textColor="#FFFFFF" android:textSize="14sp" />
+                            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginStart="12dp" android:layout_marginTop="10dp" android:layout_marginEnd="12dp" android:fontFamily="sans-serif" android:text="Douyin" android:textColor="#85858E" android:textSize="11sp" />
+                            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginStart="12dp" android:layout_marginTop="3dp" android:layout_marginEnd="12dp" android:ellipsize="end" android:maxLines="2" android:fontFamily="sans-serif" android:text="在抖音记录美好生活20260911 - ..." android:textColor="#FFFFFF" android:textSize="14sp" />
                         </LinearLayout>
                         <LinearLayout android:layout_width="match_parent" android:layout_height="48dp" android:layout_marginTop="10dp" android:gravity="center_vertical" android:orientation="horizontal">
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/preview_tag_personal" android:fontFamily="@font/google_sans_medium" android:text="Personal" android:textColor="#A2494E" android:textSize="11sp" />
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:background="@drawable/preview_tag_personal" android:fontFamily="sans-serif" android:text="Personal" android:textColor="#A2494E" android:textSize="11sp" />
                             <Space android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="1" />
-                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_medium" android:text="Sep 10, 2026" android:textColor="#777780" android:textSize="10sp" />
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Sep 10, 2026" android:textColor="#777780" android:textSize="10sp" />
                         </LinearLayout>
                     </LinearLayout>
 
@@ -217,8 +217,8 @@ https://v.douyin.com/..." android:textColor="#74747D" android:textSize="14sp" />
                             <Space android:layout_width="0dp" android:layout_height="1dp" android:layout_weight="1" />
                             <ImageView android:layout_width="25dp" android:layout_height="25dp" android:src="@drawable/preview_ic_more" android:tint="#FFFFFF" android:contentDescription="@null" />
                         </LinearLayout>
-                        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="@font/google_sans_bold" android:text="Untitled" android:textColor="#FFFFFF" android:textSize="19sp" />
-                        <TextView android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:layout_marginTop="6dp" android:ellipsize="end" android:maxLines="3" android:fontFamily="@font/google_sans_regular" android:text="A short note with a bright image attachment and a few lines of text." android:textColor="#7E7E86" android:textSize="13sp" />
+                        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Untitled" android:textColor="#FFFFFF" android:textSize="19sp" />
+                        <TextView android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:layout_marginTop="6dp" android:ellipsize="end" android:maxLines="3" android:fontFamily="sans-serif" android:text="A short note with a bright image attachment and a few lines of text." android:textColor="#7E7E86" android:textSize="13sp" />
                     </LinearLayout>
                 </LinearLayout>
             </LinearLayout>

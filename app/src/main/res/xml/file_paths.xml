@@ -14,4 +14,10 @@
         name="app_updates"
         path="app_updates/" />
 
+
+    <!-- Proyectos PDF privados y su PDF base persistente. -->
+    <files-path
+        name="pdf_projects"
+        path="pdf_projects/" />
+
 </paths>

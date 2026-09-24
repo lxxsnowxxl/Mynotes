@@ -14,6 +14,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontFamily
 
 private const val
     MAX_DARKEN_AMOUNT = 0.30f
@@ -91,6 +92,26 @@ private fun TextStyle.withBlackOutline(enabled: Boolean): TextStyle {
     } else {
         this
     }
+}
+
+private fun typographyWithFontFamily(base: MaterialTypography, fontFamily: FontFamily): MaterialTypography {
+    return base.copy(
+        displayLarge = base.displayLarge.copy(fontFamily = fontFamily),
+        displayMedium = base.displayMedium.copy(fontFamily = fontFamily),
+        displaySmall = base.displaySmall.copy(fontFamily = fontFamily),
+        headlineLarge = base.headlineLarge.copy(fontFamily = fontFamily),
+        headlineMedium = base.headlineMedium.copy(fontFamily = fontFamily),
+        headlineSmall = base.headlineSmall.copy(fontFamily = fontFamily),
+        titleLarge = base.titleLarge.copy(fontFamily = fontFamily),
+        titleMedium = base.titleMedium.copy(fontFamily = fontFamily),
+        titleSmall = base.titleSmall.copy(fontFamily = fontFamily),
+        bodyLarge = base.bodyLarge.copy(fontFamily = fontFamily),
+        bodyMedium = base.bodyMedium.copy(fontFamily = fontFamily),
+        bodySmall = base.bodySmall.copy(fontFamily = fontFamily),
+        labelLarge = base.labelLarge.copy(fontFamily = fontFamily),
+        labelMedium = base.labelMedium.copy(fontFamily = fontFamily),
+        labelSmall = base.labelSmall.copy(fontFamily = fontFamily)
+    )
 }
 
 private fun typographyWithBlackOutline(base: MaterialTypography, enabled: Boolean): MaterialTypography {
@@ -215,6 +236,7 @@ fun MyNotesTheme(darkTheme: Boolean = isSystemInDarkTheme(),
     textColor: String = "auto",
     textOutlineEnabled: Boolean = false,
     accentColor: String = "palette",
+    fontFamily: FontFamily = FontFamily.Default,
     content:
         @Composable () -> Unit) {
     val palette = remember(backgroundColor) {
@@ -245,8 +267,9 @@ fun MyNotesTheme(darkTheme: Boolean = isSystemInDarkTheme(),
                     accentColor = accentColor)
             }
         }
-    val resolvedTypography = remember(textOutlineEnabled) {
-            typographyWithBlackOutline(base = Typography,
+    val resolvedTypography = remember(textOutlineEnabled, fontFamily) {
+            val fontAwareTypography = typographyWithFontFamily(base = Typography, fontFamily = fontFamily)
+            typographyWithBlackOutline(base = fontAwareTypography,
                 enabled = textOutlineEnabled)
         }
     MaterialTheme(colorScheme = scheme,
@@ -257,9 +280,9 @@ fun MyNotesTheme(darkTheme: Boolean = isSystemInDarkTheme(),
          * el mismo halo sin tener que modificar cada pantalla.
          */
         val inheritedTextStyle = if (textOutlineEnabled) {
-                LocalTextStyle.current.copy(shadow = BlackTextOutlineShadow)
+                LocalTextStyle.current.copy(fontFamily = fontFamily, shadow = BlackTextOutlineShadow)
             } else {
-                LocalTextStyle.current
+                LocalTextStyle.current.copy(fontFamily = fontFamily)
             }
         CompositionLocalProvider(LocalTextStyle provides
                 inheritedTextStyle) {

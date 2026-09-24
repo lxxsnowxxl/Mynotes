@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/preview_screen_editor"
+    android:orientation="vertical"
+    tools:ignore="ContentDescription,HardcodedText">
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="74dp" android:gravity="center_vertical" android:orientation="horizontal" android:paddingStart="16dp" android:paddingEnd="16dp">
+        <ImageView android:layout_width="42dp" android:layout_height="42dp" android:padding="9dp" android:src="@drawable/preview_ic_arrow_back" android:tint="#111111" />
+        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_marginStart="8dp" android:layout_weight="1" android:orientation="vertical">
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="@string/reminder_create_title" android:textColor="#111111" android:textSize="23sp" />
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="@string/reminder_editor_subtitle" android:textColor="#66666D" android:textSize="11sp" />
+        </LinearLayout>
+        <FrameLayout android:layout_width="46dp" android:layout_height="46dp" android:background="@drawable/preview_button_light"><ImageView android:layout_width="24dp" android:layout_height="24dp" android:layout_gravity="center" android:src="@drawable/preview_ic_check" android:tint="#111111" /></FrameLayout>
+    </LinearLayout>
+
+    <ScrollView android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@drawable/preview_light_group" android:orientation="vertical" android:padding="16dp">
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="@string/reminder_content_section" android:textColor="#111111" android:textSize="17sp" />
+                <EditText android:layout_width="match_parent" android:layout_height="58dp" android:layout_marginTop="10dp" android:background="@drawable/preview_field" android:fontFamily="sans-serif" android:hint="@string/reminder_title" android:paddingStart="14dp" android:paddingEnd="14dp" android:textColor="#111111" android:textColorHint="#73737A" />
+                <EditText android:layout_width="match_parent" android:layout_height="92dp" android:layout_marginTop="10dp" android:background="@drawable/preview_field" android:fontFamily="sans-serif" android:gravity="top|start" android:hint="@string/reminder_description" android:padding="14dp" android:textColor="#111111" android:textColorHint="#73737A" />
+            </LinearLayout>
+
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:background="@drawable/preview_light_group" android:orientation="vertical" android:padding="16dp">
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="@string/reminder_tools" android:textColor="#111111" android:textSize="17sp" />
+                <TextView android:layout_width="match_parent" android:layout_height="52dp" android:layout_marginTop="9dp" android:background="@drawable/preview_button_outline" android:gravity="center_vertical" android:paddingStart="14dp" android:fontFamily="sans-serif" android:text="@string/reminder_when" tools:text="Fecha y hora   ·   23/09/2026 08:30" android:textColor="#111111" />
+                <TextView android:layout_width="match_parent" android:layout_height="52dp" android:layout_marginTop="8dp" android:background="@drawable/preview_button_outline" android:gravity="center_vertical" android:paddingStart="14dp" android:fontFamily="sans-serif" android:text="@string/reminder_repeat" tools:text="Repetición   ·   No repetir" android:textColor="#111111" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:fontFamily="sans-serif" android:text="@string/reminder_priority" android:textColor="#111111" />
+                <LinearLayout android:layout_width="match_parent" android:layout_height="42dp" android:layout_marginTop="7dp" android:orientation="horizontal">
+                    <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_weight="1" android:background="@drawable/preview_small_unselected" android:gravity="center" android:fontFamily="sans-serif" android:text="@string/reminder_priority_low" android:textColor="#111111" />
+                    <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_marginStart="6dp" android:layout_weight="1" android:background="@drawable/preview_small_selected" android:gravity="center" android:fontFamily="sans-serif" android:text="@string/reminder_priority_normal" android:textColor="#111111" />
+                    <TextView android:layout_width="0dp" android:layout_height="match_parent" android:layout_marginStart="6dp" android:layout_weight="1" android:background="@drawable/preview_small_unselected" android:gravity="center" android:fontFamily="sans-serif" android:text="@string/reminder_priority_high" android:textColor="#111111" />
+                </LinearLayout>
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="12dp" android:fontFamily="sans-serif" android:text="@string/reminder_color" android:textColor="#111111" />
+                <LinearLayout android:layout_width="match_parent" android:layout_height="40dp" android:layout_marginTop="6dp" android:gravity="center_vertical" android:orientation="horizontal">
+                    <View android:layout_width="30dp" android:layout_height="30dp" android:background="@drawable/preview_dot_cyan" /><View android:layout_width="30dp" android:layout_height="30dp" android:layout_marginStart="8dp" android:background="@drawable/preview_dot_lav2" /><View android:layout_width="30dp" android:layout_height="30dp" android:layout_marginStart="8dp" android:background="@drawable/preview_dot_neon_pink" /><View android:layout_width="30dp" android:layout_height="30dp" android:layout_marginStart="8dp" android:background="@drawable/preview_dot_orange" /><View android:layout_width="30dp" android:layout_height="30dp" android:layout_marginStart="8dp" android:background="@drawable/preview_dot_lime" />
+                </LinearLayout>
+                <LinearLayout android:layout_width="match_parent" android:layout_height="58dp" android:layout_marginTop="8dp" android:gravity="center_vertical" android:orientation="horizontal">
+                    <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:orientation="vertical"><TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="@string/reminder_enabled" android:textColor="#111111" /><TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="2dp" android:fontFamily="sans-serif" android:text="@string/reminder_enabled_description" android:textColor="#66666D" android:textSize="11sp" /></LinearLayout>
+                    <FrameLayout android:layout_width="48dp" android:layout_height="28dp" android:background="@drawable/preview_switch_on" android:padding="3dp"><View android:layout_width="22dp" android:layout_height="22dp" android:layout_gravity="end" android:background="@drawable/preview_thumb_white" /></FrameLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

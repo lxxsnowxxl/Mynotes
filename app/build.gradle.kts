@@ -12,7 +12,7 @@ android {
         minSdk = 24
         targetSdk = 36
         versionCode = 1
-        versionName = "1.5.0"
+        versionName = "1.7.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         // Compatibilidad consistente de recursos vectoriales en API 24/25.
         vectorDrawables {
@@ -44,6 +44,9 @@ dependencies {
     implementation("io.coil-kt.coil3:coil-network-okhttp:3.3.0")
     // Decodificador GIF por software para Android 7/8 y animaciones en APIs nuevas.
     implementation("io.coil-kt.coil3:coil-gif:3.3.0")
+    // Recorte por IA de imágenes dentro del editor PDF. El modelo de
+    // Subject Segmentation se entrega mediante Google Play Services.
+    implementation("com.google.android.gms:play-services-mlkit-subject-segmentation:16.0.0-beta1")
     implementation("androidx.media3:media3-exoplayer:1.11.0")
     /*
      * PlayerView mantiene la relación de aspecto y la salida de vídeo de
@@ -65,6 +68,8 @@ dependencies {
      */
     implementation("androidx.compose.animation:animation")
     implementation(libs.androidx.compose.ui)
+    // Fuente descargable oficial de Google Fonts; no se empaqueta el antiguo binario cerrado.
+    implementation("androidx.compose.ui:ui-text-google-fonts")
     implementation(libs.androidx.compose.ui.graphics)
     implementation(libs.androidx.compose.ui.tooling.preview)
     implementation("androidx.compose.material:material-icons-extended")

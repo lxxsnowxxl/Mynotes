@@ -44,7 +44,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="end"
-            android:fontFamily="@font/google_sans_medium"
+            android:fontFamily="sans-serif"
             android:maxLines="1"
             android:textSize="11sp" />
 
@@ -54,7 +54,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="2dp"
             android:ellipsize="end"
-            android:fontFamily="@font/google_sans_bold"
+            android:fontFamily="sans-serif"
             android:maxLines="2"
             android:textSize="17sp" />
 
@@ -65,7 +65,7 @@
             android:layout_weight="1"
             android:layout_marginTop="5dp"
             android:ellipsize="end"
-            android:fontFamily="@font/google_sans_regular"
+            android:fontFamily="sans-serif"
             android:maxLines="3"
             android:textSize="13sp" />
 
@@ -75,7 +75,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:ellipsize="end"
-            android:fontFamily="@font/google_sans_medium"
+            android:fontFamily="sans-serif"
             android:maxLines="1"
             android:textSize="11sp" />
     </LinearLayout>

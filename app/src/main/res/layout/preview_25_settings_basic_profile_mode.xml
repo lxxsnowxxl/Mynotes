@@ -23,7 +23,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/google_sans_bold"
+                android:fontFamily="sans-serif"
                 android:text="Appearance"
                 android:textColor="#111111"
                 android:textSize="21sp" />
@@ -32,7 +32,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="2dp"
-                android:fontFamily="@font/google_sans_regular"
+                android:fontFamily="sans-serif"
                 android:text="Basic settings"
                 android:textColor="#68686F"
                 android:textSize="12sp" />
@@ -48,7 +48,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/google_sans_bold"
+                    android:fontFamily="sans-serif"
                     android:text="Profile"
                     android:textColor="#FFFFFF"
                     android:textSize="15sp" />
@@ -88,7 +88,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:background="@drawable/preview_button_light"
-                            android:fontFamily="@font/google_sans_bold"
+                            android:fontFamily="sans-serif"
                             android:paddingStart="14dp"
                             android:paddingTop="10dp"
                             android:paddingEnd="14dp"
@@ -101,7 +101,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_marginTop="4dp"
-                            android:fontFamily="@font/google_sans_bold"
+                            android:fontFamily="sans-serif"
                             android:paddingStart="10dp"
                             android:paddingTop="7dp"
                             android:paddingEnd="10dp"
@@ -113,7 +113,7 @@
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:fontFamily="@font/google_sans_bold"
+                            android:fontFamily="sans-serif"
                             android:paddingStart="10dp"
                             android:paddingTop="7dp"
                             android:paddingEnd="10dp"
@@ -131,7 +131,7 @@
                 <TextView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:fontFamily="@font/google_sans_bold"
+                    android:fontFamily="sans-serif"
                     android:text="Configuration mode"
                     android:textColor="#FFFFFF"
                     android:textSize="15sp" />
@@ -140,7 +140,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
-                    android:fontFamily="@font/google_sans_regular"
+                    android:fontFamily="sans-serif"
                     android:text="Choose a simplified Settings screen or all advanced controls."
                     android:textColor="#9E9EA6"
                     android:textSize="12sp" />
@@ -158,7 +158,7 @@
                         android:layout_marginEnd="5dp"
                         android:layout_weight="1"
                         android:background="@drawable/preview_button_light"
-                        android:fontFamily="@font/google_sans_bold"
+                        android:fontFamily="sans-serif"
                         android:gravity="center"
                         android:text="Basic version"
                         android:textColor="#111111"
@@ -170,7 +170,7 @@
                         android:layout_marginStart="5dp"
                         android:layout_weight="1"
                         android:background="@drawable/preview_translucent_panel"
-                        android:fontFamily="@font/google_sans_bold"
+                        android:fontFamily="sans-serif"
                         android:gravity="center"
                         android:text="Advanced version"
                         android:textColor="#FFFFFF"

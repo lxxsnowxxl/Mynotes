@@ -14,6 +14,7 @@ import android.os.Build
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTransformGestures
@@ -32,8 +33,9 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Slider
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -52,6 +54,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalContext
@@ -144,6 +147,25 @@ fun ProfileImageEditorDialog(
     ) {
         val scrimInteraction = remember { MutableInteractionSource() }
         val surfaceInteraction = remember { MutableInteractionSource() }
+        val editorPanelColor = MaterialTheme.colorScheme.surfaceContainerHigh
+        val darkNeutralButtons = remember(editorPanelColor) { editorPanelColor.luminance() < 0.52f }
+        val editorButtonContainer = remember(editorPanelColor, darkNeutralButtons) {
+            if (darkNeutralButtons) {
+                mixProfileEditorColor(Color.White, editorPanelColor, 0.18f)
+            } else {
+                mixProfileEditorColor(Color.Black, editorPanelColor, 0.14f)
+            }
+        }
+        val editorButtonContent = remember(editorButtonContainer) {
+            if (editorButtonContainer.luminance() >= 0.56f) Color.Black else Color.White
+        }
+        val editorButtonBorder = remember(editorButtonContainer, editorButtonContent) {
+            if (editorButtonContainer.luminance() >= 0.56f) {
+                Color.Black.copy(alpha = 0.14f)
+            } else {
+                Color.White.copy(alpha = 0.20f)
+            }
+        }
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -166,7 +188,7 @@ fun ProfileImageEditorDialog(
                     onClick = { }
                 ),
             shape = RoundedCornerShape(28.dp),
-            color = MaterialTheme.colorScheme.surfaceContainerHigh,
+            color = editorPanelColor,
             tonalElevation = 0.dp,
             shadowElevation = 0.dp
         ) {
@@ -239,25 +261,41 @@ fun ProfileImageEditorDialog(
                             fontFamily = fontFamily,
                             textAlign = TextAlign.Center
                         )
-                        Slider(
+                        StyledSettingsSlider(
                             value = zoom,
                             onValueChange = { requested ->
                                 zoom = requested.coerceIn(PROFILE_MIN_ZOOM, PROFILE_MAX_ZOOM)
                                 offset = clampProfileOffset(bitmap, viewportSize, zoom, offset)
                             },
                             valueRange = PROFILE_MIN_ZOOM..PROFILE_MAX_ZOOM,
-                            enabled = !saving
+                            activeColor = MaterialTheme.colorScheme.primary,
+                            inactiveColor = MaterialTheme.colorScheme.outlineVariant,
+                            style = "capsule",
+                            valueLabel = stringResource(
+                                R.string.extreme_profile_zoom,
+                                (zoom * 100f).roundToInt()
+                            )
                         )
-                        TextButton(
+                        Button(
                             onClick = {
                                 zoom = PROFILE_MIN_ZOOM
                                 offset = Offset.Zero
                             },
-                            enabled = !saving
+                            enabled = !saving,
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(18.dp),
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = editorButtonContainer,
+                                contentColor = editorButtonContent,
+                                disabledContainerColor = editorButtonContainer.copy(alpha = 0.55f),
+                                disabledContentColor = editorButtonContent.copy(alpha = 0.55f)
+                            ),
+                            border = BorderStroke(1.dp, editorButtonBorder)
                         ) {
                             Text(
                                 text = stringResource(R.string.extreme_profile_reset),
-                                fontFamily = fontFamily
+                                fontFamily = fontFamily,
+                                fontWeight = FontWeight.SemiBold
                             )
                         }
                     }
@@ -289,16 +327,31 @@ fun ProfileImageEditorDialog(
                 Spacer(Modifier.height(8.dp))
                 Row(
                     modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.End,
+                    horizontalArrangement = Arrangement.spacedBy(10.dp, Alignment.End),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    TextButton(onClick = onDismissRequest, enabled = !saving) {
-                        Text(text = stringResource(R.string.cancel), fontFamily = fontFamily)
+                    Button(
+                        onClick = onDismissRequest,
+                        enabled = !saving,
+                        shape = RoundedCornerShape(18.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = editorButtonContainer,
+                            contentColor = editorButtonContent,
+                            disabledContainerColor = editorButtonContainer.copy(alpha = 0.55f),
+                            disabledContentColor = editorButtonContent.copy(alpha = 0.55f)
+                        ),
+                        border = BorderStroke(1.dp, editorButtonBorder)
+                    ) {
+                        Text(
+                            text = stringResource(R.string.cancel),
+                            fontFamily = fontFamily,
+                            fontWeight = FontWeight.SemiBold
+                        )
                     }
-                    TextButton(
+                    Button(
                         enabled = sourceBitmap != null && viewportSize.width > 0 && viewportSize.height > 0 && !saving,
                         onClick = {
-                            val bitmap = sourceBitmap ?: return@TextButton
+                            val bitmap = sourceBitmap ?: return@Button
                             saving = true
                             scope.launch {
                                 val savedUri = withContext(Dispatchers.IO) {
@@ -314,12 +367,24 @@ fun ProfileImageEditorDialog(
                                 saving = false
                                 if (savedUri != null) onImageSaved(savedUri) else loadFailed = true
                             }
-                        }
+                        },
+                        shape = RoundedCornerShape(18.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = editorButtonContainer,
+                            contentColor = editorButtonContent,
+                            disabledContainerColor = editorButtonContainer.copy(alpha = 0.55f),
+                            disabledContentColor = editorButtonContent.copy(alpha = 0.55f)
+                        ),
+                        border = BorderStroke(1.dp, editorButtonBorder)
                     ) {
                         if (saving) {
-                            CircularProgressIndicator(modifier = Modifier.height(18.dp), strokeWidth = 2.dp)
+                            CircularProgressIndicator(modifier = Modifier.height(18.dp), strokeWidth = 2.dp, color = editorButtonContent)
                         } else {
-                            Text(text = stringResource(R.string.extreme_profile_apply), fontFamily = fontFamily)
+                            Text(
+                                text = stringResource(R.string.extreme_profile_apply),
+                                fontFamily = fontFamily,
+                                fontWeight = FontWeight.SemiBold
+                            )
                         }
                     }
                 }
@@ -340,6 +405,16 @@ fun managedProfileSourceUri(context: Context, currentProfileImageUri: String): U
 /** Elimina únicamente los archivos internos gestionados por el editor de perfil. */
 fun clearManagedProfileImages(context: Context) {
     File(context.filesDir, PROFILE_FOLDER).deleteRecursively()
+}
+
+private fun mixProfileEditorColor(base: Color, target: Color, amount: Float): Color {
+    val value = amount.coerceIn(0f, 1f)
+    return Color(
+        red = base.red + (target.red - base.red) * value,
+        green = base.green + (target.green - base.green) * value,
+        blue = base.blue + (target.blue - base.blue) * value,
+        alpha = 1f
+    )
 }
 
 private fun clampProfileOffset(bitmap: Bitmap, viewport: IntSize, zoom: Float, requested: Offset): Offset {

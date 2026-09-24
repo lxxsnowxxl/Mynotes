@@ -393,13 +393,15 @@ object AppDataBackupManager {
         put("headerIntensity", settings.headerIntensity.toDouble())
         put("textColor", settings.textColor)
         put("textOutlineEnabled", settings.textOutlineEnabled)
-        put("noteUiTextColor", settings.noteUiTextColor)
         put("sliderStyle", settings.sliderStyle)
         put("font", settings.font)
         put("fontSize", settings.fontSize.toDouble())
         put("soundEffectsEnabled", settings.soundEffectsEnabled)
         put("soundEffectsVolume", settings.soundEffectsVolume.toDouble())
         put("soundEffectsTheme", settings.soundEffectsTheme)
+        put("reminderSoundEnabled", settings.reminderSoundEnabled)
+        put("reminderSoundVolume", settings.reminderSoundVolume.toDouble())
+        put("reminderRingtone", settings.reminderRingtone)
         put("hapticEffectsEnabled", settings.hapticEffectsEnabled)
         put("hapticEffectsIntensity", settings.hapticEffectsIntensity.toDouble())
         put("hapticEffectsStyle", settings.hapticEffectsStyle)
@@ -450,12 +452,14 @@ object AppDataBackupManager {
             headerIntensity = json.optDouble("headerIntensity", defaults.headerIntensity.toDouble()).toFloat(),
             textColor = json.optString("textColor", defaults.textColor),
             textOutlineEnabled = json.optBoolean("textOutlineEnabled", defaults.textOutlineEnabled),
-            noteUiTextColor = json.optString("noteUiTextColor", defaults.noteUiTextColor),
             sliderStyle = json.optString("sliderStyle", defaults.sliderStyle), font = json.optString("font", defaults.font),
             fontSize = json.optDouble("fontSize", defaults.fontSize.toDouble()).toFloat(),
             soundEffectsEnabled = json.optBoolean("soundEffectsEnabled", defaults.soundEffectsEnabled),
             soundEffectsVolume = json.optDouble("soundEffectsVolume", defaults.soundEffectsVolume.toDouble()).toFloat(),
             soundEffectsTheme = json.optString("soundEffectsTheme", defaults.soundEffectsTheme),
+            reminderSoundEnabled = json.optBoolean("reminderSoundEnabled", defaults.reminderSoundEnabled),
+            reminderSoundVolume = json.optDouble("reminderSoundVolume", defaults.reminderSoundVolume.toDouble()).toFloat(),
+            reminderRingtone = json.optString("reminderRingtone", defaults.reminderRingtone),
             hapticEffectsEnabled = json.optBoolean("hapticEffectsEnabled", defaults.hapticEffectsEnabled),
             hapticEffectsIntensity = json.optDouble("hapticEffectsIntensity", defaults.hapticEffectsIntensity.toDouble()).toFloat(),
             hapticEffectsStyle = json.optString("hapticEffectsStyle", defaults.hapticEffectsStyle),

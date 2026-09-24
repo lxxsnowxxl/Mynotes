@@ -42,7 +42,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:ellipsize="end"
-            android:fontFamily="@font/google_sans_medium"
+            android:fontFamily="sans-serif"
             android:maxLines="1"
             android:textSize="9sp" />
 
@@ -52,7 +52,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="1dp"
             android:ellipsize="end"
-            android:fontFamily="@font/google_sans_bold"
+            android:fontFamily="sans-serif"
             android:maxLines="1"
             android:textSize="15sp" />
 
@@ -62,7 +62,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="1dp"
             android:ellipsize="end"
-            android:fontFamily="@font/google_sans_regular"
+            android:fontFamily="sans-serif"
             android:maxLines="1"
             android:textSize="11sp" />
     </LinearLayout>

@@ -25,13 +25,15 @@ class SettingsRepository(private val context: Context) {
         private val HEADER_INTENSITY = floatPreferencesKey("header_intensity")
         private val TEXT_COLOR = stringPreferencesKey("text_color")
         private val TEXT_OUTLINE_ENABLED = booleanPreferencesKey("text_outline_enabled")
-        private val NOTE_UI_TEXT_COLOR = stringPreferencesKey("note_ui_text_color")
         private val SLIDER_STYLE = stringPreferencesKey("slider_style")
         private val FONT = stringPreferencesKey("font")
         private val FONT_SIZE = floatPreferencesKey("font_size")
         private val SOUND_EFFECTS_ENABLED = booleanPreferencesKey("sound_effects_enabled")
         private val SOUND_EFFECTS_VOLUME = floatPreferencesKey("sound_effects_volume")
         private val SOUND_EFFECTS_THEME = stringPreferencesKey("sound_effects_theme")
+        private val REMINDER_SOUND_ENABLED = booleanPreferencesKey("reminder_sound_enabled")
+        private val REMINDER_SOUND_VOLUME = floatPreferencesKey("reminder_sound_volume")
+        private val REMINDER_RINGTONE = stringPreferencesKey("reminder_ringtone")
         private val HAPTIC_EFFECTS_ENABLED = booleanPreferencesKey("haptic_effects_enabled")
         private val HAPTIC_EFFECTS_INTENSITY = floatPreferencesKey("haptic_effects_intensity")
         private val HAPTIC_EFFECTS_STYLE = stringPreferencesKey("haptic_effects_style")
@@ -103,13 +105,15 @@ class SettingsRepository(private val context: Context) {
                     headerIntensity = (preferences[HEADER_INTENSITY]?: 18f).coerceIn(0f, 100f),
                     textColor = normalizeUiTextColor(preferences[TEXT_COLOR]?: "auto"),
                     textOutlineEnabled = preferences[TEXT_OUTLINE_ENABLED]?: false,
-                    noteUiTextColor = normalizeUiTextColor(preferences[NOTE_UI_TEXT_COLOR]?: "auto"),
                     sliderStyle = normalizeSliderStyle(preferences[SLIDER_STYLE]?: "capsule"),
-                    font = preferences[FONT]?: "google_sans_bold",
+                    font = preferences[FONT]?: "system_sans",
                     fontSize = (preferences[FONT_SIZE]?: 16f).coerceIn(12f, 28f),
                     soundEffectsEnabled = preferences[SOUND_EFFECTS_ENABLED]?: true,
                     soundEffectsVolume = (preferences[SOUND_EFFECTS_VOLUME]?: 65f).coerceIn(0f, 100f),
                     soundEffectsTheme = normalizeSoundEffectsTheme(preferences[SOUND_EFFECTS_THEME]?: "classic"),
+                    reminderSoundEnabled = preferences[REMINDER_SOUND_ENABLED] ?: (preferences[SOUND_EFFECTS_ENABLED] ?: true),
+                    reminderSoundVolume = (preferences[REMINDER_SOUND_VOLUME] ?: preferences[SOUND_EFFECTS_VOLUME] ?: 75f).coerceIn(0f, 100f),
+                    reminderRingtone = normalizeReminderRingtone(preferences[REMINDER_RINGTONE]?: "classic"),
                     hapticEffectsEnabled = preferences[HAPTIC_EFFECTS_ENABLED]?: true,
                     hapticEffectsIntensity = (preferences[HAPTIC_EFFECTS_INTENSITY]?: 55f).coerceIn(0f, 100f),
                     hapticEffectsStyle = normalizeHapticEffectsStyle(preferences[HAPTIC_EFFECTS_STYLE]?: "soft"),
@@ -215,11 +219,6 @@ class SettingsRepository(private val context: Context) {
                 it[TEXT_OUTLINE_ENABLED] = value
             }
     }
-    suspend fun setNoteUiTextColor(value: String) {
-        context.dataStore.edit {
-                it[NOTE_UI_TEXT_COLOR] = normalizeUiTextColor(value)
-            }
-    }
     suspend fun setSliderStyle(value: String) {
         context.dataStore.edit {
                 it[SLIDER_STYLE] = normalizeSliderStyle(value)
@@ -249,6 +248,21 @@ class SettingsRepository(private val context: Context) {
         context.dataStore.edit {
                 it[SOUND_EFFECTS_THEME] = normalizeSoundEffectsTheme(value)
             }
+    }
+    suspend fun setReminderSoundEnabled(value: Boolean) {
+        context.dataStore.edit {
+            it[REMINDER_SOUND_ENABLED] = value
+        }
+    }
+    suspend fun setReminderSoundVolume(value: Float) {
+        context.dataStore.edit {
+            it[REMINDER_SOUND_VOLUME] = value.coerceIn(0f, 100f)
+        }
+    }
+    suspend fun setReminderRingtone(value: String) {
+        context.dataStore.edit {
+            it[REMINDER_RINGTONE] = normalizeReminderRingtone(value)
+        }
     }
     suspend fun setHapticEffectsEnabled(value: Boolean) {
         context.dataStore.edit {
@@ -466,13 +480,15 @@ class SettingsRepository(private val context: Context) {
             preferences[HEADER_INTENSITY] = value.headerIntensity.coerceIn(0f, 100f)
             preferences[TEXT_COLOR] = normalizeUiTextColor(value.textColor)
             preferences[TEXT_OUTLINE_ENABLED] = value.textOutlineEnabled
-            preferences[NOTE_UI_TEXT_COLOR] = normalizeUiTextColor(value.noteUiTextColor)
             preferences[SLIDER_STYLE] = normalizeSliderStyle(value.sliderStyle)
             preferences[FONT] = value.font
             preferences[FONT_SIZE] = value.fontSize.coerceIn(12f, 28f)
             preferences[SOUND_EFFECTS_ENABLED] = value.soundEffectsEnabled
             preferences[SOUND_EFFECTS_VOLUME] = value.soundEffectsVolume.coerceIn(0f, 100f)
             preferences[SOUND_EFFECTS_THEME] = normalizeSoundEffectsTheme(value.soundEffectsTheme)
+            preferences[REMINDER_SOUND_ENABLED] = value.reminderSoundEnabled
+            preferences[REMINDER_SOUND_VOLUME] = value.reminderSoundVolume.coerceIn(0f, 100f)
+            preferences[REMINDER_RINGTONE] = normalizeReminderRingtone(value.reminderRingtone)
             preferences[HAPTIC_EFFECTS_ENABLED] = value.hapticEffectsEnabled
             preferences[HAPTIC_EFFECTS_INTENSITY] = value.hapticEffectsIntensity.coerceIn(0f, 100f)
             preferences[HAPTIC_EFFECTS_STYLE] = normalizeHapticEffectsStyle(value.hapticEffectsStyle)
@@ -620,6 +636,18 @@ class SettingsRepository(private val context: Context) {
         return when (normalized) {
             "soft", "digital", "glass", "retro", "pop", "mechanical", "bubble", "arcade", "wood", "synth", "minimal", "camera",
             "typewriter", "metal", "pixel", "space", "chime", "paper", "neon", "material", "expressive", "prism", "aurora", "fluid", "pulse" -> normalized
+            else -> "classic"
+        }
+    }
+    private fun normalizeReminderRingtone(value: String): String {
+        val normalized = value.trim().lowercase()
+        return when (normalized) {
+            "classic", "bell", "crystal", "pulse", "sunrise", "digital",
+            "alert", "urgent", "beacon", "radar", "warning", "signal", "pager", "double_alarm",
+            "serenity", "soft_bell", "breeze", "dew", "bamboo", "horizon", "calm", "moonlight",
+            "orbit", "droplet", "glass_tap", "clockwork", "spark", "bubble_pop", "comet", "echo_ping", "woodblock", "starlight",
+            "sentinel", "siren", "cascade", "escalation", "distress", "interlock", "scanner", "command",
+            "rapid_triple", "priority_sequence", "double_sweep", "attention_burst" -> normalized
             else -> "classic"
         }
     }

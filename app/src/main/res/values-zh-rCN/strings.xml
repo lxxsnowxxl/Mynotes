@@ -101,8 +101,6 @@
     <string name="palette_lavender">薰衣草色</string>
     <string name="palette_violet">紫罗兰色</string>
     <string name="palette_peach">蜜桃色</string>
-    <string name="note_ui_text_color">笔记与菜单文字</string>
-    <string name="note_ui_text_color_description">仅更改笔记正文和三点菜单中的文字。</string>
     <string name="slider_style">滑块样式</string>
     <string name="slider_style_description">选择所有滑块的视觉样式。</string>
     <string name="slider_style_minimal">简约</string>
@@ -118,7 +116,6 @@
     <string name="microphone_not_available">此设备没有可用的麦克风。</string>
     <string name="image_format_not_supported">此图片无法在该设备上显示。</string>
     <string name="mock_auto">自动</string>
-
     <string name="sound_effects">音效</string>
     <string name="sound_effects_description">为应用操作提供音效。选择现代音效包并在这里试听。</string>
     <string name="sound_effects_enabled">启用音效</string>
@@ -151,7 +148,56 @@
     <string name="sound_theme_fluid">流体</string>
     <string name="sound_theme_pulse">脉冲</string>
     <string name="sound_theme_neon">霓虹</string>
-
+    <string name="reminder_tones">警报声音</string>
+    <string name="reminder_tones_description">44 个用于提醒的警报声音：直接、重复且醒目的信号。它们完全替换之前的铃声，并且不复用应用界面的音效。</string>
+    <string name="reminder_sound_enabled">警报声音</string>
+    <string name="reminder_tone">警报声音</string>
+    <string name="reminder_tone_preview">试听警报</string>
+    <string name="reminder_sound_volume">提醒音量</string>
+    <string name="reminder_tone_classic">标准警报</string>
+    <string name="reminder_tone_bell">双重警报</string>
+    <string name="reminder_tone_crystal">下降扫频</string>
+    <string name="reminder_tone_pulse">关键脉冲</string>
+    <string name="reminder_tone_sunrise">上升扫频</string>
+    <string name="reminder_tone_digital">紧急代码</string>
+    <string name="reminder_tone_alert">快速交替</string>
+    <string name="reminder_tone_urgent">最高优先级</string>
+    <string name="reminder_tone_beacon">警报信标</string>
+    <string name="reminder_tone_radar">雷达扫频</string>
+    <string name="reminder_tone_warning">三重警告</string>
+    <string name="reminder_tone_signal">短长信号</string>
+    <string name="reminder_tone_pager">寻呼警报</string>
+    <string name="reminder_tone_double_alarm">交替警报</string>
+    <string name="reminder_tone_serenity">柔和提醒</string>
+    <string name="reminder_tone_soft_bell">阶梯警报</string>
+    <string name="reminder_tone_breeze">警告爆发</string>
+    <string name="reminder_tone_dew">快速下降</string>
+    <string name="reminder_tone_bamboo">干脆敲击</string>
+    <string name="reminder_tone_horizon">宽幅警报</string>
+    <string name="reminder_tone_calm">切分警报</string>
+    <string name="reminder_tone_moonlight">警报闪光</string>
+    <string name="reminder_tone_orbit">重复扫频</string>
+    <string name="reminder_tone_droplet">高低脉冲</string>
+    <string name="reminder_tone_glass_tap">短金属音</string>
+    <string name="reminder_tone_clockwork">警报计数</string>
+    <string name="reminder_tone_spark">快速爆发</string>
+    <string name="reminder_tone_bubble_pop">五段代码</string>
+    <string name="reminder_tone_comet">紧急上升</string>
+    <string name="reminder_tone_echo_ping">注意回声</string>
+    <string name="reminder_tone_woodblock">3 + 1 敲击</string>
+    <string name="reminder_tone_starlight">不规则模式</string>
+    <string name="reminder_tone_sentinel">三重闪光</string>
+    <string name="reminder_tone_siren">紧急水晶</string>
+    <string name="reminder_tone_cascade">下降火花</string>
+    <string name="reminder_tone_escalation">明亮上升</string>
+    <string name="reminder_tone_distress">高频编码</string>
+    <string name="reminder_tone_interlock">数字交替</string>
+    <string name="reminder_tone_scanner">水晶扫描</string>
+    <string name="reminder_tone_command">优先脉冲</string>
+    <string name="reminder_tone_rapid_triple">明亮三连</string>
+    <string name="reminder_tone_priority_sequence">光亮序列</string>
+    <string name="reminder_tone_double_sweep">双重闪光</string>
+    <string name="reminder_tone_attention_burst">水晶脉冲群</string>
     <string name="haptic_effects">振动效果</string>
     <string name="haptic_effects_description">为按钮、开关、滑块和其他操作提供触觉反馈。可选择振动风格和强度。</string>
     <string name="haptic_effects_enabled">启用振动</string>
@@ -174,7 +220,6 @@
     <string name="haptic_style_heavy">强劲</string>
     <string name="haptic_style_spring">弹簧</string>
     <string name="haptic_style_echo">回声</string>
-
     <string name="configuration_mode_welcome_title">你希望如何配置 MyNotes？</string>
     <string name="configuration_mode_welcome_description">选择你希望在设置中看到的选项数量。这不会更改你的笔记，也不会创建不同版本的应用。</string>
     <string name="configuration_mode_basic">基础版</string>
@@ -185,7 +230,6 @@
     <string name="configuration_mode_settings_title">配置模式</string>
     <string name="configuration_mode_settings_description">选择精简设置或显示全部高级控制项。</string>
     <string name="configuration_mode_confirm">确定</string>
-
     <string name="widget_new_note">新建笔记</string>
     <string name="widget_recent_notes">最近笔记</string>
     <string name="widget_empty_notes">你还没有任何笔记</string>

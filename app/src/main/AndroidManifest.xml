@@ -54,6 +54,26 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.MyNotes">
 
+        <!-- Descarga anticipada del modelo usado por Recorte IA en PDF Studio. -->
+        <meta-data
+            android:name="com.google.mlkit.vision.DEPENDENCIES"
+            android:value="subject_segment" />
+
+        <activity
+            android:name=".ui.pdf.PdfLibraryActivity"
+            android:exported="false"
+            android:resizeableActivity="true"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout"
+            android:theme="@style/Theme.MyNotes" />
+
+        <activity
+            android:name=".ui.pdf.PdfEditorActivity"
+            android:exported="false"
+            android:resizeableActivity="true"
+            android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout"
+            android:theme="@style/Theme.MyNotes"
+            android:windowSoftInputMode="adjustResize" />
+
         <activity
             android:name=".ui.AttachmentViewerActivity"
             android:exported="false"

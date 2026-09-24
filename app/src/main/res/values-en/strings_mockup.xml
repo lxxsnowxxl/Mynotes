@@ -64,11 +64,11 @@
     <string name="mock_background_intensity">Background intensity</string>
     <string name="mock_header_intensity">Header intensity</string>
     <string name="mock_text_color">Text color</string>
-    <string name="mock_note_menu_text_color">Notes &amp; menu text color</string>
-    <string name="mock_black">Black</string>
+<string name="mock_black">Black</string>
     <string name="mock_white">White</string>
     <string name="mock_font">Font</string>
-    <string name="mock_font_default">Default</string>
+    <string name="mock_font_system_sans">Generic Sans Serif</string>
+    <string name="mock_font_default">Android system font</string>
     <string name="mock_font_serif">Serif</string>
     <string name="mock_font_monospace">Monospace</string>
     <string name="mock_font_size">Font size</string>
@@ -90,4 +90,5 @@
     <string name="mock_voice_note">Voice note</string>
     <string name="mock_audio">Audio</string>
     <string name="mock_file">File</string>
+    <string name="mock_font_google_sans_flex">Google Sans Flex</string>
 </resources>

@@ -169,9 +169,9 @@ fun NoteEditorScreen(settings: AppSettings, initialTitle: String = "", initialCo
         mutableStateOf(initialColor)
     }
     val editorBackground = noteBackgroundColor(selectedColor)
-    val editorTextColor = resolveUiTextColor(value = settings.noteUiTextColor, background = editorBackground)
-    val editorSecondaryTextColor = resolveSecondaryUiTextColor(value = settings.noteUiTextColor, background = editorBackground)
-    val editorGraphicColor = resolveUiGraphicColor(value = settings.noteUiTextColor, background = editorBackground)
+    val editorTextColor = resolveUiTextColor(value = settings.textColor, background = editorBackground)
+    val editorSecondaryTextColor = resolveSecondaryUiTextColor(value = settings.textColor, background = editorBackground)
+    val editorGraphicColor = resolveUiGraphicColor(value = settings.textColor, background = editorBackground)
     val editorAccentOutline = ensureUiContrast(preferred = MaterialTheme.colorScheme.primary, background = editorBackground,
             minimumContrast = 3f)
     var title by rememberSaveable(initialTitle, stateSaver = TextFieldValue.Saver) {
@@ -588,7 +588,7 @@ fun NoteEditorScreen(settings: AppSettings, initialTitle: String = "", initialCo
                         LinkPreviewCard(
                             url = linkUrl,
                             compact = false,
-                            textColorMode = settings.noteUiTextColor,
+                            textColorMode = settings.textColor,
                             onPreviewReady = { readyUrl ->
                                 val currentEmbeddedLinks = embeddedLinkState.split("\u001F")
                                     .map { it.trim() }

@@ -72,24 +72,24 @@ fun automaticUiTextColor(background: Color): Color {
 }
 
 /**
- * Resolución segura del color principal.
+ * Resuelve el color principal solicitado por Configuración.
  *
- * auto  -> contraste calculado.
- * black / white -> respeta la elección mientras conserve al menos 4.5:1.
- * Si el color manual se vuelve ilegible sobre la superficie real, usa de
- * forma automática negro o blanco. Esto evita texto blanco sobre tarjetas
- * claras y texto negro sobre fondos oscuros.
+ * - auto  -> calcula negro/blanco contra el fondo real.
+ * - black -> fuerza negro.
+ * - white -> fuerza blanco.
+ *
+ * Los modos manuales son deliberadamente absolutos. Antes se sustituían por
+ * el modo automático cuando el contraste era menor de 4.5:1; eso hacía que
+ * Negro/Blanco parecieran no funcionar en muchas paletas. Los componentes que
+ * necesitan proteger obligatoriamente su legibilidad (por ejemplo contenido
+ * sobre acentos dinámicos o previews) deben usar su propia resolución de
+ * contraste, como automaticUiTextColor()/resolveAdaptiveUiButtonColors().
  */
 fun resolveUiTextColor(value: String, background: Color): Color {
-    val preferred = when (value) {
+    return when (value) {
         "black" -> Color.Black
         "white" -> Color.White
-        else -> return automaticUiTextColor(background)
-    }
-    return if (uiContrastRatio(preferred, background) >= 4.5f) {
-        preferred
-    } else {
-        automaticUiTextColor(background)
+        else -> automaticUiTextColor(background)
     }
 }
 

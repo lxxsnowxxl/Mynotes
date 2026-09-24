@@ -1,0 +1,79 @@
+# MyNotes — Third-party notices
+
+Last reviewed: 2026-09-24
+
+This file documents the direct third-party software components declared by the
+MyNotes Android module. It is intended to accompany binary distributions of
+MyNotes and does not replace the license text supplied by each upstream
+project.
+
+## Apache License 2.0 components
+
+The following direct dependencies are distributed under the Apache License,
+Version 2.0 (including their applicable transitive components and copyright
+notices):
+
+- AndroidX DataStore Preferences 1.1.7
+- AndroidX AppCompat 1.7.1
+- AndroidX Lifecycle / Lifecycle Runtime Compose
+- AndroidX Room 2.7.2
+- Jetpack Compose UI, Material 3, Animation and Material Icons
+- AndroidX Core KTX
+- AndroidX Media3 / ExoPlayer 1.11.0
+- Coil 3.3.0 (Compose, OkHttp networking and GIF modules)
+- OkHttp, pulled transitively by Coil's OkHttp networking module
+- Kotlin / kotlinx.coroutines components used by the application
+
+A complete copy of Apache License 2.0 is included at:
+
+    legal/licenses/Apache-2.0.txt
+
+and in the installed application assets at:
+
+    assets/legal/Apache-2.0.txt
+
+## Google ML Kit Subject Segmentation
+
+MyNotes declares:
+
+    com.google.android.gms:play-services-mlkit-subject-segmentation:16.0.0-beta1
+
+This API is governed by the ML Kit Terms of Service and the Google APIs Terms
+of Service rather than by the Apache-2.0 notice above. Subject segmentation is
+an unbundled ML Kit feature: the model is obtained through Google Play
+services. According to Google's ML Kit privacy documentation, input data and
+results are processed on-device, while ML Kit may contact Google servers for
+items such as model or compatibility updates and may send performance and
+utilization metrics.
+
+Terms and privacy:
+https://developers.google.com/ml-kit/terms
+
+Subject segmentation documentation:
+https://developers.google.com/ml-kit/vision/subject-segmentation/android
+
+## Fonts
+
+MyNotes no longer bundles the historical Google Sans font binaries that were
+present in older project revisions. The application now resolves those legacy
+font preference keys to Android's system sans-serif family, so no Google Sans
+font binary is redistributed by MyNotes.
+
+## Application code
+
+MyNotes original source code is distributed under the project-specific
+proprietary license in the root `LICENSE` file. A copy is also bundled in the
+application assets as `assets/legal/MyNotes-LICENSE.txt`. That license does not
+replace or alter any third-party license listed in this notice.
+
+## Release checklist
+
+Before a public release, generate the resolved Gradle dependency graph and
+compare it with this notice so newly introduced transitive libraries and their
+NOTICE requirements are not missed.
+
+## Google Sans Flex
+
+When the hidden developer font is unlocked and selected, MyNotes requests **Google Sans Flex** from the official Google Fonts provider at runtime. The legacy closed Google Sans binaries are not bundled. Google Sans Flex is licensed under the **SIL Open Font License 1.1**. A copy is included in `OFL-Google-Sans-Flex.txt` and `app/src/main/assets/legal/OFL-Google-Sans-Flex.txt`.
+
+Copyright 2022 The Google Sans Flex Project Authors (github.com/googlefonts/googlesans-flex).

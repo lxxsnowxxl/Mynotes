@@ -131,12 +131,12 @@ fun NoteDetailScreen(note: Note, noteViewModel: NoteViewModel, settings: AppSett
             appFontFamily(settings.font)
         }
     val detailBackground = noteBackgroundColor(note.color)
-    val noteTextColor = resolveUiTextColor(value = settings.noteUiTextColor, background = detailBackground)
-    val noteSecondaryTextColor = resolveSecondaryUiTextColor(value = settings.noteUiTextColor, background = detailBackground)
-    val noteGraphicColor = resolveUiGraphicColor(value = settings.noteUiTextColor, background = detailBackground)
+    val noteTextColor = resolveUiTextColor(value = settings.textColor, background = detailBackground)
+    val noteSecondaryTextColor = resolveSecondaryUiTextColor(value = settings.textColor, background = detailBackground)
+    val noteGraphicColor = resolveUiGraphicColor(value = settings.textColor, background = detailBackground)
     val favoriteIconColor = ensureUiContrast(preferred = FavoriteGold, background = detailBackground, minimumContrast = 3f)
     val attachmentAddButtonContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh
-    val attachmentAddButtonContentColor = resolveUiTextColor(value = settings.noteUiTextColor,
+    val attachmentAddButtonContentColor = resolveUiTextColor(value = settings.textColor,
             background = attachmentAddButtonContainerColor)
     val useDarkDateChip = noteTextColor.luminance() > 0.7f
     val dateChipContainerColor = if (useDarkDateChip) {
@@ -180,14 +180,18 @@ fun NoteDetailScreen(note: Note, noteViewModel: NoteViewModel, settings: AppSett
             mutableStateOf(false)
         }
     val motionDuration = AppMotion.duration(AppMotion.FAST, settings.animationsEnabled, settings.animationSpeed)
-    val popupBaseColor = when (settings.optionMenuTextColor) {
-            "white" -> MaterialTheme.colorScheme.inverseSurface
-            else -> MaterialTheme.colorScheme.surfaceContainerHigh
+    val effectiveOptionMenuTextColorMode = if (settings.optionMenuTextColor == "note") settings.textColor else settings.optionMenuTextColor
+    val defaultPopupSurface = MaterialTheme.colorScheme.surfaceContainerHigh
+    val inversePopupSurface = MaterialTheme.colorScheme.inverseSurface
+    val popupBaseColor = when (effectiveOptionMenuTextColorMode) {
+            "white" -> if (defaultPopupSurface.luminance() < 0.46f) defaultPopupSurface else inversePopupSurface
+            "black" -> if (defaultPopupSurface.luminance() > 0.54f) defaultPopupSurface else inversePopupSurface
+            else -> defaultPopupSurface
         }
     val popupAlpha = (settings.optionMenuOpacity / 100f).coerceIn(0.35f, 1f)
     val popupBackground = popupBaseColor.copy(alpha = popupAlpha)
     val popupVisualBackground = compositeUiColor(foreground = popupBackground, background = detailBackground)
-    val optionMenuTextColor = resolveUiTextColor(value = settings.optionMenuTextColor, background = popupVisualBackground)
+    val optionMenuTextColor = resolveUiTextColor(value = effectiveOptionMenuTextColorMode, background = popupVisualBackground)
     val hiddenMainMenuItems = remember(settings.optionMenuHiddenItems) {
             parseDetailMenuKeys(settings.optionMenuHiddenItems, listOf("edit", "favorite", "pin", "priority", "color", "move", "delete"))
         }
@@ -497,7 +501,7 @@ fun NoteDetailScreen(note: Note, noteViewModel: NoteViewModel, settings: AppSett
             if (noteLinks.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(18.dp))
                 noteLinks.take(3).forEach { linkUrl -> LinkPreviewCard(url = linkUrl, compact = false,
-                            textColorMode = settings.noteUiTextColor)
+                            textColorMode = settings.textColor)
                         Spacer(modifier = Modifier.height(10.dp))
                     }
             }

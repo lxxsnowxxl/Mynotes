@@ -25,6 +25,7 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -41,6 +42,7 @@ import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.NoteAdd
 import androidx.compose.material.icons.filled.NotificationsActive
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.PictureAsPdf
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.FilterChip
@@ -145,6 +147,7 @@ fun NotesScreen(
     onAddNote: () -> Unit,
     onDrawNote: () -> Unit,
     onOpenReminders: () -> Unit,
+    onAddPdf: () -> Unit,
     onOpenSettings: () -> Unit,
     onOpenNote: (Note) -> Unit,
     onEditNote: (Note) -> Unit
@@ -495,6 +498,18 @@ fun NotesScreen(
                             }
                         )
                         QuickCreateActionButton(
+                            text = stringResource(R.string.add_pdf),
+                            icon = Icons.Default.PictureAsPdf,
+                            fontFamily = fontFamily,
+                            containerColor = quickCreateSurfaceColor,
+                            contentColor = quickCreateTextColor,
+                            onClick = {
+                                addMenuExpanded = false
+                                UiSoundPlayer.playAction(context = context, action = UiActionSound.Add)
+                                onAddPdf()
+                            }
+                        )
+                        QuickCreateActionButton(
                             text = stringResource(R.string.create_drawing),
                             icon = Icons.Default.Brush,
                             fontFamily = fontFamily,
@@ -665,7 +680,8 @@ fun NotesScreen(
             if (visibleNotes.isEmpty()) {
                 EmptyNotesState(modifier = Modifier.fillMaxSize(),
                     hasSearch = query.isNotBlank() || selectedFilter != NoteFilter.ALL,
-                    fontFamily = fontFamily)
+                    fontFamily = fontFamily,
+                    textColorMode = settings.textColor)
             } else {
                 BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
                     /*
@@ -698,8 +714,8 @@ fun NotesScreen(
                             attachments = noteAttachments,
                             fontFamily = fontFamily,
                             fontSize = settings.fontSize,
-                            noteUiTextColor = settings.noteUiTextColor,
                             style = noteCardStyle,
+                            textColorMode = settings.textColor,
                             optionMenuOrder = settings.optionMenuOrder,
                             optionMenuHiddenItems = settings.optionMenuHiddenItems,
                             optionMenuShowIcons = settings.optionMenuShowIcons,
@@ -785,10 +801,16 @@ private fun QuickCreateActionButton(
     contentColor: androidx.compose.ui.graphics.Color,
     onClick: () -> Unit
 ) {
+    val interactionSource = remember { MutableInteractionSource() }
+
     Surface(
         modifier = Modifier
             .height(46.dp)
-            .clickable(onClick = onClick),
+            .clickable(
+                interactionSource = interactionSource,
+                indication = null,
+                onClick = onClick
+            ),
         shape = RoundedCornerShape(24.dp),
         color = containerColor,
         contentColor = contentColor,
@@ -821,7 +843,7 @@ private fun QuickCreateActionButton(
 
 @Composable
 private fun EmptyNotesState(modifier: Modifier, hasSearch: Boolean, fontFamily:
-        androidx.compose.ui.text.font.FontFamily) {
+        androidx.compose.ui.text.font.FontFamily, textColorMode: String) {
     Box(modifier = modifier,
         contentAlignment = Alignment.Center) {
         Column(horizontalAlignment = Alignment.CenterHorizontally) {
@@ -848,7 +870,7 @@ private fun EmptyNotesState(modifier: Modifier, hasSearch: Boolean, fontFamily:
                 modifier = Modifier.padding(top = 4.dp),
                 fontFamily = fontFamily,
                 fontSize = 13.sp,
-                color = resolveSecondaryUiTextColor(value = "auto", background = MaterialTheme.colorScheme.background))
+                color = resolveSecondaryUiTextColor(value = textColorMode, background = MaterialTheme.colorScheme.background))
         }
     }
 }

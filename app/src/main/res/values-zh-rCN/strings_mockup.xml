@@ -64,11 +64,11 @@
     <string name="mock_background_intensity">背景强度</string>
     <string name="mock_header_intensity">标题栏强度</string>
     <string name="mock_text_color">文字颜色</string>
-    <string name="mock_note_menu_text_color">笔记和菜单文字颜色</string>
-    <string name="mock_black">黑色</string>
+<string name="mock_black">黑色</string>
     <string name="mock_white">白色</string>
     <string name="mock_font">字体</string>
-    <string name="mock_font_default">默认</string>
+    <string name="mock_font_system_sans">通用无衬线字体</string>
+    <string name="mock_font_default">Android 系统字体</string>
     <string name="mock_font_serif">衬线字体</string>
     <string name="mock_font_monospace">等宽字体</string>
     <string name="mock_font_size">字体大小</string>
@@ -90,4 +90,5 @@
     <string name="mock_voice_note">语音笔记</string>
     <string name="mock_audio">音频</string>
     <string name="mock_file">文件</string>
+    <string name="mock_font_google_sans_flex">Google Sans Flex</string>
 </resources>

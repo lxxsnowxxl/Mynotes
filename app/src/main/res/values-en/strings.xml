@@ -101,8 +101,6 @@
     <string name="palette_lavender">Lavender</string>
     <string name="palette_violet">Violet</string>
     <string name="palette_peach">Peach</string>
-    <string name="note_ui_text_color">Notes and menu text</string>
-    <string name="note_ui_text_color_description">Only changes the text in notes and the three-dot menu.</string>
     <string name="slider_style">Slider design</string>
     <string name="slider_style_description">Choose the visual style for all sliders.</string>
     <string name="slider_style_minimal">Minimal</string>
@@ -118,7 +116,6 @@
     <string name="microphone_not_available">This device does not have an available microphone.</string>
     <string name="image_format_not_supported">This image could not be displayed on this device.</string>
     <string name="mock_auto">Automatic</string>
-
     <string name="sound_effects">Sound effects</string>
     <string name="sound_effects_description">Sounds for app actions. Choose from modern sound packs and preview them here.</string>
     <string name="sound_effects_enabled">Enable sounds</string>
@@ -151,7 +148,56 @@
     <string name="sound_theme_fluid">Fluid</string>
     <string name="sound_theme_pulse">Pulse</string>
     <string name="sound_theme_neon">Neon</string>
-
+    <string name="reminder_tones">Alert sounds</string>
+    <string name="reminder_tones_description">44 alert sounds for reminders: direct, repeating, high-attention signals. They completely replace the previous tones and do not reuse the app UI sound effects.</string>
+    <string name="reminder_sound_enabled">Alert sounds</string>
+    <string name="reminder_tone">Alert sound</string>
+    <string name="reminder_tone_preview">Preview alert</string>
+    <string name="reminder_sound_volume">Reminder volume</string>
+    <string name="reminder_tone_classic">Standard Alert</string>
+    <string name="reminder_tone_bell">Double Alert</string>
+    <string name="reminder_tone_crystal">Descending Sweep</string>
+    <string name="reminder_tone_pulse">Critical Pulse</string>
+    <string name="reminder_tone_sunrise">Rising Sweep</string>
+    <string name="reminder_tone_digital">Urgent Code</string>
+    <string name="reminder_tone_alert">Fast Alternating</string>
+    <string name="reminder_tone_urgent">Maximum Priority</string>
+    <string name="reminder_tone_beacon">Alert Beacon</string>
+    <string name="reminder_tone_radar">Radar Sweep</string>
+    <string name="reminder_tone_warning">Triple Warning</string>
+    <string name="reminder_tone_signal">Short-Long Signal</string>
+    <string name="reminder_tone_pager">Pager Alert</string>
+    <string name="reminder_tone_double_alarm">Alternating Alarm</string>
+    <string name="reminder_tone_serenity">Soft Attention</string>
+    <string name="reminder_tone_soft_bell">Alert Steps</string>
+    <string name="reminder_tone_breeze">Warning Burst</string>
+    <string name="reminder_tone_dew">Quick Descent</string>
+    <string name="reminder_tone_bamboo">Dry Hit</string>
+    <string name="reminder_tone_horizon">Wide Alert</string>
+    <string name="reminder_tone_calm">Syncopated Alert</string>
+    <string name="reminder_tone_moonlight">Alert Flash</string>
+    <string name="reminder_tone_orbit">Repeated Sweep</string>
+    <string name="reminder_tone_droplet">High-Low Pulse</string>
+    <string name="reminder_tone_glass_tap">Short Metal</string>
+    <string name="reminder_tone_clockwork">Alert Count</string>
+    <string name="reminder_tone_spark">Rapid Burst</string>
+    <string name="reminder_tone_bubble_pop">Five-Part Code</string>
+    <string name="reminder_tone_comet">Emergency Rise</string>
+    <string name="reminder_tone_echo_ping">Attention Echo</string>
+    <string name="reminder_tone_woodblock">3 + 1 Hit</string>
+    <string name="reminder_tone_starlight">Irregular Pattern</string>
+    <string name="reminder_tone_sentinel">Triple flash</string>
+    <string name="reminder_tone_siren">Urgent crystal</string>
+    <string name="reminder_tone_cascade">Descending spark</string>
+    <string name="reminder_tone_escalation">Bright ascent</string>
+    <string name="reminder_tone_distress">High code</string>
+    <string name="reminder_tone_interlock">Digital alternation</string>
+    <string name="reminder_tone_scanner">Crystal scanner</string>
+    <string name="reminder_tone_command">Priority pulse</string>
+    <string name="reminder_tone_rapid_triple">Bright trio</string>
+    <string name="reminder_tone_priority_sequence">Luminous sequence</string>
+    <string name="reminder_tone_double_sweep">Double flash</string>
+    <string name="reminder_tone_attention_burst">Crystal burst</string>
     <string name="haptic_effects">Vibration effects</string>
     <string name="haptic_effects_description">Haptic feedback for buttons, switches, sliders and other actions. Choose the vibration style and intensity.</string>
     <string name="haptic_effects_enabled">Enable vibration</string>
@@ -174,7 +220,6 @@
     <string name="haptic_style_heavy">Heavy</string>
     <string name="haptic_style_spring">Spring</string>
     <string name="haptic_style_echo">Echo</string>
-
     <string name="configuration_mode_welcome_title">How would you like to configure MyNotes?</string>
     <string name="configuration_mode_welcome_description">Choose how many options you want to see in Settings. This does not change your notes or create a different edition of the app.</string>
     <string name="configuration_mode_basic">Basic version</string>
@@ -185,7 +230,6 @@
     <string name="configuration_mode_settings_title">Configuration mode</string>
     <string name="configuration_mode_settings_description">Choose a simplified Settings screen or all advanced controls.</string>
     <string name="configuration_mode_confirm">OK</string>
-
     <string name="widget_new_note">New note</string>
     <string name="widget_recent_notes">Recent notes</string>
     <string name="widget_empty_notes">You don’t have any notes yet</string>

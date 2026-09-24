@@ -79,11 +79,6 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
             repository.setTextOutlineEnabled(value)
         }
     }
-    fun setNoteUiTextColor(value: String) {
-        viewModelScope.launch {
-            repository.setNoteUiTextColor(value)
-        }
-    }
     fun setSliderStyle(value: String) {
         viewModelScope.launch {
             repository.setSliderStyle(value)
@@ -112,6 +107,21 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
     fun setSoundEffectsTheme(value: String) {
         viewModelScope.launch {
             repository.setSoundEffectsTheme(value)
+        }
+    }
+    fun setReminderSoundEnabled(value: Boolean) {
+        viewModelScope.launch {
+            repository.setReminderSoundEnabled(value)
+        }
+    }
+    fun setReminderSoundVolume(value: Float) {
+        val normalized = value.coerceIn(0f, 100f)
+        if (settings.value.reminderSoundVolume == normalized) return
+        viewModelScope.launch { repository.setReminderSoundVolume(normalized) }
+    }
+    fun setReminderRingtone(value: String) {
+        viewModelScope.launch {
+            repository.setReminderRingtone(value)
         }
     }
     fun setHapticEffectsEnabled(value: Boolean) {

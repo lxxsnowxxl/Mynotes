@@ -54,17 +54,10 @@ data class AppSettings(
      */
     val textOutlineEnabled: Boolean = false,
     /*
-     * Color independiente para notas y sus menús.
-     */
-    /*
-     * Mismo comportamiento, pero aplicado al fondo individual de cada nota.
-     */
-    val noteUiTextColor: String = "auto",
-    /*
      * Diseños conservados para las barras.
      */
     val sliderStyle: String = "capsule",
-    val font: String = "google_sans_bold",
+    val font: String = "system_sans",
     val fontSize: Float = 16f,
     /*
      * Efectos cortos de interfaz: editar, borrar, prioridad, sliders
@@ -78,6 +71,14 @@ data class AppSettings(
      * classic, soft, digital, glass, retro o pop.
      */
     val soundEffectsTheme: String = "classic",
+    /*
+     * Sonido dedicado para los recordatorios/notificaciones. Se mantiene
+     * separado de los efectos cortos de la interfaz para que el usuario pueda
+     * elegir un tono y volumen propios sin alterar taps, menús o adjuntos.
+     */
+    val reminderSoundEnabled: Boolean = true,
+    val reminderSoundVolume: Float = 75f,
+    val reminderRingtone: String = "classic",
     /*
      * Respuesta háptica independiente del sonido. El estilo cambia el patrón
      * de vibración y la intensidad se guarda como porcentaje.

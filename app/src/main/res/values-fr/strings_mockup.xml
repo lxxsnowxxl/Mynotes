@@ -64,11 +64,11 @@
     <string name="mock_background_intensity">Intensité du fond</string>
     <string name="mock_header_intensity">Intensité de l’en-tête</string>
     <string name="mock_text_color">Couleur du texte</string>
-    <string name="mock_note_menu_text_color">Texte des notes et du menu</string>
-    <string name="mock_black">Noir</string>
+<string name="mock_black">Noir</string>
     <string name="mock_white">Blanc</string>
     <string name="mock_font">Police</string>
-    <string name="mock_font_default">Par défaut</string>
+    <string name="mock_font_system_sans">Sans-serif générique</string>
+    <string name="mock_font_default">Police système Android</string>
     <string name="mock_font_serif">Serif</string>
     <string name="mock_font_monospace">Monospace</string>
     <string name="mock_font_size">Taille du texte</string>
@@ -90,4 +90,5 @@
     <string name="mock_voice_note">Note vocale</string>
     <string name="mock_audio">Audio</string>
     <string name="mock_file">Fichier</string>
+    <string name="mock_font_google_sans_flex">Google Sans Flex</string>
 </resources>
