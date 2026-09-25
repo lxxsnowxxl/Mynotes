@@ -5,6 +5,7 @@ import android.media.AudioAttributes
 import android.media.SoundPool
 import android.os.SystemClock
 import com.example.mynotes.R
+import com.example.mynotes.settings.FeedbackPreferencePolicy
 import java.util.EnumMap
 
 /**
@@ -29,11 +30,8 @@ enum class UiActionSound {
 }
 
 object UiSoundPlayer {
-    const val DEFAULT_THEME = "classic"
-    val availableThemes: List<String> = listOf("classic", "soft", "digital", "glass", "retro", "pop", "mechanical", "bubble", "arcade",
-            "wood", "synth", "minimal", "camera", "typewriter", "metal", "pixel", "space", "chime", "paper", "neon",
-            "material", "expressive", "prism", "aurora", "fluid", "pulse")
-    private val availableThemeSet = availableThemes.toHashSet()
+    const val DEFAULT_THEME = FeedbackPreferencePolicy.DEFAULT_SOUND_THEME
+    val availableThemes: List<String> = FeedbackPreferencePolicy.soundThemes
     private val layeredThemes: Set<String> = emptySet()
     @Volatile
     private var pool: SoundPool? = null
@@ -50,7 +48,7 @@ object UiSoundPlayer {
     private var volume: Float = 0.65f
     @Volatile
     private var theme: String = DEFAULT_THEME
-    fun normalizeTheme(value: String): String = value.trim().lowercase().takeIf { it in availableThemeSet }?: DEFAULT_THEME
+    fun normalizeTheme(value: String): String = FeedbackPreferencePolicy.normalizeSoundTheme(value)
     fun configure(context: Context, enabled: Boolean, volumePercent: Float, theme: String = DEFAULT_THEME, hapticEnabled: Boolean = true,
         hapticIntensityPercent: Float = 55f, hapticStyle: String = UiHapticPlayer.DEFAULT_STYLE) {
         this.enabled = enabled
@@ -274,7 +272,8 @@ object UiSoundPlayer {
             return
         }
         val soundPool = ensureInitialized(context)
-        val soundId = soundIds[normalizeTheme(theme)]?.get(sound)?: soundIds[DEFAULT_THEME]?.get(sound)?: return
+        // Los llamadores internos reciben el tema ya validado por configure.
+        val soundId = soundIds[theme]?.get(sound)?: soundIds[DEFAULT_THEME]?.get(sound)?: return
         soundPool.play(soundId, volume, volume, 1, 0, rate.coerceIn(0.5f, 2f))
     }
     private fun playAccentLayer(context: Context, action: UiActionSound) {

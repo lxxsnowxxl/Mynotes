@@ -1,12 +1,5 @@
 package com.example.mynotes.ui.components
 
-import androidx.compose.foundation.border
-import androidx.compose.foundation.background
-import android.content.Intent
-import android.net.Uri
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -17,21 +10,15 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -41,7 +28,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
@@ -49,10 +35,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
@@ -61,19 +46,13 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.PopupProperties
-import coil3.compose.AsyncImage
 import com.example.mynotes.R
 import com.example.mynotes.ui.components.AppDropdownMenu
 import com.example.mynotes.settings.AppSettings
 import com.example.mynotes.ui.sound.UiActionSound
-import com.example.mynotes.ui.sound.UiSound
 import com.example.mynotes.ui.sound.UiSoundPlayer
 import com.example.mynotes.ui.motion.ConfigurableAnimatedContent
 import com.example.mynotes.ui.theme.PaletteCatalog
-import com.example.mynotes.ui.theme.adaptiveUiButtonContainer
-import com.example.mynotes.ui.theme.resolveAdaptiveUiButtonColors
-import com.example.mynotes.ui.theme.automaticUiTextColor
-import com.example.mynotes.ui.theme.softenUiColorToContrast
 import kotlin.math.roundToInt
 
 @Immutable
@@ -121,308 +100,231 @@ private val accents = listOf(AccentOption("red", Color(0xFFE55757)), AccentOptio
         AccentOption("blue", Color(0xFF4B8EDB)), AccentOption("indigo", Color(0xFF6275CF)), AccentOption("violet", Color(0xFF8B6BC5)),
         AccentOption("purple", Color(0xFFA05BC1)), AccentOption("pink", Color(0xFFD96787)), AccentOption("rose", Color(0xFFE16F9A)),
         AccentOption("brown", Color(0xFF9A7157)), AccentOption("graphite", Color(0xFF59636A)))
+
+
+/**
+ * Secciones avanzadas separadas para que SettingsScreen pueda colocarlas como
+ * items independientes de su LazyColumn. De esta forma una sección pesada
+ * (tarjetas, animaciones, acento, etc.) deja de mantener vivas a todas las
+ * demás mientras se desplaza la pantalla.
+ */
 @Composable
-fun ExtremeCustomizationSection(settings: AppSettings, fontFamily: FontFamily, textColor: Color, secondaryTextColor: Color,
-    graphicColor: Color, profileOnly: Boolean = false, showProfileSection: Boolean = true,
-    onProfileImageUriChange: (String) -> Unit, onProfileImageSizeChange: (Float) -> Unit,
-    onIconStyleChange: (String) -> Unit, onIconSizeChange: (Float) -> Unit, onAccentColorChange: (String) -> Unit,
-    onNoteCardCornerRadiusChange: (Float) -> Unit, onNoteCardElevationChange: (Float) -> Unit, onNoteCardPaddingChange: (Float) -> Unit,
-    onNoteCardImageHeightChange: (Float) -> Unit, onNoteCardOutlineWidthChange: (Float) -> Unit,
-    onNoteTitleMaxLinesChange: (Int) -> Unit, onNoteContentMaxLinesChange: (Int) -> Unit,
-    onNoteLineSpacingChange: (Float) -> Unit, onShowNoteDateChange: (Boolean) -> Unit, onShowCategoryChipChange: (Boolean) -> Unit,
-    onShowFavoriteIconChange: (Boolean) -> Unit, onFabSizeChange: (Float) -> Unit, onPerformanceModeChange: (String) -> Unit,
-    onAnimationsEnabledChange: (Boolean) -> Unit, onAnimationStyleChange: (String) -> Unit, onAnimationEasingChange: (String) -> Unit,
-    onAnimationSpeedChange: (Float) -> Unit, onAnimationIntensityChange: (Float) -> Unit) {
+fun ExtremeCustomizationHeader(
+    fontFamily: FontFamily,
+    textColor: Color
+) {
+    Text(
+        text = stringResource(R.string.extreme_personalization),
+        color = textColor,
+        fontFamily = fontFamily,
+        fontWeight = FontWeight.Bold,
+        fontSize = 20.sp
+    )
+}
+
+@Composable
+fun ExtremeIconsSettingsSection(
+    settings: AppSettings,
+    fontFamily: FontFamily,
+    onIconStyleChange: (String) -> Unit,
+    onIconSizeChange: (Float) -> Unit
+) {
     val context = LocalContext.current
-    var iconMenu by remember {
-        mutableStateOf(false)
-    }
-    var profileSize by remember {
-        mutableFloatStateOf(settings.profileImageSize)
-    }
-    var iconSize by remember {
-        mutableFloatStateOf(settings.iconSize)
-    }
-    var radius by remember {
-        mutableFloatStateOf(settings.noteCardCornerRadius)
-    }
-    var elevation by remember {
-        mutableFloatStateOf(settings.noteCardElevation)
-    }
-    var padding by remember {
-        mutableFloatStateOf(settings.noteCardPadding)
-    }
-    var imageHeight by remember {
-        mutableFloatStateOf(settings.noteCardImageHeight)
-    }
-    var noteOutlineWidth by remember {
-        mutableFloatStateOf(if (settings.noteCardOutlineEnabled) settings.noteCardOutlineWidth else 0f)
-    }
-    var titleLines by remember {
-        mutableFloatStateOf(settings.noteTitleMaxLines.toFloat())
-    }
-    var contentLines by remember {
-        mutableFloatStateOf(settings.noteContentMaxLines.toFloat())
-    }
-    var lineSpacing by remember {
-        mutableFloatStateOf(settings.noteLineSpacing)
-    }
-    var fabSize by remember {
-        mutableFloatStateOf(settings.fabSize)
-    }
-    var animationSpeed by remember {
-        mutableFloatStateOf(settings.animationSpeed)
-    }
-    var animationIntensity by remember {
-        mutableFloatStateOf(settings.animationIntensity)
-    }
-    var previewState by remember {
-        mutableStateOf(false)
-    }
-    LaunchedEffect(settings.profileImageSize) {
-        profileSize = settings.profileImageSize
-    }
-    LaunchedEffect(settings.iconSize) {
-        iconSize = settings.iconSize
-    }
-    LaunchedEffect(settings.noteCardCornerRadius) {
-        radius = settings.noteCardCornerRadius
-    }
-    LaunchedEffect(settings.noteCardElevation) {
-        elevation = settings.noteCardElevation
-    }
-    LaunchedEffect(settings.noteCardPadding) {
-        padding = settings.noteCardPadding
-    }
-    LaunchedEffect(settings.noteCardImageHeight) {
-        imageHeight = settings.noteCardImageHeight
-    }
-    LaunchedEffect(settings.noteCardOutlineEnabled, settings.noteCardOutlineWidth) {
-        noteOutlineWidth = if (settings.noteCardOutlineEnabled) settings.noteCardOutlineWidth else 0f
-    }
-    LaunchedEffect(settings.noteTitleMaxLines) {
-        titleLines = settings.noteTitleMaxLines.toFloat()
-    }
-    LaunchedEffect(settings.noteContentMaxLines) {
-        contentLines = settings.noteContentMaxLines.toFloat()
-    }
-    LaunchedEffect(settings.noteLineSpacing) {
-        lineSpacing = settings.noteLineSpacing
-    }
-    LaunchedEffect(settings.fabSize) {
-        fabSize = settings.fabSize
-    }
-    LaunchedEffect(settings.animationSpeed) {
-        animationSpeed = settings.animationSpeed
-    }
-    LaunchedEffect(settings.animationIntensity) {
-        animationIntensity = settings.animationIntensity
-    }
-    var profileEditorUri by remember { mutableStateOf<Uri?>(null) }
-    val picker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) {
-                uri ->
-            if (uri != null) {
-                try {
-                    context.contentResolver.takePersistableUriPermission(uri, Intent.FLAG_GRANT_READ_URI_PERMISSION)
-                } catch (_: SecurityException) {
-                }
-                UiSoundPlayer.play(context = context, sound = UiSound.Attachment)
-                /*
-                 * No guardamos la URI como avatar inmediatamente. Primero abrimos el
-                 * editor circular para que el usuario decida el encuadre, posición y
-                 * zoom. El archivo definitivo se escribe en filesDir únicamente al
-                 * confirmar el recorte.
-                 */
-                profileEditorUri = uri
-            }
-        }
-    profileEditorUri?.let { sourceUri ->
-        ProfileImageEditorDialog(sourceUri = sourceUri, fontFamily = fontFamily, onDismissRequest = {
-                profileEditorUri = null
-            }, onImageSaved = { croppedUri ->
-                UiSoundPlayer.playAction(context = context, action = UiActionSound.Select)
-                onProfileImageUriChange(croppedUri.toString())
-                profileEditorUri = null
-            })
-    }
-    if (!profileOnly) {
-        Text(text = stringResource(R.string.extreme_personalization), color = textColor, fontFamily = fontFamily, fontWeight = FontWeight.Bold,
-            fontSize = 20.sp)
-        Spacer(Modifier.height(10.dp))
-    }
-    if (showProfileSection) {
-        SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(14.dp)) { panelColors ->
-            Text(text = stringResource(R.string.extreme_profile), color = panelColors.text, fontFamily = fontFamily,
-                fontWeight = FontWeight.Bold)
-            Spacer(Modifier.height(10.dp))
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Surface(modifier = Modifier.size(74.dp).clickable(enabled = settings.profileImageUri.isNotBlank()) {
-                        UiSoundPlayer.playAction(context = context, action = UiActionSound.Open)
-                        profileEditorUri = managedProfileSourceUri(context, settings.profileImageUri) ?: Uri.parse(settings.profileImageUri)
-                    }, shape = CircleShape, color = MaterialTheme.colorScheme.surfaceContainerHigh) {
-                    if (settings.profileImageUri.isNotBlank()) {
-                        AsyncImage(model = Uri.parse(settings.profileImageUri), contentDescription = null,
-                            modifier = Modifier.fillMaxWidth().clip(CircleShape), contentScale = ContentScale.Crop)
-                    } else {
-                        Box(contentAlignment = Alignment.Center) {
-                            Icon(imageVector = Icons.Default.Person, contentDescription = null, modifier = Modifier.size(34.dp),
-                                tint = panelColors.text)
-                        }
-                    }
-                }
-                Column(modifier = Modifier.padding(start = 12.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                    ProfileActionButton(
-                        text = stringResource(R.string.extreme_change_photo),
-                        panelBackground = panelColors.background,
-                        textColorMode = settings.textColor,
-                        fontFamily = fontFamily,
-                        onClick = {
-                            UiSoundPlayer.playAction(context = context, action = UiActionSound.Add)
-                            picker.launch(arrayOf("image/*"))
-                        }
-                    )
-                    if (settings.profileImageUri.isNotBlank()) {
-                        ProfileActionButton(
-                            text = stringResource(R.string.extreme_edit_photo),
-                            panelBackground = panelColors.background,
-                            textColorMode = settings.textColor,
-                            fontFamily = fontFamily,
-                            onClick = {
-                                UiSoundPlayer.playAction(context = context, action = UiActionSound.Open)
-                                profileEditorUri = managedProfileSourceUri(context, settings.profileImageUri) ?: Uri.parse(settings.profileImageUri)
-                            }
-                        )
-                        ProfileActionButton(
-                            text = stringResource(R.string.extreme_remove_photo),
-                            panelBackground = panelColors.background,
-                            textColorMode = settings.textColor,
-                            fontFamily = fontFamily,
-                            onClick = {
-                                UiSoundPlayer.play(context = context, sound = UiSound.Delete)
-                                clearManagedProfileImages(context)
-                                onProfileImageUriChange("")
-                            }
-                        )
-                    }
-                }
-            }
-            if (!profileOnly) {
-                CustomSlider(title = stringResource(R.string.extreme_profile_size), label = "${profileSize.roundToInt()} dp", value = profileSize,
-                    onValueChange = { profileSize = it }, onFinished = {
-                        onProfileImageSizeChange(profileSize)
-                    }, range = 36f..84f, steps = 23, settings = settings, fontFamily = fontFamily, textColor = panelColors.text)
-            }
-        }
-    }
-    if (!profileOnly) {
-    Spacer(Modifier.height(if (showProfileSection) 12.dp else 2.dp))
+    var iconMenu by remember { mutableStateOf(false) }
+    var iconSize by remember(settings.iconSize) { mutableFloatStateOf(settings.iconSize) }
+
     SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(14.dp)) { panelColors ->
-        Text(text = stringResource(R.string.extreme_icons), color = panelColors.text, fontFamily = fontFamily, fontWeight = FontWeight.Bold
+        Text(
+            text = stringResource(R.string.extreme_icons),
+            color = panelColors.text,
+            fontFamily = fontFamily,
+            fontWeight = FontWeight.Bold
         )
         Box(modifier = Modifier.fillMaxWidth()) {
             TextButton(onClick = {
-                    UiSoundPlayer.playAction(context = context, action = UiActionSound.Menu)
-                    iconMenu = true
-                }) {
-                Text(text = stringResource(iconStyles.firstOrNull {
-                            it.key == settings.iconStyle
-                        }?.labelRes ?: R.string.extreme_icon_rounded), color = panelColors.text, fontFamily = fontFamily)
+                UiSoundPlayer.playAction(context = context, action = UiActionSound.Menu)
+                iconMenu = true
+            }) {
+                Text(
+                    text = stringResource(
+                        iconStyles.firstOrNull { it.key == settings.iconStyle }?.labelRes
+                            ?: R.string.extreme_icon_rounded
+                    ),
+                    color = panelColors.text,
+                    fontFamily = fontFamily
+                )
             }
-            val iconMenuLongestLabel = iconStyles.maxOfOrNull { context.getString(it.labelRes).length } ?: 0
+            val iconMenuLongestLabel = remember(iconStyles, context) {
+                iconStyles.maxOfOrNull { context.getString(it.labelRes).length } ?: 0
+            }
             val iconMenuWidth = when {
-                    iconMenuLongestLabel <= 8 -> 118.dp
-                    iconMenuLongestLabel <= 12 -> 138.dp
-                    else -> 158.dp
-                }
-            AppDropdownMenu(modifier = Modifier.width(iconMenuWidth), expanded = iconMenu, onDismissRequest = {
-                    iconMenu = false
-                }, properties = PopupProperties(focusable = false, dismissOnBackPress = true, dismissOnClickOutside = true)) {
-                iconStyles.forEach {
-                        option -> DropdownMenuItem(modifier = Modifier.height(32.dp),
-                        contentPadding = PaddingValues(horizontal = 4.dp, vertical = 0.dp), text = {
-                            Text(text = stringResource(option.labelRes), modifier = Modifier.fillMaxWidth(), color = panelColors.text,
-                                fontFamily = fontFamily, fontSize = 12.sp, maxLines = 1, textAlign = TextAlign.Center)
-                        }, onClick = {
+                iconMenuLongestLabel <= 8 -> 118.dp
+                iconMenuLongestLabel <= 12 -> 138.dp
+                else -> 158.dp
+            }
+            AppDropdownMenu(
+                modifier = Modifier.width(iconMenuWidth),
+                expanded = iconMenu,
+                onDismissRequest = { iconMenu = false },
+                properties = PopupProperties(
+                    focusable = false,
+                    dismissOnBackPress = true,
+                    dismissOnClickOutside = true
+                )
+            ) {
+                iconStyles.forEach { option ->
+                    DropdownMenuItem(
+                        modifier = Modifier.height(32.dp),
+                        contentPadding = PaddingValues(horizontal = 4.dp, vertical = 0.dp),
+                        text = {
+                            Text(
+                                text = stringResource(option.labelRes),
+                                modifier = Modifier.fillMaxWidth(),
+                                color = panelColors.text,
+                                fontFamily = fontFamily,
+                                fontSize = 12.sp,
+                                maxLines = 1,
+                                textAlign = TextAlign.Center
+                            )
+                        },
+                        onClick = {
                             UiSoundPlayer.playAction(context = context, action = UiActionSound.Select)
                             iconMenu = false
                             onIconStyleChange(option.key)
-                        })
+                        }
+                    )
                 }
             }
         }
-        CustomSlider(title = stringResource(R.string.extreme_icon_size), label = "${iconSize.roundToInt()} dp", value = iconSize,
-            onValueChange = { iconSize = it }, onFinished = {
-                onIconSizeChange(iconSize)
-            }, range = 16f..36f, steps = 19, settings = settings, fontFamily = fontFamily, textColor = panelColors.text)
+        CustomSlider(
+            title = stringResource(R.string.extreme_icon_size),
+            label = "${iconSize.roundToInt()} dp",
+            value = iconSize,
+            onValueChange = { iconSize = it },
+            onFinished = { onIconSizeChange(iconSize) },
+            range = 16f..36f,
+            steps = 19,
+            settings = settings,
+            fontFamily = fontFamily,
+            textColor = panelColors.text
+        )
     }
-    Spacer(Modifier.height(12.dp))
+}
+
+@Composable
+fun ExtremeAccentSettingsSection(
+    settings: AppSettings,
+    fontFamily: FontFamily,
+    onAccentColorChange: (String) -> Unit
+) {
+    val context = LocalContext.current
     SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(14.dp)) { panelColors ->
-        Text(text = stringResource(R.string.extreme_accent), color = panelColors.text, fontFamily = fontFamily, fontWeight = FontWeight.Bold
+        Text(
+            text = stringResource(R.string.extreme_accent),
+            color = panelColors.text,
+            fontFamily = fontFamily,
+            fontWeight = FontWeight.Bold
         )
         Spacer(Modifier.height(10.dp))
-        /*
-         * La paleta se reparte en 4 filas de 5 círculos.
-         * Así ningún color queda cortado en pantallas estrechas y todos
-         * conservan exactamente el mismo tamaño y separación visual.
-         */
         val paletteAccent = remember(settings.backgroundColor) {
-                PaletteCatalog.find(settings.backgroundColor).accent
-            }
-        val accentItems = remember {
-                listOf<AccentOption?>(null) + accents
-            }
-        Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-            accentItems.chunked(5).forEach { rowItems -> Row(modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
-                        rowItems.forEach { option -> val key = option?.key ?: "palette"
-                            val color = option?.color ?: paletteAccent
-                            val selected = settings.accentColor == key
-                            val accentInteraction = remember(key) { MutableInteractionSource() }
-                            val checkColor = if (color.luminance() > 0.48f) Color.Black else Color.White
-                            Box(
-                                modifier = Modifier
-                                    .size(48.dp)
-                                    .clip(CircleShape)
-                                    .background(color)
-                                    .border(
-                                        width = if (selected) 3.dp else 1.dp,
-                                        color = if (selected) panelColors.text else panelColors.graphic.copy(alpha = 0.65f),
-                                        shape = CircleShape
+            PaletteCatalog.find(settings.backgroundColor).accent
+        }
+        val accentRows = remember { (listOf<AccentOption?>(null) + accents).chunked(5) }
+        Column(
+            modifier = Modifier.fillMaxWidth(),
+            verticalArrangement = Arrangement.spacedBy(12.dp)
+        ) {
+            accentRows.forEach { rowItems ->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    rowItems.forEach { option ->
+                        val key = option?.key ?: "palette"
+                        val color = option?.color ?: paletteAccent
+                        val selected = settings.accentColor == key
+                        val accentInteraction = remember(key) { MutableInteractionSource() }
+                        val checkColor = if (color.luminance() > 0.48f) Color.Black else Color.White
+                        Box(
+                            modifier = Modifier
+                                .size(48.dp)
+                                .drawWithCache {
+                                    val selectedStroke = 3.dp.toPx()
+                                    val normalStroke = 1.dp.toPx()
+                                    val strokeColor = if (selected) panelColors.text
+                                    else panelColors.graphic.copy(alpha = 0.65f)
+                                    val stroke = androidx.compose.ui.graphics.drawscope.Stroke(
+                                        width = if (selected) selectedStroke else normalStroke
                                     )
-                                    .clickable(
-                                        interactionSource = accentInteraction,
-                                        indication = null
-                                    ) {
-                                        UiSoundPlayer.playAction(context = context, action = UiActionSound.Color)
-                                        onAccentColorChange(key)
-                                    },
-                                contentAlignment = Alignment.Center
-                            ) {
-                                if (selected) {
-                                    Icon(
-                                        imageVector = Icons.Default.Check,
-                                        contentDescription = null,
-                                        tint = checkColor,
-                                        modifier = Modifier.size(22.dp)
-                                    )
+                                    onDrawBehind {
+                                        drawCircle(color = color)
+                                        drawCircle(
+                                            color = strokeColor,
+                                            style = stroke
+                                        )
+                                    }
                                 }
+                                .clickable(
+                                    interactionSource = accentInteraction,
+                                    indication = null
+                                ) {
+                                    UiSoundPlayer.playAction(context = context, action = UiActionSound.Color)
+                                    onAccentColorChange(key)
+                                },
+                            contentAlignment = Alignment.Center
+                        ) {
+                            if (selected) {
+                                Icon(
+                                    imageVector = Icons.Default.Check,
+                                    contentDescription = null,
+                                    tint = checkColor,
+                                    modifier = Modifier.size(22.dp)
+                                )
                             }
                         }
-                        /*
-                         * Solo se usa si en el futuro cambia el número de
-                         * colores; mantiene la cuadrícula alineada.
-                         */
-                        repeat(5 - rowItems.size) {
-                            Spacer(Modifier.size(48.dp))
-                        }
                     }
+                    repeat(5 - rowItems.size) { Spacer(Modifier.size(48.dp)) }
                 }
+            }
         }
     }
-    Spacer(Modifier.height(12.dp))
+}
+
+@Composable
+fun ExtremeNoteCardsSettingsSection(
+    settings: AppSettings,
+    fontFamily: FontFamily,
+    onNoteCardCornerRadiusChange: (Float) -> Unit,
+    onNoteCardElevationChange: (Float) -> Unit,
+    onNoteCardPaddingChange: (Float) -> Unit,
+    onNoteCardImageHeightChange: (Float) -> Unit,
+    onNoteCardOutlineWidthChange: (Float) -> Unit,
+    onNoteTitleMaxLinesChange: (Int) -> Unit,
+    onNoteContentMaxLinesChange: (Int) -> Unit,
+    onNoteLineSpacingChange: (Float) -> Unit,
+    onShowNoteDateChange: (Boolean) -> Unit,
+    onShowCategoryChipChange: (Boolean) -> Unit,
+    onShowFavoriteIconChange: (Boolean) -> Unit
+) {
+    var radius by remember(settings.noteCardCornerRadius) { mutableFloatStateOf(settings.noteCardCornerRadius) }
+    var elevation by remember(settings.noteCardElevation) { mutableFloatStateOf(settings.noteCardElevation) }
+    var padding by remember(settings.noteCardPadding) { mutableFloatStateOf(settings.noteCardPadding) }
+    var imageHeight by remember(settings.noteCardImageHeight) { mutableFloatStateOf(settings.noteCardImageHeight) }
+    var noteOutlineWidth by remember(settings.noteCardOutlineEnabled, settings.noteCardOutlineWidth) {
+        mutableFloatStateOf(if (settings.noteCardOutlineEnabled) settings.noteCardOutlineWidth else 0f)
+    }
+    var titleLines by remember(settings.noteTitleMaxLines) { mutableFloatStateOf(settings.noteTitleMaxLines.toFloat()) }
+    var contentLines by remember(settings.noteContentMaxLines) { mutableFloatStateOf(settings.noteContentMaxLines.toFloat()) }
+    var lineSpacing by remember(settings.noteLineSpacing) { mutableFloatStateOf(settings.noteLineSpacing) }
+
     SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(14.dp)) { panelColors ->
-        Text(text = stringResource(R.string.extreme_note_cards), color = panelColors.text, fontFamily = fontFamily,
-            fontWeight = FontWeight.Bold)
+        Text(
+            text = stringResource(R.string.extreme_note_cards),
+            color = panelColors.text,
+            fontFamily = fontFamily,
+            fontWeight = FontWeight.Bold
+        )
         CustomSlider(stringResource(R.string.extreme_card_radius), "${radius.roundToInt()} dp", radius, { radius = it },
             { onNoteCardCornerRadiusChange(radius) }, 0f..36f, 35, settings, fontFamily, panelColors.text)
         CustomSlider(stringResource(R.string.extreme_card_elevation), "${String.format("%.1f", elevation)} dp", elevation,
@@ -432,122 +334,164 @@ fun ExtremeCustomizationSection(settings: AppSettings, fontFamily: FontFamily, t
         CustomSlider(stringResource(R.string.extreme_image_height), "${imageHeight.roundToInt()} dp", imageHeight, { imageHeight = it },
             { onNoteCardImageHeightChange(imageHeight) }, 72f..220f, 36, settings, fontFamily, panelColors.text)
         CustomSlider(stringResource(R.string.extreme_note_outline_width), String.format("%.1f dp", noteOutlineWidth), noteOutlineWidth,
-            { noteOutlineWidth = it }, { onNoteCardOutlineWidthChange(noteOutlineWidth) }, 0f..6f, 11, settings, fontFamily,
-            panelColors.text)
-        CustomSlider(stringResource(R.string.extreme_title_lines), titleLines.roundToInt().toString(), titleLines, { titleLines = it }, {
-                onNoteTitleMaxLinesChange(titleLines.roundToInt())
-            }, 1f..8f, 6, settings, fontFamily, panelColors.text)
+            { noteOutlineWidth = it }, { onNoteCardOutlineWidthChange(noteOutlineWidth) }, 0f..6f, 11, settings, fontFamily, panelColors.text)
+        CustomSlider(stringResource(R.string.extreme_title_lines), titleLines.roundToInt().toString(), titleLines, { titleLines = it },
+            { onNoteTitleMaxLinesChange(titleLines.roundToInt()) }, 1f..8f, 6, settings, fontFamily, panelColors.text)
         CustomSlider(stringResource(R.string.extreme_content_lines), contentLines.roundToInt().toString(), contentLines,
-            { contentLines = it }, {
-                onNoteContentMaxLinesChange(contentLines.roundToInt())
-            }, 2f..14f, 11, settings, fontFamily, panelColors.text)
-        CustomSlider(stringResource(R.string.extreme_line_spacing), String.format("%.2fx", lineSpacing), lineSpacing, { lineSpacing = it },
-            { onNoteLineSpacingChange(lineSpacing) }, 1f..1.8f, 15, settings, fontFamily, panelColors.text)
+            { contentLines = it }, { onNoteContentMaxLinesChange(contentLines.roundToInt()) }, 2f..14f, 11, settings, fontFamily,
+            panelColors.text)
+        CustomSlider(stringResource(R.string.extreme_line_spacing), String.format("%.2fx", lineSpacing), lineSpacing,
+            { lineSpacing = it }, { onNoteLineSpacingChange(lineSpacing) }, 1f..1.8f, 15, settings, fontFamily, panelColors.text)
         ToggleRow(stringResource(R.string.extreme_show_date), settings.showNoteDate, onShowNoteDateChange, fontFamily, panelColors.text)
         ToggleRow(stringResource(R.string.extreme_show_category), settings.showCategoryChip, onShowCategoryChipChange, fontFamily,
             panelColors.text)
         ToggleRow(stringResource(R.string.extreme_show_favorite), settings.showFavoriteIcon, onShowFavoriteIconChange, fontFamily,
             panelColors.text)
     }
-    Spacer(Modifier.height(12.dp))
-    SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(14.dp)) { panelColors -> CustomSlider(
-            stringResource(R.string.extreme_fab_size), "${fabSize.roundToInt()} dp", fabSize, { fabSize = it },
-            { onFabSizeChange(fabSize) }, 48f..82f, 33, settings, fontFamily, panelColors.text)
-    }
-    Spacer(Modifier.height(12.dp))
+}
+
+@Composable
+fun ExtremeFabSettingsSection(
+    settings: AppSettings,
+    fontFamily: FontFamily,
+    onFabSizeChange: (Float) -> Unit
+) {
+    var fabSize by remember(settings.fabSize) { mutableFloatStateOf(settings.fabSize) }
     SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(14.dp)) { panelColors ->
-        MotionOptionPicker(title = stringResource(R.string.performance_mode_title), selectedKey = settings.performanceMode,
-            options = performanceModes, onSelected = onPerformanceModeChange, fontFamily = fontFamily, textColor = panelColors.text)
-        Text(text = stringResource(R.string.performance_mode_description), modifier = Modifier.padding(top = 2.dp, bottom = 14.dp),
-            color = panelColors.secondaryText, fontFamily = fontFamily, fontSize = 12.sp)
-    }
-    Spacer(Modifier.height(12.dp))
-    SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(14.dp)) { panelColors -> Text(
-            text = stringResource(R.string.motion_title), color = panelColors.text, fontFamily = fontFamily, fontWeight = FontWeight.Bold)
-        ToggleRow(title = stringResource(R.string.motion_enabled), checked = settings.animationsEnabled,
-            onCheckedChange = onAnimationsEnabledChange, fontFamily = fontFamily, textColor = panelColors.text)
-        if (settings.animationsEnabled) {
-            MotionOptionPicker(title = stringResource(R.string.motion_style), selectedKey = settings.animationStyle, options = motionStyles,
-                onSelected = onAnimationStyleChange, fontFamily = fontFamily, textColor = panelColors.text)
-            MotionOptionPicker(title = stringResource(R.string.motion_easing), selectedKey = settings.animationEasing,
-                options = motionEasings, onSelected = onAnimationEasingChange, fontFamily = fontFamily, textColor = panelColors.text)
-            CustomSlider(title = stringResource(R.string.motion_speed), label = String.format("%.1fx", animationSpeed),
-                value = animationSpeed, onValueChange = {
-                    animationSpeed = it
-                }, onFinished = {
-                    onAnimationSpeedChange(animationSpeed)
-                }, range = 0.5f..2f, steps = 14, settings = settings, fontFamily = fontFamily, textColor = panelColors.text)
-            CustomSlider(title = stringResource(R.string.motion_intensity), label = String.format("%.1fx", animationIntensity),
-                value = animationIntensity, onValueChange = {
-                    animationIntensity = it
-                }, onFinished = {
-                    onAnimationIntensityChange(animationIntensity)
-                }, range = 0.5f..1.5f, steps = 9, settings = settings, fontFamily = fontFamily, textColor = panelColors.text)
-            Spacer(Modifier.height(12.dp))
-            Text(text = stringResource(R.string.motion_preview), color = panelColors.text, fontFamily = fontFamily, fontSize = 13.sp,
-                fontWeight = FontWeight.SemiBold)
-            Surface(modifier = Modifier.fillMaxWidth().height(96.dp).padding(top = 8.dp), shape = RoundedCornerShape(16.dp),
-                color = MaterialTheme.colorScheme.surfaceContainerHigh) {
-                ConfigurableAnimatedContent(targetState = previewState, animationsEnabled = true, animationSpeed = animationSpeed,
-                    animationStyle = settings.animationStyle, animationEasing = settings.animationEasing,
-                    animationIntensity = animationIntensity, performanceMode = settings.performanceMode) { state -> Box(
-                        modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text(text = if (state) "B" else "A", color = panelColors.text, fontFamily = fontFamily, fontSize = 28.sp,
-                            fontWeight = FontWeight.Bold)
-                    }
-                }
-            }
-            TextButton(onClick = {
-                    UiSoundPlayer.playAction(context = context, action = UiActionSound.PlayPause)
-                    previewState = !previewState
-                }, modifier = Modifier.align(Alignment.End)) {
-                Text(text = stringResource(R.string.motion_preview_button), color = panelColors.text, fontFamily = fontFamily,
-                    fontWeight = FontWeight.SemiBold)
-            }
-        }
-        Text(text = stringResource(R.string.motion_description), modifier = Modifier.padding(top = 6.dp), color = panelColors.secondaryText,
-            fontFamily = fontFamily, fontSize = 12.sp)
-    }
+        CustomSlider(
+            stringResource(R.string.extreme_fab_size),
+            "${fabSize.roundToInt()} dp",
+            fabSize,
+            { fabSize = it },
+            { onFabSizeChange(fabSize) },
+            48f..82f,
+            33,
+            settings,
+            fontFamily,
+            panelColors.text
+        )
     }
 }
 
-
 @Composable
-private fun ProfileActionButton(
-    text: String,
-    panelBackground: Color,
-    textColorMode: String,
+fun ExtremePerformanceSettingsSection(
+    settings: AppSettings,
     fontFamily: FontFamily,
-    onClick: () -> Unit
+    onPerformanceModeChange: (String) -> Unit
 ) {
-    val accentTonalBase = MaterialTheme.colorScheme.primaryContainer
-    val resolvedColors = remember(accentTonalBase, panelBackground, textColorMode) {
-        resolveAdaptiveUiButtonColors(
-            preferred = accentTonalBase,
-            background = panelBackground,
-            textColorMode = textColorMode,
-            minimumContentContrast = 4.5f,
-            minimumSurfaceContrast = 1.65f
+    SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(14.dp)) { panelColors ->
+        MotionOptionPicker(
+            title = stringResource(R.string.performance_mode_title),
+            selectedKey = settings.performanceMode,
+            options = performanceModes,
+            onSelected = onPerformanceModeChange,
+            fontFamily = fontFamily,
+            textColor = panelColors.text
+        )
+        Text(
+            text = stringResource(R.string.performance_mode_description),
+            modifier = Modifier.padding(top = 2.dp, bottom = 14.dp),
+            color = panelColors.secondaryText,
+            fontFamily = fontFamily,
+            fontSize = 12.sp
         )
     }
-    val containerColor = resolvedColors.container
-    val textColor = resolvedColors.content
-    Button(
-        onClick = onClick,
-        modifier = Modifier.defaultMinSize(minHeight = 42.dp),
-        shape = RoundedCornerShape(18.dp),
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = containerColor,
-            contentColor = textColor
-        )
-    ) {
+}
+
+@Composable
+fun ExtremeMotionSettingsSection(
+    settings: AppSettings,
+    fontFamily: FontFamily,
+    onAnimationsEnabledChange: (Boolean) -> Unit,
+    onAnimationStyleChange: (String) -> Unit,
+    onAnimationEasingChange: (String) -> Unit,
+    onAnimationSpeedChange: (Float) -> Unit,
+    onAnimationIntensityChange: (Float) -> Unit
+) {
+    val context = LocalContext.current
+    var animationSpeed by remember(settings.animationSpeed) { mutableFloatStateOf(settings.animationSpeed) }
+    var animationIntensity by remember(settings.animationIntensity) { mutableFloatStateOf(settings.animationIntensity) }
+    var previewState by remember { mutableStateOf(false) }
+
+    SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(14.dp)) { panelColors ->
         Text(
-            text = text,
-            color = textColor,
+            text = stringResource(R.string.motion_title),
+            color = panelColors.text,
             fontFamily = fontFamily,
-            fontSize = 14.sp,
-            fontWeight = FontWeight.SemiBold
+            fontWeight = FontWeight.Bold
+        )
+        ToggleRow(
+            title = stringResource(R.string.motion_enabled),
+            checked = settings.animationsEnabled,
+            onCheckedChange = onAnimationsEnabledChange,
+            fontFamily = fontFamily,
+            textColor = panelColors.text
+        )
+        if (settings.animationsEnabled) {
+            MotionOptionPicker(stringResource(R.string.motion_style), settings.animationStyle, motionStyles,
+                onAnimationStyleChange, fontFamily, panelColors.text)
+            MotionOptionPicker(stringResource(R.string.motion_easing), settings.animationEasing, motionEasings,
+                onAnimationEasingChange, fontFamily, panelColors.text)
+            CustomSlider(stringResource(R.string.motion_speed), String.format("%.1fx", animationSpeed), animationSpeed,
+                { animationSpeed = it }, { onAnimationSpeedChange(animationSpeed) }, 0.5f..2f, 14, settings, fontFamily,
+                panelColors.text)
+            CustomSlider(stringResource(R.string.motion_intensity), String.format("%.1fx", animationIntensity), animationIntensity,
+                { animationIntensity = it }, { onAnimationIntensityChange(animationIntensity) }, 0.5f..1.5f, 9, settings,
+                fontFamily, panelColors.text)
+            Spacer(Modifier.height(12.dp))
+            Text(
+                text = stringResource(R.string.motion_preview),
+                color = panelColors.text,
+                fontFamily = fontFamily,
+                fontSize = 13.sp,
+                fontWeight = FontWeight.SemiBold
+            )
+            Surface(
+                modifier = Modifier.fillMaxWidth().height(96.dp).padding(top = 8.dp),
+                shape = RoundedCornerShape(16.dp),
+                color = MaterialTheme.colorScheme.surfaceContainerHigh
+            ) {
+                ConfigurableAnimatedContent(
+                    targetState = previewState,
+                    animationsEnabled = true,
+                    animationSpeed = animationSpeed,
+                    animationStyle = settings.animationStyle,
+                    animationEasing = settings.animationEasing,
+                    animationIntensity = animationIntensity,
+                    performanceMode = settings.performanceMode
+                ) { state ->
+                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                        Text(
+                            text = if (state) "B" else "A",
+                            color = panelColors.text,
+                            fontFamily = fontFamily,
+                            fontSize = 28.sp,
+                            fontWeight = FontWeight.Bold
+                        )
+                    }
+                }
+            }
+            TextButton(
+                onClick = {
+                    UiSoundPlayer.playAction(context = context, action = UiActionSound.PlayPause)
+                    previewState = !previewState
+                },
+                modifier = Modifier.align(Alignment.End)
+            ) {
+                Text(
+                    text = stringResource(R.string.motion_preview_button),
+                    color = panelColors.text,
+                    fontFamily = fontFamily,
+                    fontWeight = FontWeight.SemiBold
+                )
+            }
+        }
+        Text(
+            text = stringResource(R.string.motion_description),
+            modifier = Modifier.padding(top = 6.dp),
+            color = panelColors.secondaryText,
+            fontFamily = fontFamily,
+            fontSize = 12.sp
         )
     }
 }

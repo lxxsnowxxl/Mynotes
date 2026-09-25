@@ -9,6 +9,7 @@ import android.os.Looper
 import androidx.compose.ui.graphics.toArgb
 import com.example.mynotes.R
 import com.example.mynotes.settings.AppSettings
+import com.example.mynotes.settings.FeedbackPreferencePolicy
 import com.example.mynotes.ui.sound.UiHaptic
 import com.example.mynotes.ui.sound.UiHapticPlayer
 import com.example.mynotes.ui.sound.UiSoundPlayer
@@ -90,21 +91,46 @@ object ReminderFeedbackPreferences {
         val primaryText = resolveUiTextColor(settings.textColor, panel)
         val secondaryText = resolveSecondaryUiTextColor(settings.textColor, panel)
 
+        val desired = Snapshot(
+            soundEnabled = settings.soundEffectsEnabled,
+            soundVolume = settings.soundEffectsVolume.coerceIn(0f, 100f),
+            soundTheme = UiSoundPlayer.normalizeTheme(settings.soundEffectsTheme),
+            reminderSoundEnabled = settings.reminderSoundEnabled,
+            reminderSoundVolume = settings.reminderSoundVolume.coerceIn(0f, 100f),
+            reminderRingtone = FeedbackPreferencePolicy.normalizeReminderRingtone(settings.reminderRingtone),
+            hapticEnabled = settings.hapticEffectsEnabled,
+            hapticIntensity = settings.hapticEffectsIntensity.coerceIn(0f, 100f),
+            hapticStyle = UiHapticPlayer.normalizeStyle(settings.hapticEffectsStyle),
+            notificationBackground = panel.toArgb(),
+            notificationText = primaryText.toArgb(),
+            notificationSecondaryText = secondaryText.toArgb(),
+            notificationAccent = scheme.primary.toArgb(),
+            notificationFontSize = settings.fontSize.coerceIn(12f, 24f)
+        )
+
+        /*
+         * MainActivity puede recibir emisiones equivalentes durante
+         * recreaciones y cambios de configuración. Si el snapshot final es
+         * idéntico, no abrimos otra edición de SharedPreferences ni generamos
+         * trabajo de persistencia innecesario.
+         */
+        if (read(context) == desired) return
+
         context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit()
-            .putBoolean(KEY_SOUND_ENABLED, settings.soundEffectsEnabled)
-            .putFloat(KEY_SOUND_VOLUME, settings.soundEffectsVolume.coerceIn(0f, 100f))
-            .putString(KEY_SOUND_THEME, UiSoundPlayer.normalizeTheme(settings.soundEffectsTheme))
-            .putBoolean(KEY_REMINDER_SOUND_ENABLED, settings.reminderSoundEnabled)
-            .putFloat(KEY_REMINDER_SOUND_VOLUME, settings.reminderSoundVolume.coerceIn(0f, 100f))
-            .putString(KEY_REMINDER_RINGTONE, normalizeRingtone(settings.reminderRingtone))
-            .putBoolean(KEY_HAPTIC_ENABLED, settings.hapticEffectsEnabled)
-            .putFloat(KEY_HAPTIC_INTENSITY, settings.hapticEffectsIntensity.coerceIn(0f, 100f))
-            .putString(KEY_HAPTIC_STYLE, UiHapticPlayer.normalizeStyle(settings.hapticEffectsStyle))
-            .putInt(KEY_NOTIFICATION_BACKGROUND, panel.toArgb())
-            .putInt(KEY_NOTIFICATION_TEXT, primaryText.toArgb())
-            .putInt(KEY_NOTIFICATION_SECONDARY_TEXT, secondaryText.toArgb())
-            .putInt(KEY_NOTIFICATION_ACCENT, scheme.primary.toArgb())
-            .putFloat(KEY_NOTIFICATION_FONT_SIZE, settings.fontSize.coerceIn(12f, 24f))
+            .putBoolean(KEY_SOUND_ENABLED, desired.soundEnabled)
+            .putFloat(KEY_SOUND_VOLUME, desired.soundVolume)
+            .putString(KEY_SOUND_THEME, desired.soundTheme)
+            .putBoolean(KEY_REMINDER_SOUND_ENABLED, desired.reminderSoundEnabled)
+            .putFloat(KEY_REMINDER_SOUND_VOLUME, desired.reminderSoundVolume)
+            .putString(KEY_REMINDER_RINGTONE, desired.reminderRingtone)
+            .putBoolean(KEY_HAPTIC_ENABLED, desired.hapticEnabled)
+            .putFloat(KEY_HAPTIC_INTENSITY, desired.hapticIntensity)
+            .putString(KEY_HAPTIC_STYLE, desired.hapticStyle)
+            .putInt(KEY_NOTIFICATION_BACKGROUND, desired.notificationBackground)
+            .putInt(KEY_NOTIFICATION_TEXT, desired.notificationText)
+            .putInt(KEY_NOTIFICATION_SECONDARY_TEXT, desired.notificationSecondaryText)
+            .putInt(KEY_NOTIFICATION_ACCENT, desired.notificationAccent)
+            .putFloat(KEY_NOTIFICATION_FONT_SIZE, desired.notificationFontSize)
             .apply()
     }
 
@@ -116,7 +142,7 @@ object ReminderFeedbackPreferences {
             soundTheme = UiSoundPlayer.normalizeTheme(prefs.getString(KEY_SOUND_THEME, UiSoundPlayer.DEFAULT_THEME).orEmpty()),
             reminderSoundEnabled = prefs.getBoolean(KEY_REMINDER_SOUND_ENABLED, true),
             reminderSoundVolume = prefs.getFloat(KEY_REMINDER_SOUND_VOLUME, 75f).coerceIn(0f, 100f),
-            reminderRingtone = normalizeRingtone(prefs.getString(KEY_REMINDER_RINGTONE, "classic").orEmpty()),
+            reminderRingtone = FeedbackPreferencePolicy.normalizeReminderRingtone(prefs.getString(KEY_REMINDER_RINGTONE, "classic").orEmpty()),
             hapticEnabled = prefs.getBoolean(KEY_HAPTIC_ENABLED, true),
             hapticIntensity = prefs.getFloat(KEY_HAPTIC_INTENSITY, 55f).coerceIn(0f, 100f),
             hapticStyle = UiHapticPlayer.normalizeStyle(prefs.getString(KEY_HAPTIC_STYLE, UiHapticPlayer.DEFAULT_STYLE).orEmpty()),
@@ -183,7 +209,7 @@ object ReminderFeedbackPreferences {
             val volume = ((volumePercent / 100f).coerceIn(0f, 1f) * 0.84f)
             val player = MediaPlayer.create(
                 context.applicationContext,
-                ringtoneResource(normalizeRingtone(ringtone)),
+                ringtoneResource(FeedbackPreferencePolicy.normalizeReminderRingtone(ringtone)),
                 ringtoneAttributes,
                 0
             ) ?: return
@@ -214,16 +240,6 @@ object ReminderFeedbackPreferences {
             }
             player.start()
         }
-    }
-
-    private fun normalizeRingtone(value: String): String = when (value.trim().lowercase()) {
-        "classic", "bell", "crystal", "pulse", "sunrise", "digital",
-        "alert", "urgent", "beacon", "radar", "warning", "signal", "pager", "double_alarm",
-        "serenity", "soft_bell", "breeze", "dew", "bamboo", "horizon", "calm", "moonlight",
-        "orbit", "droplet", "glass_tap", "clockwork", "spark", "bubble_pop", "comet", "echo_ping", "woodblock", "starlight",
-        "sentinel", "siren", "cascade", "escalation", "distress", "interlock", "scanner", "command",
-        "rapid_triple", "priority_sequence", "double_sweep", "attention_burst" -> value.trim().lowercase()
-        else -> "classic"
     }
 
     private fun ringtoneResource(value: String): Int = when (value) {

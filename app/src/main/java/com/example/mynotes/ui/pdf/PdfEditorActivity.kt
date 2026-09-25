@@ -128,6 +128,7 @@ import androidx.core.view.WindowInsetsControllerCompat
 import com.example.mynotes.R
 import com.example.mynotes.settings.AppSettings
 import com.example.mynotes.settings.SettingsRepository
+import com.example.mynotes.performance.DisplayPerformanceController
 import com.example.mynotes.ui.motion.AppMotion
 import com.example.mynotes.ui.sound.UiActionSound
 import com.example.mynotes.ui.sound.UiSound
@@ -219,6 +220,19 @@ class PdfEditorActivity : ComponentActivity() {
             val systemDark = androidx.compose.foundation.isSystemInDarkTheme()
             val effectiveDark = if (settings.configurationMode == "advanced") settings.darkMode else systemDark
 
+            /*
+             * Mantiene esta Window sincronizada con el mismo perfil de
+             * rendimiento que el resto de MyNotes. Compose renderiza con
+             * Choreographer/VSYNC; aquí solo solicitamos 60 o hasta 120 Hz
+             * según el modo guardado.
+             */
+            LaunchedEffect(settings.performanceMode) {
+                DisplayPerformanceController.requestForPerformanceMode(
+                    window = window,
+                    performanceMode = settings.performanceMode
+                )
+            }
+
             LaunchedEffect(
                 settings.soundEffectsEnabled,
                 settings.soundEffectsVolume,
@@ -260,10 +274,16 @@ class PdfEditorActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
+        DisplayPerformanceController.reapplyLastRequest(window)
         // Pickers de imágenes/PDF y otros componentes del sistema pueden
         // restaurar la navegación. Al regresar, la ocultamos inmediatamente.
         hideAndroidNavigationBar()
         window.decorView.post { hideAndroidNavigationBar() }
+    }
+
+    override fun onDestroy() {
+        DisplayPerformanceController.release(window)
+        super.onDestroy()
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {

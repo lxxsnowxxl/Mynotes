@@ -67,8 +67,7 @@
 <string name="mock_black">黑色</string>
     <string name="mock_white">白色</string>
     <string name="mock_font">字体</string>
-    <string name="mock_font_system_sans">通用无衬线字体</string>
-    <string name="mock_font_default">Android 系统字体</string>
+<string name="mock_font_default">Android 系统字体</string>
     <string name="mock_font_serif">衬线字体</string>
     <string name="mock_font_monospace">等宽字体</string>
     <string name="mock_font_size">字体大小</string>

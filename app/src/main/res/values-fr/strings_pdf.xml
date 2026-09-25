@@ -55,7 +55,7 @@
     <string name="pdf_clear_edits">Effacer les modifications</string>
     <string name="pdf_delete_page">Supprimer la page</string>
     <string name="pdf_apply_color">Appliquer la couleur</string>
-    <string name="pdf_library_title">Mes PDF</string>
+    <string name="pdf_library_title">Bibliothèque PDF</string>
     <string name="pdf_library_subtitle">Vos documents enregistrés et modifiables dans MyNotes.</string>
     <string name="pdf_library_new">Nouveau PDF</string>
     <string name="pdf_library_empty_title">Aucun PDF enregistré</string>

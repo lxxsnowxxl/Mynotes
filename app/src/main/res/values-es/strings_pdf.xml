@@ -55,7 +55,7 @@
     <string name="pdf_clear_edits">Limpiar ediciones</string>
     <string name="pdf_delete_page">Eliminar página</string>
     <string name="pdf_apply_color">Aplicar color</string>
-    <string name="pdf_library_title">Mis PDF</string>
+    <string name="pdf_library_title">Biblioteca PDF</string>
     <string name="pdf_library_subtitle">Tus documentos guardados y editables dentro de MyNotes.</string>
     <string name="pdf_library_new">Nuevo PDF</string>
     <string name="pdf_library_empty_title">Aún no hay PDF guardados</string>

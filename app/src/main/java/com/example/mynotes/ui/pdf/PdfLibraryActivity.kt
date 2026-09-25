@@ -8,6 +8,7 @@ import android.os.Build
 import android.os.Bundle
 import android.view.View
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
@@ -81,6 +82,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.mynotes.R
 import com.example.mynotes.settings.AppSettings
 import com.example.mynotes.settings.SettingsRepository
+import com.example.mynotes.performance.DisplayPerformanceController
 import com.example.mynotes.ui.components.AppDropdownMenu
 import com.example.mynotes.ui.sound.UiActionSound
 import com.example.mynotes.ui.sound.UiSound
@@ -133,6 +135,19 @@ class PdfLibraryActivity : ComponentActivity() {
             val systemDark = androidx.compose.foundation.isSystemInDarkTheme()
             val effectiveDark = if (settings.configurationMode == "advanced") settings.darkMode else systemDark
 
+            /*
+             * Mantiene esta Window sincronizada con el mismo perfil de
+             * rendimiento que el resto de MyNotes. Compose renderiza con
+             * Choreographer/VSYNC; aquí solo solicitamos 60 o hasta 120 Hz
+             * según el modo guardado.
+             */
+            LaunchedEffect(settings.performanceMode) {
+                DisplayPerformanceController.requestForPerformanceMode(
+                    window = window,
+                    performanceMode = settings.performanceMode
+                )
+            }
+
             LaunchedEffect(
                 settings.soundEffectsEnabled,
                 settings.soundEffectsVolume,
@@ -163,10 +178,20 @@ class PdfLibraryActivity : ComponentActivity() {
                 textOutlineEnabled = settings.textOutlineEnabled,
                 accentColor = settings.accentColor
             ) {
+                val handleBack: () -> Unit = {
+                    // Usa el mismo feedback global configurado en Settings.
+                    // playAction reproduce tanto el efecto de sonido como el
+                    // háptico correspondiente (si cada opción está habilitada).
+                    UiSoundPlayer.playAction(this@PdfLibraryActivity, UiActionSound.Back)
+                    finish()
+                }
+
+                BackHandler(onBack = handleBack)
+
                 PdfLibraryScreen(
                     settings = settings,
                     refreshSignal = refreshSignal.intValue,
-                    onBack = { finish() },
+                    onBack = handleBack,
                     onNew = {
                         UiSoundPlayer.playAction(this, UiActionSound.Add)
                         startActivity(Intent(this, PdfEditorActivity::class.java))
@@ -185,9 +210,15 @@ class PdfLibraryActivity : ComponentActivity() {
 
     override fun onResume() {
         super.onResume()
+        DisplayPerformanceController.reapplyLastRequest(window)
         hideAndroidNavigationBar()
         window.decorView.post { hideAndroidNavigationBar() }
         refreshSignal.intValue++
+    }
+
+    override fun onDestroy() {
+        DisplayPerformanceController.release(window)
+        super.onDestroy()
     }
 
     override fun onWindowFocusChanged(hasFocus: Boolean) {

@@ -57,7 +57,7 @@ data class AppSettings(
      * Diseños conservados para las barras.
      */
     val sliderStyle: String = "capsule",
-    val font: String = "system_sans",
+    val font: String = FontPreferencePolicy.SYSTEM_DEFAULT,
     val fontSize: Float = 16f,
     /*
      * Efectos cortos de interfaz: editar, borrar, prioridad, sliders

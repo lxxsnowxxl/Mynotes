@@ -55,7 +55,7 @@
     <string name="pdf_clear_edits">Clear edits</string>
     <string name="pdf_delete_page">Delete page</string>
     <string name="pdf_apply_color">Apply color</string>
-    <string name="pdf_library_title">My PDFs</string>
+    <string name="pdf_library_title">PDF Library</string>
     <string name="pdf_library_subtitle">Your saved, editable documents inside MyNotes.</string>
     <string name="pdf_library_new">New PDF</string>
     <string name="pdf_library_empty_title">No saved PDFs yet</string>

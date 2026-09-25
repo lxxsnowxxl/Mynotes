@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.height
@@ -19,10 +20,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
@@ -73,10 +75,23 @@ import com.example.mynotes.reminders.ReminderFeedbackPreferences
 import com.example.mynotes.ui.components.AppDropdownMenu
 import com.example.mynotes.settings.AppSettings
 import com.example.mynotes.settings.DeveloperFeatures
+import com.example.mynotes.settings.FontPreferencePolicy
 import com.example.mynotes.ui.components.BackupRestoreSection
-import com.example.mynotes.ui.components.ExtremeCustomizationSection
-import com.example.mynotes.ui.components.OptionsMenuCustomizationSection
-import com.example.mynotes.ui.components.PaletteSelector
+import com.example.mynotes.ui.components.ExtremeCustomizationHeader
+import com.example.mynotes.ui.components.ExtremeIconsSettingsSection
+import com.example.mynotes.ui.components.ExtremeAccentSettingsSection
+import com.example.mynotes.ui.components.ExtremeNoteCardsSettingsSection
+import com.example.mynotes.ui.components.ExtremeFabSettingsSection
+import com.example.mynotes.ui.components.ExtremePerformanceSettingsSection
+import com.example.mynotes.ui.components.ExtremeMotionSettingsSection
+import com.example.mynotes.ui.components.OptionsMenuHeader
+import com.example.mynotes.ui.components.OptionsMenuAppearanceSettingsSection
+import com.example.mynotes.ui.components.OptionsMenuMainActionsSettingsSection
+import com.example.mynotes.ui.components.OptionsMenuPrioritySettingsSection
+import com.example.mynotes.ui.components.OptionsMenuColorSettingsSection
+import com.example.mynotes.ui.components.OptionsMenuResetAction
+import com.example.mynotes.ui.components.PaletteSelectorRow
+import com.example.mynotes.ui.components.PaletteSettingsSegment
 import com.example.mynotes.ui.components.StyledSettingsSlider
 import com.example.mynotes.ui.components.SettingsSectionPanel
 import com.example.mynotes.ui.components.ScrollPositionCapsule
@@ -237,20 +252,37 @@ fun SettingsScreen(settings: AppSettings, onConfigurationModeChange: (String) ->
      * En automático el texto se calcula contra el color REAL del panel de
      * Configuración. Negro y blanco siguen siendo anulaciones manuales.
      */
-    val settingsTextColor = resolveUiTextColor(value = settings.textColor, background = settingsPanelColor)
-    val settingsSecondaryTextColor = resolveSecondaryUiTextColor(value = settings.textColor, background = settingsPanelColor)
-    val settingsGraphicColor = resolveUiGraphicColor(value = settings.textColor, background = settingsPanelColor)
-    val settingsScreenTextColor = resolveUiTextColor(value = settings.textColor, background = MaterialTheme.colorScheme.background)
-    val settingsScreenSecondaryTextColor = resolveSecondaryUiTextColor(value = settings.textColor,
-        background = MaterialTheme.colorScheme.background)
-    val settingsScreenGraphicColor = resolveUiGraphicColor(value = settings.textColor, background = MaterialTheme.colorScheme.background)
-    val settingsTopBarTextColor = resolveUiTextColor(value = settings.textColor, background = MaterialTheme.colorScheme.surface)
+    // Los sliders ajenos al color no necesitan repetir los cálculos de contraste.
+    // Cada resultado se invalida al cambiar su fondo real o el modo de texto.
+    val settingsTextColor = remember(settings.textColor, settingsPanelColor) {
+        resolveUiTextColor(value = settings.textColor, background = settingsPanelColor)
+    }
+    val settingsSecondaryTextColor = remember(settings.textColor, settingsPanelColor) {
+        resolveSecondaryUiTextColor(value = settings.textColor, background = settingsPanelColor)
+    }
+    val settingsGraphicColor = remember(settings.textColor, settingsPanelColor) {
+        resolveUiGraphicColor(value = settings.textColor, background = settingsPanelColor)
+    }
+    val screenBackground = MaterialTheme.colorScheme.background
+    val settingsScreenTextColor = remember(settings.textColor, screenBackground) {
+        resolveUiTextColor(value = settings.textColor, background = screenBackground)
+    }
+    val settingsScreenSecondaryTextColor = remember(settings.textColor, screenBackground) {
+        resolveSecondaryUiTextColor(value = settings.textColor, background = screenBackground)
+    }
+    val topBarBackground = MaterialTheme.colorScheme.surface
+    val settingsTopBarTextColor = remember(settings.textColor, topBarBackground) {
+        resolveUiTextColor(value = settings.textColor, background = topBarBackground)
+    }
     val menuBackground = when (settings.textColor) {
             "white" -> MaterialTheme.colorScheme.inverseSurface
             else -> MaterialTheme.colorScheme.surfaceContainerHigh
         }
-    val settingsMenuTextColor = resolveUiTextColor(value = settings.textColor, background = menuBackground)
-    val settingsScrollState = rememberScrollState()
+    val settingsMenuTextColor = remember(settings.textColor, menuBackground) {
+        resolveUiTextColor(value = settings.textColor, background = menuBackground)
+    }
+    val settingsListState = rememberLazyListState()
+    val paletteRows = remember { PaletteCatalog.palettes.chunked(2) }
     val isAdvancedMode = settings.configurationMode == "advanced"
 
     /*
@@ -337,1000 +369,1259 @@ fun SettingsScreen(settings: AppSettings, onConfigurationModeChange: (String) ->
         }) {
             paddingValues ->
         Box(modifier = Modifier.fillMaxSize().padding(paddingValues), contentAlignment = Alignment.TopCenter) {
-            Column(modifier = Modifier.widthIn(max = 840.dp).fillMaxWidth().verticalScroll(settingsScrollState).padding(start = 14.dp,
-                            end = 14.dp, bottom = 32.dp)) {
-            Surface(modifier = Modifier.fillMaxWidth(),
-                shape = RoundedCornerShape(22.dp),
-                color = settingsPanelColor,
-                tonalElevation = 1.dp) {
-                Column(modifier = Modifier.fillMaxWidth().padding(16.dp)) {
-                    Text(text = stringResource(R.string.mock_appearance),
-                        color = settingsTextColor,
-                        fontFamily = fontFamily,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 21.sp)
-                    Text(text = stringResource(R.string.mock_appearance_description),
-                        modifier = Modifier.padding(top = 2.dp),
-                        color = settingsSecondaryTextColor,
-                        fontFamily = fontFamily,
-                        fontSize = 13.sp)
-                    Spacer(modifier = Modifier.height(16.dp))
-                    ProfileAndModePanel(
-                        settings = settings,
-                        fontFamily = fontFamily,
-                        isAdvancedMode = isAdvancedMode,
-                        profileSize = localProfileSize,
-                        onProfileSizeValueChange = { localProfileSize = it },
-                        onConfigurationModeChange = onConfigurationModeChange,
-                        onProfileImageUriChange = onProfileImageUriChange,
-                        onProfileImageSizeChange = { onProfileImageSizeChange(localProfileSize) }
-                    )
-                    if (isAdvancedMode) {
-                        Spacer(modifier = Modifier.height(18.dp))
-                        ExtremeCustomizationSection(settings = settings, fontFamily = fontFamily, textColor = settingsScreenTextColor,
-                            secondaryTextColor = settingsScreenSecondaryTextColor, graphicColor = settingsScreenGraphicColor,
-                            profileOnly = false, showProfileSection = false,
-                            onProfileImageUriChange = onProfileImageUriChange, onProfileImageSizeChange = onProfileImageSizeChange,
-                            onIconStyleChange = onIconStyleChange, onIconSizeChange = onIconSizeChange,
-                            onAccentColorChange = onAccentColorChange, onNoteCardCornerRadiusChange = onNoteCardCornerRadiusChange,
-                            onNoteCardElevationChange = onNoteCardElevationChange, onNoteCardPaddingChange = onNoteCardPaddingChange,
-                            onNoteCardImageHeightChange = onNoteCardImageHeightChange,
-                            onNoteCardOutlineWidthChange = onNoteCardOutlineWidthChange,
-                            onNoteTitleMaxLinesChange = onNoteTitleMaxLinesChange,
-                            onNoteContentMaxLinesChange = onNoteContentMaxLinesChange, onNoteLineSpacingChange = onNoteLineSpacingChange,
-                            onShowNoteDateChange = onShowNoteDateChange, onShowCategoryChipChange = onShowCategoryChipChange,
-                            onShowFavoriteIconChange = onShowFavoriteIconChange, onFabSizeChange = onFabSizeChange,
-                            onPerformanceModeChange = onPerformanceModeChange, onAnimationsEnabledChange = onAnimationsEnabledChange,
-                            onAnimationStyleChange = onAnimationStyleChange, onAnimationEasingChange = onAnimationEasingChange,
-                            onAnimationSpeedChange = onAnimationSpeedChange, onAnimationIntensityChange = onAnimationIntensityChange)
-                    }
-                    if (isAdvancedMode) {
-                        Spacer(modifier = Modifier.height(18.dp))
-                        OptionsMenuCustomizationSection(settings = settings, fontFamily = fontFamily, textColor = settingsScreenTextColor,
-                            secondaryTextColor = settingsScreenSecondaryTextColor, graphicColor = settingsScreenGraphicColor,
-                            onOrderChange = onOptionMenuOrderChange, onHiddenItemsChange = onOptionMenuHiddenItemsChange,
-                            onShowIconsChange = onOptionMenuShowIconsChange, onTextColorChange = onOptionMenuTextColorChange,
-                            onOpacityChange = onOptionMenuOpacityChange, onPriorityHiddenItemsChange = onPriorityMenuHiddenItemsChange,
-                            onColorHiddenItemsChange = onColorMenuHiddenItemsChange, onReset = onResetOptionMenu)
-                        Spacer(modifier = Modifier.height(22.dp))
-                    } else {
-                        Spacer(modifier = Modifier.height(16.dp))
-                    }
-                    /*
-                     * -------------------------------------------------
-                     * COLOR PALETTE
-                     * -------------------------------------------------
-                     */
-                    SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(start = 6.dp, top = 14.dp, end = 0.dp, bottom = 14.dp),
-                        horizontalOutset = 8.dp) { panelColors -> SettingTitle(text = stringResource(R.string.mock_color_palette), color =
-                                panelColors.text, fontFamily = fontFamily)
-                        Spacer(modifier = Modifier.height(10.dp))
-                        PaletteSelector(palettes = PaletteCatalog.palettes,
-                            selectedPaletteKey = settings.backgroundColor,
-                            selectedToneIndex = settings.backgroundToneIndex,
-                            /*
-                             * Pulsar la tarjeta cambia de paleta y mantiene
-                             * el tono actual.
-                             */
-                            onPaletteSelected = {
-                                    paletteKey ->
-                                onBackgroundColorChange(paletteKey)
-                            },
-                            /*
-                             * Pulsar CUALQUIERA de los cuatro círculos:
-                             * 1) selecciona la paleta;
-                             * 2) selecciona ese tono exacto.
-                             */
-                            onToneSelected = {
-                                    paletteKey, toneIndex ->
-                                localTone = toneIndex.toFloat()
-                                onBackgroundColorChange(paletteKey)
-                                onBackgroundToneIndexChange(toneIndex)
-                            },
-                            animationsEnabled = settings.animationsEnabled,
-                            animationSpeed = settings.animationSpeed,
-                            textColorMode = settings.textColor,
-                            fontFamily = fontFamily)
-                        if (isAdvancedMode) {
-                            Spacer(modifier = Modifier.height(20.dp))
-                            /*
-                             * En modo avanzado se conserva la barra secundaria
-                             * de tono. En modo básico el tono se elige tocando
-                             * directamente uno de los cuatro círculos de la paleta.
-                             */
-                            SettingTitleRow(title = stringResource(R.string.mock_palette_tone),
-                                value = "${localTone.roundToInt() + 1}/4",
-                                color = panelColors.text,
-                                fontFamily = fontFamily)
-                            StyledSettingsSlider(value = localTone,
-                                onValueChange = {
-                                    localTone = it
-                                },
-                                onValueChangeFinished = {
-                                    onBackgroundToneIndexChange(localTone.roundToInt().coerceIn(0, 3))
-                                },
-                                valueRange = 0f..3f,
-                                steps = 2,
-                                activeColor = MaterialTheme.colorScheme.primary,
-                                inactiveColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.35f),
-                                style = settings.sliderStyle,
-                                valueLabel = "${localTone.roundToInt() + 1}/4")
-                        }
-                    }
-                    if (isAdvancedMode) {
-                    Spacer(modifier = Modifier.height(8.dp))
-                    /*
-                     * -------------------------------------------------
-                     * TONALIDAD DEL PANEL
-                     * -------------------------------------------------
-                     *
-                     * Controla el gran rectángulo que envuelve toda
-                     * la pantalla de Configuración.
-                     */
-                    SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(start = 6.dp, top = 14.dp, end = 0.dp, bottom = 14.dp),
-                        horizontalOutset = 8.dp) { panelColors -> SettingTitleRow(title = stringResource(R.string.settings_panel_tone),
-                            value = "${localSettingsPanelTone.roundToInt()}%",
-                            color = panelColors.text,
-                            fontFamily = fontFamily)
-                        StyledSettingsSlider(value = localSettingsPanelTone,
-                            onValueChange = {
-                                localSettingsPanelTone = it
-                            },
-                            onValueChangeFinished = {
-                                onSettingsPanelToneChange(localSettingsPanelTone)
-                            },
-                            valueRange = 0f..100f,
-                            activeColor = MaterialTheme.colorScheme.primary,
-                            inactiveColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.35f),
-                            style = settings.sliderStyle,
-                            valueLabel = "${localSettingsPanelTone.roundToInt()}%")
-                    }
-                    Spacer(modifier = Modifier.height(8.dp))
-                    SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(start = 6.dp, top = 14.dp, end = 0.dp, bottom = 14.dp),
-                        horizontalOutset = 8.dp) { panelColors -> SettingTitleRow(title = stringResource(R.string.mock_background_intensity
-                                ),
-                            value = "${localBackgroundIntensity.roundToInt()}%",
-                            color = panelColors.text,
-                            fontFamily = fontFamily)
-                        StyledSettingsSlider(value = localBackgroundIntensity,
-                            onValueChange = {
-                                localBackgroundIntensity = it
-                            },
-                            onValueChangeFinished = {
-                                onBackgroundIntensityChange(localBackgroundIntensity)
-                            },
-                            valueRange = 0f..100f,
-                            activeColor = MaterialTheme.colorScheme.primary,
-                            inactiveColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.35f),
-                            style = settings.sliderStyle,
-                            valueLabel = "${localBackgroundIntensity.roundToInt()}%")
-                    }
-                    Spacer(modifier = Modifier.height(8.dp))
-                    SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(start = 6.dp, top = 14.dp, end = 0.dp, bottom = 14.dp),
-                        horizontalOutset = 8.dp) { panelColors -> SettingTitleRow(title = stringResource(R.string.mock_header_intensity),
-                            value = "${localHeaderIntensity.roundToInt()}%",
-                            color = panelColors.text,
-                            fontFamily = fontFamily)
-                        StyledSettingsSlider(value = localHeaderIntensity,
-                            onValueChange = {
-                                localHeaderIntensity = it
-                            },
-                            onValueChangeFinished = {
-                                onHeaderIntensityChange(localHeaderIntensity)
-                            },
-                            valueRange = 0f..100f,
-                            activeColor = MaterialTheme.colorScheme.primary,
-                            inactiveColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.35f),
-                            style = settings.sliderStyle,
-                            valueLabel = "${localHeaderIntensity.roundToInt()}%")
-                    }
-                    Spacer(modifier = Modifier.height(8.dp))
-                    /*
-                     * -------------------------------------------------
-                     * RECUADROS / PANELES TRANSLÚCIDOS
-                     * -------------------------------------------------
-                     *
-                     * Controla surfaceVariant y los tres niveles
-                     * surfaceContainer usados por buscador, chips,
-                     * tarjetas de Configuración, adjuntos, menús, etc.
-                     */
-                    SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(start = 6.dp, top = 14.dp, end = 0.dp, bottom = 14.dp),
-                        horizontalOutset = 8.dp) { panelColors -> SettingTitleRow(title = stringResource(R.string.surface_panels_intensity
-                                ),
-                            value = "${localSurfacePanelIntensity.roundToInt()}%",
-                            color = panelColors.text,
-                            fontFamily = fontFamily)
-                        StyledSettingsSlider(value = localSurfacePanelIntensity,
-                            onValueChange = {
-                                localSurfacePanelIntensity = it
-                            },
-                            onValueChangeFinished = {
-                                onSurfacePanelIntensityChange(localSurfacePanelIntensity)
-                            },
-                            valueRange = 0f..100f,
-                            activeColor = MaterialTheme.colorScheme.primary,
-                            inactiveColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.35f),
-                            style = settings.sliderStyle,
-                            valueLabel = "${localSurfacePanelIntensity.roundToInt()}%")
-                        Text(text = stringResource(R.string.surface_panels_intensity_description),
-                            modifier = Modifier.padding(top = 2.dp),
-                            color = panelColors.secondaryText,
-                            fontFamily = fontFamily,
-                            fontSize = 12.sp)
-                    }
-                    Spacer(modifier = Modifier.height(14.dp))
-                    /*
-                     * -------------------------------------------------
-                     * TEXT COLOR
-                     * -------------------------------------------------
-                     */
-                    SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(start = 6.dp, top = 14.dp, end = 0.dp, bottom = 14.dp),
-                        horizontalOutset = 8.dp) { panelColors -> SettingTitle(text = stringResource(R.string.mock_text_color), color =
-                                panelColors.text, fontFamily = fontFamily)
-                        Spacer(modifier = Modifier.height(8.dp))
-                        TextColorSelector(selected = settings.textColor,
-                            onSelected = onTextColorChange,
-                            fontKey = settings.font)
-                    }
-                    Spacer(modifier = Modifier.height(12.dp))
-                    SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(vertical = 0.dp),
-                        horizontalOutset = 8.dp) { panelColors ->
-                        Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 14.dp, vertical = 12.dp),
-                            verticalAlignment = Alignment.CenterVertically) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(text = stringResource(R.string.text_black_outline),
-                                    color = panelColors.text,
+            LazyColumn(
+                state = settingsListState,
+                modifier = Modifier
+                    .widthIn(max = 840.dp)
+                    .fillMaxWidth()
+                    .fillMaxHeight()
+                    .padding(start = 14.dp, end = 14.dp, bottom = 32.dp)
+            ) {
+                item(key = "appearance_profile") {
+                    Surface(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(topStart = 22.dp, topEnd = 22.dp),
+                        color = settingsPanelColor,
+                        tonalElevation = 1.dp
+                    ) {
+                        Column(modifier = Modifier.fillMaxWidth().padding(PaddingValues(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 0.dp))) {
+                                Text(text = stringResource(R.string.mock_appearance),
+                                    color = settingsTextColor,
                                     fontFamily = fontFamily,
-                                    fontWeight = FontWeight.SemiBold,
-                                    fontSize = 15.sp)
-                                Text(text = stringResource(R.string.text_black_outline_description),
+                                    fontWeight = FontWeight.Bold,
+                                    fontSize = 21.sp)
+                                Text(text = stringResource(R.string.mock_appearance_description),
                                     modifier = Modifier.padding(top = 2.dp),
-                                    color = panelColors.secondaryText,
+                                    color = settingsSecondaryTextColor,
                                     fontFamily = fontFamily,
-                                    fontSize = 12.sp)
-                            }
-                            Switch(checked = settings.textOutlineEnabled,
-                                onCheckedChange = { checked -> UiSoundPlayer.playToggle(context = context, checked = checked)
-                                    onTextOutlineEnabledChange(checked)
-                                })
+                                    fontSize = 13.sp)
+                                Spacer(modifier = Modifier.height(16.dp))
+                                ProfileAndModePanel(
+                                    settings = settings,
+                                    fontFamily = fontFamily,
+                                    isAdvancedMode = isAdvancedMode,
+                                    profileSize = localProfileSize,
+                                    onProfileSizeValueChange = { localProfileSize = it },
+                                    onConfigurationModeChange = onConfigurationModeChange,
+                                    onProfileImageUriChange = onProfileImageUriChange,
+                                    onProfileImageSizeChange = { onProfileImageSizeChange(localProfileSize) }
+                                )
+                                Spacer(modifier = Modifier.height(if (isAdvancedMode) 10.dp else 16.dp))
                         }
                     }
-                    }
-                    Spacer(modifier = Modifier.height(20.dp))
-                    /*
-                     * -------------------------------------------------
-                     * FONT
-                     * -------------------------------------------------
-                     */
-                    SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(start = 6.dp, top = 14.dp, end = 0.dp, bottom = 14.dp),
-                        horizontalOutset = 8.dp) { panelColors ->
-                        if (isAdvancedMode) {
-                            val systemFontLabel = stringResource(R.string.mock_font_default)
-                            val systemSansLabel = stringResource(R.string.mock_font_system_sans)
-                            val googleSansFlexLabel = stringResource(R.string.mock_font_google_sans_flex)
-                            val serifLabel = stringResource(R.string.mock_font_serif)
-                            val monospaceLabel = stringResource(R.string.mock_font_monospace)
-                            val fontOptions = buildList {
-                                add("system_default" to systemFontLabel)
-                                add("system_sans" to systemSansLabel)
-                                if (developerGoogleSansFlexUnlocked) {
-                                    add("developer_google_sans_flex" to googleSansFlexLabel)
-                                }
-                                add("serif" to serifLabel)
-                                add("monospace" to monospaceLabel)
-                            }
-                            SettingDropdown(title = stringResource(R.string.mock_font),
-                            selectedLabel = when (settings.font) {
-                                    "system_default" -> systemFontLabel
-                                    "developer_google_sans_flex" -> googleSansFlexLabel
-                                    "serif" -> serifLabel
-                                    "monospace" -> monospaceLabel
-                                    else -> systemSansLabel
-                                },
-                            options = fontOptions,
-                            textColor = panelColors.text,
-                            textColorMode = settings.textColor,
-                            menuBackground = menuBackground,
-                            menuTextColor = settingsMenuTextColor,
-                            fontFamily = fontFamily,
-                            onSelected = onFontChange)
-                            Spacer(modifier = Modifier.height(14.dp))
-                        }
-                        SettingTitleRow(title = stringResource(R.string.mock_font_size),
-                            value = "${localFontSize.roundToInt()} sp",
-                            color = panelColors.text,
-                            fontFamily = fontFamily)
-                        StyledSettingsSlider(value = localFontSize,
-                            onValueChange = {
-                                localFontSize = it
-                            },
-                            onValueChangeFinished = {
-                                onFontSizeChange(localFontSize)
-                            },
-                            valueRange = 12f..28f,
-                            activeColor = MaterialTheme.colorScheme.primary,
-                            inactiveColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.35f),
-                            // En la configuración básica el tamaño de fuente usa siempre
-                            // el diseño Capsule. En modo avanzado se respeta el estilo
-                            // elegido por el usuario desde la personalización de sliders.
-                            style = if (isAdvancedMode) settings.sliderStyle else "capsule",
-                            valueLabel = "${localFontSize.roundToInt()} sp")
-                    }
-                    if (isAdvancedMode) {
-                    Spacer(modifier = Modifier.height(14.dp))
-                    /*
-                     * -------------------------------------------------
-                     * SOUND EFFECTS
-                     * -------------------------------------------------
-                     */
-                    SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(start = 6.dp, top = 10.dp, end = 0.dp, bottom = SoundHapticPanelBottomPadding),
-                        horizontalOutset = 8.dp) { panelColors -> Text(text = stringResource(R.string.sound_effects),
-                            color = panelColors.text,
-                            fontFamily = fontFamily,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 16.sp)
-                        Text(text = stringResource(R.string.sound_effects_description),
-                            modifier = Modifier.padding(top = 2.dp, bottom = 8.dp),
-                            color = panelColors.secondaryText,
-                            fontFamily = fontFamily,
-                            fontSize = 12.sp)
-                        Row(modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween) {
-                            Text(text = stringResource(R.string.sound_effects_enabled),
-                                color = panelColors.text,
-                                fontFamily = fontFamily,
-                                fontSize = 14.sp)
-                            Switch(checked = settings.soundEffectsEnabled,
-                                onCheckedChange = { checked -> UiSoundPlayer.playToggle(context = context, checked = checked, force = true)
-                                    onSoundEffectsEnabledChange(checked)
-                                })
-                        }
-                        if (settings.soundEffectsEnabled) {
-                            Spacer(modifier = Modifier.height(8.dp))
-                            SettingDropdown(title = stringResource(R.string.sound_effects_theme),
-                                selectedLabel = when (settings.soundEffectsTheme) {
-                                        "soft" -> stringResource(R.string.sound_theme_soft)
-                                        "digital" -> stringResource(R.string.sound_theme_digital)
-                                        "glass" -> stringResource(R.string.sound_theme_glass)
-                                        "retro" -> stringResource(R.string.sound_theme_retro)
-                                        "pop" -> stringResource(R.string.sound_theme_pop)
-                                        "mechanical" -> stringResource(R.string.sound_theme_mechanical)
-                                        "bubble" -> stringResource(R.string.sound_theme_bubble)
-                                        "arcade" -> stringResource(R.string.sound_theme_arcade)
-                                        "wood" -> stringResource(R.string.sound_theme_wood)
-                                        "synth" -> stringResource(R.string.sound_theme_synth)
-                                        "minimal" -> stringResource(R.string.sound_theme_minimal)
-                                        "camera" -> stringResource(R.string.sound_theme_camera)
-                                        "typewriter" -> stringResource(R.string.sound_theme_typewriter)
-                                        "metal" -> stringResource(R.string.sound_theme_metal)
-                                        "pixel" -> stringResource(R.string.sound_theme_pixel)
-                                        "space" -> stringResource(R.string.sound_theme_space)
-                                        "chime" -> stringResource(R.string.sound_theme_chime)
-                                        "paper" -> stringResource(R.string.sound_theme_paper)
-                                        "neon" -> stringResource(R.string.sound_theme_neon)
-                                        "material" -> stringResource(R.string.sound_theme_material)
-                                        "expressive" -> stringResource(R.string.sound_theme_expressive)
-                                        "prism" -> stringResource(R.string.sound_theme_prism)
-                                        "aurora" -> stringResource(R.string.sound_theme_aurora)
-                                        "fluid" -> stringResource(R.string.sound_theme_fluid)
-                                        "pulse" -> stringResource(R.string.sound_theme_pulse)
-                                        else -> stringResource(R.string.sound_theme_classic)
-                                    },
-                                options = listOf("classic" to stringResource(R.string.sound_theme_classic),
-                                        "soft" to stringResource(R.string.sound_theme_soft),
-                                        "digital" to stringResource(R.string.sound_theme_digital),
-                                        "glass" to stringResource(R.string.sound_theme_glass),
-                                        "retro" to stringResource(R.string.sound_theme_retro),
-                                        "pop" to stringResource(R.string.sound_theme_pop),
-                                        "mechanical" to stringResource(R.string.sound_theme_mechanical),
-                                        "bubble" to stringResource(R.string.sound_theme_bubble),
-                                        "arcade" to stringResource(R.string.sound_theme_arcade),
-                                        "wood" to stringResource(R.string.sound_theme_wood),
-                                        "synth" to stringResource(R.string.sound_theme_synth),
-                                        "minimal" to stringResource(R.string.sound_theme_minimal),
-                                        "camera" to stringResource(R.string.sound_theme_camera),
-                                        "typewriter" to stringResource(R.string.sound_theme_typewriter),
-                                        "metal" to stringResource(R.string.sound_theme_metal),
-                                        "pixel" to stringResource(R.string.sound_theme_pixel),
-                                        "space" to stringResource(R.string.sound_theme_space),
-                                        "chime" to stringResource(R.string.sound_theme_chime),
-                                        "paper" to stringResource(R.string.sound_theme_paper),
-                                        "neon" to stringResource(R.string.sound_theme_neon),
-                                        "material" to stringResource(R.string.sound_theme_material),
-                                        "expressive" to stringResource(R.string.sound_theme_expressive),
-                                        "prism" to stringResource(R.string.sound_theme_prism),
-                                        "aurora" to stringResource(R.string.sound_theme_aurora),
-                                        "fluid" to stringResource(R.string.sound_theme_fluid),
-                                        "pulse" to stringResource(R.string.sound_theme_pulse)),
-                                textColor = panelColors.text,
-                                textColorMode = settings.textColor,
-                                menuBackground = menuBackground,
-                                menuTextColor = settingsMenuTextColor,
-                                fontFamily = fontFamily,
-                                playDefaultSelectionFeedback = false,
-                                onSelected = { selectedTheme ->
-                                    UiHapticPlayer.play(context = context, haptic = UiHaptic.Selection)
-                                    onSoundEffectsThemeChange(selectedTheme)
-                                    UiSoundPlayer.previewTheme(
-                                        context = context,
-                                        theme = selectedTheme,
-                                        sound = UiSound.Edit,
-                                        volumePercent = localSoundEffectsVolume
-                                    )
-                                })
-                            Spacer(modifier = Modifier.height(PreviewButtonVerticalGap))
-                            RoundedPreviewButton(
-                                text = stringResource(R.string.sound_effects_preview),
-                                panelBackground = panelColors.background,
-                                panelContentColor = panelColors.text,
-                                textColorMode = settings.textColor,
-                                fontFamily = fontFamily,
-                                onClick = {
-                                    UiSoundPlayer.previewTheme(
-                                        context = context,
-                                        theme = settings.soundEffectsTheme,
-                                        sound = UiSound.Attachment,
-                                        volumePercent = localSoundEffectsVolume
-                                    )
-                                }
-                            )
-                            Spacer(modifier = Modifier.height(PreviewToSliderGap))
-                            SettingTitleRow(title = stringResource(R.string.sound_effects_volume),
-                                value = "${localSoundEffectsVolume.roundToInt()}%",
-                                color = panelColors.text,
-                                fontFamily = fontFamily)
-                            StyledSettingsSlider(value = localSoundEffectsVolume,
-                                onValueChange = {
-                                    localSoundEffectsVolume = it
-                                },
-                                onValueChangeFinished = {
-                                    onSoundEffectsVolumeChange(localSoundEffectsVolume)
-                                },
-                                valueRange = 0f..100f,
-                                steps = 19,
-                                activeColor = MaterialTheme.colorScheme.primary,
-                                inactiveColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.35f),
-                                style = settings.sliderStyle,
-                                valueLabel = "${localSoundEffectsVolume.roundToInt()}%")
-                        }
-                    }
-                    Spacer(modifier = Modifier.height(16.dp))
-                    /*
-                     * -------------------------------------------------
-                     * REMINDER / ALERT SOUNDS
-                     * -------------------------------------------------
-                     */
-                    SettingsSectionPanel(
-                        textColorMode = settings.textColor,
-                        contentPadding = PaddingValues(start = 6.dp, top = 10.dp, end = 0.dp, bottom = SoundHapticPanelBottomPadding),
-                        horizontalOutset = 8.dp
-                    ) { panelColors ->
-                        Text(
-                            text = stringResource(R.string.reminder_tones),
-                            color = panelColors.text,
-                            fontFamily = fontFamily,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 16.sp
-                        )
-                        Text(
-                            text = stringResource(R.string.reminder_tones_description),
-                            modifier = Modifier.padding(top = 2.dp, bottom = 8.dp),
-                            color = panelColors.secondaryText,
-                            fontFamily = fontFamily,
-                            fontSize = 12.sp
-                        )
-                        Row(
+                }
+                if (isAdvancedMode) {
+                    item(key = "extreme_header", contentType = "settings_header") {
+                        Surface(
                             modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween
+                            shape = RoundedCornerShape(0.dp),
+                            color = settingsPanelColor,
+                            tonalElevation = 1.dp
                         ) {
-                            Text(
-                                text = stringResource(R.string.reminder_sound_enabled),
-                                color = panelColors.text,
-                                fontFamily = fontFamily,
-                                fontSize = 14.sp
-                            )
-                            Switch(
-                                checked = settings.reminderSoundEnabled,
-                                onCheckedChange = { checked ->
-                                    UiSoundPlayer.playToggleAudioOnly(context = context, checked = checked)
-                                    UiHapticPlayer.playToggle(context = context, checked = checked)
-                                    onReminderSoundEnabledChange(checked)
-                                }
-                            )
-                        }
-                        Spacer(modifier = Modifier.height(8.dp))
-                        SettingDropdown(
-                            title = stringResource(R.string.reminder_tone),
-                            selectedLabel = when (settings.reminderRingtone) {
-                                "bell" -> stringResource(R.string.reminder_tone_bell)
-                                "crystal" -> stringResource(R.string.reminder_tone_crystal)
-                                "pulse" -> stringResource(R.string.reminder_tone_pulse)
-                                "sunrise" -> stringResource(R.string.reminder_tone_sunrise)
-                                "digital" -> stringResource(R.string.reminder_tone_digital)
-                                "alert" -> stringResource(R.string.reminder_tone_alert)
-                                "urgent" -> stringResource(R.string.reminder_tone_urgent)
-                                "beacon" -> stringResource(R.string.reminder_tone_beacon)
-                                "radar" -> stringResource(R.string.reminder_tone_radar)
-                                "warning" -> stringResource(R.string.reminder_tone_warning)
-                                "signal" -> stringResource(R.string.reminder_tone_signal)
-                                "pager" -> stringResource(R.string.reminder_tone_pager)
-                                "double_alarm" -> stringResource(R.string.reminder_tone_double_alarm)
-                                "serenity" -> stringResource(R.string.reminder_tone_serenity)
-                                "soft_bell" -> stringResource(R.string.reminder_tone_soft_bell)
-                                "breeze" -> stringResource(R.string.reminder_tone_breeze)
-                                "dew" -> stringResource(R.string.reminder_tone_dew)
-                                "bamboo" -> stringResource(R.string.reminder_tone_bamboo)
-                                "horizon" -> stringResource(R.string.reminder_tone_horizon)
-                                "calm" -> stringResource(R.string.reminder_tone_calm)
-                                "moonlight" -> stringResource(R.string.reminder_tone_moonlight)
-                                "orbit" -> stringResource(R.string.reminder_tone_orbit)
-                                "droplet" -> stringResource(R.string.reminder_tone_droplet)
-                                "glass_tap" -> stringResource(R.string.reminder_tone_glass_tap)
-                                "clockwork" -> stringResource(R.string.reminder_tone_clockwork)
-                                "spark" -> stringResource(R.string.reminder_tone_spark)
-                                "bubble_pop" -> stringResource(R.string.reminder_tone_bubble_pop)
-                                "comet" -> stringResource(R.string.reminder_tone_comet)
-                                "echo_ping" -> stringResource(R.string.reminder_tone_echo_ping)
-                                "woodblock" -> stringResource(R.string.reminder_tone_woodblock)
-                                "starlight" -> stringResource(R.string.reminder_tone_starlight)
-                                "sentinel" -> stringResource(R.string.reminder_tone_sentinel)
-                                "siren" -> stringResource(R.string.reminder_tone_siren)
-                                "cascade" -> stringResource(R.string.reminder_tone_cascade)
-                                "escalation" -> stringResource(R.string.reminder_tone_escalation)
-                                "distress" -> stringResource(R.string.reminder_tone_distress)
-                                "interlock" -> stringResource(R.string.reminder_tone_interlock)
-                                "scanner" -> stringResource(R.string.reminder_tone_scanner)
-                                "command" -> stringResource(R.string.reminder_tone_command)
-                                "rapid_triple" -> stringResource(R.string.reminder_tone_rapid_triple)
-                                "priority_sequence" -> stringResource(R.string.reminder_tone_priority_sequence)
-                                "double_sweep" -> stringResource(R.string.reminder_tone_double_sweep)
-                                "attention_burst" -> stringResource(R.string.reminder_tone_attention_burst)
-                                else -> stringResource(R.string.reminder_tone_classic)
-                            },
-                            options = listOf(
-                                "classic" to stringResource(R.string.reminder_tone_classic),
-                                "bell" to stringResource(R.string.reminder_tone_bell),
-                                "crystal" to stringResource(R.string.reminder_tone_crystal),
-                                "pulse" to stringResource(R.string.reminder_tone_pulse),
-                                "sunrise" to stringResource(R.string.reminder_tone_sunrise),
-                                "digital" to stringResource(R.string.reminder_tone_digital),
-                                "alert" to stringResource(R.string.reminder_tone_alert),
-                                "urgent" to stringResource(R.string.reminder_tone_urgent),
-                                "beacon" to stringResource(R.string.reminder_tone_beacon),
-                                "radar" to stringResource(R.string.reminder_tone_radar),
-                                "warning" to stringResource(R.string.reminder_tone_warning),
-                                "signal" to stringResource(R.string.reminder_tone_signal),
-                                "pager" to stringResource(R.string.reminder_tone_pager),
-                                "double_alarm" to stringResource(R.string.reminder_tone_double_alarm),
-                                "serenity" to stringResource(R.string.reminder_tone_serenity),
-                                "soft_bell" to stringResource(R.string.reminder_tone_soft_bell),
-                                "breeze" to stringResource(R.string.reminder_tone_breeze),
-                                "dew" to stringResource(R.string.reminder_tone_dew),
-                                "bamboo" to stringResource(R.string.reminder_tone_bamboo),
-                                "horizon" to stringResource(R.string.reminder_tone_horizon),
-                                "calm" to stringResource(R.string.reminder_tone_calm),
-                                "moonlight" to stringResource(R.string.reminder_tone_moonlight),
-                                "orbit" to stringResource(R.string.reminder_tone_orbit),
-                                "droplet" to stringResource(R.string.reminder_tone_droplet),
-                                "glass_tap" to stringResource(R.string.reminder_tone_glass_tap),
-                                "clockwork" to stringResource(R.string.reminder_tone_clockwork),
-                                "spark" to stringResource(R.string.reminder_tone_spark),
-                                "bubble_pop" to stringResource(R.string.reminder_tone_bubble_pop),
-                                "comet" to stringResource(R.string.reminder_tone_comet),
-                                "echo_ping" to stringResource(R.string.reminder_tone_echo_ping),
-                                "woodblock" to stringResource(R.string.reminder_tone_woodblock),
-                                "starlight" to stringResource(R.string.reminder_tone_starlight),
-                                "sentinel" to stringResource(R.string.reminder_tone_sentinel),
-                                "siren" to stringResource(R.string.reminder_tone_siren),
-                                "cascade" to stringResource(R.string.reminder_tone_cascade),
-                                "escalation" to stringResource(R.string.reminder_tone_escalation),
-                                "distress" to stringResource(R.string.reminder_tone_distress),
-                                "interlock" to stringResource(R.string.reminder_tone_interlock),
-                                "scanner" to stringResource(R.string.reminder_tone_scanner),
-                                "command" to stringResource(R.string.reminder_tone_command),
-                                "rapid_triple" to stringResource(R.string.reminder_tone_rapid_triple),
-                                "priority_sequence" to stringResource(R.string.reminder_tone_priority_sequence),
-                                "double_sweep" to stringResource(R.string.reminder_tone_double_sweep),
-                                "attention_burst" to stringResource(R.string.reminder_tone_attention_burst)
-                            ),
-                            textColor = panelColors.text,
-                            textColorMode = settings.textColor,
-                            menuBackground = menuBackground,
-                            menuTextColor = settingsMenuTextColor,
-                            fontFamily = fontFamily,
-                            playDefaultSelectionFeedback = false,
-                            onSelected = { selectedRingtone ->
-                                UiHapticPlayer.play(context = context, haptic = UiHaptic.Selection)
-                                onReminderRingtoneChange(selectedRingtone)
-                                ReminderFeedbackPreferences.previewRingtone(
-                                    context = context,
-                                    ringtone = selectedRingtone,
-                                    volumePercent = localReminderSoundVolume
+                            Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
+                                Spacer(modifier = Modifier.height(8.dp))
+                                ExtremeCustomizationHeader(
+                                    fontFamily = fontFamily,
+                                    textColor = settingsScreenTextColor
                                 )
+                                Spacer(modifier = Modifier.height(10.dp))
                             }
-                        )
-                        Spacer(modifier = Modifier.height(PreviewButtonVerticalGap))
-                        RoundedPreviewButton(
-                            text = stringResource(R.string.reminder_tone_preview),
-                            panelBackground = panelColors.background,
-                            panelContentColor = panelColors.text,
-                            textColorMode = settings.textColor,
-                            fontFamily = fontFamily,
-                            onClick = {
-                                ReminderFeedbackPreferences.previewRingtone(
-                                    context = context,
-                                    ringtone = settings.reminderRingtone,
-                                    volumePercent = localReminderSoundVolume
+                        }
+                    }
+                    item(key = "extreme_icons", contentType = "settings_panel") {
+                        Surface(Modifier.fillMaxWidth(), RoundedCornerShape(0.dp), settingsPanelColor, tonalElevation = 1.dp) {
+                            Column(Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
+                                ExtremeIconsSettingsSection(settings, fontFamily, onIconStyleChange, onIconSizeChange)
+                                Spacer(Modifier.height(12.dp))
+                            }
+                        }
+                    }
+                    item(key = "extreme_accent", contentType = "settings_panel") {
+                        Surface(Modifier.fillMaxWidth(), RoundedCornerShape(0.dp), settingsPanelColor, tonalElevation = 1.dp) {
+                            Column(Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
+                                ExtremeAccentSettingsSection(settings, fontFamily, onAccentColorChange)
+                                Spacer(Modifier.height(12.dp))
+                            }
+                        }
+                    }
+                    item(key = "extreme_note_cards", contentType = "settings_panel") {
+                        Surface(Modifier.fillMaxWidth(), RoundedCornerShape(0.dp), settingsPanelColor, tonalElevation = 1.dp) {
+                            Column(Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
+                                ExtremeNoteCardsSettingsSection(
+                                    settings = settings,
+                                    fontFamily = fontFamily,
+                                    onNoteCardCornerRadiusChange = onNoteCardCornerRadiusChange,
+                                    onNoteCardElevationChange = onNoteCardElevationChange,
+                                    onNoteCardPaddingChange = onNoteCardPaddingChange,
+                                    onNoteCardImageHeightChange = onNoteCardImageHeightChange,
+                                    onNoteCardOutlineWidthChange = onNoteCardOutlineWidthChange,
+                                    onNoteTitleMaxLinesChange = onNoteTitleMaxLinesChange,
+                                    onNoteContentMaxLinesChange = onNoteContentMaxLinesChange,
+                                    onNoteLineSpacingChange = onNoteLineSpacingChange,
+                                    onShowNoteDateChange = onShowNoteDateChange,
+                                    onShowCategoryChipChange = onShowCategoryChipChange,
+                                    onShowFavoriteIconChange = onShowFavoriteIconChange
                                 )
+                                Spacer(Modifier.height(12.dp))
                             }
-                        )
-                        Spacer(modifier = Modifier.height(PreviewToSliderGap))
-                        SettingTitleRow(
-                            title = stringResource(R.string.reminder_sound_volume),
-                            value = "${localReminderSoundVolume.roundToInt()}%",
-                            color = panelColors.text,
-                            fontFamily = fontFamily
-                        )
-                        StyledSettingsSlider(
-                            value = localReminderSoundVolume,
-                            onValueChange = { localReminderSoundVolume = it },
-                            onValueChangeFinished = { onReminderSoundVolumeChange(localReminderSoundVolume) },
-                            valueRange = 0f..100f,
-                            steps = 19,
-                            activeColor = MaterialTheme.colorScheme.primary,
-                            inactiveColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.35f),
-                            style = settings.sliderStyle,
-                            valueLabel = "${localReminderSoundVolume.roundToInt()}%"
-                        )
-                    }
-                    Spacer(modifier = Modifier.height(16.dp))
-                    /*
-                     * -------------------------------------------------
-                     * HAPTIC / VIBRATION EFFECTS
-                     * -------------------------------------------------
-                     */
-                    SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(start = 6.dp, top = 10.dp, end = 0.dp, bottom = SoundHapticPanelBottomPadding),
-                        horizontalOutset = 8.dp) { panelColors -> Text(text = stringResource(R.string.haptic_effects),
-                            color = panelColors.text,
-                            fontFamily = fontFamily,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 16.sp)
-                        Text(text = stringResource(R.string.haptic_effects_description),
-                            modifier = Modifier.padding(top = 2.dp, bottom = 8.dp),
-                            color = panelColors.secondaryText,
-                            fontFamily = fontFamily,
-                            fontSize = 12.sp)
-                        Row(modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.SpaceBetween) {
-                            Text(text = stringResource(R.string.haptic_effects_enabled),
-                                color = panelColors.text,
-                                fontFamily = fontFamily,
-                                fontSize = 14.sp)
-                            Switch(
-                                checked = settings.hapticEffectsEnabled,
-                                onCheckedChange = { checked ->
-                                    UiSoundPlayer.playToggleAudioOnly(context = context, checked = checked)
-                                    UiHapticPlayer.playToggle(context = context, checked = checked, force = true)
-                                    onHapticEffectsEnabledChange(checked)
-                                }
-                            )
-                        }
-                        if (settings.hapticEffectsEnabled) {
-                            Spacer(modifier = Modifier.height(8.dp))
-                            SettingDropdown(title = stringResource(R.string.haptic_effects_style),
-                                selectedLabel = when (settings.hapticEffectsStyle) {
-                                        "crisp" -> stringResource(R.string.haptic_style_crisp)
-                                        "deep" -> stringResource(R.string.haptic_style_deep)
-                                        "double" -> stringResource(R.string.haptic_style_double)
-                                        "pulse" -> stringResource(R.string.haptic_style_pulse)
-                                        "stepped" -> stringResource(R.string.haptic_style_stepped)
-                                        "mechanical" -> stringResource(R.string.haptic_style_mechanical)
-                                        "minimal" -> stringResource(R.string.haptic_style_minimal)
-                                        "triple" -> stringResource(R.string.haptic_style_triple)
-                                        "ripple" -> stringResource(R.string.haptic_style_ripple)
-                                        "heartbeat" -> stringResource(R.string.haptic_style_heartbeat)
-                                        "snap" -> stringResource(R.string.haptic_style_snap)
-                                        "wave" -> stringResource(R.string.haptic_style_wave)
-                                        "heavy" -> stringResource(R.string.haptic_style_heavy)
-                                        "spring" -> stringResource(R.string.haptic_style_spring)
-                                        "echo" -> stringResource(R.string.haptic_style_echo)
-                                        else -> stringResource(R.string.haptic_style_soft)
-                                    },
-                                options = listOf("soft" to stringResource(R.string.haptic_style_soft),
-                                        "crisp" to stringResource(R.string.haptic_style_crisp),
-                                        "deep" to stringResource(R.string.haptic_style_deep),
-                                        "double" to stringResource(R.string.haptic_style_double),
-                                        "pulse" to stringResource(R.string.haptic_style_pulse),
-                                        "stepped" to stringResource(R.string.haptic_style_stepped),
-                                        "mechanical" to stringResource(R.string.haptic_style_mechanical),
-                                        "minimal" to stringResource(R.string.haptic_style_minimal),
-                                        "triple" to stringResource(R.string.haptic_style_triple),
-                                        "ripple" to stringResource(R.string.haptic_style_ripple),
-                                        "heartbeat" to stringResource(R.string.haptic_style_heartbeat),
-                                        "snap" to stringResource(R.string.haptic_style_snap),
-                                        "wave" to stringResource(R.string.haptic_style_wave),
-                                        "heavy" to stringResource(R.string.haptic_style_heavy),
-                                        "spring" to stringResource(R.string.haptic_style_spring),
-                                        "echo" to stringResource(R.string.haptic_style_echo)),
-                                textColor = panelColors.text,
-                                textColorMode = settings.textColor,
-                                menuBackground = menuBackground,
-                                menuTextColor = settingsMenuTextColor,
-                                fontFamily = fontFamily,
-                                playDefaultSelectionFeedback = false,
-                                onSelected = { selectedStyle ->
-                                    UiSoundPlayer.playActionAudioOnly(context = context, action = UiActionSound.Select)
-                                    onHapticEffectsStyleChange(selectedStyle)
-                                    UiHapticPlayer.previewStyle(
-                                        context = context,
-                                        style = selectedStyle,
-                                        intensityPercent = localHapticEffectsIntensity,
-                                        haptic = UiHaptic.Confirm
-                                    )
-                                })
-                            Spacer(modifier = Modifier.height(PreviewButtonVerticalGap))
-                            RoundedPreviewButton(
-                                text = stringResource(R.string.haptic_effects_preview),
-                                panelBackground = panelColors.background,
-                                panelContentColor = panelColors.text,
-                                textColorMode = settings.textColor,
-                                fontFamily = fontFamily,
-                                onClick = {
-                                    UiSoundPlayer.playActionAudioOnly(context = context, action = UiActionSound.PlayPause)
-                                    UiHapticPlayer.previewStyle(
-                                        context = context,
-                                        style = settings.hapticEffectsStyle,
-                                        intensityPercent = localHapticEffectsIntensity,
-                                        haptic = UiHaptic.Confirm
-                                    )
-                                }
-                            )
-                            Spacer(modifier = Modifier.height(PreviewToSliderGap))
-                            SettingTitleRow(title = stringResource(R.string.haptic_effects_intensity),
-                                value = "${localHapticEffectsIntensity.roundToInt()}%",
-                                color = panelColors.text,
-                                fontFamily = fontFamily)
-                            StyledSettingsSlider(value = localHapticEffectsIntensity,
-                                onValueChange = {
-                                    localHapticEffectsIntensity = it
-                                },
-                                onValueChangeFinished = {
-                                    onHapticEffectsIntensityChange(localHapticEffectsIntensity)
-                                    UiHapticPlayer.previewStyle(context = context, style = settings.hapticEffectsStyle,
-                                        intensityPercent = localHapticEffectsIntensity, haptic = UiHaptic.Tick)
-                                },
-                                valueRange = 0f..100f,
-                                steps = 19,
-                                activeColor = MaterialTheme.colorScheme.primary,
-                                inactiveColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.35f),
-                                style = settings.sliderStyle,
-                                valueLabel = "${localHapticEffectsIntensity.roundToInt()}%")
                         }
                     }
+                    item(key = "extreme_fab", contentType = "settings_panel") {
+                        Surface(Modifier.fillMaxWidth(), RoundedCornerShape(0.dp), settingsPanelColor, tonalElevation = 1.dp) {
+                            Column(Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
+                                ExtremeFabSettingsSection(settings, fontFamily, onFabSizeChange)
+                                Spacer(Modifier.height(12.dp))
+                            }
+                        }
                     }
-                    Spacer(modifier = Modifier.height(18.dp))
-                    /*
-                     * -------------------------------------------------
-                     * LANGUAGE
-                     * -------------------------------------------------
-                     */
-                    SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(start = 6.dp, top = 14.dp, end = 0.dp, bottom = 14.dp),
-                        horizontalOutset = 8.dp) { panelColors -> SettingDropdown(title = stringResource(R.string.mock_language),
-                            selectedLabel = when (settings.language) {
-                                    "system" -> stringResource(R.string.language_system)
-                                    "en" -> "English"
-                                    "fr" -> "Français"
-                                    "zh-CN" -> "中文（简体）"
-                                    else -> "Español"
-                                },
-                            options = listOf("system" to stringResource(R.string.language_system),
-                                        "es" to "Español", "en" to
-                                        "English", "fr" to
-                                        "Français", "zh-CN" to
-                                        "中文（简体）"),
-                            textColor = panelColors.text,
-                            textColorMode = settings.textColor,
-                            menuBackground = menuBackground,
-                            menuTextColor = settingsMenuTextColor,
-                            fontFamily = fontFamily,
-                            onSelected = onLanguageChange)
+                    item(key = "extreme_performance", contentType = "settings_panel") {
+                        Surface(Modifier.fillMaxWidth(), RoundedCornerShape(0.dp), settingsPanelColor, tonalElevation = 1.dp) {
+                            Column(Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
+                                ExtremePerformanceSettingsSection(settings, fontFamily, onPerformanceModeChange)
+                                Spacer(Modifier.height(12.dp))
+                            }
+                        }
                     }
-                    if (isAdvancedMode) {
-                    Spacer(modifier = Modifier.height(14.dp))
-                    SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(start = 6.dp, top = 14.dp, end = 0.dp, bottom = 14.dp),
-                        horizontalOutset = 8.dp) { panelColors -> SettingDropdown(title = stringResource(R.string.mock_columns),
-                            selectedLabel = settings.gridColumns.toString(),
-                            options = listOf("1" to "1", "2" to "2", "3" to "3"),
-                            textColor = panelColors.text,
-                            textColorMode = settings.textColor,
-                            menuBackground = menuBackground,
-                            menuTextColor = settingsMenuTextColor,
-                            fontFamily = fontFamily,
-                            onSelected = {
-                                    value ->
-                                onGridColumnsChange(value.toIntOrNull()?.coerceIn(1, 3)?: 2)
-                            })
+                    item(key = "extreme_motion", contentType = "settings_panel") {
+                        Surface(Modifier.fillMaxWidth(), RoundedCornerShape(0.dp), settingsPanelColor, tonalElevation = 1.dp) {
+                            Column(Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
+                                ExtremeMotionSettingsSection(
+                                    settings = settings,
+                                    fontFamily = fontFamily,
+                                    onAnimationsEnabledChange = onAnimationsEnabledChange,
+                                    onAnimationStyleChange = onAnimationStyleChange,
+                                    onAnimationEasingChange = onAnimationEasingChange,
+                                    onAnimationSpeedChange = onAnimationSpeedChange,
+                                    onAnimationIntensityChange = onAnimationIntensityChange
+                                )
+                                Spacer(Modifier.height(18.dp))
+                            }
+                        }
                     }
-                    Spacer(modifier = Modifier.height(14.dp))
-                    SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(start = 6.dp, top = 14.dp, end = 0.dp, bottom = 14.dp),
-                        horizontalOutset = 8.dp) { panelColors -> SettingDropdown(title = stringResource(R.string.mock_slider_style),
-                            selectedLabel = stringResource(SliderStyleOptions.firstOrNull {
-                                            it.key == settings.sliderStyle
-                                        }?.labelRes?: R.string.mock_slider_minimal),
-                            options = SliderStyleOptions.map {
-                                        it.key to
-                                            stringResource(it.labelRes)
-                                    },
-                            textColor = panelColors.text,
-                            textColorMode = settings.textColor,
-                            menuBackground = menuBackground,
-                            menuTextColor = settingsMenuTextColor,
-                            fontFamily = fontFamily,
-                            onSelected = onSliderStyleChange)
+                    item(key = "options_header", contentType = "settings_header") {
+                        Surface(Modifier.fillMaxWidth(), RoundedCornerShape(0.dp), settingsPanelColor, tonalElevation = 1.dp) {
+                            Column(Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
+                                OptionsMenuHeader(fontFamily, settingsScreenTextColor, settingsScreenSecondaryTextColor)
+                                Spacer(Modifier.height(10.dp))
+                            }
+                        }
                     }
-                    Spacer(modifier = Modifier.height(17.dp))
-                    SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(start = 6.dp, top = 14.dp, end = 0.dp, bottom = 14.dp),
-                        horizontalOutset = 8.dp) { panelColors -> Row(modifier = Modifier.fillMaxWidth(),
-                            verticalAlignment = Alignment.CenterVertically) {
-                            Column(modifier = Modifier.weight(1f)) {
-                                Text(text = stringResource(R.string.mock_dark_mode),
+                    item(key = "options_appearance", contentType = "settings_panel") {
+                        Surface(Modifier.fillMaxWidth(), RoundedCornerShape(0.dp), settingsPanelColor, tonalElevation = 1.dp) {
+                            Column(Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
+                                OptionsMenuAppearanceSettingsSection(
+                                    settings,
+                                    fontFamily,
+                                    onOptionMenuShowIconsChange,
+                                    onOptionMenuTextColorChange,
+                                    onOptionMenuOpacityChange
+                                )
+                                Spacer(Modifier.height(8.dp))
+                            }
+                        }
+                    }
+                    item(key = "options_main_actions", contentType = "settings_panel") {
+                        Surface(Modifier.fillMaxWidth(), RoundedCornerShape(0.dp), settingsPanelColor, tonalElevation = 1.dp) {
+                            Column(Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
+                                OptionsMenuMainActionsSettingsSection(
+                                    settings,
+                                    fontFamily,
+                                    onOptionMenuOrderChange,
+                                    onOptionMenuHiddenItemsChange
+                                )
+                                Spacer(Modifier.height(8.dp))
+                            }
+                        }
+                    }
+                    item(key = "options_priority", contentType = "settings_panel") {
+                        Surface(Modifier.fillMaxWidth(), RoundedCornerShape(0.dp), settingsPanelColor, tonalElevation = 1.dp) {
+                            Column(Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
+                                OptionsMenuPrioritySettingsSection(settings, fontFamily, onPriorityMenuHiddenItemsChange)
+                                Spacer(Modifier.height(8.dp))
+                            }
+                        }
+                    }
+                    item(key = "options_color", contentType = "settings_panel") {
+                        Surface(Modifier.fillMaxWidth(), RoundedCornerShape(0.dp), settingsPanelColor, tonalElevation = 1.dp) {
+                            Column(Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
+                                OptionsMenuColorSettingsSection(settings, fontFamily, onColorMenuHiddenItemsChange)
+                                Spacer(Modifier.height(8.dp))
+                            }
+                        }
+                    }
+                    item(key = "options_reset", contentType = "settings_action") {
+                        Surface(Modifier.fillMaxWidth(), RoundedCornerShape(0.dp), settingsPanelColor, tonalElevation = 1.dp) {
+                            Column(Modifier.fillMaxWidth().padding(horizontal = 16.dp)) {
+                                OptionsMenuResetAction(fontFamily, settingsScreenTextColor, onResetOptionMenu)
+                                Spacer(Modifier.height(14.dp))
+                            }
+                        }
+                    }
+                }
+                /*
+                 * COLOR PALETTE
+                 *
+                 * La sección ya no es un único item gigante. Cada fila de dos
+                 * paletas es un item lazy independiente, así Compose solo
+                 * compone las filas visibles y reutiliza las que salen/entran
+                 * al viewport. Esto evita crear 46 tarjetas / 184 tonos de golpe.
+                 */
+                item(key = "palette_header", contentType = "palette_header") {
+                    Surface(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(0.dp),
+                        color = settingsPanelColor,
+                        tonalElevation = 1.dp
+                    ) {
+                        Column(modifier = Modifier.fillMaxWidth().padding(PaddingValues(horizontal = 16.dp))) {
+                            PaletteSettingsSegment(
+                                textColorMode = settings.textColor,
+                                contentPadding = PaddingValues(start = 6.dp, top = 14.dp, end = 0.dp, bottom = 0.dp),
+                                horizontalOutset = 8.dp,
+                                roundTop = true
+                            ) { panelColors ->
+                                SettingTitle(
+                                    text = stringResource(R.string.mock_color_palette),
                                     color = panelColors.text,
-                                    fontFamily = fontFamily,
-                                    fontWeight = FontWeight.SemiBold,
-                                    fontSize = 15.sp)
-                                Text(text = stringResource(R.string.mock_dark_mode_description),
-                                    modifier = Modifier.padding(top = 2.dp),
-                                    color = panelColors.secondaryText,
-                                    fontFamily = fontFamily,
-                                    fontSize = 12.sp)
-                            }
-                            Switch(checked = settings.darkMode,
-                                onCheckedChange = { checked -> UiSoundPlayer.playToggle(context = context, checked = checked)
-                                    onDarkModeChange(checked)
-                                })
-                        }
-                    }
-                    Spacer(modifier = Modifier.height(18.dp))
-                    BackupRestoreSection(settings = settings, fontFamily = fontFamily, textColor = settingsTextColor,
-                        secondaryTextColor = settingsSecondaryTextColor, graphicColor = settingsGraphicColor)
-                    }
-                    Spacer(modifier = Modifier.height(22.dp))
-                    /*
-                     * -------------------------------------------------
-                     * INFORMACIÓN DEL DESARROLLO
-                     * -------------------------------------------------
-                     * Solo navega a una pantalla informativa; no cambia ninguna
-                     * preferencia ni estado funcional de las notas.
-                     */
-                    SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(0.dp),
-                        horizontalOutset = 8.dp) { panelColors ->
-                        Row(modifier = Modifier.fillMaxWidth().clickable {
-                                UiSoundPlayer.playAction(context = context, action = UiActionSound.Menu)
-                                onOpenDevelopmentInfo()
-                            }.padding(horizontal = 14.dp, vertical = 14.dp),
-                            verticalAlignment = Alignment.CenterVertically) {
-                            Icon(imageVector = Icons.Default.Code, contentDescription = null, tint = panelColors.graphic,
-                                modifier = Modifier.size(23.dp))
-                            Column(modifier = Modifier.weight(1f).padding(start = 12.dp, end = 8.dp)) {
-                                Text(text = stringResource(R.string.development_info_settings_title), color = panelColors.text,
-                                    fontFamily = fontFamily, fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
-                                Text(text = stringResource(R.string.development_info_settings_description),
-                                    modifier = Modifier.padding(top = 2.dp), color = panelColors.secondaryText,
-                                    fontFamily = fontFamily, fontSize = 12.sp)
-                            }
-                            Icon(imageVector = Icons.Default.ChevronRight, contentDescription = null,
-                                tint = panelColors.graphic, modifier = Modifier.size(22.dp))
-                        }
-                    }
-                    Spacer(modifier = Modifier.height(14.dp))
-                    /*
-                     * -------------------------------------------------
-                     * ACTUALIZACIONES DE LA APLICACIÓN
-                     * -------------------------------------------------
-                     * Consulta la última Release estable de GitHub. Si la etiqueta
-                     * es superior a versionName y existe un asset .apk, permite
-                     * descargarlo y pasarlo al instalador oficial de Android.
-                     */
-                    SettingsSectionPanel(
-                        textColorMode = settings.textColor,
-                        contentPadding = PaddingValues(horizontal = 14.dp, vertical = 14.dp),
-                        horizontalOutset = 8.dp
-                    ) { panelColors ->
-                        Column(modifier = Modifier.fillMaxWidth()) {
-                            Row(verticalAlignment = Alignment.CenterVertically) {
-                                Icon(
-                                    imageVector = Icons.Default.Download,
-                                    contentDescription = null,
-                                    tint = panelColors.graphic,
-                                    modifier = Modifier.size(23.dp)
+                                    fontFamily = fontFamily
                                 )
-                                Column(modifier = Modifier.weight(1f).padding(start = 12.dp)) {
-                                    Text(
-                                        text = stringResource(R.string.update_settings_title),
+                                Spacer(modifier = Modifier.height(10.dp))
+                            }
+                        }
+                    }
+                }
+                itemsIndexed(
+                    items = paletteRows,
+                    key = { _, row -> "palette_row_${row.first().key}" },
+                    contentType = { _, _ -> "palette_row" }
+                ) { rowIndex, rowPalettes ->
+                    val isLastPaletteRow = rowIndex == paletteRows.lastIndex
+                    Surface(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(0.dp),
+                        color = settingsPanelColor,
+                        tonalElevation = 1.dp
+                    ) {
+                        Column(modifier = Modifier.fillMaxWidth().padding(PaddingValues(horizontal = 16.dp))) {
+                            PaletteSettingsSegment(
+                                textColorMode = settings.textColor,
+                                contentPadding = PaddingValues(
+                                    start = 6.dp,
+                                    top = 0.dp,
+                                    end = 0.dp,
+                                    bottom = when {
+                                        !isLastPaletteRow -> 10.dp
+                                        isAdvancedMode -> 20.dp
+                                        else -> 14.dp
+                                    }
+                                ),
+                                horizontalOutset = 8.dp,
+                                roundBottom = isLastPaletteRow && !isAdvancedMode
+                            ) {
+                                PaletteSelectorRow(
+                                    rowPalettes = rowPalettes,
+                                    selectedPaletteKey = settings.backgroundColor,
+                                    selectedToneIndex = settings.backgroundToneIndex,
+                                    onPaletteSelected = { paletteKey ->
+                                        onBackgroundColorChange(paletteKey)
+                                    },
+                                    onToneSelected = { paletteKey, toneIndex ->
+                                        localTone = toneIndex.toFloat()
+                                        onBackgroundColorChange(paletteKey)
+                                        onBackgroundToneIndexChange(toneIndex)
+                                    },
+                                    animationsEnabled = settings.animationsEnabled,
+                                    animationSpeed = settings.animationSpeed,
+                                    textColorMode = settings.textColor,
+                                    fontFamily = fontFamily
+                                )
+                            }
+                        }
+                    }
+                }
+                if (isAdvancedMode) {
+                    item(key = "palette_tone", contentType = "palette_footer") {
+                        Surface(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(0.dp),
+                            color = settingsPanelColor,
+                            tonalElevation = 1.dp
+                        ) {
+                            Column(modifier = Modifier.fillMaxWidth().padding(PaddingValues(horizontal = 16.dp))) {
+                                PaletteSettingsSegment(
+                                    textColorMode = settings.textColor,
+                                    contentPadding = PaddingValues(start = 6.dp, top = 0.dp, end = 0.dp, bottom = 14.dp),
+                                    horizontalOutset = 8.dp,
+                                    roundBottom = true
+                                ) { panelColors ->
+                                    SettingTitleRow(
+                                        title = stringResource(R.string.mock_palette_tone),
+                                        value = "${localTone.roundToInt() + 1}/4",
+                                        color = panelColors.text,
+                                        fontFamily = fontFamily
+                                    )
+                                    StyledSettingsSlider(
+                                        value = localTone,
+                                        onValueChange = { localTone = it },
+                                        onValueChangeFinished = {
+                                            onBackgroundToneIndexChange(localTone.roundToInt().coerceIn(0, 3))
+                                        },
+                                        valueRange = 0f..3f,
+                                        steps = 2,
+                                        activeColor = MaterialTheme.colorScheme.primary,
+                                        inactiveColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.35f),
+                                        style = settings.sliderStyle,
+                                        valueLabel = "${localTone.roundToInt() + 1}/4"
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+                if (isAdvancedMode) {
+                    item(key = "appearance_panel_tone", contentType = "settings_panel") {
+                        Surface(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(0.dp),
+                            color = settingsPanelColor,
+                            tonalElevation = 1.dp
+                        ) {
+                            Column(modifier = Modifier.fillMaxWidth().padding(PaddingValues(horizontal = 16.dp))) {
+                                Spacer(modifier = Modifier.height(8.dp))
+                                /*
+                                 * -------------------------------------------------
+                                 * TONALIDAD DEL PANEL
+                                 * -------------------------------------------------
+                                 *
+                                 * Controla el gran rectángulo que envuelve toda
+                                 * la pantalla de Configuración.
+                                 */
+                                SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(start = 6.dp, top = 14.dp, end = 0.dp, bottom = 14.dp),
+                                    horizontalOutset = 8.dp) { panelColors -> SettingTitleRow(title = stringResource(R.string.settings_panel_tone),
+                                        value = "${localSettingsPanelTone.roundToInt()}%",
+                                        color = panelColors.text,
+                                        fontFamily = fontFamily)
+                                    StyledSettingsSlider(value = localSettingsPanelTone,
+                                        onValueChange = {
+                                            localSettingsPanelTone = it
+                                        },
+                                        onValueChangeFinished = {
+                                            onSettingsPanelToneChange(localSettingsPanelTone)
+                                        },
+                                        valueRange = 0f..100f,
+                                        activeColor = MaterialTheme.colorScheme.primary,
+                                        inactiveColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.35f),
+                                        style = settings.sliderStyle,
+                                        valueLabel = "${localSettingsPanelTone.roundToInt()}%")
+                                }
+                            }
+                        }
+                    }
+                }
+                if (isAdvancedMode) {
+                    item(key = "appearance_background_intensity", contentType = "settings_panel") {
+                        Surface(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(0.dp),
+                            color = settingsPanelColor,
+                            tonalElevation = 1.dp
+                        ) {
+                            Column(modifier = Modifier.fillMaxWidth().padding(PaddingValues(horizontal = 16.dp))) {
+                                Spacer(modifier = Modifier.height(8.dp))
+                                SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(start = 6.dp, top = 14.dp, end = 0.dp, bottom = 14.dp),
+                                    horizontalOutset = 8.dp) { panelColors -> SettingTitleRow(title = stringResource(R.string.mock_background_intensity
+                                            ),
+                                        value = "${localBackgroundIntensity.roundToInt()}%",
+                                        color = panelColors.text,
+                                        fontFamily = fontFamily)
+                                    StyledSettingsSlider(value = localBackgroundIntensity,
+                                        onValueChange = {
+                                            localBackgroundIntensity = it
+                                        },
+                                        onValueChangeFinished = {
+                                            onBackgroundIntensityChange(localBackgroundIntensity)
+                                        },
+                                        valueRange = 0f..100f,
+                                        activeColor = MaterialTheme.colorScheme.primary,
+                                        inactiveColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.35f),
+                                        style = settings.sliderStyle,
+                                        valueLabel = "${localBackgroundIntensity.roundToInt()}%")
+                                }
+                            }
+                        }
+                    }
+                }
+                if (isAdvancedMode) {
+                    item(key = "appearance_header_intensity", contentType = "settings_panel") {
+                        Surface(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(0.dp),
+                            color = settingsPanelColor,
+                            tonalElevation = 1.dp
+                        ) {
+                            Column(modifier = Modifier.fillMaxWidth().padding(PaddingValues(horizontal = 16.dp))) {
+                                Spacer(modifier = Modifier.height(8.dp))
+                                SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(start = 6.dp, top = 14.dp, end = 0.dp, bottom = 14.dp),
+                                    horizontalOutset = 8.dp) { panelColors -> SettingTitleRow(title = stringResource(R.string.mock_header_intensity),
+                                        value = "${localHeaderIntensity.roundToInt()}%",
+                                        color = panelColors.text,
+                                        fontFamily = fontFamily)
+                                    StyledSettingsSlider(value = localHeaderIntensity,
+                                        onValueChange = {
+                                            localHeaderIntensity = it
+                                        },
+                                        onValueChangeFinished = {
+                                            onHeaderIntensityChange(localHeaderIntensity)
+                                        },
+                                        valueRange = 0f..100f,
+                                        activeColor = MaterialTheme.colorScheme.primary,
+                                        inactiveColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.35f),
+                                        style = settings.sliderStyle,
+                                        valueLabel = "${localHeaderIntensity.roundToInt()}%")
+                                }
+                            }
+                        }
+                    }
+                }
+                if (isAdvancedMode) {
+                    item(key = "appearance_translucent_panels", contentType = "settings_panel") {
+                        Surface(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(0.dp),
+                            color = settingsPanelColor,
+                            tonalElevation = 1.dp
+                        ) {
+                            Column(modifier = Modifier.fillMaxWidth().padding(PaddingValues(horizontal = 16.dp))) {
+                                Spacer(modifier = Modifier.height(8.dp))
+                                /*
+                                 * -------------------------------------------------
+                                 * RECUADROS / PANELES TRANSLÚCIDOS
+                                 * -------------------------------------------------
+                                 *
+                                 * Controla surfaceVariant y los tres niveles
+                                 * surfaceContainer usados por buscador, chips,
+                                 * tarjetas de Configuración, adjuntos, menús, etc.
+                                 */
+                                SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(start = 6.dp, top = 14.dp, end = 0.dp, bottom = 14.dp),
+                                    horizontalOutset = 8.dp) { panelColors -> SettingTitleRow(title = stringResource(R.string.surface_panels_intensity
+                                            ),
+                                        value = "${localSurfacePanelIntensity.roundToInt()}%",
+                                        color = panelColors.text,
+                                        fontFamily = fontFamily)
+                                    StyledSettingsSlider(value = localSurfacePanelIntensity,
+                                        onValueChange = {
+                                            localSurfacePanelIntensity = it
+                                        },
+                                        onValueChangeFinished = {
+                                            onSurfacePanelIntensityChange(localSurfacePanelIntensity)
+                                        },
+                                        valueRange = 0f..100f,
+                                        activeColor = MaterialTheme.colorScheme.primary,
+                                        inactiveColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.35f),
+                                        style = settings.sliderStyle,
+                                        valueLabel = "${localSurfacePanelIntensity.roundToInt()}%")
+                                    Text(text = stringResource(R.string.surface_panels_intensity_description),
+                                        modifier = Modifier.padding(top = 2.dp),
+                                        color = panelColors.secondaryText,
+                                        fontFamily = fontFamily,
+                                        fontSize = 12.sp)
+                                }
+                            }
+                        }
+                    }
+                }
+                if (isAdvancedMode) {
+                    item(key = "appearance_text_color", contentType = "settings_panel") {
+                        Surface(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(0.dp),
+                            color = settingsPanelColor,
+                            tonalElevation = 1.dp
+                        ) {
+                            Column(modifier = Modifier.fillMaxWidth().padding(PaddingValues(horizontal = 16.dp))) {
+                                Spacer(modifier = Modifier.height(14.dp))
+                                /*
+                                 * -------------------------------------------------
+                                 * TEXT COLOR
+                                 * -------------------------------------------------
+                                 */
+                                SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(start = 6.dp, top = 14.dp, end = 0.dp, bottom = 14.dp),
+                                    horizontalOutset = 8.dp) { panelColors -> SettingTitle(text = stringResource(R.string.mock_text_color), color =
+                                            panelColors.text, fontFamily = fontFamily)
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                    TextColorSelector(selected = settings.textColor,
+                                        onSelected = onTextColorChange,
+                                        fontKey = settings.font)
+                                }
+                            }
+                        }
+                    }
+                }
+                if (isAdvancedMode) {
+                    item(key = "appearance_text_outline", contentType = "settings_panel") {
+                        Surface(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(0.dp),
+                            color = settingsPanelColor,
+                            tonalElevation = 1.dp
+                        ) {
+                            Column(modifier = Modifier.fillMaxWidth().padding(PaddingValues(horizontal = 16.dp))) {
+                                Spacer(modifier = Modifier.height(12.dp))
+                                SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(vertical = 0.dp),
+                                    horizontalOutset = 8.dp) { panelColors ->
+                                    Row(modifier = Modifier.fillMaxWidth().padding(horizontal = 14.dp, vertical = 12.dp),
+                                        verticalAlignment = Alignment.CenterVertically) {
+                                        Column(modifier = Modifier.weight(1f)) {
+                                            Text(text = stringResource(R.string.text_black_outline),
+                                                color = panelColors.text,
+                                                fontFamily = fontFamily,
+                                                fontWeight = FontWeight.SemiBold,
+                                                fontSize = 15.sp)
+                                            Text(text = stringResource(R.string.text_black_outline_description),
+                                                modifier = Modifier.padding(top = 2.dp),
+                                                color = panelColors.secondaryText,
+                                                fontFamily = fontFamily,
+                                                fontSize = 12.sp)
+                                        }
+                                        Switch(checked = settings.textOutlineEnabled,
+                                            onCheckedChange = { checked -> UiSoundPlayer.playToggle(context = context, checked = checked)
+                                                onTextOutlineEnabledChange(checked)
+                                            })
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                item(key = "font") {
+                    Surface(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(0.dp),
+                        color = settingsPanelColor,
+                        tonalElevation = 1.dp
+                    ) {
+                        Column(modifier = Modifier.fillMaxWidth().padding(PaddingValues(horizontal = 16.dp))) {
+                                Spacer(modifier = Modifier.height(20.dp))
+                                /*
+                                 * -------------------------------------------------
+                                 * FONT
+                                 * -------------------------------------------------
+                                 */
+                                SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(start = 6.dp, top = 14.dp, end = 0.dp, bottom = 14.dp),
+                                    horizontalOutset = 8.dp) { panelColors ->
+                                    if (isAdvancedMode) {
+                                        val systemFontLabel = stringResource(R.string.mock_font_default)
+                                        val googleSansFlexLabel = stringResource(R.string.mock_font_google_sans_flex)
+                                        val serifLabel = stringResource(R.string.mock_font_serif)
+                                        val monospaceLabel = stringResource(R.string.mock_font_monospace)
+                                        val fontOptions = buildList {
+                                            add(FontPreferencePolicy.SYSTEM_DEFAULT to systemFontLabel)
+                                            if (developerGoogleSansFlexUnlocked) {
+                                                add(FontPreferencePolicy.DEVELOPER_GOOGLE_SANS_FLEX to googleSansFlexLabel)
+                                            }
+                                            add(FontPreferencePolicy.SERIF to serifLabel)
+                                            add(FontPreferencePolicy.MONOSPACE to monospaceLabel)
+                                        }
+                                        SettingDropdown(title = stringResource(R.string.mock_font),
+                                        selectedLabel = when (settings.font) {
+                                                FontPreferencePolicy.SYSTEM_DEFAULT -> systemFontLabel
+                                                FontPreferencePolicy.DEVELOPER_GOOGLE_SANS_FLEX -> googleSansFlexLabel
+                                                FontPreferencePolicy.SERIF -> serifLabel
+                                                FontPreferencePolicy.MONOSPACE -> monospaceLabel
+                                                else -> systemFontLabel
+                                            },
+                                        options = fontOptions,
+                                        textColor = panelColors.text,
+                                        textColorMode = settings.textColor,
+                                        menuBackground = menuBackground,
+                                        menuTextColor = settingsMenuTextColor,
+                                        fontFamily = fontFamily,
+                                        onSelected = onFontChange)
+                                        Spacer(modifier = Modifier.height(14.dp))
+                                    }
+                                    SettingTitleRow(title = stringResource(R.string.mock_font_size),
+                                        value = "${localFontSize.roundToInt()} sp",
+                                        color = panelColors.text,
+                                        fontFamily = fontFamily)
+                                    StyledSettingsSlider(value = localFontSize,
+                                        onValueChange = {
+                                            localFontSize = it
+                                        },
+                                        onValueChangeFinished = {
+                                            onFontSizeChange(localFontSize)
+                                        },
+                                        valueRange = 12f..28f,
+                                        activeColor = MaterialTheme.colorScheme.primary,
+                                        inactiveColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.35f),
+                                        // En la configuración básica el tamaño de fuente usa siempre
+                                        // el diseño Capsule. En modo avanzado se respeta el estilo
+                                        // elegido por el usuario desde la personalización de sliders.
+                                        style = if (isAdvancedMode) settings.sliderStyle else "capsule",
+                                        valueLabel = "${localFontSize.roundToInt()} sp")
+                                }
+                        }
+                    }
+                }
+                if (isAdvancedMode) {
+                    item(key = "feedback_sound_effects", contentType = "settings_panel") {
+                        Surface(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(0.dp),
+                            color = settingsPanelColor,
+                            tonalElevation = 1.dp
+                        ) {
+                            Column(modifier = Modifier.fillMaxWidth().padding(PaddingValues(horizontal = 16.dp))) {
+                                Spacer(modifier = Modifier.height(14.dp))
+                                /*
+                                 * -------------------------------------------------
+                                 * SOUND EFFECTS
+                                 * -------------------------------------------------
+                                 */
+                                SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(start = 6.dp, top = 10.dp, end = 0.dp, bottom = SoundHapticPanelBottomPadding),
+                                    horizontalOutset = 8.dp) { panelColors -> Text(text = stringResource(R.string.sound_effects),
                                         color = panelColors.text,
                                         fontFamily = fontFamily,
-                                        fontWeight = FontWeight.SemiBold,
-                                        fontSize = 15.sp
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 16.sp)
+                                    Text(text = stringResource(R.string.sound_effects_description),
+                                        modifier = Modifier.padding(top = 2.dp, bottom = 8.dp),
+                                        color = panelColors.secondaryText,
+                                        fontFamily = fontFamily,
+                                        fontSize = 12.sp)
+                                    Row(modifier = Modifier.fillMaxWidth(),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.SpaceBetween) {
+                                        Text(text = stringResource(R.string.sound_effects_enabled),
+                                            color = panelColors.text,
+                                            fontFamily = fontFamily,
+                                            fontSize = 14.sp)
+                                        Switch(checked = settings.soundEffectsEnabled,
+                                            onCheckedChange = { checked -> UiSoundPlayer.playToggle(context = context, checked = checked, force = true)
+                                                onSoundEffectsEnabledChange(checked)
+                                            })
+                                    }
+                                    if (settings.soundEffectsEnabled) {
+                                        Spacer(modifier = Modifier.height(8.dp))
+                                        KeyedSettingDropdown(title = stringResource(R.string.sound_effects_theme),
+                                            selectedKey = settings.soundEffectsTheme,
+                                            options = listOf("classic" to stringResource(R.string.sound_theme_classic),
+                                                    "soft" to stringResource(R.string.sound_theme_soft),
+                                                    "digital" to stringResource(R.string.sound_theme_digital),
+                                                    "glass" to stringResource(R.string.sound_theme_glass),
+                                                    "retro" to stringResource(R.string.sound_theme_retro),
+                                                    "pop" to stringResource(R.string.sound_theme_pop),
+                                                    "mechanical" to stringResource(R.string.sound_theme_mechanical),
+                                                    "bubble" to stringResource(R.string.sound_theme_bubble),
+                                                    "arcade" to stringResource(R.string.sound_theme_arcade),
+                                                    "wood" to stringResource(R.string.sound_theme_wood),
+                                                    "synth" to stringResource(R.string.sound_theme_synth),
+                                                    "minimal" to stringResource(R.string.sound_theme_minimal),
+                                                    "camera" to stringResource(R.string.sound_theme_camera),
+                                                    "typewriter" to stringResource(R.string.sound_theme_typewriter),
+                                                    "metal" to stringResource(R.string.sound_theme_metal),
+                                                    "pixel" to stringResource(R.string.sound_theme_pixel),
+                                                    "space" to stringResource(R.string.sound_theme_space),
+                                                    "chime" to stringResource(R.string.sound_theme_chime),
+                                                    "paper" to stringResource(R.string.sound_theme_paper),
+                                                    "neon" to stringResource(R.string.sound_theme_neon),
+                                                    "material" to stringResource(R.string.sound_theme_material),
+                                                    "expressive" to stringResource(R.string.sound_theme_expressive),
+                                                    "prism" to stringResource(R.string.sound_theme_prism),
+                                                    "aurora" to stringResource(R.string.sound_theme_aurora),
+                                                    "fluid" to stringResource(R.string.sound_theme_fluid),
+                                                    "pulse" to stringResource(R.string.sound_theme_pulse)),
+                                            textColor = panelColors.text,
+                                            textColorMode = settings.textColor,
+                                            menuBackground = menuBackground,
+                                            menuTextColor = settingsMenuTextColor,
+                                            fontFamily = fontFamily,
+                                            playDefaultSelectionFeedback = false,
+                                            onSelected = { selectedTheme ->
+                                                UiHapticPlayer.play(context = context, haptic = UiHaptic.Selection)
+                                                onSoundEffectsThemeChange(selectedTheme)
+                                                UiSoundPlayer.previewTheme(
+                                                    context = context,
+                                                    theme = selectedTheme,
+                                                    sound = UiSound.Edit,
+                                                    volumePercent = localSoundEffectsVolume
+                                                )
+                                            })
+                                        Spacer(modifier = Modifier.height(PreviewButtonVerticalGap))
+                                        RoundedPreviewButton(
+                                            text = stringResource(R.string.sound_effects_preview),
+                                            panelBackground = panelColors.background,
+                                            panelContentColor = panelColors.text,
+                                            textColorMode = settings.textColor,
+                                            fontFamily = fontFamily,
+                                            onClick = {
+                                                UiSoundPlayer.previewTheme(
+                                                    context = context,
+                                                    theme = settings.soundEffectsTheme,
+                                                    sound = UiSound.Attachment,
+                                                    volumePercent = localSoundEffectsVolume
+                                                )
+                                            }
+                                        )
+                                        Spacer(modifier = Modifier.height(PreviewToSliderGap))
+                                        SettingTitleRow(title = stringResource(R.string.sound_effects_volume),
+                                            value = "${localSoundEffectsVolume.roundToInt()}%",
+                                            color = panelColors.text,
+                                            fontFamily = fontFamily)
+                                        StyledSettingsSlider(value = localSoundEffectsVolume,
+                                            onValueChange = {
+                                                localSoundEffectsVolume = it
+                                            },
+                                            onValueChangeFinished = {
+                                                onSoundEffectsVolumeChange(localSoundEffectsVolume)
+                                            },
+                                            valueRange = 0f..100f,
+                                            steps = 19,
+                                            activeColor = MaterialTheme.colorScheme.primary,
+                                            inactiveColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.35f),
+                                            style = settings.sliderStyle,
+                                            valueLabel = "${localSoundEffectsVolume.roundToInt()}%")
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                if (isAdvancedMode) {
+                    item(key = "feedback_alert_sounds", contentType = "settings_panel") {
+                        Surface(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(0.dp),
+                            color = settingsPanelColor,
+                            tonalElevation = 1.dp
+                        ) {
+                            Column(modifier = Modifier.fillMaxWidth().padding(PaddingValues(horizontal = 16.dp))) {
+                                Spacer(modifier = Modifier.height(16.dp))
+                                /*
+                                 * -------------------------------------------------
+                                 * REMINDER / ALERT SOUNDS
+                                 * -------------------------------------------------
+                                 */
+                                SettingsSectionPanel(
+                                    textColorMode = settings.textColor,
+                                    contentPadding = PaddingValues(start = 6.dp, top = 10.dp, end = 0.dp, bottom = SoundHapticPanelBottomPadding),
+                                    horizontalOutset = 8.dp
+                                ) { panelColors ->
+                                    Text(
+                                        text = stringResource(R.string.reminder_tones),
+                                        color = panelColors.text,
+                                        fontFamily = fontFamily,
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 16.sp
                                     )
                                     Text(
-                                        text = stringResource(R.string.update_settings_description),
-                                        modifier = Modifier.padding(top = 2.dp),
+                                        text = stringResource(R.string.reminder_tones_description),
+                                        modifier = Modifier.padding(top = 2.dp, bottom = 8.dp),
                                         color = panelColors.secondaryText,
                                         fontFamily = fontFamily,
                                         fontSize = 12.sp
                                     )
-                                }
-                            }
-
-                            Text(
-                                text = stringResource(R.string.update_current_version, installedVersion),
-                                modifier = Modifier.padding(top = 10.dp),
-                                color = panelColors.secondaryText,
-                                fontFamily = fontFamily,
-                                fontSize = 12.sp
-                            )
-
-                            Button(
-                                onClick = {
-                                    UiSoundPlayer.playAction(context = context, action = UiActionSound.Menu)
-                                    updateScope.launch {
-                                        checkingForUpdate = true
-                                        updateActionMessage = null
-                                        updateResult = GitHubUpdateManager.checkForUpdate(context)
-                                        checkingForUpdate = false
+                                    Row(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.SpaceBetween
+                                    ) {
+                                        Text(
+                                            text = stringResource(R.string.reminder_sound_enabled),
+                                            color = panelColors.text,
+                                            fontFamily = fontFamily,
+                                            fontSize = 14.sp
+                                        )
+                                        Switch(
+                                            checked = settings.reminderSoundEnabled,
+                                            onCheckedChange = { checked ->
+                                                UiSoundPlayer.playToggleAudioOnly(context = context, checked = checked)
+                                                UiHapticPlayer.playToggle(context = context, checked = checked)
+                                                onReminderSoundEnabledChange(checked)
+                                            }
+                                        )
                                     }
-                                },
-                                enabled = !checkingForUpdate && !downloadingUpdate,
-                                modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
-                                shape = RoundedCornerShape(14.dp)
-                            ) {
-                                if (checkingForUpdate) {
-                                    CircularProgressIndicator(
-                                        modifier = Modifier.size(17.dp),
-                                        strokeWidth = 2.dp,
-                                        color = MaterialTheme.colorScheme.onPrimary
+                                    Spacer(modifier = Modifier.height(8.dp))
+                                    KeyedSettingDropdown(
+                                        title = stringResource(R.string.reminder_tone),
+                                        selectedKey = settings.reminderRingtone,
+                                        options = listOf(
+                                            "classic" to stringResource(R.string.reminder_tone_classic),
+                                            "bell" to stringResource(R.string.reminder_tone_bell),
+                                            "crystal" to stringResource(R.string.reminder_tone_crystal),
+                                            "pulse" to stringResource(R.string.reminder_tone_pulse),
+                                            "sunrise" to stringResource(R.string.reminder_tone_sunrise),
+                                            "digital" to stringResource(R.string.reminder_tone_digital),
+                                            "alert" to stringResource(R.string.reminder_tone_alert),
+                                            "urgent" to stringResource(R.string.reminder_tone_urgent),
+                                            "beacon" to stringResource(R.string.reminder_tone_beacon),
+                                            "radar" to stringResource(R.string.reminder_tone_radar),
+                                            "warning" to stringResource(R.string.reminder_tone_warning),
+                                            "signal" to stringResource(R.string.reminder_tone_signal),
+                                            "pager" to stringResource(R.string.reminder_tone_pager),
+                                            "double_alarm" to stringResource(R.string.reminder_tone_double_alarm),
+                                            "serenity" to stringResource(R.string.reminder_tone_serenity),
+                                            "soft_bell" to stringResource(R.string.reminder_tone_soft_bell),
+                                            "breeze" to stringResource(R.string.reminder_tone_breeze),
+                                            "dew" to stringResource(R.string.reminder_tone_dew),
+                                            "bamboo" to stringResource(R.string.reminder_tone_bamboo),
+                                            "horizon" to stringResource(R.string.reminder_tone_horizon),
+                                            "calm" to stringResource(R.string.reminder_tone_calm),
+                                            "moonlight" to stringResource(R.string.reminder_tone_moonlight),
+                                            "orbit" to stringResource(R.string.reminder_tone_orbit),
+                                            "droplet" to stringResource(R.string.reminder_tone_droplet),
+                                            "glass_tap" to stringResource(R.string.reminder_tone_glass_tap),
+                                            "clockwork" to stringResource(R.string.reminder_tone_clockwork),
+                                            "spark" to stringResource(R.string.reminder_tone_spark),
+                                            "bubble_pop" to stringResource(R.string.reminder_tone_bubble_pop),
+                                            "comet" to stringResource(R.string.reminder_tone_comet),
+                                            "echo_ping" to stringResource(R.string.reminder_tone_echo_ping),
+                                            "woodblock" to stringResource(R.string.reminder_tone_woodblock),
+                                            "starlight" to stringResource(R.string.reminder_tone_starlight),
+                                            "sentinel" to stringResource(R.string.reminder_tone_sentinel),
+                                            "siren" to stringResource(R.string.reminder_tone_siren),
+                                            "cascade" to stringResource(R.string.reminder_tone_cascade),
+                                            "escalation" to stringResource(R.string.reminder_tone_escalation),
+                                            "distress" to stringResource(R.string.reminder_tone_distress),
+                                            "interlock" to stringResource(R.string.reminder_tone_interlock),
+                                            "scanner" to stringResource(R.string.reminder_tone_scanner),
+                                            "command" to stringResource(R.string.reminder_tone_command),
+                                            "rapid_triple" to stringResource(R.string.reminder_tone_rapid_triple),
+                                            "priority_sequence" to stringResource(R.string.reminder_tone_priority_sequence),
+                                            "double_sweep" to stringResource(R.string.reminder_tone_double_sweep),
+                                            "attention_burst" to stringResource(R.string.reminder_tone_attention_burst)
+                                        ),
+                                        textColor = panelColors.text,
+                                        textColorMode = settings.textColor,
+                                        menuBackground = menuBackground,
+                                        menuTextColor = settingsMenuTextColor,
+                                        fontFamily = fontFamily,
+                                        playDefaultSelectionFeedback = false,
+                                        onSelected = { selectedRingtone ->
+                                            UiHapticPlayer.play(context = context, haptic = UiHaptic.Selection)
+                                            onReminderRingtoneChange(selectedRingtone)
+                                            ReminderFeedbackPreferences.previewRingtone(
+                                                context = context,
+                                                ringtone = selectedRingtone,
+                                                volumePercent = localReminderSoundVolume
+                                            )
+                                        }
                                     )
-                                    Spacer(modifier = Modifier.width(8.dp))
+                                    Spacer(modifier = Modifier.height(PreviewButtonVerticalGap))
+                                    RoundedPreviewButton(
+                                        text = stringResource(R.string.reminder_tone_preview),
+                                        panelBackground = panelColors.background,
+                                        panelContentColor = panelColors.text,
+                                        textColorMode = settings.textColor,
+                                        fontFamily = fontFamily,
+                                        onClick = {
+                                            ReminderFeedbackPreferences.previewRingtone(
+                                                context = context,
+                                                ringtone = settings.reminderRingtone,
+                                                volumePercent = localReminderSoundVolume
+                                            )
+                                        }
+                                    )
+                                    Spacer(modifier = Modifier.height(PreviewToSliderGap))
+                                    SettingTitleRow(
+                                        title = stringResource(R.string.reminder_sound_volume),
+                                        value = "${localReminderSoundVolume.roundToInt()}%",
+                                        color = panelColors.text,
+                                        fontFamily = fontFamily
+                                    )
+                                    StyledSettingsSlider(
+                                        value = localReminderSoundVolume,
+                                        onValueChange = { localReminderSoundVolume = it },
+                                        onValueChangeFinished = { onReminderSoundVolumeChange(localReminderSoundVolume) },
+                                        valueRange = 0f..100f,
+                                        steps = 19,
+                                        activeColor = MaterialTheme.colorScheme.primary,
+                                        inactiveColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.35f),
+                                        style = settings.sliderStyle,
+                                        valueLabel = "${localReminderSoundVolume.roundToInt()}%"
+                                    )
                                 }
-                                Text(
-                                    text = stringResource(
-                                        if (checkingForUpdate) R.string.update_checking else R.string.update_check
-                                    ),
-                                    fontFamily = fontFamily,
-                                    fontWeight = FontWeight.SemiBold
-                                )
                             }
-
-                            when (val result = updateResult) {
-                                is GitHubUpdateManager.CheckResult.UpdateAvailable -> {
-                                    Text(
-                                        text = stringResource(R.string.update_available, result.release.version),
-                                        modifier = Modifier.padding(top = 12.dp),
+                        }
+                    }
+                }
+                if (isAdvancedMode) {
+                    item(key = "feedback_vibration", contentType = "settings_panel") {
+                        Surface(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(0.dp),
+                            color = settingsPanelColor,
+                            tonalElevation = 1.dp
+                        ) {
+                            Column(modifier = Modifier.fillMaxWidth().padding(PaddingValues(horizontal = 16.dp))) {
+                                Spacer(modifier = Modifier.height(16.dp))
+                                /*
+                                 * -------------------------------------------------
+                                 * HAPTIC / VIBRATION EFFECTS
+                                 * -------------------------------------------------
+                                 */
+                                SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(start = 6.dp, top = 10.dp, end = 0.dp, bottom = SoundHapticPanelBottomPadding),
+                                    horizontalOutset = 8.dp) { panelColors -> Text(text = stringResource(R.string.haptic_effects),
                                         color = panelColors.text,
                                         fontFamily = fontFamily,
-                                        fontWeight = FontWeight.SemiBold,
-                                        fontSize = 13.sp
-                                    )
-                                    if (result.release.title.isNotBlank() && result.release.title != result.release.version) {
+                                        fontWeight = FontWeight.Bold,
+                                        fontSize = 16.sp)
+                                    Text(text = stringResource(R.string.haptic_effects_description),
+                                        modifier = Modifier.padding(top = 2.dp, bottom = 8.dp),
+                                        color = panelColors.secondaryText,
+                                        fontFamily = fontFamily,
+                                        fontSize = 12.sp)
+                                    Row(modifier = Modifier.fillMaxWidth(),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                        horizontalArrangement = Arrangement.SpaceBetween) {
+                                        Text(text = stringResource(R.string.haptic_effects_enabled),
+                                            color = panelColors.text,
+                                            fontFamily = fontFamily,
+                                            fontSize = 14.sp)
+                                        Switch(
+                                            checked = settings.hapticEffectsEnabled,
+                                            onCheckedChange = { checked ->
+                                                UiSoundPlayer.playToggleAudioOnly(context = context, checked = checked)
+                                                UiHapticPlayer.playToggle(context = context, checked = checked, force = true)
+                                                onHapticEffectsEnabledChange(checked)
+                                            }
+                                        )
+                                    }
+                                    if (settings.hapticEffectsEnabled) {
+                                        Spacer(modifier = Modifier.height(8.dp))
+                                        KeyedSettingDropdown(title = stringResource(R.string.haptic_effects_style),
+                                            selectedKey = settings.hapticEffectsStyle,
+                                            options = listOf("soft" to stringResource(R.string.haptic_style_soft),
+                                                    "crisp" to stringResource(R.string.haptic_style_crisp),
+                                                    "deep" to stringResource(R.string.haptic_style_deep),
+                                                    "double" to stringResource(R.string.haptic_style_double),
+                                                    "pulse" to stringResource(R.string.haptic_style_pulse),
+                                                    "stepped" to stringResource(R.string.haptic_style_stepped),
+                                                    "mechanical" to stringResource(R.string.haptic_style_mechanical),
+                                                    "minimal" to stringResource(R.string.haptic_style_minimal),
+                                                    "triple" to stringResource(R.string.haptic_style_triple),
+                                                    "ripple" to stringResource(R.string.haptic_style_ripple),
+                                                    "heartbeat" to stringResource(R.string.haptic_style_heartbeat),
+                                                    "snap" to stringResource(R.string.haptic_style_snap),
+                                                    "wave" to stringResource(R.string.haptic_style_wave),
+                                                    "heavy" to stringResource(R.string.haptic_style_heavy),
+                                                    "spring" to stringResource(R.string.haptic_style_spring),
+                                                    "echo" to stringResource(R.string.haptic_style_echo)),
+                                            textColor = panelColors.text,
+                                            textColorMode = settings.textColor,
+                                            menuBackground = menuBackground,
+                                            menuTextColor = settingsMenuTextColor,
+                                            fontFamily = fontFamily,
+                                            playDefaultSelectionFeedback = false,
+                                            onSelected = { selectedStyle ->
+                                                UiSoundPlayer.playActionAudioOnly(context = context, action = UiActionSound.Select)
+                                                onHapticEffectsStyleChange(selectedStyle)
+                                                UiHapticPlayer.previewStyle(
+                                                    context = context,
+                                                    style = selectedStyle,
+                                                    intensityPercent = localHapticEffectsIntensity,
+                                                    haptic = UiHaptic.Confirm
+                                                )
+                                            })
+                                        Spacer(modifier = Modifier.height(PreviewButtonVerticalGap))
+                                        RoundedPreviewButton(
+                                            text = stringResource(R.string.haptic_effects_preview),
+                                            panelBackground = panelColors.background,
+                                            panelContentColor = panelColors.text,
+                                            textColorMode = settings.textColor,
+                                            fontFamily = fontFamily,
+                                            onClick = {
+                                                UiSoundPlayer.playActionAudioOnly(context = context, action = UiActionSound.PlayPause)
+                                                UiHapticPlayer.previewStyle(
+                                                    context = context,
+                                                    style = settings.hapticEffectsStyle,
+                                                    intensityPercent = localHapticEffectsIntensity,
+                                                    haptic = UiHaptic.Confirm
+                                                )
+                                            }
+                                        )
+                                        Spacer(modifier = Modifier.height(PreviewToSliderGap))
+                                        SettingTitleRow(title = stringResource(R.string.haptic_effects_intensity),
+                                            value = "${localHapticEffectsIntensity.roundToInt()}%",
+                                            color = panelColors.text,
+                                            fontFamily = fontFamily)
+                                        StyledSettingsSlider(value = localHapticEffectsIntensity,
+                                            onValueChange = {
+                                                localHapticEffectsIntensity = it
+                                            },
+                                            onValueChangeFinished = {
+                                                onHapticEffectsIntensityChange(localHapticEffectsIntensity)
+                                                UiHapticPlayer.previewStyle(context = context, style = settings.hapticEffectsStyle,
+                                                    intensityPercent = localHapticEffectsIntensity, haptic = UiHaptic.Tick)
+                                            },
+                                            valueRange = 0f..100f,
+                                            steps = 19,
+                                            activeColor = MaterialTheme.colorScheme.primary,
+                                            inactiveColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.35f),
+                                            style = settings.sliderStyle,
+                                            valueLabel = "${localHapticEffectsIntensity.roundToInt()}%")
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                item(key = "language") {
+                    Surface(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(0.dp),
+                        color = settingsPanelColor,
+                        tonalElevation = 1.dp
+                    ) {
+                        Column(modifier = Modifier.fillMaxWidth().padding(PaddingValues(horizontal = 16.dp))) {
+                                Spacer(modifier = Modifier.height(18.dp))
+                                /*
+                                 * -------------------------------------------------
+                                 * LANGUAGE
+                                 * -------------------------------------------------
+                                 */
+                                SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(start = 6.dp, top = 14.dp, end = 0.dp, bottom = 14.dp),
+                                    horizontalOutset = 8.dp) { panelColors -> SettingDropdown(title = stringResource(R.string.mock_language),
+                                        selectedLabel = when (settings.language) {
+                                                "system" -> stringResource(R.string.language_system)
+                                                "en" -> "English"
+                                                "fr" -> "Français"
+                                                "zh-CN" -> "中文（简体）"
+                                                else -> "Español"
+                                            },
+                                        options = listOf("system" to stringResource(R.string.language_system),
+                                                    "es" to "Español", "en" to
+                                                    "English", "fr" to
+                                                    "Français", "zh-CN" to
+                                                    "中文（简体）"),
+                                        textColor = panelColors.text,
+                                        textColorMode = settings.textColor,
+                                        menuBackground = menuBackground,
+                                        menuTextColor = settingsMenuTextColor,
+                                        fontFamily = fontFamily,
+                                        onSelected = onLanguageChange)
+                                }
+                        }
+                    }
+                }
+                if (isAdvancedMode) {
+                    item(key = "layout_columns", contentType = "settings_panel") {
+                        Surface(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(0.dp),
+                            color = settingsPanelColor,
+                            tonalElevation = 1.dp
+                        ) {
+                            Column(modifier = Modifier.fillMaxWidth().padding(PaddingValues(horizontal = 16.dp))) {
+                                Spacer(modifier = Modifier.height(14.dp))
+                                SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(start = 6.dp, top = 14.dp, end = 0.dp, bottom = 14.dp),
+                                    horizontalOutset = 8.dp) { panelColors -> SettingDropdown(title = stringResource(R.string.mock_columns),
+                                        selectedLabel = settings.gridColumns.toString(),
+                                        options = listOf("1" to "1", "2" to "2", "3" to "3"),
+                                        textColor = panelColors.text,
+                                        textColorMode = settings.textColor,
+                                        menuBackground = menuBackground,
+                                        menuTextColor = settingsMenuTextColor,
+                                        fontFamily = fontFamily,
+                                        onSelected = {
+                                                value ->
+                                            onGridColumnsChange(value.toIntOrNull()?.coerceIn(1, 3)?: 2)
+                                        })
+                                }
+                            }
+                        }
+                    }
+                }
+                if (isAdvancedMode) {
+                    item(key = "layout_slider_design", contentType = "settings_panel") {
+                        Surface(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(0.dp),
+                            color = settingsPanelColor,
+                            tonalElevation = 1.dp
+                        ) {
+                            Column(modifier = Modifier.fillMaxWidth().padding(PaddingValues(horizontal = 16.dp))) {
+                                Spacer(modifier = Modifier.height(14.dp))
+                                SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(start = 6.dp, top = 14.dp, end = 0.dp, bottom = 14.dp),
+                                    horizontalOutset = 8.dp) { panelColors -> SettingDropdown(title = stringResource(R.string.mock_slider_style),
+                                        selectedLabel = stringResource(SliderStyleOptions.firstOrNull {
+                                                        it.key == settings.sliderStyle
+                                                    }?.labelRes?: R.string.mock_slider_minimal),
+                                        options = SliderStyleOptions.map {
+                                                    it.key to
+                                                        stringResource(it.labelRes)
+                                                },
+                                        textColor = panelColors.text,
+                                        textColorMode = settings.textColor,
+                                        menuBackground = menuBackground,
+                                        menuTextColor = settingsMenuTextColor,
+                                        fontFamily = fontFamily,
+                                        onSelected = onSliderStyleChange)
+                                }
+                            }
+                        }
+                    }
+                }
+                if (isAdvancedMode) {
+                    item(key = "layout_dark_mode", contentType = "settings_panel") {
+                        Surface(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(0.dp),
+                            color = settingsPanelColor,
+                            tonalElevation = 1.dp
+                        ) {
+                            Column(modifier = Modifier.fillMaxWidth().padding(PaddingValues(horizontal = 16.dp))) {
+                                Spacer(modifier = Modifier.height(17.dp))
+                                SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(start = 6.dp, top = 14.dp, end = 0.dp, bottom = 14.dp),
+                                    horizontalOutset = 8.dp) { panelColors -> Row(modifier = Modifier.fillMaxWidth(),
+                                        verticalAlignment = Alignment.CenterVertically) {
+                                        Column(modifier = Modifier.weight(1f)) {
+                                            Text(text = stringResource(R.string.mock_dark_mode),
+                                                color = panelColors.text,
+                                                fontFamily = fontFamily,
+                                                fontWeight = FontWeight.SemiBold,
+                                                fontSize = 15.sp)
+                                            Text(text = stringResource(R.string.mock_dark_mode_description),
+                                                modifier = Modifier.padding(top = 2.dp),
+                                                color = panelColors.secondaryText,
+                                                fontFamily = fontFamily,
+                                                fontSize = 12.sp)
+                                        }
+                                        Switch(checked = settings.darkMode,
+                                            onCheckedChange = { checked -> UiSoundPlayer.playToggle(context = context, checked = checked)
+                                                onDarkModeChange(checked)
+                                            })
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                if (isAdvancedMode) {
+                    item(key = "layout_backup_restore", contentType = "settings_panel") {
+                        Surface(
+                            modifier = Modifier.fillMaxWidth(),
+                            shape = RoundedCornerShape(0.dp),
+                            color = settingsPanelColor,
+                            tonalElevation = 1.dp
+                        ) {
+                            Column(modifier = Modifier.fillMaxWidth().padding(PaddingValues(horizontal = 16.dp))) {
+                                Spacer(modifier = Modifier.height(18.dp))
+                                BackupRestoreSection(settings = settings, fontFamily = fontFamily, textColor = settingsTextColor,
+                                    secondaryTextColor = settingsSecondaryTextColor, graphicColor = settingsGraphicColor)
+                            }
+                        }
+                    }
+                }
+                item(key = "development") {
+                    Surface(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(0.dp),
+                        color = settingsPanelColor,
+                        tonalElevation = 1.dp
+                    ) {
+                        Column(modifier = Modifier.fillMaxWidth().padding(PaddingValues(horizontal = 16.dp))) {
+                                Spacer(modifier = Modifier.height(22.dp))
+                                /*
+                                 * -------------------------------------------------
+                                 * INFORMACIÓN DEL DESARROLLO
+                                 * -------------------------------------------------
+                                 * Solo navega a una pantalla informativa; no cambia ninguna
+                                 * preferencia ni estado funcional de las notas.
+                                 */
+                                SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(0.dp),
+                                    horizontalOutset = 8.dp) { panelColors ->
+                                    Row(modifier = Modifier.fillMaxWidth().clickable {
+                                            UiSoundPlayer.playAction(context = context, action = UiActionSound.Menu)
+                                            onOpenDevelopmentInfo()
+                                        }.padding(horizontal = 14.dp, vertical = 14.dp),
+                                        verticalAlignment = Alignment.CenterVertically) {
+                                        Icon(imageVector = Icons.Default.Code, contentDescription = null, tint = panelColors.graphic,
+                                            modifier = Modifier.size(23.dp))
+                                        Column(modifier = Modifier.weight(1f).padding(start = 12.dp, end = 8.dp)) {
+                                            Text(text = stringResource(R.string.development_info_settings_title), color = panelColors.text,
+                                                fontFamily = fontFamily, fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
+                                            Text(text = stringResource(R.string.development_info_settings_description),
+                                                modifier = Modifier.padding(top = 2.dp), color = panelColors.secondaryText,
+                                                fontFamily = fontFamily, fontSize = 12.sp)
+                                        }
+                                        Icon(imageVector = Icons.Default.ChevronRight, contentDescription = null,
+                                            tint = panelColors.graphic, modifier = Modifier.size(22.dp))
+                                    }
+                                }
+                        }
+                    }
+                }
+                item(key = "updates") {
+                    Surface(
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = RoundedCornerShape(bottomStart = 22.dp, bottomEnd = 22.dp),
+                        color = settingsPanelColor,
+                        tonalElevation = 1.dp
+                    ) {
+                        Column(modifier = Modifier.fillMaxWidth().padding(PaddingValues(start = 16.dp, top = 0.dp, end = 16.dp, bottom = 16.dp))) {
+                                Spacer(modifier = Modifier.height(14.dp))
+                                /*
+                                 * -------------------------------------------------
+                                 * ACTUALIZACIONES DE LA APLICACIÓN
+                                 * -------------------------------------------------
+                                 * Consulta la última Release estable de GitHub. Si la etiqueta
+                                 * es superior a versionName y existe un asset .apk, permite
+                                 * descargarlo y pasarlo al instalador oficial de Android.
+                                 */
+                                SettingsSectionPanel(
+                                    textColorMode = settings.textColor,
+                                    contentPadding = PaddingValues(horizontal = 14.dp, vertical = 14.dp),
+                                    horizontalOutset = 8.dp
+                                ) { panelColors ->
+                                    Column(modifier = Modifier.fillMaxWidth()) {
+                                        Row(verticalAlignment = Alignment.CenterVertically) {
+                                            Icon(
+                                                imageVector = Icons.Default.Download,
+                                                contentDescription = null,
+                                                tint = panelColors.graphic,
+                                                modifier = Modifier.size(23.dp)
+                                            )
+                                            Column(modifier = Modifier.weight(1f).padding(start = 12.dp)) {
+                                                Text(
+                                                    text = stringResource(R.string.update_settings_title),
+                                                    color = panelColors.text,
+                                                    fontFamily = fontFamily,
+                                                    fontWeight = FontWeight.SemiBold,
+                                                    fontSize = 15.sp
+                                                )
+                                                Text(
+                                                    text = stringResource(R.string.update_settings_description),
+                                                    modifier = Modifier.padding(top = 2.dp),
+                                                    color = panelColors.secondaryText,
+                                                    fontFamily = fontFamily,
+                                                    fontSize = 12.sp
+                                                )
+                                            }
+                                        }
+            
                                         Text(
-                                            text = result.release.title,
-                                            modifier = Modifier.padding(top = 2.dp),
+                                            text = stringResource(R.string.update_current_version, installedVersion),
+                                            modifier = Modifier.padding(top = 10.dp),
                                             color = panelColors.secondaryText,
                                             fontFamily = fontFamily,
                                             fontSize = 12.sp
                                         )
-                                    }
-                                    if (result.release.apkDownloadUrl != null) {
+            
                                         Button(
-                                            onClick = { requestDownloadAndInstall(result.release) },
-                                            enabled = !downloadingUpdate,
-                                            modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                                            onClick = {
+                                                UiSoundPlayer.playAction(context = context, action = UiActionSound.Menu)
+                                                updateScope.launch {
+                                                    checkingForUpdate = true
+                                                    updateActionMessage = null
+                                                    updateResult = GitHubUpdateManager.checkForUpdate(context)
+                                                    checkingForUpdate = false
+                                                }
+                                            },
+                                            enabled = !checkingForUpdate && !downloadingUpdate,
+                                            modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
                                             shape = RoundedCornerShape(14.dp)
                                         ) {
-                                            if (downloadingUpdate) {
+                                            if (checkingForUpdate) {
                                                 CircularProgressIndicator(
                                                     modifier = Modifier.size(17.dp),
                                                     strokeWidth = 2.dp,
@@ -1340,82 +1631,126 @@ fun SettingsScreen(settings: AppSettings, onConfigurationModeChange: (String) ->
                                             }
                                             Text(
                                                 text = stringResource(
-                                                    if (downloadingUpdate) R.string.update_downloading
-                                                    else R.string.update_download_install
+                                                    if (checkingForUpdate) R.string.update_checking else R.string.update_check
                                                 ),
                                                 fontFamily = fontFamily,
                                                 fontWeight = FontWeight.SemiBold
                                             )
                                         }
-                                    } else {
-                                        Text(
-                                            text = stringResource(R.string.update_release_without_apk),
-                                            modifier = Modifier.padding(top = 6.dp),
-                                            color = panelColors.secondaryText,
-                                            fontFamily = fontFamily,
-                                            fontSize = 12.sp
-                                        )
-                                    }
-                                    TextButton(
-                                        onClick = { GitHubUpdateManager.openReleasePage(context, result.release.htmlUrl) },
-                                        modifier = Modifier.fillMaxWidth()
-                                    ) {
-                                        Text(text = stringResource(R.string.update_open_release), fontFamily = fontFamily)
+            
+                                        when (val result = updateResult) {
+                                            is GitHubUpdateManager.CheckResult.UpdateAvailable -> {
+                                                Text(
+                                                    text = stringResource(R.string.update_available, result.release.version),
+                                                    modifier = Modifier.padding(top = 12.dp),
+                                                    color = panelColors.text,
+                                                    fontFamily = fontFamily,
+                                                    fontWeight = FontWeight.SemiBold,
+                                                    fontSize = 13.sp
+                                                )
+                                                if (result.release.title.isNotBlank() && result.release.title != result.release.version) {
+                                                    Text(
+                                                        text = result.release.title,
+                                                        modifier = Modifier.padding(top = 2.dp),
+                                                        color = panelColors.secondaryText,
+                                                        fontFamily = fontFamily,
+                                                        fontSize = 12.sp
+                                                    )
+                                                }
+                                                if (result.release.apkDownloadUrl != null) {
+                                                    Button(
+                                                        onClick = { requestDownloadAndInstall(result.release) },
+                                                        enabled = !downloadingUpdate,
+                                                        modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                                                        shape = RoundedCornerShape(14.dp)
+                                                    ) {
+                                                        if (downloadingUpdate) {
+                                                            CircularProgressIndicator(
+                                                                modifier = Modifier.size(17.dp),
+                                                                strokeWidth = 2.dp,
+                                                                color = MaterialTheme.colorScheme.onPrimary
+                                                            )
+                                                            Spacer(modifier = Modifier.width(8.dp))
+                                                        }
+                                                        Text(
+                                                            text = stringResource(
+                                                                if (downloadingUpdate) R.string.update_downloading
+                                                                else R.string.update_download_install
+                                                            ),
+                                                            fontFamily = fontFamily,
+                                                            fontWeight = FontWeight.SemiBold
+                                                        )
+                                                    }
+                                                } else {
+                                                    Text(
+                                                        text = stringResource(R.string.update_release_without_apk),
+                                                        modifier = Modifier.padding(top = 6.dp),
+                                                        color = panelColors.secondaryText,
+                                                        fontFamily = fontFamily,
+                                                        fontSize = 12.sp
+                                                    )
+                                                }
+                                                TextButton(
+                                                    onClick = { GitHubUpdateManager.openReleasePage(context, result.release.htmlUrl) },
+                                                    modifier = Modifier.fillMaxWidth()
+                                                ) {
+                                                    Text(text = stringResource(R.string.update_open_release), fontFamily = fontFamily)
+                                                }
+                                            }
+            
+                                            is GitHubUpdateManager.CheckResult.UpToDate -> Text(
+                                                text = stringResource(R.string.update_up_to_date, result.latestVersion),
+                                                modifier = Modifier.padding(top = 10.dp),
+                                                color = panelColors.secondaryText,
+                                                fontFamily = fontFamily,
+                                                fontSize = 12.sp
+                                            )
+            
+                                            is GitHubUpdateManager.CheckResult.NoPublishedRelease -> {
+                                                Text(
+                                                    text = stringResource(R.string.update_no_release),
+                                                    modifier = Modifier.padding(top = 10.dp),
+                                                    color = panelColors.secondaryText,
+                                                    fontFamily = fontFamily,
+                                                    fontSize = 12.sp
+                                                )
+                                                TextButton(
+                                                    onClick = { GitHubUpdateManager.openReleasePage(context) },
+                                                    modifier = Modifier.fillMaxWidth()
+                                                ) {
+                                                    Text(text = stringResource(R.string.update_open_release), fontFamily = fontFamily)
+                                                }
+                                            }
+            
+                                            is GitHubUpdateManager.CheckResult.Failure -> Text(
+                                                text = stringResource(R.string.update_error, result.reason),
+                                                modifier = Modifier.padding(top = 10.dp),
+                                                color = MaterialTheme.colorScheme.error,
+                                                fontFamily = fontFamily,
+                                                fontSize = 12.sp
+                                            )
+            
+                                            null -> Unit
+                                        }
+            
+                                        updateActionMessage?.let { message ->
+                                            Text(
+                                                text = message,
+                                                modifier = Modifier.padding(top = 8.dp),
+                                                color = MaterialTheme.colorScheme.error,
+                                                fontFamily = fontFamily,
+                                                fontSize = 12.sp
+                                            )
+                                        }
                                     }
                                 }
-
-                                is GitHubUpdateManager.CheckResult.UpToDate -> Text(
-                                    text = stringResource(R.string.update_up_to_date, result.latestVersion),
-                                    modifier = Modifier.padding(top = 10.dp),
-                                    color = panelColors.secondaryText,
-                                    fontFamily = fontFamily,
-                                    fontSize = 12.sp
-                                )
-
-                                is GitHubUpdateManager.CheckResult.NoPublishedRelease -> {
-                                    Text(
-                                        text = stringResource(R.string.update_no_release),
-                                        modifier = Modifier.padding(top = 10.dp),
-                                        color = panelColors.secondaryText,
-                                        fontFamily = fontFamily,
-                                        fontSize = 12.sp
-                                    )
-                                    TextButton(
-                                        onClick = { GitHubUpdateManager.openReleasePage(context) },
-                                        modifier = Modifier.fillMaxWidth()
-                                    ) {
-                                        Text(text = stringResource(R.string.update_open_release), fontFamily = fontFamily)
-                                    }
-                                }
-
-                                is GitHubUpdateManager.CheckResult.Failure -> Text(
-                                    text = stringResource(R.string.update_error, result.reason),
-                                    modifier = Modifier.padding(top = 10.dp),
-                                    color = MaterialTheme.colorScheme.error,
-                                    fontFamily = fontFamily,
-                                    fontSize = 12.sp
-                                )
-
-                                null -> Unit
-                            }
-
-                            updateActionMessage?.let { message ->
-                                Text(
-                                    text = message,
-                                    modifier = Modifier.padding(top = 8.dp),
-                                    color = MaterialTheme.colorScheme.error,
-                                    fontFamily = fontFamily,
-                                    fontSize = 12.sp
-                                )
-                            }
                         }
                     }
                 }
             }
-        }
         /*
          * El indicador debe ser hermano del contenido desplazable, no un hijo
-         * de la Column con verticalScroll. De esa forma permanece visible en
+         * de la LazyColumn principal. De esa forma permanece visible en
          * todo momento mientras Settings se desplaza y no termina colocado al
          * final del contenido, fuera del viewport actual.
          */
@@ -1426,7 +1761,7 @@ fun SettingsScreen(settings: AppSettings, onConfigurationModeChange: (String) ->
             contentAlignment = Alignment.CenterEnd
         ) {
             ScrollPositionCapsule(
-                state = settingsScrollState,
+                state = settingsListState,
                 backgroundColor = MaterialTheme.colorScheme.background,
                 preferredColor = MaterialTheme.colorScheme.onBackground
             )
@@ -1895,6 +2230,22 @@ private fun TextColorButton(modifier: Modifier, label: String, sampleColor: Colo
             }
         }
     }
+}
+
+/** Usa las mismas etiquetas del menú para mostrar la selección actual. */
+@Composable
+private fun KeyedSettingDropdown(
+    title: String, selectedKey: String, options: List<Pair<String, String>>, textColor: Color,
+    textColorMode: String, menuBackground: Color, menuTextColor: Color,
+    fontFamily: androidx.compose.ui.text.font.FontFamily,
+    playDefaultSelectionFeedback: Boolean = true, onSelected: (String) -> Unit
+) {
+    val selectedLabel = remember(selectedKey, options) {
+        (options.firstOrNull { it.first == selectedKey } ?: options.first()).second
+    }
+    SettingDropdown(title = title, selectedLabel = selectedLabel, options = options, textColor = textColor,
+        textColorMode = textColorMode, menuBackground = menuBackground, menuTextColor = menuTextColor,
+        fontFamily = fontFamily, playDefaultSelectionFeedback = playDefaultSelectionFeedback, onSelected = onSelected)
 }
 
 @Composable

@@ -5,11 +5,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.googlefonts.Font as GoogleFontsFont
 import androidx.compose.ui.text.googlefonts.GoogleFont
 import com.example.mynotes.R
+import com.example.mynotes.settings.FontPreferencePolicy
 
 /*
- * Google Sans Flex is requested from the official Google Fonts provider only
- * after the hidden developer option has been selected. The APK does not bundle
- * the legacy Google Sans binaries that identified themselves as non-open-source.
+ * Google Sans Flex se solicita al proveedor oficial de Google Fonts. El APK no
+ * vuelve a empaquetar los antiguos binarios Google Sans que fueron retirados.
  */
 private val googleFontsProvider = GoogleFont.Provider(
     providerAuthority = "com.google.android.gms.fonts",
@@ -27,32 +27,18 @@ private val googleSansFlexFamily = FontFamily(
 )
 
 /**
- * Font mapping for MyNotes.
+ * Convierte una clave ya validada por SettingsRepository en la familia Compose.
  *
- * `system_default` follows the device/OEM default Compose font family, while
- * `system_sans` keeps Android's generic sans-serif family.
- *
- * Older builds stored several `google_sans*` keys in DataStore. Those legacy
- * keys remain mapped to Android sans-serif so an update never tries to revive
- * the old unlicensed font files. The new developer-only key uses Google Sans
- * Flex from the official Google Fonts provider.
+ * SYSTEM_DEFAULT deja a Android/OEM resolver la tipografía predeterminada real
+ * del dispositivo. Las preferencias de tipografía retiradas se migran a
+ * SYSTEM_DEFAULT antes de llegar aquí.
  */
 fun appFontFamily(key: String): FontFamily {
-    return when (key) {
-        "system_default" -> FontFamily.Default
-        "serif" -> FontFamily.Serif
-        "monospace" -> FontFamily.Monospace
-        "developer_google_sans_flex" -> googleSansFlexFamily
-        "system_sans",
-        "default",
-        "google_sans",
-        "google_sans_regular",
-        "google_sans_medium",
-        "google_sans_bold",
-        "google_sans_italic",
-        "google_sans_medium_italic",
-        "google_sans_bold_italic",
-        "google_sans_flex" -> FontFamily.SansSerif
-        else -> FontFamily.SansSerif
+    return when (FontPreferencePolicy.normalize(key, googleSansFlexUnlocked = true)) {
+        FontPreferencePolicy.SYSTEM_DEFAULT -> FontFamily.Default
+        FontPreferencePolicy.SERIF -> FontFamily.Serif
+        FontPreferencePolicy.MONOSPACE -> FontFamily.Monospace
+        FontPreferencePolicy.DEVELOPER_GOOGLE_SANS_FLEX -> googleSansFlexFamily
+        else -> FontFamily.Default
     }
 }

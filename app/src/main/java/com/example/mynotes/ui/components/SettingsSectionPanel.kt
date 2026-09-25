@@ -9,7 +9,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.geometry.CornerRadius
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
@@ -35,12 +35,32 @@ internal fun SettingsSectionPanel(textColorMode: String, modifier: Modifier = Mo
     val colors = remember(background, textColorMode) {
         settingsSectionColors(background, textColorMode)
     }
-    Column(modifier = modifier.fillMaxWidth().drawBehind {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            /*
+             * El fondo de cada panel era recalculado en cada pasada de dibujo.
+             * En Settings hay muchos paneles y, durante un fling, eso puede
+             * provocar frames irregulares. drawWithCache conserva exactamente
+             * la misma geometría visual pero reutiliza el cálculo hasta que
+             * cambien tamaño, color u outset.
+             */
+            .drawWithCache {
                 val outset = horizontalOutset.toPx()
                 val radius = 18.dp.toPx()
-                drawRoundRect(color = colors.background, topLeft = Offset(-outset, 0f), size = Size(size.width + outset * 2f, size.height),
-                    cornerRadius = CornerRadius(radius, radius))
-            }.padding(contentPadding)) {
+                val topLeft = Offset(-outset, 0f)
+                val panelSize = Size(size.width + outset * 2f, size.height)
+                onDrawBehind {
+                    drawRoundRect(
+                        color = colors.background,
+                        topLeft = topLeft,
+                        size = panelSize,
+                        cornerRadius = CornerRadius(radius, radius)
+                    )
+                }
+            }
+            .padding(contentPadding)
+    ) {
         content(colors)
     }
 }

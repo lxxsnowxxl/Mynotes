@@ -20,294 +20,193 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
                 // "loading" evita que el diálogo de primer inicio parpadee
                 // antes de que DataStore entregue el modo ya guardado.
                 initialValue = AppSettings(configurationMode = "loading"))
-    fun setConfigurationMode(value: String) {
+    /**
+     * Evita lanzar una coroutine y abrir una transacción de DataStore cuando
+     * el valor solicitado ya está aplicado. Esto es especialmente importante
+     * para sliders, switches y menús que pueden reenviar el mismo valor durante
+     * recomposiciones o gestos rápidos.
+     */
+    private fun <T> launchIfChanged(
+        current: T,
+        requested: T,
+        update: suspend (T) -> Unit,
+        refreshWidgets: Boolean = false
+    ) {
+        if (current == requested) return
         viewModelScope.launch {
-            repository.setConfigurationMode(value)
+            update(requested)
+            if (refreshWidgets) MyNotesWidgetUpdater.requestUpdate(getApplication<Application>())
         }
     }
-    fun setDarkMode(value: Boolean) {
-        viewModelScope.launch {
-            repository.setDarkMode(value)
-            MyNotesWidgetUpdater.requestUpdate(getApplication<Application>())
-        }
-    }
-    fun setBackgroundColor(value: String) {
-        viewModelScope.launch {
-            repository.setBackgroundColor(value)
-            MyNotesWidgetUpdater.requestUpdate(getApplication<Application>())
-        }
-    }
-    fun setBackgroundToneIndex(value: Int) {
-        viewModelScope.launch {
-            repository.setBackgroundToneIndex(value)
-            MyNotesWidgetUpdater.requestUpdate(getApplication<Application>())
-        }
-    }
-    fun setBackgroundIntensity(value: Float) {
-        val normalized = value.coerceIn(0f, 100f)
-        if (settings.value.backgroundIntensity == normalized) return
-        viewModelScope.launch {
-            repository.setBackgroundIntensity(normalized)
-            MyNotesWidgetUpdater.requestUpdate(getApplication<Application>())
-        }
-    }
-    fun setSettingsPanelTone(value: Float) {
-        val normalized = value.coerceIn(0f, 100f)
-        if (settings.value.settingsPanelTone == normalized) return
-        viewModelScope.launch { repository.setSettingsPanelTone(normalized) }
-    }
-    fun setSurfacePanelIntensity(value: Float) {
-        val normalized = value.coerceIn(0f, 100f)
-        if (settings.value.surfacePanelIntensity == normalized) return
-        viewModelScope.launch {
-            repository.setSurfacePanelIntensity(normalized)
-            MyNotesWidgetUpdater.requestUpdate(getApplication<Application>())
-        }
-    }
-    fun setHeaderIntensity(value: Float) {
-        val normalized = value.coerceIn(0f, 100f)
-        if (settings.value.headerIntensity == normalized) return
-        viewModelScope.launch { repository.setHeaderIntensity(normalized) }
-    }
-    fun setTextColor(value: String) {
-        viewModelScope.launch {
-            repository.setTextColor(value)
-        }
-    }
-    fun setTextOutlineEnabled(value: Boolean) {
-        viewModelScope.launch {
-            repository.setTextOutlineEnabled(value)
-        }
-    }
-    fun setSliderStyle(value: String) {
-        viewModelScope.launch {
-            repository.setSliderStyle(value)
-        }
-    }
-    fun setFont(value: String) {
-        viewModelScope.launch {
-            repository.setFont(value)
-        }
-    }
-    fun setFontSize(value: Float) {
-        val normalized = value.coerceIn(12f, 28f)
-        if (settings.value.fontSize == normalized) return
-        viewModelScope.launch { repository.setFontSize(normalized) }
-    }
-    fun setSoundEffectsEnabled(value: Boolean) {
-        viewModelScope.launch {
-            repository.setSoundEffectsEnabled(value)
-        }
-    }
-    fun setSoundEffectsVolume(value: Float) {
-        val normalized = value.coerceIn(0f, 100f)
-        if (settings.value.soundEffectsVolume == normalized) return
-        viewModelScope.launch { repository.setSoundEffectsVolume(normalized) }
-    }
-    fun setSoundEffectsTheme(value: String) {
-        viewModelScope.launch {
-            repository.setSoundEffectsTheme(value)
-        }
-    }
-    fun setReminderSoundEnabled(value: Boolean) {
-        viewModelScope.launch {
-            repository.setReminderSoundEnabled(value)
-        }
-    }
-    fun setReminderSoundVolume(value: Float) {
-        val normalized = value.coerceIn(0f, 100f)
-        if (settings.value.reminderSoundVolume == normalized) return
-        viewModelScope.launch { repository.setReminderSoundVolume(normalized) }
-    }
-    fun setReminderRingtone(value: String) {
-        viewModelScope.launch {
-            repository.setReminderRingtone(value)
-        }
-    }
-    fun setHapticEffectsEnabled(value: Boolean) {
-        viewModelScope.launch {
-            repository.setHapticEffectsEnabled(value)
-        }
-    }
-    fun setHapticEffectsIntensity(value: Float) {
-        val normalized = value.coerceIn(0f, 100f)
-        if (settings.value.hapticEffectsIntensity == normalized) return
-        viewModelScope.launch { repository.setHapticEffectsIntensity(normalized) }
-    }
-    fun setHapticEffectsStyle(value: String) {
-        viewModelScope.launch {
-            repository.setHapticEffectsStyle(value)
-        }
-    }
-    fun setLanguage(value: String) {
-        viewModelScope.launch {
-            repository.setLanguage(value)
-            MyNotesWidgetUpdater.requestUpdate(getApplication<Application>())
-        }
-    }
-    fun setGridColumns(value: Int) {
-        viewModelScope.launch {
-            repository.setGridColumns(value)
-        }
-    }
-    fun setSortOrder(value: String) {
-        viewModelScope.launch {
-            repository.setSortOrder(value)
-        }
-    }
-    fun setProfileImageUri(value: String) {
-        viewModelScope.launch {
-            repository.setProfileImageUri(value)
-        }
-    }
-    fun setProfileImageSize(value: Float) {
-        val normalized = value.coerceIn(36f, 84f)
-        if (settings.value.profileImageSize == normalized) return
-        viewModelScope.launch { repository.setProfileImageSize(normalized) }
-    }
-    fun setIconStyle(value: String) {
-        viewModelScope.launch {
-            repository.setIconStyle(value)
-        }
-    }
-    fun setIconSize(value: Float) {
-        val normalized = value.coerceIn(16f, 36f)
-        if (settings.value.iconSize == normalized) return
-        viewModelScope.launch { repository.setIconSize(normalized) }
-    }
-    fun setAccentColor(value: String) {
-        viewModelScope.launch {
-            repository.setAccentColor(value)
-        }
-    }
-    fun setNoteCardCornerRadius(value: Float) {
-        val normalized = value.coerceIn(0f, 36f)
-        if (settings.value.noteCardCornerRadius == normalized) return
-        viewModelScope.launch { repository.setNoteCardCornerRadius(normalized) }
-    }
-    fun setNoteCardElevation(value: Float) {
-        val normalized = value.coerceIn(0f, 12f)
-        if (settings.value.noteCardElevation == normalized) return
-        viewModelScope.launch { repository.setNoteCardElevation(normalized) }
-    }
-    fun setNoteCardPadding(value: Float) {
-        val normalized = value.coerceIn(6f, 24f)
-        if (settings.value.noteCardPadding == normalized) return
-        viewModelScope.launch { repository.setNoteCardPadding(normalized) }
-    }
-    fun setNoteCardImageHeight(value: Float) {
-        val normalized = value.coerceIn(72f, 220f)
-        if (settings.value.noteCardImageHeight == normalized) return
-        viewModelScope.launch { repository.setNoteCardImageHeight(normalized) }
-    }
-    fun setNoteCardOutlineWidth(value: Float) {
-        val normalized = value.coerceIn(0f, 6f)
-        if (settings.value.noteCardOutlineWidth == normalized) return
-        viewModelScope.launch { repository.setNoteCardOutlineWidth(normalized) }
-    }
-    fun setNoteTitleMaxLines(value: Int) {
-        viewModelScope.launch {
-            repository.setNoteTitleMaxLines(value)
-        }
-    }
-    fun setNoteContentMaxLines(value: Int) {
-        viewModelScope.launch {
-            repository.setNoteContentMaxLines(value)
-        }
-    }
-    fun setNoteLineSpacing(value: Float) {
-        val normalized = value.coerceIn(1f, 1.8f)
-        if (settings.value.noteLineSpacing == normalized) return
-        viewModelScope.launch { repository.setNoteLineSpacing(normalized) }
-    }
-    fun setShowNoteDate(value: Boolean) {
-        viewModelScope.launch {
-            repository.setShowNoteDate(value)
-        }
-    }
-    fun setShowCategoryChip(value: Boolean) {
-        viewModelScope.launch {
-            repository.setShowCategoryChip(value)
-        }
-    }
-    fun setShowFavoriteIcon(value: Boolean) {
-        viewModelScope.launch {
-            repository.setShowFavoriteIcon(value)
-        }
-    }
-    fun setFabSize(value: Float) {
-        val normalized = value.coerceIn(48f, 82f)
-        if (settings.value.fabSize == normalized) return
-        viewModelScope.launch { repository.setFabSize(normalized) }
-    }
-    fun setOptionMenuOrder(value: String) {
-        viewModelScope.launch {
-            repository.setOptionMenuOrder(value)
-        }
-    }
-    fun setOptionMenuHiddenItems(value: String) {
-        viewModelScope.launch {
-            repository.setOptionMenuHiddenItems(value)
-        }
-    }
-    fun setOptionMenuShowIcons(value: Boolean) {
-        viewModelScope.launch {
-            repository.setOptionMenuShowIcons(value)
-        }
-    }
-    fun setOptionMenuTextColor(value: String) {
-        viewModelScope.launch {
-            repository.setOptionMenuTextColor(value)
-        }
-    }
-    fun setOptionMenuOpacity(value: Float) {
-        viewModelScope.launch {
-            repository.setOptionMenuOpacity(value)
-        }
-    }
-    fun setPriorityMenuHiddenItems(value: String) {
-        viewModelScope.launch {
-            repository.setPriorityMenuHiddenItems(value)
-        }
-    }
-    fun setColorMenuHiddenItems(value: String) {
-        viewModelScope.launch {
-            repository.setColorMenuHiddenItems(value)
-        }
-    }
+
+    fun setConfigurationMode(value: String) =
+        launchIfChanged(settings.value.configurationMode, value, repository::setConfigurationMode)
+
+    fun setDarkMode(value: Boolean) =
+        launchIfChanged(settings.value.darkMode, value, repository::setDarkMode, refreshWidgets = true)
+
+    fun setBackgroundColor(value: String) =
+        launchIfChanged(settings.value.backgroundColor, value, repository::setBackgroundColor, refreshWidgets = true)
+
+    fun setBackgroundToneIndex(value: Int) =
+        launchIfChanged(settings.value.backgroundToneIndex, value.coerceIn(0, 3), repository::setBackgroundToneIndex, refreshWidgets = true)
+
+    fun setBackgroundIntensity(value: Float) =
+        launchIfChanged(settings.value.backgroundIntensity, value.coerceIn(0f, 100f), repository::setBackgroundIntensity, refreshWidgets = true)
+
+    fun setSettingsPanelTone(value: Float) =
+        launchIfChanged(settings.value.settingsPanelTone, value.coerceIn(0f, 100f), repository::setSettingsPanelTone)
+
+    fun setSurfacePanelIntensity(value: Float) =
+        launchIfChanged(settings.value.surfacePanelIntensity, value.coerceIn(0f, 100f), repository::setSurfacePanelIntensity, refreshWidgets = true)
+
+    fun setHeaderIntensity(value: Float) =
+        launchIfChanged(settings.value.headerIntensity, value.coerceIn(0f, 100f), repository::setHeaderIntensity)
+
+    fun setTextColor(value: String) =
+        launchIfChanged(settings.value.textColor, value, repository::setTextColor)
+
+    fun setTextOutlineEnabled(value: Boolean) =
+        launchIfChanged(settings.value.textOutlineEnabled, value, repository::setTextOutlineEnabled)
+
+    fun setSliderStyle(value: String) =
+        launchIfChanged(settings.value.sliderStyle, value, repository::setSliderStyle)
+
+    fun setFont(value: String) =
+        launchIfChanged(settings.value.font, value, repository::setFont)
+
+    fun setFontSize(value: Float) =
+        launchIfChanged(settings.value.fontSize, value.coerceIn(12f, 28f), repository::setFontSize)
+
+    fun setSoundEffectsEnabled(value: Boolean) =
+        launchIfChanged(settings.value.soundEffectsEnabled, value, repository::setSoundEffectsEnabled)
+
+    fun setSoundEffectsVolume(value: Float) =
+        launchIfChanged(settings.value.soundEffectsVolume, value.coerceIn(0f, 100f), repository::setSoundEffectsVolume)
+
+    fun setSoundEffectsTheme(value: String) =
+        launchIfChanged(settings.value.soundEffectsTheme, value, repository::setSoundEffectsTheme)
+
+    fun setReminderSoundEnabled(value: Boolean) =
+        launchIfChanged(settings.value.reminderSoundEnabled, value, repository::setReminderSoundEnabled)
+
+    fun setReminderSoundVolume(value: Float) =
+        launchIfChanged(settings.value.reminderSoundVolume, value.coerceIn(0f, 100f), repository::setReminderSoundVolume)
+
+    fun setReminderRingtone(value: String) =
+        launchIfChanged(settings.value.reminderRingtone, value, repository::setReminderRingtone)
+
+    fun setHapticEffectsEnabled(value: Boolean) =
+        launchIfChanged(settings.value.hapticEffectsEnabled, value, repository::setHapticEffectsEnabled)
+
+    fun setHapticEffectsIntensity(value: Float) =
+        launchIfChanged(settings.value.hapticEffectsIntensity, value.coerceIn(0f, 100f), repository::setHapticEffectsIntensity)
+
+    fun setHapticEffectsStyle(value: String) =
+        launchIfChanged(settings.value.hapticEffectsStyle, value, repository::setHapticEffectsStyle)
+
+    fun setLanguage(value: String) =
+        launchIfChanged(settings.value.language, value, repository::setLanguage, refreshWidgets = true)
+
+    fun setGridColumns(value: Int) =
+        launchIfChanged(settings.value.gridColumns, value.coerceIn(1, 3), repository::setGridColumns)
+
+    fun setSortOrder(value: String) =
+        launchIfChanged(settings.value.sortOrder, value, repository::setSortOrder)
+
+    fun setProfileImageUri(value: String) =
+        launchIfChanged(settings.value.profileImageUri, value, repository::setProfileImageUri)
+
+    fun setProfileImageSize(value: Float) =
+        launchIfChanged(settings.value.profileImageSize, value.coerceIn(36f, 84f), repository::setProfileImageSize)
+
+    fun setIconStyle(value: String) =
+        launchIfChanged(settings.value.iconStyle, value, repository::setIconStyle)
+
+    fun setIconSize(value: Float) =
+        launchIfChanged(settings.value.iconSize, value.coerceIn(16f, 36f), repository::setIconSize)
+
+    fun setAccentColor(value: String) =
+        launchIfChanged(settings.value.accentColor, value, repository::setAccentColor)
+
+    fun setNoteCardCornerRadius(value: Float) =
+        launchIfChanged(settings.value.noteCardCornerRadius, value.coerceIn(0f, 36f), repository::setNoteCardCornerRadius)
+
+    fun setNoteCardElevation(value: Float) =
+        launchIfChanged(settings.value.noteCardElevation, value.coerceIn(0f, 12f), repository::setNoteCardElevation)
+
+    fun setNoteCardPadding(value: Float) =
+        launchIfChanged(settings.value.noteCardPadding, value.coerceIn(6f, 24f), repository::setNoteCardPadding)
+
+    fun setNoteCardImageHeight(value: Float) =
+        launchIfChanged(settings.value.noteCardImageHeight, value.coerceIn(72f, 220f), repository::setNoteCardImageHeight)
+
+    fun setNoteCardOutlineWidth(value: Float) =
+        launchIfChanged(settings.value.noteCardOutlineWidth, value.coerceIn(0f, 6f), repository::setNoteCardOutlineWidth)
+
+    fun setNoteTitleMaxLines(value: Int) =
+        launchIfChanged(settings.value.noteTitleMaxLines, value.coerceIn(1, 8), repository::setNoteTitleMaxLines)
+
+    fun setNoteContentMaxLines(value: Int) =
+        launchIfChanged(settings.value.noteContentMaxLines, value.coerceIn(2, 14), repository::setNoteContentMaxLines)
+
+    fun setNoteLineSpacing(value: Float) =
+        launchIfChanged(settings.value.noteLineSpacing, value.coerceIn(1f, 1.8f), repository::setNoteLineSpacing)
+
+    fun setShowNoteDate(value: Boolean) =
+        launchIfChanged(settings.value.showNoteDate, value, repository::setShowNoteDate)
+
+    fun setShowCategoryChip(value: Boolean) =
+        launchIfChanged(settings.value.showCategoryChip, value, repository::setShowCategoryChip)
+
+    fun setShowFavoriteIcon(value: Boolean) =
+        launchIfChanged(settings.value.showFavoriteIcon, value, repository::setShowFavoriteIcon)
+
+    fun setFabSize(value: Float) =
+        launchIfChanged(settings.value.fabSize, value.coerceIn(48f, 82f), repository::setFabSize)
+
+    fun setOptionMenuOrder(value: String) =
+        launchIfChanged(settings.value.optionMenuOrder, value, repository::setOptionMenuOrder)
+
+    fun setOptionMenuHiddenItems(value: String) =
+        launchIfChanged(settings.value.optionMenuHiddenItems, value, repository::setOptionMenuHiddenItems)
+
+    fun setOptionMenuShowIcons(value: Boolean) =
+        launchIfChanged(settings.value.optionMenuShowIcons, value, repository::setOptionMenuShowIcons)
+
+    fun setOptionMenuTextColor(value: String) =
+        launchIfChanged(settings.value.optionMenuTextColor, value, repository::setOptionMenuTextColor)
+
+    fun setOptionMenuOpacity(value: Float) =
+        launchIfChanged(settings.value.optionMenuOpacity, value.coerceIn(35f, 100f), repository::setOptionMenuOpacity)
+
+    fun setPriorityMenuHiddenItems(value: String) =
+        launchIfChanged(settings.value.priorityMenuHiddenItems, value, repository::setPriorityMenuHiddenItems)
+
+    fun setColorMenuHiddenItems(value: String) =
+        launchIfChanged(settings.value.colorMenuHiddenItems, value, repository::setColorMenuHiddenItems)
+
     fun resetOptionMenuSettings() {
         viewModelScope.launch {
             repository.resetOptionMenuSettings()
         }
     }
-    fun setPerformanceMode(value: String) {
-        viewModelScope.launch {
-            repository.setPerformanceMode(value)
-        }
-    }
-    fun setAnimationsEnabled(value: Boolean) {
-        viewModelScope.launch {
-            repository.setAnimationsEnabled(value)
-        }
-    }
-    fun setAnimationSpeed(value: Float) {
-        val normalized = value.coerceIn(0.5f, 2f)
-        if (settings.value.animationSpeed == normalized) return
-        viewModelScope.launch { repository.setAnimationSpeed(normalized) }
-    }
-    fun setAnimationStyle(value: String) {
-        viewModelScope.launch {
-            repository.setAnimationStyle(value)
-        }
-    }
-    fun setAnimationEasing(value: String) {
-        viewModelScope.launch {
-            repository.setAnimationEasing(value)
-        }
-    }
-    fun setAnimationIntensity(value: Float) {
-        val normalized = value.coerceIn(0.5f, 1.5f)
-        if (settings.value.animationIntensity == normalized) return
-        viewModelScope.launch { repository.setAnimationIntensity(normalized) }
-    }
+    fun setPerformanceMode(value: String) =
+        launchIfChanged(settings.value.performanceMode, value, repository::setPerformanceMode)
+
+    fun setAnimationsEnabled(value: Boolean) =
+        launchIfChanged(settings.value.animationsEnabled, value, repository::setAnimationsEnabled)
+
+    fun setAnimationSpeed(value: Float) =
+        launchIfChanged(settings.value.animationSpeed, value.coerceIn(0.5f, 2f), repository::setAnimationSpeed)
+
+    fun setAnimationStyle(value: String) =
+        launchIfChanged(settings.value.animationStyle, value, repository::setAnimationStyle)
+
+    fun setAnimationEasing(value: String) =
+        launchIfChanged(settings.value.animationEasing, value, repository::setAnimationEasing)
+
+    fun setAnimationIntensity(value: Float) =
+        launchIfChanged(settings.value.animationIntensity, value.coerceIn(0.5f, 1.5f), repository::setAnimationIntensity)
+
 }

@@ -426,9 +426,49 @@ class MainActivity : ComponentActivity() {
                     SettingsViewModel = viewModel()
             val settings by settingsViewModel.settings.collectAsStateWithLifecycle()
             val reminderRepository = remember {
-                ReminderRepository(applicationContext)
+                ReminderRepository.getInstance(applicationContext)
             }
             val systemDarkTheme = isSystemInDarkTheme()
+            /*
+             * Configuración de audio/hápticos separada de la sincronización
+             * visual de recordatorios. Antes, cambiar paleta, intensidad,
+             * tamaño de fuente o tema podía volver a ejecutar también la ruta
+             * de SoundPool aunque el audio no hubiera cambiado.
+             */
+            LaunchedEffect(
+                settings.soundEffectsEnabled,
+                settings.soundEffectsVolume,
+                settings.soundEffectsTheme,
+                settings.hapticEffectsEnabled,
+                settings.hapticEffectsIntensity,
+                settings.hapticEffectsStyle
+            ) {
+                UiSoundPlayer.configure(
+                    context = this@MainActivity,
+                    enabled = settings.soundEffectsEnabled,
+                    volumePercent = settings.soundEffectsVolume,
+                    theme = settings.soundEffectsTheme,
+                    hapticEnabled = settings.hapticEffectsEnabled,
+                    hapticIntensityPercent = settings.hapticEffectsIntensity,
+                    hapticStyle = settings.hapticEffectsStyle
+                )
+            }
+
+            /*
+             * El mute temporal del clic del teclado solo depende del switch
+             * maestro de sonidos. No se vuelve a tocar AudioManager por cambios
+             * de volumen, paleta, tipografía o recordatorios.
+             */
+            LaunchedEffect(settings.soundEffectsEnabled) {
+                setSystemKeyboardSoundSuppressionEnabled(settings.soundEffectsEnabled)
+            }
+
+            /*
+             * Las preferencias de recordatorio sí dependen de su audio y de
+             * los colores/tamaño usados por la notificación personalizada.
+             * Se mantienen exactamente las mismas claves visuales de antes,
+             * pero ya no arrastran una reconfiguración innecesaria del audio UI.
+             */
             LaunchedEffect(
                 settings.soundEffectsEnabled,
                 settings.soundEffectsVolume,
@@ -451,12 +491,7 @@ class MainActivity : ComponentActivity() {
                 settings.fontSize,
                 systemDarkTheme
             ) {
-                UiSoundPlayer.configure(context = this@MainActivity, enabled = settings.soundEffectsEnabled,
-                    volumePercent = settings.soundEffectsVolume, theme = settings.soundEffectsTheme,
-                    hapticEnabled = settings.hapticEffectsEnabled, hapticIntensityPercent = settings.hapticEffectsIntensity,
-                    hapticStyle = settings.hapticEffectsStyle)
                 ReminderFeedbackPreferences.sync(this@MainActivity, settings)
-                setSystemKeyboardSoundSuppressionEnabled(settings.soundEffectsEnabled)
             }
             /*
              * En Configuración básica el tema claro/oscuro pertenece al

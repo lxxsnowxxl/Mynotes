@@ -6,6 +6,7 @@ import android.os.SystemClock
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.os.VibratorManager
+import com.example.mynotes.settings.FeedbackPreferencePolicy
 import java.util.EnumMap
 import kotlin.math.roundToInt
 
@@ -21,10 +22,8 @@ enum class UiHaptic {
 }
 
 object UiHapticPlayer {
-    const val DEFAULT_STYLE = "soft"
-    val availableStyles: List<String> = listOf("soft", "crisp", "deep", "double", "pulse", "stepped", "mechanical", "minimal", "triple",
-            "ripple", "heartbeat", "snap", "wave", "heavy", "spring", "echo")
-    private val availableStyleSet = availableStyles.toHashSet()
+    const val DEFAULT_STYLE = FeedbackPreferencePolicy.DEFAULT_HAPTIC_STYLE
+    val availableStyles: List<String> = FeedbackPreferencePolicy.hapticStyles
     @Volatile
     private var enabled: Boolean = true
     @Volatile
@@ -32,7 +31,7 @@ object UiHapticPlayer {
     @Volatile
     private var style: String = DEFAULT_STYLE
     private val lastPlayAt = EnumMap<UiHaptic, Long>(UiHaptic::class.java)
-    fun normalizeStyle(value: String): String = value.trim().lowercase().takeIf { it in availableStyleSet }?: DEFAULT_STYLE
+    fun normalizeStyle(value: String): String = FeedbackPreferencePolicy.normalizeHapticStyle(value)
     fun configure(enabled: Boolean, intensityPercent: Float, style: String = DEFAULT_STYLE) {
         this.enabled = enabled
         this.intensity = (intensityPercent / 100f).coerceIn(0f, 1f)
@@ -146,7 +145,8 @@ object UiHapticPlayer {
                 UiHaptic.Confirm -> 0.96f
                 UiHaptic.Warning -> 1.00f
             }
-        var pattern = basePattern(normalizeStyle(style))
+        // configure y previewStyle validan el estilo antes de entrar aquí.
+        var pattern = basePattern(style)
         // Sliders y movimientos de cursor deben sentirse como ticks cortos,
         // incluso cuando el usuario eligió un estilo con varios pulsos.
         if (haptic == UiHaptic.Tick) {

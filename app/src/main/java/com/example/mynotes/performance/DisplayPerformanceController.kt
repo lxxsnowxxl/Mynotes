@@ -78,34 +78,36 @@ object DisplayPerformanceController {
          */
         attributes.preferredRefreshRate = targetRefreshRate
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            /*
+             * Limpiamos primero cualquier modo concreto solicitado por el
+             * perfil anterior. Así, al pasar de 120 a 60 Hz no puede quedar
+             * fijado accidentalmente el modeId de 120 Hz.
+             */
+            attributes.preferredDisplayModeId = 0
+
             val display = window.decorView.display
             val currentMode = display?.mode
             val supportedModes = display?.supportedModes?.toList().orEmpty()
-            if (supportedModes.isNotEmpty()) {
+            if (currentMode != null && supportedModes.isNotEmpty()) {
                 /*
-                 * Primero mantenemos la resolución física actual. Solo si no
-                 * existe ningún modo equivalente consideramos todos los modos.
+                 * Solo fijamos un modeId cuando existe una opción compatible
+                 * con la resolución física actual y que no supere el objetivo.
+                 * Esto evita pedir 90/120/144 Hz en los perfiles de 60 Hz o
+                 * 144/165 Hz en el perfil limitado a 120 Hz.
+                 *
+                 * Si el panel no ofrece una opción adecuada, dejamos modeId=0
+                 * y conservamos preferredRefreshRate como hint de 60/120 Hz;
+                 * Android puede decidir el modo final según el hardware/OEM.
                  */
-                val sameResolutionModes = if (currentMode != null) {
-                        supportedModes.filter { mode -> mode.physicalWidth == currentMode.physicalWidth &&
-                                mode.physicalHeight == currentMode.physicalHeight
-                        }
-                    } else {
-                        emptyList()
-                    }
-                val resolutionCandidates = sameResolutionModes.ifEmpty {
-                        supportedModes
-                    }
-                /*
-                 * En quality pedimos "hasta 120 Hz". Si el panel solo ofrece
-                 * 144/165 Hz por encima del objetivo, preferimos el mejor modo
-                 * disponible <= 120 Hz antes de forzar una tasa superior.
-                 */
-                val candidates = resolutionCandidates.filter { mode -> mode.refreshRate <= targetRefreshRate + REFRESH_RATE_TOLERANCE
-                        }.ifEmpty {
-                            resolutionCandidates
-                        }
-                val bestMode = chooseClosestMode(modes = candidates, targetRefreshRate = targetRefreshRate)
+                val candidates = supportedModes.filter { mode ->
+                    mode.physicalWidth == currentMode.physicalWidth &&
+                        mode.physicalHeight == currentMode.physicalHeight &&
+                        mode.refreshRate <= targetRefreshRate + REFRESH_RATE_TOLERANCE
+                }
+                val bestMode = chooseClosestMode(
+                    modes = candidates,
+                    targetRefreshRate = targetRefreshRate
+                )
                 if (bestMode != null) {
                     attributes.preferredDisplayModeId = bestMode.modeId
                     attributes.preferredRefreshRate = bestMode.refreshRate

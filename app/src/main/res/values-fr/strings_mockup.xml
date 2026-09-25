@@ -67,8 +67,7 @@
 <string name="mock_black">Noir</string>
     <string name="mock_white">Blanc</string>
     <string name="mock_font">Police</string>
-    <string name="mock_font_system_sans">Sans-serif générique</string>
-    <string name="mock_font_default">Police système Android</string>
+<string name="mock_font_default">Police système Android</string>
     <string name="mock_font_serif">Serif</string>
     <string name="mock_font_monospace">Monospace</string>
     <string name="mock_font_size">Taille du texte</string>

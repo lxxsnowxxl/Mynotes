@@ -26,13 +26,13 @@ import java.util.Locale
 class ReminderReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent?) {
         if (intent?.action == Intent.ACTION_BOOT_COMPLETED || intent?.action == Intent.ACTION_MY_PACKAGE_REPLACED) {
-            ReminderRepository(context).rescheduleAll()
+            ReminderRepository.getInstance(context).rescheduleAll()
             return
         }
         if (intent?.action != ReminderAlarmScheduler.ACTION_FIRE_REMINDER) return
         val id = intent.getLongExtra(ReminderAlarmScheduler.EXTRA_REMINDER_ID, -1L)
         if (id <= 0L) return
-        val repository = ReminderRepository(context)
+        val repository = ReminderRepository.getInstance(context)
         val reminder = repository.getReminder(id) ?: return
         if (!reminder.enabled) return
         showNotification(context, reminder)

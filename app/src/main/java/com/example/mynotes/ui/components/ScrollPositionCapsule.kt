@@ -58,17 +58,71 @@ fun ScrollPositionCapsule(
             val viewport = viewportHeightPx.toFloat()
             val content = viewport + state.maxValue.toFloat()
             val visibleFraction = (viewport / content).coerceIn(0f, 1f)
-            val progress = (state.value.toFloat() / state.maxValue.toFloat()).coerceIn(0f, 1f)
 
-            CapsuleThumb(
-                progress = progress,
+            /*
+             * Para ScrollState no animamos un valor que cambia prácticamente
+             * en cada frame del gesto. La cápsula sigue exactamente al scroll
+             * y evitamos crear una animación tween de duración 0 repetidamente.
+             */
+            ScrollStateCapsuleThumb(
+                state = state,
                 visibleFraction = visibleFraction,
-                active = state.isScrollInProgress,
                 backgroundColor = backgroundColor,
                 preferredColor = preferredColor,
                 modifier = Modifier.fillMaxSize()
             )
         }
+    }
+}
+
+
+@Composable
+private fun ScrollStateCapsuleThumb(
+    state: ScrollState,
+    visibleFraction: Float,
+    backgroundColor: Color,
+    preferredColor: Color,
+    modifier: Modifier = Modifier
+) {
+    val active = state.isScrollInProgress
+    val thumbColor = remember(backgroundColor, preferredColor, active) {
+        adaptiveScrollCapsuleColor(
+            backgroundColor = backgroundColor,
+            preferredColor = preferredColor,
+            active = active
+        )
+    }
+
+    BoxWithConstraints(
+        modifier = modifier
+            .fillMaxHeight()
+            .width(10.dp)
+            .padding(top = 10.dp, bottom = 10.dp, end = 2.dp),
+        contentAlignment = Alignment.TopCenter
+    ) {
+        val thumbHeight = (maxHeight * visibleFraction.coerceIn(0.06f, 0.65f))
+            .coerceAtLeast(36.dp)
+            .coerceAtMost(maxHeight)
+        val availableTravelPx = with(androidx.compose.ui.platform.LocalDensity.current) {
+            (maxHeight - thumbHeight).coerceAtLeast(0.dp).toPx()
+        }
+
+        Box(
+            modifier = Modifier
+                .graphicsLayer {
+                    val max = state.maxValue
+                    val progress = if (max > 0) {
+                        (state.value.toFloat() / max.toFloat()).coerceIn(0f, 1f)
+                    } else {
+                        0f
+                    }
+                    translationY = availableTravelPx * progress
+                }
+                .width(4.dp)
+                .height(thumbHeight)
+                .clip(CircleShape)
+                .background(thumbColor)
+        )
     }
 }
 
@@ -221,11 +275,14 @@ private fun CapsuleThumb(
      * real de la pantalla. Si el color preferido no alcanza ese contraste, la
      * función de contraste cae automáticamente en negro o blanco.
      */
-    val thumbColor = adaptiveScrollCapsuleColor(
-        backgroundColor = backgroundColor,
-        preferredColor = preferredColor,
-        active = active
-    )
+    // El contraste no depende de la posición: reutilizarlo durante el gesto.
+    val thumbColor = remember(backgroundColor, preferredColor, active) {
+        adaptiveScrollCapsuleColor(
+            backgroundColor = backgroundColor,
+            preferredColor = preferredColor,
+            active = active
+        )
+    }
 
     BoxWithConstraints(
         modifier = modifier
@@ -258,11 +315,10 @@ private fun CapsuleThumb(
             animationSpec = tween(durationMillis = if (smoothMovement) 110 else 0),
             label = "scrollCapsuleProgress"
         )
-        val yOffset = availableTravel * displayedProgress
-
         Box(
             modifier = Modifier
-                .graphicsLayer { translationY = yOffset.toPx() }
+                // Leer la animación en la capa evita recomponer por cada frame.
+                .graphicsLayer { translationY = (availableTravel * displayedProgress).toPx() }
                 .width(4.dp)
                 .height(thumbHeight)
                 .clip(CircleShape)
