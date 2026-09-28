@@ -1,0 +1,1081 @@
+MYNOTES — EXPLICACIÓN ULTRA DETALLADA
+==============================================================================================================
+Archivo 17/72: app/src/main/java/com/example/mynotes/reminders/ReminderReceiver.kt
+SHA-256: dfa8498ebf65eaa7b7cf73632f139aa545d9ee9b0be7dd482bd6ee9b94ff21af
+Líneas del fuente: 250
+Package: com.example.mynotes.reminders
+
+1. RESPONSABILIDAD EXACTA DEL ARCHIVO
+----------------------------------------------------------------------
+BroadcastReceiver ejecutado cuando vence un recordatorio. Construye la notificación, reproduce el feedback configurado, gestiona repetición y prepara el Intent que abre MyNotes.
+
+2. DÓNDE ENCAJA EN LA ARQUITECTURA
+----------------------------------------------------------------------
+Este archivo pertenece principalmente a la **subsistema de recordatorios/alarmas/notificaciones**. No debe analizarse aislado: las referencias cruzadas y callbacks se detallan más abajo.
+
+3. IMPORTACIONES, UNA POR UNA
+----------------------------------------------------------------------
+- `android.Manifest`: Importa `android.Manifest` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `android.app.NotificationChannel`: Importa `android.app.NotificationChannel` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `android.app.NotificationManager`: Importa `android.app.NotificationManager` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `android.app.PendingIntent`: Importa `android.app.PendingIntent` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `android.content.BroadcastReceiver`: Importa `android.content.BroadcastReceiver` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `android.content.Context`: Importa `android.content.Context` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `android.content.Intent`: Importa `android.content.Intent` para usar mensajería/navegación entre componentes Android.
+- `android.content.pm.PackageManager`: Importa `android.content.pm.PackageManager` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `android.content.res.Configuration`: Importa `android.content.res.Configuration` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `android.os.Build`: Importa `android.os.Build` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `android.util.TypedValue`: Importa `android.util.TypedValue` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `android.view.View`: Importa `android.view.View` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `android.widget.RemoteViews`: Importa `android.widget.RemoteViews` para usar interfaz de App Widgets/notificaciones personalizadas fuera de Compose.
+- `androidx.core.app.NotificationCompat`: Importa `androidx.core.app.NotificationCompat` para usar construcción compatible de notificaciones Android.
+- `androidx.core.app.NotificationManagerCompat`: Importa `androidx.core.app.NotificationManagerCompat` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.core.content.ContextCompat`: Importa `androidx.core.content.ContextCompat` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.core.graphics.ColorUtils`: Importa `androidx.core.graphics.ColorUtils` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `com.example.mynotes.MainActivity`: Importa `com.example.mynotes.MainActivity`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.R`: Importa `com.example.mynotes.R`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `java.text.SimpleDateFormat`: Importa `java.text.SimpleDateFormat` de la biblioteca estándar/JVM para operaciones de lenguaje, fechas, colecciones, I/O o utilidades.
+- `java.util.Date`: Importa `java.util.Date` de la biblioteca estándar/JVM para operaciones de lenguaje, fechas, colecciones, I/O o utilidades.
+- `java.util.Locale`: Importa `java.util.Locale` de la biblioteca estándar/JVM para operaciones de lenguaje, fechas, colecciones, I/O o utilidades.
+
+4. DECLARACIONES Y ESTADO IMPORTANTES
+----------------------------------------------------------------------
+L26: `class ReminderReceiver : BroadcastReceiver() {`
+    Declara class `ReminderReceiver`. A partir de aquí las propiedades y funciones hasta su llave de cierre pertenecen a este tipo.
+L33: `val id = intent.getLongExtra(ReminderAlarmScheduler.EXTRA_REMINDER_ID, -1L)`
+    Declara `id` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `intent.getLongExtra(ReminderAlarmScheduler.EXTRA_REMINDER_ID, -1L)`.
+L35: `val repository = ReminderRepository(context)`
+    Declara `repository` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `ReminderRepository(context)`.
+L36: `val reminder = repository.getReminder(id) ?: return`
+    Declara `reminder` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `repository.getReminder(id) ?: return`.
+L43: `val textContext = localizedContext(context)`
+    Declara `textContext` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `localizedContext(context)`.
+L44: `val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager`
+    Accede al servicio/compatibilidad de notificaciones para crear canales o publicar/cancelar avisos.
+L49: `val channel = NotificationChannel(`
+    Declara `channel` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `NotificationChannel(`.
+L65: `val contentIntent = PendingIntent.getActivity(`
+    Crea o configura un `PendingIntent`: una autorización empaquetada que Android puede ejecutar más tarde en nombre de MyNotes.
+L75: `val priority = when (reminder.priority) {`
+    Declara `priority` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `when (reminder.priority) {`.
+L80: `val title = reminder.title.ifBlank { textContext.getString(R.string.reminder_untitled) }`
+    Declara `title` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `reminder.title.ifBlank { textContext.getString(R.string.reminder_untitled) }`.
+L81: `val description = reminder.description.ifBlank {`
+    Declara `description` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `reminder.description.ifBlank {`.
+L84: `val visual = ReminderFeedbackPreferences.read(context)`
+    Declara `visual` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `ReminderFeedbackPreferences.read(context)`.
+L85: `val accent = reminderAccent(reminder.colorKey, visual.notificationAccent, visual.notificationBackground)`
+    Declara `accent` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `reminderAccent(reminder.colorKey, visual.notificationAccent, visual.notificationBackground)`.
+L86: `val expandedView = buildCustomView(`
+    Declara `expandedView` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `buildCustomView(`.
+L98: `val headsUpView = buildCustomView(`
+    Declara `headsUpView` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `buildCustomView(`.
+L112: `val notification = NotificationCompat.Builder(context, CHANNEL_ID)`
+    Empieza a construir una notificación compatible con múltiples versiones Android. Las llamadas encadenadas siguientes definen icono, texto, prioridad, intents y estilo.
+L149: `val view = RemoteViews(context.packageName, layoutId)`
+    Crea un árbol `RemoteViews`, la UI serializable que Android permite mostrar fuera del proceso normal de Compose (widgets/notificaciones personalizadas).
+L166: `val base = visual.notificationFontSize.coerceIn(12f, 17f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L195: `val locale = context.resources.configuration.locales[0]`
+    Declara `locale` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `context.resources.configuration.locales[0]`.
+L196: `val dateTime = SimpleDateFormat("EEE, d MMM • HH:mm", locale).format(Date(reminder.triggerAtMillis))`
+    Declara `dateTime` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `SimpleDateFormat("EEE, d MMM • HH:mm", locale).format(Date(reminder.triggerAtMillis))`.
+L197: `val repeat = when (reminder.repeatMode) {`
+    Declara `repeat` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `when (reminder.repeatMode) {`.
+L204: `val priority = when (reminder.priority) {`
+    Declara `priority` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `when (reminder.priority) {`.
+L213: `val preferred = when (colorKey) {`
+    Declara `preferred` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `when (colorKey) {`.
+L226: `val target = if (ColorUtils.calculateLuminance(background) > 0.5) 0xFF000000.toInt() else 0xFFFFFFFF.toInt()`
+    Declara `target` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (ColorUtils.calculateLuminance(background) > 0.5) 0xFF000000.toInt() else 0xFFFFFFFF.toInt()`.
+L227: `var best = preferred`
+    Declara `best` como variable mutable: el código puede reasignarla para representar estado cambiante. Parte con `preferred`.
+L229: `val candidate = ColorUtils.blendARGB(preferred, target, step / 10f)`
+    Declara `candidate` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `ColorUtils.blendARGB(preferred, target, step / 10f)`.
+L237: `val language = context.getSharedPreferences("locale_prefs", Context.MODE_PRIVATE)`
+    Declara `language` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `context.getSharedPreferences("locale_prefs", Context.MODE_PRIVATE)`.
+L240: `val configuration = Configuration(context.resources.configuration)`
+    Declara `configuration` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `Configuration(context.resources.configuration)`.
+L246: `private const val OLD_CHANNEL_ID = "mynotes_reminders"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L247: `const val CHANNEL_ID = "mynotes_reminders_v2"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L248: `const val EXTRA_OPEN_REMINDERS = "open_reminders"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+
+5. FUNCIONES — EXPLICACIÓN DE CADA UNA
+----------------------------------------------------------------------
+
+5.1 `onReceive` — líneas 27–40
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        override fun onReceive(context: Context, intent: Intent?) {
+
+Propósito:
+    Punto de entrada de un BroadcastReceiver. Android llama aquí cuando llega la acción registrada y el método decide cómo responder.
+
+Parámetros/entradas:
+  - `context: Context`: el llamador proporciona este valor/callback a `onReceive`. Dentro del cuerpo, las líneas donde aparece `context` muestran exactamente cómo afecta al resultado.
+  - `intent: Intent?`: el llamador proporciona este valor/callback a `onReceive`. Dentro del cuerpo, las líneas donde aparece `intent` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L27 [4 espacios] `override fun onReceive(context: Context, intent: Intent?) {`
+      → Sobrescribe un método definido por una clase/interfaz base. El bloque de `onReceive` se detalla después instrucción por instrucción.
+  L28 [8 espacios] `if (intent?.action == Intent.ACTION_BOOT_COMPLETED || intent?.action == Intent.ACTION_MY_PACKAGE_REPLACED) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `intent?.action == Intent.ACTION_BOOT_COMPLETED || intent?.action == Intent.ACTION_MY_PACKAGE_REPLACED`.
+  L29 [12 espacios] `ReminderRepository(context).rescheduleAll()`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L30 [12 espacios] `return`
+      → Finaliza inmediatamente la función actual sin devolver un valor adicional (`Unit`).
+  L31 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L32 [8 espacios] `if (intent?.action != ReminderAlarmScheduler.ACTION_FIRE_REMINDER) return`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `intent?.action != ReminderAlarmScheduler.ACTION_FIRE_REMINDER`.
+  L33 [8 espacios] `val id = intent.getLongExtra(ReminderAlarmScheduler.EXTRA_REMINDER_ID, -1L)`
+      → Declara `id` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `intent.getLongExtra(ReminderAlarmScheduler.EXTRA_REMINDER_ID, -1L)`.
+  L34 [8 espacios] `if (id <= 0L) return`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `id <= 0L`.
+  L35 [8 espacios] `val repository = ReminderRepository(context)`
+      → Declara `repository` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `ReminderRepository(context)`.
+  L36 [8 espacios] `val reminder = repository.getReminder(id) ?: return`
+      → Declara `reminder` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `repository.getReminder(id) ?: return`.
+  L37 [8 espacios] `if (!reminder.enabled) return`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `!reminder.enabled`.
+  L38 [8 espacios] `showNotification(context, reminder)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L39 [8 espacios] `repository.advanceAfterTrigger(id)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L40 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.2 `showNotification` — líneas 42–134
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        private fun showNotification(context: Context, reminder: Reminder) {
+
+Propósito:
+    Activa/muestra el elemento indicado por el nombre y configura los datos necesarios antes de hacerlo visible.
+
+Parámetros/entradas:
+  - `context: Context`: el llamador proporciona este valor/callback a `showNotification`. Dentro del cuerpo, las líneas donde aparece `context` muestran exactamente cómo afecta al resultado.
+  - `reminder: Reminder`: el llamador proporciona este valor/callback a `showNotification`. Dentro del cuerpo, las líneas donde aparece `reminder` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L42 [4 espacios] `private fun showNotification(context: Context, reminder: Reminder) {`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `showNotification` se detalla después instrucción por instrucción.
+  L43 [8 espacios] `val textContext = localizedContext(context)`
+      → Declara `textContext` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `localizedContext(context)`.
+  L44 [8 espacios] `val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager`
+      → Accede al servicio/compatibilidad de notificaciones para crear canales o publicar/cancelar avisos.
+  L45 [8 espacios] `if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `Build.VERSION.SDK_INT >= Build.VERSION_CODES.O`.
+  L46 [12 espacios] `// El feedback audible/háptico lo controla MyNotes para respetar`
+      → Comentario del autor. No se ejecuta; documenta la intención o una restricción del bloque siguiente.
+  L47 [12 espacios] `// las opciones de Configuración y evitar duplicarlo con el canal.`
+      → Comentario del autor. No se ejecuta; documenta la intención o una restricción del bloque siguiente.
+  L48 [12 espacios] `notificationManager.deleteNotificationChannel(OLD_CHANNEL_ID)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L49 [12 espacios] `val channel = NotificationChannel(`
+      → Declara `channel` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `NotificationChannel(`.
+  L50 [16 espacios] `CHANNEL_ID,`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `CHANNEL_ID,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L51 [16 espacios] `textContext.getString(R.string.reminder_notification_channel),`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L52 [16 espacios] `NotificationManager.IMPORTANCE_HIGH`
+      → Accede al servicio/compatibilidad de notificaciones para crear canales o publicar/cancelar avisos.
+  L53 [12 espacios] `).apply {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L54 [16 espacios] `description = textContext.getString(R.string.reminder_notification_channel_description)`
+      → Asigna/configura `description` usando `textContext.getString(R.string.reminder_notification_channel_description)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L55 [16 espacios] `setSound(null, null)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L56 [16 espacios] `enableVibration(false)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L57 [16 espacios] `vibrationPattern = null`
+      → Asigna/configura `vibrationPattern` usando `null`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L58 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L59 [12 espacios] `notificationManager.createNotificationChannel(channel)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L60 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L61 [8 espacios] `if (Build.VERSION.SDK_INT >= 33 &&`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera.
+  L62 [12 espacios] `ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED`
+      → Asigna/configura `ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) !` usando `PackageManager.PERMISSION_GRANTED`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L63 [8 espacios] `) return`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `) return`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L65 [8 espacios] `val contentIntent = PendingIntent.getActivity(`
+      → Crea o configura un `PendingIntent`: una autorización empaquetada que Android puede ejecutar más tarde en nombre de MyNotes.
+  L66 [12 espacios] `context,`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `context,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L67 [12 espacios] `reminder.id.toInt(),`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L68 [12 espacios] `Intent(context, MainActivity::class.java).apply {`
+      → Construye un `Intent` para abrir/enviar una acción a otro componente Android. Los extras añadidos después transportan el contexto necesario.
+  L69 [16 espacios] `flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP`
+      → Asigna/configura `flags` usando `Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L70 [16 espacios] `putExtra(EXTRA_OPEN_REMINDERS, true)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L71 [12 espacios] `},`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L72 [12 espacios] `PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE`
+      → Crea o configura un `PendingIntent`: una autorización empaquetada que Android puede ejecutar más tarde en nombre de MyNotes.
+  L73 [8 espacios] `)`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L75 [8 espacios] `val priority = when (reminder.priority) {`
+      → Declara `priority` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `when (reminder.priority) {`.
+  L76 [12 espacios] `Reminder.PRIORITY_HIGH -> NotificationCompat.PRIORITY_HIGH`
+      → Define una rama/lambda. Cuando coincide `Reminder.PRIORITY_HIGH`, se ejecuta la expresión o bloque situado después de `->`.
+  L77 [12 espacios] `Reminder.PRIORITY_LOW -> NotificationCompat.PRIORITY_LOW`
+      → Define una rama/lambda. Cuando coincide `Reminder.PRIORITY_LOW`, se ejecuta la expresión o bloque situado después de `->`.
+  L78 [12 espacios] `else -> NotificationCompat.PRIORITY_DEFAULT`
+      → Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+  L79 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L80 [8 espacios] `val title = reminder.title.ifBlank { textContext.getString(R.string.reminder_untitled) }`
+      → Declara `title` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `reminder.title.ifBlank { textContext.getString(R.string.reminder_untitled) }`.
+  L81 [8 espacios] `val description = reminder.description.ifBlank {`
+      → Declara `description` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `reminder.description.ifBlank {`.
+  L82 [12 espacios] `textContext.getString(R.string.reminder_notification_default_text)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L83 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L84 [8 espacios] `val visual = ReminderFeedbackPreferences.read(context)`
+      → Declara `visual` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `ReminderFeedbackPreferences.read(context)`.
+  L85 [8 espacios] `val accent = reminderAccent(reminder.colorKey, visual.notificationAccent, visual.notificationBackground)`
+      → Declara `accent` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `reminderAccent(reminder.colorKey, visual.notificationAccent, visual.notificationBackground)`.
+  L86 [8 espacios] `val expandedView = buildCustomView(`
+      → Declara `expandedView` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `buildCustomView(`.
+  L87 [12 espacios] `context = context,`
+      → Asigna/configura `context` usando `context,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L88 [12 espacios] `textContext = textContext,`
+      → Asigna/configura `textContext` usando `textContext,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L89 [12 espacios] `layoutId = R.layout.notification_reminder_expanded,`
+      → Asigna/configura `layoutId` usando `R.layout.notification_reminder_expanded,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L90 [12 espacios] `reminder = reminder,`
+      → Asigna/configura `reminder` usando `reminder,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L91 [12 espacios] `title = title,`
+      → Asigna/configura `title` usando `title,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L92 [12 espacios] `description = description,`
+      → Asigna/configura `description` usando `description,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L93 [12 espacios] `visual = visual,`
+      → Asigna/configura `visual` usando `visual,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L94 [12 espacios] `accent = accent,`
+      → Asigna/configura `accent` usando `accent,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L95 [12 espacios] `contentIntent = contentIntent,`
+      → Asigna/configura `contentIntent` usando `contentIntent,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L96 [12 espacios] `expanded = true`
+      → Asigna/configura `expanded` usando `true`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L97 [8 espacios] `)`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L98 [8 espacios] `val headsUpView = buildCustomView(`
+      → Declara `headsUpView` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `buildCustomView(`.
+  L99 [12 espacios] `context = context,`
+      → Asigna/configura `context` usando `context,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L100 [12 espacios] `textContext = textContext,`
+      → Asigna/configura `textContext` usando `textContext,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L101 [12 espacios] `layoutId = R.layout.notification_reminder_heads_up,`
+      → Asigna/configura `layoutId` usando `R.layout.notification_reminder_heads_up,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L102 [12 espacios] `reminder = reminder,`
+      → Asigna/configura `reminder` usando `reminder,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L103 [12 espacios] `title = title,`
+      → Asigna/configura `title` usando `title,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L104 [12 espacios] `description = description,`
+      → Asigna/configura `description` usando `description,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L105 [12 espacios] `visual = visual,`
+      → Asigna/configura `visual` usando `visual,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L106 [12 espacios] `accent = accent,`
+      → Asigna/configura `accent` usando `accent,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L107 [12 espacios] `contentIntent = contentIntent,`
+      → Asigna/configura `contentIntent` usando `contentIntent,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L108 [12 espacios] `expanded = false,`
+      → Asigna/configura `expanded` usando `false,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L109 [12 espacios] `headsUp = true`
+      → Asigna/configura `headsUp` usando `true`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L110 [8 espacios] `)`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L112 [8 espacios] `val notification = NotificationCompat.Builder(context, CHANNEL_ID)`
+      → Empieza a construir una notificación compatible con múltiples versiones Android. Las llamadas encadenadas siguientes definen icono, texto, prioridad, intents y estilo.
+  L113 [12 espacios] `.setSmallIcon(R.drawable.ic_reminder_notification)`
+      → Referencia un drawable empaquetado en recursos (ic_reminder_notification) para usarlo como icono/fondo/imagen.
+  L114 [12 espacios] `.setContentTitle(title)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L115 [12 espacios] `.setContentText(description)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L116 [12 espacios] `.setSubText(textContext.getString(R.string.reminders))`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L117 [12 espacios] `.setCustomBigContentView(expandedView)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L118 [12 espacios] `.setCustomHeadsUpContentView(headsUpView)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L119 [12 espacios] `.setStyle(NotificationCompat.DecoratedCustomViewStyle())`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L120 [12 espacios] `.setColor(accent)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L121 [12 espacios] `.setCategory(NotificationCompat.CATEGORY_REMINDER)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L122 [12 espacios] `.setVisibility(NotificationCompat.VISIBILITY_PRIVATE)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L123 [12 espacios] `.setPriority(priority)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L124 [12 espacios] `.setWhen(reminder.triggerAtMillis)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L125 [12 espacios] `.setShowWhen(true)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L126 [12 espacios] `.setSound(null)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L127 [12 espacios] `.setVibrate(longArrayOf(0L))`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L128 [12 espacios] `.setAutoCancel(true)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L129 [12 espacios] `.setContentIntent(contentIntent)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L130 [12 espacios] `.build()`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L132 [8 espacios] `NotificationManagerCompat.from(context).notify(reminder.id.toInt(), notification)`
+      → Accede al servicio/compatibilidad de notificaciones para crear canales o publicar/cancelar avisos.
+  L133 [8 espacios] `ReminderFeedbackPreferences.playReminderAlert(context)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L134 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.3 `buildCustomView` — líneas 136–147
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        private fun buildCustomView(
+            context: Context,
+            textContext: Context,
+            layoutId: Int,
+            reminder: Reminder,
+            title: String,
+            description: String,
+            visual: ReminderFeedbackPreferences.Snapshot,
+            accent: Int,
+            contentIntent: PendingIntent,
+            expanded: Boolean,
+            headsUp: Boolean = false
+
+Propósito:
+    Construye el objeto/estructura indicado por el nombre a partir de parámetros y configuración actual.
+
+Parámetros/entradas:
+  - `context: Context`: el llamador proporciona este valor/callback a `buildCustomView`. Dentro del cuerpo, las líneas donde aparece `context` muestran exactamente cómo afecta al resultado.
+  - `textContext: Context`: el llamador proporciona este valor/callback a `buildCustomView`. Dentro del cuerpo, las líneas donde aparece `textContext` muestran exactamente cómo afecta al resultado.
+  - `layoutId: Int`: el llamador proporciona este valor/callback a `buildCustomView`. Dentro del cuerpo, las líneas donde aparece `layoutId` muestran exactamente cómo afecta al resultado.
+  - `reminder: Reminder`: el llamador proporciona este valor/callback a `buildCustomView`. Dentro del cuerpo, las líneas donde aparece `reminder` muestran exactamente cómo afecta al resultado.
+  - `title: String`: el llamador proporciona este valor/callback a `buildCustomView`. Dentro del cuerpo, las líneas donde aparece `title` muestran exactamente cómo afecta al resultado.
+  - `description: String`: el llamador proporciona este valor/callback a `buildCustomView`. Dentro del cuerpo, las líneas donde aparece `description` muestran exactamente cómo afecta al resultado.
+  - `visual: ReminderFeedbackPreferences.Snapshot`: el llamador proporciona este valor/callback a `buildCustomView`. Dentro del cuerpo, las líneas donde aparece `visual` muestran exactamente cómo afecta al resultado.
+  - `accent: Int`: el llamador proporciona este valor/callback a `buildCustomView`. Dentro del cuerpo, las líneas donde aparece `accent` muestran exactamente cómo afecta al resultado.
+  - `contentIntent: PendingIntent`: el llamador proporciona este valor/callback a `buildCustomView`. Dentro del cuerpo, las líneas donde aparece `contentIntent` muestran exactamente cómo afecta al resultado.
+  - `expanded: Boolean`: el llamador proporciona este valor/callback a `buildCustomView`. Dentro del cuerpo, las líneas donde aparece `expanded` muestran exactamente cómo afecta al resultado.
+  - `headsUp: Boolean = fals`: el llamador proporciona este valor/callback a `buildCustomView`. Dentro del cuerpo, las líneas donde aparece `headsUp` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L136 [4 espacios] `private fun buildCustomView(`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `buildCustomView` se detalla después instrucción por instrucción.
+  L137 [8 espacios] `context: Context,`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `context: Context,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L138 [8 espacios] `textContext: Context,`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `textContext: Context,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L139 [8 espacios] `layoutId: Int,`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `layoutId: Int,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L140 [8 espacios] `reminder: Reminder,`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `reminder: Reminder,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L141 [8 espacios] `title: String,`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `title: String,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L142 [8 espacios] `description: String,`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `description: String,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L143 [8 espacios] `visual: ReminderFeedbackPreferences.Snapshot,`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `visual: ReminderFeedbackPreferences.Snapshot,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L144 [8 espacios] `accent: Int,`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `accent: Int,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L145 [8 espacios] `contentIntent: PendingIntent,`
+      → Crea o configura un `PendingIntent`: una autorización empaquetada que Android puede ejecutar más tarde en nombre de MyNotes.
+  L146 [8 espacios] `expanded: Boolean,`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `expanded: Boolean,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L147 [8 espacios] `headsUp: Boolean = false`
+      → Asigna/configura `headsUp: Boolean` usando `false`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+
+5.4 `metadata` — líneas 194–210
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        private fun metadata(context: Context, reminder: Reminder): String {
+
+Propósito:
+    Implementa `metadata`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `context: Context`: el llamador proporciona este valor/callback a `metadata`. Dentro del cuerpo, las líneas donde aparece `context` muestran exactamente cómo afecta al resultado.
+  - `reminder: Reminder`: el llamador proporciona este valor/callback a `metadata`. Dentro del cuerpo, las líneas donde aparece `reminder` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `String`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L194 [4 espacios] `private fun metadata(context: Context, reminder: Reminder): String {`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `metadata` se detalla después instrucción por instrucción.
+  L195 [8 espacios] `val locale = context.resources.configuration.locales[0]`
+      → Declara `locale` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `context.resources.configuration.locales[0]`.
+  L196 [8 espacios] `val dateTime = SimpleDateFormat("EEE, d MMM • HH:mm", locale).format(Date(reminder.triggerAtMillis))`
+      → Declara `dateTime` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `SimpleDateFormat("EEE, d MMM • HH:mm", locale).format(Date(reminder.triggerAtMillis))`.
+  L197 [8 espacios] `val repeat = when (reminder.repeatMode) {`
+      → Declara `repeat` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `when (reminder.repeatMode) {`.
+  L198 [12 espacios] `Reminder.REPEAT_DAILY -> context.getString(R.string.reminder_repeat_daily)`
+      → Define una rama/lambda. Cuando coincide `Reminder.REPEAT_DAILY`, se ejecuta la expresión o bloque situado después de `->`.
+  L199 [12 espacios] `Reminder.REPEAT_WEEKDAYS -> context.getString(R.string.reminder_repeat_weekdays)`
+      → Define una rama/lambda. Cuando coincide `Reminder.REPEAT_WEEKDAYS`, se ejecuta la expresión o bloque situado después de `->`.
+  L200 [12 espacios] `Reminder.REPEAT_WEEKLY -> context.getString(R.string.reminder_repeat_weekly)`
+      → Define una rama/lambda. Cuando coincide `Reminder.REPEAT_WEEKLY`, se ejecuta la expresión o bloque situado después de `->`.
+  L201 [12 espacios] `Reminder.REPEAT_MONTHLY -> context.getString(R.string.reminder_repeat_monthly)`
+      → Define una rama/lambda. Cuando coincide `Reminder.REPEAT_MONTHLY`, se ejecuta la expresión o bloque situado después de `->`.
+  L202 [12 espacios] `else -> context.getString(R.string.reminder_repeat_none)`
+      → Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+  L203 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L204 [8 espacios] `val priority = when (reminder.priority) {`
+      → Declara `priority` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `when (reminder.priority) {`.
+  L205 [12 espacios] `Reminder.PRIORITY_HIGH -> context.getString(R.string.reminder_priority_high)`
+      → Define una rama/lambda. Cuando coincide `Reminder.PRIORITY_HIGH`, se ejecuta la expresión o bloque situado después de `->`.
+  L206 [12 espacios] `Reminder.PRIORITY_LOW -> context.getString(R.string.reminder_priority_low)`
+      → Define una rama/lambda. Cuando coincide `Reminder.PRIORITY_LOW`, se ejecuta la expresión o bloque situado después de `->`.
+  L207 [12 espacios] `else -> context.getString(R.string.reminder_priority_normal)`
+      → Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+  L208 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L209 [8 espacios] `return "$dateTime  •  $repeat  •  $priority"`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L210 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.5 `reminderAccent` — líneas 212–234
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        private fun reminderAccent(colorKey: String, paletteAccent: Int, background: Int): Int {
+
+Propósito:
+    Implementa `reminderAccent`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `colorKey: String`: el llamador proporciona este valor/callback a `reminderAccent`. Dentro del cuerpo, las líneas donde aparece `colorKey` muestran exactamente cómo afecta al resultado.
+  - `paletteAccent: Int`: el llamador proporciona este valor/callback a `reminderAccent`. Dentro del cuerpo, las líneas donde aparece `paletteAccent` muestran exactamente cómo afecta al resultado.
+  - `background: Int`: el llamador proporciona este valor/callback a `reminderAccent`. Dentro del cuerpo, las líneas donde aparece `background` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Int`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L212 [4 espacios] `private fun reminderAccent(colorKey: String, paletteAccent: Int, background: Int): Int {`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `reminderAccent` se detalla después instrucción por instrucción.
+  L213 [8 espacios] `val preferred = when (colorKey) {`
+      → Declara `preferred` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `when (colorKey) {`.
+  L214 [12 espacios] `"blue" -> 0xFF9DB4FF.toInt()`
+      → Define una rama/lambda. Cuando coincide `"blue"`, se ejecuta la expresión o bloque situado después de `->`.
+  L215 [12 espacios] `"purple" -> 0xFFB49BFF.toInt()`
+      → Define una rama/lambda. Cuando coincide `"purple"`, se ejecuta la expresión o bloque situado después de `->`.
+  L216 [12 espacios] `"pink" -> 0xFFFFA9C7.toInt()`
+      → Define una rama/lambda. Cuando coincide `"pink"`, se ejecuta la expresión o bloque situado después de `->`.
+  L217 [12 espacios] `"red" -> 0xFFFF9A9A.toInt()`
+      → Define una rama/lambda. Cuando coincide `"red"`, se ejecuta la expresión o bloque situado después de `->`.
+  L218 [12 espacios] `"orange" -> 0xFFFFBD82.toInt()`
+      → Define una rama/lambda. Cuando coincide `"orange"`, se ejecuta la expresión o bloque situado después de `->`.
+  L219 [12 espacios] `"yellow" -> 0xFFFFDC78.toInt()`
+      → Define una rama/lambda. Cuando coincide `"yellow"`, se ejecuta la expresión o bloque situado después de `->`.
+  L220 [12 espacios] `"green" -> 0xFF8FD3A8.toInt()`
+      → Define una rama/lambda. Cuando coincide `"green"`, se ejecuta la expresión o bloque situado después de `->`.
+  L221 [12 espacios] `"teal" -> 0xFF78D7D0.toInt()`
+      → Define una rama/lambda. Cuando coincide `"teal"`, se ejecuta la expresión o bloque situado después de `->`.
+  L222 [12 espacios] `"gray" -> 0xFFB8BEC9.toInt()`
+      → Define una rama/lambda. Cuando coincide `"gray"`, se ejecuta la expresión o bloque situado después de `->`.
+  L223 [12 espacios] `else -> paletteAccent`
+      → Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+  L224 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L225 [8 espacios] `if (ColorUtils.calculateContrast(preferred, background) >= 2.25) return preferred`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `ColorUtils.calculateContrast(preferred, background) >= 2.25`.
+  L226 [8 espacios] `val target = if (ColorUtils.calculateLuminance(background) > 0.5) 0xFF000000.toInt() else 0xFFFFFFFF.toInt()`
+      → Declara `target` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (ColorUtils.calculateLuminance(background) > 0.5) 0xFF000000.toInt() else 0xFFFFFFFF.toInt()`.
+  L227 [8 espacios] `var best = preferred`
+      → Declara `best` como variable mutable: el código puede reasignarla para representar estado cambiante. Parte con `preferred`.
+  L228 [8 espacios] `for (step in 1..10) {`
+      → Inicia un bucle `for`; ejecuta el bloque una vez por cada elemento del iterable/rango indicado.
+  L229 [12 espacios] `val candidate = ColorUtils.blendARGB(preferred, target, step / 10f)`
+      → Declara `candidate` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `ColorUtils.blendARGB(preferred, target, step / 10f)`.
+  L230 [12 espacios] `best = candidate`
+      → Asigna/configura `best` usando `candidate`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L231 [12 espacios] `if (ColorUtils.calculateContrast(candidate, background) >= 2.25) return candidate`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `ColorUtils.calculateContrast(candidate, background) >= 2.25`.
+  L232 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L233 [8 espacios] `return best`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L234 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.6 `localizedContext` — líneas 236–243
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        private fun localizedContext(context: Context): Context {
+
+Propósito:
+    Implementa `localizedContext`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `context: Context`: el llamador proporciona este valor/callback a `localizedContext`. Dentro del cuerpo, las líneas donde aparece `context` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Context`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L236 [4 espacios] `private fun localizedContext(context: Context): Context {`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `localizedContext` se detalla después instrucción por instrucción.
+  L237 [8 espacios] `val language = context.getSharedPreferences("locale_prefs", Context.MODE_PRIVATE)`
+      → Declara `language` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `context.getSharedPreferences("locale_prefs", Context.MODE_PRIVATE)`.
+  L238 [12 espacios] `.getString("language", "system") ?: "system"`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `.getString("language", "system") ?: "system"`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L239 [8 espacios] `if (language == "system") return context`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `language == "system"`.
+  L240 [8 espacios] `val configuration = Configuration(context.resources.configuration)`
+      → Declara `configuration` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `Configuration(context.resources.configuration)`.
+  L241 [8 espacios] `configuration.setLocale(Locale.forLanguageTag(language))`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L242 [8 espacios] `return context.createConfigurationContext(configuration)`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L243 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+6. EXPLICACIÓN COMPLETA LÍNEA POR LÍNEA
+----------------------------------------------------------------------
+Esta sección no omite líneas ejecutables. Repite incluso partes ya explicadas en funciones para poder leer el archivo de arriba abajo sin saltar entre secciones.
+L1: `package com.example.mynotes.reminders`
+    Declara que este archivo pertenece al package `com.example.mynotes.reminders`; esto determina su namespace Kotlin y cómo lo importan otros archivos.
+L3: `import android.Manifest`
+    Importa `android.Manifest` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L4: `import android.app.NotificationChannel`
+    Importa `android.app.NotificationChannel` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L5: `import android.app.NotificationManager`
+    Importa `android.app.NotificationManager` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L6: `import android.app.PendingIntent`
+    Importa `android.app.PendingIntent` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L7: `import android.content.BroadcastReceiver`
+    Importa `android.content.BroadcastReceiver` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L8: `import android.content.Context`
+    Importa `android.content.Context` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L9: `import android.content.Intent`
+    Importa `android.content.Intent` para usar mensajería/navegación entre componentes Android.
+L10: `import android.content.pm.PackageManager`
+    Importa `android.content.pm.PackageManager` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L11: `import android.content.res.Configuration`
+    Importa `android.content.res.Configuration` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L12: `import android.os.Build`
+    Importa `android.os.Build` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L13: `import android.util.TypedValue`
+    Importa `android.util.TypedValue` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L14: `import android.view.View`
+    Importa `android.view.View` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L15: `import android.widget.RemoteViews`
+    Importa `android.widget.RemoteViews` para usar interfaz de App Widgets/notificaciones personalizadas fuera de Compose.
+L16: `import androidx.core.app.NotificationCompat`
+    Importa `androidx.core.app.NotificationCompat` para usar construcción compatible de notificaciones Android.
+L17: `import androidx.core.app.NotificationManagerCompat`
+    Importa `androidx.core.app.NotificationManagerCompat` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L18: `import androidx.core.content.ContextCompat`
+    Importa `androidx.core.content.ContextCompat` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L19: `import androidx.core.graphics.ColorUtils`
+    Importa `androidx.core.graphics.ColorUtils` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L20: `import com.example.mynotes.MainActivity`
+    Importa `com.example.mynotes.MainActivity`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L21: `import com.example.mynotes.R`
+    Importa `com.example.mynotes.R`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L22: `import java.text.SimpleDateFormat`
+    Importa `java.text.SimpleDateFormat` de la biblioteca estándar/JVM para operaciones de lenguaje, fechas, colecciones, I/O o utilidades.
+L23: `import java.util.Date`
+    Importa `java.util.Date` de la biblioteca estándar/JVM para operaciones de lenguaje, fechas, colecciones, I/O o utilidades.
+L24: `import java.util.Locale`
+    Importa `java.util.Locale` de la biblioteca estándar/JVM para operaciones de lenguaje, fechas, colecciones, I/O o utilidades.
+L26: `class ReminderReceiver : BroadcastReceiver() {`
+    Declara class `ReminderReceiver`. A partir de aquí las propiedades y funciones hasta su llave de cierre pertenecen a este tipo.
+L27: `override fun onReceive(context: Context, intent: Intent?) {`
+    Sobrescribe un método definido por una clase/interfaz base. El bloque de `onReceive` se detalla después instrucción por instrucción.
+L28: `if (intent?.action == Intent.ACTION_BOOT_COMPLETED || intent?.action == Intent.ACTION_MY_PACKAGE_REPLACED) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `intent?.action == Intent.ACTION_BOOT_COMPLETED || intent?.action == Intent.ACTION_MY_PACKAGE_REPLACED`.
+L29: `ReminderRepository(context).rescheduleAll()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L30: `return`
+    Finaliza inmediatamente la función actual sin devolver un valor adicional (`Unit`).
+L31: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L32: `if (intent?.action != ReminderAlarmScheduler.ACTION_FIRE_REMINDER) return`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `intent?.action != ReminderAlarmScheduler.ACTION_FIRE_REMINDER`.
+L33: `val id = intent.getLongExtra(ReminderAlarmScheduler.EXTRA_REMINDER_ID, -1L)`
+    Declara `id` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `intent.getLongExtra(ReminderAlarmScheduler.EXTRA_REMINDER_ID, -1L)`.
+L34: `if (id <= 0L) return`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `id <= 0L`.
+L35: `val repository = ReminderRepository(context)`
+    Declara `repository` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `ReminderRepository(context)`.
+L36: `val reminder = repository.getReminder(id) ?: return`
+    Declara `reminder` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `repository.getReminder(id) ?: return`.
+L37: `if (!reminder.enabled) return`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `!reminder.enabled`.
+L38: `showNotification(context, reminder)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L39: `repository.advanceAfterTrigger(id)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L40: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L42: `private fun showNotification(context: Context, reminder: Reminder) {`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `showNotification` se detalla después instrucción por instrucción.
+L43: `val textContext = localizedContext(context)`
+    Declara `textContext` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `localizedContext(context)`.
+L44: `val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager`
+    Accede al servicio/compatibilidad de notificaciones para crear canales o publicar/cancelar avisos.
+L45: `if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `Build.VERSION.SDK_INT >= Build.VERSION_CODES.O`.
+L46: `// El feedback audible/háptico lo controla MyNotes para respetar`
+    Comentario del autor. No se ejecuta; documenta la intención o una restricción del bloque siguiente.
+L47: `// las opciones de Configuración y evitar duplicarlo con el canal.`
+    Comentario del autor. No se ejecuta; documenta la intención o una restricción del bloque siguiente.
+L48: `notificationManager.deleteNotificationChannel(OLD_CHANNEL_ID)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L49: `val channel = NotificationChannel(`
+    Declara `channel` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `NotificationChannel(`.
+L50: `CHANNEL_ID,`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `CHANNEL_ID,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L51: `textContext.getString(R.string.reminder_notification_channel),`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L52: `NotificationManager.IMPORTANCE_HIGH`
+    Accede al servicio/compatibilidad de notificaciones para crear canales o publicar/cancelar avisos.
+L53: `).apply {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L54: `description = textContext.getString(R.string.reminder_notification_channel_description)`
+    Asigna/configura `description` usando `textContext.getString(R.string.reminder_notification_channel_description)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L55: `setSound(null, null)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L56: `enableVibration(false)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L57: `vibrationPattern = null`
+    Asigna/configura `vibrationPattern` usando `null`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L58: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L59: `notificationManager.createNotificationChannel(channel)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L60: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L61: `if (Build.VERSION.SDK_INT >= 33 &&`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera.
+L62: `ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED`
+    Asigna/configura `ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) !` usando `PackageManager.PERMISSION_GRANTED`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L63: `) return`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `) return`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L65: `val contentIntent = PendingIntent.getActivity(`
+    Crea o configura un `PendingIntent`: una autorización empaquetada que Android puede ejecutar más tarde en nombre de MyNotes.
+L66: `context,`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `context,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L67: `reminder.id.toInt(),`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L68: `Intent(context, MainActivity::class.java).apply {`
+    Construye un `Intent` para abrir/enviar una acción a otro componente Android. Los extras añadidos después transportan el contexto necesario.
+L69: `flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP`
+    Asigna/configura `flags` usando `Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L70: `putExtra(EXTRA_OPEN_REMINDERS, true)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L71: `},`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L72: `PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE`
+    Crea o configura un `PendingIntent`: una autorización empaquetada que Android puede ejecutar más tarde en nombre de MyNotes.
+L73: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L75: `val priority = when (reminder.priority) {`
+    Declara `priority` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `when (reminder.priority) {`.
+L76: `Reminder.PRIORITY_HIGH -> NotificationCompat.PRIORITY_HIGH`
+    Define una rama/lambda. Cuando coincide `Reminder.PRIORITY_HIGH`, se ejecuta la expresión o bloque situado después de `->`.
+L77: `Reminder.PRIORITY_LOW -> NotificationCompat.PRIORITY_LOW`
+    Define una rama/lambda. Cuando coincide `Reminder.PRIORITY_LOW`, se ejecuta la expresión o bloque situado después de `->`.
+L78: `else -> NotificationCompat.PRIORITY_DEFAULT`
+    Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+L79: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L80: `val title = reminder.title.ifBlank { textContext.getString(R.string.reminder_untitled) }`
+    Declara `title` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `reminder.title.ifBlank { textContext.getString(R.string.reminder_untitled) }`.
+L81: `val description = reminder.description.ifBlank {`
+    Declara `description` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `reminder.description.ifBlank {`.
+L82: `textContext.getString(R.string.reminder_notification_default_text)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L83: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L84: `val visual = ReminderFeedbackPreferences.read(context)`
+    Declara `visual` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `ReminderFeedbackPreferences.read(context)`.
+L85: `val accent = reminderAccent(reminder.colorKey, visual.notificationAccent, visual.notificationBackground)`
+    Declara `accent` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `reminderAccent(reminder.colorKey, visual.notificationAccent, visual.notificationBackground)`.
+L86: `val expandedView = buildCustomView(`
+    Declara `expandedView` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `buildCustomView(`.
+L87: `context = context,`
+    Asigna/configura `context` usando `context,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L88: `textContext = textContext,`
+    Asigna/configura `textContext` usando `textContext,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L89: `layoutId = R.layout.notification_reminder_expanded,`
+    Asigna/configura `layoutId` usando `R.layout.notification_reminder_expanded,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L90: `reminder = reminder,`
+    Asigna/configura `reminder` usando `reminder,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L91: `title = title,`
+    Asigna/configura `title` usando `title,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L92: `description = description,`
+    Asigna/configura `description` usando `description,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L93: `visual = visual,`
+    Asigna/configura `visual` usando `visual,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L94: `accent = accent,`
+    Asigna/configura `accent` usando `accent,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L95: `contentIntent = contentIntent,`
+    Asigna/configura `contentIntent` usando `contentIntent,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L96: `expanded = true`
+    Asigna/configura `expanded` usando `true`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L97: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L98: `val headsUpView = buildCustomView(`
+    Declara `headsUpView` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `buildCustomView(`.
+L99: `context = context,`
+    Asigna/configura `context` usando `context,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L100: `textContext = textContext,`
+    Asigna/configura `textContext` usando `textContext,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L101: `layoutId = R.layout.notification_reminder_heads_up,`
+    Asigna/configura `layoutId` usando `R.layout.notification_reminder_heads_up,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L102: `reminder = reminder,`
+    Asigna/configura `reminder` usando `reminder,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L103: `title = title,`
+    Asigna/configura `title` usando `title,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L104: `description = description,`
+    Asigna/configura `description` usando `description,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L105: `visual = visual,`
+    Asigna/configura `visual` usando `visual,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L106: `accent = accent,`
+    Asigna/configura `accent` usando `accent,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L107: `contentIntent = contentIntent,`
+    Asigna/configura `contentIntent` usando `contentIntent,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L108: `expanded = false,`
+    Asigna/configura `expanded` usando `false,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L109: `headsUp = true`
+    Asigna/configura `headsUp` usando `true`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L110: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L112: `val notification = NotificationCompat.Builder(context, CHANNEL_ID)`
+    Empieza a construir una notificación compatible con múltiples versiones Android. Las llamadas encadenadas siguientes definen icono, texto, prioridad, intents y estilo.
+L113: `.setSmallIcon(R.drawable.ic_reminder_notification)`
+    Referencia un drawable empaquetado en recursos (ic_reminder_notification) para usarlo como icono/fondo/imagen.
+L114: `.setContentTitle(title)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L115: `.setContentText(description)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L116: `.setSubText(textContext.getString(R.string.reminders))`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L117: `.setCustomBigContentView(expandedView)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L118: `.setCustomHeadsUpContentView(headsUpView)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L119: `.setStyle(NotificationCompat.DecoratedCustomViewStyle())`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L120: `.setColor(accent)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L121: `.setCategory(NotificationCompat.CATEGORY_REMINDER)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L122: `.setVisibility(NotificationCompat.VISIBILITY_PRIVATE)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L123: `.setPriority(priority)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L124: `.setWhen(reminder.triggerAtMillis)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L125: `.setShowWhen(true)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L126: `.setSound(null)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L127: `.setVibrate(longArrayOf(0L))`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L128: `.setAutoCancel(true)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L129: `.setContentIntent(contentIntent)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L130: `.build()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L132: `NotificationManagerCompat.from(context).notify(reminder.id.toInt(), notification)`
+    Accede al servicio/compatibilidad de notificaciones para crear canales o publicar/cancelar avisos.
+L133: `ReminderFeedbackPreferences.playReminderAlert(context)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L134: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L136: `private fun buildCustomView(`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `buildCustomView` se detalla después instrucción por instrucción.
+L137: `context: Context,`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `context: Context,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L138: `textContext: Context,`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `textContext: Context,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L139: `layoutId: Int,`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `layoutId: Int,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L140: `reminder: Reminder,`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `reminder: Reminder,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L141: `title: String,`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `title: String,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L142: `description: String,`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `description: String,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L143: `visual: ReminderFeedbackPreferences.Snapshot,`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `visual: ReminderFeedbackPreferences.Snapshot,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L144: `accent: Int,`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `accent: Int,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L145: `contentIntent: PendingIntent,`
+    Crea o configura un `PendingIntent`: una autorización empaquetada que Android puede ejecutar más tarde en nombre de MyNotes.
+L146: `expanded: Boolean,`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `expanded: Boolean,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L147: `headsUp: Boolean = false`
+    Asigna/configura `headsUp: Boolean` usando `false`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L148: `): RemoteViews {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L149: `val view = RemoteViews(context.packageName, layoutId)`
+    Crea un árbol `RemoteViews`, la UI serializable que Android permite mostrar fuera del proceso normal de Compose (widgets/notificaciones personalizadas).
+L150: `view.setInt(R.id.reminder_notification_background, "setColorFilter", visual.notificationBackground)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L151: `view.setInt(R.id.reminder_notification_accent, "setColorFilter", accent)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L152: `view.setInt(R.id.reminder_notification_icon, "setColorFilter", accent)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L153: `view.setTextViewText(`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `view.setTextViewText(`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L154: `R.id.reminder_notification_label,`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `R.id.reminder_notification_label,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L155: `"MyNotes • ${textContext.getString(R.string.reminders)}"`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"MyNotes • ${textContext.getString(R.string.reminders)}"`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L156: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L157: `view.setTextViewText(R.id.reminder_notification_title, title)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L158: `view.setTextViewText(R.id.reminder_notification_description, description)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L159: `view.setTextColor(R.id.reminder_notification_label, visual.notificationSecondaryText)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L160: `view.setTextColor(R.id.reminder_notification_title, visual.notificationText)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L161: `view.setTextColor(R.id.reminder_notification_description, visual.notificationSecondaryText)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L163: `// Las notificaciones personalizadas tienen límites de altura estrictos,`
+    Comentario del autor. No se ejecuta; documenta la intención o una restricción del bloque siguiente.
+L164: `// especialmente en Samsung/Android 9. Se conserva la escala elegida`
+    Comentario del autor. No se ejecuta; documenta la intención o una restricción del bloque siguiente.
+L165: `// por el usuario, pero dentro de un rango que no pueda recortar la vista.`
+    Comentario del autor. No se ejecuta; documenta la intención o una restricción del bloque siguiente.
+L166: `val base = visual.notificationFontSize.coerceIn(12f, 17f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L167: `when {`
+    Abre una decisión `when`: selecciona una rama según el valor/condición, equivalente a un switch más expresivo de Kotlin.
+L168: `headsUp -> {`
+    Define una rama/lambda. Cuando coincide `headsUp`, se ejecuta la expresión o bloque situado después de `->`.
+L169: `view.setTextViewTextSize(R.id.reminder_notification_label, TypedValue.COMPLEX_UNIT_SP, (base - 5f).coerceIn(8f, 10f))`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L170: `view.setTextViewTextSize(R.id.reminder_notification_title, TypedValue.COMPLEX_UNIT_SP, base.coerceIn(13f, 16f))`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L171: `view.setTextViewTextSize(R.id.reminder_notification_description, TypedValue.COMPLEX_UNIT_SP, (base - 3f).coerceIn(9f, 12f))`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L172: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L173: `else -> {`
+    Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+L174: `view.setTextViewTextSize(R.id.reminder_notification_label, TypedValue.COMPLEX_UNIT_SP, (base - 5f).coerceIn(8f, 11f))`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L175: `view.setTextViewTextSize(R.id.reminder_notification_title, TypedValue.COMPLEX_UNIT_SP, base.coerceIn(13f, 17f))`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L176: `view.setTextViewTextSize(R.id.reminder_notification_description, TypedValue.COMPLEX_UNIT_SP, (base - 3f).coerceIn(9f, 13f))`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L177: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L178: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L179: `view.setOnClickPendingIntent(R.id.reminder_notification_root, contentIntent)`
+    Crea o configura un `PendingIntent`: una autorización empaquetada que Android puede ejecutar más tarde en nombre de MyNotes.
+L181: `if (expanded) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `expanded`.
+L182: `view.setTextViewText(R.id.reminder_notification_metadata, metadata(textContext, reminder))`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L183: `view.setTextColor(R.id.reminder_notification_metadata, visual.notificationSecondaryText)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L184: `view.setTextViewTextSize(`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `view.setTextViewTextSize(`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L185: `R.id.reminder_notification_metadata,`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `R.id.reminder_notification_metadata,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L186: `TypedValue.COMPLEX_UNIT_SP,`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `TypedValue.COMPLEX_UNIT_SP,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L187: `(base - 5f).coerceAtLeast(9f)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L188: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L189: `view.setViewVisibility(R.id.reminder_notification_metadata, View.VISIBLE)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L190: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L191: `return view`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L192: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L194: `private fun metadata(context: Context, reminder: Reminder): String {`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `metadata` se detalla después instrucción por instrucción.
+L195: `val locale = context.resources.configuration.locales[0]`
+    Declara `locale` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `context.resources.configuration.locales[0]`.
+L196: `val dateTime = SimpleDateFormat("EEE, d MMM • HH:mm", locale).format(Date(reminder.triggerAtMillis))`
+    Declara `dateTime` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `SimpleDateFormat("EEE, d MMM • HH:mm", locale).format(Date(reminder.triggerAtMillis))`.
+L197: `val repeat = when (reminder.repeatMode) {`
+    Declara `repeat` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `when (reminder.repeatMode) {`.
+L198: `Reminder.REPEAT_DAILY -> context.getString(R.string.reminder_repeat_daily)`
+    Define una rama/lambda. Cuando coincide `Reminder.REPEAT_DAILY`, se ejecuta la expresión o bloque situado después de `->`.
+L199: `Reminder.REPEAT_WEEKDAYS -> context.getString(R.string.reminder_repeat_weekdays)`
+    Define una rama/lambda. Cuando coincide `Reminder.REPEAT_WEEKDAYS`, se ejecuta la expresión o bloque situado después de `->`.
+L200: `Reminder.REPEAT_WEEKLY -> context.getString(R.string.reminder_repeat_weekly)`
+    Define una rama/lambda. Cuando coincide `Reminder.REPEAT_WEEKLY`, se ejecuta la expresión o bloque situado después de `->`.
+L201: `Reminder.REPEAT_MONTHLY -> context.getString(R.string.reminder_repeat_monthly)`
+    Define una rama/lambda. Cuando coincide `Reminder.REPEAT_MONTHLY`, se ejecuta la expresión o bloque situado después de `->`.
+L202: `else -> context.getString(R.string.reminder_repeat_none)`
+    Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+L203: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L204: `val priority = when (reminder.priority) {`
+    Declara `priority` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `when (reminder.priority) {`.
+L205: `Reminder.PRIORITY_HIGH -> context.getString(R.string.reminder_priority_high)`
+    Define una rama/lambda. Cuando coincide `Reminder.PRIORITY_HIGH`, se ejecuta la expresión o bloque situado después de `->`.
+L206: `Reminder.PRIORITY_LOW -> context.getString(R.string.reminder_priority_low)`
+    Define una rama/lambda. Cuando coincide `Reminder.PRIORITY_LOW`, se ejecuta la expresión o bloque situado después de `->`.
+L207: `else -> context.getString(R.string.reminder_priority_normal)`
+    Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+L208: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L209: `return "$dateTime  •  $repeat  •  $priority"`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L210: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L212: `private fun reminderAccent(colorKey: String, paletteAccent: Int, background: Int): Int {`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `reminderAccent` se detalla después instrucción por instrucción.
+L213: `val preferred = when (colorKey) {`
+    Declara `preferred` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `when (colorKey) {`.
+L214: `"blue" -> 0xFF9DB4FF.toInt()`
+    Define una rama/lambda. Cuando coincide `"blue"`, se ejecuta la expresión o bloque situado después de `->`.
+L215: `"purple" -> 0xFFB49BFF.toInt()`
+    Define una rama/lambda. Cuando coincide `"purple"`, se ejecuta la expresión o bloque situado después de `->`.
+L216: `"pink" -> 0xFFFFA9C7.toInt()`
+    Define una rama/lambda. Cuando coincide `"pink"`, se ejecuta la expresión o bloque situado después de `->`.
+L217: `"red" -> 0xFFFF9A9A.toInt()`
+    Define una rama/lambda. Cuando coincide `"red"`, se ejecuta la expresión o bloque situado después de `->`.
+L218: `"orange" -> 0xFFFFBD82.toInt()`
+    Define una rama/lambda. Cuando coincide `"orange"`, se ejecuta la expresión o bloque situado después de `->`.
+L219: `"yellow" -> 0xFFFFDC78.toInt()`
+    Define una rama/lambda. Cuando coincide `"yellow"`, se ejecuta la expresión o bloque situado después de `->`.
+L220: `"green" -> 0xFF8FD3A8.toInt()`
+    Define una rama/lambda. Cuando coincide `"green"`, se ejecuta la expresión o bloque situado después de `->`.
+L221: `"teal" -> 0xFF78D7D0.toInt()`
+    Define una rama/lambda. Cuando coincide `"teal"`, se ejecuta la expresión o bloque situado después de `->`.
+L222: `"gray" -> 0xFFB8BEC9.toInt()`
+    Define una rama/lambda. Cuando coincide `"gray"`, se ejecuta la expresión o bloque situado después de `->`.
+L223: `else -> paletteAccent`
+    Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+L224: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L225: `if (ColorUtils.calculateContrast(preferred, background) >= 2.25) return preferred`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `ColorUtils.calculateContrast(preferred, background) >= 2.25`.
+L226: `val target = if (ColorUtils.calculateLuminance(background) > 0.5) 0xFF000000.toInt() else 0xFFFFFFFF.toInt()`
+    Declara `target` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (ColorUtils.calculateLuminance(background) > 0.5) 0xFF000000.toInt() else 0xFFFFFFFF.toInt()`.
+L227: `var best = preferred`
+    Declara `best` como variable mutable: el código puede reasignarla para representar estado cambiante. Parte con `preferred`.
+L228: `for (step in 1..10) {`
+    Inicia un bucle `for`; ejecuta el bloque una vez por cada elemento del iterable/rango indicado.
+L229: `val candidate = ColorUtils.blendARGB(preferred, target, step / 10f)`
+    Declara `candidate` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `ColorUtils.blendARGB(preferred, target, step / 10f)`.
+L230: `best = candidate`
+    Asigna/configura `best` usando `candidate`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L231: `if (ColorUtils.calculateContrast(candidate, background) >= 2.25) return candidate`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `ColorUtils.calculateContrast(candidate, background) >= 2.25`.
+L232: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L233: `return best`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L234: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L236: `private fun localizedContext(context: Context): Context {`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `localizedContext` se detalla después instrucción por instrucción.
+L237: `val language = context.getSharedPreferences("locale_prefs", Context.MODE_PRIVATE)`
+    Declara `language` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `context.getSharedPreferences("locale_prefs", Context.MODE_PRIVATE)`.
+L238: `.getString("language", "system") ?: "system"`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `.getString("language", "system") ?: "system"`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L239: `if (language == "system") return context`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `language == "system"`.
+L240: `val configuration = Configuration(context.resources.configuration)`
+    Declara `configuration` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `Configuration(context.resources.configuration)`.
+L241: `configuration.setLocale(Locale.forLanguageTag(language))`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L242: `return context.createConfigurationContext(configuration)`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L243: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L245: `companion object {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L246: `private const val OLD_CHANNEL_ID = "mynotes_reminders"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L247: `const val CHANNEL_ID = "mynotes_reminders_v2"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L248: `const val EXTRA_OPEN_REMINDERS = "open_reminders"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L249: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L250: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+7. RECURSOS ANDROID REFERENCIADOS
+----------------------------------------------------------------------
+- `R.drawable.ic_reminder_notification`: referencia a un recurso `drawable` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.id.reminder_notification_accent`: referencia a un recurso `id` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.id.reminder_notification_background`: referencia a un recurso `id` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.id.reminder_notification_description`: referencia a un recurso `id` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.id.reminder_notification_icon`: referencia a un recurso `id` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.id.reminder_notification_label`: referencia a un recurso `id` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.id.reminder_notification_metadata`: referencia a un recurso `id` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.id.reminder_notification_root`: referencia a un recurso `id` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.id.reminder_notification_title`: referencia a un recurso `id` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.layout.notification_reminder_expanded`: referencia a un recurso `layout` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.layout.notification_reminder_heads_up`: referencia a un recurso `layout` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.reminder_notification_channel`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.reminder_notification_channel_description`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.reminder_notification_default_text`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.reminder_priority_high`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.reminder_priority_low`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.reminder_priority_normal`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.reminder_repeat_daily`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.reminder_repeat_monthly`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.reminder_repeat_none`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.reminder_repeat_weekdays`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.reminder_repeat_weekly`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.reminder_untitled`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.reminders`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+
+8. QUIÉN USA ESTE COMPONENTE
+----------------------------------------------------------------------
+- `ReminderReceiver` aparece también en 3 archivo(s):
+    - app/src/main/java/com/example/mynotes/MainActivity.kt
+    - app/src/main/java/com/example/mynotes/reminders/ReminderAlarmScheduler.kt
+    - app/src/main/java/com/example/mynotes/reminders/ReminderFeedbackPreferences.kt
+
+9. QUÉ PUEDE ROMPERSE SI LO MODIFICAS
+----------------------------------------------------------------------
+- Los recordatorios combinan persistencia + AlarmManager + BroadcastReceiver + notificación. Cambiar solo la UI sin sincronizar scheduler/receiver puede crear alarmas huérfanas o avisos que no reflejen el estado guardado.
+
+10. CHECKLIST DE PRUEBA DESPUÉS DE MODIFICAR ESTE ARCHIVO
+----------------------------------------------------------------------
+- Compilar `assembleDebug` y resolver primero errores de Kotlin/AAPT.
+- Abrir la pantalla/flujo relacionado y comprobar ida y vuelta (back) sin estado duplicado.
+- Cambiar tema/paleta y verificar contraste si este archivo dibuja UI.
+- Crear un recordatorio a +5 minutos, editarlo, desactivarlo y confirmar que solo aparece la notificación esperada.
+- Reiniciar el dispositivo/emulador y verificar reprogramación de recordatorios activos.
+
+==============================================================================================================
+FIN DEL ARCHIVO
+==============================================================================================================

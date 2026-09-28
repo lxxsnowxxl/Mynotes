@@ -1,52 +1,83 @@
-# BackupRestoreSection.kt — documentación del código actual
-**Ruta real:** `app/src/main/java/com/example/mynotes/ui/components/BackupRestoreSection.kt`  **SHA-256:** `89e8386c8cf33add82aa9ab4b96f66612c65b0dfbbf62788718af85d5a34f20b`  **Líneas:** 163 · **Bytes:** 9033 · **Imports:** 45 · **Declaraciones detectadas:** 1
-> Documento generado fuera de `app/` a partir de lectura del código. El fuente es la única fuente de verdad; no se modificó para generar esta documentación.
-## 1. Responsabilidad
+# BackupRestoreSection.kt — explicación completa del código
 
-Sección de Configuración para Backup & Restore.
-## 2. Package e imports
+**Ruta:** `app/src/main/java/com/example/mynotes/ui/components/BackupRestoreSection.kt`  
+**SHA-256:** `89e8386c8cf33add82aa9ab4b96f66612c65b0dfbbf62788718af85d5a34f20b`  
+**Líneas:** 164  
+**Package:** `com.example.mynotes.ui.components`
 
-Package declarado: `com.example.mynotes.ui.components`.
+## 1. Para qué existe este archivo
 
-### Android / Jetpack / Compose
+Sección de Configuración que expone exportar/importar y presenta resultados de Backup & Restore.
 
-`android.app.Activity`, `android.net.Uri`, `android.widget.Toast`, `androidx.activity.compose.rememberLauncherForActivityResult`, `androidx.activity.result.contract.ActivityResultContracts`, `androidx.compose.foundation.layout.Arrangement`, `androidx.compose.foundation.layout.PaddingValues`, `androidx.compose.foundation.layout.Row`, `androidx.compose.foundation.layout.Spacer`, `androidx.compose.foundation.layout.fillMaxWidth`, `androidx.compose.foundation.layout.height`, `androidx.compose.foundation.layout.size`, `androidx.compose.material.icons.Icons`, `androidx.compose.material.icons.filled.Download`, `androidx.compose.material.icons.filled.Upload`, `androidx.compose.material3.CircularProgressIndicator`, `androidx.compose.material3.Icon`, `androidx.compose.material3.OutlinedButton`, `androidx.compose.material3.Text`, `androidx.compose.material3.TextButton`, `androidx.compose.runtime.Composable`, `androidx.compose.runtime.getValue`, `androidx.compose.runtime.mutableStateOf`, `androidx.compose.runtime.remember`, `androidx.compose.runtime.rememberCoroutineScope`, `androidx.compose.runtime.setValue`, `androidx.compose.ui.Alignment`, `androidx.compose.ui.Modifier`, `androidx.compose.ui.graphics.Color`, `androidx.compose.ui.platform.LocalContext`, `androidx.compose.ui.res.stringResource`, `androidx.compose.ui.text.font.FontFamily`, `androidx.compose.ui.text.font.FontWeight`, `androidx.compose.ui.unit.dp`, `androidx.compose.ui.unit.sp`
+## 2. Tipos/clases declarados
 
-### Proyecto MyNotes
+- No declara una clase/objeto propio; contiene funciones/valores de soporte o es un archivo marcador.
 
-`com.example.mynotes.R`, `com.example.mynotes.ui.components.AppAlertDialog`, `com.example.mynotes.data.AppDataBackupManager`, `com.example.mynotes.settings.AppSettings`, `com.example.mynotes.ui.sound.UiActionSound`, `com.example.mynotes.ui.sound.UiSoundPlayer`
+## 3. Estado, constantes y valores importantes
 
-### Kotlin / Coroutines / Java
+- **`context`** (línea 51) inicia con `LocalContext.current`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`scope`** (línea 52) inicia con `rememberCoroutineScope(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`exportLauncher`** (línea 56) inicia con `rememberLauncherForActivityResult(contract = ActivityResultContracts.CreateDocument("application/zip"`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`result`** (línea 61) inicia con `AppDataBackupManager.exportBackup(context = context`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`importLauncher`** (línea 74) inicia con `rememberLauncherForActivityResult(contract = ActivityResultContracts.OpenDocument(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`stamp`** (línea 89) inicia con `SimpleDateFormat("yyyy-MM-dd_HH-mm"`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`importUri`** (línea 121) inicia con `pendingImportUri`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
 
-`kotlinx.coroutines.launch`, `java.text.SimpleDateFormat`, `java.util.Date`, `java.util.Locale`
+## 4. Funciones y flujo, una por una
 
-## 3. Declaraciones detectadas
+### `BackupRestoreSection` — líneas 50–163
 
-| Línea | Tipo | Nombre | Firma/inicio |
-|---:|---|---|---|
-| 48 | `fun` | `BackupRestoreSection` | `` |
+**Firma:** `fun BackupRestoreSection(settings: AppSettings, fontFamily: FontFamily, textColor: Color, secondaryTextColor: Color, graphicColor: Color)`
 
-## 4. Estado, efectos y límites observables
+Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
 
-- **Compose state:** 8 aparición/apariciones.
-- **Coroutines:** 5 aparición/apariciones.
-- **safe calls:** 1 aparición/apariciones.
+**Entradas:**
+- `settings: AppSettings`
+- `fontFamily: FontFamily`
+- `textColor: Color`
+- `secondaryTextColor: Color`
+- `graphicColor: Color`
 
-Estas cifras son indicadores de superficie de cambio, no diagnósticos de error. Cualquier modificación debe preservar contratos de persistencia, lifecycle, límites numéricos y nulabilidad visibles en el fuente.
+**Salida:** Unit o inferido por Kotlin.
 
-## 5. Dependencias internas directas
+**Efectos/APIs observados en el cuerpo:**
+- Lanza trabajo asíncrono mediante coroutines.
+- Participa en estado/efectos de Compose.
 
-- `com.example.mynotes.R`
-- `com.example.mynotes.data.AppDataBackupManager`
-- `com.example.mynotes.settings.AppSettings`
-- `com.example.mynotes.ui.components.AppAlertDialog`
-- `com.example.mynotes.ui.sound.UiActionSound`
-- `com.example.mynotes.ui.sound.UiSoundPlayer`
+**Decisiones y protecciones visibles:**
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
 
-## 6. Recursos Android referenciados
+**Operaciones/funciones que coordina:** `rememberCoroutineScope`, `rememberLauncherForActivityResult`, `CreateDocument`, `exportBackup`, `getString`, `OpenDocument`, `SettingsSectionPanel`, `PaddingValues`, `height`, `fillMaxWidth`, `spacedBy`, `OutlinedButton`, `playAction`, `SimpleDateFormat`, `format`, `Date`, `launch`, `weight`.
 
-- **R.string:** `backup_cancel`, `backup_export_button`, `backup_export_skipped`, `backup_export_success`, `backup_import_button`, `backup_import_confirm_action`, `backup_import_confirm_message`, `backup_import_confirm_title`, `backup_import_success`, `backup_operation_error` ×2, `backup_processing`, `backup_restore_description`, `backup_restore_title`, `backup_unknown_error` ×2
+## 5. Cómo se conecta con el resto de MyNotes
 
-## 7. Puntos de revisión al modificarlo
+- Usa `com.example.mynotes.R`.
+- Usa `com.example.mynotes.ui.components.AppAlertDialog`.
+- Usa `com.example.mynotes.data.AppDataBackupManager`.
+- Usa `com.example.mynotes.settings.AppSettings`.
+- Usa `com.example.mynotes.ui.sound.UiActionSound`.
+- Usa `com.example.mynotes.ui.sound.UiSoundPlayer`.
 
-- Conservar rangos `coerce*`, claves DataStore y compatibilidad con backups existentes.
+## 6. Recursos Android que utiliza
+
+- `R.string`: `backup_cancel`, `backup_export_button`, `backup_export_skipped`, `backup_export_success`, `backup_import_button`, `backup_import_confirm_action`, `backup_import_confirm_message`, `backup_import_confirm_title`, `backup_import_success`, `backup_operation_error`, `backup_processing`, `backup_restore_description`, `backup_restore_title`, `backup_unknown_error`
+
+## 7. Tecnologías y efectos relevantes
+
+- Lanza trabajo asíncrono mediante coroutines.
+- Participa en estado/efectos de Compose.
+
+## 8. Lectura práctica del flujo
+
+Una forma útil de seguir este archivo en el depurador es recorrer estas operaciones en este orden aproximado:
+1. `BackupRestoreSection` — Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+## 9. Qué no debe romperse al modificarlo
+
+- Conservar validaciones de Uri/ruta y no confiar en nombres externos sin sanitizar.
+- Evitar trabajo bloqueante durante composición y mantener estado estable para limitar recomposiciones.
+
+## 10. Resumen en lenguaje sencillo
+
+En términos simples: Sección de Configuración que expone exportar/importar y presenta resultados de Backup & Restore. La sección función por función anterior describe qué entra, qué devuelve y qué efectos produce cada operación detectada en el fuente actual.

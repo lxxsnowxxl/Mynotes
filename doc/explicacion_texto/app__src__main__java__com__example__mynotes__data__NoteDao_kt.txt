@@ -1,0 +1,261 @@
+# NoteDao.kt — explicación completa del código
+
+Ruta: app/src/main/java/com/example/mynotes/data/NoteDao.kt  
+SHA-256: 7f974ecce790f4e5bcde975e34a669d746ecfe25c96c3e5fab3fe797b94e98db  
+Líneas: 143  
+Package: com.example.mynotes.data
+
+## 1. Para qué existe este archivo
+
+Contrato Room de notas; contiene consultas reactivas, operaciones CRUD y consultas optimizadas para widgets.
+
+## 2. Tipos/clases declarados
+
+- Línea 12 — data  class WidgetNoteStats.
+- Línea 22 — interface NoteDao.
+
+## 3. Estado, constantes y valores importantes
+
+- No se detectaron propiedades inicializadas a nivel visible que necesiten explicación separada.
+
+## 4. Funciones y flujo, una por una
+
+### getAllNotes — líneas 42–42
+
+Firma: fun getAllNotes():
+
+Obtiene el dato solicitado desde la fuente o estructura que maneja este archivo, sin cambiar el contrato público del resto del módulo.
+
+Salida: Unit o inferido por Kotlin.
+
+### getAllNotesOnce — líneas 51–51
+
+Firma: suspend fun getAllNotesOnce():
+
+Obtiene el dato solicitado desde la fuente o estructura que maneja este archivo, sin cambiar el contrato público del resto del módulo.
+
+Salida: Unit o inferido por Kotlin.
+
+### getNoteByIdOnce — líneas 55–55
+
+Firma: suspend fun getNoteByIdOnce(noteId: Int): Note?
+
+Obtiene el dato solicitado desde la fuente o estructura que maneja este archivo, sin cambiar el contrato público del resto del módulo.
+
+Entradas:
+- noteId: Int
+
+Salida: Note?.
+
+### getRecentNotesForWidget — líneas 65–65
+
+Firma: suspend fun getRecentNotesForWidget(limit: Int): List<Note>
+
+Obtiene el dato solicitado desde la fuente o estructura que maneja este archivo, sin cambiar el contrato público del resto del módulo.
+
+Entradas:
+- limit: Int
+
+Salida: List<Note>.
+
+### getNoteCountForWidget — líneas 68–68
+
+Firma: suspend fun getNoteCountForWidget(): Int
+
+Obtiene el dato solicitado desde la fuente o estructura que maneja este archivo, sin cambiar el contrato público del resto del módulo.
+
+Salida: Int.
+
+### getFavoriteCountForWidget — líneas 71–71
+
+Firma: suspend fun getFavoriteCountForWidget(): Int
+
+Obtiene el dato solicitado desde la fuente o estructura que maneja este archivo, sin cambiar el contrato público del resto del módulo.
+
+Salida: Int.
+
+### getWidgetStats — líneas 85–85
+
+Firma: suspend fun getWidgetStats(): WidgetNoteStats
+
+Obtiene el dato solicitado desde la fuente o estructura que maneja este archivo, sin cambiar el contrato público del resto del módulo.
+
+Salida: WidgetNoteStats.
+
+### getFavoriteNotesForWidget — líneas 96–96
+
+Firma: suspend fun getFavoriteNotesForWidget(limit: Int): List<Note>
+
+Obtiene el dato solicitado desde la fuente o estructura que maneja este archivo, sin cambiar el contrato público del resto del módulo.
+
+Entradas:
+- limit: Int
+
+Salida: List<Note>.
+
+### getPinnedNotesForWidget — líneas 107–107
+
+Firma: suspend fun getPinnedNotesForWidget(limit: Int): List<Note>
+
+Obtiene el dato solicitado desde la fuente o estructura que maneja este archivo, sin cambiar el contrato público del resto del módulo.
+
+Entradas:
+- limit: Int
+
+Salida: List<Note>.
+
+### getFocusNoteForWidget — líneas 117–117
+
+Firma: suspend fun getFocusNoteForWidget(): Note?
+
+Obtiene el dato solicitado desde la fuente o estructura que maneja este archivo, sin cambiar el contrato público del resto del módulo.
+
+Salida: Note?.
+
+### insertNotes — líneas 119–119
+
+Firma: suspend fun insertNotes(notes: List<Note>)
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+Entradas:
+- notes: List<Note>
+
+Salida: Unit o inferido por Kotlin.
+
+### deleteAllNotes — líneas 121–121
+
+Firma: suspend fun deleteAllNotes()
+
+Elimina el elemento indicado. El cuerpo coordina la capa de persistencia y, cuando hay archivos asociados, realiza la limpieza correspondiente.
+
+Salida: Unit o inferido por Kotlin.
+
+### insertNote — líneas 123–123
+
+Firma: suspend fun insertNote(note: Note): Long
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+Entradas:
+- note: Note
+
+Salida: Long.
+
+### updateNote — líneas 125–125
+
+Firma: suspend fun updateNote(note: Note)
+
+Actualiza el estado/datos indicados por sus parámetros y propaga el cambio a las dependencias utilizadas en el cuerpo.
+
+Entradas:
+- note: Note
+
+Salida: Unit o inferido por Kotlin.
+
+### updateColor — líneas 131–131
+
+Firma: suspend fun updateColor(noteId: Int, color: String)
+
+Actualiza el estado/datos indicados por sus parámetros y propaga el cambio a las dependencias utilizadas en el cuerpo.
+
+Entradas:
+- noteId: Int
+- color: String
+
+Salida: Unit o inferido por Kotlin.
+
+### updatePriority — líneas 133–133
+
+Firma: suspend fun updatePriority(noteId: Int, priority: Int)
+
+Actualiza el estado/datos indicados por sus parámetros y propaga el cambio a las dependencias utilizadas en el cuerpo.
+
+Entradas:
+- noteId: Int
+- priority: Int
+
+Salida: Unit o inferido por Kotlin.
+
+### updateFavorite — líneas 135–135
+
+Firma: suspend fun updateFavorite(noteId: Int, isFavorite: Boolean)
+
+Actualiza el estado/datos indicados por sus parámetros y propaga el cambio a las dependencias utilizadas en el cuerpo.
+
+Entradas:
+- noteId: Int
+- isFavorite: Boolean
+
+Salida: Unit o inferido por Kotlin.
+
+### updatePinned — líneas 137–137
+
+Firma: suspend fun updatePinned(noteId: Int, isPinned: Boolean)
+
+Actualiza el estado/datos indicados por sus parámetros y propaga el cambio a las dependencias utilizadas en el cuerpo.
+
+Entradas:
+- noteId: Int
+- isPinned: Boolean
+
+Salida: Unit o inferido por Kotlin.
+
+### updateCategory — líneas 139–139
+
+Firma: suspend fun updateCategory(noteId: Int, category: String)
+
+Actualiza el estado/datos indicados por sus parámetros y propaga el cambio a las dependencias utilizadas en el cuerpo.
+
+Entradas:
+- noteId: Int
+- category: String
+
+Salida: Unit o inferido por Kotlin.
+
+### deleteNote — líneas 141–141
+
+Firma: suspend fun deleteNote(note: Note)
+
+Elimina el elemento indicado. El cuerpo coordina la capa de persistencia y, cuando hay archivos asociados, realiza la limpieza correspondiente.
+
+Entradas:
+- note: Note
+
+Salida: Unit o inferido por Kotlin.
+
+## 5. Cómo se conecta con el resto de MyNotes
+
+- No importa directamente otro componente com.example.mynotes; funciona como modelo/utilidad base o mediante APIs Android/Jetpack.
+
+## 6. Recursos Android que utiliza
+
+- No se detectaron referencias directas R.* en este archivo.
+
+## 7. Tecnologías y efectos relevantes
+
+- Accede a la base Room/DAO.
+
+## 8. Lectura práctica del flujo
+
+Una forma útil de seguir este archivo en el depurador es recorrer estas operaciones en este orden aproximado:
+1. getAllNotes — Obtiene el dato solicitado desde la fuente o estructura que maneja este archivo, sin cambiar el contrato público del resto del módulo.
+2. getAllNotesOnce — Obtiene el dato solicitado desde la fuente o estructura que maneja este archivo, sin cambiar el contrato público del resto del módulo.
+3. getNoteByIdOnce — Obtiene el dato solicitado desde la fuente o estructura que maneja este archivo, sin cambiar el contrato público del resto del módulo.
+4. getRecentNotesForWidget — Obtiene el dato solicitado desde la fuente o estructura que maneja este archivo, sin cambiar el contrato público del resto del módulo.
+5. getNoteCountForWidget — Obtiene el dato solicitado desde la fuente o estructura que maneja este archivo, sin cambiar el contrato público del resto del módulo.
+6. getFavoriteCountForWidget — Obtiene el dato solicitado desde la fuente o estructura que maneja este archivo, sin cambiar el contrato público del resto del módulo.
+7. getWidgetStats — Obtiene el dato solicitado desde la fuente o estructura que maneja este archivo, sin cambiar el contrato público del resto del módulo.
+8. getFavoriteNotesForWidget — Obtiene el dato solicitado desde la fuente o estructura que maneja este archivo, sin cambiar el contrato público del resto del módulo.
+9. getPinnedNotesForWidget — Obtiene el dato solicitado desde la fuente o estructura que maneja este archivo, sin cambiar el contrato público del resto del módulo.
+10. getFocusNoteForWidget — Obtiene el dato solicitado desde la fuente o estructura que maneja este archivo, sin cambiar el contrato público del resto del módulo.
+11. insertNotes — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+12. deleteAllNotes — Elimina el elemento indicado. El cuerpo coordina la capa de persistencia y, cuando hay archivos asociados, realiza la limpieza correspondiente.
+
+## 9. Qué no debe romperse al modificarlo
+
+- Los cambios de esquema Room requieren revisar versión/migraciones y compatibilidad con datos existentes.
+
+## 10. Resumen en lenguaje sencillo
+
+En términos simples: Contrato Room de notas; contiene consultas reactivas, operaciones CRUD y consultas optimizadas para widgets. La sección función por función anterior describe qué entra, qué devuelve y qué efectos produce cada operación detectada en el fuente actual.

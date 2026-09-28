@@ -1,0 +1,1306 @@
+MYNOTES — EXPLICACIÓN ULTRA DETALLADA
+==============================================================================================================
+Archivo 70/72: app/src/main/java/com/example/mynotes/widget/WidgetPresentation.kt
+SHA-256: ad2a216a39e371194d99cdd6f7d7551a0a5c84390daa9bc4abc511c3f0e0957a
+Líneas del fuente: 264
+Package: com.example.mynotes.widget
+
+1. RESPONSABILIDAD EXACTA DEL ARCHIVO
+----------------------------------------------------------------------
+Calcula colores, fondos, contraste, formas y valores visuales que los providers aplican a RemoteViews.
+
+2. DÓNDE ENCAJA EN LA ARQUITECTURA
+----------------------------------------------------------------------
+Este archivo pertenece principalmente a la **integración App Widgets/launcher**. No debe analizarse aislado: las referencias cruzadas y callbacks se detallan más abajo.
+
+3. IMPORTACIONES, UNA POR UNA
+----------------------------------------------------------------------
+- `android.content.Context`: Importa `android.content.Context` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `androidx.compose.ui.graphics.Color`: Importa `androidx.compose.ui.graphics.Color` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.graphics.luminance`: Importa `androidx.compose.ui.graphics.luminance` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.graphics.toArgb`: Importa `androidx.compose.ui.graphics.toArgb` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `com.example.mynotes.R`: Importa `com.example.mynotes.R`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.data.Note`: Importa `com.example.mynotes.data.Note`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.settings.SettingsRepository`: Importa `com.example.mynotes.settings.SettingsRepository`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.ui.theme.PaletteCatalog`: Importa `com.example.mynotes.ui.theme.PaletteCatalog`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `kotlinx.coroutines.flow.first`: Importa `kotlinx.coroutines.flow.first` para usar coroutines, Flow y ejecución asíncrona.
+- `java.text.SimpleDateFormat`: Importa `java.text.SimpleDateFormat` de la biblioteca estándar/JVM para operaciones de lenguaje, fechas, colecciones, I/O o utilidades.
+- `java.util.Date`: Importa `java.util.Date` de la biblioteca estándar/JVM para operaciones de lenguaje, fechas, colecciones, I/O o utilidades.
+
+4. DECLARACIONES Y ESTADO IMPORTANTES
+----------------------------------------------------------------------
+L15: `object WidgetPresentation {`
+    Declara object `WidgetPresentation`. A partir de aquí las propiedades y funciones hasta su llave de cierre pertenecen a este tipo.
+L17: `private val WidgetEmbeddedLinkMarkerRegex = Regex(`
+    Declara `WidgetEmbeddedLinkMarkerRegex` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `Regex(`.
+L21: `private val WidgetUrlRegex = Regex("""https?://[^\s<>"']+""", RegexOption.IGNORE_CASE)`
+    Declara `WidgetUrlRegex` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `Regex("""https?://[^\s<>"']+""", RegexOption.IGNORE_CASE)`.
+L29: `data class WidgetThemeSpec(`
+    Declara `WidgetThemeSpec` como `data class`: Kotlin genera automáticamente igualdad, hash, copia y representación textual a partir de sus propiedades del constructor.
+L30: `val dark: Boolean,`
+    Declara `dark` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L31: `val rootBackgroundRes: Int,`
+    Declara `rootBackgroundRes` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L32: `val cardBackgroundRes: Int,`
+    Declara `cardBackgroundRes` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L33: `val noteRowBackgroundRes: Int,`
+    Declara `noteRowBackgroundRes` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L34: `val detailCardBackgroundRes: Int,`
+    Declara `detailCardBackgroundRes` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L35: `val metricCardBackgroundRes: Int,`
+    Declara `metricCardBackgroundRes` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L36: `val actionBackgroundRes: Int,`
+    Declara `actionBackgroundRes` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L37: `val primaryActionBackgroundRes: Int,`
+    Declara `primaryActionBackgroundRes` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L38: `val textPrimary: Int,`
+    Declara `textPrimary` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L39: `val textSecondary: Int,`
+    Declara `textSecondary` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L40: `val textMuted: Int,`
+    Declara `textMuted` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L41: `val onAction: Int,`
+    Declara `onAction` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L42: `val onPrimaryAction: Int,`
+    Declara `onPrimaryAction` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L43: `val accent: Int,`
+    Declara `accent` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L44: `val countBadgeBackgroundRes: Int,`
+    Declara `countBadgeBackgroundRes` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L45: `val countBadgeText: Int,`
+    Declara `countBadgeText` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L46: `val thumbnailBackgroundRes: Int,`
+    Declara `thumbnailBackgroundRes` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L47: `val chipBackgroundRes: Int,`
+    Declara `chipBackgroundRes` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L48: `val rootBackgroundColor: Int,`
+    Declara `rootBackgroundColor` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L49: `val cardBackgroundColor: Int,`
+    Declara `cardBackgroundColor` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L50: `val noteRowBackgroundColor: Int,`
+    Declara `noteRowBackgroundColor` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L51: `val detailCardBackgroundColor: Int,`
+    Declara `detailCardBackgroundColor` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L52: `val metricCardBackgroundColor: Int,`
+    Declara `metricCardBackgroundColor` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L53: `val thumbnailBackgroundColor: Int,`
+    Declara `thumbnailBackgroundColor` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L54: `val chipBackgroundColor: Int`
+    Declara `chipBackgroundColor` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L59: `val settings = SettingsRepository(context.applicationContext).settings.first()`
+    Declara `settings` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `SettingsRepository(context.applicationContext).settings.first()`.
+L60: `val palette = PaletteCatalog.find(settings.backgroundColor)`
+    Declara `palette` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `PaletteCatalog.find(settings.backgroundColor)`.
+L61: `val toneIndex = settings.backgroundToneIndex.coerceIn(0, 3)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L62: `val selectedTone = palette.tones.getOrElse(toneIndex) { palette.tones.first() }`
+    Declara `selectedTone` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `palette.tones.getOrElse(toneIndex) { palette.tones.first() }`.
+L63: `val dark = settings.darkMode || selectedTone.luminance() < 0.48f || toneIndex >= 2`
+    Declara `dark` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `settings.darkMode || selectedTone.luminance() < 0.48f || toneIndex >= 2`.
+L64: `val key = palette.key.replace(Regex("[^a-z0-9_]"), "_")`
+    Declara `key` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `palette.key.replace(Regex("[^a-z0-9_]"), "_")`.
+L79: `val name = "widget_palette_${key}_${toneIndex}_root"`
+    Declara `name` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `"widget_palette_${key}_${toneIndex}_root"`.
+L80: `val id = context.resources.getIdentifier(name, "drawable", context.packageName)`
+    Declara `id` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `context.resources.getIdentifier(name, "drawable", context.packageName)`.
+L84: `val actionColor = if (dark) {`
+    Declara `actionColor` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (dark) {`.
+L89: `val primaryColor = if (dark) {`
+    Declara `primaryColor` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (dark) {`.
+L94: `val countColor = if (dark) {`
+    Declara `countColor` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (dark) {`.
+L184: `val normalizedTitle = note.title.trim()`
+    Declara `normalizedTitle` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `note.title.trim()`.
+L185: `val lines = visibleNoteContent(note.content).lineSequence().map { it.trim() }.filter { it.isNotEmpty() }.toList()`
+    Transforma cada valor/elemento de la fuente en otro valor sin mutar la colección/Flow original.
+L186: `val contentLine = lines.firstOrNull().orEmpty()`
+    Busca el primer elemento que coincide; si no existe devuelve `null` en lugar de lanzar una excepción.
+L197: `val merged = visibleNoteContent(note.content).lineSequence().map { it.trim() }.filter { it.isNotEmpty() }.joinToString(" ")`
+    Transforma cada valor/elemento de la fuente en otro valor sin mutar la colección/Flow original.
+L216: `val parts = buildList {`
+    Declara `parts` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `buildList {`.
+L249: `val t = amount.coerceIn(0f, 1f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L259: `val normalized = (intensity.coerceIn(0f, 100f) / 100f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L260: `val target = if (dark) Color.Black else Color.White`
+    Declara `target` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (dark) Color.Black else Color.White`.
+L261: `val amount = if (dark) normalized * 0.12f else normalized * 0.10f`
+    Declara `amount` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (dark) normalized * 0.12f else normalized * 0.10f`.
+
+5. FUNCIONES — EXPLICACIÓN DE CADA UNA
+----------------------------------------------------------------------
+
+5.1 `visibleNoteContent` — líneas 23–23
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        private fun visibleNoteContent(raw: String): String = raw
+
+Propósito:
+    Implementa `visibleNoteContent`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `raw: String`: el llamador proporciona este valor/callback a `visibleNoteContent`. Dentro del cuerpo, las líneas donde aparece `raw` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `String`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L23 [4 espacios] `private fun visibleNoteContent(raw: String): String = raw`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `visibleNoteContent` se detalla después instrucción por instrucción.
+
+5.2 `theme` — líneas 57–156
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        suspend fun theme(context: Context): WidgetThemeSpec {
+
+Propósito:
+    Implementa `theme`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `context: Context`: el llamador proporciona este valor/callback a `theme`. Dentro del cuerpo, las líneas donde aparece `context` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `WidgetThemeSpec`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L57 [4 espacios] `suspend fun theme(context: Context): WidgetThemeSpec {`
+      → Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `theme` se detalla después instrucción por instrucción.
+  L58 [8 espacios] `return runCatching {`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L59 [12 espacios] `val settings = SettingsRepository(context.applicationContext).settings.first()`
+      → Declara `settings` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `SettingsRepository(context.applicationContext).settings.first()`.
+  L60 [12 espacios] `val palette = PaletteCatalog.find(settings.backgroundColor)`
+      → Declara `palette` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `PaletteCatalog.find(settings.backgroundColor)`.
+  L61 [12 espacios] `val toneIndex = settings.backgroundToneIndex.coerceIn(0, 3)`
+      → Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+  L62 [12 espacios] `val selectedTone = palette.tones.getOrElse(toneIndex) { palette.tones.first() }`
+      → Declara `selectedTone` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `palette.tones.getOrElse(toneIndex) { palette.tones.first() }`.
+  L63 [12 espacios] `val dark = settings.darkMode || selectedTone.luminance() < 0.48f || toneIndex >= 2`
+      → Declara `dark` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `settings.darkMode || selectedTone.luminance() < 0.48f || toneIndex >= 2`.
+  L64 [12 espacios] `val key = palette.key.replace(Regex("[^a-z0-9_]"), "_")`
+      → Declara `key` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `palette.key.replace(Regex("[^a-z0-9_]"), "_")`.
+  L66 [12 espacios] `/*`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L67 [13 espacios] `* Compact widget theming:`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L68 [13 espacios] `*`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L69 [13 espacios] `* Only the rounded ROOT background needs a palette/tone-specific`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L70 [13 espacios] `* drawable. Internal cards/actions use shared translucent shapes,`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L71 [13 espacios] `* so the palette underneath remains visible without generating`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L72 [13 espacios] `* thousands of nearly identical XML resources.`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L73 [13 espacios] `*`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L74 [13 espacios] `* This keeps RemoteViews compatible with API 28/Samsung launchers`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L75 [13 espacios] `* and avoids the setBackgroundTintList issue that previously caused`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L76 [13 espacios] `* partially rendered widgets.`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L77 [13 espacios] `*/`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L78 [12 espacios] `fun themedRoot(fallback: Int): Int {`
+      → Declara una función. El bloque de `themedRoot` se detalla después instrucción por instrucción.
+  L79 [16 espacios] `val name = "widget_palette_${key}_${toneIndex}_root"`
+      → Declara `name` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `"widget_palette_${key}_${toneIndex}_root"`.
+  L80 [16 espacios] `val id = context.resources.getIdentifier(name, "drawable", context.packageName)`
+      → Declara `id` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `context.resources.getIdentifier(name, "drawable", context.packageName)`.
+  L81 [16 espacios] `return if (id != 0) id else fallback`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L82 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L84 [12 espacios] `val actionColor = if (dark) {`
+      → Declara `actionColor` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (dark) {`.
+  L85 [16 espacios] `blend(selectedTone, Color.Black, 0.30f)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L86 [12 espacios] `} else {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L87 [16 espacios] `blend(selectedTone, Color.White, 0.18f)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L88 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L89 [12 espacios] `val primaryColor = if (dark) {`
+      → Declara `primaryColor` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (dark) {`.
+  L90 [16 espacios] `blend(selectedTone, Color.Black, 0.46f)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L91 [12 espacios] `} else {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L92 [16 espacios] `blend(selectedTone, Color.Black, 0.36f)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L93 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L94 [12 espacios] `val countColor = if (dark) {`
+      → Declara `countColor` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (dark) {`.
+  L95 [16 espacios] `blend(selectedTone, Color.White, 0.82f)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L96 [12 espacios] `} else {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L97 [16 espacios] `blend(selectedTone, Color.Black, 0.42f)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L98 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L100 [12 espacios] `WidgetThemeSpec(`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `WidgetThemeSpec(`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L101 [16 espacios] `dark = dark,`
+      → Asigna/configura `dark` usando `dark,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L102 [16 espacios] `rootBackgroundRes = themedRoot(if (dark) R.drawable.widget_surface_screen_dark else R.drawable.widget_surface_screen_light),`
+      → Referencia un drawable empaquetado en recursos (widget_surface_screen_dark, widget_surface_screen_light) para usarlo como icono/fondo/imagen.
+  L103 [16 espacios] `cardBackgroundRes = if (dark) R.drawable.widget_panel_card_dark else R.drawable.widget_panel_card_light,`
+      → Referencia un drawable empaquetado en recursos (widget_panel_card_dark, widget_panel_card_light) para usarlo como icono/fondo/imagen.
+  L104 [16 espacios] `noteRowBackgroundRes = if (dark) R.drawable.widget_note_card_dark else R.drawable.widget_note_card_light,`
+      → Referencia un drawable empaquetado en recursos (widget_note_card_dark, widget_note_card_light) para usarlo como icono/fondo/imagen.
+  L105 [16 espacios] `detailCardBackgroundRes = if (dark) R.drawable.widget_detail_card_dark else R.drawable.widget_detail_card_light,`
+      → Referencia un drawable empaquetado en recursos (widget_detail_card_dark, widget_detail_card_light) para usarlo como icono/fondo/imagen.
+  L106 [16 espacios] `metricCardBackgroundRes = if (dark) R.drawable.widget_metric_card_dark else R.drawable.widget_metric_card_light,`
+      → Referencia un drawable empaquetado en recursos (widget_metric_card_dark, widget_metric_card_light) para usarlo como icono/fondo/imagen.
+  L107 [16 espacios] `actionBackgroundRes = if (dark) R.drawable.widget_action_circle_dark else R.drawable.widget_action_circle_light,`
+      → Referencia un drawable empaquetado en recursos (widget_action_circle_dark, widget_action_circle_light) para usarlo como icono/fondo/imagen.
+  L108 [16 espacios] `primaryActionBackgroundRes = if (dark) R.drawable.widget_action_primary_dark else R.drawable.widget_action_primary_light,`
+      → Referencia un drawable empaquetado en recursos (widget_action_primary_dark, widget_action_primary_light) para usarlo como icono/fondo/imagen.
+  L109 [16 espacios] `textPrimary = if (dark) 0xFFF6F4FF.toInt() else 0xFF0F1115.toInt(),`
+      → Asigna/configura `textPrimary` usando `if (dark) 0xFFF6F4FF.toInt() else 0xFF0F1115.toInt(),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L110 [16 espacios] `textSecondary = if (dark) 0xFFE5E6F5.toInt() else 0xFF62594F.toInt(),`
+      → Asigna/configura `textSecondary` usando `if (dark) 0xFFE5E6F5.toInt() else 0xFF62594F.toInt(),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L111 [16 espacios] `textMuted = if (dark) 0xFFC7CAE4.toInt() else 0xFF8B8178.toInt(),`
+      → Asigna/configura `textMuted` usando `if (dark) 0xFFC7CAE4.toInt() else 0xFF8B8178.toInt(),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L112 [16 espacios] `onAction = contrastText(actionColor),`
+      → Asigna/configura `onAction` usando `contrastText(actionColor),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L113 [16 espacios] `onPrimaryAction = contrastText(primaryColor),`
+      → Asigna/configura `onPrimaryAction` usando `contrastText(primaryColor),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L114 [16 espacios] `accent = palette.accent.toArgb(),`
+      → Asigna/configura `accent` usando `palette.accent.toArgb(),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L115 [16 espacios] `countBadgeBackgroundRes = if (dark) R.drawable.widget_count_pill_dark else R.drawable.widget_count_pill_light,`
+      → Referencia un drawable empaquetado en recursos (widget_count_pill_dark, widget_count_pill_light) para usarlo como icono/fondo/imagen.
+  L116 [16 espacios] `countBadgeText = contrastText(countColor),`
+      → Asigna/configura `countBadgeText` usando `contrastText(countColor),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L117 [16 espacios] `thumbnailBackgroundRes = if (dark) R.drawable.widget_thumb_background_dark else R.drawable.widget_thumb_background_light,`
+      → Referencia un drawable empaquetado en recursos (widget_thumb_background_dark, widget_thumb_background_light) para usarlo como icono/fondo/imagen.
+  L118 [16 espacios] `chipBackgroundRes = if (dark) R.drawable.widget_chip_dark else R.drawable.widget_chip_light,`
+      → Referencia un drawable empaquetado en recursos (widget_chip_dark, widget_chip_light) para usarlo como icono/fondo/imagen.
+  L119 [16 espacios] `rootBackgroundColor = selectedTone.toArgb(),`
+      → Asigna/configura `rootBackgroundColor` usando `selectedTone.toArgb(),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L120 [16 espacios] `cardBackgroundColor = selectedTone.toArgb(),`
+      → Asigna/configura `cardBackgroundColor` usando `selectedTone.toArgb(),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L121 [16 espacios] `noteRowBackgroundColor = selectedTone.toArgb(),`
+      → Asigna/configura `noteRowBackgroundColor` usando `selectedTone.toArgb(),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L122 [16 espacios] `detailCardBackgroundColor = selectedTone.toArgb(),`
+      → Asigna/configura `detailCardBackgroundColor` usando `selectedTone.toArgb(),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L123 [16 espacios] `metricCardBackgroundColor = selectedTone.toArgb(),`
+      → Asigna/configura `metricCardBackgroundColor` usando `selectedTone.toArgb(),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L124 [16 espacios] `thumbnailBackgroundColor = selectedTone.toArgb(),`
+      → Asigna/configura `thumbnailBackgroundColor` usando `selectedTone.toArgb(),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L125 [16 espacios] `chipBackgroundColor = selectedTone.toArgb()`
+      → Asigna/configura `chipBackgroundColor` usando `selectedTone.toArgb()`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L126 [12 espacios] `)`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L127 [8 espacios] `}.getOrDefault(`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `}.getOrDefault(`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L128 [12 espacios] `WidgetThemeSpec(`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `WidgetThemeSpec(`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L129 [16 espacios] `dark = true,`
+      → Asigna/configura `dark` usando `true,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L130 [16 espacios] `rootBackgroundRes = R.drawable.widget_surface_screen_dark,`
+      → Referencia un drawable empaquetado en recursos (widget_surface_screen_dark) para usarlo como icono/fondo/imagen.
+  L131 [16 espacios] `cardBackgroundRes = R.drawable.widget_panel_card_dark,`
+      → Referencia un drawable empaquetado en recursos (widget_panel_card_dark) para usarlo como icono/fondo/imagen.
+  L132 [16 espacios] `noteRowBackgroundRes = R.drawable.widget_note_card_dark,`
+      → Referencia un drawable empaquetado en recursos (widget_note_card_dark) para usarlo como icono/fondo/imagen.
+  L133 [16 espacios] `detailCardBackgroundRes = R.drawable.widget_detail_card_dark,`
+      → Referencia un drawable empaquetado en recursos (widget_detail_card_dark) para usarlo como icono/fondo/imagen.
+  L134 [16 espacios] `metricCardBackgroundRes = R.drawable.widget_metric_card_dark,`
+      → Referencia un drawable empaquetado en recursos (widget_metric_card_dark) para usarlo como icono/fondo/imagen.
+  L135 [16 espacios] `actionBackgroundRes = R.drawable.widget_action_circle_dark,`
+      → Referencia un drawable empaquetado en recursos (widget_action_circle_dark) para usarlo como icono/fondo/imagen.
+  L136 [16 espacios] `primaryActionBackgroundRes = R.drawable.widget_action_primary_dark,`
+      → Referencia un drawable empaquetado en recursos (widget_action_primary_dark) para usarlo como icono/fondo/imagen.
+  L137 [16 espacios] `textPrimary = 0xFFF6F4FF.toInt(),`
+      → Asigna/configura `textPrimary` usando `0xFFF6F4FF.toInt(),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L138 [16 espacios] `textSecondary = 0xFFD3D6FF.toInt(),`
+      → Asigna/configura `textSecondary` usando `0xFFD3D6FF.toInt(),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L139 [16 espacios] `textMuted = 0xFFB2B6E5.toInt(),`
+      → Asigna/configura `textMuted` usando `0xFFB2B6E5.toInt(),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L140 [16 espacios] `onAction = 0xFFFFFFFF.toInt(),`
+      → Asigna/configura `onAction` usando `0xFFFFFFFF.toInt(),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L141 [16 espacios] `onPrimaryAction = 0xFFFFFFFF.toInt(),`
+      → Asigna/configura `onPrimaryAction` usando `0xFFFFFFFF.toInt(),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L142 [16 espacios] `accent = 0xFF666666.toInt(),`
+      → Asigna/configura `accent` usando `0xFF666666.toInt(),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L143 [16 espacios] `countBadgeBackgroundRes = R.drawable.widget_count_pill_dark,`
+      → Referencia un drawable empaquetado en recursos (widget_count_pill_dark) para usarlo como icono/fondo/imagen.
+  L144 [16 espacios] `countBadgeText = 0xFF2F2A31.toInt(),`
+      → Asigna/configura `countBadgeText` usando `0xFF2F2A31.toInt(),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L145 [16 espacios] `thumbnailBackgroundRes = R.drawable.widget_thumb_background_dark,`
+      → Referencia un drawable empaquetado en recursos (widget_thumb_background_dark) para usarlo como icono/fondo/imagen.
+  L146 [16 espacios] `chipBackgroundRes = R.drawable.widget_chip_dark,`
+      → Referencia un drawable empaquetado en recursos (widget_chip_dark) para usarlo como icono/fondo/imagen.
+  L147 [16 espacios] `rootBackgroundColor = 0xFF5F5F5F.toInt(),`
+      → Asigna/configura `rootBackgroundColor` usando `0xFF5F5F5F.toInt(),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L148 [16 espacios] `cardBackgroundColor = 0xFF767676.toInt(),`
+      → Asigna/configura `cardBackgroundColor` usando `0xFF767676.toInt(),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L149 [16 espacios] `noteRowBackgroundColor = 0xFF858585.toInt(),`
+      → Asigna/configura `noteRowBackgroundColor` usando `0xFF858585.toInt(),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L150 [16 espacios] `detailCardBackgroundColor = 0xFF8B8B8B.toInt(),`
+      → Asigna/configura `detailCardBackgroundColor` usando `0xFF8B8B8B.toInt(),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L151 [16 espacios] `metricCardBackgroundColor = 0xFF808080.toInt(),`
+      → Asigna/configura `metricCardBackgroundColor` usando `0xFF808080.toInt(),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L152 [16 espacios] `thumbnailBackgroundColor = 0xFF707070.toInt(),`
+      → Asigna/configura `thumbnailBackgroundColor` usando `0xFF707070.toInt(),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L153 [16 espacios] `chipBackgroundColor = 0xFF555555.toInt()`
+      → Asigna/configura `chipBackgroundColor` usando `0xFF555555.toInt()`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L154 [12 espacios] `)`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L155 [8 espacios] `)`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L156 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.3 `accentColor` — líneas 158–158
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        suspend fun accentColor(context: Context): Int = theme(context).accent
+
+Propósito:
+    Implementa `accentColor`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `context: Context): Int = theme(context`: el llamador proporciona este valor/callback a `accentColor`. Dentro del cuerpo, las líneas donde aparece `context` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Int`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L158 [4 espacios] `suspend fun accentColor(context: Context): Int = theme(context).accent`
+      → Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `accentColor` se detalla después instrucción por instrucción.
+
+5.4 `noteAccentColor` — líneas 160–175
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun noteAccentColor(note: Note, fallback: Int): Int = when (note.color) {
+
+Propósito:
+    Implementa `noteAccentColor`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `note: Note`: el llamador proporciona este valor/callback a `noteAccentColor`. Dentro del cuerpo, las líneas donde aparece `note` muestran exactamente cómo afecta al resultado.
+  - `fallback: Int): Int = when (note.color`: el llamador proporciona este valor/callback a `noteAccentColor`. Dentro del cuerpo, las líneas donde aparece `fallback` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Int`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L160 [4 espacios] `fun noteAccentColor(note: Note, fallback: Int): Int = when (note.color) {`
+      → Declara una función. El bloque de `noteAccentColor` se detalla después instrucción por instrucción.
+  L161 [8 espacios] `"purple" -> 0xFFB388FF.toInt()`
+      → Define una rama/lambda. Cuando coincide `"purple"`, se ejecuta la expresión o bloque situado después de `->`.
+  L162 [8 espacios] `"yellow" -> 0xFFE8B64D.toInt()`
+      → Define una rama/lambda. Cuando coincide `"yellow"`, se ejecuta la expresión o bloque situado después de `->`.
+  L163 [8 espacios] `"pink" -> 0xFFFF8FB1.toInt()`
+      → Define una rama/lambda. Cuando coincide `"pink"`, se ejecuta la expresión o bloque situado después de `->`.
+  L164 [8 espacios] `"green" -> 0xFF7DDC9C.toInt()`
+      → Define una rama/lambda. Cuando coincide `"green"`, se ejecuta la expresión o bloque situado después de `->`.
+  L165 [8 espacios] `"blue" -> 0xFF74B9FF.toInt()`
+      → Define una rama/lambda. Cuando coincide `"blue"`, se ejecuta la expresión o bloque situado después de `->`.
+  L166 [8 espacios] `"orange" -> 0xFFFFAB66.toInt()`
+      → Define una rama/lambda. Cuando coincide `"orange"`, se ejecuta la expresión o bloque situado después de `->`.
+  L167 [8 espacios] `"red" -> 0xFFFF7E7E.toInt()`
+      → Define una rama/lambda. Cuando coincide `"red"`, se ejecuta la expresión o bloque situado después de `->`.
+  L168 [8 espacios] `"cyan" -> 0xFF5EDAE0.toInt()`
+      → Define una rama/lambda. Cuando coincide `"cyan"`, se ejecuta la expresión o bloque situado después de `->`.
+  L169 [8 espacios] `"teal" -> 0xFF5FD2BE.toInt()`
+      → Define una rama/lambda. Cuando coincide `"teal"`, se ejecuta la expresión o bloque situado después de `->`.
+  L170 [8 espacios] `"mint" -> 0xFF7CE6B3.toInt()`
+      → Define una rama/lambda. Cuando coincide `"mint"`, se ejecuta la expresión o bloque situado después de `->`.
+  L171 [8 espacios] `"lime" -> 0xFFC8E86B.toInt()`
+      → Define una rama/lambda. Cuando coincide `"lime"`, se ejecuta la expresión o bloque situado después de `->`.
+  L172 [8 espacios] `"brown" -> 0xFFC89F7A.toInt()`
+      → Define una rama/lambda. Cuando coincide `"brown"`, se ejecuta la expresión o bloque situado después de `->`.
+  L173 [8 espacios] `"gray" -> 0xFFAAB3BD.toInt()`
+      → Define una rama/lambda. Cuando coincide `"gray"`, se ejecuta la expresión o bloque situado después de `->`.
+  L174 [8 espacios] `else -> fallback`
+      → Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+  L175 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.5 `title` — líneas 177–181
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun title(context: Context, note: Note): String {
+
+Propósito:
+    Implementa `title`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `context: Context`: el llamador proporciona este valor/callback a `title`. Dentro del cuerpo, las líneas donde aparece `context` muestran exactamente cómo afecta al resultado.
+  - `note: Note`: el llamador proporciona este valor/callback a `title`. Dentro del cuerpo, las líneas donde aparece `note` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `String`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L177 [4 espacios] `fun title(context: Context, note: Note): String {`
+      → Declara una función. El bloque de `title` se detalla después instrucción por instrucción.
+  L178 [8 espacios] `return note.title.trim().takeIf { it.isNotEmpty() }`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L179 [12 espacios] `?: visibleNoteContent(note.content).lineSequence().firstOrNull { it.isNotBlank() }?.trim()`
+      → Busca el primer elemento que coincide; si no existe devuelve `null` en lugar de lanzar una excepción.
+  L180 [12 espacios] `?: context.getString(R.string.widget_untitled_note)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L181 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.6 `preview` — líneas 183–194
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun preview(context: Context, note: Note): String {
+
+Propósito:
+    Implementa `preview`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `context: Context`: el llamador proporciona este valor/callback a `preview`. Dentro del cuerpo, las líneas donde aparece `context` muestran exactamente cómo afecta al resultado.
+  - `note: Note`: el llamador proporciona este valor/callback a `preview`. Dentro del cuerpo, las líneas donde aparece `note` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `String`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L183 [4 espacios] `fun preview(context: Context, note: Note): String {`
+      → Declara una función. El bloque de `preview` se detalla después instrucción por instrucción.
+  L184 [8 espacios] `val normalizedTitle = note.title.trim()`
+      → Declara `normalizedTitle` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `note.title.trim()`.
+  L185 [8 espacios] `val lines = visibleNoteContent(note.content).lineSequence().map { it.trim() }.filter { it.isNotEmpty() }.toList()`
+      → Transforma cada valor/elemento de la fuente en otro valor sin mutar la colección/Flow original.
+  L186 [8 espacios] `val contentLine = lines.firstOrNull().orEmpty()`
+      → Busca el primer elemento que coincide; si no existe devuelve `null` en lugar de lanzar una excepción.
+  L187 [8 espacios] `if (contentLine.isNotEmpty() && contentLine != normalizedTitle) return contentLine`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `contentLine.isNotEmpty() && contentLine != normalizedTitle`.
+  L188 [8 espacios] `return when {`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L189 [12 espacios] `note.isPinned -> context.getString(R.string.widget_pinned_note)`
+      → Define una rama/lambda. Cuando coincide `note.isPinned`, se ejecuta la expresión o bloque situado después de `->`.
+  L190 [12 espacios] `note.isFavorite -> context.getString(R.string.widget_favorite_note)`
+      → Define una rama/lambda. Cuando coincide `note.isFavorite`, se ejecuta la expresión o bloque situado después de `->`.
+  L191 [12 espacios] `note.priority > 0 -> priorityLabel(context, note.priority)`
+      → Define una rama/lambda. Cuando coincide `note.priority > 0`, se ejecuta la expresión o bloque situado después de `->`.
+  L192 [12 espacios] `else -> context.getString(R.string.widget_tap_to_open)`
+      → Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+  L193 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L194 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.7 `contentPreview` — líneas 196–203
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun contentPreview(note: Note, maxLength: Int = 170): String {
+
+Propósito:
+    Implementa `contentPreview`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `note: Note`: el llamador proporciona este valor/callback a `contentPreview`. Dentro del cuerpo, las líneas donde aparece `note` muestran exactamente cómo afecta al resultado.
+  - `maxLength: Int = 170`: el llamador proporciona este valor/callback a `contentPreview`. Dentro del cuerpo, las líneas donde aparece `maxLength` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `String`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L196 [4 espacios] `fun contentPreview(note: Note, maxLength: Int = 170): String {`
+      → Declara una función. El bloque de `contentPreview` se detalla después instrucción por instrucción.
+  L197 [8 espacios] `val merged = visibleNoteContent(note.content).lineSequence().map { it.trim() }.filter { it.isNotEmpty() }.joinToString(" ")`
+      → Transforma cada valor/elemento de la fuente en otro valor sin mutar la colección/Flow original.
+  L198 [8 espacios] `return when {`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L199 [12 espacios] `merged.isBlank() -> ""`
+      → Define una rama/lambda. Cuando coincide `merged.isBlank()`, se ejecuta la expresión o bloque situado después de `->`.
+  L200 [12 espacios] `merged.length <= maxLength -> merged`
+      → Define una rama/lambda. Cuando coincide `merged.length <= maxLength`, se ejecuta la expresión o bloque situado después de `->`.
+  L201 [12 espacios] `else -> merged.take(maxLength - 1).trimEnd() + "…"`
+      → Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+  L202 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L203 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.8 `badge` — líneas 205–213
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun badge(context: Context, note: Note): String = when {
+
+Propósito:
+    Implementa `badge`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `context: Context`: el llamador proporciona este valor/callback a `badge`. Dentro del cuerpo, las líneas donde aparece `context` muestran exactamente cómo afecta al resultado.
+  - `note: Note`: el llamador proporciona este valor/callback a `badge`. Dentro del cuerpo, las líneas donde aparece `note` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `String`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L205 [4 espacios] `fun badge(context: Context, note: Note): String = when {`
+      → Declara una función. El bloque de `badge` se detalla después instrucción por instrucción.
+  L206 [8 espacios] `note.isPinned -> context.getString(R.string.widget_badge_pinned)`
+      → Define una rama/lambda. Cuando coincide `note.isPinned`, se ejecuta la expresión o bloque situado después de `->`.
+  L207 [8 espacios] `note.isFavorite -> "★"`
+      → Define una rama/lambda. Cuando coincide `note.isFavorite`, se ejecuta la expresión o bloque situado después de `->`.
+  L208 [8 espacios] `note.priority == 3 -> "P3"`
+      → Define una rama/lambda. Cuando coincide `note.priority == 3`, se ejecuta la expresión o bloque situado después de `->`.
+  L209 [8 espacios] `note.priority == 2 -> "P2"`
+      → Define una rama/lambda. Cuando coincide `note.priority == 2`, se ejecuta la expresión o bloque situado después de `->`.
+  L210 [8 espacios] `note.priority == 1 -> "P1"`
+      → Define una rama/lambda. Cuando coincide `note.priority == 1`, se ejecuta la expresión o bloque situado después de `->`.
+  L211 [8 espacios] `note.category == "work" -> context.getString(R.string.widget_badge_work)`
+      → Define una rama/lambda. Cuando coincide `note.category == "work"`, se ejecuta la expresión o bloque situado después de `->`.
+  L212 [8 espacios] `else -> context.getString(R.string.widget_badge_personal)`
+      → Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+  L213 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.9 `metadata` — líneas 215–225
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun metadata(context: Context, note: Note): String {
+
+Propósito:
+    Implementa `metadata`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `context: Context`: el llamador proporciona este valor/callback a `metadata`. Dentro del cuerpo, las líneas donde aparece `context` muestran exactamente cómo afecta al resultado.
+  - `note: Note`: el llamador proporciona este valor/callback a `metadata`. Dentro del cuerpo, las líneas donde aparece `note` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `String`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L215 [4 espacios] `fun metadata(context: Context, note: Note): String {`
+      → Declara una función. El bloque de `metadata` se detalla después instrucción por instrucción.
+  L216 [8 espacios] `val parts = buildList {`
+      → Declara `parts` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `buildList {`.
+  L217 [12 espacios] `if (note.priority > 0) add(priorityLabel(context, note.priority))`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `note.priority > 0) add(priorityLabel(context, note.priority)`.
+  L218 [12 espacios] `add(`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `add(`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L219 [16 espacios] `if (note.category == "work") context.getString(R.string.widget_category_work)`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `note.category == "work") context.getString(R.string.widget_category_work`.
+  L220 [16 espacios] `else context.getString(R.string.widget_category_personal)`
+      → Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+  L221 [12 espacios] `)`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L222 [12 espacios] `add(shortDate(context, note.createdAt))`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L223 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L224 [8 espacios] `return parts.joinToString("  •  ")`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L225 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.10 `shortDate` — líneas 227–231
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun shortDate(context: Context, timestamp: Long): String {
+
+Propósito:
+    Implementa `shortDate`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `context: Context`: el llamador proporciona este valor/callback a `shortDate`. Dentro del cuerpo, las líneas donde aparece `context` muestran exactamente cómo afecta al resultado.
+  - `timestamp: Long`: el llamador proporciona este valor/callback a `shortDate`. Dentro del cuerpo, las líneas donde aparece `timestamp` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `String`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L227 [4 espacios] `fun shortDate(context: Context, timestamp: Long): String {`
+      → Declara una función. El bloque de `shortDate` se detalla después instrucción por instrucción.
+  L228 [8 espacios] `return runCatching {`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L229 [12 espacios] `SimpleDateFormat("MMM d, yyyy", WidgetLocale.locale(context)).format(Date(timestamp))`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L230 [8 espacios] `}.getOrDefault("")`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L231 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.11 `priorityLabel` — líneas 233–238
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun priorityLabel(context: Context, priority: Int): String = when (priority) {
+
+Propósito:
+    Implementa `priorityLabel`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `context: Context`: el llamador proporciona este valor/callback a `priorityLabel`. Dentro del cuerpo, las líneas donde aparece `context` muestran exactamente cómo afecta al resultado.
+  - `priority: Int): String = when (priority`: el llamador proporciona este valor/callback a `priorityLabel`. Dentro del cuerpo, las líneas donde aparece `priority` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `String`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L233 [4 espacios] `fun priorityLabel(context: Context, priority: Int): String = when (priority) {`
+      → Declara una función. El bloque de `priorityLabel` se detalla después instrucción por instrucción.
+  L234 [8 espacios] `3 -> context.getString(R.string.mock_priority_high)`
+      → Define una rama/lambda. Cuando coincide `3`, se ejecuta la expresión o bloque situado después de `->`.
+  L235 [8 espacios] `2 -> context.getString(R.string.mock_priority_medium)`
+      → Define una rama/lambda. Cuando coincide `2`, se ejecuta la expresión o bloque situado después de `->`.
+  L236 [8 espacios] `1 -> context.getString(R.string.mock_priority_low)`
+      → Define una rama/lambda. Cuando coincide `1`, se ejecuta la expresión o bloque situado después de `->`.
+  L237 [8 espacios] `else -> context.getString(R.string.mock_priority_none)`
+      → Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+  L238 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.12 `contrastText` — líneas 240–246
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        private fun contrastText(background: Color): Int {
+
+Propósito:
+    Implementa `contrastText`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `background: Color`: el llamador proporciona este valor/callback a `contrastText`. Dentro del cuerpo, las líneas donde aparece `background` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Int`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L240 [4 espacios] `private fun contrastText(background: Color): Int {`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `contrastText` se detalla después instrucción por instrucción.
+  L241 [8 espacios] `return if (background.luminance() > 0.48f) {`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L242 [12 espacios] `0xFF111111.toInt()`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L243 [8 espacios] `} else {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L244 [12 espacios] `0xFFFFFFFF.toInt()`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L245 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L246 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.13 `blend` — líneas 248–256
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        private fun blend(base: Color, overlay: Color, amount: Float): Color {
+
+Propósito:
+    Implementa `blend`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `base: Color`: el llamador proporciona este valor/callback a `blend`. Dentro del cuerpo, las líneas donde aparece `base` muestran exactamente cómo afecta al resultado.
+  - `overlay: Color`: el llamador proporciona este valor/callback a `blend`. Dentro del cuerpo, las líneas donde aparece `overlay` muestran exactamente cómo afecta al resultado.
+  - `amount: Float`: el llamador proporciona este valor/callback a `blend`. Dentro del cuerpo, las líneas donde aparece `amount` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Color`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L248 [4 espacios] `private fun blend(base: Color, overlay: Color, amount: Float): Color {`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `blend` se detalla después instrucción por instrucción.
+  L249 [8 espacios] `val t = amount.coerceIn(0f, 1f)`
+      → Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+  L250 [8 espacios] `return Color(`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L251 [12 espacios] `red = base.red + (overlay.red - base.red) * t,`
+      → Asigna/configura `red` usando `base.red + (overlay.red - base.red) * t,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L252 [12 espacios] `green = base.green + (overlay.green - base.green) * t,`
+      → Asigna/configura `green` usando `base.green + (overlay.green - base.green) * t,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L253 [12 espacios] `blue = base.blue + (overlay.blue - base.blue) * t,`
+      → Asigna/configura `blue` usando `base.blue + (overlay.blue - base.blue) * t,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L254 [12 espacios] `alpha = 1f`
+      → Asigna/configura `alpha` usando `1f`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L255 [8 espacios] `)`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L256 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.14 `applyIntensity` — líneas 258–263
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        private fun applyIntensity(color: Color, intensity: Float, dark: Boolean): Color {
+
+Propósito:
+    Implementa `applyIntensity`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `color: Color`: el llamador proporciona este valor/callback a `applyIntensity`. Dentro del cuerpo, las líneas donde aparece `color` muestran exactamente cómo afecta al resultado.
+  - `intensity: Float`: el llamador proporciona este valor/callback a `applyIntensity`. Dentro del cuerpo, las líneas donde aparece `intensity` muestran exactamente cómo afecta al resultado.
+  - `dark: Boolean`: el llamador proporciona este valor/callback a `applyIntensity`. Dentro del cuerpo, las líneas donde aparece `dark` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Color`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L258 [4 espacios] `private fun applyIntensity(color: Color, intensity: Float, dark: Boolean): Color {`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `applyIntensity` se detalla después instrucción por instrucción.
+  L259 [8 espacios] `val normalized = (intensity.coerceIn(0f, 100f) / 100f)`
+      → Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+  L260 [8 espacios] `val target = if (dark) Color.Black else Color.White`
+      → Declara `target` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (dark) Color.Black else Color.White`.
+  L261 [8 espacios] `val amount = if (dark) normalized * 0.12f else normalized * 0.10f`
+      → Declara `amount` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (dark) normalized * 0.12f else normalized * 0.10f`.
+  L262 [8 espacios] `return blend(color, target, amount)`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L263 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+6. EXPLICACIÓN COMPLETA LÍNEA POR LÍNEA
+----------------------------------------------------------------------
+Esta sección no omite líneas ejecutables. Repite incluso partes ya explicadas en funciones para poder leer el archivo de arriba abajo sin saltar entre secciones.
+L1: `package com.example.mynotes.widget`
+    Declara que este archivo pertenece al package `com.example.mynotes.widget`; esto determina su namespace Kotlin y cómo lo importan otros archivos.
+L3: `import android.content.Context`
+    Importa `android.content.Context` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L4: `import androidx.compose.ui.graphics.Color`
+    Importa `androidx.compose.ui.graphics.Color` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L5: `import androidx.compose.ui.graphics.luminance`
+    Importa `androidx.compose.ui.graphics.luminance` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L6: `import androidx.compose.ui.graphics.toArgb`
+    Importa `androidx.compose.ui.graphics.toArgb` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L7: `import com.example.mynotes.R`
+    Importa `com.example.mynotes.R`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L8: `import com.example.mynotes.data.Note`
+    Importa `com.example.mynotes.data.Note`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L9: `import com.example.mynotes.settings.SettingsRepository`
+    Importa `com.example.mynotes.settings.SettingsRepository`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L10: `import com.example.mynotes.ui.theme.PaletteCatalog`
+    Importa `com.example.mynotes.ui.theme.PaletteCatalog`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L11: `import kotlinx.coroutines.flow.first`
+    Importa `kotlinx.coroutines.flow.first` para usar coroutines, Flow y ejecución asíncrona.
+L12: `import java.text.SimpleDateFormat`
+    Importa `java.text.SimpleDateFormat` de la biblioteca estándar/JVM para operaciones de lenguaje, fechas, colecciones, I/O o utilidades.
+L13: `import java.util.Date`
+    Importa `java.util.Date` de la biblioteca estándar/JVM para operaciones de lenguaje, fechas, colecciones, I/O o utilidades.
+L15: `object WidgetPresentation {`
+    Declara object `WidgetPresentation`. A partir de aquí las propiedades y funciones hasta su llave de cierre pertenecen a este tipo.
+L17: `private val WidgetEmbeddedLinkMarkerRegex = Regex(`
+    Declara `WidgetEmbeddedLinkMarkerRegex` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `Regex(`.
+L18: `pattern = """(?m)^\s*\[\[mynotes-link:https?://[^\]]+]]\s*(?:\r?\n)?""",`
+    Asigna/configura `pattern` usando `"""(?m)^\s*\[\[mynotes-link:https?://[^\]]+]]\s*(?:\r?\n)?""",`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L19: `option = RegexOption.IGNORE_CASE`
+    Asigna/configura `option` usando `RegexOption.IGNORE_CASE`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L20: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L21: `private val WidgetUrlRegex = Regex("""https?://[^\s<>"']+""", RegexOption.IGNORE_CASE)`
+    Declara `WidgetUrlRegex` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `Regex("""https?://[^\s<>"']+""", RegexOption.IGNORE_CASE)`.
+L23: `private fun visibleNoteContent(raw: String): String = raw`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `visibleNoteContent` se detalla después instrucción por instrucción.
+L24: `.replace(WidgetEmbeddedLinkMarkerRegex, "")`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L25: `.replace(WidgetUrlRegex, "")`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L26: `.replace(Regex("""\n{3,}"""), "\n\n")`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L27: `.trim()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L29: `data class WidgetThemeSpec(`
+    Declara `WidgetThemeSpec` como `data class`: Kotlin genera automáticamente igualdad, hash, copia y representación textual a partir de sus propiedades del constructor.
+L30: `val dark: Boolean,`
+    Declara `dark` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L31: `val rootBackgroundRes: Int,`
+    Declara `rootBackgroundRes` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L32: `val cardBackgroundRes: Int,`
+    Declara `cardBackgroundRes` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L33: `val noteRowBackgroundRes: Int,`
+    Declara `noteRowBackgroundRes` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L34: `val detailCardBackgroundRes: Int,`
+    Declara `detailCardBackgroundRes` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L35: `val metricCardBackgroundRes: Int,`
+    Declara `metricCardBackgroundRes` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L36: `val actionBackgroundRes: Int,`
+    Declara `actionBackgroundRes` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L37: `val primaryActionBackgroundRes: Int,`
+    Declara `primaryActionBackgroundRes` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L38: `val textPrimary: Int,`
+    Declara `textPrimary` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L39: `val textSecondary: Int,`
+    Declara `textSecondary` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L40: `val textMuted: Int,`
+    Declara `textMuted` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L41: `val onAction: Int,`
+    Declara `onAction` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L42: `val onPrimaryAction: Int,`
+    Declara `onPrimaryAction` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L43: `val accent: Int,`
+    Declara `accent` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L44: `val countBadgeBackgroundRes: Int,`
+    Declara `countBadgeBackgroundRes` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L45: `val countBadgeText: Int,`
+    Declara `countBadgeText` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L46: `val thumbnailBackgroundRes: Int,`
+    Declara `thumbnailBackgroundRes` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L47: `val chipBackgroundRes: Int,`
+    Declara `chipBackgroundRes` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L48: `val rootBackgroundColor: Int,`
+    Declara `rootBackgroundColor` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L49: `val cardBackgroundColor: Int,`
+    Declara `cardBackgroundColor` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L50: `val noteRowBackgroundColor: Int,`
+    Declara `noteRowBackgroundColor` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L51: `val detailCardBackgroundColor: Int,`
+    Declara `detailCardBackgroundColor` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L52: `val metricCardBackgroundColor: Int,`
+    Declara `metricCardBackgroundColor` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L53: `val thumbnailBackgroundColor: Int,`
+    Declara `thumbnailBackgroundColor` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L54: `val chipBackgroundColor: Int`
+    Declara `chipBackgroundColor` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L55: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L57: `suspend fun theme(context: Context): WidgetThemeSpec {`
+    Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `theme` se detalla después instrucción por instrucción.
+L58: `return runCatching {`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L59: `val settings = SettingsRepository(context.applicationContext).settings.first()`
+    Declara `settings` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `SettingsRepository(context.applicationContext).settings.first()`.
+L60: `val palette = PaletteCatalog.find(settings.backgroundColor)`
+    Declara `palette` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `PaletteCatalog.find(settings.backgroundColor)`.
+L61: `val toneIndex = settings.backgroundToneIndex.coerceIn(0, 3)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L62: `val selectedTone = palette.tones.getOrElse(toneIndex) { palette.tones.first() }`
+    Declara `selectedTone` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `palette.tones.getOrElse(toneIndex) { palette.tones.first() }`.
+L63: `val dark = settings.darkMode || selectedTone.luminance() < 0.48f || toneIndex >= 2`
+    Declara `dark` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `settings.darkMode || selectedTone.luminance() < 0.48f || toneIndex >= 2`.
+L64: `val key = palette.key.replace(Regex("[^a-z0-9_]"), "_")`
+    Declara `key` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `palette.key.replace(Regex("[^a-z0-9_]"), "_")`.
+L66: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L67: `* Compact widget theming:`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L68: `*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L69: `* Only the rounded ROOT background needs a palette/tone-specific`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L70: `* drawable. Internal cards/actions use shared translucent shapes,`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L71: `* so the palette underneath remains visible without generating`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L72: `* thousands of nearly identical XML resources.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L73: `*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L74: `* This keeps RemoteViews compatible with API 28/Samsung launchers`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L75: `* and avoids the setBackgroundTintList issue that previously caused`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L76: `* partially rendered widgets.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L77: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L78: `fun themedRoot(fallback: Int): Int {`
+    Declara una función. El bloque de `themedRoot` se detalla después instrucción por instrucción.
+L79: `val name = "widget_palette_${key}_${toneIndex}_root"`
+    Declara `name` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `"widget_palette_${key}_${toneIndex}_root"`.
+L80: `val id = context.resources.getIdentifier(name, "drawable", context.packageName)`
+    Declara `id` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `context.resources.getIdentifier(name, "drawable", context.packageName)`.
+L81: `return if (id != 0) id else fallback`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L82: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L84: `val actionColor = if (dark) {`
+    Declara `actionColor` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (dark) {`.
+L85: `blend(selectedTone, Color.Black, 0.30f)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L86: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L87: `blend(selectedTone, Color.White, 0.18f)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L88: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L89: `val primaryColor = if (dark) {`
+    Declara `primaryColor` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (dark) {`.
+L90: `blend(selectedTone, Color.Black, 0.46f)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L91: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L92: `blend(selectedTone, Color.Black, 0.36f)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L93: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L94: `val countColor = if (dark) {`
+    Declara `countColor` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (dark) {`.
+L95: `blend(selectedTone, Color.White, 0.82f)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L96: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L97: `blend(selectedTone, Color.Black, 0.42f)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L98: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L100: `WidgetThemeSpec(`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `WidgetThemeSpec(`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L101: `dark = dark,`
+    Asigna/configura `dark` usando `dark,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L102: `rootBackgroundRes = themedRoot(if (dark) R.drawable.widget_surface_screen_dark else R.drawable.widget_surface_screen_light),`
+    Referencia un drawable empaquetado en recursos (widget_surface_screen_dark, widget_surface_screen_light) para usarlo como icono/fondo/imagen.
+L103: `cardBackgroundRes = if (dark) R.drawable.widget_panel_card_dark else R.drawable.widget_panel_card_light,`
+    Referencia un drawable empaquetado en recursos (widget_panel_card_dark, widget_panel_card_light) para usarlo como icono/fondo/imagen.
+L104: `noteRowBackgroundRes = if (dark) R.drawable.widget_note_card_dark else R.drawable.widget_note_card_light,`
+    Referencia un drawable empaquetado en recursos (widget_note_card_dark, widget_note_card_light) para usarlo como icono/fondo/imagen.
+L105: `detailCardBackgroundRes = if (dark) R.drawable.widget_detail_card_dark else R.drawable.widget_detail_card_light,`
+    Referencia un drawable empaquetado en recursos (widget_detail_card_dark, widget_detail_card_light) para usarlo como icono/fondo/imagen.
+L106: `metricCardBackgroundRes = if (dark) R.drawable.widget_metric_card_dark else R.drawable.widget_metric_card_light,`
+    Referencia un drawable empaquetado en recursos (widget_metric_card_dark, widget_metric_card_light) para usarlo como icono/fondo/imagen.
+L107: `actionBackgroundRes = if (dark) R.drawable.widget_action_circle_dark else R.drawable.widget_action_circle_light,`
+    Referencia un drawable empaquetado en recursos (widget_action_circle_dark, widget_action_circle_light) para usarlo como icono/fondo/imagen.
+L108: `primaryActionBackgroundRes = if (dark) R.drawable.widget_action_primary_dark else R.drawable.widget_action_primary_light,`
+    Referencia un drawable empaquetado en recursos (widget_action_primary_dark, widget_action_primary_light) para usarlo como icono/fondo/imagen.
+L109: `textPrimary = if (dark) 0xFFF6F4FF.toInt() else 0xFF0F1115.toInt(),`
+    Asigna/configura `textPrimary` usando `if (dark) 0xFFF6F4FF.toInt() else 0xFF0F1115.toInt(),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L110: `textSecondary = if (dark) 0xFFE5E6F5.toInt() else 0xFF62594F.toInt(),`
+    Asigna/configura `textSecondary` usando `if (dark) 0xFFE5E6F5.toInt() else 0xFF62594F.toInt(),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L111: `textMuted = if (dark) 0xFFC7CAE4.toInt() else 0xFF8B8178.toInt(),`
+    Asigna/configura `textMuted` usando `if (dark) 0xFFC7CAE4.toInt() else 0xFF8B8178.toInt(),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L112: `onAction = contrastText(actionColor),`
+    Asigna/configura `onAction` usando `contrastText(actionColor),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L113: `onPrimaryAction = contrastText(primaryColor),`
+    Asigna/configura `onPrimaryAction` usando `contrastText(primaryColor),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L114: `accent = palette.accent.toArgb(),`
+    Asigna/configura `accent` usando `palette.accent.toArgb(),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L115: `countBadgeBackgroundRes = if (dark) R.drawable.widget_count_pill_dark else R.drawable.widget_count_pill_light,`
+    Referencia un drawable empaquetado en recursos (widget_count_pill_dark, widget_count_pill_light) para usarlo como icono/fondo/imagen.
+L116: `countBadgeText = contrastText(countColor),`
+    Asigna/configura `countBadgeText` usando `contrastText(countColor),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L117: `thumbnailBackgroundRes = if (dark) R.drawable.widget_thumb_background_dark else R.drawable.widget_thumb_background_light,`
+    Referencia un drawable empaquetado en recursos (widget_thumb_background_dark, widget_thumb_background_light) para usarlo como icono/fondo/imagen.
+L118: `chipBackgroundRes = if (dark) R.drawable.widget_chip_dark else R.drawable.widget_chip_light,`
+    Referencia un drawable empaquetado en recursos (widget_chip_dark, widget_chip_light) para usarlo como icono/fondo/imagen.
+L119: `rootBackgroundColor = selectedTone.toArgb(),`
+    Asigna/configura `rootBackgroundColor` usando `selectedTone.toArgb(),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L120: `cardBackgroundColor = selectedTone.toArgb(),`
+    Asigna/configura `cardBackgroundColor` usando `selectedTone.toArgb(),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L121: `noteRowBackgroundColor = selectedTone.toArgb(),`
+    Asigna/configura `noteRowBackgroundColor` usando `selectedTone.toArgb(),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L122: `detailCardBackgroundColor = selectedTone.toArgb(),`
+    Asigna/configura `detailCardBackgroundColor` usando `selectedTone.toArgb(),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L123: `metricCardBackgroundColor = selectedTone.toArgb(),`
+    Asigna/configura `metricCardBackgroundColor` usando `selectedTone.toArgb(),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L124: `thumbnailBackgroundColor = selectedTone.toArgb(),`
+    Asigna/configura `thumbnailBackgroundColor` usando `selectedTone.toArgb(),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L125: `chipBackgroundColor = selectedTone.toArgb()`
+    Asigna/configura `chipBackgroundColor` usando `selectedTone.toArgb()`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L126: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L127: `}.getOrDefault(`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `}.getOrDefault(`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L128: `WidgetThemeSpec(`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `WidgetThemeSpec(`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L129: `dark = true,`
+    Asigna/configura `dark` usando `true,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L130: `rootBackgroundRes = R.drawable.widget_surface_screen_dark,`
+    Referencia un drawable empaquetado en recursos (widget_surface_screen_dark) para usarlo como icono/fondo/imagen.
+L131: `cardBackgroundRes = R.drawable.widget_panel_card_dark,`
+    Referencia un drawable empaquetado en recursos (widget_panel_card_dark) para usarlo como icono/fondo/imagen.
+L132: `noteRowBackgroundRes = R.drawable.widget_note_card_dark,`
+    Referencia un drawable empaquetado en recursos (widget_note_card_dark) para usarlo como icono/fondo/imagen.
+L133: `detailCardBackgroundRes = R.drawable.widget_detail_card_dark,`
+    Referencia un drawable empaquetado en recursos (widget_detail_card_dark) para usarlo como icono/fondo/imagen.
+L134: `metricCardBackgroundRes = R.drawable.widget_metric_card_dark,`
+    Referencia un drawable empaquetado en recursos (widget_metric_card_dark) para usarlo como icono/fondo/imagen.
+L135: `actionBackgroundRes = R.drawable.widget_action_circle_dark,`
+    Referencia un drawable empaquetado en recursos (widget_action_circle_dark) para usarlo como icono/fondo/imagen.
+L136: `primaryActionBackgroundRes = R.drawable.widget_action_primary_dark,`
+    Referencia un drawable empaquetado en recursos (widget_action_primary_dark) para usarlo como icono/fondo/imagen.
+L137: `textPrimary = 0xFFF6F4FF.toInt(),`
+    Asigna/configura `textPrimary` usando `0xFFF6F4FF.toInt(),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L138: `textSecondary = 0xFFD3D6FF.toInt(),`
+    Asigna/configura `textSecondary` usando `0xFFD3D6FF.toInt(),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L139: `textMuted = 0xFFB2B6E5.toInt(),`
+    Asigna/configura `textMuted` usando `0xFFB2B6E5.toInt(),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L140: `onAction = 0xFFFFFFFF.toInt(),`
+    Asigna/configura `onAction` usando `0xFFFFFFFF.toInt(),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L141: `onPrimaryAction = 0xFFFFFFFF.toInt(),`
+    Asigna/configura `onPrimaryAction` usando `0xFFFFFFFF.toInt(),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L142: `accent = 0xFF666666.toInt(),`
+    Asigna/configura `accent` usando `0xFF666666.toInt(),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L143: `countBadgeBackgroundRes = R.drawable.widget_count_pill_dark,`
+    Referencia un drawable empaquetado en recursos (widget_count_pill_dark) para usarlo como icono/fondo/imagen.
+L144: `countBadgeText = 0xFF2F2A31.toInt(),`
+    Asigna/configura `countBadgeText` usando `0xFF2F2A31.toInt(),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L145: `thumbnailBackgroundRes = R.drawable.widget_thumb_background_dark,`
+    Referencia un drawable empaquetado en recursos (widget_thumb_background_dark) para usarlo como icono/fondo/imagen.
+L146: `chipBackgroundRes = R.drawable.widget_chip_dark,`
+    Referencia un drawable empaquetado en recursos (widget_chip_dark) para usarlo como icono/fondo/imagen.
+L147: `rootBackgroundColor = 0xFF5F5F5F.toInt(),`
+    Asigna/configura `rootBackgroundColor` usando `0xFF5F5F5F.toInt(),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L148: `cardBackgroundColor = 0xFF767676.toInt(),`
+    Asigna/configura `cardBackgroundColor` usando `0xFF767676.toInt(),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L149: `noteRowBackgroundColor = 0xFF858585.toInt(),`
+    Asigna/configura `noteRowBackgroundColor` usando `0xFF858585.toInt(),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L150: `detailCardBackgroundColor = 0xFF8B8B8B.toInt(),`
+    Asigna/configura `detailCardBackgroundColor` usando `0xFF8B8B8B.toInt(),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L151: `metricCardBackgroundColor = 0xFF808080.toInt(),`
+    Asigna/configura `metricCardBackgroundColor` usando `0xFF808080.toInt(),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L152: `thumbnailBackgroundColor = 0xFF707070.toInt(),`
+    Asigna/configura `thumbnailBackgroundColor` usando `0xFF707070.toInt(),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L153: `chipBackgroundColor = 0xFF555555.toInt()`
+    Asigna/configura `chipBackgroundColor` usando `0xFF555555.toInt()`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L154: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L155: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L156: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L158: `suspend fun accentColor(context: Context): Int = theme(context).accent`
+    Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `accentColor` se detalla después instrucción por instrucción.
+L160: `fun noteAccentColor(note: Note, fallback: Int): Int = when (note.color) {`
+    Declara una función. El bloque de `noteAccentColor` se detalla después instrucción por instrucción.
+L161: `"purple" -> 0xFFB388FF.toInt()`
+    Define una rama/lambda. Cuando coincide `"purple"`, se ejecuta la expresión o bloque situado después de `->`.
+L162: `"yellow" -> 0xFFE8B64D.toInt()`
+    Define una rama/lambda. Cuando coincide `"yellow"`, se ejecuta la expresión o bloque situado después de `->`.
+L163: `"pink" -> 0xFFFF8FB1.toInt()`
+    Define una rama/lambda. Cuando coincide `"pink"`, se ejecuta la expresión o bloque situado después de `->`.
+L164: `"green" -> 0xFF7DDC9C.toInt()`
+    Define una rama/lambda. Cuando coincide `"green"`, se ejecuta la expresión o bloque situado después de `->`.
+L165: `"blue" -> 0xFF74B9FF.toInt()`
+    Define una rama/lambda. Cuando coincide `"blue"`, se ejecuta la expresión o bloque situado después de `->`.
+L166: `"orange" -> 0xFFFFAB66.toInt()`
+    Define una rama/lambda. Cuando coincide `"orange"`, se ejecuta la expresión o bloque situado después de `->`.
+L167: `"red" -> 0xFFFF7E7E.toInt()`
+    Define una rama/lambda. Cuando coincide `"red"`, se ejecuta la expresión o bloque situado después de `->`.
+L168: `"cyan" -> 0xFF5EDAE0.toInt()`
+    Define una rama/lambda. Cuando coincide `"cyan"`, se ejecuta la expresión o bloque situado después de `->`.
+L169: `"teal" -> 0xFF5FD2BE.toInt()`
+    Define una rama/lambda. Cuando coincide `"teal"`, se ejecuta la expresión o bloque situado después de `->`.
+L170: `"mint" -> 0xFF7CE6B3.toInt()`
+    Define una rama/lambda. Cuando coincide `"mint"`, se ejecuta la expresión o bloque situado después de `->`.
+L171: `"lime" -> 0xFFC8E86B.toInt()`
+    Define una rama/lambda. Cuando coincide `"lime"`, se ejecuta la expresión o bloque situado después de `->`.
+L172: `"brown" -> 0xFFC89F7A.toInt()`
+    Define una rama/lambda. Cuando coincide `"brown"`, se ejecuta la expresión o bloque situado después de `->`.
+L173: `"gray" -> 0xFFAAB3BD.toInt()`
+    Define una rama/lambda. Cuando coincide `"gray"`, se ejecuta la expresión o bloque situado después de `->`.
+L174: `else -> fallback`
+    Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+L175: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L177: `fun title(context: Context, note: Note): String {`
+    Declara una función. El bloque de `title` se detalla después instrucción por instrucción.
+L178: `return note.title.trim().takeIf { it.isNotEmpty() }`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L179: `?: visibleNoteContent(note.content).lineSequence().firstOrNull { it.isNotBlank() }?.trim()`
+    Busca el primer elemento que coincide; si no existe devuelve `null` en lugar de lanzar una excepción.
+L180: `?: context.getString(R.string.widget_untitled_note)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L181: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L183: `fun preview(context: Context, note: Note): String {`
+    Declara una función. El bloque de `preview` se detalla después instrucción por instrucción.
+L184: `val normalizedTitle = note.title.trim()`
+    Declara `normalizedTitle` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `note.title.trim()`.
+L185: `val lines = visibleNoteContent(note.content).lineSequence().map { it.trim() }.filter { it.isNotEmpty() }.toList()`
+    Transforma cada valor/elemento de la fuente en otro valor sin mutar la colección/Flow original.
+L186: `val contentLine = lines.firstOrNull().orEmpty()`
+    Busca el primer elemento que coincide; si no existe devuelve `null` en lugar de lanzar una excepción.
+L187: `if (contentLine.isNotEmpty() && contentLine != normalizedTitle) return contentLine`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `contentLine.isNotEmpty() && contentLine != normalizedTitle`.
+L188: `return when {`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L189: `note.isPinned -> context.getString(R.string.widget_pinned_note)`
+    Define una rama/lambda. Cuando coincide `note.isPinned`, se ejecuta la expresión o bloque situado después de `->`.
+L190: `note.isFavorite -> context.getString(R.string.widget_favorite_note)`
+    Define una rama/lambda. Cuando coincide `note.isFavorite`, se ejecuta la expresión o bloque situado después de `->`.
+L191: `note.priority > 0 -> priorityLabel(context, note.priority)`
+    Define una rama/lambda. Cuando coincide `note.priority > 0`, se ejecuta la expresión o bloque situado después de `->`.
+L192: `else -> context.getString(R.string.widget_tap_to_open)`
+    Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+L193: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L194: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L196: `fun contentPreview(note: Note, maxLength: Int = 170): String {`
+    Declara una función. El bloque de `contentPreview` se detalla después instrucción por instrucción.
+L197: `val merged = visibleNoteContent(note.content).lineSequence().map { it.trim() }.filter { it.isNotEmpty() }.joinToString(" ")`
+    Transforma cada valor/elemento de la fuente en otro valor sin mutar la colección/Flow original.
+L198: `return when {`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L199: `merged.isBlank() -> ""`
+    Define una rama/lambda. Cuando coincide `merged.isBlank()`, se ejecuta la expresión o bloque situado después de `->`.
+L200: `merged.length <= maxLength -> merged`
+    Define una rama/lambda. Cuando coincide `merged.length <= maxLength`, se ejecuta la expresión o bloque situado después de `->`.
+L201: `else -> merged.take(maxLength - 1).trimEnd() + "…"`
+    Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+L202: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L203: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L205: `fun badge(context: Context, note: Note): String = when {`
+    Declara una función. El bloque de `badge` se detalla después instrucción por instrucción.
+L206: `note.isPinned -> context.getString(R.string.widget_badge_pinned)`
+    Define una rama/lambda. Cuando coincide `note.isPinned`, se ejecuta la expresión o bloque situado después de `->`.
+L207: `note.isFavorite -> "★"`
+    Define una rama/lambda. Cuando coincide `note.isFavorite`, se ejecuta la expresión o bloque situado después de `->`.
+L208: `note.priority == 3 -> "P3"`
+    Define una rama/lambda. Cuando coincide `note.priority == 3`, se ejecuta la expresión o bloque situado después de `->`.
+L209: `note.priority == 2 -> "P2"`
+    Define una rama/lambda. Cuando coincide `note.priority == 2`, se ejecuta la expresión o bloque situado después de `->`.
+L210: `note.priority == 1 -> "P1"`
+    Define una rama/lambda. Cuando coincide `note.priority == 1`, se ejecuta la expresión o bloque situado después de `->`.
+L211: `note.category == "work" -> context.getString(R.string.widget_badge_work)`
+    Define una rama/lambda. Cuando coincide `note.category == "work"`, se ejecuta la expresión o bloque situado después de `->`.
+L212: `else -> context.getString(R.string.widget_badge_personal)`
+    Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+L213: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L215: `fun metadata(context: Context, note: Note): String {`
+    Declara una función. El bloque de `metadata` se detalla después instrucción por instrucción.
+L216: `val parts = buildList {`
+    Declara `parts` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `buildList {`.
+L217: `if (note.priority > 0) add(priorityLabel(context, note.priority))`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `note.priority > 0) add(priorityLabel(context, note.priority)`.
+L218: `add(`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `add(`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L219: `if (note.category == "work") context.getString(R.string.widget_category_work)`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `note.category == "work") context.getString(R.string.widget_category_work`.
+L220: `else context.getString(R.string.widget_category_personal)`
+    Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+L221: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L222: `add(shortDate(context, note.createdAt))`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L223: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L224: `return parts.joinToString("  •  ")`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L225: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L227: `fun shortDate(context: Context, timestamp: Long): String {`
+    Declara una función. El bloque de `shortDate` se detalla después instrucción por instrucción.
+L228: `return runCatching {`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L229: `SimpleDateFormat("MMM d, yyyy", WidgetLocale.locale(context)).format(Date(timestamp))`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L230: `}.getOrDefault("")`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L231: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L233: `fun priorityLabel(context: Context, priority: Int): String = when (priority) {`
+    Declara una función. El bloque de `priorityLabel` se detalla después instrucción por instrucción.
+L234: `3 -> context.getString(R.string.mock_priority_high)`
+    Define una rama/lambda. Cuando coincide `3`, se ejecuta la expresión o bloque situado después de `->`.
+L235: `2 -> context.getString(R.string.mock_priority_medium)`
+    Define una rama/lambda. Cuando coincide `2`, se ejecuta la expresión o bloque situado después de `->`.
+L236: `1 -> context.getString(R.string.mock_priority_low)`
+    Define una rama/lambda. Cuando coincide `1`, se ejecuta la expresión o bloque situado después de `->`.
+L237: `else -> context.getString(R.string.mock_priority_none)`
+    Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+L238: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L240: `private fun contrastText(background: Color): Int {`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `contrastText` se detalla después instrucción por instrucción.
+L241: `return if (background.luminance() > 0.48f) {`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L242: `0xFF111111.toInt()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L243: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L244: `0xFFFFFFFF.toInt()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L245: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L246: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L248: `private fun blend(base: Color, overlay: Color, amount: Float): Color {`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `blend` se detalla después instrucción por instrucción.
+L249: `val t = amount.coerceIn(0f, 1f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L250: `return Color(`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L251: `red = base.red + (overlay.red - base.red) * t,`
+    Asigna/configura `red` usando `base.red + (overlay.red - base.red) * t,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L252: `green = base.green + (overlay.green - base.green) * t,`
+    Asigna/configura `green` usando `base.green + (overlay.green - base.green) * t,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L253: `blue = base.blue + (overlay.blue - base.blue) * t,`
+    Asigna/configura `blue` usando `base.blue + (overlay.blue - base.blue) * t,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L254: `alpha = 1f`
+    Asigna/configura `alpha` usando `1f`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L255: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L256: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L258: `private fun applyIntensity(color: Color, intensity: Float, dark: Boolean): Color {`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `applyIntensity` se detalla después instrucción por instrucción.
+L259: `val normalized = (intensity.coerceIn(0f, 100f) / 100f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L260: `val target = if (dark) Color.Black else Color.White`
+    Declara `target` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (dark) Color.Black else Color.White`.
+L261: `val amount = if (dark) normalized * 0.12f else normalized * 0.10f`
+    Declara `amount` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (dark) normalized * 0.12f else normalized * 0.10f`.
+L262: `return blend(color, target, amount)`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L263: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L264: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+7. RECURSOS ANDROID REFERENCIADOS
+----------------------------------------------------------------------
+- `R.drawable.widget_action_circle_dark`: referencia a un recurso `drawable` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.drawable.widget_action_circle_light`: referencia a un recurso `drawable` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.drawable.widget_action_primary_dark`: referencia a un recurso `drawable` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.drawable.widget_action_primary_light`: referencia a un recurso `drawable` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.drawable.widget_chip_dark`: referencia a un recurso `drawable` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.drawable.widget_chip_light`: referencia a un recurso `drawable` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.drawable.widget_count_pill_dark`: referencia a un recurso `drawable` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.drawable.widget_count_pill_light`: referencia a un recurso `drawable` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.drawable.widget_detail_card_dark`: referencia a un recurso `drawable` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.drawable.widget_detail_card_light`: referencia a un recurso `drawable` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.drawable.widget_metric_card_dark`: referencia a un recurso `drawable` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.drawable.widget_metric_card_light`: referencia a un recurso `drawable` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.drawable.widget_note_card_dark`: referencia a un recurso `drawable` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.drawable.widget_note_card_light`: referencia a un recurso `drawable` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.drawable.widget_panel_card_dark`: referencia a un recurso `drawable` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.drawable.widget_panel_card_light`: referencia a un recurso `drawable` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.drawable.widget_surface_screen_dark`: referencia a un recurso `drawable` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.drawable.widget_surface_screen_light`: referencia a un recurso `drawable` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.drawable.widget_thumb_background_dark`: referencia a un recurso `drawable` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.drawable.widget_thumb_background_light`: referencia a un recurso `drawable` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.mock_priority_high`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.mock_priority_low`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.mock_priority_medium`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.mock_priority_none`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.widget_badge_personal`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.widget_badge_pinned`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.widget_badge_work`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.widget_category_personal`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.widget_category_work`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.widget_favorite_note`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.widget_pinned_note`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.widget_tap_to_open`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.widget_untitled_note`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+
+8. QUIÉN USA ESTE COMPONENTE
+----------------------------------------------------------------------
+- `WidgetPresentation` aparece también en 4 archivo(s):
+    - app/src/main/java/com/example/mynotes/widget/FavoritesWidgetProvider.kt
+    - app/src/main/java/com/example/mynotes/widget/FocusNoteWidgetProvider.kt
+    - app/src/main/java/com/example/mynotes/widget/QuickNoteWidgetProvider.kt
+    - app/src/main/java/com/example/mynotes/widget/RecentNotesWidgetProvider.kt
+- `WidgetThemeSpec` aparece también en 2 archivo(s):
+    - app/src/main/java/com/example/mynotes/widget/FavoritesWidgetProvider.kt
+    - app/src/main/java/com/example/mynotes/widget/RecentNotesWidgetProvider.kt
+
+9. QUÉ PUEDE ROMPERSE SI LO MODIFICAS
+----------------------------------------------------------------------
+- Los widgets usan RemoteViews, no Compose. API 28/Samsung limita propiedades y tintes; no asumir que cualquier API visual de Compose/Views funciona dentro del launcher.
+
+10. CHECKLIST DE PRUEBA DESPUÉS DE MODIFICAR ESTE ARCHIVO
+----------------------------------------------------------------------
+- Compilar `assembleDebug` y resolver primero errores de Kotlin/AAPT.
+- Abrir la pantalla/flujo relacionado y comprobar ida y vuelta (back) sin estado duplicado.
+- Cambiar tema/paleta y verificar contraste si este archivo dibuja UI.
+- Añadir el widget desde el launcher en API 28/Samsung, cambiar idioma/paleta y forzar actualización.
+
+==============================================================================================================
+FIN DEL ARCHIVO
+==============================================================================================================

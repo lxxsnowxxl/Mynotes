@@ -1,0 +1,206 @@
+MYNOTES — EXPLICACIÓN ULTRA DETALLADA
+==============================================================================================================
+Archivo 41/72: app/src/main/java/com/example/mynotes/ui/theme/AppFonts.kt
+SHA-256: 3b9a9b91cd033607fd9ba69a16e099cdc244233374c1471e1d9bed151359c724
+Líneas del fuente: 51
+Package: com.example.mynotes.ui.theme
+
+1. RESPONSABILIDAD EXACTA DEL ARCHIVO
+----------------------------------------------------------------------
+Mapea las claves de fuente guardadas en Settings a familias tipográficas de Compose.
+
+2. DÓNDE ENCAJA EN LA ARQUITECTURA
+----------------------------------------------------------------------
+Este archivo pertenece principalmente a la **capa de interfaz Compose/Activities**. No debe analizarse aislado: las referencias cruzadas y callbacks se detallan más abajo.
+
+3. IMPORTACIONES, UNA POR UNA
+----------------------------------------------------------------------
+- `androidx.compose.ui.text.font.Font`: Importa `androidx.compose.ui.text.font.Font` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.text.font.FontFamily`: Importa `androidx.compose.ui.text.font.FontFamily` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.text.font.FontStyle`: Importa `androidx.compose.ui.text.font.FontStyle` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.text.font.FontWeight`: Importa `androidx.compose.ui.text.font.FontWeight` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `com.example.mynotes.R`: Importa `com.example.mynotes.R`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+
+4. DECLARACIONES Y ESTADO IMPORTANTES
+----------------------------------------------------------------------
+L13: `val GoogleSansFontFamily = FontFamily(Font(resId = R.font.google_sans_regular, weight = FontWeight.Normal, style = FontStyle.Normal), Font(`
+    Declara `GoogleSansFontFamily` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `FontFamily(Font(resId = R.font.google_sans_regular, weight = FontWeight.Normal, style = FontStyle.Normal), Font(`.
+L23: `val GoogleSansRegularFontFamily = FontFamily(Font(R.font.google_sans_regular))`
+    Declara `GoogleSansRegularFontFamily` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `FontFamily(Font(R.font.google_sans_regular))`.
+L25: `val GoogleSansMediumFontFamily = FontFamily(Font(R.font.google_sans_medium))`
+    Declara `GoogleSansMediumFontFamily` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `FontFamily(Font(R.font.google_sans_medium))`.
+L27: `val GoogleSansBoldFontFamily = FontFamily(Font(R.font.google_sans_bold))`
+    Declara `GoogleSansBoldFontFamily` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `FontFamily(Font(R.font.google_sans_bold))`.
+L29: `val GoogleSansItalicFontFamily = FontFamily(Font(R.font.google_sans_italic))`
+    Declara `GoogleSansItalicFontFamily` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `FontFamily(Font(R.font.google_sans_italic))`.
+L31: `val GoogleSansMediumItalicFontFamily = FontFamily(Font(R.font.google_sans_medium_italic))`
+    Declara `GoogleSansMediumItalicFontFamily` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `FontFamily(Font(R.font.google_sans_medium_italic))`.
+L33: `val GoogleSansBoldItalicFontFamily = FontFamily(Font(R.font.google_sans_bold_italic))`
+    Declara `GoogleSansBoldItalicFontFamily` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `FontFamily(Font(R.font.google_sans_bold_italic))`.
+L35: `val GoogleSansFlexFontFamily = FontFamily(Font(R.font.google_sans_flex))`
+    Declara `GoogleSansFlexFontFamily` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `FontFamily(Font(R.font.google_sans_flex))`.
+
+5. FUNCIONES — EXPLICACIÓN DE CADA UNA
+----------------------------------------------------------------------
+
+5.1 `appFontFamily` — líneas 37–51
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    fun appFontFamily(key: String): FontFamily {
+
+Propósito:
+    Implementa `appFontFamily`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `key: String`: el llamador proporciona este valor/callback a `appFontFamily`. Dentro del cuerpo, las líneas donde aparece `key` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `FontFamily`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L37 [0 espacios] `fun appFontFamily(key: String): FontFamily {`
+      → Declara una función. El bloque de `appFontFamily` se detalla después instrucción por instrucción.
+  L38 [4 espacios] `return when (key) {`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L39 [8 espacios] `"google_sans" -> GoogleSansFontFamily`
+      → Define una rama/lambda. Cuando coincide `"google_sans"`, se ejecuta la expresión o bloque situado después de `->`.
+  L40 [8 espacios] `"google_sans_regular" -> GoogleSansRegularFontFamily`
+      → Define una rama/lambda. Cuando coincide `"google_sans_regular"`, se ejecuta la expresión o bloque situado después de `->`.
+  L41 [8 espacios] `"google_sans_medium" -> GoogleSansMediumFontFamily`
+      → Define una rama/lambda. Cuando coincide `"google_sans_medium"`, se ejecuta la expresión o bloque situado después de `->`.
+  L42 [8 espacios] `"google_sans_bold" -> GoogleSansBoldFontFamily`
+      → Define una rama/lambda. Cuando coincide `"google_sans_bold"`, se ejecuta la expresión o bloque situado después de `->`.
+  L43 [8 espacios] `"google_sans_italic" -> GoogleSansItalicFontFamily`
+      → Define una rama/lambda. Cuando coincide `"google_sans_italic"`, se ejecuta la expresión o bloque situado después de `->`.
+  L44 [8 espacios] `"google_sans_medium_italic" -> GoogleSansMediumItalicFontFamily`
+      → Define una rama/lambda. Cuando coincide `"google_sans_medium_italic"`, se ejecuta la expresión o bloque situado después de `->`.
+  L45 [8 espacios] `"google_sans_bold_italic" -> GoogleSansBoldItalicFontFamily`
+      → Define una rama/lambda. Cuando coincide `"google_sans_bold_italic"`, se ejecuta la expresión o bloque situado después de `->`.
+  L46 [8 espacios] `"google_sans_flex" -> GoogleSansFlexFontFamily`
+      → Define una rama/lambda. Cuando coincide `"google_sans_flex"`, se ejecuta la expresión o bloque situado después de `->`.
+  L47 [8 espacios] `"serif" -> FontFamily.Serif`
+      → Define una rama/lambda. Cuando coincide `"serif"`, se ejecuta la expresión o bloque situado después de `->`.
+  L48 [8 espacios] `"monospace" -> FontFamily.Monospace`
+      → Define una rama/lambda. Cuando coincide `"monospace"`, se ejecuta la expresión o bloque situado después de `->`.
+  L49 [8 espacios] `else -> FontFamily.SansSerif`
+      → Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+  L50 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L51 [0 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+6. EXPLICACIÓN COMPLETA LÍNEA POR LÍNEA
+----------------------------------------------------------------------
+Esta sección no omite líneas ejecutables. Repite incluso partes ya explicadas en funciones para poder leer el archivo de arriba abajo sin saltar entre secciones.
+L1: `package com.example.mynotes.ui.theme`
+    Declara que este archivo pertenece al package `com.example.mynotes.ui.theme`; esto determina su namespace Kotlin y cómo lo importan otros archivos.
+L3: `import androidx.compose.ui.text.font.Font`
+    Importa `androidx.compose.ui.text.font.Font` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L4: `import androidx.compose.ui.text.font.FontFamily`
+    Importa `androidx.compose.ui.text.font.FontFamily` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L5: `import androidx.compose.ui.text.font.FontStyle`
+    Importa `androidx.compose.ui.text.font.FontStyle` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L6: `import androidx.compose.ui.text.font.FontWeight`
+    Importa `androidx.compose.ui.text.font.FontWeight` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L7: `import com.example.mynotes.R`
+    Importa `com.example.mynotes.R`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L9: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L10: `* Familia completa: Compose elige automáticamente Regular / Medium / Bold`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L11: `* y sus variantes Italic según el FontWeight/FontStyle solicitado por cada Text.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L12: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L13: `val GoogleSansFontFamily = FontFamily(Font(resId = R.font.google_sans_regular, weight = FontWeight.Normal, style = FontStyle.Normal), Font(`
+    Declara `GoogleSansFontFamily` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `FontFamily(Font(resId = R.font.google_sans_regular, weight = FontWeight.Normal, style = FontStyle.Normal), Font(`.
+L14: `resId = R.font.google_sans_medium, weight = FontWeight.Medium, style = FontStyle.Normal), Font(resId = R.font.google_sans_bold,`
+    Asigna/configura `resId` usando `R.font.google_sans_medium, weight = FontWeight.Medium, style = FontStyle.Normal), Font(resId = R.font.google_sans_bold,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L15: `weight = FontWeight.Bold, style = FontStyle.Normal), Font(resId = R.font.google_sans_italic, weight = FontWeight.Normal,`
+    Asigna/configura `weight` usando `FontWeight.Bold, style = FontStyle.Normal), Font(resId = R.font.google_sans_italic, weight = FontWeight.Normal,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L16: `style = FontStyle.Italic), Font(resId = R.font.google_sans_medium_italic, weight = FontWeight.Medium, style = FontStyle.Italic`
+    Asigna/configura `style` usando `FontStyle.Italic), Font(resId = R.font.google_sans_medium_italic, weight = FontWeight.Medium, style = FontStyle.Italic`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L17: `), Font(resId = R.font.google_sans_bold_italic, weight = FontWeight.Bold, style = FontStyle.Italic))`
+    Asigna/configura `), Font(resId` usando `R.font.google_sans_bold_italic, weight = FontWeight.Bold, style = FontStyle.Italic))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L18: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L19: `* Variantes seleccionables individualmente desde Configuración.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L20: `* Cada archivo se registra como una familia de una sola cara para que,`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L21: `* al elegirla, esa apariencia se aplique a toda la interfaz.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L22: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L23: `val GoogleSansRegularFontFamily = FontFamily(Font(R.font.google_sans_regular))`
+    Declara `GoogleSansRegularFontFamily` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `FontFamily(Font(R.font.google_sans_regular))`.
+L25: `val GoogleSansMediumFontFamily = FontFamily(Font(R.font.google_sans_medium))`
+    Declara `GoogleSansMediumFontFamily` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `FontFamily(Font(R.font.google_sans_medium))`.
+L27: `val GoogleSansBoldFontFamily = FontFamily(Font(R.font.google_sans_bold))`
+    Declara `GoogleSansBoldFontFamily` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `FontFamily(Font(R.font.google_sans_bold))`.
+L29: `val GoogleSansItalicFontFamily = FontFamily(Font(R.font.google_sans_italic))`
+    Declara `GoogleSansItalicFontFamily` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `FontFamily(Font(R.font.google_sans_italic))`.
+L31: `val GoogleSansMediumItalicFontFamily = FontFamily(Font(R.font.google_sans_medium_italic))`
+    Declara `GoogleSansMediumItalicFontFamily` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `FontFamily(Font(R.font.google_sans_medium_italic))`.
+L33: `val GoogleSansBoldItalicFontFamily = FontFamily(Font(R.font.google_sans_bold_italic))`
+    Declara `GoogleSansBoldItalicFontFamily` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `FontFamily(Font(R.font.google_sans_bold_italic))`.
+L35: `val GoogleSansFlexFontFamily = FontFamily(Font(R.font.google_sans_flex))`
+    Declara `GoogleSansFlexFontFamily` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `FontFamily(Font(R.font.google_sans_flex))`.
+L37: `fun appFontFamily(key: String): FontFamily {`
+    Declara una función. El bloque de `appFontFamily` se detalla después instrucción por instrucción.
+L38: `return when (key) {`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L39: `"google_sans" -> GoogleSansFontFamily`
+    Define una rama/lambda. Cuando coincide `"google_sans"`, se ejecuta la expresión o bloque situado después de `->`.
+L40: `"google_sans_regular" -> GoogleSansRegularFontFamily`
+    Define una rama/lambda. Cuando coincide `"google_sans_regular"`, se ejecuta la expresión o bloque situado después de `->`.
+L41: `"google_sans_medium" -> GoogleSansMediumFontFamily`
+    Define una rama/lambda. Cuando coincide `"google_sans_medium"`, se ejecuta la expresión o bloque situado después de `->`.
+L42: `"google_sans_bold" -> GoogleSansBoldFontFamily`
+    Define una rama/lambda. Cuando coincide `"google_sans_bold"`, se ejecuta la expresión o bloque situado después de `->`.
+L43: `"google_sans_italic" -> GoogleSansItalicFontFamily`
+    Define una rama/lambda. Cuando coincide `"google_sans_italic"`, se ejecuta la expresión o bloque situado después de `->`.
+L44: `"google_sans_medium_italic" -> GoogleSansMediumItalicFontFamily`
+    Define una rama/lambda. Cuando coincide `"google_sans_medium_italic"`, se ejecuta la expresión o bloque situado después de `->`.
+L45: `"google_sans_bold_italic" -> GoogleSansBoldItalicFontFamily`
+    Define una rama/lambda. Cuando coincide `"google_sans_bold_italic"`, se ejecuta la expresión o bloque situado después de `->`.
+L46: `"google_sans_flex" -> GoogleSansFlexFontFamily`
+    Define una rama/lambda. Cuando coincide `"google_sans_flex"`, se ejecuta la expresión o bloque situado después de `->`.
+L47: `"serif" -> FontFamily.Serif`
+    Define una rama/lambda. Cuando coincide `"serif"`, se ejecuta la expresión o bloque situado después de `->`.
+L48: `"monospace" -> FontFamily.Monospace`
+    Define una rama/lambda. Cuando coincide `"monospace"`, se ejecuta la expresión o bloque situado después de `->`.
+L49: `else -> FontFamily.SansSerif`
+    Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+L50: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L51: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+7. RECURSOS ANDROID REFERENCIADOS
+----------------------------------------------------------------------
+- `R.font.google_sans_bold`: referencia a un recurso `font` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.font.google_sans_bold_italic`: referencia a un recurso `font` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.font.google_sans_flex`: referencia a un recurso `font` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.font.google_sans_italic`: referencia a un recurso `font` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.font.google_sans_medium`: referencia a un recurso `font` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.font.google_sans_medium_italic`: referencia a un recurso `font` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.font.google_sans_regular`: referencia a un recurso `font` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+
+8. QUIÉN USA ESTE COMPONENTE
+----------------------------------------------------------------------
+- No se detectaron referencias externas por nombre a los tipos principales; puede ser punto de entrada Android, recurso invocado por Manifest o archivo de prueba.
+
+9. QUÉ PUEDE ROMPERSE SI LO MODIFICAS
+----------------------------------------------------------------------
+- Conservar firmas públicas/callbacks y comprobar los archivos que aparecen en “quién usa este componente” antes de renombrar o cambiar tipos.
+
+10. CHECKLIST DE PRUEBA DESPUÉS DE MODIFICAR ESTE ARCHIVO
+----------------------------------------------------------------------
+- Compilar `assembleDebug` y resolver primero errores de Kotlin/AAPT.
+- Abrir la pantalla/flujo relacionado y comprobar ida y vuelta (back) sin estado duplicado.
+- Cambiar tema/paleta y verificar contraste si este archivo dibuja UI.
+
+==============================================================================================================
+FIN DEL ARCHIVO
+==============================================================================================================

@@ -1,0 +1,618 @@
+MYNOTES — EXPLICACIÓN ULTRA DETALLADA
+==============================================================================================================
+Archivo 13/72: app/src/main/java/com/example/mynotes/performance/DisplayPerformanceController.kt
+SHA-256: ce8d178a143a85f44c75e50dfc920c55ea073110dbf6e1bcebb58eab30c0f1fe
+Líneas del fuente: 129
+Package: com.example.mynotes.performance
+
+1. RESPONSABILIDAD EXACTA DEL ARCHIVO
+----------------------------------------------------------------------
+Centraliza decisiones de rendimiento visual, FPS/vsync y perfiles de calidad para que las pantallas consulten una política común.
+
+2. DÓNDE ENCAJA EN LA ARQUITECTURA
+----------------------------------------------------------------------
+Este archivo pertenece principalmente a la **rendimiento/caché**. No debe analizarse aislado: las referencias cruzadas y callbacks se detallan más abajo.
+
+3. IMPORTACIONES, UNA POR UNA
+----------------------------------------------------------------------
+- `android.os.Build`: Importa `android.os.Build` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `android.view.Display`: Importa `android.view.Display` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `android.view.Window`: Importa `android.view.Window` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `java.util.WeakHashMap`: Importa `java.util.WeakHashMap` de la biblioteca estándar/JVM para operaciones de lenguaje, fechas, colecciones, I/O o utilidades.
+- `kotlin.math.abs`: Importa `kotlin.math.abs` de la biblioteca estándar/JVM para operaciones de lenguaje, fechas, colecciones, I/O o utilidades.
+
+4. DECLARACIONES Y ESTADO IMPORTANTES
+----------------------------------------------------------------------
+L25: `object DisplayPerformanceController {`
+    Declara object `DisplayPerformanceController`. A partir de aquí las propiedades y funciones hasta su llave de cierre pertenecen a este tipo.
+L31: `private val lastRequestedMode = WeakHashMap<Window, String>()`
+    Declara `lastRequestedMode` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `WeakHashMap<Window, String>()`.
+L33: `val normalizedMode = normalizePerformanceMode(performanceMode)`
+    Declara `normalizedMode` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `normalizePerformanceMode(performanceMode)`.
+L52: `val mode = lastRequestedMode[window]?: return`
+    Declara `mode` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `lastRequestedMode[window]?: return`.
+L73: `val attributes = window.attributes`
+    Declara `attributes` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `window.attributes`.
+L81: `val display = window.decorView.display`
+    Declara `display` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `window.decorView.display`.
+L82: `val currentMode = display?.mode`
+    Declara `currentMode` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `display?.mode`.
+L83: `val supportedModes = display?.supportedModes?.toList().orEmpty()`
+    Declara `supportedModes` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `display?.supportedModes?.toList().orEmpty()`.
+L89: `val sameResolutionModes = if (currentMode != null) {`
+    Declara `sameResolutionModes` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (currentMode != null) {`.
+L96: `val resolutionCandidates = sameResolutionModes.ifEmpty {`
+    Declara `resolutionCandidates` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `sameResolutionModes.ifEmpty {`.
+L104: `val candidates = resolutionCandidates.filter { mode -> mode.refreshRate <= targetRefreshRate + REFRESH_RATE_TOLERANCE`
+    Define una rama/lambda. Cuando coincide `val candidates = resolutionCandidates.filter { mode`, se ejecuta la expresión o bloque situado después de `->`.
+L108: `val bestMode = chooseClosestMode(modes = candidates, targetRefreshRate = targetRefreshRate)`
+    Declara `bestMode` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `chooseClosestMode(modes = candidates, targetRefreshRate = targetRefreshRate)`.
+L123: `private const val MODE_PERFORMANCE = "performance"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L124: `private const val MODE_BALANCED = "balanced"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L125: `private const val MODE_QUALITY = "quality"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L126: `private const val STANDARD_REFRESH_RATE = 60f`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L127: `private const val QUALITY_REFRESH_RATE = 120f`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L128: `private const val REFRESH_RATE_TOLERANCE = 0.5f`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+
+5. FUNCIONES — EXPLICACIÓN DE CADA UNA
+----------------------------------------------------------------------
+
+5.1 `requestForPerformanceMode` — líneas 32–46
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun requestForPerformanceMode(window: Window, performanceMode: String) {
+
+Propósito:
+    Implementa `requestForPerformanceMode`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `window: Window`: el llamador proporciona este valor/callback a `requestForPerformanceMode`. Dentro del cuerpo, las líneas donde aparece `window` muestran exactamente cómo afecta al resultado.
+  - `performanceMode: String`: el llamador proporciona este valor/callback a `requestForPerformanceMode`. Dentro del cuerpo, las líneas donde aparece `performanceMode` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L32 [4 espacios] `fun requestForPerformanceMode(window: Window, performanceMode: String) {`
+      → Declara una función. El bloque de `requestForPerformanceMode` se detalla después instrucción por instrucción.
+  L33 [8 espacios] `val normalizedMode = normalizePerformanceMode(performanceMode)`
+      → Declara `normalizedMode` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `normalizePerformanceMode(performanceMode)`.
+  L34 [8 espacios] `/*`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L35 [9 espacios] `* DataStore/Compose puede volver a entregar el mismo perfil durante`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L36 [9 espacios] `* recreaciones internas. Si esta misma Window ya tiene exactamente la`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L37 [9 espacios] `* misma solicitud no reescribimos LayoutParams ni recorremos de nuevo`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L38 [9 espacios] `* todos los modos de pantalla soportados.`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L39 [9 espacios] `*`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L40 [9 espacios] `* reapplyLastRequest() sigue forzando la reaplicación al volver a`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L41 [9 espacios] `* primer plano, por lo que no perdemos la recuperación frente a OEMs.`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L42 [9 espacios] `*/`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L43 [8 espacios] `if (lastRequestedMode[window] == normalizedMode) return`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `lastRequestedMode[window] == normalizedMode`.
+  L44 [8 espacios] `lastRequestedMode[window] = normalizedMode`
+      → Asigna/configura `lastRequestedMode[window]` usando `normalizedMode`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L45 [8 espacios] `requestRefreshRate(window = window, targetRefreshRate = refreshRateFor(normalizedMode))`
+      → Asigna/configura `requestRefreshRate(window` usando `window, targetRefreshRate = refreshRateFor(normalizedMode))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L46 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.2 `reapplyLastRequest` — líneas 51–54
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun reapplyLastRequest(window: Window) {
+
+Propósito:
+    Implementa `reapplyLastRequest`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `window: Window`: el llamador proporciona este valor/callback a `reapplyLastRequest`. Dentro del cuerpo, las líneas donde aparece `window` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L51 [4 espacios] `fun reapplyLastRequest(window: Window) {`
+      → Declara una función. El bloque de `reapplyLastRequest` se detalla después instrucción por instrucción.
+  L52 [8 espacios] `val mode = lastRequestedMode[window]?: return`
+      → Declara `mode` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `lastRequestedMode[window]?: return`.
+  L53 [8 espacios] `requestRefreshRate(window = window, targetRefreshRate = refreshRateFor(mode))`
+      → Asigna/configura `requestRefreshRate(window` usando `window, targetRefreshRate = refreshRateFor(mode))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L54 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.3 `release` — líneas 59–61
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun release(window: Window) {
+
+Propósito:
+    Implementa `release`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `window: Window`: el llamador proporciona este valor/callback a `release`. Dentro del cuerpo, las líneas donde aparece `window` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L59 [4 espacios] `fun release(window: Window) {`
+      → Declara una función. El bloque de `release` se detalla después instrucción por instrucción.
+  L60 [8 espacios] `lastRequestedMode.remove(window)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L61 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.4 `refreshRateFor` — líneas 62–66
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        private fun refreshRateFor(performanceMode: String): Float = when (performanceMode) {
+
+Propósito:
+    Implementa `refreshRateFor`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `performanceMode: String): Float = when (performanceMode`: el llamador proporciona este valor/callback a `refreshRateFor`. Dentro del cuerpo, las líneas donde aparece `performanceMode` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Float`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L62 [4 espacios] `private fun refreshRateFor(performanceMode: String): Float = when (performanceMode) {`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `refreshRateFor` se detalla después instrucción por instrucción.
+  L63 [12 espacios] `MODE_QUALITY -> QUALITY_REFRESH_RATE`
+      → Define una rama/lambda. Cuando coincide `MODE_QUALITY`, se ejecuta la expresión o bloque situado después de `->`.
+  L64 [12 espacios] `MODE_PERFORMANCE, MODE_BALANCED -> STANDARD_REFRESH_RATE`
+      → Define una rama/lambda. Cuando coincide `MODE_PERFORMANCE, MODE_BALANCED`, se ejecuta la expresión o bloque situado después de `->`.
+  L65 [12 espacios] `else -> STANDARD_REFRESH_RATE`
+      → Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+  L66 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.5 `normalizePerformanceMode` — líneas 67–71
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        private fun normalizePerformanceMode(value: String): String = when (value.trim().lowercase()) {
+
+Propósito:
+    Implementa `normalizePerformanceMode`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `value: String): String = when (value.trim().lowercase()`: el llamador proporciona este valor/callback a `normalizePerformanceMode`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `String`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L67 [4 espacios] `private fun normalizePerformanceMode(value: String): String = when (value.trim().lowercase()) {`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `normalizePerformanceMode` se detalla después instrucción por instrucción.
+  L68 [12 espacios] `MODE_PERFORMANCE -> MODE_PERFORMANCE`
+      → Define una rama/lambda. Cuando coincide `MODE_PERFORMANCE`, se ejecuta la expresión o bloque situado después de `->`.
+  L69 [12 espacios] `MODE_QUALITY -> MODE_QUALITY`
+      → Define una rama/lambda. Cuando coincide `MODE_QUALITY`, se ejecuta la expresión o bloque situado después de `->`.
+  L70 [12 espacios] `else -> MODE_BALANCED`
+      → Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+  L71 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.6 `requestRefreshRate` — líneas 72–116
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        private fun requestRefreshRate(window: Window, targetRefreshRate: Float) {
+
+Propósito:
+    Implementa `requestRefreshRate`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `window: Window`: el llamador proporciona este valor/callback a `requestRefreshRate`. Dentro del cuerpo, las líneas donde aparece `window` muestran exactamente cómo afecta al resultado.
+  - `targetRefreshRate: Float`: el llamador proporciona este valor/callback a `requestRefreshRate`. Dentro del cuerpo, las líneas donde aparece `targetRefreshRate` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L72 [4 espacios] `private fun requestRefreshRate(window: Window, targetRefreshRate: Float) {`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `requestRefreshRate` se detalla después instrucción por instrucción.
+  L73 [8 espacios] `val attributes = window.attributes`
+      → Declara `attributes` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `window.attributes`.
+  L74 [8 espacios] `/*`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L75 [9 espacios] `* preferredRefreshRate existe desde API 21. Android puede ignorar`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L76 [9 espacios] `* la preferencia si el panel, compositor o estado actual no permiten`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L77 [9 espacios] `* esa frecuencia.`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L78 [9 espacios] `*/`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L79 [8 espacios] `attributes.preferredRefreshRate = targetRefreshRate`
+      → Asigna/configura `attributes.preferredRefreshRate` usando `targetRefreshRate`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L80 [8 espacios] `if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `Build.VERSION.SDK_INT >= Build.VERSION_CODES.M`.
+  L81 [12 espacios] `val display = window.decorView.display`
+      → Declara `display` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `window.decorView.display`.
+  L82 [12 espacios] `val currentMode = display?.mode`
+      → Declara `currentMode` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `display?.mode`.
+  L83 [12 espacios] `val supportedModes = display?.supportedModes?.toList().orEmpty()`
+      → Declara `supportedModes` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `display?.supportedModes?.toList().orEmpty()`.
+  L84 [12 espacios] `if (supportedModes.isNotEmpty()) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `supportedModes.isNotEmpty()`.
+  L85 [16 espacios] `/*`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L86 [17 espacios] `* Primero mantenemos la resolución física actual. Solo si no`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L87 [17 espacios] `* existe ningún modo equivalente consideramos todos los modos.`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L88 [17 espacios] `*/`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L89 [16 espacios] `val sameResolutionModes = if (currentMode != null) {`
+      → Declara `sameResolutionModes` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (currentMode != null) {`.
+  L90 [24 espacios] `supportedModes.filter { mode -> mode.physicalWidth == currentMode.physicalWidth &&`
+      → Define una rama/lambda. Cuando coincide `supportedModes.filter { mode`, se ejecuta la expresión o bloque situado después de `->`.
+  L91 [32 espacios] `mode.physicalHeight == currentMode.physicalHeight`
+      → Asigna/configura `mode.physicalHeight` usando `= currentMode.physicalHeight`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L92 [24 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L93 [20 espacios] `} else {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L94 [24 espacios] `emptyList()`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L95 [20 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L96 [16 espacios] `val resolutionCandidates = sameResolutionModes.ifEmpty {`
+      → Declara `resolutionCandidates` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `sameResolutionModes.ifEmpty {`.
+  L97 [24 espacios] `supportedModes`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `supportedModes`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L98 [20 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L99 [16 espacios] `/*`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L100 [17 espacios] `* En quality pedimos "hasta 120 Hz". Si el panel solo ofrece`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L101 [17 espacios] `* 144/165 Hz por encima del objetivo, preferimos el mejor modo`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L102 [17 espacios] `* disponible <= 120 Hz antes de forzar una tasa superior.`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L103 [17 espacios] `*/`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L104 [16 espacios] `val candidates = resolutionCandidates.filter { mode -> mode.refreshRate <= targetRefreshRate + REFRESH_RATE_TOLERANCE`
+      → Define una rama/lambda. Cuando coincide `val candidates = resolutionCandidates.filter { mode`, se ejecuta la expresión o bloque situado después de `->`.
+  L105 [24 espacios] `}.ifEmpty {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L106 [28 espacios] `resolutionCandidates`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `resolutionCandidates`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L107 [24 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L108 [16 espacios] `val bestMode = chooseClosestMode(modes = candidates, targetRefreshRate = targetRefreshRate)`
+      → Declara `bestMode` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `chooseClosestMode(modes = candidates, targetRefreshRate = targetRefreshRate)`.
+  L109 [16 espacios] `if (bestMode != null) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `bestMode != null`.
+  L110 [20 espacios] `attributes.preferredDisplayModeId = bestMode.modeId`
+      → Asigna/configura `attributes.preferredDisplayModeId` usando `bestMode.modeId`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L111 [20 espacios] `attributes.preferredRefreshRate = bestMode.refreshRate`
+      → Asigna/configura `attributes.preferredRefreshRate` usando `bestMode.refreshRate`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L112 [16 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L113 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L114 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L115 [8 espacios] `window.attributes = attributes`
+      → Asigna/configura `window.attributes` usando `attributes`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L116 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.7 `chooseClosestMode` — líneas 117–117
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        private fun chooseClosestMode(modes: List<Display.Mode>, targetRefreshRate: Float): Display.Mode? = modes.minWithOrNull(
+
+Propósito:
+    Implementa `chooseClosestMode`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `modes: List<Display.Mode>`: el llamador proporciona este valor/callback a `chooseClosestMode`. Dentro del cuerpo, las líneas donde aparece `modes` muestran exactamente cómo afecta al resultado.
+  - `targetRefreshRate: Float`: el llamador proporciona este valor/callback a `chooseClosestMode`. Dentro del cuerpo, las líneas donde aparece `targetRefreshRate` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Display.Mode?`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L117 [4 espacios] `private fun chooseClosestMode(modes: List<Display.Mode>, targetRefreshRate: Float): Display.Mode? = modes.minWithOrNull(`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `chooseClosestMode` se detalla después instrucción por instrucción.
+
+6. EXPLICACIÓN COMPLETA LÍNEA POR LÍNEA
+----------------------------------------------------------------------
+Esta sección no omite líneas ejecutables. Repite incluso partes ya explicadas en funciones para poder leer el archivo de arriba abajo sin saltar entre secciones.
+L1: `package com.example.mynotes.performance`
+    Declara que este archivo pertenece al package `com.example.mynotes.performance`; esto determina su namespace Kotlin y cómo lo importan otros archivos.
+L3: `import android.os.Build`
+    Importa `android.os.Build` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L4: `import android.view.Display`
+    Importa `android.view.Display` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L5: `import android.view.Window`
+    Importa `android.view.Window` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L6: `import java.util.WeakHashMap`
+    Importa `java.util.WeakHashMap` de la biblioteca estándar/JVM para operaciones de lenguaje, fechas, colecciones, I/O o utilidades.
+L7: `import kotlin.math.abs`
+    Importa `kotlin.math.abs` de la biblioteca estándar/JVM para operaciones de lenguaje, fechas, colecciones, I/O o utilidades.
+L9: `/**`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L10: `* Único punto de control para la frecuencia de refresco preferida de MyNotes.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L11: `*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L12: `* IMPORTANTE:`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L13: `* - Esto controla Hz / modo de pantalla, no un límite de FPS del renderizador.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L14: `* - Jetpack Compose sincroniza el dibujo con VSYNC mediante Choreographer;`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L15: `*   no hace falta activar VSYNC manualmente desde MainActivity.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L16: `*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L17: `* Perfiles actuales:`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L18: `* - performance: 60 Hz`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L19: `* - balanced:    60 Hz`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L20: `* - quality:     hasta 120 Hz cuando el panel lo soporta`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L21: `*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L22: `* Si la frecuencia exacta no está disponible, se elige el modo compatible`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L23: `* más cercano sin cambiar voluntariamente la resolución física actual.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L24: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L25: `object DisplayPerformanceController {`
+    Declara object `DisplayPerformanceController`. A partir de aquí las propiedades y funciones hasta su llave de cierre pertenecen a este tipo.
+L26: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L27: `* Conservamos la última solicitud por Window para poder reaplicarla al`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L28: `* volver a primer plano sin duplicar reglas de Hz en las Activities.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L29: `* WeakHashMap evita retener una Activity/Window destruida.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L30: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L31: `private val lastRequestedMode = WeakHashMap<Window, String>()`
+    Declara `lastRequestedMode` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `WeakHashMap<Window, String>()`.
+L32: `fun requestForPerformanceMode(window: Window, performanceMode: String) {`
+    Declara una función. El bloque de `requestForPerformanceMode` se detalla después instrucción por instrucción.
+L33: `val normalizedMode = normalizePerformanceMode(performanceMode)`
+    Declara `normalizedMode` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `normalizePerformanceMode(performanceMode)`.
+L34: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L35: `* DataStore/Compose puede volver a entregar el mismo perfil durante`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L36: `* recreaciones internas. Si esta misma Window ya tiene exactamente la`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L37: `* misma solicitud no reescribimos LayoutParams ni recorremos de nuevo`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L38: `* todos los modos de pantalla soportados.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L39: `*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L40: `* reapplyLastRequest() sigue forzando la reaplicación al volver a`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L41: `* primer plano, por lo que no perdemos la recuperación frente a OEMs.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L42: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L43: `if (lastRequestedMode[window] == normalizedMode) return`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `lastRequestedMode[window] == normalizedMode`.
+L44: `lastRequestedMode[window] = normalizedMode`
+    Asigna/configura `lastRequestedMode[window]` usando `normalizedMode`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L45: `requestRefreshRate(window = window, targetRefreshRate = refreshRateFor(normalizedMode))`
+    Asigna/configura `requestRefreshRate(window` usando `window, targetRefreshRate = refreshRateFor(normalizedMode))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L46: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L47: `/**`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L48: `* Reaplica la última preferencia conocida para esta ventana.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L49: `* Si todavía no se ha recibido AppSettings, no fuerza ningún Hz.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L50: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L51: `fun reapplyLastRequest(window: Window) {`
+    Declara una función. El bloque de `reapplyLastRequest` se detalla después instrucción por instrucción.
+L52: `val mode = lastRequestedMode[window]?: return`
+    Declara `mode` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `lastRequestedMode[window]?: return`.
+L53: `requestRefreshRate(window = window, targetRefreshRate = refreshRateFor(mode))`
+    Asigna/configura `requestRefreshRate(window` usando `window, targetRefreshRate = refreshRateFor(mode))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L54: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L55: `/**`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L56: `* Libera la referencia lógica cuando una Activity termina.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L57: `* La clave es débil, pero retirarla explícitamente hace la intención clara.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L58: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L59: `fun release(window: Window) {`
+    Declara una función. El bloque de `release` se detalla después instrucción por instrucción.
+L60: `lastRequestedMode.remove(window)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L61: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L62: `private fun refreshRateFor(performanceMode: String): Float = when (performanceMode) {`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `refreshRateFor` se detalla después instrucción por instrucción.
+L63: `MODE_QUALITY -> QUALITY_REFRESH_RATE`
+    Define una rama/lambda. Cuando coincide `MODE_QUALITY`, se ejecuta la expresión o bloque situado después de `->`.
+L64: `MODE_PERFORMANCE, MODE_BALANCED -> STANDARD_REFRESH_RATE`
+    Define una rama/lambda. Cuando coincide `MODE_PERFORMANCE, MODE_BALANCED`, se ejecuta la expresión o bloque situado después de `->`.
+L65: `else -> STANDARD_REFRESH_RATE`
+    Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+L66: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L67: `private fun normalizePerformanceMode(value: String): String = when (value.trim().lowercase()) {`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `normalizePerformanceMode` se detalla después instrucción por instrucción.
+L68: `MODE_PERFORMANCE -> MODE_PERFORMANCE`
+    Define una rama/lambda. Cuando coincide `MODE_PERFORMANCE`, se ejecuta la expresión o bloque situado después de `->`.
+L69: `MODE_QUALITY -> MODE_QUALITY`
+    Define una rama/lambda. Cuando coincide `MODE_QUALITY`, se ejecuta la expresión o bloque situado después de `->`.
+L70: `else -> MODE_BALANCED`
+    Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+L71: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L72: `private fun requestRefreshRate(window: Window, targetRefreshRate: Float) {`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `requestRefreshRate` se detalla después instrucción por instrucción.
+L73: `val attributes = window.attributes`
+    Declara `attributes` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `window.attributes`.
+L74: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L75: `* preferredRefreshRate existe desde API 21. Android puede ignorar`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L76: `* la preferencia si el panel, compositor o estado actual no permiten`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L77: `* esa frecuencia.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L78: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L79: `attributes.preferredRefreshRate = targetRefreshRate`
+    Asigna/configura `attributes.preferredRefreshRate` usando `targetRefreshRate`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L80: `if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `Build.VERSION.SDK_INT >= Build.VERSION_CODES.M`.
+L81: `val display = window.decorView.display`
+    Declara `display` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `window.decorView.display`.
+L82: `val currentMode = display?.mode`
+    Declara `currentMode` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `display?.mode`.
+L83: `val supportedModes = display?.supportedModes?.toList().orEmpty()`
+    Declara `supportedModes` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `display?.supportedModes?.toList().orEmpty()`.
+L84: `if (supportedModes.isNotEmpty()) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `supportedModes.isNotEmpty()`.
+L85: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L86: `* Primero mantenemos la resolución física actual. Solo si no`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L87: `* existe ningún modo equivalente consideramos todos los modos.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L88: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L89: `val sameResolutionModes = if (currentMode != null) {`
+    Declara `sameResolutionModes` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (currentMode != null) {`.
+L90: `supportedModes.filter { mode -> mode.physicalWidth == currentMode.physicalWidth &&`
+    Define una rama/lambda. Cuando coincide `supportedModes.filter { mode`, se ejecuta la expresión o bloque situado después de `->`.
+L91: `mode.physicalHeight == currentMode.physicalHeight`
+    Asigna/configura `mode.physicalHeight` usando `= currentMode.physicalHeight`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L92: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L93: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L94: `emptyList()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L95: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L96: `val resolutionCandidates = sameResolutionModes.ifEmpty {`
+    Declara `resolutionCandidates` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `sameResolutionModes.ifEmpty {`.
+L97: `supportedModes`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `supportedModes`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L98: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L99: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L100: `* En quality pedimos "hasta 120 Hz". Si el panel solo ofrece`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L101: `* 144/165 Hz por encima del objetivo, preferimos el mejor modo`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L102: `* disponible <= 120 Hz antes de forzar una tasa superior.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L103: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L104: `val candidates = resolutionCandidates.filter { mode -> mode.refreshRate <= targetRefreshRate + REFRESH_RATE_TOLERANCE`
+    Define una rama/lambda. Cuando coincide `val candidates = resolutionCandidates.filter { mode`, se ejecuta la expresión o bloque situado después de `->`.
+L105: `}.ifEmpty {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L106: `resolutionCandidates`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `resolutionCandidates`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L107: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L108: `val bestMode = chooseClosestMode(modes = candidates, targetRefreshRate = targetRefreshRate)`
+    Declara `bestMode` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `chooseClosestMode(modes = candidates, targetRefreshRate = targetRefreshRate)`.
+L109: `if (bestMode != null) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `bestMode != null`.
+L110: `attributes.preferredDisplayModeId = bestMode.modeId`
+    Asigna/configura `attributes.preferredDisplayModeId` usando `bestMode.modeId`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L111: `attributes.preferredRefreshRate = bestMode.refreshRate`
+    Asigna/configura `attributes.preferredRefreshRate` usando `bestMode.refreshRate`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L112: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L113: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L114: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L115: `window.attributes = attributes`
+    Asigna/configura `window.attributes` usando `attributes`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L116: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L117: `private fun chooseClosestMode(modes: List<Display.Mode>, targetRefreshRate: Float): Display.Mode? = modes.minWithOrNull(`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `chooseClosestMode` se detalla después instrucción por instrucción.
+L118: `compareBy<Display.Mode> {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L119: `abs(it.refreshRate - targetRefreshRate)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L120: `}.thenByDescending {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L121: `it.refreshRate`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `it.refreshRate`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L122: `})`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L123: `private const val MODE_PERFORMANCE = "performance"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L124: `private const val MODE_BALANCED = "balanced"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L125: `private const val MODE_QUALITY = "quality"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L126: `private const val STANDARD_REFRESH_RATE = 60f`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L127: `private const val QUALITY_REFRESH_RATE = 120f`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L128: `private const val REFRESH_RATE_TOLERANCE = 0.5f`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L129: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+7. RECURSOS ANDROID REFERENCIADOS
+----------------------------------------------------------------------
+- No hay referencias directas `R.*` en este archivo.
+
+8. QUIÉN USA ESTE COMPONENTE
+----------------------------------------------------------------------
+- `DisplayPerformanceController` aparece también en 3 archivo(s):
+    - app/src/main/java/com/example/mynotes/MainActivity.kt
+    - app/src/main/java/com/example/mynotes/ui/AttachmentViewerActivity.kt
+    - app/src/main/java/com/example/mynotes/ui/theme/SourceCodeInfoScreen.kt
+
+9. QUÉ PUEDE ROMPERSE SI LO MODIFICAS
+----------------------------------------------------------------------
+- Conservar firmas públicas/callbacks y comprobar los archivos que aparecen en “quién usa este componente” antes de renombrar o cambiar tipos.
+
+10. CHECKLIST DE PRUEBA DESPUÉS DE MODIFICAR ESTE ARCHIVO
+----------------------------------------------------------------------
+- Compilar `assembleDebug` y resolver primero errores de Kotlin/AAPT.
+- Abrir la pantalla/flujo relacionado y comprobar ida y vuelta (back) sin estado duplicado.
+- Cambiar tema/paleta y verificar contraste si este archivo dibuja UI.
+
+==============================================================================================================
+FIN DEL ARCHIVO
+==============================================================================================================

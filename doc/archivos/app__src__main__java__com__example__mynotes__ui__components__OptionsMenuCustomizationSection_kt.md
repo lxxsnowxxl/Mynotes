@@ -1,58 +1,210 @@
-# OptionsMenuCustomizationSection.kt — documentación del código actual
-**Ruta real:** `app/src/main/java/com/example/mynotes/ui/components/OptionsMenuCustomizationSection.kt`  **SHA-256:** `e90945c9af4c2025c57fda46b1d4e1a99927ab3a05733504369eb3fa0848e6de`  **Líneas:** 368 · **Bytes:** 20066 · **Imports:** 48 · **Declaraciones detectadas:** 8
-> Documento generado fuera de `app/` a partir de lectura del código. El fuente es la única fuente de verdad; no se modificó para generar esta documentación.
-## 1. Responsabilidad
+# OptionsMenuCustomizationSection.kt — explicación completa del código
 
-Personalización del menú de opciones de cada nota.
-## 2. Package e imports
+**Ruta:** `app/src/main/java/com/example/mynotes/ui/components/OptionsMenuCustomizationSection.kt`  
+**SHA-256:** `e90945c9af4c2025c57fda46b1d4e1a99927ab3a05733504369eb3fa0848e6de`  
+**Líneas:** 369  
+**Package:** `com.example.mynotes.ui.components`
 
-Package declarado: `com.example.mynotes.ui.components`.
+## 1. Para qué existe este archivo
 
-### Android / Jetpack / Compose
+Configura orden, visibilidad y apariencia del menú ⋮ y sus submenús.
 
-`androidx.compose.foundation.layout.Arrangement`, `androidx.compose.foundation.layout.Column`, `androidx.compose.foundation.layout.PaddingValues`, `androidx.compose.foundation.layout.Row`, `androidx.compose.foundation.layout.Spacer`, `androidx.compose.foundation.layout.fillMaxWidth`, `androidx.compose.foundation.layout.height`, `androidx.compose.foundation.layout.padding`, `androidx.compose.foundation.layout.size`, `androidx.compose.foundation.layout.width`, `androidx.compose.material.icons.Icons`, `androidx.compose.material.icons.filled.ExpandMore`, `androidx.compose.material.icons.filled.KeyboardArrowDown`, `androidx.compose.material.icons.filled.KeyboardArrowUp`, `androidx.compose.material.icons.filled.Refresh`, `androidx.compose.material3.DropdownMenuItem`, `androidx.compose.material3.Icon`, `androidx.compose.material3.IconButton`, `androidx.compose.material3.MaterialTheme`, `androidx.compose.material3.Slider`, `androidx.compose.material3.Switch`, `androidx.compose.material3.Text`, `androidx.compose.material3.TextButton`, `androidx.compose.runtime.Composable`, `androidx.compose.runtime.LaunchedEffect`, `androidx.compose.runtime.getValue`, `androidx.compose.runtime.mutableFloatStateOf`, `androidx.compose.runtime.mutableStateOf`, `androidx.compose.runtime.remember`, `androidx.compose.runtime.setValue`, `androidx.compose.ui.Alignment`, `androidx.compose.ui.Modifier`, `androidx.compose.ui.graphics.Color`, `androidx.compose.ui.platform.LocalContext`, `androidx.compose.ui.res.stringResource`, `androidx.compose.ui.text.font.FontFamily`, `androidx.compose.ui.text.font.FontWeight`, `androidx.compose.ui.text.style.TextAlign`, `androidx.compose.ui.unit.dp`, `androidx.compose.ui.unit.sp`, `androidx.compose.ui.window.PopupProperties`
+## 2. Tipos/clases declarados
 
-### Proyecto MyNotes
+- Línea **52** — `private data  class MenuOptionDescriptor`.
 
-`com.example.mynotes.R`, `com.example.mynotes.ui.components.AppDropdownMenu`, `com.example.mynotes.settings.AppSettings`, `com.example.mynotes.ui.sound.UiActionSound`, `com.example.mynotes.ui.sound.UiSound`, `com.example.mynotes.ui.sound.UiSoundPlayer`
+## 3. Estado, constantes y valores importantes
 
-### Kotlin / Coroutines / Java
+- **`MainMenuOptions`** (línea 53) inicia con `listOf(MenuOptionDescriptor("edit"`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`PriorityOptions`** (línea 58) inicia con `listOf(MenuOptionDescriptor("none"`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`ColorOptions`** (línea 61) inicia con `listOf(MenuOptionDescriptor("default"`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`DefaultMainOrder`** (línea 69) inicia con `MainMenuOptions.map {`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`context`** (línea 77) inicia con `LocalContext.current`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`orderedKeys`** (línea 78) inicia con `remember(settings.optionMenuOrder`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`hiddenMain`** (línea 81) inicia con `remember(settings.optionMenuHiddenItems`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`hiddenPriorities`** (línea 84) inicia con `remember(settings.priorityMenuHiddenItems`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`hiddenColors`** (línea 89) inicia con `remember(settings.colorMenuHiddenItems`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`enabledCount`** (línea 170) inicia con `orderedKeys.count {`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`descriptor`** (línea 175) inicia con `MainMenuOptions.first {`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`isVisible`** (línea 178) inicia con `key !in`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`next`** (línea 185) inicia con `hiddenMain.toMutableSet(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`previous`** (línea 194) inicia con `index - 1`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`temp`** (línea 195) inicia con `next[previous]`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`following`** (línea 201) inicia con `index + 1`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`visiblePriorityCount`** (línea 213) inicia con `PriorityOptions.count {`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`visibleColorCount`** (línea 224) inicia con `ColorOptions.count {`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`visible`** (línea 289) inicia con `option.key !in`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`requested`** (línea 349) inicia con `raw.split("`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
 
-`kotlin.math.roundToInt`
+## 4. Funciones y flujo, una por una
 
-## 3. Declaraciones detectadas
+### `OptionsMenuCustomizationSection` — líneas 73–244
 
-| Línea | Tipo | Nombre | Firma/inicio |
-|---:|---|---|---|
-| 51 | `class` | `MenuOptionDescriptor` | `` |
-| 72 | `fun` | `OptionsMenuCustomizationSection` | `@Composable` |
-| 245 | `fun` | `MenuOrderRow` | `` |
-| 279 | `fun` | `CompactToggleGrid` | `` |
-| 310 | `fun` | `ToggleRow` | `` |
-| 338 | `fun` | `optionMenuTextColorLabel` | `` |
-| 347 | `fun` | `normalizedOrder` | `` |
-| 360 | `fun` | `parseKeys` | `` |
+**Firma:** `fun OptionsMenuCustomizationSection(settings: AppSettings, fontFamily: FontFamily, textColor: Color, secondaryTextColor: Color, graphicColor: Color, onOrderChange: (String) -> Unit, onHiddenItemsChange: (String) -> Unit, onShowIconsChange: (Boolean) -> Unit, onTextColorChange: (String) -> Unit, onOpacityChange: (Float) -> Unit, onPriorityHiddenItemsChange: (String) -> Unit, onColorHiddenItemsChange: (String) -> Unit, onReset: () -> Unit)`
 
-## 4. Estado, efectos y límites observables
+Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
 
-- **Compose state:** 11 aparición/apariciones.
-- **LaunchedEffect/DisposableEffect:** 2 aparición/apariciones.
+**Entradas:**
+- `settings: AppSettings`
+- `fontFamily: FontFamily`
+- `textColor: Color`
+- `secondaryTextColor: Color`
+- `graphicColor: Color`
+- `onOrderChange: (String) -> Unit`
+- `onHiddenItemsChange: (String) -> Unit`
+- `onShowIconsChange: (Boolean) -> Unit`
+- `onTextColorChange: (String) -> Unit`
+- `onOpacityChange: (Float) -> Unit`
+- `onPriorityHiddenItemsChange: (String) -> Unit`
+- `onColorHiddenItemsChange: (String) -> Unit`
+- `onReset: () -> Unit`
 
-Estas cifras son indicadores de superficie de cambio, no diagnósticos de error. Cualquier modificación debe preservar contratos de persistencia, lifecycle, límites numéricos y nulabilidad visibles en el fuente.
+**Salida:** Unit o inferido por Kotlin.
 
-## 5. Dependencias internas directas
+**Efectos/APIs observados en el cuerpo:**
+- Participa en estado/efectos de Compose.
 
-- `com.example.mynotes.R`
-- `com.example.mynotes.settings.AppSettings`
-- `com.example.mynotes.ui.components.AppDropdownMenu`
-- `com.example.mynotes.ui.sound.UiActionSound`
-- `com.example.mynotes.ui.sound.UiSound`
-- `com.example.mynotes.ui.sound.UiSoundPlayer`
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
 
-## 6. Recursos Android referenciados
+**Operaciones/funciones que coordina:** `normalizedOrder`, `parseKeys`, `mutableFloatStateOf`, `LaunchedEffect`, `height`, `padding`, `SettingsSectionPanel`, `PaddingValues`, `ToggleRow`, `fillMaxWidth`, `optionMenuTextColorLabel`, `weight`, `TextButton`, `playAction`, `size`, `AppDropdownMenu`, `width`, `PopupProperties`.
 
-- **R.string:** `mock_color`, `mock_color_blue`, `mock_color_brown`, `mock_color_cyan`, `mock_color_default`, `mock_color_gray`, `mock_color_green`, `mock_color_lime`, `mock_color_mint`, `mock_color_orange`, `mock_color_pink`, `mock_color_purple`, `mock_color_red`, `mock_color_teal`, `mock_color_yellow`, `mock_delete`, `mock_edit`, `mock_favorites`, `mock_move`, `mock_pin`, `mock_priority`, `mock_priority_high`, `mock_priority_low`, `mock_priority_medium`, `mock_priority_none`, `option_menu_change`, `option_menu_color_submenu`, `option_menu_customization_description`, `option_menu_customization_title`, `option_menu_main_actions`, `option_menu_main_actions_hint`, `option_menu_move_down`, `option_menu_move_up`, `option_menu_opacity`, `option_menu_priority_submenu`, `option_menu_reset`, `option_menu_show_icons`, `option_menu_text_black` ×2, `option_menu_text_color`, `option_menu_text_follow_note` ×2, `option_menu_text_white` ×2
+### `MenuOrderRow` — líneas 247–278
 
-## 7. Puntos de revisión al modificarlo
+**Firma:** `private fun MenuOrderRow(label: String, visible: Boolean, canHide: Boolean, canMoveUp: Boolean, canMoveDown: Boolean, onVisibleChange: (Boolean) -> Unit, onMoveUp: () -> Unit, onMoveDown: () -> Unit, fontFamily: FontFamily, textColor: Color)`
 
-- Conservar rangos `coerce*`, claves DataStore y compatibilidad con backups existentes.
+Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+**Entradas:**
+- `label: String`
+- `visible: Boolean`
+- `canHide: Boolean`
+- `canMoveUp: Boolean`
+- `canMoveDown: Boolean`
+- `onVisibleChange: (Boolean) -> Unit`
+- `onMoveUp: () -> Unit`
+- `onMoveDown: () -> Unit`
+- `fontFamily: FontFamily`
+- `textColor: Color`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `fillMaxWidth`, `padding`, `weight`, `IconButton`, `playAction`, `onMoveUp`, `size`, `copy`, `onMoveDown`, `Switch`, `playToggle`, `onVisibleChange`.
+
+### `CompactToggleGrid` — líneas 281–309
+
+**Firma:** `private fun CompactToggleGrid(options: List<MenuOptionDescriptor>, hiddenItems: Set<String>, visibleCount: Int, onHiddenItemsChange: (String) -> Unit, fontFamily: FontFamily, textColor: Color)`
+
+Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+**Entradas:**
+- `options: List<MenuOptionDescriptor>`
+- `hiddenItems: Set<String>`
+- `visibleCount: Int`
+- `onHiddenItemsChange: (String) -> Unit`
+- `fontFamily: FontFamily`
+- `textColor: Color`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `chunked`, `fillMaxWidth`, `spacedBy`, `ToggleRow`, `toMutableSet`, `remove`, `add`, `onHiddenItemsChange`, `joinToString`, `weight`.
+
+### `ToggleRow` — líneas 312–337
+
+**Firma:** `private fun ToggleRow(title: String, checked: Boolean, onCheckedChange: (Boolean) -> Unit, fontFamily: FontFamily, textColor: Color, enabled: Boolean = true, modifier: Modifier = Modifier, compact: Boolean = false)`
+
+Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+**Entradas:**
+- `title: String`
+- `checked: Boolean`
+- `onCheckedChange: (Boolean) -> Unit`
+- `fontFamily: FontFamily`
+- `textColor: Color`
+- `enabled: Boolean = true`
+- `modifier: Modifier = Modifier`
+- `compact: Boolean = false`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `then`, `fillMaxWidth`, `padding`, `weight`, `copy`, `Switch`, `playToggle`, `onCheckedChange`.
+
+### `optionMenuTextColorLabel` — líneas 340–346
+
+**Firma:** `private fun optionMenuTextColorLabel(value: String): String`
+
+Convierte un valor interno a texto breve de presentación para la interfaz.
+
+**Entradas:**
+- `value: String`
+
+**Salida:** String.
+
+**Decisiones y protecciones visibles:**
+- Usa `when` para mapear estados/tipos/opciones.
+
+### `normalizedOrder` — líneas 348–359
+
+**Firma:** `private fun normalizedOrder(raw: String): List<String>`
+
+Normaliza una cadena/valor externo al conjunto de opciones admitidas por MyNotes y devuelve un fallback estable si el valor no es reconocido.
+
+**Entradas:**
+- `raw: String`
+
+**Salida:** List<String>.
+
+**Operaciones/funciones que coordina:** `split`, `trim`, `distinct`.
+
+### `parseKeys` — líneas 361–368
+
+**Firma:** `private fun parseKeys(raw: String, valid: List<String>): Set<String>`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `raw: String`
+- `valid: List<String>`
+
+**Salida:** Set<String>.
+
+**Operaciones/funciones que coordina:** `split`, `trim`, `toSet`.
+
+## 5. Cómo se conecta con el resto de MyNotes
+
+- Usa `com.example.mynotes.R`.
+- Usa `com.example.mynotes.ui.components.AppDropdownMenu`.
+- Usa `com.example.mynotes.settings.AppSettings`.
+- Usa `com.example.mynotes.ui.sound.UiActionSound`.
+- Usa `com.example.mynotes.ui.sound.UiSound`.
+- Usa `com.example.mynotes.ui.sound.UiSoundPlayer`.
+
+## 6. Recursos Android que utiliza
+
+- `R.string`: `mock_color`, `mock_color_blue`, `mock_color_brown`, `mock_color_cyan`, `mock_color_default`, `mock_color_gray`, `mock_color_green`, `mock_color_lime`, `mock_color_mint`, `mock_color_orange`, `mock_color_pink`, `mock_color_purple`, `mock_color_red`, `mock_color_teal`, `mock_color_yellow`, `mock_delete`, `mock_edit`, `mock_favorites`, `mock_move`, `mock_pin`, `mock_priority`, `mock_priority_high`, `mock_priority_low`, `mock_priority_medium`, `mock_priority_none`, `option_menu_change`, `option_menu_color_submenu`, `option_menu_customization_description`, `option_menu_customization_title`, `option_menu_main_actions`, `option_menu_main_actions_hint`, `option_menu_move_down`, `option_menu_move_up`, `option_menu_opacity`, `option_menu_priority_submenu`, `option_menu_reset`, `option_menu_show_icons`, `option_menu_text_black`, `option_menu_text_color`, `option_menu_text_follow_note`, `option_menu_text_white`
+
+## 7. Tecnologías y efectos relevantes
+
+- Participa en estado/efectos de Compose.
+
+## 8. Lectura práctica del flujo
+
+Una forma útil de seguir este archivo en el depurador es recorrer estas operaciones en este orden aproximado:
+1. `OptionsMenuCustomizationSection` — Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+## 9. Qué no debe romperse al modificarlo
+
+- Evitar trabajo bloqueante durante composición y mantener estado estable para limitar recomposiciones.
+
+## 10. Resumen en lenguaje sencillo
+
+En términos simples: Configura orden, visibilidad y apariencia del menú ⋮ y sus submenús. La sección función por función anterior describe qué entra, qué devuelve y qué efectos produce cada operación detectada en el fuente actual.

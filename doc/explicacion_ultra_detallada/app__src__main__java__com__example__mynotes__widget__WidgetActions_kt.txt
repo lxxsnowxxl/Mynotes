@@ -1,0 +1,129 @@
+MYNOTES — EXPLICACIÓN ULTRA DETALLADA
+==============================================================================================================
+Archivo 66/72: app/src/main/java/com/example/mynotes/widget/WidgetActions.kt
+SHA-256: e96b5d6ae6fda8cb2424a6db5efa40f9cbe7bc4dab4de8d49450eb051c995b2f
+Líneas del fuente: 22
+Package: com.example.mynotes.widget
+
+1. RESPONSABILIDAD EXACTA DEL ARCHIVO
+----------------------------------------------------------------------
+Constantes y helpers que definen nombres de acciones usadas entre widgets, receiver y MainActivity.
+
+2. DÓNDE ENCAJA EN LA ARQUITECTURA
+----------------------------------------------------------------------
+Este archivo pertenece principalmente a la **integración App Widgets/launcher**. No debe analizarse aislado: las referencias cruzadas y callbacks se detallan más abajo.
+
+3. IMPORTACIONES, UNA POR UNA
+----------------------------------------------------------------------
+- No declara imports explícitos.
+
+4. DECLARACIONES Y ESTADO IMPORTANTES
+----------------------------------------------------------------------
+L3: `object WidgetActions {`
+    Declara object `WidgetActions`. A partir de aquí las propiedades y funciones hasta su llave de cierre pertenecen a este tipo.
+L4: `const val ACTION_NEW_NOTE = "com.example.mynotes.widget.NEW_NOTE"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L5: `const val ACTION_OPEN_NOTE = "com.example.mynotes.widget.OPEN_NOTE"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L6: `const val ACTION_OPEN_COLLECTION = "com.example.mynotes.widget.OPEN_COLLECTION"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L7: `const val ACTION_SEARCH = "com.example.mynotes.widget.SEARCH"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L8: `const val ACTION_TOGGLE_FAVORITE = "com.example.mynotes.widget.TOGGLE_FAVORITE"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L9: `const val ACTION_TOGGLE_PIN = "com.example.mynotes.widget.TOGGLE_PIN"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L11: `const val EXTRA_NOTE_ID = "widget_note_id"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L12: `const val EXTRA_COLLECTION = "widget_collection"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L14: `const val COLLECTION_ALL = "all"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L15: `const val COLLECTION_FAVORITES = "favorites"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L16: `const val COLLECTION_PINNED = "pinned"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L17: `const val COLLECTION_PRIORITY = "priority"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L18: `const val COLLECTION_WORK = "work"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L19: `const val COLLECTION_PERSONAL = "personal"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L20: `const val COLLECTION_IMAGES = "images"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L21: `const val COLLECTION_FILES = "files"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+
+5. FUNCIONES — EXPLICACIÓN DE CADA UNA
+----------------------------------------------------------------------
+Este archivo no declara funciones Kotlin detectables (puede ser un script Gradle, clase puramente declarativa o modelo).
+
+6. EXPLICACIÓN COMPLETA LÍNEA POR LÍNEA
+----------------------------------------------------------------------
+Esta sección no omite líneas ejecutables. Repite incluso partes ya explicadas en funciones para poder leer el archivo de arriba abajo sin saltar entre secciones.
+L1: `package com.example.mynotes.widget`
+    Declara que este archivo pertenece al package `com.example.mynotes.widget`; esto determina su namespace Kotlin y cómo lo importan otros archivos.
+L3: `object WidgetActions {`
+    Declara object `WidgetActions`. A partir de aquí las propiedades y funciones hasta su llave de cierre pertenecen a este tipo.
+L4: `const val ACTION_NEW_NOTE = "com.example.mynotes.widget.NEW_NOTE"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L5: `const val ACTION_OPEN_NOTE = "com.example.mynotes.widget.OPEN_NOTE"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L6: `const val ACTION_OPEN_COLLECTION = "com.example.mynotes.widget.OPEN_COLLECTION"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L7: `const val ACTION_SEARCH = "com.example.mynotes.widget.SEARCH"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L8: `const val ACTION_TOGGLE_FAVORITE = "com.example.mynotes.widget.TOGGLE_FAVORITE"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L9: `const val ACTION_TOGGLE_PIN = "com.example.mynotes.widget.TOGGLE_PIN"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L11: `const val EXTRA_NOTE_ID = "widget_note_id"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L12: `const val EXTRA_COLLECTION = "widget_collection"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L14: `const val COLLECTION_ALL = "all"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L15: `const val COLLECTION_FAVORITES = "favorites"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L16: `const val COLLECTION_PINNED = "pinned"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L17: `const val COLLECTION_PRIORITY = "priority"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L18: `const val COLLECTION_WORK = "work"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L19: `const val COLLECTION_PERSONAL = "personal"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L20: `const val COLLECTION_IMAGES = "images"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L21: `const val COLLECTION_FILES = "files"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L22: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+7. RECURSOS ANDROID REFERENCIADOS
+----------------------------------------------------------------------
+- No hay referencias directas `R.*` en este archivo.
+
+8. QUIÉN USA ESTE COMPONENTE
+----------------------------------------------------------------------
+- `WidgetActions` aparece también en 5 archivo(s):
+    - app/src/main/java/com/example/mynotes/MainActivity.kt
+    - app/src/main/java/com/example/mynotes/widget/FavoritesWidgetProvider.kt
+    - app/src/main/java/com/example/mynotes/widget/RecentNotesWidgetProvider.kt
+    - app/src/main/java/com/example/mynotes/widget/WidgetActionReceiver.kt
+    - app/src/main/java/com/example/mynotes/widget/WidgetIntents.kt
+
+9. QUÉ PUEDE ROMPERSE SI LO MODIFICAS
+----------------------------------------------------------------------
+- Los widgets usan RemoteViews, no Compose. API 28/Samsung limita propiedades y tintes; no asumir que cualquier API visual de Compose/Views funciona dentro del launcher.
+
+10. CHECKLIST DE PRUEBA DESPUÉS DE MODIFICAR ESTE ARCHIVO
+----------------------------------------------------------------------
+- Compilar `assembleDebug` y resolver primero errores de Kotlin/AAPT.
+- Abrir la pantalla/flujo relacionado y comprobar ida y vuelta (back) sin estado duplicado.
+- Cambiar tema/paleta y verificar contraste si este archivo dibuja UI.
+- Añadir el widget desde el launcher en API 28/Samsung, cambiar idioma/paleta y forzar actualización.
+
+==============================================================================================================
+FIN DEL ARCHIVO
+==============================================================================================================

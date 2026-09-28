@@ -1,0 +1,103 @@
+MYNOTES — EXPLICACIÓN ULTRA DETALLADA
+==============================================================================================================
+Archivo 71/72: app/src/test/java/com/example/mynotes/ExampleUnitTest.kt
+SHA-256: 4be77c1c9460e6c4dcfd772f14ec189b7000b826363740951f1858c12a9a3d86
+Líneas del fuente: 17
+Package: com.example.mynotes
+
+1. RESPONSABILIDAD EXACTA DEL ARCHIVO
+----------------------------------------------------------------------
+Archivo de pruebas que comprueba automáticamente una parte concreta del comportamiento del proyecto.
+
+2. DÓNDE ENCAJA EN LA ARQUITECTURA
+----------------------------------------------------------------------
+Este archivo pertenece principalmente a la **capa general**. No debe analizarse aislado: las referencias cruzadas y callbacks se detallan más abajo.
+
+3. IMPORTACIONES, UNA POR UNA
+----------------------------------------------------------------------
+- `org.junit.Test`: Importa `org.junit.Test` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `org.junit.Assert.*`: Importa `org.junit.Assert.*` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+
+4. DECLARACIONES Y ESTADO IMPORTANTES
+----------------------------------------------------------------------
+L12: `class ExampleUnitTest {`
+    Declara class `ExampleUnitTest`. A partir de aquí las propiedades y funciones hasta su llave de cierre pertenecen a este tipo.
+
+5. FUNCIONES — EXPLICACIÓN DE CADA UNA
+----------------------------------------------------------------------
+
+5.1 `addition_isCorrect` — líneas 14–16
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun addition_isCorrect() {
+
+Propósito:
+    Implementa `addition_isCorrect`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - No recibe parámetros explícitos.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L14 [4 espacios] `fun addition_isCorrect() {`
+      → Declara una función. El bloque de `addition_isCorrect` se detalla después instrucción por instrucción.
+  L15 [8 espacios] `assertEquals(4, 2 + 2)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L16 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+6. EXPLICACIÓN COMPLETA LÍNEA POR LÍNEA
+----------------------------------------------------------------------
+Esta sección no omite líneas ejecutables. Repite incluso partes ya explicadas en funciones para poder leer el archivo de arriba abajo sin saltar entre secciones.
+L1: `package com.example.mynotes`
+    Declara que este archivo pertenece al package `com.example.mynotes`; esto determina su namespace Kotlin y cómo lo importan otros archivos.
+L3: `import org.junit.Test`
+    Importa `org.junit.Test` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L5: `import org.junit.Assert.*`
+    Importa `org.junit.Assert.*` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L7: `/**`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L8: `* Example local unit test, which will execute on the development machine (host).`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L9: `*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L10: `* See [testing documentation](http://d.android.com/tools/testing).`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L11: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L12: `class ExampleUnitTest {`
+    Declara class `ExampleUnitTest`. A partir de aquí las propiedades y funciones hasta su llave de cierre pertenecen a este tipo.
+L13: `@Test`
+    Aplica la anotación `@Test` a la declaración siguiente; la anotación modifica metadatos, generación de código o comportamiento del framework.
+L14: `fun addition_isCorrect() {`
+    Declara una función. El bloque de `addition_isCorrect` se detalla después instrucción por instrucción.
+L15: `assertEquals(4, 2 + 2)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L16: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L17: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+7. RECURSOS ANDROID REFERENCIADOS
+----------------------------------------------------------------------
+- No hay referencias directas `R.*` en este archivo.
+
+8. QUIÉN USA ESTE COMPONENTE
+----------------------------------------------------------------------
+- No se detectaron referencias externas por nombre a los tipos principales; puede ser punto de entrada Android, recurso invocado por Manifest o archivo de prueba.
+
+9. QUÉ PUEDE ROMPERSE SI LO MODIFICAS
+----------------------------------------------------------------------
+- Conservar firmas públicas/callbacks y comprobar los archivos que aparecen en “quién usa este componente” antes de renombrar o cambiar tipos.
+
+10. CHECKLIST DE PRUEBA DESPUÉS DE MODIFICAR ESTE ARCHIVO
+----------------------------------------------------------------------
+- Compilar `assembleDebug` y resolver primero errores de Kotlin/AAPT.
+- Abrir la pantalla/flujo relacionado y comprobar ida y vuelta (back) sin estado duplicado.
+- Cambiar tema/paleta y verificar contraste si este archivo dibuja UI.
+
+==============================================================================================================
+FIN DEL ARCHIVO
+==============================================================================================================

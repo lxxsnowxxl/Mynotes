@@ -1,0 +1,702 @@
+MYNOTES — EXPLICACIÓN ULTRA DETALLADA
+==============================================================================================================
+Archivo 37/72: app/src/main/java/com/example/mynotes/ui/components/StyledSettingsSlider.kt
+SHA-256: 5f322821526286538d40d528b5805436e71f7a231291b1a72c24c505914067e3
+Líneas del fuente: 281
+Package: com.example.mynotes.ui.components
+
+1. RESPONSABILIDAD EXACTA DEL ARCHIVO
+----------------------------------------------------------------------
+Slider reutilizable de Configuración que aplica estilo de MyNotes y separa preview local del valor persistido cuando es necesario.
+
+2. DÓNDE ENCAJA EN LA ARQUITECTURA
+----------------------------------------------------------------------
+Este archivo pertenece principalmente a la **capa de interfaz Compose/Activities**. No debe analizarse aislado: las referencias cruzadas y callbacks se detallan más abajo.
+
+3. IMPORTACIONES, UNA POR UNA
+----------------------------------------------------------------------
+- `android.graphics.Paint`: Importa `android.graphics.Paint` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `android.graphics.Typeface`: Importa `android.graphics.Typeface` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `androidx.compose.foundation.Canvas`: Importa `androidx.compose.foundation.Canvas` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.layout.Box`: Importa `androidx.compose.foundation.layout.Box` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.layout.fillMaxSize`: Importa `androidx.compose.foundation.layout.fillMaxSize` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.layout.fillMaxWidth`: Importa `androidx.compose.foundation.layout.fillMaxWidth` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.layout.height`: Importa `androidx.compose.foundation.layout.height` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.material3.Slider`: Importa `androidx.compose.material3.Slider` para usar componentes y tema Material 3.
+- `androidx.compose.material3.SliderDefaults`: Importa `androidx.compose.material3.SliderDefaults` para usar componentes y tema Material 3.
+- `androidx.compose.runtime.Composable`: Importa `androidx.compose.runtime.Composable` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+- `androidx.compose.runtime.remember`: Importa `androidx.compose.runtime.remember` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+- `androidx.compose.ui.Modifier`: Importa `androidx.compose.ui.Modifier` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.geometry.CornerRadius`: Importa `androidx.compose.ui.geometry.CornerRadius` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.geometry.Offset`: Importa `androidx.compose.ui.geometry.Offset` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.geometry.Size`: Importa `androidx.compose.ui.geometry.Size` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.graphics.Brush`: Importa `androidx.compose.ui.graphics.Brush` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.graphics.Color`: Importa `androidx.compose.ui.graphics.Color` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.graphics.nativeCanvas`: Importa `androidx.compose.ui.graphics.nativeCanvas` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.graphics.toArgb`: Importa `androidx.compose.ui.graphics.toArgb` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.platform.LocalContext`: Importa `androidx.compose.ui.platform.LocalContext` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.unit.dp`: Importa `androidx.compose.ui.unit.dp` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `com.example.mynotes.ui.sound.UiSound`: Importa `com.example.mynotes.ui.sound.UiSound`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.ui.sound.UiSoundPlayer`: Importa `com.example.mynotes.ui.sound.UiSoundPlayer`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+
+4. DECLARACIONES Y ESTADO IMPORTANTES
+----------------------------------------------------------------------
+L38: `val context = LocalContext.current`
+    Declara `context` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `LocalContext.current`.
+L39: `val min = valueRange.start`
+    Declara `min` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `valueRange.start`.
+L40: `val max = valueRange.endInclusive`
+    Declara `max` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `valueRange.endInclusive`.
+L46: `val floatingTextPaint = remember {`
+    Memoriza el resultado durante recomposiciones de Compose. Solo se recalcula cuando cambian las claves de `remember`, reduciendo trabajo y preservando identidad/estado local.
+L53: `val fraction = if (max >`
+    Declara `fraction` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (max >`.
+L65: `val inset = 14.dp.toPx()`
+    Declara `inset` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `14.dp.toPx()`.
+L66: `val topExtra = if (style == "floating") {`
+    Declara `topExtra` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (style == "floating") {`.
+L71: `val centerY = (size.height + topExtra) / 2f`
+    Declara `centerY` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `(size.height + topExtra) / 2f`.
+L72: `val trackWidth = (size.width - inset * 2f).coerceAtLeast(0f)`
+    Declara `trackWidth` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `(size.width - inset * 2f).coerceAtLeast(0f)`.
+L73: `val startX = inset`
+    Declara `startX` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `inset`.
+L74: `val activeWidth = trackWidth * fraction`
+    Declara `activeWidth` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `trackWidth * fraction`.
+L75: `val thumbX = startX + activeWidth`
+    Declara `thumbX` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `startX + activeWidth`.
+L108: `val h = 15.dp.toPx()`
+    Declara `h` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `15.dp.toPx()`.
+L123: `val count = if (steps >`
+    Declara `count` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (steps >`.
+L129: `val gap = 4.dp.toPx()`
+    Declara `gap` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `4.dp.toPx()`.
+L130: `val segmentWidth = (trackWidth - gap * (count - 1)) / count`
+    Declara `segmentWidth` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `(trackWidth - gap * (count - 1)) / count`.
+L133: `val segmentFraction = if (count <= 1) {`
+    Declara `segmentFraction` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (count <= 1) {`.
+L138: `val selected = segmentFraction <= fraction + 0.0001f`
+    Declara `selected` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `segmentFraction <= fraction + 0.0001f`.
+L152: `val count = if (steps >`
+    Declara `count` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (steps >`.
+L160: `val dotFraction = if (count <= 1) {`
+    Declara `dotFraction` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (count <= 1) {`.
+L165: `val x = startX + trackWidth * dotFraction`
+    Declara `x` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `startX + trackWidth * dotFraction`.
+L186: `val h = 7.dp.toPx()`
+    Declara `h` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `7.dp.toPx()`.
+L197: `val h = 12.dp.toPx()`
+    Declara `h` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `12.dp.toPx()`.
+L228: `val bubbleWidth = 56.dp.toPx()`
+    Declara `bubbleWidth` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `56.dp.toPx()`.
+L229: `val bubbleHeight = 24.dp.toPx()`
+    Declara `bubbleHeight` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `24.dp.toPx()`.
+L230: `val bubbleX = (thumbX - bubbleWidth / 2f).coerceIn(0f, size.width - bubbleWidth)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L231: `val bubbleY = 2.dp.toPx()`
+    Declara `bubbleY` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `2.dp.toPx()`.
+
+5. FUNCIONES — EXPLICACIÓN DE CADA UNA
+----------------------------------------------------------------------
+
+5.1 `StyledSettingsSlider` — líneas 35–35
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    fun StyledSettingsSlider(value: Float, onValueChange: (Float) -> Unit, onValueChangeFinished: (() -> Unit)? = null,
+
+Propósito:
+    Implementa `StyledSettingsSlider`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `value: Float`: el llamador proporciona este valor/callback a `StyledSettingsSlider`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+  - `onValueChange: (Float) -> Unit`: el llamador proporciona este valor/callback a `StyledSettingsSlider`. Dentro del cuerpo, las líneas donde aparece `onValueChange` muestran exactamente cómo afecta al resultado.
+  - `onValueChangeFinished: (() -> Unit`: el llamador proporciona este valor/callback a `StyledSettingsSlider`. Dentro del cuerpo, las líneas donde aparece `onValueChangeFinished` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L35 [0 espacios] `fun StyledSettingsSlider(value: Float, onValueChange: (Float) -> Unit, onValueChangeFinished: (() -> Unit)? = null,`
+      → Declara una función. El bloque de `StyledSettingsSlider` se detalla después instrucción por instrucción.
+
+6. EXPLICACIÓN COMPLETA LÍNEA POR LÍNEA
+----------------------------------------------------------------------
+Esta sección no omite líneas ejecutables. Repite incluso partes ya explicadas en funciones para poder leer el archivo de arriba abajo sin saltar entre secciones.
+L1: `package com.example.mynotes.ui.components`
+    Declara que este archivo pertenece al package `com.example.mynotes.ui.components`; esto determina su namespace Kotlin y cómo lo importan otros archivos.
+L3: `import android.graphics.Paint`
+    Importa `android.graphics.Paint` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L4: `import android.graphics.Typeface`
+    Importa `android.graphics.Typeface` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L5: `import androidx.compose.foundation.Canvas`
+    Importa `androidx.compose.foundation.Canvas` para usar layouts, gestos y primitivas visuales de Compose.
+L6: `import androidx.compose.foundation.layout.Box`
+    Importa `androidx.compose.foundation.layout.Box` para usar layouts, gestos y primitivas visuales de Compose.
+L7: `import androidx.compose.foundation.layout.fillMaxSize`
+    Importa `androidx.compose.foundation.layout.fillMaxSize` para usar layouts, gestos y primitivas visuales de Compose.
+L8: `import androidx.compose.foundation.layout.fillMaxWidth`
+    Importa `androidx.compose.foundation.layout.fillMaxWidth` para usar layouts, gestos y primitivas visuales de Compose.
+L9: `import androidx.compose.foundation.layout.height`
+    Importa `androidx.compose.foundation.layout.height` para usar layouts, gestos y primitivas visuales de Compose.
+L10: `import androidx.compose.material3.Slider`
+    Importa `androidx.compose.material3.Slider` para usar componentes y tema Material 3.
+L11: `import androidx.compose.material3.SliderDefaults`
+    Importa `androidx.compose.material3.SliderDefaults` para usar componentes y tema Material 3.
+L12: `import androidx.compose.runtime.Composable`
+    Importa `androidx.compose.runtime.Composable` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+L13: `import androidx.compose.runtime.remember`
+    Importa `androidx.compose.runtime.remember` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+L14: `import androidx.compose.ui.Modifier`
+    Importa `androidx.compose.ui.Modifier` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L15: `import androidx.compose.ui.geometry.CornerRadius`
+    Importa `androidx.compose.ui.geometry.CornerRadius` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L16: `import androidx.compose.ui.geometry.Offset`
+    Importa `androidx.compose.ui.geometry.Offset` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L17: `import androidx.compose.ui.geometry.Size`
+    Importa `androidx.compose.ui.geometry.Size` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L18: `import androidx.compose.ui.graphics.Brush`
+    Importa `androidx.compose.ui.graphics.Brush` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L19: `import androidx.compose.ui.graphics.Color`
+    Importa `androidx.compose.ui.graphics.Color` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L20: `import androidx.compose.ui.graphics.nativeCanvas`
+    Importa `androidx.compose.ui.graphics.nativeCanvas` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L21: `import androidx.compose.ui.graphics.toArgb`
+    Importa `androidx.compose.ui.graphics.toArgb` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L22: `import androidx.compose.ui.platform.LocalContext`
+    Importa `androidx.compose.ui.platform.LocalContext` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L23: `import androidx.compose.ui.unit.dp`
+    Importa `androidx.compose.ui.unit.dp` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L24: `import com.example.mynotes.ui.sound.UiSound`
+    Importa `com.example.mynotes.ui.sound.UiSound`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L25: `import com.example.mynotes.ui.sound.UiSoundPlayer`
+    Importa `com.example.mynotes.ui.sound.UiSoundPlayer`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L27: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L28: `* Slider visual personalizado.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L29: `*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L30: `* Conserva los 10 diseños que ya habíamos agregado al proyecto,`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L31: `* pero la interacción real sigue siendo un Slider de Material`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L32: `* transparente. Así mantenemos gestos, accesibilidad y pasos.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L33: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L34: `@Composable`
+    Marca la función siguiente como Composable: Compose puede ejecutarla durante composición/recomposición para describir UI a partir de estado.
+L35: `fun StyledSettingsSlider(value: Float, onValueChange: (Float) -> Unit, onValueChangeFinished: (() -> Unit)? = null,`
+    Declara una función. El bloque de `StyledSettingsSlider` se detalla después instrucción por instrucción.
+L36: `valueRange: ClosedFloatingPointRange<Float>, steps: Int = 0, activeColor: Color, inactiveColor: Color, style: String,`
+    Asigna/configura `valueRange: ClosedFloatingPointRange<Float>, steps: Int` usando `0, activeColor: Color, inactiveColor: Color, style: String,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L37: `valueLabel: String? = null) {`
+    Asigna/configura `valueLabel: String?` usando `null) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L38: `val context = LocalContext.current`
+    Declara `context` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `LocalContext.current`.
+L39: `val min = valueRange.start`
+    Declara `min` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `valueRange.start`.
+L40: `val max = valueRange.endInclusive`
+    Declara `max` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `valueRange.endInclusive`.
+L41: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L42: `* Reutilizamos el Paint del estilo Floating. Antes se creaba un`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L43: `* android.graphics.Paint nuevo en cada frame mientras el usuario`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L44: `* arrastraba el slider.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L45: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L46: `val floatingTextPaint = remember {`
+    Memoriza el resultado durante recomposiciones de Compose. Solo se recalcula cuando cambian las claves de `remember`, reduciendo trabajo y preservando identidad/estado local.
+L47: `Paint(Paint.ANTI_ALIAS_FLAG).apply {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L48: `color = Color.White.toArgb()`
+    Asigna/configura `color` usando `Color.White.toArgb()`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L49: `textAlign = Paint.Align.CENTER`
+    Asigna/configura `textAlign` usando `Paint.Align.CENTER`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L50: `typeface = Typeface.create(Typeface.DEFAULT, Typeface.BOLD)`
+    Asigna/configura `typeface` usando `Typeface.create(Typeface.DEFAULT, Typeface.BOLD)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L51: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L52: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L53: `val fraction = if (max >`
+    Declara `fraction` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (max >`.
+L54: `min) {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L55: `((value - min) / (max - min)).coerceIn(0f, 1f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L56: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L57: `0f`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `0f`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L58: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L59: `Box(modifier = Modifier.fillMaxWidth().height(if (style == "floating") {`
+    Crea un `Box` de Compose que superpone/posiciona hijos dentro de un mismo contenedor. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+L60: `58.dp`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `58.dp`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L61: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L62: `44.dp`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `44.dp`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L63: `})) {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L64: `Canvas(modifier = Modifier.fillMaxSize()) {`
+    Crea un lienzo de dibujo Compose. Dentro del bloque se emiten operaciones gráficas directamente sobre el `DrawScope`.
+L65: `val inset = 14.dp.toPx()`
+    Declara `inset` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `14.dp.toPx()`.
+L66: `val topExtra = if (style == "floating") {`
+    Declara `topExtra` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (style == "floating") {`.
+L67: `12.dp.toPx()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L68: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L69: `0f`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `0f`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L70: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L71: `val centerY = (size.height + topExtra) / 2f`
+    Declara `centerY` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `(size.height + topExtra) / 2f`.
+L72: `val trackWidth = (size.width - inset * 2f).coerceAtLeast(0f)`
+    Declara `trackWidth` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `(size.width - inset * 2f).coerceAtLeast(0f)`.
+L73: `val startX = inset`
+    Declara `startX` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `inset`.
+L74: `val activeWidth = trackWidth * fraction`
+    Declara `activeWidth` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `trackWidth * fraction`.
+L75: `val thumbX = startX + activeWidth`
+    Declara `thumbX` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `startX + activeWidth`.
+L76: `when (style) {`
+    Abre una decisión `when`: selecciona una rama según el valor/condición, equivalente a un switch más expresivo de Kotlin.
+L77: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L78: `* 1. Minimal.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L79: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L80: `"minimal" -> {`
+    Define una rama/lambda. Cuando coincide `"minimal"`, se ejecuta la expresión o bloque situado después de `->`.
+L81: `drawTrack(startX = startX, centerY = centerY, trackWidth = trackWidth, activeWidth = activeWidth, height = 4.dp.toPx(),`
+    Asigna/configura `drawTrack(startX` usando `startX, centerY = centerY, trackWidth = trackWidth, activeWidth = activeWidth, height = 4.dp.toPx(),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L82: `activeColor = activeColor, inactiveColor = inactiveColor)`
+    Asigna/configura `activeColor` usando `activeColor, inactiveColor = inactiveColor)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L83: `drawCircle(color = activeColor, radius = 6.5.dp.toPx(), center = Offset(thumbX, centerY))`
+    Asigna/configura `drawCircle(color` usando `activeColor, radius = 6.5.dp.toPx(), center = Offset(thumbX, centerY))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L84: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L85: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L86: `* 2. Capsule.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L87: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L88: `"capsule" -> {`
+    Define una rama/lambda. Cuando coincide `"capsule"`, se ejecuta la expresión o bloque situado después de `->`.
+L89: `drawTrack(startX = startX, centerY = centerY, trackWidth = trackWidth, activeWidth = activeWidth, height = 14.dp.toPx(),`
+    Asigna/configura `drawTrack(startX` usando `startX, centerY = centerY, trackWidth = trackWidth, activeWidth = activeWidth, height = 14.dp.toPx(),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L90: `activeColor = activeColor, inactiveColor = inactiveColor)`
+    Asigna/configura `activeColor` usando `activeColor, inactiveColor = inactiveColor)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L91: `drawCircle(color = Color.White, radius = 9.dp.toPx(), center = Offset(thumbX, centerY))`
+    Asigna/configura `drawCircle(color` usando `Color.White, radius = 9.dp.toPx(), center = Offset(thumbX, centerY))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L92: `drawCircle(color = activeColor, radius = 6.dp.toPx(), center = Offset(thumbX, centerY))`
+    Asigna/configura `drawCircle(color` usando `activeColor, radius = 6.dp.toPx(), center = Offset(thumbX, centerY))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L93: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L94: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L95: `* 3. Glow.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L96: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L97: `"glow" -> {`
+    Define una rama/lambda. Cuando coincide `"glow"`, se ejecuta la expresión o bloque situado después de `->`.
+L98: `drawTrack(startX = startX, centerY = centerY, trackWidth = trackWidth, activeWidth = activeWidth, height = 5.dp.toPx(),`
+    Asigna/configura `drawTrack(startX` usando `startX, centerY = centerY, trackWidth = trackWidth, activeWidth = activeWidth, height = 5.dp.toPx(),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L99: `activeColor = activeColor, inactiveColor = inactiveColor)`
+    Asigna/configura `activeColor` usando `activeColor, inactiveColor = inactiveColor)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L100: `drawCircle(color = activeColor.copy(alpha = 0.12f), radius = 17.dp.toPx(), center = Offset(thumbX, centerY))`
+    Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+L101: `drawCircle(color = activeColor.copy(alpha = 0.24f), radius = 12.dp.toPx(), center = Offset(thumbX, centerY))`
+    Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+L102: `drawCircle(color = activeColor, radius = 6.5.dp.toPx(), center = Offset(thumbX, centerY))`
+    Asigna/configura `drawCircle(color` usando `activeColor, radius = 6.5.dp.toPx(), center = Offset(thumbX, centerY))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L103: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L104: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L105: `* 4. Glass.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L106: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L107: `"glass" -> {`
+    Define una rama/lambda. Cuando coincide `"glass"`, se ejecuta la expresión o bloque situado después de `->`.
+L108: `val h = 15.dp.toPx()`
+    Declara `h` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `15.dp.toPx()`.
+L109: `drawRoundRect(color = inactiveColor.copy(alpha = 0.34f), topLeft = Offset(startX, centerY - h / 2f), size = Size(`
+    Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+L110: `trackWidth, h), cornerRadius = CornerRadius(h, h))`
+    Asigna/configura `trackWidth, h), cornerRadius` usando `CornerRadius(h, h))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L111: `if (activeWidth >`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera.
+L112: `0f) {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L113: `drawRoundRect(color = activeColor.copy(alpha = 0.72f), topLeft = Offset(startX, centerY - h / 2f), size = Size(`
+    Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+L114: `activeWidth, h), cornerRadius = CornerRadius(h, h))`
+    Asigna/configura `activeWidth, h), cornerRadius` usando `CornerRadius(h, h))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L115: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L116: `drawCircle(color = Color.White.copy(alpha = 0.88f), radius = 8.5.dp.toPx(), center = Offset(thumbX, centerY))`
+    Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+L117: `drawCircle(color = activeColor, radius = 5.dp.toPx(), center = Offset(thumbX, centerY))`
+    Asigna/configura `drawCircle(color` usando `activeColor, radius = 5.dp.toPx(), center = Offset(thumbX, centerY))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L118: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L119: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L120: `* 5. Segmented.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L121: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L122: `"segmented" -> {`
+    Define una rama/lambda. Cuando coincide `"segmented"`, se ejecuta la expresión o bloque situado después de `->`.
+L123: `val count = if (steps >`
+    Declara `count` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (steps >`.
+L124: `0) {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L125: `steps + 2`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `steps + 2`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L126: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L127: `8`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `8`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L128: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L129: `val gap = 4.dp.toPx()`
+    Declara `gap` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `4.dp.toPx()`.
+L130: `val segmentWidth = (trackWidth - gap * (count - 1)) / count`
+    Declara `segmentWidth` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `(trackWidth - gap * (count - 1)) / count`.
+L131: `repeat(count) {`
+    Ejecuta el bloque un número fijo de veces; suele usarse aquí para iteraciones de aproximación/cálculo.
+L132: `index ->`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `index ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L133: `val segmentFraction = if (count <= 1) {`
+    Declara `segmentFraction` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (count <= 1) {`.
+L134: `0f`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `0f`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L135: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L136: `index.toFloat() / (count - 1)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L137: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L138: `val selected = segmentFraction <= fraction + 0.0001f`
+    Declara `selected` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `segmentFraction <= fraction + 0.0001f`.
+L139: `drawRoundRect(color = if (selected) {`
+    Asigna/configura `drawRoundRect(color` usando `if (selected) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L140: `activeColor`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `activeColor`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L141: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L142: `inactiveColor.copy(alpha = 0.55f)`
+    Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+L143: `}, topLeft = Offset(startX + index * (segmentWidth + gap), centerY - 4.dp.toPx()), size = Size(`
+    Asigna/configura `}, topLeft` usando `Offset(startX + index * (segmentWidth + gap), centerY - 4.dp.toPx()), size = Size(`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L144: `segmentWidth, 8.dp.toPx()), cornerRadius = CornerRadius(8.dp.toPx(), 8.dp.toPx()))`
+    Asigna/configura `segmentWidth, 8.dp.toPx()), cornerRadius` usando `CornerRadius(8.dp.toPx(), 8.dp.toPx()))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L145: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L146: `drawCircle(color = activeColor, radius = 6.dp.toPx(), center = Offset(thumbX, centerY))`
+    Asigna/configura `drawCircle(color` usando `activeColor, radius = 6.dp.toPx(), center = Offset(thumbX, centerY))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L147: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L148: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L149: `* 6. Dots.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L150: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L151: `"dots" -> {`
+    Define una rama/lambda. Cuando coincide `"dots"`, se ejecuta la expresión o bloque situado después de `->`.
+L152: `val count = if (steps >`
+    Declara `count` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (steps >`.
+L153: `0) {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L154: `steps + 2`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `steps + 2`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L155: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L156: `9`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `9`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L157: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L158: `repeat(count) {`
+    Ejecuta el bloque un número fijo de veces; suele usarse aquí para iteraciones de aproximación/cálculo.
+L159: `index ->`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `index ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L160: `val dotFraction = if (count <= 1) {`
+    Declara `dotFraction` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (count <= 1) {`.
+L161: `0f`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `0f`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L162: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L163: `index.toFloat() / (count - 1)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L164: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L165: `val x = startX + trackWidth * dotFraction`
+    Declara `x` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `startX + trackWidth * dotFraction`.
+L166: `drawCircle(color = if (dotFraction <= fraction + 0.0001f) {`
+    Asigna/configura `drawCircle(color` usando `if (dotFraction <= fraction + 0.0001f) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L167: `activeColor`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `activeColor`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L168: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L169: `inactiveColor.copy(alpha = 0.60f)`
+    Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+L170: `}, radius = if (kotlin.math.abs(dotFraction - fraction) <`
+    Asigna/configura `}, radius` usando `if (kotlin.math.abs(dotFraction - fraction) <`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L171: `0.08f) {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L172: `6.dp.toPx()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L173: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L174: `3.2.dp.toPx()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L175: `}, center = Offset(x, centerY))`
+    Asigna/configura `}, center` usando `Offset(x, centerY))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L176: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L177: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L178: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L179: `* 7. Gradient.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L180: `*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L181: `* El degradado utiliza colores del propio tema,`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L182: `* no el color de fondo de la paleta. Esto evita`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L183: `* que el slider de tono se camufle con la pantalla.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L184: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L185: `"gradient" -> {`
+    Define una rama/lambda. Cuando coincide `"gradient"`, se ejecuta la expresión o bloque situado después de `->`.
+L186: `val h = 7.dp.toPx()`
+    Declara `h` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `7.dp.toPx()`.
+L187: `drawRoundRect(brush = Brush.horizontalGradient(colors = listOf(inactiveColor, activeColor), startX = startX, endX =`
+    Asigna/configura `drawRoundRect(brush` usando `Brush.horizontalGradient(colors = listOf(inactiveColor, activeColor), startX = startX, endX =`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L188: `startX + trackWidth), topLeft = Offset(startX, centerY - h / 2f), size = Size(trackWidth, h),`
+    Asigna/configura `startX + trackWidth), topLeft` usando `Offset(startX, centerY - h / 2f), size = Size(trackWidth, h),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L189: `cornerRadius = CornerRadius(h, h))`
+    Asigna/configura `cornerRadius` usando `CornerRadius(h, h))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L190: `drawCircle(color = Color.White, radius = 8.dp.toPx(), center = Offset(thumbX, centerY))`
+    Asigna/configura `drawCircle(color` usando `Color.White, radius = 8.dp.toPx(), center = Offset(thumbX, centerY))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L191: `drawCircle(color = activeColor, radius = 5.5.dp.toPx(), center = Offset(thumbX, centerY))`
+    Asigna/configura `drawCircle(color` usando `activeColor, radius = 5.5.dp.toPx(), center = Offset(thumbX, centerY))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L192: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L193: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L194: `* 8. Neumorphic.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L195: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L196: `"neumorphic" -> {`
+    Define una rama/lambda. Cuando coincide `"neumorphic"`, se ejecuta la expresión o bloque situado después de `->`.
+L197: `val h = 12.dp.toPx()`
+    Declara `h` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `12.dp.toPx()`.
+L198: `drawRoundRect(color = Color.Black.copy(alpha = 0.10f), topLeft = Offset(startX + 1.dp.toPx(), centerY - h / 2f +`
+    Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+L199: `2.dp.toPx()), size = Size(trackWidth, h), cornerRadius = CornerRadius(h, h))`
+    Asigna/configura `2.dp.toPx()), size` usando `Size(trackWidth, h), cornerRadius = CornerRadius(h, h))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L200: `drawRoundRect(color = inactiveColor.copy(alpha = 0.55f), topLeft = Offset(startX, centerY - h / 2f), size = Size(`
+    Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+L201: `trackWidth, h), cornerRadius = CornerRadius(h, h))`
+    Asigna/configura `trackWidth, h), cornerRadius` usando `CornerRadius(h, h))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L202: `if (activeWidth >`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera.
+L203: `0f) {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L204: `drawRoundRect(color = activeColor, topLeft = Offset(startX, centerY - h / 2f), size = Size(activeWidth, h),`
+    Asigna/configura `drawRoundRect(color` usando `activeColor, topLeft = Offset(startX, centerY - h / 2f), size = Size(activeWidth, h),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L205: `cornerRadius = CornerRadius(h, h))`
+    Asigna/configura `cornerRadius` usando `CornerRadius(h, h))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L206: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L207: `drawCircle(color = Color.Black.copy(alpha = 0.12f), radius = 10.dp.toPx(), center = Offset(thumbX + 1.dp.toPx(),`
+    Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+L208: `centerY + 2.dp.toPx()))`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L209: `drawCircle(color = Color.White, radius = 9.dp.toPx(), center = Offset(thumbX, centerY))`
+    Asigna/configura `drawCircle(color` usando `Color.White, radius = 9.dp.toPx(), center = Offset(thumbX, centerY))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L210: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L211: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L212: `* 9. Line + pill.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L213: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L214: `"line_pill" -> {`
+    Define una rama/lambda. Cuando coincide `"line_pill"`, se ejecuta la expresión o bloque situado después de `->`.
+L215: `drawTrack(startX = startX, centerY = centerY, trackWidth = trackWidth, activeWidth = activeWidth, height = 3.dp.toPx(),`
+    Asigna/configura `drawTrack(startX` usando `startX, centerY = centerY, trackWidth = trackWidth, activeWidth = activeWidth, height = 3.dp.toPx(),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L216: `activeColor = activeColor, inactiveColor = inactiveColor)`
+    Asigna/configura `activeColor` usando `activeColor, inactiveColor = inactiveColor)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L217: `drawRoundRect(color = activeColor, topLeft = Offset(thumbX - 4.dp.toPx(), centerY - 11.dp.toPx()), size = Size(`
+    Asigna/configura `drawRoundRect(color` usando `activeColor, topLeft = Offset(thumbX - 4.dp.toPx(), centerY - 11.dp.toPx()), size = Size(`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L218: `8.dp.toPx(), 22.dp.toPx()), cornerRadius = CornerRadius(8.dp.toPx(), 8.dp.toPx()))`
+    Asigna/configura `8.dp.toPx(), 22.dp.toPx()), cornerRadius` usando `CornerRadius(8.dp.toPx(), 8.dp.toPx()))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L219: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L220: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L221: `* 10. Floating.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L222: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L223: `"floating" -> {`
+    Define una rama/lambda. Cuando coincide `"floating"`, se ejecuta la expresión o bloque situado después de `->`.
+L224: `drawTrack(startX = startX, centerY = centerY, trackWidth = trackWidth, activeWidth = activeWidth, height = 4.dp.toPx(),`
+    Asigna/configura `drawTrack(startX` usando `startX, centerY = centerY, trackWidth = trackWidth, activeWidth = activeWidth, height = 4.dp.toPx(),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L225: `activeColor = activeColor, inactiveColor = inactiveColor)`
+    Asigna/configura `activeColor` usando `activeColor, inactiveColor = inactiveColor)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L226: `drawCircle(color = activeColor, radius = 6.5.dp.toPx(), center = Offset(thumbX, centerY))`
+    Asigna/configura `drawCircle(color` usando `activeColor, radius = 6.5.dp.toPx(), center = Offset(thumbX, centerY))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L227: `if (!valueLabel.isNullOrBlank()) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `!valueLabel.isNullOrBlank()`.
+L228: `val bubbleWidth = 56.dp.toPx()`
+    Declara `bubbleWidth` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `56.dp.toPx()`.
+L229: `val bubbleHeight = 24.dp.toPx()`
+    Declara `bubbleHeight` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `24.dp.toPx()`.
+L230: `val bubbleX = (thumbX - bubbleWidth / 2f).coerceIn(0f, size.width - bubbleWidth)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L231: `val bubbleY = 2.dp.toPx()`
+    Declara `bubbleY` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `2.dp.toPx()`.
+L232: `drawRoundRect(color = activeColor, topLeft = Offset(bubbleX, bubbleY), size = Size(bubbleWidth, bubbleHeight),`
+    Asigna/configura `drawRoundRect(color` usando `activeColor, topLeft = Offset(bubbleX, bubbleY), size = Size(bubbleWidth, bubbleHeight),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L233: `cornerRadius = CornerRadius(12.dp.toPx(), 12.dp.toPx()))`
+    Asigna/configura `cornerRadius` usando `CornerRadius(12.dp.toPx(), 12.dp.toPx()))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L234: `drawContext.canvas.nativeCanvas.drawText(valueLabel, bubbleX + bubbleWidth / 2f, bubbleY + bubbleHeight * 0.69f,`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `drawContext.canvas.nativeCanvas.drawText(valueLabel, bubbleX + bubbleWidth / 2f, bubbleY + bubbleHeight * 0.69f,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L235: `floatingTextPaint.apply {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L236: `textSize = 11.dp.toPx()`
+    Asigna/configura `textSize` usando `11.dp.toPx()`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L237: `})`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L238: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L239: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L240: `else -> {`
+    Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+L241: `drawTrack(startX = startX, centerY = centerY, trackWidth = trackWidth, activeWidth = activeWidth, height = 4.dp.toPx(),`
+    Asigna/configura `drawTrack(startX` usando `startX, centerY = centerY, trackWidth = trackWidth, activeWidth = activeWidth, height = 4.dp.toPx(),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L242: `activeColor = activeColor, inactiveColor = inactiveColor)`
+    Asigna/configura `activeColor` usando `activeColor, inactiveColor = inactiveColor)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L243: `drawCircle(color = activeColor, radius = 6.5.dp.toPx(), center = Offset(thumbX, centerY))`
+    Asigna/configura `drawCircle(color` usando `activeColor, radius = 6.5.dp.toPx(), center = Offset(thumbX, centerY))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L244: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L245: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L246: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L247: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L248: `* Slider funcional transparente.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L249: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L250: `Slider(value = value,`
+    Crea un control de ajuste. El valor visible viene del estado y el callback persiste/previsualiza la nueva selección.
+L251: `onValueChange = {`
+    Asigna un callback de interacción. El código situado a la derecha se ejecutará cuando el usuario produzca ese evento.
+L252: `newValue ->`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `newValue ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L253: `UiSoundPlayer.playThrottled(context = context, sound = UiSound.SliderTick, minimumIntervalMs = 48L)`
+    Asigna/configura `UiSoundPlayer.playThrottled(context` usando `context, sound = UiSound.SliderTick, minimumIntervalMs = 48L)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L254: `onValueChange(newValue)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L255: `},`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L256: `onValueChangeFinished = onValueChangeFinished,`
+    Asigna/configura `onValueChangeFinished` usando `onValueChangeFinished,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L257: `valueRange = valueRange,`
+    Asigna/configura `valueRange` usando `valueRange,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L258: `steps = steps,`
+    Asigna/configura `steps` usando `steps,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L259: `modifier = Modifier.fillMaxSize(),`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L260: `colors = SliderDefaults.colors(thumbColor = Color.Transparent,`
+    Asigna/configura `colors` usando `SliderDefaults.colors(thumbColor = Color.Transparent,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L261: `activeTrackColor = Color.Transparent,`
+    Asigna/configura `activeTrackColor` usando `Color.Transparent,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L262: `inactiveTrackColor = Color.Transparent,`
+    Asigna/configura `inactiveTrackColor` usando `Color.Transparent,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L263: `activeTickColor = Color.Transparent,`
+    Asigna/configura `activeTickColor` usando `Color.Transparent,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L264: `inactiveTickColor = Color.Transparent))`
+    Asigna/configura `inactiveTickColor` usando `Color.Transparent))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L265: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L266: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L268: `private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawTrack(startX: Float, centerY: Float, trackWidth: Float, activeWidth: Float,`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `androidx` se detalla después instrucción por instrucción.
+L269: `height: Float, activeColor: Color, inactiveColor: Color) {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L270: `drawRoundRect(color = inactiveColor.copy(alpha = 0.60f),`
+    Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+L271: `topLeft = Offset(startX, centerY - height / 2f),`
+    Asigna/configura `topLeft` usando `Offset(startX, centerY - height / 2f),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L272: `size = Size(trackWidth, height),`
+    Asigna/configura `size` usando `Size(trackWidth, height),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L273: `cornerRadius = CornerRadius(height, height))`
+    Asigna/configura `cornerRadius` usando `CornerRadius(height, height))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L274: `if (activeWidth >`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera.
+L275: `0f) {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L276: `drawRoundRect(color = activeColor,`
+    Asigna/configura `drawRoundRect(color` usando `activeColor,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L277: `topLeft = Offset(startX, centerY - height / 2f),`
+    Asigna/configura `topLeft` usando `Offset(startX, centerY - height / 2f),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L278: `size = Size(activeWidth, height),`
+    Asigna/configura `size` usando `Size(activeWidth, height),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L279: `cornerRadius = CornerRadius(height, height))`
+    Asigna/configura `cornerRadius` usando `CornerRadius(height, height))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L280: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L281: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+7. RECURSOS ANDROID REFERENCIADOS
+----------------------------------------------------------------------
+- No hay referencias directas `R.*` en este archivo.
+
+8. QUIÉN USA ESTE COMPONENTE
+----------------------------------------------------------------------
+- No se detectaron referencias externas por nombre a los tipos principales; puede ser punto de entrada Android, recurso invocado por Manifest o archivo de prueba.
+
+9. QUÉ PUEDE ROMPERSE SI LO MODIFICAS
+----------------------------------------------------------------------
+- Conservar firmas públicas/callbacks y comprobar los archivos que aparecen en “quién usa este componente” antes de renombrar o cambiar tipos.
+
+10. CHECKLIST DE PRUEBA DESPUÉS DE MODIFICAR ESTE ARCHIVO
+----------------------------------------------------------------------
+- Compilar `assembleDebug` y resolver primero errores de Kotlin/AAPT.
+- Abrir la pantalla/flujo relacionado y comprobar ida y vuelta (back) sin estado duplicado.
+- Cambiar tema/paleta y verificar contraste si este archivo dibuja UI.
+
+==============================================================================================================
+FIN DEL ARCHIVO
+==============================================================================================================

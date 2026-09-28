@@ -1,69 +1,296 @@
-# AppDataBackupManager.kt — documentación del código actual
-**Ruta real:** `app/src/main/java/com/example/mynotes/data/AppDataBackupManager.kt`  **SHA-256:** `5d9cc192f4cf9abe63b9fb530651c18a6de7c1917c803cdbfb9a6cf5307b2daa`  **Líneas:** 499 · **Bytes:** 30017 · **Imports:** 17 · **Declaraciones detectadas:** 14
-> Documento generado fuera de `app/` a partir de lectura del código. El fuente es la única fuente de verdad; no se modificó para generar esta documentación.
-## 1. Responsabilidad
+# AppDataBackupManager.kt — explicación completa del código
 
-Exportación e importación de la configuración de MyNotes y datos de respaldo.
-## 2. Package e imports
+**Ruta:** `app/src/main/java/com/example/mynotes/data/AppDataBackupManager.kt`  
+**SHA-256:** `5d9cc192f4cf9abe63b9fb530651c18a6de7c1917c803cdbfb9a6cf5307b2daa`  
+**Líneas:** 500  
+**Package:** `com.example.mynotes.data`
 
-Package declarado: `com.example.mynotes.data`.
+## 1. Para qué existe este archivo
 
-### Android / Jetpack / Compose
+Implementa Backup & Restore. Serializa notas, adjuntos y ajustes en un ZIP, valida la importación, restaura archivos internos y reconstruye datos persistentes.
 
-`android.content.Context`, `android.net.Uri`, `androidx.room.withTransaction`
+## 2. Tipos/clases declarados
 
-### Proyecto MyNotes
+- Línea **34** — `object AppDataBackupManager`.
+- Línea **48** — `data  class BackupSummary`.
+- Línea **374** — `private data  class AttachmentRecord`.
 
-`com.example.mynotes.settings.AppSettings`, `com.example.mynotes.settings.SettingsRepository`, `com.example.mynotes.widget.MyNotesWidgetUpdater`
+## 3. Estado, constantes y valores importantes
 
-### Kotlin / Coroutines / Java
+- **`FORMAT_NAME`** (línea 35) inicia con `"mynotes-backup"`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`FORMAT_VERSION`** (línea 36) inicia con `1`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`DATA_ENTRY`** (línea 37) inicia con `"data.json"`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`ATTACHMENTS_PREFIX`** (línea 38) inicia con `"attachments/"`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`PROFILE_PREFIX`** (línea 39) inicia con `"profile/"`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`MAX_BACKUP_ENTRIES`** (línea 46) inicia con `20_000`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`MAX_METADATA_BYTES`** (línea 47) inicia con `64L * 1024L * 1024L`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`appContext`** (línea 52) inicia con `context.applicationContext`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`database`** (línea 53) inicia con `AppDatabase.getDatabase(appContext`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`notes`** (línea 54) inicia con `database.noteDao(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`attachments`** (línea 55) inicia con `database.attachmentDao(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`output`** (línea 56) inicia con `appContext.contentResolver.openOutputStream(destination`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`attachmentJson`** (línea 59) inicia con `JSONArray(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`exportedAttachments`** (línea 60) inicia con `0`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`skippedAttachments`** (línea 61) inicia con `0`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`entryName`** (línea 63) inicia con `"$ATTACHMENTS_PREFIX${attachment.id}_$safeName"`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`copied`** (línea 64) inicia con `writeUriEntry(context = appContext`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`profileEntry`** (línea 73) inicia con `null`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`profileUri`** (línea 75) inicia con `Uri.parse(settings.profileImageUri`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`profileName`** (línea 76) inicia con `safeFileName(profileUri.lastPathSegment?.substringAfterLast('/'`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`candidate`** (línea 78) inicia con `"$PROFILE_PREFIX$profileName"`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`data`** (línea 83) inicia con `JSONObject(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`stageDir`** (línea 105) inicia con `File(appContext.cacheDir`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`importedFiles`** (línea 109) inicia con `mutableListOf<File>(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`dataFile`** (línea 112) inicia con `File(stageDir`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`attachmentRecords`** (línea 128) inicia con `jsonToAttachmentRecords(data.getJSONArray("attachments"`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`settingsJson`** (línea 129) inicia con `data.optJSONObject("settings"`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`restoredSettings`** (línea 130) inicia con `jsonToSettings(settingsJson`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`noteIds`** (línea 131) inicia con `notes.map {`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`attachmentsDirectory`** (línea 148) inicia con `File(appContext.filesDir`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`restoreToken`** (línea 152) inicia con `System.currentTimeMillis(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`restoredAttachments`** (línea 153) inicia con `attachmentRecords.map { record -> val sourceFile = safeStageFile(stageDir = stageDir`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`targetName`** (línea 158) inicia con `"restore_${restoreToken}_${record.id}_${safeFileName(record.name ?: sourceFile.name`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`target`** (línea 159) inicia con `File(attachmentsDirectory`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`profileSource`** (línea 167) inicia con `safeStageFile(stageDir`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
 
-`kotlinx.coroutines.Dispatchers`, `kotlinx.coroutines.withContext`, `java.io.File`, `java.io.FileInputStream`, `java.io.InputStream`, `java.util.UUID`, `java.util.zip.ZipEntry`, `java.util.zip.ZipInputStream`, `java.util.zip.ZipOutputStream`
+## 4. Funciones y flujo, una por una
 
-### Terceros / otros
+### `exportBackup` — líneas 49–49
 
-`org.json.JSONArray`, `org.json.JSONObject`
+**Firma:** `suspend fun exportBackup(context: Context, destination: Uri, settings: AppSettings): Result<BackupSummary>`
 
-## 3. Declaraciones detectadas
+Lee notas/adjuntos/settings, escribe metadatos JSON y archivos binarios dentro de un ZIP, cuenta elementos omitidos y devuelve BackupSummary.
 
-| Línea | Tipo | Nombre | Firma/inicio |
-|---:|---|---|---|
-| 34 | `object` | `AppDataBackupManager` | `object AppDataBackupManager {` |
-| 48 | `class` | `BackupSummary` | `data class BackupSummary(val noteCount: Int, val attachmentCount: Int, val skippedAttachmentCount: Int = 0)` |
-| 241 | `fun` | `writeUriEntry` | `private fun writeUriEntry(context: Context, zip: ZipOutputStream, source: Uri, entryName: String): Boolean {` |
-| 257 | `fun` | `openInputStream` | `private fun openInputStream(context: Context, uri: Uri): InputStream? = try {` |
-| 267 | `fun` | `extractBackup` | `private fun extractBackup(context: Context, source: Uri, stageDir: File) {` |
-| 333 | `fun` | `safeStageFile` | `private fun safeStageFile(stageDir: File, entryName: String): File {` |
-| 345 | `fun` | `safeFileName` | `private fun safeFileName(value: String): String = value.replace(Regex("[^A-Za-z0-9._-]"), "_").trim('_').take(100).ifBlank { "file" }` |
-| 346 | `fun` | `noteToJson` | `private fun noteToJson(note: Note) = JSONObject().apply {` |
-| 357 | `fun` | `attachmentToJson` | `private fun attachmentToJson(attachment: Attachment, fileEntry: String) = JSONObject().apply {` |
-| 365 | `fun` | `jsonToNotes` | `private fun jsonToNotes(array: JSONArray): List<Note> = buildList {` |
-| 374 | `class` | `AttachmentRecord` | `private data class AttachmentRecord(val id: Int, val noteId: Int, val type: String, val name: String?, val createdAt: Long,` |
-| 376 | `fun` | `jsonToAttachmentRecords` | `private fun jsonToAttachmentRecords(array: JSONArray): List<AttachmentRecord> = buildList {` |
-| 385 | `fun` | `settingsToJson` | `private fun settingsToJson(settings: AppSettings, profileEntry: String?) = JSONObject().apply {` |
-| 441 | `fun` | `jsonToSettings` | `private fun jsonToSettings(json: JSONObject): AppSettings {` |
+**Entradas:**
+- `context: Context`
+- `destination: Uri`
+- `settings: AppSettings`
 
-## 4. Estado, efectos y límites observables
+**Salida:** Result<BackupSummary>.
 
-- **Coroutines:** 3 aparición/apariciones.
-- **Room:** 1 aparición/apariciones.
-- **I/O/red:** 21 aparición/apariciones.
-- **try/catch:** 9 aparición/apariciones.
-- **coerce*:** 4 aparición/apariciones.
-- **safe calls:** 7 aparición/apariciones.
+### `importBackup` — líneas 102–102
 
-Estas cifras son indicadores de superficie de cambio, no diagnósticos de error. Cualquier modificación debe preservar contratos de persistencia, lifecycle, límites numéricos y nulabilidad visibles en el fuente.
+**Firma:** `suspend fun importBackup(context: Context, source: Uri): Result<BackupSummary>`
 
-## 5. Dependencias internas directas
+Extrae el ZIP a staging seguro, valida formato/rutas/tamaños, reconstruye notas/adjuntos/settings y mueve archivos restaurados a destinos internos.
 
-- `com.example.mynotes.settings.AppSettings`
-- `com.example.mynotes.settings.SettingsRepository`
-- `com.example.mynotes.widget.MyNotesWidgetUpdater`
+**Entradas:**
+- `context: Context`
+- `source: Uri`
 
-## 6. Recursos Android referenciados
+**Salida:** Result<BackupSummary>.
 
-No se detectaron referencias `R.*` directas.
+**Efectos/APIs observados en el cuerpo:**
+- Ejecuta trabajo de I/O fuera del hilo principal.
 
-## 7. Puntos de revisión al modificarlo
+**Operaciones/funciones que coordina:** `withContext`.
 
-- Conservar rangos `coerce*`, claves DataStore y compatibilidad con backups existentes.
+### `writeUriEntry` — líneas 241–256
+
+**Firma:** `private fun writeUriEntry(context: Context, zip: ZipOutputStream, source: Uri, entryName: String): Boolean`
+
+Serializa/escribe los datos indicados en su destino y controla los errores/recursos definidos en el cuerpo.
+
+**Entradas:**
+- `context: Context`
+- `zip: ZipOutputStream`
+- `source: Uri`
+- `entryName: String`
+
+**Salida:** Boolean.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lee/escribe Uris mediante ContentResolver.
+
+**Decisiones y protecciones visibles:**
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+
+**Operaciones/funciones que coordina:** `openInputStream`, `putNextEntry`, `ZipEntry`, `copyTo`, `closeEntry`.
+
+### `openInputStream` — líneas 257–257
+
+**Firma:** `private fun openInputStream(context: Context, uri: Uri): InputStream?`
+
+Construye/ejecuta la operación necesaria para abrir el destino indicado, aplicando las validaciones visibles en el cuerpo.
+
+**Entradas:**
+- `context: Context`
+- `uri: Uri`
+
+**Salida:** InputStream?.
+
+**Decisiones y protecciones visibles:**
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+
+### `extractBackup` — líneas 267–332
+
+**Firma:** `private fun extractBackup(context: Context, source: Uri, stageDir: File)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `context: Context`
+- `source: Uri`
+- `stageDir: File`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lee o escribe archivos ZIP.
+- Accede al sistema de archivos interno/cache.
+- Lee/escribe Uris mediante ContentResolver.
+
+**Decisiones y protecciones visibles:**
+- Limita valores con `coerce*` para evitar estados fuera de rango.
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `openInputStream`, `error`, `coerceAtLeast`, `maxOf`, `ByteArray`, `ZipInputStream`, `buffered`, `safeStageFile`, `exists`, `mkdirs`, `outputStream`, `read`, `toLong`, `write`, `closeEntry`.
+
+### `safeStageFile` — líneas 333–344
+
+**Firma:** `private fun safeStageFile(stageDir: File, entryName: String): File`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `stageDir: File`
+- `entryName: String`
+
+**Salida:** File.
+
+**Efectos/APIs observados en el cuerpo:**
+- Accede al sistema de archivos interno/cache.
+
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `isBlank`, `startsWith`, `contains`, `error`, `File`.
+
+### `safeFileName` — líneas 345–345
+
+**Firma:** `private fun safeFileName(value: String): String`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: String`
+
+**Salida:** String.
+
+**Operaciones/funciones que coordina:** `replace`, `Regex`, `trim`, `take`.
+
+### `noteToJson` — líneas 346–346
+
+**Firma:** `private fun noteToJson(note: Note)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `note: Note`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Operaciones/funciones que coordina:** `JSONObject`.
+
+### `attachmentToJson` — líneas 357–357
+
+**Firma:** `private fun attachmentToJson(attachment: Attachment, fileEntry: String)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `attachment: Attachment`
+- `fileEntry: String`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Operaciones/funciones que coordina:** `JSONObject`.
+
+### `jsonToNotes` — líneas 365–365
+
+**Firma:** `private fun jsonToNotes(array: JSONArray): List<Note>`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `array: JSONArray`
+
+**Salida:** List<Note>.
+
+### `jsonToAttachmentRecords` — líneas 376–376
+
+**Firma:** `private fun jsonToAttachmentRecords(array: JSONArray): List<AttachmentRecord>`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `array: JSONArray`
+
+**Salida:** List<AttachmentRecord>.
+
+### `settingsToJson` — líneas 385–385
+
+**Firma:** `private fun settingsToJson(settings: AppSettings, profileEntry: String?)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `settings: AppSettings`
+- `profileEntry: String?`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Operaciones/funciones que coordina:** `JSONObject`.
+
+### `jsonToSettings` — líneas 441–498
+
+**Firma:** `private fun jsonToSettings(json: JSONObject): AppSettings`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `json: JSONObject`
+
+**Salida:** AppSettings.
+
+**Decisiones y protecciones visibles:**
+- Limita valores con `coerce*` para evitar estados fuera de rango.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `AppSettings`, `optString`, `optBoolean`, `optInt`, `optDouble`, `toDouble`, `toFloat`, `coerceIn`.
+
+## 5. Cómo se conecta con el resto de MyNotes
+
+- Usa `com.example.mynotes.settings.AppSettings`.
+- Usa `com.example.mynotes.settings.SettingsRepository`.
+- Usa `com.example.mynotes.widget.MyNotesWidgetUpdater`.
+
+## 6. Recursos Android que utiliza
+
+- No se detectaron referencias directas `R.*` en este archivo.
+
+## 7. Tecnologías y efectos relevantes
+
+- Ejecuta trabajo de I/O fuera del hilo principal.
+- Lee o escribe SharedPreferences.
+- Accede a la base Room/DAO.
+- Lee o escribe archivos ZIP.
+- Accede al sistema de archivos interno/cache.
+- Lee/escribe Uris mediante ContentResolver.
+
+## 8. Lectura práctica del flujo
+
+Una forma útil de seguir este archivo en el depurador es recorrer estas operaciones en este orden aproximado:
+1. `exportBackup` — Lee notas/adjuntos/settings, escribe metadatos JSON y archivos binarios dentro de un ZIP, cuenta elementos omitidos y devuelve BackupSummary.
+2. `importBackup` — Extrae el ZIP a staging seguro, valida formato/rutas/tamaños, reconstruye notas/adjuntos/settings y mueve archivos restaurados a destinos internos.
+
+## 9. Qué no debe romperse al modificarlo
+
+- No renombrar claves persistentes sin migración; ajustes ya guardados dependen de ellas.
+- Conservar validaciones de Uri/ruta y no confiar en nombres externos sin sanitizar.
+
+## 10. Resumen en lenguaje sencillo
+
+En términos simples: Implementa Backup & Restore. Serializa notas, adjuntos y ajustes en un ZIP, valida la importación, restaura archivos internos y reconstruye datos persistentes. La sección función por función anterior describe qué entra, qué devuelve y qué efectos produce cada operación detectada en el fuente actual.

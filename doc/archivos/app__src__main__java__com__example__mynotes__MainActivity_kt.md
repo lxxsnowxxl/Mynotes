@@ -1,89 +1,392 @@
-# MainActivity.kt — documentación del código actual
-**Ruta real:** `app/src/main/java/com/example/mynotes/MainActivity.kt`  **SHA-256:** `521e82c74bbb6f3f0492fdea4a35c1b591afab5cbe43a7bd01bd700eea38690f`  **Líneas:** 1169 · **Bytes:** 53520 · **Imports:** 56 · **Declaraciones detectadas:** 14
-> Documento generado fuera de `app/` a partir de lectura del código. El fuente es la única fuente de verdad; no se modificó para generar esta documentación.
-## 1. Responsabilidad
+# MainActivity.kt — explicación completa del código
 
-Actividad principal, navegación Compose, recepción de intents compartidos y coordinación de pantallas/estado global.
-## 2. Package e imports
+**Ruta:** `app/src/main/java/com/example/mynotes/MainActivity.kt`  
+**SHA-256:** `521e82c74bbb6f3f0492fdea4a35c1b591afab5cbe43a7bd01bd700eea38690f`  
+**Líneas:** 1170  
+**Package:** `com.example.mynotes`
 
-Package declarado: `com.example.mynotes`.
+## 1. Para qué existe este archivo
 
-### Android / Jetpack / Compose
+Punto de entrada principal de MyNotes. Une lifecycle Android, navegación Compose, intents externos, widgets, recordatorios, idioma, barras del sistema, supresión del sonido del teclado y coordinación de ViewModels.
 
-`android.content.Context`, `android.content.Intent`, `android.content.res.Configuration`, `android.media.AudioManager`, `android.os.Build`, `android.os.Bundle`, `android.net.Uri`, `androidx.activity.ComponentActivity`, `androidx.activity.compose.BackHandler`, `androidx.activity.compose.setContent`, `androidx.activity.enableEdgeToEdge`, `androidx.compose.foundation.isSystemInDarkTheme`, `androidx.compose.foundation.layout.Box`, `androidx.compose.foundation.layout.fillMaxSize`, `androidx.compose.ui.Modifier`, `androidx.compose.runtime.LaunchedEffect`, `androidx.compose.runtime.getValue`, `androidx.compose.runtime.mutableIntStateOf`, `androidx.compose.runtime.mutableStateOf`, `androidx.compose.runtime.remember`, `androidx.compose.runtime.setValue`, `androidx.core.view.ViewCompat`, `androidx.core.view.WindowCompat`, `androidx.core.view.WindowInsetsCompat`, `androidx.core.view.WindowInsetsControllerCompat`, `androidx.lifecycle.compose.collectAsStateWithLifecycle`, `androidx.lifecycle.viewmodel.compose.viewModel`
+## 2. Tipos/clases declarados
 
-### Proyecto MyNotes
+- Línea **60** — `private enum  class AppDestination`.
+- Línea **64** — `private data  class NavigationSnapshot`.
+- Línea **66** — `class MainActivity`.
 
-`com.example.mynotes.data.AppDatabase`, `com.example.mynotes.data.Attachment`, `com.example.mynotes.data.Note`, `com.example.mynotes.data.PendingAttachment`, `com.example.mynotes.performance.DisplayPerformanceController`, `com.example.mynotes.reminders.ReminderRepository`, `com.example.mynotes.reminders.ReminderFeedbackPreferences`, `com.example.mynotes.reminders.ReminderReceiver`, `com.example.mynotes.ui.DrawingScreen`, `com.example.mynotes.ui.NoteDetailScreen`, `com.example.mynotes.ui.NoteEditorScreen`, `com.example.mynotes.ui.ReminderScreen`, `com.example.mynotes.ui.NotesScreen`, `com.example.mynotes.ui.DevelopmentInfoScreen`, `com.example.mynotes.ui.SourceCodeInfoScreen`, `com.example.mynotes.ui.components.ConfigurationModeDialog`, `com.example.mynotes.ui.motion.AnimatedScreenEntry`, `com.example.mynotes.ui.motion.ConfigurableAnimatedContent`, `com.example.mynotes.ui.SettingsScreen`, `com.example.mynotes.ui.sound.UiSoundPlayer`, `com.example.mynotes.ui.theme.MyNotesTheme`, `com.example.mynotes.ui.theme.appFontFamily`, `com.example.mynotes.viewmodel.NoteViewModel`, `com.example.mynotes.viewmodel.SettingsViewModel`, `com.example.mynotes.widget.WidgetActions`, `com.example.mynotes.widget.MyNotesWidgetUpdater`
+## 3. Estado, constantes y valores importantes
 
-### Kotlin / Coroutines / Java
+- **`wasImeVisible`** (línea 72) inicia con `false`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`suppressSystemKeyboardSounds`** (línea 86) inicia con `false`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`systemStreamMutedByMyNotes`** (línea 87) inicia con `false`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`systemStreamWasMutedBeforeIme`** (línea 88) inicia con `false`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`activityIsResumed`** (línea 89) inicia con `false`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`LOCALE_PREFS`** (línea 91) inicia con `"locale_prefs"`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`LANGUAGE_KEY`** (línea 92) inicia con `"language"`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`DEFAULT_LANGUAGE`** (línea 93) inicia con `"system"`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`sharedText`** (línea 165) inicia con `incomingIntent.getCharSequenceExtra(Intent.EXTRA_TEXT`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`preferences`** (línea 187) inicia con `newBase.getSharedPreferences(LOCALE_PREFS`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`language`** (línea 188) inicia con `preferences.getString(LANGUAGE_KEY`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`locale`** (línea 196) inicia con `Locale.forLanguageTag(language`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`configuration`** (línea 198) inicia con `Configuration(newBase.resources.configuration`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`localizedContext`** (línea 200) inicia con `newBase.createConfigurationContext(configuration`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`shouldMuteSystemStream`** (línea 249) inicia con `activityIsResumed && suppressSystemKeyboardSounds && isImeVisible`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`isImeVisible`** (línea 305) inicia con `insets.isVisible(WindowInsetsCompat.Type.ime(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`controller`** (línea 323) inicia con `WindowCompat.getInsetsController(window`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`isMultiWindow`** (línea 330) inicia con `Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && isInMultiWindowMode`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`noteViewModel`** (línea 422) inicia con `viewModel(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`settingsViewModel`** (línea 424) inicia con `viewModel(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`reminderRepository`** (línea 427) inicia con `remember {`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`systemDarkTheme`** (línea 430) inicia con `isSystemInDarkTheme(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`effectiveDarkTheme`** (línea 468) inicia con `if (settings.configurationMode == "advanced"`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`noteId`** (línea 562) inicia con `pendingWidgetNoteId ?: return@LaunchedEffect`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`note`** (línea 563) inicia con `withContext(Dispatchers.IO`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`currentScreen`** (línea 658) inicia con `remember(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`existingAttachments`** (línea 911) inicia con `if (screen.note != null`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`attachmentsFlow`** (línea 913) inicia con `remember(screen.note!!.id`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`noteBeingEdited`** (línea 948) inicia con `screen.note`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`currentSelectedNote`** (línea 1057) inicia con `detailNotes.firstOrNull {`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
 
-`kotlinx.coroutines.Dispatchers`, `kotlinx.coroutines.withContext`, `java.util.Locale`
+## 4. Funciones y flujo, una por una
 
-## 3. Declaraciones detectadas
+### `handleReminderIntent` — líneas 117–121
 
-| Línea | Tipo | Nombre | Firma/inicio |
-|---:|---|---|---|
-| 59 | `class` | `AppDestination` | `` |
-| 63 | `class` | `NavigationSnapshot` | `` |
-| 65 | `class` | `MainActivity` | `` |
-| 116 | `fun` | `handleReminderIntent` | `` |
-| 122 | `fun` | `handleWidgetIntent` | `` |
-| 161 | `fun` | `handleIncomingShare` | `private fun handleIncomingShare(incomingIntent: Intent?) {` |
-| 172 | `fun` | `clearPendingShare` | `private fun clearPendingShare() {` |
-| 203 | `fun` | `changeAppLanguage` | `private fun changeAppLanguage(language: String) {` |
-| 233 | `fun` | `setSystemKeyboardSoundSuppressionEnabled` | `private fun setSystemKeyboardSoundSuppressionEnabled(enabled: Boolean) {` |
-| 247 | `fun` | `updateSystemKeyboardSoundSuppression` | `private fun updateSystemKeyboardSoundSuppression(isImeVisible: Boolean) {` |
-| 282 | `fun` | `restoreSystemSoundStreamIfNeeded` | `private fun restoreSystemSoundStreamIfNeeded() {` |
-| 302 | `fun` | `installImeNavigationBarRecovery` | `` |
-| 322 | `fun` | `applyAndroidNavigationBarPolicy` | `private fun applyAndroidNavigationBarPolicy() {` |
-| 348 | `fun` | `applySystemBarAppearance` | `private fun applySystemBarAppearance(darkMode: Boolean) {` |
+**Firma:** `private fun handleReminderIntent(incomingIntent: Intent?)`
 
-## 4. Estado, efectos y límites observables
+Inspecciona el Intent recibido por la Activity. Si contiene la señal usada por las notificaciones de recordatorio, marca navegación pendiente hacia la pantalla de Recordatorios y limpia/consume el estado necesario para que Compose lo atienda.
 
-- **Compose state:** 32 aparición/apariciones.
-- **LaunchedEffect/DisposableEffect:** 10 aparición/apariciones.
-- **Coroutines:** 2 aparición/apariciones.
-- **Room:** 3 aparición/apariciones.
-- **try/catch:** 6 aparición/apariciones.
-- **safe calls:** 11 aparición/apariciones.
+**Entradas:**
+- `incomingIntent: Intent?`
 
-Estas cifras son indicadores de superficie de cambio, no diagnósticos de error. Cualquier modificación debe preservar contratos de persistencia, lifecycle, límites numéricos y nulabilidad visibles en el fuente.
+**Salida:** Unit o inferido por Kotlin.
 
-## 5. Dependencias internas directas
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
 
-- `com.example.mynotes.data.AppDatabase`
-- `com.example.mynotes.data.Attachment`
-- `com.example.mynotes.data.Note`
-- `com.example.mynotes.data.PendingAttachment`
-- `com.example.mynotes.performance.DisplayPerformanceController`
-- `com.example.mynotes.reminders.ReminderFeedbackPreferences`
-- `com.example.mynotes.reminders.ReminderReceiver`
-- `com.example.mynotes.reminders.ReminderRepository`
-- `com.example.mynotes.ui.DevelopmentInfoScreen`
-- `com.example.mynotes.ui.DrawingScreen`
-- `com.example.mynotes.ui.NoteDetailScreen`
-- `com.example.mynotes.ui.NoteEditorScreen`
-- `com.example.mynotes.ui.NotesScreen`
-- `com.example.mynotes.ui.ReminderScreen`
-- `com.example.mynotes.ui.SettingsScreen`
-- `com.example.mynotes.ui.SourceCodeInfoScreen`
-- `com.example.mynotes.ui.components.ConfigurationModeDialog`
-- `com.example.mynotes.ui.motion.AnimatedScreenEntry`
-- `com.example.mynotes.ui.motion.ConfigurableAnimatedContent`
-- `com.example.mynotes.ui.sound.UiSoundPlayer`
-- `com.example.mynotes.ui.theme.MyNotesTheme`
-- `com.example.mynotes.ui.theme.appFontFamily`
-- `com.example.mynotes.viewmodel.NoteViewModel`
-- `com.example.mynotes.viewmodel.SettingsViewModel`
-- `com.example.mynotes.widget.MyNotesWidgetUpdater`
-- `com.example.mynotes.widget.WidgetActions`
+**Operaciones/funciones que coordina:** `getBooleanExtra`.
 
-## 6. Recursos Android referenciados
+### `handleWidgetIntent` — líneas 123–160
 
-- **R.string:** `drawing_default_note_title`
+**Firma:** `private fun handleWidgetIntent(incomingIntent: Intent?)`
 
-## 7. Puntos de revisión al modificarlo
+Traduce las acciones enviadas por los widgets a estado de navegación interno: crear nota, abrir una nota concreta, abrir una colección/filtro o activar búsqueda. No dibuja UI; prepara flags que onCreate/onNewIntent consumen.
 
-- Conservar rangos `coerce*`, claves DataStore y compatibilidad con backups existentes.
-- Revisar navegación, intents externos, modo inmersivo, IME y restauración de barras del sistema.
+**Entradas:**
+- `incomingIntent: Intent?`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Decisiones y protecciones visibles:**
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Usa `when` para mapear estados/tipos/opciones.
+
+**Operaciones/funciones que coordina:** `clearPendingShare`, `getIntExtra`, `getStringExtra`.
+
+### `handleIncomingShare` — líneas 161–171
+
+**Firma:** `private fun handleIncomingShare(incomingIntent: Intent?)`
+
+Procesa intents ACTION_SEND recibidos desde otras apps. Extrae texto/título compartido y los deja como contenido pendiente para abrir el editor de nota con esos datos.
+
+**Entradas:**
+- `incomingIntent: Intent?`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `getCharSequenceExtra`, `toString`, `trim`, `orEmpty`, `isBlank`, `isNotBlank`.
+
+### `clearPendingShare` — líneas 172–175
+
+**Firma:** `private fun clearPendingShare()`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Salida:** Unit o inferido por Kotlin.
+
+### `attachBaseContext` — líneas 186–202
+
+**Firma:** `override fun attachBaseContext(newBase: Context)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `newBase: Context`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lee o escribe SharedPreferences.
+
+**Decisiones y protecciones visibles:**
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `getSharedPreferences`, `getString`, `attachBaseContext`, `forLanguageTag`, `setDefault`, `Configuration`, `setLocale`, `createConfigurationContext`.
+
+### `changeAppLanguage` — líneas 203–215
+
+**Firma:** `private fun changeAppLanguage(language: String)`
+
+Guarda la selección de idioma en las preferencias locales de locale, actualiza Locale/Configuration y recrea la Activity para reconstruir recursos y Compose con el idioma nuevo.
+
+**Entradas:**
+- `language: String`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lee o escribe SharedPreferences.
+
+**Operaciones/funciones que coordina:** `getSharedPreferences`, `edit`, `putString`, `commit`, `requestUpdate`, `recreate`.
+
+### `setSystemKeyboardSoundSuppressionEnabled` — líneas 233–236
+
+**Firma:** `private fun setSystemKeyboardSoundSuppressionEnabled(enabled: Boolean)`
+
+Activa o desactiva la política que silencia temporalmente STREAM_SYSTEM cuando el IME está visible, sin afectar el canal de efectos propio de MyNotes.
+
+**Entradas:**
+- `enabled: Boolean`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Operaciones/funciones que coordina:** `updateSystemKeyboardSoundSuppression`.
+
+### `updateSystemKeyboardSoundSuppression` — líneas 247–276
+
+**Firma:** `private fun updateSystemKeyboardSoundSuppression(isImeVisible: Boolean)`
+
+Decide, según visibilidad del teclado y estado de la Activity, cuándo mutear/restaurar STREAM_SYSTEM. Conserva el estado anterior para no dejar silenciado el teléfono después.
+
+**Entradas:**
+- `isImeVisible: Boolean`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Decisiones y protecciones visibles:**
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `isStreamMute`, `adjustStreamVolume`, `restoreSystemSoundStreamIfNeeded`.
+
+### `restoreSystemSoundStreamIfNeeded` — líneas 282–301
+
+**Firma:** `private fun restoreSystemSoundStreamIfNeeded()`
+
+Restaura el stream del sistema únicamente si MyNotes fue quien lo silenció; evita sobrescribir una decisión de silencio previa del usuario/sistema.
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Decisiones y protecciones visibles:**
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `adjustStreamVolume`.
+
+### `installImeNavigationBarRecovery` — líneas 303–321
+
+**Firma:** `private fun installImeNavigationBarRecovery()`
+
+Instala el observador de WindowInsets/IME utilizado para recuperar la política de barras del sistema después de abrir/cerrar el teclado.
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `setOnApplyWindowInsetsListener`, `isVisible`, `ime`, `updateSystemKeyboardSoundSuppression`, `applyAndroidNavigationBarPolicy`, `requestApplyInsets`.
+
+### `applyAndroidNavigationBarPolicy` — líneas 322–347
+
+**Firma:** `private fun applyAndroidNavigationBarPolicy()`
+
+Aplica la política inmersiva de barra de navegación considerando multi-window y estado de la ventana.
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `getInsetsController`, `show`, `navigationBars`, `hide`, `Suppress`.
+
+### `applySystemBarAppearance` — líneas 348–354
+
+**Firma:** `private fun applySystemBarAppearance(darkMode: Boolean)`
+
+Configura iconos claros/oscuros y visibilidad de barras del sistema de acuerdo con el tema efectivo.
+
+**Entradas:**
+- `darkMode: Boolean`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `getInsetsController`.
+
+### `onWindowFocusChanged` — líneas 355–360
+
+**Firma:** `override fun onWindowFocusChanged(hasFocus: Boolean)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `hasFocus: Boolean`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `onWindowFocusChanged`, `applyAndroidNavigationBarPolicy`.
+
+### `onResume` — líneas 361–373
+
+**Firma:** `override fun onResume()`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Operaciones/funciones que coordina:** `onResume`, `updateSystemKeyboardSoundSuppression`, `requestApplyInsets`, `reapplyLastRequest`, `applyAndroidNavigationBarPolicy`.
+
+### `onPause` — líneas 374–383
+
+**Firma:** `override fun onPause()`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Operaciones/funciones que coordina:** `restoreSystemSoundStreamIfNeeded`, `onPause`.
+
+### `onMultiWindowModeChanged` — líneas 384–387
+
+**Firma:** `override fun onMultiWindowModeChanged(isInMultiWindowMode: Boolean)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `isInMultiWindowMode: Boolean`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Operaciones/funciones que coordina:** `onMultiWindowModeChanged`, `applyAndroidNavigationBarPolicy`.
+
+### `onDestroy` — líneas 388–392
+
+**Firma:** `override fun onDestroy()`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Operaciones/funciones que coordina:** `restoreSystemSoundStreamIfNeeded`, `release`, `onDestroy`.
+
+### `onNewIntent` — líneas 393–399
+
+**Firma:** `override fun onNewIntent(intent: Intent)`
+
+Reprocesa intents cuando MainActivity ya existe: recordatorios, acciones de widgets y compartir, evitando crear otra Activity.
+
+**Entradas:**
+- `intent: Intent`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Inicia o prepara navegación/acción mediante Intent.
+
+**Operaciones/funciones que coordina:** `onNewIntent`, `setIntent`, `handleIncomingShare`, `handleWidgetIntent`, `handleReminderIntent`.
+
+### `onCreate` — líneas 400–1168
+
+**Firma:** `override fun onCreate(savedInstanceState: Bundle?)`
+
+Inicializa edge-to-edge, ViewModels/repositorios, tema, observación de ajustes, navegación Compose y los flujos pendientes de compartir/widgets/recordatorios. Es el punto donde todas las pantallas principales se conectan.
+
+**Entradas:**
+- `savedInstanceState: Bundle?`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Ejecuta trabajo de I/O fuera del hilo principal.
+- Accede a la base Room/DAO.
+- Participa en estado/efectos de Compose.
+- Inicia o prepara navegación/acción mediante Intent.
+
+**Decisiones y protecciones visibles:**
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+- Usa `when` para mapear estados/tipos/opciones.
+
+**Operaciones/funciones que coordina:** `setTheme`, `onCreate`, `getSystemService`, `handleIncomingShare`, `handleWidgetIntent`, `handleReminderIntent`, `enableEdgeToEdge`, `installImeNavigationBarRecovery`, `applyAndroidNavigationBarPolicy`, `viewModel`, `collectAsStateWithLifecycle`, `ReminderRepository`, `isSystemInDarkTheme`, `LaunchedEffect`, `configure`, `sync`, `setSystemKeyboardSoundSuppressionEnabled`, `applySystemBarAppearance`.
+
+## 5. Cómo se conecta con el resto de MyNotes
+
+- Usa `com.example.mynotes.data.AppDatabase`.
+- Usa `com.example.mynotes.data.Attachment`.
+- Usa `com.example.mynotes.data.Note`.
+- Usa `com.example.mynotes.data.PendingAttachment`.
+- Usa `com.example.mynotes.performance.DisplayPerformanceController`.
+- Usa `com.example.mynotes.reminders.ReminderRepository`.
+- Usa `com.example.mynotes.reminders.ReminderFeedbackPreferences`.
+- Usa `com.example.mynotes.reminders.ReminderReceiver`.
+- Usa `com.example.mynotes.ui.DrawingScreen`.
+- Usa `com.example.mynotes.ui.NoteDetailScreen`.
+- Usa `com.example.mynotes.ui.NoteEditorScreen`.
+- Usa `com.example.mynotes.ui.ReminderScreen`.
+- Usa `com.example.mynotes.ui.NotesScreen`.
+- Usa `com.example.mynotes.ui.DevelopmentInfoScreen`.
+- Usa `com.example.mynotes.ui.SourceCodeInfoScreen`.
+- Usa `com.example.mynotes.ui.components.ConfigurationModeDialog`.
+- Usa `com.example.mynotes.ui.motion.AnimatedScreenEntry`.
+- Usa `com.example.mynotes.ui.motion.ConfigurableAnimatedContent`.
+- Usa `com.example.mynotes.ui.SettingsScreen`.
+- Usa `com.example.mynotes.ui.sound.UiSoundPlayer`.
+- Usa `com.example.mynotes.ui.theme.MyNotesTheme`.
+- Usa `com.example.mynotes.ui.theme.appFontFamily`.
+- Usa `com.example.mynotes.viewmodel.NoteViewModel`.
+- Usa `com.example.mynotes.viewmodel.SettingsViewModel`.
+- Usa `com.example.mynotes.widget.WidgetActions`.
+- Usa `com.example.mynotes.widget.MyNotesWidgetUpdater`.
+
+## 6. Recursos Android que utiliza
+
+- `R.string`: `drawing_default_note_title`
+
+## 7. Tecnologías y efectos relevantes
+
+- Ejecuta trabajo de I/O fuera del hilo principal.
+- Lee o escribe SharedPreferences.
+- Accede a la base Room/DAO.
+- Participa en estado/efectos de Compose.
+- Inicia o prepara navegación/acción mediante Intent.
+
+## 8. Lectura práctica del flujo
+
+Una forma útil de seguir este archivo en el depurador es recorrer estas operaciones en este orden aproximado:
+1. `attachBaseContext` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+2. `onWindowFocusChanged` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+3. `onResume` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+4. `onPause` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+5. `onMultiWindowModeChanged` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+6. `onDestroy` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+7. `onNewIntent` — Reprocesa intents cuando MainActivity ya existe: recordatorios, acciones de widgets y compartir, evitando crear otra Activity.
+8. `onCreate` — Inicializa edge-to-edge, ViewModels/repositorios, tema, observación de ajustes, navegación Compose y los flujos pendientes de compartir/widgets/recordatorios. Es el punto donde todas las pantallas principales se conectan.
+
+## 9. Qué no debe romperse al modificarlo
+
+- No renombrar claves persistentes sin migración; ajustes ya guardados dependen de ellas.
+- Conservar validaciones de Uri/ruta y no confiar en nombres externos sin sanitizar.
+- Evitar trabajo bloqueante durante composición y mantener estado estable para limitar recomposiciones.
+
+## 10. Resumen en lenguaje sencillo
+
+En términos simples: Punto de entrada principal de MyNotes. Une lifecycle Android, navegación Compose, intents externos, widgets, recordatorios, idioma, barras del sistema, supresión del sonido del teclado y coordinación de ViewModels. La sección función por función anterior describe qué entra, qué devuelve y qué efectos produce cada operación detectada en el fuente actual.

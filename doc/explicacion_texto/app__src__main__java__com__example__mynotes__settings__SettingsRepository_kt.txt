@@ -1,0 +1,1238 @@
+# SettingsRepository.kt — explicación completa del código
+
+Ruta: app/src/main/java/com/example/mynotes/settings/SettingsRepository.kt  
+SHA-256: a1b5c28d763ae7840ec5fa917ca901177858f89d32810b1e784eaeb615446de3  
+Líneas: 641  
+Package: com.example.mynotes.settings
+
+## 1. Para qué existe este archivo
+
+Capa DataStore de preferencias. Lee ajustes como Flow, normaliza valores y persiste cada cambio de Configuración.
+
+## 2. Tipos/clases declarados
+
+- Línea 16 — class SettingsRepository.
+
+## 3. Estado, constantes y valores importantes
+
+- CONFIGURATION_MODE (línea 18) inicia con stringPreferencesKey("configuration_mode". Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- DARK_MODE (línea 19) inicia con booleanPreferencesKey("dark_mode". Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- BACKGROUND_COLOR (línea 20) inicia con stringPreferencesKey("background_color". Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- BACKGROUND_TONE_INDEX (línea 21) inicia con intPreferencesKey("background_tone_index". Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- BACKGROUND_INTENSITY (línea 22) inicia con floatPreferencesKey("background_intensity". Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- SETTINGS_PANEL_TONE (línea 23) inicia con floatPreferencesKey("settings_panel_tone". Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- SURFACE_PANEL_INTENSITY (línea 24) inicia con floatPreferencesKey("surface_panel_intensity". Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- HEADER_INTENSITY (línea 25) inicia con floatPreferencesKey("header_intensity". Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- TEXT_COLOR (línea 26) inicia con stringPreferencesKey("text_color". Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- TEXT_OUTLINE_ENABLED (línea 27) inicia con booleanPreferencesKey("text_outline_enabled". Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- NOTE_UI_TEXT_COLOR (línea 28) inicia con stringPreferencesKey("note_ui_text_color". Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- SLIDER_STYLE (línea 29) inicia con stringPreferencesKey("slider_style". Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- FONT (línea 30) inicia con stringPreferencesKey("font". Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- FONT_SIZE (línea 31) inicia con floatPreferencesKey("font_size". Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- SOUND_EFFECTS_ENABLED (línea 32) inicia con booleanPreferencesKey("sound_effects_enabled". Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- SOUND_EFFECTS_VOLUME (línea 33) inicia con floatPreferencesKey("sound_effects_volume". Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- SOUND_EFFECTS_THEME (línea 34) inicia con stringPreferencesKey("sound_effects_theme". Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- HAPTIC_EFFECTS_ENABLED (línea 35) inicia con booleanPreferencesKey("haptic_effects_enabled". Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- HAPTIC_EFFECTS_INTENSITY (línea 36) inicia con floatPreferencesKey("haptic_effects_intensity". Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- HAPTIC_EFFECTS_STYLE (línea 37) inicia con stringPreferencesKey("haptic_effects_style". Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- LANGUAGE (línea 38) inicia con stringPreferencesKey("language". Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- GRID_COLUMNS (línea 39) inicia con intPreferencesKey("grid_columns". Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- SORT_ORDER (línea 40) inicia con stringPreferencesKey("sort_order". Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- PROFILE_IMAGE_URI (línea 41) inicia con stringPreferencesKey("profile_image_uri". Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- PROFILE_IMAGE_SIZE (línea 42) inicia con floatPreferencesKey("profile_image_size". Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- ICON_STYLE (línea 43) inicia con stringPreferencesKey("icon_style". Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- ICON_SIZE (línea 44) inicia con floatPreferencesKey("icon_size". Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- ACCENT_COLOR (línea 45) inicia con stringPreferencesKey("accent_color". Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- NOTE_CARD_CORNER_RADIUS (línea 46) inicia con floatPreferencesKey("note_card_corner_radius". Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- NOTE_CARD_ELEVATION (línea 47) inicia con floatPreferencesKey("note_card_elevation". Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- NOTE_CARD_PADDING (línea 48) inicia con floatPreferencesKey("note_card_padding". Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- NOTE_CARD_IMAGE_HEIGHT (línea 49) inicia con floatPreferencesKey("note_card_image_height". Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- NOTE_CARD_OUTLINE_ENABLED (línea 50) inicia con booleanPreferencesKey("note_card_outline_enabled". Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- NOTE_CARD_OUTLINE_WIDTH (línea 51) inicia con floatPreferencesKey("note_card_outline_width". Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- NOTE_TITLE_MAX_LINES (línea 52) inicia con intPreferencesKey("note_title_max_lines". Su valor se usa dentro de la responsabilidad descrita para este archivo.
+
+## 4. Funciones y flujo, una por una
+
+### setConfigurationMode — líneas 161–165
+
+Firma: suspend fun setConfigurationMode(value: String)
+
+Persiste el ajuste ConfigurationMode. La función recibe el nuevo valor y lo escribe en el almacén de preferencias. Antes de guardar aplica normalización/rango para mantener un estado válido.
+
+Entradas:
+- value: String
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Escribe preferencias persistentes.
+
+Operaciones/funciones que coordina: normalizeConfigurationMode.
+
+### setDarkMode — líneas 166–170
+
+Firma: suspend fun setDarkMode(value: Boolean)
+
+Persiste el ajuste DarkMode. La función recibe el nuevo valor y lo escribe en el almacén de preferencias.
+
+Entradas:
+- value: Boolean
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Escribe preferencias persistentes.
+
+### setBackgroundColor — líneas 171–175
+
+Firma: suspend fun setBackgroundColor(value: String)
+
+Persiste el ajuste BackgroundColor. La función recibe el nuevo valor y lo escribe en el almacén de preferencias. Antes de guardar aplica normalización/rango para mantener un estado válido.
+
+Entradas:
+- value: String
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Escribe preferencias persistentes.
+
+Operaciones/funciones que coordina: normalizePaletteKey.
+
+### setBackgroundToneIndex — líneas 176–187
+
+Firma: suspend fun setBackgroundToneIndex(value: Int)
+
+Persiste el ajuste BackgroundToneIndex. La función recibe el nuevo valor y lo escribe en el almacén de preferencias. Antes de guardar aplica normalización/rango para mantener un estado válido.
+
+Entradas:
+- value: Int
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Escribe preferencias persistentes.
+
+Decisiones y protecciones visibles:
+- Limita valores con coerce* para evitar estados fuera de rango.
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+
+Operaciones/funciones que coordina: normalizePaletteKey, coerceIn.
+
+### setBackgroundIntensity — líneas 188–192
+
+Firma: suspend fun setBackgroundIntensity(value: Float)
+
+Persiste el ajuste BackgroundIntensity. La función recibe el nuevo valor y lo escribe en el almacén de preferencias. Antes de guardar aplica normalización/rango para mantener un estado válido.
+
+Entradas:
+- value: Float
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Escribe preferencias persistentes.
+
+Decisiones y protecciones visibles:
+- Limita valores con coerce* para evitar estados fuera de rango.
+
+Operaciones/funciones que coordina: coerceIn.
+
+### setSettingsPanelTone — líneas 193–197
+
+Firma: suspend fun setSettingsPanelTone(value: Float)
+
+Persiste el ajuste SettingsPanelTone. La función recibe el nuevo valor y lo escribe en el almacén de preferencias. Antes de guardar aplica normalización/rango para mantener un estado válido.
+
+Entradas:
+- value: Float
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Escribe preferencias persistentes.
+
+Decisiones y protecciones visibles:
+- Limita valores con coerce* para evitar estados fuera de rango.
+
+Operaciones/funciones que coordina: coerceIn.
+
+### setSurfacePanelIntensity — líneas 198–202
+
+Firma: suspend fun setSurfacePanelIntensity(value: Float)
+
+Persiste el ajuste SurfacePanelIntensity. La función recibe el nuevo valor y lo escribe en el almacén de preferencias. Antes de guardar aplica normalización/rango para mantener un estado válido.
+
+Entradas:
+- value: Float
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Escribe preferencias persistentes.
+
+Decisiones y protecciones visibles:
+- Limita valores con coerce* para evitar estados fuera de rango.
+
+Operaciones/funciones que coordina: coerceIn.
+
+### setHeaderIntensity — líneas 203–207
+
+Firma: suspend fun setHeaderIntensity(value: Float)
+
+Persiste el ajuste HeaderIntensity. La función recibe el nuevo valor y lo escribe en el almacén de preferencias. Antes de guardar aplica normalización/rango para mantener un estado válido.
+
+Entradas:
+- value: Float
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Escribe preferencias persistentes.
+
+Decisiones y protecciones visibles:
+- Limita valores con coerce* para evitar estados fuera de rango.
+
+Operaciones/funciones que coordina: coerceIn.
+
+### setTextColor — líneas 208–212
+
+Firma: suspend fun setTextColor(value: String)
+
+Persiste el ajuste TextColor. La función recibe el nuevo valor y lo escribe en el almacén de preferencias. Antes de guardar aplica normalización/rango para mantener un estado válido.
+
+Entradas:
+- value: String
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Escribe preferencias persistentes.
+
+Operaciones/funciones que coordina: normalizeUiTextColor.
+
+### setTextOutlineEnabled — líneas 213–217
+
+Firma: suspend fun setTextOutlineEnabled(value: Boolean)
+
+Persiste el ajuste TextOutlineEnabled. La función recibe el nuevo valor y lo escribe en el almacén de preferencias.
+
+Entradas:
+- value: Boolean
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Escribe preferencias persistentes.
+
+### setNoteUiTextColor — líneas 218–222
+
+Firma: suspend fun setNoteUiTextColor(value: String)
+
+Persiste el ajuste NoteUiTextColor. La función recibe el nuevo valor y lo escribe en el almacén de preferencias. Antes de guardar aplica normalización/rango para mantener un estado válido.
+
+Entradas:
+- value: String
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Escribe preferencias persistentes.
+
+Operaciones/funciones que coordina: normalizeUiTextColor.
+
+### setSliderStyle — líneas 223–227
+
+Firma: suspend fun setSliderStyle(value: String)
+
+Persiste el ajuste SliderStyle. La función recibe el nuevo valor y lo escribe en el almacén de preferencias. Antes de guardar aplica normalización/rango para mantener un estado válido.
+
+Entradas:
+- value: String
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Escribe preferencias persistentes.
+
+Operaciones/funciones que coordina: normalizeSliderStyle.
+
+### setFont — líneas 228–232
+
+Firma: suspend fun setFont(value: String)
+
+Persiste el ajuste Font. La función recibe el nuevo valor y lo escribe en el almacén de preferencias.
+
+Entradas:
+- value: String
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Escribe preferencias persistentes.
+
+### setFontSize — líneas 233–237
+
+Firma: suspend fun setFontSize(value: Float)
+
+Persiste el ajuste FontSize. La función recibe el nuevo valor y lo escribe en el almacén de preferencias. Antes de guardar aplica normalización/rango para mantener un estado válido.
+
+Entradas:
+- value: Float
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Escribe preferencias persistentes.
+
+Decisiones y protecciones visibles:
+- Limita valores con coerce* para evitar estados fuera de rango.
+
+Operaciones/funciones que coordina: coerceIn.
+
+### setSoundEffectsEnabled — líneas 238–242
+
+Firma: suspend fun setSoundEffectsEnabled(value: Boolean)
+
+Persiste el ajuste SoundEffectsEnabled. La función recibe el nuevo valor y lo escribe en el almacén de preferencias.
+
+Entradas:
+- value: Boolean
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Escribe preferencias persistentes.
+
+### setSoundEffectsVolume — líneas 243–247
+
+Firma: suspend fun setSoundEffectsVolume(value: Float)
+
+Persiste el ajuste SoundEffectsVolume. La función recibe el nuevo valor y lo escribe en el almacén de preferencias. Antes de guardar aplica normalización/rango para mantener un estado válido.
+
+Entradas:
+- value: Float
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Escribe preferencias persistentes.
+
+Decisiones y protecciones visibles:
+- Limita valores con coerce* para evitar estados fuera de rango.
+
+Operaciones/funciones que coordina: coerceIn.
+
+### setSoundEffectsTheme — líneas 248–252
+
+Firma: suspend fun setSoundEffectsTheme(value: String)
+
+Persiste el ajuste SoundEffectsTheme. La función recibe el nuevo valor y lo escribe en el almacén de preferencias. Antes de guardar aplica normalización/rango para mantener un estado válido.
+
+Entradas:
+- value: String
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Escribe preferencias persistentes.
+
+Operaciones/funciones que coordina: normalizeSoundEffectsTheme.
+
+### setHapticEffectsEnabled — líneas 253–257
+
+Firma: suspend fun setHapticEffectsEnabled(value: Boolean)
+
+Persiste el ajuste HapticEffectsEnabled. La función recibe el nuevo valor y lo escribe en el almacén de preferencias.
+
+Entradas:
+- value: Boolean
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Escribe preferencias persistentes.
+
+### setHapticEffectsIntensity — líneas 258–262
+
+Firma: suspend fun setHapticEffectsIntensity(value: Float)
+
+Persiste el ajuste HapticEffectsIntensity. La función recibe el nuevo valor y lo escribe en el almacén de preferencias. Antes de guardar aplica normalización/rango para mantener un estado válido.
+
+Entradas:
+- value: Float
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Escribe preferencias persistentes.
+
+Decisiones y protecciones visibles:
+- Limita valores con coerce* para evitar estados fuera de rango.
+
+Operaciones/funciones que coordina: coerceIn.
+
+### setHapticEffectsStyle — líneas 263–267
+
+Firma: suspend fun setHapticEffectsStyle(value: String)
+
+Persiste el ajuste HapticEffectsStyle. La función recibe el nuevo valor y lo escribe en el almacén de preferencias. Antes de guardar aplica normalización/rango para mantener un estado válido.
+
+Entradas:
+- value: String
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Escribe preferencias persistentes.
+
+Operaciones/funciones que coordina: normalizeHapticEffectsStyle.
+
+### setLanguage — líneas 268–272
+
+Firma: suspend fun setLanguage(value: String)
+
+Persiste el ajuste Language. La función recibe el nuevo valor y lo escribe en el almacén de preferencias.
+
+Entradas:
+- value: String
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Escribe preferencias persistentes.
+
+### setGridColumns — líneas 273–277
+
+Firma: suspend fun setGridColumns(value: Int)
+
+Persiste el ajuste GridColumns. La función recibe el nuevo valor y lo escribe en el almacén de preferencias. Antes de guardar aplica normalización/rango para mantener un estado válido.
+
+Entradas:
+- value: Int
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Escribe preferencias persistentes.
+
+Decisiones y protecciones visibles:
+- Limita valores con coerce* para evitar estados fuera de rango.
+
+Operaciones/funciones que coordina: coerceIn.
+
+### setSortOrder — líneas 278–282
+
+Firma: suspend fun setSortOrder(value: String)
+
+Persiste el ajuste SortOrder. La función recibe el nuevo valor y lo escribe en el almacén de preferencias.
+
+Entradas:
+- value: String
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Escribe preferencias persistentes.
+
+### setProfileImageUri — líneas 283–287
+
+Firma: suspend fun setProfileImageUri(value: String)
+
+Persiste el ajuste ProfileImageUri. La función recibe el nuevo valor y lo escribe en el almacén de preferencias.
+
+Entradas:
+- value: String
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Escribe preferencias persistentes.
+
+### setProfileImageSize — líneas 288–292
+
+Firma: suspend fun setProfileImageSize(value: Float)
+
+Persiste el ajuste ProfileImageSize. La función recibe el nuevo valor y lo escribe en el almacén de preferencias. Antes de guardar aplica normalización/rango para mantener un estado válido.
+
+Entradas:
+- value: Float
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Escribe preferencias persistentes.
+
+Decisiones y protecciones visibles:
+- Limita valores con coerce* para evitar estados fuera de rango.
+
+Operaciones/funciones que coordina: coerceIn.
+
+### setIconStyle — líneas 293–297
+
+Firma: suspend fun setIconStyle(value: String)
+
+Persiste el ajuste IconStyle. La función recibe el nuevo valor y lo escribe en el almacén de preferencias. Antes de guardar aplica normalización/rango para mantener un estado válido.
+
+Entradas:
+- value: String
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Escribe preferencias persistentes.
+
+Operaciones/funciones que coordina: normalizeIconStyle.
+
+### setIconSize — líneas 298–302
+
+Firma: suspend fun setIconSize(value: Float)
+
+Persiste el ajuste IconSize. La función recibe el nuevo valor y lo escribe en el almacén de preferencias. Antes de guardar aplica normalización/rango para mantener un estado válido.
+
+Entradas:
+- value: Float
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Escribe preferencias persistentes.
+
+Decisiones y protecciones visibles:
+- Limita valores con coerce* para evitar estados fuera de rango.
+
+Operaciones/funciones que coordina: coerceIn.
+
+### setAccentColor — líneas 303–307
+
+Firma: suspend fun setAccentColor(value: String)
+
+Persiste el ajuste AccentColor. La función recibe el nuevo valor y lo escribe en el almacén de preferencias. Antes de guardar aplica normalización/rango para mantener un estado válido.
+
+Entradas:
+- value: String
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Escribe preferencias persistentes.
+
+Operaciones/funciones que coordina: normalizeAccentColor.
+
+### setNoteCardCornerRadius — líneas 308–312
+
+Firma: suspend fun setNoteCardCornerRadius(value: Float)
+
+Persiste el ajuste NoteCardCornerRadius. La función recibe el nuevo valor y lo escribe en el almacén de preferencias. Antes de guardar aplica normalización/rango para mantener un estado válido.
+
+Entradas:
+- value: Float
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Escribe preferencias persistentes.
+
+Decisiones y protecciones visibles:
+- Limita valores con coerce* para evitar estados fuera de rango.
+
+Operaciones/funciones que coordina: coerceIn.
+
+### setNoteCardElevation — líneas 313–317
+
+Firma: suspend fun setNoteCardElevation(value: Float)
+
+Persiste el ajuste NoteCardElevation. La función recibe el nuevo valor y lo escribe en el almacén de preferencias. Antes de guardar aplica normalización/rango para mantener un estado válido.
+
+Entradas:
+- value: Float
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Escribe preferencias persistentes.
+
+Decisiones y protecciones visibles:
+- Limita valores con coerce* para evitar estados fuera de rango.
+
+Operaciones/funciones que coordina: coerceIn.
+
+### setNoteCardPadding — líneas 318–322
+
+Firma: suspend fun setNoteCardPadding(value: Float)
+
+Persiste el ajuste NoteCardPadding. La función recibe el nuevo valor y lo escribe en el almacén de preferencias. Antes de guardar aplica normalización/rango para mantener un estado válido.
+
+Entradas:
+- value: Float
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Escribe preferencias persistentes.
+
+Decisiones y protecciones visibles:
+- Limita valores con coerce* para evitar estados fuera de rango.
+
+Operaciones/funciones que coordina: coerceIn.
+
+### setNoteCardImageHeight — líneas 323–327
+
+Firma: suspend fun setNoteCardImageHeight(value: Float)
+
+Persiste el ajuste NoteCardImageHeight. La función recibe el nuevo valor y lo escribe en el almacén de preferencias. Antes de guardar aplica normalización/rango para mantener un estado válido.
+
+Entradas:
+- value: Float
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Escribe preferencias persistentes.
+
+Decisiones y protecciones visibles:
+- Limita valores con coerce* para evitar estados fuera de rango.
+
+Operaciones/funciones que coordina: coerceIn.
+
+### setNoteCardOutlineEnabled — líneas 328–332
+
+Firma: suspend fun setNoteCardOutlineEnabled(value: Boolean)
+
+Persiste el ajuste NoteCardOutlineEnabled. La función recibe el nuevo valor y lo escribe en el almacén de preferencias.
+
+Entradas:
+- value: Boolean
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Escribe preferencias persistentes.
+
+### setNoteCardOutlineWidth — líneas 333–341
+
+Firma: suspend fun setNoteCardOutlineWidth(value: Float)
+
+Persiste el ajuste NoteCardOutlineWidth. La función recibe el nuevo valor y lo escribe en el almacén de preferencias. Antes de guardar aplica normalización/rango para mantener un estado válido.
+
+Entradas:
+- value: Float
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Escribe preferencias persistentes.
+
+Decisiones y protecciones visibles:
+- Limita valores con coerce* para evitar estados fuera de rango.
+
+Operaciones/funciones que coordina: coerceIn.
+
+### setNoteTitleMaxLines — líneas 342–346
+
+Firma: suspend fun setNoteTitleMaxLines(value: Int)
+
+Persiste el ajuste NoteTitleMaxLines. La función recibe el nuevo valor y lo escribe en el almacén de preferencias. Antes de guardar aplica normalización/rango para mantener un estado válido.
+
+Entradas:
+- value: Int
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Escribe preferencias persistentes.
+
+Decisiones y protecciones visibles:
+- Limita valores con coerce* para evitar estados fuera de rango.
+
+Operaciones/funciones que coordina: coerceIn.
+
+### setNoteContentMaxLines — líneas 347–351
+
+Firma: suspend fun setNoteContentMaxLines(value: Int)
+
+Persiste el ajuste NoteContentMaxLines. La función recibe el nuevo valor y lo escribe en el almacén de preferencias. Antes de guardar aplica normalización/rango para mantener un estado válido.
+
+Entradas:
+- value: Int
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Escribe preferencias persistentes.
+
+Decisiones y protecciones visibles:
+- Limita valores con coerce* para evitar estados fuera de rango.
+
+Operaciones/funciones que coordina: coerceIn.
+
+### setNoteLineSpacing — líneas 352–356
+
+Firma: suspend fun setNoteLineSpacing(value: Float)
+
+Persiste el ajuste NoteLineSpacing. La función recibe el nuevo valor y lo escribe en el almacén de preferencias. Antes de guardar aplica normalización/rango para mantener un estado válido.
+
+Entradas:
+- value: Float
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Escribe preferencias persistentes.
+
+Decisiones y protecciones visibles:
+- Limita valores con coerce* para evitar estados fuera de rango.
+
+Operaciones/funciones que coordina: coerceIn.
+
+### setShowNoteDate — líneas 357–361
+
+Firma: suspend fun setShowNoteDate(value: Boolean)
+
+Persiste el ajuste ShowNoteDate. La función recibe el nuevo valor y lo escribe en el almacén de preferencias.
+
+Entradas:
+- value: Boolean
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Escribe preferencias persistentes.
+
+### setShowCategoryChip — líneas 362–366
+
+Firma: suspend fun setShowCategoryChip(value: Boolean)
+
+Persiste el ajuste ShowCategoryChip. La función recibe el nuevo valor y lo escribe en el almacén de preferencias.
+
+Entradas:
+- value: Boolean
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Escribe preferencias persistentes.
+
+### setShowFavoriteIcon — líneas 367–371
+
+Firma: suspend fun setShowFavoriteIcon(value: Boolean)
+
+Persiste el ajuste ShowFavoriteIcon. La función recibe el nuevo valor y lo escribe en el almacén de preferencias.
+
+Entradas:
+- value: Boolean
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Escribe preferencias persistentes.
+
+### setFabSize — líneas 372–376
+
+Firma: suspend fun setFabSize(value: Float)
+
+Persiste el ajuste FabSize. La función recibe el nuevo valor y lo escribe en el almacén de preferencias. Antes de guardar aplica normalización/rango para mantener un estado válido.
+
+Entradas:
+- value: Float
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Escribe preferencias persistentes.
+
+Decisiones y protecciones visibles:
+- Limita valores con coerce* para evitar estados fuera de rango.
+
+Operaciones/funciones que coordina: coerceIn.
+
+### setOptionMenuOrder — líneas 377–381
+
+Firma: suspend fun setOptionMenuOrder(value: String)
+
+Persiste el ajuste OptionMenuOrder. La función recibe el nuevo valor y lo escribe en el almacén de preferencias. Antes de guardar aplica normalización/rango para mantener un estado válido.
+
+Entradas:
+- value: String
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Escribe preferencias persistentes.
+
+Operaciones/funciones que coordina: normalizeOptionMenuOrder.
+
+### setOptionMenuHiddenItems — líneas 382–386
+
+Firma: suspend fun setOptionMenuHiddenItems(value: String)
+
+Persiste el ajuste OptionMenuHiddenItems. La función recibe el nuevo valor y lo escribe en el almacén de preferencias. Antes de guardar aplica normalización/rango para mantener un estado válido.
+
+Entradas:
+- value: String
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Escribe preferencias persistentes.
+
+Operaciones/funciones que coordina: normalizeHiddenItems.
+
+### setOptionMenuShowIcons — líneas 387–391
+
+Firma: suspend fun setOptionMenuShowIcons(value: Boolean)
+
+Persiste el ajuste OptionMenuShowIcons. La función recibe el nuevo valor y lo escribe en el almacén de preferencias.
+
+Entradas:
+- value: Boolean
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Escribe preferencias persistentes.
+
+### setOptionMenuTextColor — líneas 392–396
+
+Firma: suspend fun setOptionMenuTextColor(value: String)
+
+Persiste el ajuste OptionMenuTextColor. La función recibe el nuevo valor y lo escribe en el almacén de preferencias. Antes de guardar aplica normalización/rango para mantener un estado válido.
+
+Entradas:
+- value: String
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Escribe preferencias persistentes.
+
+Operaciones/funciones que coordina: normalizeOptionMenuTextColor.
+
+### setOptionMenuOpacity — líneas 397–401
+
+Firma: suspend fun setOptionMenuOpacity(value: Float)
+
+Persiste el ajuste OptionMenuOpacity. La función recibe el nuevo valor y lo escribe en el almacén de preferencias. Antes de guardar aplica normalización/rango para mantener un estado válido.
+
+Entradas:
+- value: Float
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Escribe preferencias persistentes.
+
+Decisiones y protecciones visibles:
+- Limita valores con coerce* para evitar estados fuera de rango.
+
+Operaciones/funciones que coordina: coerceIn.
+
+### setPriorityMenuHiddenItems — líneas 402–406
+
+Firma: suspend fun setPriorityMenuHiddenItems(value: String)
+
+Persiste el ajuste PriorityMenuHiddenItems. La función recibe el nuevo valor y lo escribe en el almacén de preferencias. Antes de guardar aplica normalización/rango para mantener un estado válido.
+
+Entradas:
+- value: String
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Escribe preferencias persistentes.
+
+Operaciones/funciones que coordina: normalizeHiddenItems.
+
+### setColorMenuHiddenItems — líneas 407–411
+
+Firma: suspend fun setColorMenuHiddenItems(value: String)
+
+Persiste el ajuste ColorMenuHiddenItems. La función recibe el nuevo valor y lo escribe en el almacén de preferencias. Antes de guardar aplica normalización/rango para mantener un estado válido.
+
+Entradas:
+- value: String
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Escribe preferencias persistentes.
+
+Operaciones/funciones que coordina: normalizeHiddenItems.
+
+### resetOptionMenuSettings — líneas 412–422
+
+Firma: suspend fun resetOptionMenuSettings()
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Escribe preferencias persistentes.
+
+### setPerformanceMode — líneas 423–427
+
+Firma: suspend fun setPerformanceMode(value: String)
+
+Persiste el ajuste PerformanceMode. La función recibe el nuevo valor y lo escribe en el almacén de preferencias. Antes de guardar aplica normalización/rango para mantener un estado válido.
+
+Entradas:
+- value: String
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Escribe preferencias persistentes.
+
+Operaciones/funciones que coordina: normalizePerformanceMode.
+
+### setAnimationsEnabled — líneas 428–432
+
+Firma: suspend fun setAnimationsEnabled(value: Boolean)
+
+Persiste el ajuste AnimationsEnabled. La función recibe el nuevo valor y lo escribe en el almacén de preferencias.
+
+Entradas:
+- value: Boolean
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Escribe preferencias persistentes.
+
+### setAnimationSpeed — líneas 433–437
+
+Firma: suspend fun setAnimationSpeed(value: Float)
+
+Persiste el ajuste AnimationSpeed. La función recibe el nuevo valor y lo escribe en el almacén de preferencias. Antes de guardar aplica normalización/rango para mantener un estado válido.
+
+Entradas:
+- value: Float
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Escribe preferencias persistentes.
+
+Decisiones y protecciones visibles:
+- Limita valores con coerce* para evitar estados fuera de rango.
+
+Operaciones/funciones que coordina: coerceIn.
+
+### setAnimationStyle — líneas 438–442
+
+Firma: suspend fun setAnimationStyle(value: String)
+
+Persiste el ajuste AnimationStyle. La función recibe el nuevo valor y lo escribe en el almacén de preferencias. Antes de guardar aplica normalización/rango para mantener un estado válido.
+
+Entradas:
+- value: String
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Escribe preferencias persistentes.
+
+Operaciones/funciones que coordina: normalizeAnimationStyle.
+
+### setAnimationEasing — líneas 443–447
+
+Firma: suspend fun setAnimationEasing(value: String)
+
+Persiste el ajuste AnimationEasing. La función recibe el nuevo valor y lo escribe en el almacén de preferencias. Antes de guardar aplica normalización/rango para mantener un estado válido.
+
+Entradas:
+- value: String
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Escribe preferencias persistentes.
+
+Operaciones/funciones que coordina: normalizeAnimationEasing.
+
+### setAnimationIntensity — líneas 448–452
+
+Firma: suspend fun setAnimationIntensity(value: Float)
+
+Persiste el ajuste AnimationIntensity. La función recibe el nuevo valor y lo escribe en el almacén de preferencias. Antes de guardar aplica normalización/rango para mantener un estado válido.
+
+Entradas:
+- value: Float
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Escribe preferencias persistentes.
+
+Decisiones y protecciones visibles:
+- Limita valores con coerce* para evitar estados fuera de rango.
+
+Operaciones/funciones que coordina: coerceIn.
+
+### restoreFromBackup — líneas 458–515
+
+Firma: suspend fun restoreFromBackup(value: AppSettings)
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+Entradas:
+- value: AppSettings
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Escribe preferencias persistentes.
+
+Decisiones y protecciones visibles:
+- Limita valores con coerce* para evitar estados fuera de rango.
+
+Operaciones/funciones que coordina: normalizeConfigurationMode, normalizePaletteKey, coerceIn, normalizeUiTextColor, normalizeSliderStyle, normalizeSoundEffectsTheme, normalizeHapticEffectsStyle, normalizeIconStyle, normalizeAccentColor, normalizeOptionMenuOrder, normalizeHiddenItems, normalizeOptionMenuTextColor, normalizePerformanceMode, normalizeAnimationStyle, normalizeAnimationEasing.
+
+### normalizeOptionMenuOrder — líneas 521–530
+
+Firma: private fun normalizeOptionMenuOrder(value: String): String
+
+Normaliza una cadena/valor externo al conjunto de opciones admitidas por MyNotes y devuelve un fallback estable si el valor no es reconocido.
+
+Entradas:
+- value: String
+
+Salida: String.
+
+Operaciones/funciones que coordina: split, trim, distinct, joinToString.
+
+### normalizeHiddenItems — líneas 531–537
+
+Firma: private fun normalizeHiddenItems(value: String, validKeys: List<String>): String
+
+Normaliza una cadena/valor externo al conjunto de opciones admitidas por MyNotes y devuelve un fallback estable si el valor no es reconocido.
+
+Entradas:
+- value: String
+- validKeys: List<String>
+
+Salida: String.
+
+Operaciones/funciones que coordina: split, trim, distinct, joinToString.
+
+### normalizeOptionMenuTextColor — líneas 538–538
+
+Firma: private fun normalizeOptionMenuTextColor(value: String): String
+
+Normaliza una cadena/valor externo al conjunto de opciones admitidas por MyNotes y devuelve un fallback estable si el valor no es reconocido.
+
+Entradas:
+- value: String
+
+Salida: String.
+
+Decisiones y protecciones visibles:
+- Usa when para mapear estados/tipos/opciones.
+
+### normalizeConfigurationMode — líneas 542–542
+
+Firma: private fun normalizeConfigurationMode(value: String): String
+
+Normaliza una cadena/valor externo al conjunto de opciones admitidas por MyNotes y devuelve un fallback estable si el valor no es reconocido.
+
+Entradas:
+- value: String
+
+Salida: String.
+
+Decisiones y protecciones visibles:
+- Usa when para mapear estados/tipos/opciones.
+
+### normalizePerformanceMode — líneas 546–546
+
+Firma: private fun normalizePerformanceMode(value: String): String
+
+Normaliza una cadena/valor externo al conjunto de opciones admitidas por MyNotes y devuelve un fallback estable si el valor no es reconocido.
+
+Entradas:
+- value: String
+
+Salida: String.
+
+Decisiones y protecciones visibles:
+- Usa when para mapear estados/tipos/opciones.
+
+### normalizeAnimationStyle — líneas 550–557
+
+Firma: private fun normalizeAnimationStyle(value: String): String
+
+Normaliza una cadena/valor externo al conjunto de opciones admitidas por MyNotes y devuelve un fallback estable si el valor no es reconocido.
+
+Entradas:
+- value: String
+
+Salida: String.
+
+Decisiones y protecciones visibles:
+- Usa when para mapear estados/tipos/opciones.
+
+### normalizeAnimationEasing — líneas 558–563
+
+Firma: private fun normalizeAnimationEasing(value: String): String
+
+Normaliza una cadena/valor externo al conjunto de opciones admitidas por MyNotes y devuelve un fallback estable si el valor no es reconocido.
+
+Entradas:
+- value: String
+
+Salida: String.
+
+Decisiones y protecciones visibles:
+- Usa when para mapear estados/tipos/opciones.
+
+### normalizePaletteKey — líneas 586–597
+
+Firma: private fun normalizePaletteKey(value: String): String
+
+Normaliza una cadena/valor externo al conjunto de opciones admitidas por MyNotes y devuelve un fallback estable si el valor no es reconocido.
+
+Entradas:
+- value: String
+
+Salida: String.
+
+Decisiones y protecciones visibles:
+- Contiene decisiones condicionales (if) para seleccionar comportamiento.
+- Usa when para mapear estados/tipos/opciones.
+
+### isLegacyPalette — líneas 598–598
+
+Firma: private fun isLegacyPalette(value: String): Boolean
+
+Evalúa una condición y devuelve un booleano utilizado para decidir una ruta posterior del flujo.
+
+Entradas:
+- value: String
+
+Salida: Boolean.
+
+### normalizeUiTextColor — líneas 599–604
+
+Firma: private fun normalizeUiTextColor(value: String): String
+
+Normaliza una cadena/valor externo al conjunto de opciones admitidas por MyNotes y devuelve un fallback estable si el valor no es reconocido.
+
+Entradas:
+- value: String
+
+Salida: String.
+
+Decisiones y protecciones visibles:
+- Usa when para mapear estados/tipos/opciones.
+
+### normalizeIconStyle — líneas 605–610
+
+Firma: private fun normalizeIconStyle(value: String): String
+
+Normaliza una cadena/valor externo al conjunto de opciones admitidas por MyNotes y devuelve un fallback estable si el valor no es reconocido.
+
+Entradas:
+- value: String
+
+Salida: String.
+
+Decisiones y protecciones visibles:
+- Usa when para mapear estados/tipos/opciones.
+
+### normalizeAccentColor — líneas 611–617
+
+Firma: private fun normalizeAccentColor(value: String): String
+
+Normaliza una cadena/valor externo al conjunto de opciones admitidas por MyNotes y devuelve un fallback estable si el valor no es reconocido.
+
+Entradas:
+- value: String
+
+Salida: String.
+
+Decisiones y protecciones visibles:
+- Usa when para mapear estados/tipos/opciones.
+
+### normalizeSoundEffectsTheme — líneas 618–625
+
+Firma: private fun normalizeSoundEffectsTheme(value: String): String
+
+Normaliza una cadena/valor externo al conjunto de opciones admitidas por MyNotes y devuelve un fallback estable si el valor no es reconocido.
+
+Entradas:
+- value: String
+
+Salida: String.
+
+Decisiones y protecciones visibles:
+- Usa when para mapear estados/tipos/opciones.
+
+Operaciones/funciones que coordina: trim, lowercase.
+
+### normalizeHapticEffectsStyle — líneas 626–633
+
+Firma: private fun normalizeHapticEffectsStyle(value: String): String
+
+Normaliza una cadena/valor externo al conjunto de opciones admitidas por MyNotes y devuelve un fallback estable si el valor no es reconocido.
+
+Entradas:
+- value: String
+
+Salida: String.
+
+Decisiones y protecciones visibles:
+- Usa when para mapear estados/tipos/opciones.
+
+Operaciones/funciones que coordina: trim, lowercase.
+
+### normalizeSliderStyle — líneas 634–639
+
+Firma: private fun normalizeSliderStyle(value: String): String
+
+Normaliza una cadena/valor externo al conjunto de opciones admitidas por MyNotes y devuelve un fallback estable si el valor no es reconocido.
+
+Entradas:
+- value: String
+
+Salida: String.
+
+Decisiones y protecciones visibles:
+- Usa when para mapear estados/tipos/opciones.
+
+## 5. Cómo se conecta con el resto de MyNotes
+
+- No importa directamente otro componente com.example.mynotes; funciona como modelo/utilidad base o mediante APIs Android/Jetpack.
+
+## 6. Recursos Android que utiliza
+
+- No se detectaron referencias directas R.* en este archivo.
+
+## 7. Tecnologías y efectos relevantes
+
+- Escribe preferencias persistentes.
+
+## 8. Lectura práctica del flujo
+
+Una forma útil de seguir este archivo en el depurador es recorrer estas operaciones en este orden aproximado:
+1. setConfigurationMode — Persiste el ajuste ConfigurationMode. La función recibe el nuevo valor y lo escribe en el almacén de preferencias. Antes de guardar aplica normalización/rango para mantener un estado válido.
+2. setDarkMode — Persiste el ajuste DarkMode. La función recibe el nuevo valor y lo escribe en el almacén de preferencias.
+3. setBackgroundColor — Persiste el ajuste BackgroundColor. La función recibe el nuevo valor y lo escribe en el almacén de preferencias. Antes de guardar aplica normalización/rango para mantener un estado válido.
+4. setBackgroundToneIndex — Persiste el ajuste BackgroundToneIndex. La función recibe el nuevo valor y lo escribe en el almacén de preferencias. Antes de guardar aplica normalización/rango para mantener un estado válido.
+5. setBackgroundIntensity — Persiste el ajuste BackgroundIntensity. La función recibe el nuevo valor y lo escribe en el almacén de preferencias. Antes de guardar aplica normalización/rango para mantener un estado válido.
+6. setSettingsPanelTone — Persiste el ajuste SettingsPanelTone. La función recibe el nuevo valor y lo escribe en el almacén de preferencias. Antes de guardar aplica normalización/rango para mantener un estado válido.
+7. setSurfacePanelIntensity — Persiste el ajuste SurfacePanelIntensity. La función recibe el nuevo valor y lo escribe en el almacén de preferencias. Antes de guardar aplica normalización/rango para mantener un estado válido.
+8. setHeaderIntensity — Persiste el ajuste HeaderIntensity. La función recibe el nuevo valor y lo escribe en el almacén de preferencias. Antes de guardar aplica normalización/rango para mantener un estado válido.
+9. setTextColor — Persiste el ajuste TextColor. La función recibe el nuevo valor y lo escribe en el almacén de preferencias. Antes de guardar aplica normalización/rango para mantener un estado válido.
+10. setTextOutlineEnabled — Persiste el ajuste TextOutlineEnabled. La función recibe el nuevo valor y lo escribe en el almacén de preferencias.
+11. setNoteUiTextColor — Persiste el ajuste NoteUiTextColor. La función recibe el nuevo valor y lo escribe en el almacén de preferencias. Antes de guardar aplica normalización/rango para mantener un estado válido.
+12. setSliderStyle — Persiste el ajuste SliderStyle. La función recibe el nuevo valor y lo escribe en el almacén de preferencias. Antes de guardar aplica normalización/rango para mantener un estado válido.
+
+## 9. Qué no debe romperse al modificarlo
+
+- No renombrar claves persistentes sin migración; ajustes ya guardados dependen de ellas.
+- Conservar validaciones de Uri/ruta y no confiar en nombres externos sin sanitizar.
+
+## 10. Resumen en lenguaje sencillo
+
+En términos simples: Capa DataStore de preferencias. Lee ajustes como Flow, normaliza valores y persiste cada cambio de Configuración. La sección función por función anterior describe qué entra, qué devuelve y qué efectos produce cada operación detectada en el fuente actual.

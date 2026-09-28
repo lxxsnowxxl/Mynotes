@@ -1,0 +1,296 @@
+# ReminderScreen.kt — explicación completa del código
+
+Ruta: app/src/main/java/com/example/mynotes/ui/theme/ReminderScreen.kt  
+SHA-256: 8bac9372df3bfe0175f20ae7ad75b1fc275e86add4ea7174fd50af1c15c5d731  
+Líneas: 902  
+Package: com.example.mynotes.ui
+
+## 1. Para qué existe este archivo
+
+UI Compose de lista y editor de recordatorios, incluyendo fecha/hora, accesos en minutos, repetición, prioridad, color y estado.
+
+## 2. Tipos/clases declarados
+
+- Línea 91 — private data  class ReminderColorOption.
+
+## 3. Estado, constantes y valores importantes
+
+- ReminderFixedColors (línea 92) inicia con listOf(. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- configuration (línea 113) inicia con LocalConfiguration.current. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- editingReminder (línea 129) inicia con editingReminderId?.let { id -> reminders.firstOrNull { it.id == id } }. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- editorVisible (línea 131) inicia con creatingReminder || editingReminder != null. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- context (línea 187) inicia con LocalContext.current. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- fontFamily (línea 188) inicia con remember(settings.font. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- baseFontSize (línea 189) inicia con settings.fontSize.coerceIn(12f. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- iconSize (línea 190) inicia con settings.iconSize.coerceIn(18f. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- background (línea 191) inicia con MaterialTheme.colorScheme.background. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- panel (línea 192) inicia con MaterialTheme.colorScheme.surfaceContainer. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- primaryText (línea 193) inicia con resolveUiTextColor(settings.textColor. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- secondaryText (línea 194) inicia con resolveSecondaryUiTextColor(settings.textColor. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- panelText (línea 195) inicia con resolveUiTextColor(settings.textColor. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- panelSecondary (línea 196) inicia con resolveSecondaryUiTextColor(settings.textColor. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- activeCount (línea 197) inicia con remember(reminders. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- container (línea 360) inicia con MaterialTheme.colorScheme.surfaceContainerLow. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- primary (línea 361) inicia con resolveUiTextColor(settings.textColor. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- secondary (línea 362) inicia con resolveSecondaryUiTextColor(settings.textColor. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- locale (línea 363) inicia con reminderLocale(. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- dateFormatter (línea 364) inicia con remember(locale. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- indicatorColor (línea 365) inicia con reminderColor(reminder.colorKey. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- initialTrigger (línea 447) inicia con remember(reminder?.id. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- now (línea 448) inicia con System.currentTimeMillis(. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- saved (línea 449) inicia con reminder?.triggerAtMillis. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- notificationPermissionLauncher (línea 460) inicia con androidx.activity.compose.rememberLauncherForActivityResult(. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- contentPanel (línea 466) inicia con MaterialTheme.colorScheme.surfaceContainer. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- contentPanelText (línea 469) inicia con resolveUiTextColor(settings.textColor. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- timeFormatter (línea 472) inicia con remember(locale. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- panelColor (línea 645) inicia con MaterialTheme.colorScheme.surfaceContainerHigh. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- chipColor (línea 648) inicia con MaterialTheme.colorScheme.surfaceVariant. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- chipText (línea 649) inicia con resolveUiTextColor(settings.textColor. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- selectedChipColor (línea 650) inicia con MaterialTheme.colorScheme.primary. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- selectedChipText (línea 651) inicia con automaticUiTextColor(selectedChipColor. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- paletteColor (línea 652) inicia con MaterialTheme.colorScheme.primary. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- colorOptions (línea 653) inicia con remember(paletteColor. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+
+## 4. Funciones y flujo, una por una
+
+### reminderColor — líneas 106–109
+
+Firma: private fun reminderColor(key: String): Color
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+Entradas:
+- key: String
+
+Salida: Color.
+
+Decisiones y protecciones visibles:
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (if) para seleccionar comportamiento.
+
+### reminderLocale — líneas 112–117
+
+Firma: private fun reminderLocale(): Locale
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+Salida: Locale.
+
+Efectos/APIs observados en el cuerpo:
+- Participa en estado/efectos de Compose.
+
+Decisiones y protecciones visibles:
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+
+Operaciones/funciones que coordina: getDefault.
+
+### ReminderScreen — líneas 120–176
+
+Firma: fun ReminderScreen( settings: AppSettings, repository: ReminderRepository, onBack: () -> Unit, initialCreate: Boolean = false )
+
+Contenedor de la funcionalidad de recordatorios. Mantiene la selección/editor actual, observa el StateFlow del repositorio, gestiona volver y decide si renderizar la lista o el editor.
+
+Entradas:
+- settings: AppSettings
+- repository: ReminderRepository
+- onBack: () -> Unit
+- initialCreate: Boolean = false
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Participa en estado/efectos de Compose.
+
+Decisiones y protecciones visibles:
+- Contiene decisiones condicionales (if) para seleccionar comportamiento.
+
+Operaciones/funciones que coordina: collectAsStateWithLifecycle, onBack, ConfigurableAnimatedContent, ReminderEditor, ReminderList, setEnabled.
+
+### ReminderList — líneas 179–348
+
+Firma: private fun ReminderList( settings: AppSettings, reminders: List<Reminder>, onBack: () -> Unit, onCreate: () -> Unit, onEdit: (Reminder) -> Unit, onToggle: (Reminder, Boolean) -> Unit )
+
+Dibuja la cabecera y las tarjetas de todos los recordatorios. Muestra el número activo, permite activar/desactivar, editar y abrir el FAB de creación sin duplicar otros botones de alta.
+
+Entradas:
+- settings: AppSettings
+- reminders: List<Reminder>
+- onBack: () -> Unit
+- onCreate: () -> Unit
+- onEdit: (Reminder) -> Unit
+- onToggle: (Reminder, Boolean) -> Unit
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Participa en estado/efectos de Compose.
+
+Decisiones y protecciones visibles:
+- Limita valores con coerce* para evitar estados fuera de rango.
+- Contiene decisiones condicionales (if) para seleccionar comportamiento.
+
+Operaciones/funciones que coordina: appFontFamily, coerceIn, resolveUiTextColor, resolveSecondaryUiTextColor, Scaffold, FloatingActionButton, playAction, onCreate, RoundedCornerShape, size, LazyColumn, fillMaxSize, padding, spacedBy, fillMaxWidth, IconButton, onBack, weight.
+
+### ReminderCard — líneas 351–433
+
+Firma: private fun ReminderCard( reminder: Reminder, settings: AppSettings, onEdit: () -> Unit, onToggle: (Boolean) -> Unit )
+
+Presenta un recordatorio individual con color de acento, título, descripción, fecha/hora, repetición, Switch y acceso a edición.
+
+Entradas:
+- reminder: Reminder
+- settings: AppSettings
+- onEdit: () -> Unit
+- onToggle: (Boolean) -> Unit
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Participa en estado/efectos de Compose.
+
+Decisiones y protecciones visibles:
+- Limita valores con coerce* para evitar estados fuera de rango.
+- Contiene decisiones condicionales (if) para seleccionar comportamiento.
+
+Operaciones/funciones que coordina: appFontFamily, coerceIn, resolveUiTextColor, resolveSecondaryUiTextColor, reminderLocale, SimpleDateFormat, reminderColor, fillMaxWidth, clickable, RoundedCornerShape, cardColors, cardElevation, width, height, background, weight, padding, isNotBlank.
+
+### ReminderEditor — líneas 436–624
+
+Firma: private fun ReminderEditor( settings: AppSettings, reminder: Reminder?, repository: ReminderRepository, onDone: () -> Unit, onCancel: () -> Unit )
+
+Editor completo de alta/modificación. Mantiene estado local de campos, valida que el disparo sea futuro, ofrece DatePicker/TimePicker y accesos +5/+10/+15/+30/+60, y delega guardado/reprogramación.
+
+Entradas:
+- settings: AppSettings
+- reminder: Reminder?
+- repository: ReminderRepository
+- onDone: () -> Unit
+- onCancel: () -> Unit
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Participa en estado/efectos de Compose.
+
+Decisiones y protecciones visibles:
+- Limita valores con coerce* para evitar estados fuera de rango.
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (if) para seleccionar comportamiento.
+
+Operaciones/funciones que coordina: appFontFamily, coerceIn, currentTimeMillis, orEmpty, mutableLongStateOf, rememberLauncherForActivityResult, RequestPermission, resolveUiTextColor, resolveSecondaryUiTextColor, reminderLocale, SimpleDateFormat, saveReminder, isBlank, getString, checkSelfPermission, launch, upsert, Reminder.
+
+### saveReminder — líneas 474–503
+
+Firma: fun saveReminder()
+
+Valida título/fecha-hora, construye una instancia Reminder conservando id/createdAt cuando se edita, la persiste con ReminderRepository y programa/cancela su alarma según enabled.
+
+Salida: Unit o inferido por Kotlin.
+
+Decisiones y protecciones visibles:
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (if) para seleccionar comportamiento.
+
+Operaciones/funciones que coordina: isBlank, getString, currentTimeMillis, checkSelfPermission, launch, upsert, Reminder, trim, playAction, onDone.
+
+### ReminderToolsPanel — líneas 627–885
+
+Firma: private fun ReminderToolsPanel( settings: AppSettings, fontFamily: FontFamily, triggerAtMillis: Long, onTriggerChange: (Long) -> Unit, repeatMode: String, onRepeatChange: (String) -> Unit, priority: String, onPriorityChange: (String) -> Unit, colorKey: String, onColorChange: (String) -> Unit, enabled: Boolean, onEnabledChange: (Boolean) -> Unit, dateText: String, timeText: String )
+
+Panel de herramientas del editor: fecha, hora, accesos rápidos en minutos, repetición, prioridad, color y activación. Usa estilos/sonido/háptica derivados de AppSettings.
+
+Entradas:
+- settings: AppSettings
+- fontFamily: FontFamily
+- triggerAtMillis: Long
+- onTriggerChange: (Long) -> Unit
+- repeatMode: String
+- onRepeatChange: (String) -> Unit
+- priority: String
+- onPriorityChange: (String) -> Unit
+- colorKey: String
+- onColorChange: (String) -> Unit
+- enabled: Boolean
+- onEnabledChange: (Boolean) -> Unit
+- dateText: String
+- timeText: String
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Participa en estado/efectos de Compose.
+- Abre selector nativo de fecha/hora.
+
+Decisiones y protecciones visibles:
+- Limita valores con coerce* para evitar estados fuera de rango.
+- Contiene decisiones condicionales (if) para seleccionar comportamiento.
+
+Operaciones/funciones que coordina: coerceIn, resolveUiTextColor, resolveSecondaryUiTextColor, automaticUiTextColor, ReminderColorOption, RoundedCornerShape, padding, spacedBy, OutlinedButton, playAction, getInstance, DatePickerDialog, set, onTriggerChange, get, show, weight, outlinedButtonColors.
+
+### repeatLabel — líneas 888–888
+
+Firma: private fun repeatLabel(mode: String): String
+
+Convierte un valor interno a texto breve de presentación para la interfaz.
+
+Entradas:
+- mode: String
+
+Salida: String.
+
+Decisiones y protecciones visibles:
+- Usa when para mapear estados/tipos/opciones.
+
+### priorityLabel — líneas 897–897
+
+Firma: private fun priorityLabel(priority: String): String
+
+Convierte un valor interno a texto breve de presentación para la interfaz.
+
+Entradas:
+- priority: String
+
+Salida: String.
+
+Decisiones y protecciones visibles:
+- Usa when para mapear estados/tipos/opciones.
+
+## 5. Cómo se conecta con el resto de MyNotes
+
+- Usa com.example.mynotes.R.
+- Usa com.example.mynotes.reminders.Reminder.
+- Usa com.example.mynotes.reminders.ReminderRepository.
+- Usa com.example.mynotes.settings.AppSettings.
+- Usa com.example.mynotes.ui.motion.ConfigurableAnimatedContent.
+- Usa com.example.mynotes.ui.sound.UiActionSound.
+- Usa com.example.mynotes.ui.sound.UiSound.
+- Usa com.example.mynotes.ui.sound.UiSoundPlayer.
+- Usa com.example.mynotes.ui.theme.appFontFamily.
+- Usa com.example.mynotes.ui.theme.automaticUiTextColor.
+- Usa com.example.mynotes.ui.theme.resolveSecondaryUiTextColor.
+- Usa com.example.mynotes.ui.theme.resolveUiGraphicColor.
+- Usa com.example.mynotes.ui.theme.resolveUiTextColor.
+
+## 6. Recursos Android que utiliza
+
+- R.string: back, edit_note, reminder_active_count, reminder_color, reminder_content_section, reminder_create_title, reminder_delete, reminder_description, reminder_edit_title, reminder_editor_subtitle, reminder_empty, reminder_empty_description, reminder_enabled, reminder_enabled_description, reminder_future_time_required, reminder_in_minutes, reminder_new, reminder_panel_description, reminder_panel_title, reminder_priority, reminder_priority_high, reminder_priority_low, reminder_priority_normal, reminder_quick_time, reminder_repeat, reminder_repeat_daily, reminder_repeat_monthly, reminder_repeat_none, reminder_repeat_weekdays, reminder_repeat_weekly, reminder_title, reminder_title_required, reminder_tools, reminder_untitled, reminder_when, reminders, save
+
+## 7. Tecnologías y efectos relevantes
+
+- Participa en estado/efectos de Compose.
+- Abre selector nativo de fecha/hora.
+
+## 8. Lectura práctica del flujo
+
+Una forma útil de seguir este archivo en el depurador es recorrer estas operaciones en este orden aproximado:
+1. ReminderScreen — Contenedor de la funcionalidad de recordatorios. Mantiene la selección/editor actual, observa el StateFlow del repositorio, gestiona volver y decide si renderizar la lista o el editor.
+2. saveReminder — Valida título/fecha-hora, construye una instancia Reminder conservando id/createdAt cuando se edita, la persiste con ReminderRepository y programa/cancela su alarma según enabled.
+
+## 9. Qué no debe romperse al modificarlo
+
+- Probar fechas cercanas, repetición, reinicio, modo idle y permisos/notificaciones según API.
+- Evitar trabajo bloqueante durante composición y mantener estado estable para limitar recomposiciones.
+
+## 10. Resumen en lenguaje sencillo
+
+En términos simples: UI Compose de lista y editor de recordatorios, incluyendo fecha/hora, accesos en minutos, repetición, prioridad, color y estado. La sección función por función anterior describe qué entra, qué devuelve y qué efectos produce cada operación detectada en el fuente actual.

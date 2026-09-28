@@ -1,103 +1,994 @@
-# SettingsViewModel.kt — documentación del código actual
-**Ruta real:** `app/src/main/java/com/example/mynotes/viewmodel/SettingsViewModel.kt`  **SHA-256:** `6890b79306855a674d337a92316af76de3986fc96f44651fe8e54041dfe910a9`  **Líneas:** 303 · **Bytes:** 10972 · **Imports:** 10 · **Declaraciones detectadas:** 55
-> Documento generado fuera de `app/` a partir de lectura del código. El fuente es la única fuente de verdad; no se modificó para generar esta documentación.
-## 1. Responsabilidad
+# SettingsViewModel.kt — explicación completa del código
 
-Puente entre SettingsRepository y UI; este nombre existe en dos rutas, una es stub de compatibilidad y la clase real vive en viewmodel/.
-## 2. Package e imports
+**Ruta:** `app/src/main/java/com/example/mynotes/viewmodel/SettingsViewModel.kt`  
+**SHA-256:** `6890b79306855a674d337a92316af76de3986fc96f44651fe8e54041dfe910a9`  
+**Líneas:** 304  
+**Package:** `com.example.mynotes.viewmodel`
 
-Package declarado: `com.example.mynotes.viewmodel`.
+## 1. Para qué existe este archivo
 
-### Android / Jetpack / Compose
+Archivo Kotlin del subsistema `com.example.mynotes.viewmodel`. Su responsabilidad se deriva de las declaraciones y dependencias detalladas a continuación.
 
-`android.app.Application`, `androidx.lifecycle.AndroidViewModel`, `androidx.lifecycle.viewModelScope`
+## 2. Tipos/clases declarados
 
-### Proyecto MyNotes
+- Línea **14** — `class SettingsViewModel`.
 
-`com.example.mynotes.settings.AppSettings`, `com.example.mynotes.settings.SettingsRepository`, `com.example.mynotes.widget.MyNotesWidgetUpdater`
+## 3. Estado, constantes y valores importantes
 
-### Kotlin / Coroutines / Java
+- **`repository`** (línea 15) inicia con `SettingsRepository(application`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`settings`** (línea 16) inicia con `repository.settings.stateIn(scope = viewModelScope`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`normalized`** (línea 47) inicia con `value.coerceIn(0f`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
 
-`kotlinx.coroutines.flow.SharingStarted`, `kotlinx.coroutines.flow.StateFlow`, `kotlinx.coroutines.flow.stateIn`, `kotlinx.coroutines.launch`
+## 4. Funciones y flujo, una por una
 
-## 3. Declaraciones detectadas
+### `setConfigurationMode` — líneas 23–27
 
-| Línea | Tipo | Nombre | Firma/inicio |
-|---:|---|---|---|
-| 13 | `class` | `SettingsViewModel` | `` |
-| 23 | `fun` | `setConfigurationMode` | `fun setConfigurationMode(value: String) {` |
-| 28 | `fun` | `setDarkMode` | `fun setDarkMode(value: Boolean) {` |
-| 34 | `fun` | `setBackgroundColor` | `fun setBackgroundColor(value: String) {` |
-| 40 | `fun` | `setBackgroundToneIndex` | `fun setBackgroundToneIndex(value: Int) {` |
-| 46 | `fun` | `setBackgroundIntensity` | `fun setBackgroundIntensity(value: Float) {` |
-| 54 | `fun` | `setSettingsPanelTone` | `fun setSettingsPanelTone(value: Float) {` |
-| 59 | `fun` | `setSurfacePanelIntensity` | `fun setSurfacePanelIntensity(value: Float) {` |
-| 67 | `fun` | `setHeaderIntensity` | `fun setHeaderIntensity(value: Float) {` |
-| 72 | `fun` | `setTextColor` | `fun setTextColor(value: String) {` |
-| 77 | `fun` | `setTextOutlineEnabled` | `fun setTextOutlineEnabled(value: Boolean) {` |
-| 82 | `fun` | `setNoteUiTextColor` | `fun setNoteUiTextColor(value: String) {` |
-| 87 | `fun` | `setSliderStyle` | `fun setSliderStyle(value: String) {` |
-| 92 | `fun` | `setFont` | `fun setFont(value: String) {` |
-| 97 | `fun` | `setFontSize` | `fun setFontSize(value: Float) {` |
-| 102 | `fun` | `setSoundEffectsEnabled` | `fun setSoundEffectsEnabled(value: Boolean) {` |
-| 107 | `fun` | `setSoundEffectsVolume` | `fun setSoundEffectsVolume(value: Float) {` |
-| 112 | `fun` | `setSoundEffectsTheme` | `fun setSoundEffectsTheme(value: String) {` |
-| 117 | `fun` | `setHapticEffectsEnabled` | `fun setHapticEffectsEnabled(value: Boolean) {` |
-| 122 | `fun` | `setHapticEffectsIntensity` | `fun setHapticEffectsIntensity(value: Float) {` |
-| 127 | `fun` | `setHapticEffectsStyle` | `fun setHapticEffectsStyle(value: String) {` |
-| 132 | `fun` | `setLanguage` | `fun setLanguage(value: String) {` |
-| 138 | `fun` | `setGridColumns` | `fun setGridColumns(value: Int) {` |
-| 143 | `fun` | `setSortOrder` | `fun setSortOrder(value: String) {` |
-| 148 | `fun` | `setProfileImageUri` | `fun setProfileImageUri(value: String) {` |
-| 153 | `fun` | `setProfileImageSize` | `fun setProfileImageSize(value: Float) {` |
-| 158 | `fun` | `setIconStyle` | `fun setIconStyle(value: String) {` |
-| 163 | `fun` | `setIconSize` | `fun setIconSize(value: Float) {` |
-| 168 | `fun` | `setAccentColor` | `fun setAccentColor(value: String) {` |
-| 173 | `fun` | `setNoteCardCornerRadius` | `fun setNoteCardCornerRadius(value: Float) {` |
-| 178 | `fun` | `setNoteCardElevation` | `fun setNoteCardElevation(value: Float) {` |
-| 183 | `fun` | `setNoteCardPadding` | `fun setNoteCardPadding(value: Float) {` |
-| 188 | `fun` | `setNoteCardImageHeight` | `fun setNoteCardImageHeight(value: Float) {` |
-| 193 | `fun` | `setNoteCardOutlineWidth` | `fun setNoteCardOutlineWidth(value: Float) {` |
-| 198 | `fun` | `setNoteTitleMaxLines` | `fun setNoteTitleMaxLines(value: Int) {` |
-| 203 | `fun` | `setNoteContentMaxLines` | `fun setNoteContentMaxLines(value: Int) {` |
-| 208 | `fun` | `setNoteLineSpacing` | `fun setNoteLineSpacing(value: Float) {` |
-| 213 | `fun` | `setShowNoteDate` | `fun setShowNoteDate(value: Boolean) {` |
-| 218 | `fun` | `setShowCategoryChip` | `fun setShowCategoryChip(value: Boolean) {` |
-| 223 | `fun` | `setShowFavoriteIcon` | `fun setShowFavoriteIcon(value: Boolean) {` |
-| 228 | `fun` | `setFabSize` | `fun setFabSize(value: Float) {` |
-| 233 | `fun` | `setOptionMenuOrder` | `fun setOptionMenuOrder(value: String) {` |
-| 238 | `fun` | `setOptionMenuHiddenItems` | `fun setOptionMenuHiddenItems(value: String) {` |
-| 243 | `fun` | `setOptionMenuShowIcons` | `fun setOptionMenuShowIcons(value: Boolean) {` |
-| 248 | `fun` | `setOptionMenuTextColor` | `fun setOptionMenuTextColor(value: String) {` |
-| 253 | `fun` | `setOptionMenuOpacity` | `fun setOptionMenuOpacity(value: Float) {` |
-| 258 | `fun` | `setPriorityMenuHiddenItems` | `fun setPriorityMenuHiddenItems(value: String) {` |
-| 263 | `fun` | `setColorMenuHiddenItems` | `fun setColorMenuHiddenItems(value: String) {` |
-| 268 | `fun` | `resetOptionMenuSettings` | `fun resetOptionMenuSettings() {` |
-| 273 | `fun` | `setPerformanceMode` | `fun setPerformanceMode(value: String) {` |
-| 278 | `fun` | `setAnimationsEnabled` | `fun setAnimationsEnabled(value: Boolean) {` |
-| 283 | `fun` | `setAnimationSpeed` | `fun setAnimationSpeed(value: Float) {` |
-| 288 | `fun` | `setAnimationStyle` | `fun setAnimationStyle(value: String) {` |
-| 293 | `fun` | `setAnimationEasing` | `fun setAnimationEasing(value: String) {` |
-| 298 | `fun` | `setAnimationIntensity` | `fun setAnimationIntensity(value: Float) {` |
+**Firma:** `fun setConfigurationMode(value: String)`
 
-## 4. Estado, efectos y límites observables
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
 
-- **Coroutines:** 55 aparición/apariciones.
-- **Flow/StateFlow:** 4 aparición/apariciones.
-- **coerce*:** 18 aparición/apariciones.
+**Entradas:**
+- `value: String`
 
-Estas cifras son indicadores de superficie de cambio, no diagnósticos de error. Cualquier modificación debe preservar contratos de persistencia, lifecycle, límites numéricos y nulabilidad visibles en el fuente.
+**Salida:** Unit o inferido por Kotlin.
 
-## 5. Dependencias internas directas
+**Efectos/APIs observados en el cuerpo:**
+- Lanza trabajo asíncrono mediante coroutines.
 
-- `com.example.mynotes.settings.AppSettings`
-- `com.example.mynotes.settings.SettingsRepository`
-- `com.example.mynotes.widget.MyNotesWidgetUpdater`
+**Operaciones/funciones que coordina:** `setConfigurationMode`.
 
-## 6. Recursos Android referenciados
+### `setDarkMode` — líneas 28–33
 
-No se detectaron referencias `R.*` directas.
+**Firma:** `fun setDarkMode(value: Boolean)`
 
-## 7. Puntos de revisión al modificarlo
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
 
-- Conservar rangos `coerce*`, claves DataStore y compatibilidad con backups existentes.
+**Entradas:**
+- `value: Boolean`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lanza trabajo asíncrono mediante coroutines.
+
+**Operaciones/funciones que coordina:** `setDarkMode`, `requestUpdate`.
+
+### `setBackgroundColor` — líneas 34–39
+
+**Firma:** `fun setBackgroundColor(value: String)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: String`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lanza trabajo asíncrono mediante coroutines.
+
+**Operaciones/funciones que coordina:** `setBackgroundColor`, `requestUpdate`.
+
+### `setBackgroundToneIndex` — líneas 40–45
+
+**Firma:** `fun setBackgroundToneIndex(value: Int)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: Int`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lanza trabajo asíncrono mediante coroutines.
+
+**Operaciones/funciones que coordina:** `setBackgroundToneIndex`, `requestUpdate`.
+
+### `setBackgroundIntensity` — líneas 46–53
+
+**Firma:** `fun setBackgroundIntensity(value: Float)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: Float`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lanza trabajo asíncrono mediante coroutines.
+
+**Decisiones y protecciones visibles:**
+- Limita valores con `coerce*` para evitar estados fuera de rango.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `coerceIn`, `setBackgroundIntensity`, `requestUpdate`.
+
+### `setSettingsPanelTone` — líneas 54–58
+
+**Firma:** `fun setSettingsPanelTone(value: Float)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: Float`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lanza trabajo asíncrono mediante coroutines.
+
+**Decisiones y protecciones visibles:**
+- Limita valores con `coerce*` para evitar estados fuera de rango.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `coerceIn`, `setSettingsPanelTone`.
+
+### `setSurfacePanelIntensity` — líneas 59–66
+
+**Firma:** `fun setSurfacePanelIntensity(value: Float)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: Float`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lanza trabajo asíncrono mediante coroutines.
+
+**Decisiones y protecciones visibles:**
+- Limita valores con `coerce*` para evitar estados fuera de rango.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `coerceIn`, `setSurfacePanelIntensity`, `requestUpdate`.
+
+### `setHeaderIntensity` — líneas 67–71
+
+**Firma:** `fun setHeaderIntensity(value: Float)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: Float`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lanza trabajo asíncrono mediante coroutines.
+
+**Decisiones y protecciones visibles:**
+- Limita valores con `coerce*` para evitar estados fuera de rango.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `coerceIn`, `setHeaderIntensity`.
+
+### `setTextColor` — líneas 72–76
+
+**Firma:** `fun setTextColor(value: String)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: String`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lanza trabajo asíncrono mediante coroutines.
+
+**Operaciones/funciones que coordina:** `setTextColor`.
+
+### `setTextOutlineEnabled` — líneas 77–81
+
+**Firma:** `fun setTextOutlineEnabled(value: Boolean)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: Boolean`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lanza trabajo asíncrono mediante coroutines.
+
+**Operaciones/funciones que coordina:** `setTextOutlineEnabled`.
+
+### `setNoteUiTextColor` — líneas 82–86
+
+**Firma:** `fun setNoteUiTextColor(value: String)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: String`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lanza trabajo asíncrono mediante coroutines.
+
+**Operaciones/funciones que coordina:** `setNoteUiTextColor`.
+
+### `setSliderStyle` — líneas 87–91
+
+**Firma:** `fun setSliderStyle(value: String)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: String`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lanza trabajo asíncrono mediante coroutines.
+
+**Operaciones/funciones que coordina:** `setSliderStyle`.
+
+### `setFont` — líneas 92–96
+
+**Firma:** `fun setFont(value: String)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: String`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lanza trabajo asíncrono mediante coroutines.
+
+**Operaciones/funciones que coordina:** `setFont`.
+
+### `setFontSize` — líneas 97–101
+
+**Firma:** `fun setFontSize(value: Float)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: Float`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lanza trabajo asíncrono mediante coroutines.
+
+**Decisiones y protecciones visibles:**
+- Limita valores con `coerce*` para evitar estados fuera de rango.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `coerceIn`, `setFontSize`.
+
+### `setSoundEffectsEnabled` — líneas 102–106
+
+**Firma:** `fun setSoundEffectsEnabled(value: Boolean)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: Boolean`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lanza trabajo asíncrono mediante coroutines.
+
+**Operaciones/funciones que coordina:** `setSoundEffectsEnabled`.
+
+### `setSoundEffectsVolume` — líneas 107–111
+
+**Firma:** `fun setSoundEffectsVolume(value: Float)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: Float`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lanza trabajo asíncrono mediante coroutines.
+
+**Decisiones y protecciones visibles:**
+- Limita valores con `coerce*` para evitar estados fuera de rango.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `coerceIn`, `setSoundEffectsVolume`.
+
+### `setSoundEffectsTheme` — líneas 112–116
+
+**Firma:** `fun setSoundEffectsTheme(value: String)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: String`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lanza trabajo asíncrono mediante coroutines.
+
+**Operaciones/funciones que coordina:** `setSoundEffectsTheme`.
+
+### `setHapticEffectsEnabled` — líneas 117–121
+
+**Firma:** `fun setHapticEffectsEnabled(value: Boolean)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: Boolean`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lanza trabajo asíncrono mediante coroutines.
+
+**Operaciones/funciones que coordina:** `setHapticEffectsEnabled`.
+
+### `setHapticEffectsIntensity` — líneas 122–126
+
+**Firma:** `fun setHapticEffectsIntensity(value: Float)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: Float`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lanza trabajo asíncrono mediante coroutines.
+
+**Decisiones y protecciones visibles:**
+- Limita valores con `coerce*` para evitar estados fuera de rango.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `coerceIn`, `setHapticEffectsIntensity`.
+
+### `setHapticEffectsStyle` — líneas 127–131
+
+**Firma:** `fun setHapticEffectsStyle(value: String)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: String`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lanza trabajo asíncrono mediante coroutines.
+
+**Operaciones/funciones que coordina:** `setHapticEffectsStyle`.
+
+### `setLanguage` — líneas 132–137
+
+**Firma:** `fun setLanguage(value: String)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: String`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lanza trabajo asíncrono mediante coroutines.
+
+**Operaciones/funciones que coordina:** `setLanguage`, `requestUpdate`.
+
+### `setGridColumns` — líneas 138–142
+
+**Firma:** `fun setGridColumns(value: Int)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: Int`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lanza trabajo asíncrono mediante coroutines.
+
+**Operaciones/funciones que coordina:** `setGridColumns`.
+
+### `setSortOrder` — líneas 143–147
+
+**Firma:** `fun setSortOrder(value: String)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: String`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lanza trabajo asíncrono mediante coroutines.
+
+**Operaciones/funciones que coordina:** `setSortOrder`.
+
+### `setProfileImageUri` — líneas 148–152
+
+**Firma:** `fun setProfileImageUri(value: String)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: String`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lanza trabajo asíncrono mediante coroutines.
+
+**Operaciones/funciones que coordina:** `setProfileImageUri`.
+
+### `setProfileImageSize` — líneas 153–157
+
+**Firma:** `fun setProfileImageSize(value: Float)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: Float`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lanza trabajo asíncrono mediante coroutines.
+
+**Decisiones y protecciones visibles:**
+- Limita valores con `coerce*` para evitar estados fuera de rango.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `coerceIn`, `setProfileImageSize`.
+
+### `setIconStyle` — líneas 158–162
+
+**Firma:** `fun setIconStyle(value: String)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: String`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lanza trabajo asíncrono mediante coroutines.
+
+**Operaciones/funciones que coordina:** `setIconStyle`.
+
+### `setIconSize` — líneas 163–167
+
+**Firma:** `fun setIconSize(value: Float)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: Float`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lanza trabajo asíncrono mediante coroutines.
+
+**Decisiones y protecciones visibles:**
+- Limita valores con `coerce*` para evitar estados fuera de rango.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `coerceIn`, `setIconSize`.
+
+### `setAccentColor` — líneas 168–172
+
+**Firma:** `fun setAccentColor(value: String)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: String`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lanza trabajo asíncrono mediante coroutines.
+
+**Operaciones/funciones que coordina:** `setAccentColor`.
+
+### `setNoteCardCornerRadius` — líneas 173–177
+
+**Firma:** `fun setNoteCardCornerRadius(value: Float)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: Float`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lanza trabajo asíncrono mediante coroutines.
+
+**Decisiones y protecciones visibles:**
+- Limita valores con `coerce*` para evitar estados fuera de rango.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `coerceIn`, `setNoteCardCornerRadius`.
+
+### `setNoteCardElevation` — líneas 178–182
+
+**Firma:** `fun setNoteCardElevation(value: Float)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: Float`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lanza trabajo asíncrono mediante coroutines.
+
+**Decisiones y protecciones visibles:**
+- Limita valores con `coerce*` para evitar estados fuera de rango.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `coerceIn`, `setNoteCardElevation`.
+
+### `setNoteCardPadding` — líneas 183–187
+
+**Firma:** `fun setNoteCardPadding(value: Float)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: Float`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lanza trabajo asíncrono mediante coroutines.
+
+**Decisiones y protecciones visibles:**
+- Limita valores con `coerce*` para evitar estados fuera de rango.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `coerceIn`, `setNoteCardPadding`.
+
+### `setNoteCardImageHeight` — líneas 188–192
+
+**Firma:** `fun setNoteCardImageHeight(value: Float)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: Float`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lanza trabajo asíncrono mediante coroutines.
+
+**Decisiones y protecciones visibles:**
+- Limita valores con `coerce*` para evitar estados fuera de rango.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `coerceIn`, `setNoteCardImageHeight`.
+
+### `setNoteCardOutlineWidth` — líneas 193–197
+
+**Firma:** `fun setNoteCardOutlineWidth(value: Float)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: Float`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lanza trabajo asíncrono mediante coroutines.
+
+**Decisiones y protecciones visibles:**
+- Limita valores con `coerce*` para evitar estados fuera de rango.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `coerceIn`, `setNoteCardOutlineWidth`.
+
+### `setNoteTitleMaxLines` — líneas 198–202
+
+**Firma:** `fun setNoteTitleMaxLines(value: Int)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: Int`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lanza trabajo asíncrono mediante coroutines.
+
+**Operaciones/funciones que coordina:** `setNoteTitleMaxLines`.
+
+### `setNoteContentMaxLines` — líneas 203–207
+
+**Firma:** `fun setNoteContentMaxLines(value: Int)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: Int`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lanza trabajo asíncrono mediante coroutines.
+
+**Operaciones/funciones que coordina:** `setNoteContentMaxLines`.
+
+### `setNoteLineSpacing` — líneas 208–212
+
+**Firma:** `fun setNoteLineSpacing(value: Float)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: Float`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lanza trabajo asíncrono mediante coroutines.
+
+**Decisiones y protecciones visibles:**
+- Limita valores con `coerce*` para evitar estados fuera de rango.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `coerceIn`, `setNoteLineSpacing`.
+
+### `setShowNoteDate` — líneas 213–217
+
+**Firma:** `fun setShowNoteDate(value: Boolean)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: Boolean`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lanza trabajo asíncrono mediante coroutines.
+
+**Operaciones/funciones que coordina:** `setShowNoteDate`.
+
+### `setShowCategoryChip` — líneas 218–222
+
+**Firma:** `fun setShowCategoryChip(value: Boolean)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: Boolean`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lanza trabajo asíncrono mediante coroutines.
+
+**Operaciones/funciones que coordina:** `setShowCategoryChip`.
+
+### `setShowFavoriteIcon` — líneas 223–227
+
+**Firma:** `fun setShowFavoriteIcon(value: Boolean)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: Boolean`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lanza trabajo asíncrono mediante coroutines.
+
+**Operaciones/funciones que coordina:** `setShowFavoriteIcon`.
+
+### `setFabSize` — líneas 228–232
+
+**Firma:** `fun setFabSize(value: Float)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: Float`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lanza trabajo asíncrono mediante coroutines.
+
+**Decisiones y protecciones visibles:**
+- Limita valores con `coerce*` para evitar estados fuera de rango.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `coerceIn`, `setFabSize`.
+
+### `setOptionMenuOrder` — líneas 233–237
+
+**Firma:** `fun setOptionMenuOrder(value: String)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: String`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lanza trabajo asíncrono mediante coroutines.
+
+**Operaciones/funciones que coordina:** `setOptionMenuOrder`.
+
+### `setOptionMenuHiddenItems` — líneas 238–242
+
+**Firma:** `fun setOptionMenuHiddenItems(value: String)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: String`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lanza trabajo asíncrono mediante coroutines.
+
+**Operaciones/funciones que coordina:** `setOptionMenuHiddenItems`.
+
+### `setOptionMenuShowIcons` — líneas 243–247
+
+**Firma:** `fun setOptionMenuShowIcons(value: Boolean)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: Boolean`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lanza trabajo asíncrono mediante coroutines.
+
+**Operaciones/funciones que coordina:** `setOptionMenuShowIcons`.
+
+### `setOptionMenuTextColor` — líneas 248–252
+
+**Firma:** `fun setOptionMenuTextColor(value: String)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: String`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lanza trabajo asíncrono mediante coroutines.
+
+**Operaciones/funciones que coordina:** `setOptionMenuTextColor`.
+
+### `setOptionMenuOpacity` — líneas 253–257
+
+**Firma:** `fun setOptionMenuOpacity(value: Float)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: Float`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lanza trabajo asíncrono mediante coroutines.
+
+**Operaciones/funciones que coordina:** `setOptionMenuOpacity`.
+
+### `setPriorityMenuHiddenItems` — líneas 258–262
+
+**Firma:** `fun setPriorityMenuHiddenItems(value: String)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: String`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lanza trabajo asíncrono mediante coroutines.
+
+**Operaciones/funciones que coordina:** `setPriorityMenuHiddenItems`.
+
+### `setColorMenuHiddenItems` — líneas 263–267
+
+**Firma:** `fun setColorMenuHiddenItems(value: String)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: String`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lanza trabajo asíncrono mediante coroutines.
+
+**Operaciones/funciones que coordina:** `setColorMenuHiddenItems`.
+
+### `resetOptionMenuSettings` — líneas 268–272
+
+**Firma:** `fun resetOptionMenuSettings()`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lanza trabajo asíncrono mediante coroutines.
+
+**Operaciones/funciones que coordina:** `resetOptionMenuSettings`.
+
+### `setPerformanceMode` — líneas 273–277
+
+**Firma:** `fun setPerformanceMode(value: String)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: String`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lanza trabajo asíncrono mediante coroutines.
+
+**Operaciones/funciones que coordina:** `setPerformanceMode`.
+
+### `setAnimationsEnabled` — líneas 278–282
+
+**Firma:** `fun setAnimationsEnabled(value: Boolean)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: Boolean`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lanza trabajo asíncrono mediante coroutines.
+
+**Operaciones/funciones que coordina:** `setAnimationsEnabled`.
+
+### `setAnimationSpeed` — líneas 283–287
+
+**Firma:** `fun setAnimationSpeed(value: Float)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: Float`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lanza trabajo asíncrono mediante coroutines.
+
+**Decisiones y protecciones visibles:**
+- Limita valores con `coerce*` para evitar estados fuera de rango.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `coerceIn`, `setAnimationSpeed`.
+
+### `setAnimationStyle` — líneas 288–292
+
+**Firma:** `fun setAnimationStyle(value: String)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: String`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lanza trabajo asíncrono mediante coroutines.
+
+**Operaciones/funciones que coordina:** `setAnimationStyle`.
+
+### `setAnimationEasing` — líneas 293–297
+
+**Firma:** `fun setAnimationEasing(value: String)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: String`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lanza trabajo asíncrono mediante coroutines.
+
+**Operaciones/funciones que coordina:** `setAnimationEasing`.
+
+### `setAnimationIntensity` — líneas 298–302
+
+**Firma:** `fun setAnimationIntensity(value: Float)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: Float`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lanza trabajo asíncrono mediante coroutines.
+
+**Decisiones y protecciones visibles:**
+- Limita valores con `coerce*` para evitar estados fuera de rango.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `coerceIn`, `setAnimationIntensity`.
+
+## 5. Cómo se conecta con el resto de MyNotes
+
+- Usa `com.example.mynotes.settings.AppSettings`.
+- Usa `com.example.mynotes.settings.SettingsRepository`.
+- Usa `com.example.mynotes.widget.MyNotesWidgetUpdater`.
+
+## 6. Recursos Android que utiliza
+
+- No se detectaron referencias directas `R.*` en este archivo.
+
+## 7. Tecnologías y efectos relevantes
+
+- Lanza trabajo asíncrono mediante coroutines.
+
+## 8. Lectura práctica del flujo
+
+Una forma útil de seguir este archivo en el depurador es recorrer estas operaciones en este orden aproximado:
+1. `setConfigurationMode` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+2. `setDarkMode` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+3. `setBackgroundColor` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+4. `setBackgroundToneIndex` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+5. `setBackgroundIntensity` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+6. `setSettingsPanelTone` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+7. `setSurfacePanelIntensity` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+8. `setHeaderIntensity` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+9. `setTextColor` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+10. `setTextOutlineEnabled` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+11. `setNoteUiTextColor` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+12. `setSliderStyle` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+## 9. Qué no debe romperse al modificarlo
+
+- No renombrar claves persistentes sin migración; ajustes ya guardados dependen de ellas.
+- Conservar validaciones de Uri/ruta y no confiar en nombres externos sin sanitizar.
+
+## 10. Resumen en lenguaje sencillo
+
+En términos simples: Archivo Kotlin del subsistema `com.example.mynotes.viewmodel`. Su responsabilidad se deriva de las declaraciones y dependencias detalladas a continuación. La sección función por función anterior describe qué entra, qué devuelve y qué efectos produce cada operación detectada en el fuente actual.

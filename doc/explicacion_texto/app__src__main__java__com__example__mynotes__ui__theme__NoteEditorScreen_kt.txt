@@ -1,0 +1,313 @@
+# NoteEditorScreen.kt — explicación completa del código
+
+Ruta: app/src/main/java/com/example/mynotes/ui/theme/NoteEditorScreen.kt  
+SHA-256: 13f492397673d122e0d7ac83b25562ac32f935e8315b86b4cf041a6fd4f7e4f9  
+Líneas: 1069  
+Package: com.example.mynotes.ui
+
+## 1. Para qué existe este archivo
+
+Pantalla crear/editar nota. Gestiona texto, color, adjuntos, audio/voz y previews de enlaces antes de guardar.
+
+## 2. Tipos/clases declarados
+
+- No declara una clase/objeto propio; contiene funciones/valores de soporte o es un archivo marcador.
+
+## 3. Estado, constantes y valores importantes
+
+- index (línea 112) inicia con value.text.indexOf(url. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- removeStart (línea 114) inicia con index. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- removeEnd (línea 116) inicia con index + url.length. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- lineStart (línea 117) inicia con value.text.lastIndexOf('\n'. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- nextNewLine (línea 118) inicia con value.text.indexOf('\n'. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- lineEnd (línea 119) inicia con if (nextNewLine < 0. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- newText (línea 124) inicia con value.text.removeRange(removeStart. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- removedLength (línea 126) inicia con removeEnd - removeStart. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- context (línea 151) inicia con LocalContext.current. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- recordingStartErrorText (línea 152) inicia con stringResource(R.string.recording_start_error. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- recordingTooShortText (línea 153) inicia con stringResource(R.string.recording_too_short. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- microphonePermissionRequiredText (línea 154) inicia con stringResource(R.string.microphone_permission_required. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- voiceNoteText (línea 155) inicia con stringResource(R.string.voice_note. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- microphoneUnavailableText (línea 156) inicia con stringResource(R.string.microphone_not_available. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- hasMicrophone (línea 157) inicia con remember(context. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- isLandscape (línea 160) inicia con LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- editorFontFamily (línea 161) inicia con com.example.mynotes.ui.theme.appFontFamily(settings.font. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- appTypography (línea 162) inicia con MaterialTheme.typography.withEditorFontFamily(editorFontFamily. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- editorBackground (línea 171) inicia con noteBackgroundColor(selectedColor. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- editorTextColor (línea 172) inicia con resolveUiTextColor(value = settings.noteUiTextColor. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- editorSecondaryTextColor (línea 173) inicia con resolveSecondaryUiTextColor(value = settings.noteUiTextColor. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- editorGraphicColor (línea 174) inicia con resolveUiGraphicColor(value = settings.noteUiTextColor. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- editorAccentOutline (línea 175) inicia con ensureUiContrast(preferred = MaterialTheme.colorScheme.primary. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- initialVisibleContent (línea 180) inicia con remember(initialContent. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- embeddedLinkUrls (línea 187) inicia con remember(embeddedLinkState. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- visibleExistingAttachments (línea 212) inicia con existingAttachments.filterNot {. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- voiceDirectory (línea 252) inicia con File(context.cacheDir. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- file (línea 257) inicia con File(voiceDirectory. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- recorder (línea 258) inicia con if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- voiceAttachment (línea 304) inicia con PendingAttachment(uri = Uri.fromFile(file. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- microphonePermissionLauncher (línea 359) inicia con rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission(. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- hasPermission (línea 376) inicia con ContextCompat.checkSelfPermission(context. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- imagePicker (línea 390) inicia con rememberLauncherForActivityResult(contract = ActivityResultContracts.OpenMultipleDocuments(. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- newItems (línea 391) inicia con uris.map { uri ->. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- videoPicker (línea 413) inicia con rememberLauncherForActivityResult(contract = ActivityResultContracts.OpenMultipleDocuments(. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+
+## 4. Funciones y flujo, una por una
+
+### removeProcessedUrl — líneas 111–137
+
+Firma: private fun removeProcessedUrl(value: TextFieldValue, url: String): TextFieldValue
+
+Elimina del TextFieldValue una URL cuya preview ya fue procesada y reajusta selección/composición para que el cursor no salte ni se corrompa.
+
+Entradas:
+- value: TextFieldValue
+- url: String
+
+Salida: TextFieldValue.
+
+Decisiones y protecciones visibles:
+- Limita valores con coerce* para evitar estados fuera de rango.
+- Contiene decisiones condicionales (if) para seleccionar comportamiento.
+- Usa when para mapear estados/tipos/opciones.
+
+Operaciones/funciones que coordina: indexOf, lastIndexOf, coerceAtLeast, substring, trim, removeRange, shifted, coerceIn, copy, TextRange.
+
+### shifted — líneas 127–127
+
+Firma: fun shifted(position: Int): Int
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+Entradas:
+- position: Int
+
+Salida: Int.
+
+Decisiones y protecciones visibles:
+- Usa when para mapear estados/tipos/opciones.
+
+### NoteEditorScreen — líneas 141–869
+
+Firma: fun NoteEditorScreen(settings: AppSettings, initialTitle: String = "", initialContent: String = "", initialColor: String = "default", isEditing: Boolean = false, /* * Adjuntos que ya pertenecen a la nota. * * Se muestran al editar, pero NO se envían otra vez * como adjuntos nuevos al guardar. */ existingAttachments: List<Attachment> = emptyList(), onSave: (String, String, String, List<PendingAttachment>, List<Attachment>) -> Unit, onCancel: () -> Unit)
+
+Gestiona creación/edición de nota: título/contenido, URL previews ocultas, paleta, adjuntos, foto/video/audio/documentos, grabación de voz y guardado. Mantiene estado Compose y callbacks sin persistir hasta confirmar.
+
+Entradas:
+- settings: AppSettings
+- initialTitle: String = ""
+- initialContent: String = ""
+- initialColor: String = "default"
+- isEditing: Boolean = false
+- /* * Adjuntos que ya pertenecen a la nota. * * Se muestran al editar
+- pero NO se envían otra vez * como adjuntos nuevos al guardar. */ existingAttachments: List<Attachment> = emptyList()
+- onSave: (String, String, String, List<PendingAttachment>, List<Attachment>) -> Unit
+- onCancel: () -> Unit
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Usa el micrófono/grabación de audio.
+- Accede al sistema de archivos interno/cache.
+- Lee/escribe Uris mediante ContentResolver.
+- Participa en estado/efectos de Compose.
+
+Decisiones y protecciones visibles:
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Contiene decisiones condicionales (if) para seleccionar comportamiento.
+- Usa when para mapear estados/tipos/opciones.
+
+Operaciones/funciones que coordina: hasSystemFeature, appFontFamily, withEditorFontFamily, rememberSaveable, noteBackgroundColor, resolveUiTextColor, resolveSecondaryUiTextColor, resolveUiGraphicColor, ensureUiContrast, TextFieldValue, stripEmbeddedLinkMetadata, extractEmbeddedLinkUrls, take, joinToString, split, trim, isNotBlank, distinct.
+
+### startRecording — líneas 245–287
+
+Firma: fun startRecording()
+
+Prepara el archivo y MediaRecorder, inicia la captura de voz y actualiza estado/feedback de grabación.
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Usa el micrófono/grabación de audio.
+- Accede al sistema de archivos interno/cache.
+
+Decisiones y protecciones visibles:
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Contiene decisiones condicionales (if) para seleccionar comportamiento.
+
+Operaciones/funciones que coordina: File, exists, mkdirs, currentTimeMillis, MediaRecorder, Suppress, setAudioSource, setOutputFormat, setAudioEncoder, setAudioEncodingBitRate, setAudioSamplingRate, setOutputFile, prepare, start, printStackTrace, release, delete.
+
+### stopRecording — líneas 288–327
+
+Firma: fun stopRecording()
+
+Detiene/libera MediaRecorder, convierte el archivo resultante en PendingAttachment y lo incorpora al editor si la grabación fue válida.
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Accede al sistema de archivos interno/cache.
+
+Decisiones y protecciones visibles:
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Contiene decisiones condicionales (if) para seleccionar comportamiento.
+
+Operaciones/funciones que coordina: stop, release, exists, length, PendingAttachment, fromFile, printStackTrace, delete.
+
+### requestVoiceRecording — líneas 371–384
+
+Firma: fun requestVoiceRecording()
+
+Comprueba/solicita RECORD_AUDIO antes de iniciar la grabación.
+
+Salida: Unit o inferido por Kotlin.
+
+Decisiones y protecciones visibles:
+- Contiene decisiones condicionales (if) para seleccionar comportamiento.
+
+Operaciones/funciones que coordina: checkSelfPermission, startRecording, launch.
+
+### AttachmentButton — líneas 877–893
+
+Firma: private fun AttachmentButton(modifier: Modifier = Modifier, text: String, icon: ImageVector, onClick: () -> Unit)
+
+Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+Entradas:
+- modifier: Modifier = Modifier
+- text: String
+- icon: ImageVector
+- onClick: () -> Unit
+
+Salida: Unit o inferido por Kotlin.
+
+Operaciones/funciones que coordina: OutlinedButton, playAction, onClick, RoundedCornerShape, outlinedButtonColors, BorderStroke, copy, size.
+
+### AttachmentPreview — líneas 901–1011
+
+Firma: private fun AttachmentPreview(attachment: PendingAttachment, previewDelayMillis: Long = 0L, performanceMode: String, onRemove: (() -> Unit)? )
+
+Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+Entradas:
+- attachment: PendingAttachment
+- previewDelayMillis: Long = 0L
+- performanceMode: String
+- onRemove: (() -> Unit)?
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Procesa imágenes/bitmaps.
+
+Decisiones y protecciones visibles:
+- Contiene decisiones condicionales (if) para seleccionar comportamiento.
+- Usa when para mapear estados/tipos/opciones.
+
+Operaciones/funciones que coordina: substringAfterLast, equals, size, playAction, openAttachmentViewer, toString, RoundedCornerShape, cardColors, cardElevation, fillMaxSize, produceState, delay, loadImagePreview, Image, asImageBitmap, clip, copy, AttachmentIconPreview.
+
+### AttachmentIconPreview — líneas 1014–1032
+
+Firma: private fun AttachmentIconPreview(icon: ImageVector, title: String, name: String?)
+
+Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+Entradas:
+- icon: ImageVector
+- title: String
+- name: String?
+
+Salida: Unit o inferido por Kotlin.
+
+Decisiones y protecciones visibles:
+- Contiene decisiones condicionales (if) para seleccionar comportamiento.
+
+Operaciones/funciones que coordina: fillMaxSize, padding, size, height, isNullOrBlank.
+
+### getFileName — líneas 1039–1057
+
+Firma: private fun getFileName(context: Context, uri: Uri): String?
+
+Obtiene el dato solicitado desde la fuente o estructura que maneja este archivo, sin cambiar el contrato público del resto del módulo.
+
+Entradas:
+- context: Context
+- uri: Uri
+
+Salida: String?.
+
+Efectos/APIs observados en el cuerpo:
+- Accede al sistema de archivos interno/cache.
+- Lee/escribe Uris mediante ContentResolver.
+
+Decisiones y protecciones visibles:
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Contiene decisiones condicionales (if) para seleccionar comportamiento.
+
+Operaciones/funciones que coordina: File, query, arrayOf, getColumnIndex, moveToFirst, getString.
+
+### withEditorFontFamily — líneas 1059–1068
+
+Firma: private fun Typography.withEditorFontFamily(fontFamily: FontFamily): Typography
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+Entradas:
+- fontFamily: FontFamily
+
+Salida: Typography.
+
+Operaciones/funciones que coordina: Typography, copy.
+
+## 5. Cómo se conecta con el resto de MyNotes
+
+- Usa com.example.mynotes.R.
+- Usa com.example.mynotes.data.Attachment.
+- Usa com.example.mynotes.data.PendingAttachment.
+- Usa com.example.mynotes.performance.AttachmentPreviewCache.
+- Usa com.example.mynotes.ui.components.LinkPreviewCard.
+- Usa com.example.mynotes.ui.components.ScrollPositionCapsule.
+- Usa com.example.mynotes.ui.components.extractLinkUrls.
+- Usa com.example.mynotes.ui.components.extractEmbeddedLinkUrls.
+- Usa com.example.mynotes.ui.components.stripEmbeddedLinkMetadata.
+- Usa com.example.mynotes.ui.components.noteContentForStorage.
+- Usa com.example.mynotes.ui.openAttachmentViewer.
+- Usa com.example.mynotes.settings.AppSettings.
+- Usa com.example.mynotes.ui.sound.UiActionSound.
+- Usa com.example.mynotes.ui.sound.UiSound.
+- Usa com.example.mynotes.ui.sound.UiSoundPlayer.
+- Usa com.example.mynotes.ui.theme.resolveUiTextColor.
+- Usa com.example.mynotes.ui.theme.resolveSecondaryUiTextColor.
+- Usa com.example.mynotes.ui.theme.resolveUiGraphicColor.
+- Usa com.example.mynotes.ui.theme.ensureUiContrast.
+- Usa com.example.mynotes.ui.theme.noteBackgroundColor.
+
+## 6. Recursos Android que utiliza
+
+- R.string: attachments, audio, back, cancel, create_note, edit_note, file, image, microphone_not_available, microphone_permission_required, mock_color_blue, mock_color_brown, mock_color_cyan, mock_color_default, mock_color_gray, mock_color_green, mock_color_lime, mock_color_mint, mock_color_orange, mock_color_palette, mock_color_pink, mock_color_purple, mock_color_red, mock_color_teal, mock_color_yellow, new_note, record_voice_note, recording_start_error, recording_too_short, recording_voice_note, save, stop_recording, title, video, voice_note, write_your_note
+
+## 7. Tecnologías y efectos relevantes
+
+- Procesa imágenes/bitmaps.
+- Usa el micrófono/grabación de audio.
+- Accede al sistema de archivos interno/cache.
+- Lee/escribe Uris mediante ContentResolver.
+- Participa en estado/efectos de Compose.
+
+## 8. Lectura práctica del flujo
+
+Una forma útil de seguir este archivo en el depurador es recorrer estas operaciones en este orden aproximado:
+1. shifted — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+2. NoteEditorScreen — Gestiona creación/edición de nota: título/contenido, URL previews ocultas, paleta, adjuntos, foto/video/audio/documentos, grabación de voz y guardado. Mantiene estado Compose y callbacks sin persistir hasta confirmar.
+3. startRecording — Prepara el archivo y MediaRecorder, inicia la captura de voz y actualiza estado/feedback de grabación.
+4. stopRecording — Detiene/libera MediaRecorder, convierte el archivo resultante en PendingAttachment y lo incorpora al editor si la grabación fue válida.
+5. requestVoiceRecording — Comprueba/solicita RECORD_AUDIO antes de iniciar la grabación.
+
+## 9. Qué no debe romperse al modificarlo
+
+- Evitar aumentar resoluciones/cargas sin considerar memoria y scroll; preservar caché y liberación de recursos.
+- Conservar validaciones de Uri/ruta y no confiar en nombres externos sin sanitizar.
+- Evitar trabajo bloqueante durante composición y mantener estado estable para limitar recomposiciones.
+
+## 10. Resumen en lenguaje sencillo
+
+En términos simples: Pantalla crear/editar nota. Gestiona texto, color, adjuntos, audio/voz y previews de enlaces antes de guardar. La sección función por función anterior describe qué entra, qué devuelve y qué efectos produce cada operación detectada en el fuente actual.

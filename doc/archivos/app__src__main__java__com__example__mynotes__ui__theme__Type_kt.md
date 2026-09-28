@@ -1,35 +1,60 @@
-# Type.kt — documentación del código actual
-**Ruta real:** `app/src/main/java/com/example/mynotes/ui/theme/Type.kt`  **SHA-256:** `3cbc87c8410800d6a172f0b34d6bf540284bda898aa4e8b4b8f1f58c153264ec`  **Líneas:** 28 · **Bytes:** 946 · **Imports:** 5 · **Declaraciones detectadas:** 0
-> Documento generado fuera de `app/` a partir de lectura del código. El fuente es la única fuente de verdad; no se modificó para generar esta documentación.
-## 1. Responsabilidad
+# Type.kt — explicación completa del código
 
-Definiciones tipográficas del tema.
-## 2. Package e imports
+**Ruta:** `app/src/main/java/com/example/mynotes/ui/theme/Type.kt`  
+**SHA-256:** `3cbc87c8410800d6a172f0b34d6bf540284bda898aa4e8b4b8f1f58c153264ec`  
+**Líneas:** 29  
+**Package:** `com.example.mynotes.ui.theme`
 
-Package declarado: `com.example.mynotes.ui.theme`.
+## 1. Para qué existe este archivo
 
-### Android / Jetpack / Compose
+Tipografía Material base antes de aplicar la fuente/contorno configurable.
 
-`androidx.compose.material3.Typography`, `androidx.compose.ui.text.TextStyle`, `androidx.compose.ui.text.font.FontFamily`, `androidx.compose.ui.text.font.FontWeight`, `androidx.compose.ui.unit.sp`
+## 2. Tipos/clases declarados
 
-## 3. Declaraciones detectadas
+- No declara una clase/objeto propio; contiene funciones/valores de soporte o es un archivo marcador.
 
-No se detectan clases/objetos/interfaces/funciones declarados; puede ser un archivo de constantes, comentarios o configuración DSL.
+## 3. Estado, constantes y valores importantes
 
-## 4. Estado, efectos y límites observables
+- **`Typography`** (línea 10) inicia con `Typography(bodyLarge = TextStyle(fontFamily = FontFamily.Default`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
 
-- No aparecen marcadores relevantes de estado/efectos de la lista auditada.
+## 4. Funciones y flujo, una por una
 
-Estas cifras son indicadores de superficie de cambio, no diagnósticos de error. Cualquier modificación debe preservar contratos de persistencia, lifecycle, límites numéricos y nulabilidad visibles en el fuente.
+Other default text styles to override
+    titleLarge = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Normal,
+        fontSize = 22.sp,
+        lineHeight = 28.sp,
+        letterSpacing = 0.sp
+    ),
+    labelSmall = TextStyle(
+        fontFamily = FontFamily.Default,
+        fontWeight = FontWeight.Medium,
+        fontSize = 11.sp,
+        lineHeight = 16.sp,
+        letterSpacing = 0.5.sp
+    )
 
-## 5. Dependencias internas directas
+## 5. Cómo se conecta con el resto de MyNotes
 
-No importa directamente otros símbolos `com.example.mynotes.*`.
+- No importa directamente otro componente `com.example.mynotes`; funciona como modelo/utilidad base o mediante APIs Android/Jetpack.
 
-## 6. Recursos Android referenciados
+## 6. Recursos Android que utiliza
 
-No se detectaron referencias `R.*` directas.
+- No se detectaron referencias directas `R.*` en este archivo.
 
-## 7. Puntos de revisión al modificarlo
+## 7. Tecnologías y efectos relevantes
 
-- Validar sus llamadores y el comportamiento visible asociado antes de alterar firmas o valores por defecto.
+- Principalmente lógica Kotlin/Compose sin I/O especial detectado por estas reglas.
+
+## 8. Lectura práctica del flujo
+
+No hay flujo ejecutable propio; su contenido sirve de declaración/configuración para otros archivos.
+
+## 9. Qué no debe romperse al modificarlo
+
+- Evitar trabajo bloqueante durante composición y mantener estado estable para limitar recomposiciones.
+
+## 10. Resumen en lenguaje sencillo
+
+En términos simples: Tipografía Material base antes de aplicar la fuente/contorno configurable. La sección función por función anterior describe qué entra, qué devuelve y qué efectos produce cada operación detectada en el fuente actual.

@@ -1,39 +1,92 @@
-# MyNotesWidgetUpdater.kt — documentación del código actual
-**Ruta real:** `app/src/main/java/com/example/mynotes/widget/MyNotesWidgetUpdater.kt`  **SHA-256:** `c9002312cabccf9a1b2744d0f4e2ab69dac33d1bea40e723b59ec39dfc604a6a`  **Líneas:** 65 · **Bytes:** 2408 · **Imports:** 6 · **Declaraciones detectadas:** 3
-> Documento generado fuera de `app/` a partir de lectura del código. El fuente es la única fuente de verdad; no se modificó para generar esta documentación.
-## 1. Responsabilidad
+# MyNotesWidgetUpdater.kt — explicación completa del código
 
-Actualización agrupada de los widgets activos.
-## 2. Package e imports
+**Ruta:** `app/src/main/java/com/example/mynotes/widget/MyNotesWidgetUpdater.kt`  
+**SHA-256:** `c9002312cabccf9a1b2744d0f4e2ab69dac33d1bea40e723b59ec39dfc604a6a`  
+**Líneas:** 66  
+**Package:** `com.example.mynotes.widget`
 
-Package declarado: `com.example.mynotes.widget`.
+## 1. Para qué existe este archivo
 
-### Android / Jetpack / Compose
+Agrupa y retrasa refrescos de widgets para evitar actualizaciones redundantes.
 
-`android.appwidget.AppWidgetManager`, `android.content.ComponentName`, `android.content.Context`, `android.content.Intent`, `android.os.Handler`, `android.os.Looper`
+## 2. Tipos/clases declarados
 
-## 3. Declaraciones detectadas
+- Línea **22** — `object MyNotesWidgetUpdater`.
 
-| Línea | Tipo | Nombre | Firma/inicio |
-|---:|---|---|---|
-| 22 | `object` | `MyNotesWidgetUpdater` | `object MyNotesWidgetUpdater {` |
-| 44 | `fun` | `requestUpdate` | `` |
-| 53 | `fun` | `updateProvider` | `` |
+## 3. Estado, constantes y valores importantes
 
-## 4. Estado, efectos y límites observables
+- **`COALESCE_DELAY_MS`** (línea 23) inicia con `120L`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`providers`** (línea 24) inicia con `arrayOf(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`mainHandler`** (línea 31) inicia con `Handler(Looper.getMainLooper(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`updateLock`** (línea 33) inicia con `Any(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`applicationContext`** (línea 34) inicia con `null`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`updateRunnable`** (línea 35) inicia con `Runnable {`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`context`** (línea 37) inicia con `synchronized(updateLock`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`manager`** (línea 40) inicia con `AppWidgetManager.getInstance(context`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`appContext`** (línea 46) inicia con `context.applicationContext`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`component`** (línea 55) inicia con `ComponentName(context`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`ids`** (línea 56) inicia con `manager.getAppWidgetIds(component`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`intent`** (línea 58) inicia con `Intent(context`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
 
-- **Room:** 1 aparición/apariciones.
+## 4. Funciones y flujo, una por una
 
-Estas cifras son indicadores de superficie de cambio, no diagnósticos de error. Cualquier modificación debe preservar contratos de persistencia, lifecycle, límites numéricos y nulabilidad visibles en el fuente.
+### `requestUpdate` — líneas 45–52
 
-## 5. Dependencias internas directas
+**Firma:** `fun requestUpdate(context: Context)`
 
-No importa directamente otros símbolos `com.example.mynotes.*`.
+Coalescea múltiples solicitudes cercanas mediante Handler para no refrescar todos los AppWidgets repetidamente.
 
-## 6. Recursos Android referenciados
+**Entradas:**
+- `context: Context`
 
-No se detectaron referencias `R.*` directas.
+**Salida:** Unit o inferido por Kotlin.
 
-## 7. Puntos de revisión al modificarlo
+**Operaciones/funciones que coordina:** `synchronized`, `removeCallbacks`, `postDelayed`.
 
-- Probar en launcher real/API 28: RemoteViews tiene restricciones distintas a Compose y no admite todos los tintes/Views.
+### `updateProvider` — líneas 54–64
+
+**Firma:** `private fun updateProvider(context: Context, manager: AppWidgetManager, providerClass: Class<*>)`
+
+Actualiza el estado/datos indicados por sus parámetros y propaga el cambio a las dependencias utilizadas en el cuerpo.
+
+**Entradas:**
+- `context: Context`
+- `manager: AppWidgetManager`
+- `providerClass: Class<*>`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Opera con RemoteViews/AppWidget fuera de Compose.
+- Inicia o prepara navegación/acción mediante Intent.
+
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `ComponentName`, `getAppWidgetIds`, `isEmpty`, `Intent`, `putExtra`, `sendBroadcast`.
+
+## 5. Cómo se conecta con el resto de MyNotes
+
+- No importa directamente otro componente `com.example.mynotes`; funciona como modelo/utilidad base o mediante APIs Android/Jetpack.
+
+## 6. Recursos Android que utiliza
+
+- No se detectaron referencias directas `R.*` en este archivo.
+
+## 7. Tecnologías y efectos relevantes
+
+- Opera con RemoteViews/AppWidget fuera de Compose.
+- Inicia o prepara navegación/acción mediante Intent.
+
+## 8. Lectura práctica del flujo
+
+Una forma útil de seguir este archivo en el depurador es recorrer estas operaciones en este orden aproximado:
+1. `requestUpdate` — Coalescea múltiples solicitudes cercanas mediante Handler para no refrescar todos los AppWidgets repetidamente.
+
+## 9. Qué no debe romperse al modificarlo
+
+- Mantener las firmas públicas/callbacks que usan los archivos listados en la sección de integración.
+
+## 10. Resumen en lenguaje sencillo
+
+En términos simples: Agrupa y retrasa refrescos de widgets para evitar actualizaciones redundantes. La sección función por función anterior describe qué entra, qué devuelve y qué efectos produce cada operación detectada en el fuente actual.

@@ -1,0 +1,406 @@
+MYNOTES — EXPLICACIÓN ULTRA DETALLADA
+==============================================================================================================
+Archivo 7/72: app/src/main/java/com/example/mynotes/data/AttachmentDao.kt
+SHA-256: b08c95b65977d9cd903a61de27f1ae385743249f560299c65cae57b7171e1ae1
+Líneas del fuente: 69
+Package: com.example.mynotes.data
+
+1. RESPONSABILIDAD EXACTA DEL ARCHIVO
+----------------------------------------------------------------------
+Contrato Room de acceso a adjuntos. Define las consultas y mutaciones SQL que el resto del programa usa sin escribir SQLite manualmente.
+
+2. DÓNDE ENCAJA EN LA ARQUITECTURA
+----------------------------------------------------------------------
+Este archivo pertenece principalmente a la **persistencia/modelos Room**. No debe analizarse aislado: las referencias cruzadas y callbacks se detallan más abajo.
+
+3. IMPORTACIONES, UNA POR UNA
+----------------------------------------------------------------------
+- `androidx.room.Dao`: Importa `androidx.room.Dao` para usar persistencia SQLite declarativa con Room.
+- `androidx.room.Delete`: Importa `androidx.room.Delete` para usar persistencia SQLite declarativa con Room.
+- `androidx.room.Insert`: Importa `androidx.room.Insert` para usar persistencia SQLite declarativa con Room.
+- `androidx.room.OnConflictStrategy`: Importa `androidx.room.OnConflictStrategy` para usar persistencia SQLite declarativa con Room.
+- `androidx.room.Query`: Importa `androidx.room.Query` para usar persistencia SQLite declarativa con Room.
+- `kotlinx.coroutines.flow.Flow`: Importa `kotlinx.coroutines.flow.Flow` para usar coroutines, Flow y ejecución asíncrona.
+
+4. DECLARACIONES Y ESTADO IMPORTANTES
+----------------------------------------------------------------------
+L11: `interface AttachmentDao {`
+    Declara interface `AttachmentDao`. A partir de aquí las propiedades y funciones hasta su llave de cierre pertenecen a este tipo.
+
+5. FUNCIONES — EXPLICACIÓN DE CADA UNA
+----------------------------------------------------------------------
+
+5.1 `getAllAttachments` — líneas 23–34
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun getAllAttachments():
+            Flow<List<Attachment>>
+        @Query(
+            """
+            SELECT *
+            FROM attachments
+            ORDER BY id ASC
+            """
+        )
+        suspend fun getAllAttachmentsOnce():
+            List<Attachment>
+        @Insert(onConflict = OnConflictStrategy.REPLACE)
+
+Propósito:
+    Obtiene/carga el dato indicado por el nombre de la función, aplicando los fallbacks y transformaciones visibles en su cuerpo.
+
+Parámetros/entradas:
+  - `):
+        Flow<List<Attachment>>
+    @Query(
+        """
+        SELECT *
+        FROM attachments
+        ORDER BY id ASC
+        """
+    )
+    suspend fun getAllAttachmentsOnce():
+        List<Attachment>
+    @Insert(onConflict = OnConflictStrategy.REPLACE`: el llamador proporciona este valor/callback a `getAllAttachments`. Dentro del cuerpo, las líneas donde aparece `)` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Flow<List<Attachment>> @Query( """ SELECT * FROM attachments ORDER BY id ASC """ ) suspend fun getAllAttachmentsOnce(): List<Attachment> @Insert(onConflict`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L23 [4 espacios] `fun getAllAttachments():`
+      → Declara una función. El bloque de `getAllAttachments` se detalla después instrucción por instrucción.
+  L24 [8 espacios] `Flow<List<Attachment>>`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `Flow<List<Attachment>>`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L25 [4 espacios] `@Query(`
+      → Asocia a la función siguiente una consulta SQL que Room compila y valida.
+  L26 [8 espacios] `"""`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"""`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L27 [8 espacios] `SELECT *`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `SELECT *`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L28 [8 espacios] `FROM attachments`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `FROM attachments`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L29 [8 espacios] `ORDER BY id ASC`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `ORDER BY id ASC`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L30 [8 espacios] `"""`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"""`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L31 [4 espacios] `)`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L32 [4 espacios] `suspend fun getAllAttachmentsOnce():`
+      → Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `getAllAttachmentsOnce` se detalla después instrucción por instrucción.
+  L33 [8 espacios] `List<Attachment>`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `List<Attachment>`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L34 [4 espacios] `@Insert(onConflict = OnConflictStrategy.REPLACE)`
+      → Indica a Room que la función siguiente inserta una entidad; la estrategia de conflicto indicada decide qué ocurre con claves repetidas.
+
+5.2 `insertAttachmentsForRestore` — líneas 35–42
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        suspend fun insertAttachmentsForRestore(attachments: List<Attachment>)
+        @Query("DELETE FROM attachments")
+        suspend fun deleteAllAttachments()
+        @Query(
+            """
+            SELECT *
+            FROM attachments
+            WHERE noteId = :noteId
+
+Propósito:
+    Implementa `insertAttachmentsForRestore`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `attachments: List<Attachment>)
+    @Query("DELETE FROM attachments")
+    suspend fun deleteAllAttachments(`: el llamador proporciona este valor/callback a `insertAttachmentsForRestore`. Dentro del cuerpo, las líneas donde aparece `attachments` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L35 [4 espacios] `suspend fun insertAttachmentsForRestore(attachments: List<Attachment>)`
+      → Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `insertAttachmentsForRestore` se detalla después instrucción por instrucción.
+  L36 [4 espacios] `@Query("DELETE FROM attachments")`
+      → Asocia a la función siguiente una consulta SQL que Room compila y valida. SQL declarado: "DELETE FROM attachments".
+  L37 [4 espacios] `suspend fun deleteAllAttachments()`
+      → Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `deleteAllAttachments` se detalla después instrucción por instrucción.
+  L38 [4 espacios] `@Query(`
+      → Asocia a la función siguiente una consulta SQL que Room compila y valida.
+  L39 [8 espacios] `"""`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"""`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L40 [8 espacios] `SELECT *`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `SELECT *`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L41 [8 espacios] `FROM attachments`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `FROM attachments`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L42 [8 espacios] `WHERE noteId = :noteId`
+      → Asigna/configura `WHERE noteId` usando `:noteId`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+
+5.3 `getAttachments` — líneas 46–51
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun getAttachments(noteId: Int): Flow<List<Attachment>>
+        @Query(
+            """
+            SELECT *
+            FROM attachments
+            WHERE noteId = :noteId
+
+Propósito:
+    Obtiene/carga el dato indicado por el nombre de la función, aplicando los fallbacks y transformaciones visibles en su cuerpo.
+
+Parámetros/entradas:
+  - `noteId: Int`: el llamador proporciona este valor/callback a `getAttachments`. Dentro del cuerpo, las líneas donde aparece `noteId` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Flow<List<Attachment>> @Query( """ SELECT * FROM attachments WHERE noteId`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L46 [4 espacios] `fun getAttachments(noteId: Int): Flow<List<Attachment>>`
+      → Declara una función. El bloque de `getAttachments` se detalla después instrucción por instrucción.
+  L47 [4 espacios] `@Query(`
+      → Asocia a la función siguiente una consulta SQL que Room compila y valida.
+  L48 [8 espacios] `"""`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"""`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L49 [8 espacios] `SELECT *`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `SELECT *`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L50 [8 espacios] `FROM attachments`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `FROM attachments`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L51 [8 espacios] `WHERE noteId = :noteId`
+      → Asigna/configura `WHERE noteId` usando `:noteId`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+
+5.4 `getAttachmentsOnce` — líneas 55–65
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        suspend fun getAttachmentsOnce(noteId: Int): List<Attachment>
+        @Insert
+        suspend fun insertAttachment(attachment: Attachment)
+        @Insert
+        suspend fun insertAttachments(attachments: List<Attachment>)
+        @Delete
+        suspend fun deleteAttachment(attachment: Attachment)
+        @Query(
+            """
+            DELETE FROM attachments
+            WHERE noteId = :noteId
+
+Propósito:
+    Obtiene/carga el dato indicado por el nombre de la función, aplicando los fallbacks y transformaciones visibles en su cuerpo.
+
+Parámetros/entradas:
+  - `noteId: Int): List<Attachment>
+    @Insert
+    suspend fun insertAttachment(attachment: Attachment)
+    @Insert
+    suspend fun insertAttachments(attachments: List<Attachment>)
+    @Delete
+    suspend fun deleteAttachment(attachment: Attachment`: el llamador proporciona este valor/callback a `getAttachmentsOnce`. Dentro del cuerpo, las líneas donde aparece `noteId` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `List<Attachment> @Insert suspend fun insertAttachment(attachment: Attachment) @Insert suspend fun insertAttachments(attachments: List<Attachment>) @Delete suspend fun deleteAttachment(attachment: Attachment) @Query( """ DELETE FROM attachments WHERE noteId`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L55 [4 espacios] `suspend fun getAttachmentsOnce(noteId: Int): List<Attachment>`
+      → Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `getAttachmentsOnce` se detalla después instrucción por instrucción.
+  L56 [4 espacios] `@Insert`
+      → Indica a Room que la función siguiente inserta una entidad; la estrategia de conflicto indicada decide qué ocurre con claves repetidas.
+  L57 [4 espacios] `suspend fun insertAttachment(attachment: Attachment)`
+      → Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `insertAttachment` se detalla después instrucción por instrucción.
+  L58 [4 espacios] `@Insert`
+      → Indica a Room que la función siguiente inserta una entidad; la estrategia de conflicto indicada decide qué ocurre con claves repetidas.
+  L59 [4 espacios] `suspend fun insertAttachments(attachments: List<Attachment>)`
+      → Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `insertAttachments` se detalla después instrucción por instrucción.
+  L60 [4 espacios] `@Delete`
+      → Indica a Room que la función siguiente elimina la entidad recibida.
+  L61 [4 espacios] `suspend fun deleteAttachment(attachment: Attachment)`
+      → Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `deleteAttachment` se detalla después instrucción por instrucción.
+  L62 [4 espacios] `@Query(`
+      → Asocia a la función siguiente una consulta SQL que Room compila y valida.
+  L63 [8 espacios] `"""`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"""`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L64 [8 espacios] `DELETE FROM attachments`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `DELETE FROM attachments`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L65 [8 espacios] `WHERE noteId = :noteId`
+      → Asigna/configura `WHERE noteId` usando `:noteId`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+
+5.5 `deleteAttachmentsForNote` — líneas 68–70
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        suspend fun deleteAttachmentsForNote(noteId: Int)
+    }
+
+Propósito:
+    Implementa `deleteAttachmentsForNote`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `noteId: Int`: el llamador proporciona este valor/callback a `deleteAttachmentsForNote`. Dentro del cuerpo, las líneas donde aparece `noteId` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L68 [4 espacios] `suspend fun deleteAttachmentsForNote(noteId: Int)`
+      → Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `deleteAttachmentsForNote` se detalla después instrucción por instrucción.
+  L69 [0 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+6. EXPLICACIÓN COMPLETA LÍNEA POR LÍNEA
+----------------------------------------------------------------------
+Esta sección no omite líneas ejecutables. Repite incluso partes ya explicadas en funciones para poder leer el archivo de arriba abajo sin saltar entre secciones.
+L1: `package com.example.mynotes.data`
+    Declara que este archivo pertenece al package `com.example.mynotes.data`; esto determina su namespace Kotlin y cómo lo importan otros archivos.
+L3: `import androidx.room.Dao`
+    Importa `androidx.room.Dao` para usar persistencia SQLite declarativa con Room.
+L4: `import androidx.room.Delete`
+    Importa `androidx.room.Delete` para usar persistencia SQLite declarativa con Room.
+L5: `import androidx.room.Insert`
+    Importa `androidx.room.Insert` para usar persistencia SQLite declarativa con Room.
+L6: `import androidx.room.OnConflictStrategy`
+    Importa `androidx.room.OnConflictStrategy` para usar persistencia SQLite declarativa con Room.
+L7: `import androidx.room.Query`
+    Importa `androidx.room.Query` para usar persistencia SQLite declarativa con Room.
+L8: `import kotlinx.coroutines.flow.Flow`
+    Importa `kotlinx.coroutines.flow.Flow` para usar coroutines, Flow y ejecución asíncrona.
+L10: `@Dao`
+    Declara un DAO de Room. Room generará la implementación concreta de las funciones SQL definidas en esta interfaz.
+L11: `interface AttachmentDao {`
+    Declara interface `AttachmentDao`. A partir de aquí las propiedades y funciones hasta su llave de cierre pertenecen a este tipo.
+L12: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L13: `* NotesScreen observa todos los adjuntos una sola vez.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L14: `* Después los agrupa por noteId en memoria.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L15: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L16: `@Query(`
+    Asocia a la función siguiente una consulta SQL que Room compila y valida.
+L17: `"""`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"""`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L18: `SELECT *`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `SELECT *`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L19: `FROM attachments`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `FROM attachments`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L20: `ORDER BY createdAt DESC`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `ORDER BY createdAt DESC`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L21: `"""`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"""`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L22: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L23: `fun getAllAttachments():`
+    Declara una función. El bloque de `getAllAttachments` se detalla después instrucción por instrucción.
+L24: `Flow<List<Attachment>>`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `Flow<List<Attachment>>`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L25: `@Query(`
+    Asocia a la función siguiente una consulta SQL que Room compila y valida.
+L26: `"""`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"""`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L27: `SELECT *`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `SELECT *`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L28: `FROM attachments`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `FROM attachments`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L29: `ORDER BY id ASC`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `ORDER BY id ASC`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L30: `"""`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"""`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L31: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L32: `suspend fun getAllAttachmentsOnce():`
+    Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `getAllAttachmentsOnce` se detalla después instrucción por instrucción.
+L33: `List<Attachment>`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `List<Attachment>`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L34: `@Insert(onConflict = OnConflictStrategy.REPLACE)`
+    Indica a Room que la función siguiente inserta una entidad; la estrategia de conflicto indicada decide qué ocurre con claves repetidas.
+L35: `suspend fun insertAttachmentsForRestore(attachments: List<Attachment>)`
+    Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `insertAttachmentsForRestore` se detalla después instrucción por instrucción.
+L36: `@Query("DELETE FROM attachments")`
+    Asocia a la función siguiente una consulta SQL que Room compila y valida. SQL declarado: "DELETE FROM attachments".
+L37: `suspend fun deleteAllAttachments()`
+    Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `deleteAllAttachments` se detalla después instrucción por instrucción.
+L38: `@Query(`
+    Asocia a la función siguiente una consulta SQL que Room compila y valida.
+L39: `"""`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"""`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L40: `SELECT *`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `SELECT *`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L41: `FROM attachments`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `FROM attachments`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L42: `WHERE noteId = :noteId`
+    Asigna/configura `WHERE noteId` usando `:noteId`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L43: `ORDER BY createdAt ASC`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `ORDER BY createdAt ASC`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L44: `"""`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"""`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L45: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L46: `fun getAttachments(noteId: Int): Flow<List<Attachment>>`
+    Declara una función. El bloque de `getAttachments` se detalla después instrucción por instrucción.
+L47: `@Query(`
+    Asocia a la función siguiente una consulta SQL que Room compila y valida.
+L48: `"""`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"""`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L49: `SELECT *`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `SELECT *`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L50: `FROM attachments`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `FROM attachments`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L51: `WHERE noteId = :noteId`
+    Asigna/configura `WHERE noteId` usando `:noteId`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L52: `ORDER BY createdAt ASC`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `ORDER BY createdAt ASC`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L53: `"""`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"""`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L54: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L55: `suspend fun getAttachmentsOnce(noteId: Int): List<Attachment>`
+    Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `getAttachmentsOnce` se detalla después instrucción por instrucción.
+L56: `@Insert`
+    Indica a Room que la función siguiente inserta una entidad; la estrategia de conflicto indicada decide qué ocurre con claves repetidas.
+L57: `suspend fun insertAttachment(attachment: Attachment)`
+    Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `insertAttachment` se detalla después instrucción por instrucción.
+L58: `@Insert`
+    Indica a Room que la función siguiente inserta una entidad; la estrategia de conflicto indicada decide qué ocurre con claves repetidas.
+L59: `suspend fun insertAttachments(attachments: List<Attachment>)`
+    Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `insertAttachments` se detalla después instrucción por instrucción.
+L60: `@Delete`
+    Indica a Room que la función siguiente elimina la entidad recibida.
+L61: `suspend fun deleteAttachment(attachment: Attachment)`
+    Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `deleteAttachment` se detalla después instrucción por instrucción.
+L62: `@Query(`
+    Asocia a la función siguiente una consulta SQL que Room compila y valida.
+L63: `"""`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"""`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L64: `DELETE FROM attachments`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `DELETE FROM attachments`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L65: `WHERE noteId = :noteId`
+    Asigna/configura `WHERE noteId` usando `:noteId`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L66: `"""`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"""`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L67: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L68: `suspend fun deleteAttachmentsForNote(noteId: Int)`
+    Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `deleteAttachmentsForNote` se detalla después instrucción por instrucción.
+L69: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+7. RECURSOS ANDROID REFERENCIADOS
+----------------------------------------------------------------------
+- No hay referencias directas `R.*` en este archivo.
+
+8. QUIÉN USA ESTE COMPONENTE
+----------------------------------------------------------------------
+- `AttachmentDao` aparece también en 2 archivo(s):
+    - app/src/main/java/com/example/mynotes/data/AppDatabase.kt
+    - app/src/main/java/com/example/mynotes/ui/theme/SourceCodeInfoScreen.kt
+
+9. QUÉ PUEDE ROMPERSE SI LO MODIFICAS
+----------------------------------------------------------------------
+- Adjuntos/previews son una ruta protegida del proyecto: cambios en decodificación, caché, tamaño, precarga o URI pueden alterar visualización o rendimiento. Modificar solo con una prueba explícita de imagen/vídeo/audio/enlace.
+- Cambiar el esquema Room puede requerir aumentar versión y definir migración. Hacerlo sin migración puede impedir abrir bases existentes o forzar pérdida de datos si se usa destructive migration.
+
+10. CHECKLIST DE PRUEBA DESPUÉS DE MODIFICAR ESTE ARCHIVO
+----------------------------------------------------------------------
+- Compilar `assembleDebug` y resolver primero errores de Kotlin/AAPT.
+- Abrir la pantalla/flujo relacionado y comprobar ida y vuelta (back) sin estado duplicado.
+- Cambiar tema/paleta y verificar contraste si este archivo dibuja UI.
+- Probar imagen, vídeo, audio y URL; hacer scroll rápido y confirmar que previews/miniaturas no parpadean ni cambian calidad.
+
+==============================================================================================================
+FIN DEL ARCHIVO
+==============================================================================================================

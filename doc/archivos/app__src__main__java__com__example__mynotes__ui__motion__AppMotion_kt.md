@@ -1,50 +1,205 @@
-# AppMotion.kt — documentación del código actual
-**Ruta real:** `app/src/main/java/com/example/mynotes/ui/motion/AppMotion.kt`  **SHA-256:** `d00156b94c88b5c5e083997f1842d42a9a2063de69c90a9c000d9702025c02b7`  **Líneas:** 342 · **Bytes:** 22229 · **Imports:** 40 · **Declaraciones detectadas:** 9
-> Documento generado fuera de `app/` a partir de lectura del código. El fuente es la única fuente de verdad; no se modificó para generar esta documentación.
-## 1. Responsabilidad
+# AppMotion.kt — explicación completa del código
 
-Animaciones/transiciones globales controladas por AppSettings.
-## 2. Package e imports
+**Ruta:** `app/src/main/java/com/example/mynotes/ui/motion/AppMotion.kt`  
+**SHA-256:** `d00156b94c88b5c5e083997f1842d42a9a2063de69c90a9c000d9702025c02b7`  
+**Líneas:** 343  
+**Package:** `com.example.mynotes.ui.motion`
 
-Package declarado: `com.example.mynotes.ui.motion`.
+## 1. Para qué existe este archivo
 
-### Android / Jetpack / Compose
+Motor de animaciones/transiciones parametrizado por ajustes de velocidad, intensidad, easing y estilo.
 
-`androidx.compose.animation.AnimatedContent`, `androidx.compose.animation.AnimatedContentTransitionScope`, `androidx.compose.animation.ContentTransform`, `androidx.compose.animation.EnterTransition`, `androidx.compose.animation.ExitTransition`, `androidx.compose.animation.expandHorizontally`, `androidx.compose.animation.expandIn`, `androidx.compose.animation.expandVertically`, `androidx.compose.animation.fadeIn`, `androidx.compose.animation.fadeOut`, `androidx.compose.animation.scaleIn`, `androidx.compose.animation.scaleOut`, `androidx.compose.animation.shrinkHorizontally`, `androidx.compose.animation.shrinkOut`, `androidx.compose.animation.shrinkVertically`, `androidx.compose.animation.slideInHorizontally`, `androidx.compose.animation.slideInVertically`, `androidx.compose.animation.slideOutHorizontally`, `androidx.compose.animation.slideOutVertically`, `androidx.compose.animation.togetherWith`, `androidx.compose.animation.core.CubicBezierEasing`, `androidx.compose.animation.core.Easing`, `androidx.compose.animation.core.FastOutLinearInEasing`, `androidx.compose.animation.core.FiniteAnimationSpec`, `androidx.compose.animation.core.FastOutSlowInEasing`, `androidx.compose.animation.core.LinearEasing`, `androidx.compose.animation.core.LinearOutSlowInEasing`, `androidx.compose.animation.core.Spring`, `androidx.compose.animation.core.spring`, `androidx.compose.animation.core.tween`, `androidx.compose.foundation.background`, `androidx.compose.foundation.layout.Box`, `androidx.compose.foundation.layout.fillMaxSize`, `androidx.compose.material3.MaterialTheme`, `androidx.compose.runtime.Composable`, `androidx.compose.runtime.remember`, `androidx.compose.ui.Alignment`, `androidx.compose.ui.Modifier`, `androidx.compose.ui.unit.IntOffset`
+## 2. Tipos/clases declarados
 
-### Kotlin / Coroutines / Java
+- Línea **55** — `object AppMotion`.
 
-`kotlin.math.roundToInt`
+## 3. Estado, constantes y valores importantes
 
-## 3. Declaraciones detectadas
+- **`EmphasizedEasing`** (línea 43) inicia con `CubicBezierEasing(0.2f`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`ExpressiveEasing`** (línea 45) inicia con `CubicBezierEasing(0.16f`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`EmphasizedAccelerateEasing`** (línea 46) inicia con `CubicBezierEasing(0.3f`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`EmphasizedDecelerateEasing`** (línea 47) inicia con `CubicBezierEasing(0.05f`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`FAST`** (línea 56) inicia con `140`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`NORMAL`** (línea 57) inicia con `220`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`SLOW`** (línea 58) inicia con `320`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`supportedStyles`** (línea 59) inicia con `setOf("zoom"`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`supportedEasings`** (línea 62) inicia con `setOf("standard"`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`speed`** (línea 71) inicia con `animationSpeed.coerceIn(0.5f`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`randomStylePool`** (línea 85) inicia con `listOf("zoom"`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`mode`** (línea 94) inicia con `AppMotion.normalizePerformanceMode(performanceMode`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`requestedStyle`** (línea 95) inicia con `AppMotion.normalizeStyle(animationStyle`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`style`** (línea 102) inicia con `when (mode`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`speedBoost`** (línea 118) inicia con `when (mode`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`intensityFactor`** (línea 124) inicia con `if (mode == "performance"`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`intensity`** (línea 129) inicia con `(animationIntensity * intensityFactor`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`easing`** (línea 130) inicia con `AppMotion.easing(animationEasing`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`enterDuration`** (línea 131) inicia con `AppMotion.duration(AppMotion.NORMAL`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`exitDuration`** (línea 136) inicia con `if (mode == "performance"`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`slowDuration`** (línea 141) inicia con `AppMotion.duration(AppMotion.SLOW`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`zoomScale`** (línea 145) inicia con `(1f - 0.08f * intensity`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`deepZoomScale`** (línea 146) inicia con `(1f - 0.16f * intensity`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`subtleScale`** (línea 147) inicia con `(1f - 0.025f * intensity`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`slideFactor`** (línea 148) inicia con `intensity.coerceIn(0.5f`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`bounceSpec`** (línea 203) inicia con `spring<Float>(dampingRatio = Spring.DampingRatioMediumBouncy`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`elasticSpec`** (línea 209) inicia con `spring<Float>(dampingRatio = Spring.DampingRatioLowBouncy`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`springFloat`** (línea 224) inicia con `spring<Float>(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`springInt`** (línea 228) inicia con `spring<IntOffset>(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`containerSpringFloat`** (línea 238) inicia con `spring<Float>(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`containerSpringInt`** (línea 242) inicia con `spring<IntOffset>(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`elasticSlideFloat`** (línea 256) inicia con `spring<Float>(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`elasticSlideInt`** (línea 260) inicia con `spring<IntOffset>(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`tonalSpring`** (línea 276) inicia con `spring<Float>(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`resolvedStyle`** (línea 302) inicia con `remember(targetState`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
 
-| Línea | Tipo | Nombre | Firma/inicio |
-|---:|---|---|---|
-| 55 | `object` | `AppMotion` | `object AppMotion {` |
-| 63 | `fun` | `normalizeStyle` | `fun normalizeStyle(value: String): String = if (value in supportedStyles) value else "zoom"` |
-| 64 | `fun` | `normalizeEasing` | `fun normalizeEasing(value: String): String = if (value in supportedEasings) value else "standard"` |
-| 65 | `fun` | `normalizePerformanceMode` | `fun normalizePerformanceMode(value: String): String = when (value) {` |
-| 69 | `fun` | `duration` | `fun duration(baseMilliseconds: Int, animationsEnabled: Boolean, animationSpeed: Float): Int {` |
-| 74 | `fun` | `easing` | `fun easing(key: String): Easing = when (normalizeEasing(key)) {` |
-| 149 | `fun` | `horizontalOffset` | `fun horizontalOffset(fullWidth: Int): Int = (fullWidth * slideFactor).roundToInt()` |
-| 150 | `fun` | `verticalOffset` | `fun verticalOffset(fullHeight: Int): Int = (fullHeight * slideFactor).roundToInt()` |
-| 336 | `fun` | `AnimatedScreenEntry` | `@Composable` |
+## 4. Funciones y flujo, una por una
 
-## 4. Estado, efectos y límites observables
+### `normalizeStyle` — líneas 63–63
 
-- **Compose state:** 2 aparición/apariciones.
-- **coerce*:** 28 aparición/apariciones.
+**Firma:** `fun normalizeStyle(value: String): String`
 
-Estas cifras son indicadores de superficie de cambio, no diagnósticos de error. Cualquier modificación debe preservar contratos de persistencia, lifecycle, límites numéricos y nulabilidad visibles en el fuente.
+Normaliza una cadena/valor externo al conjunto de opciones admitidas por MyNotes y devuelve un fallback estable si el valor no es reconocido.
 
-## 5. Dependencias internas directas
+**Entradas:**
+- `value: String`
 
-No importa directamente otros símbolos `com.example.mynotes.*`.
+**Salida:** String.
 
-## 6. Recursos Android referenciados
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
 
-No se detectaron referencias `R.*` directas.
+### `normalizeEasing` — líneas 64–64
 
-## 7. Puntos de revisión al modificarlo
+**Firma:** `fun normalizeEasing(value: String): String`
 
-- Validar sus llamadores y el comportamiento visible asociado antes de alterar firmas o valores por defecto.
+Normaliza una cadena/valor externo al conjunto de opciones admitidas por MyNotes y devuelve un fallback estable si el valor no es reconocido.
+
+**Entradas:**
+- `value: String`
+
+**Salida:** String.
+
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+### `normalizePerformanceMode` — líneas 65–65
+
+**Firma:** `fun normalizePerformanceMode(value: String): String`
+
+Normaliza una cadena/valor externo al conjunto de opciones admitidas por MyNotes y devuelve un fallback estable si el valor no es reconocido.
+
+**Entradas:**
+- `value: String`
+
+**Salida:** String.
+
+**Decisiones y protecciones visibles:**
+- Usa `when` para mapear estados/tipos/opciones.
+
+### `duration` — líneas 69–73
+
+**Firma:** `fun duration(baseMilliseconds: Int, animationsEnabled: Boolean, animationSpeed: Float): Int`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `baseMilliseconds: Int`
+- `animationsEnabled: Boolean`
+- `animationSpeed: Float`
+
+**Salida:** Int.
+
+**Decisiones y protecciones visibles:**
+- Limita valores con `coerce*` para evitar estados fuera de rango.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `coerceIn`, `roundToInt`, `coerceAtLeast`.
+
+### `easing` — líneas 74–74
+
+**Firma:** `fun easing(key: String): Easing`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `key: String`
+
+**Salida:** Easing.
+
+**Decisiones y protecciones visibles:**
+- Usa `when` para mapear estados/tipos/opciones.
+
+**Operaciones/funciones que coordina:** `normalizeEasing`.
+
+### `horizontalOffset` — líneas 149–149
+
+**Firma:** `fun horizontalOffset(fullWidth: Int): Int`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `fullWidth: Int`
+
+**Salida:** Int.
+
+**Operaciones/funciones que coordina:** `roundToInt`.
+
+### `verticalOffset` — líneas 150–150
+
+**Firma:** `fun verticalOffset(fullHeight: Int): Int`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `fullHeight: Int`
+
+**Salida:** Int.
+
+**Operaciones/funciones que coordina:** `roundToInt`.
+
+### `AnimatedScreenEntry` — líneas 337–342
+
+**Firma:** `fun AnimatedScreenEntry(animationsEnabled: Boolean, animationSpeed: Float, modifier: Modifier = Modifier, content: @Composable () -> Unit )`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `animationsEnabled: Boolean`
+- `animationSpeed: Float`
+- `modifier: Modifier = Modifier`
+- `content: @Composable () -> Unit`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Operaciones/funciones que coordina:** `fillMaxSize`, `content`.
+
+## 5. Cómo se conecta con el resto de MyNotes
+
+- No importa directamente otro componente `com.example.mynotes`; funciona como modelo/utilidad base o mediante APIs Android/Jetpack.
+
+## 6. Recursos Android que utiliza
+
+- No se detectaron referencias directas `R.*` en este archivo.
+
+## 7. Tecnologías y efectos relevantes
+
+- Participa en estado/efectos de Compose.
+
+## 8. Lectura práctica del flujo
+
+Una forma útil de seguir este archivo en el depurador es recorrer estas operaciones en este orden aproximado:
+1. `normalizeStyle` — Normaliza una cadena/valor externo al conjunto de opciones admitidas por MyNotes y devuelve un fallback estable si el valor no es reconocido.
+2. `normalizeEasing` — Normaliza una cadena/valor externo al conjunto de opciones admitidas por MyNotes y devuelve un fallback estable si el valor no es reconocido.
+3. `normalizePerformanceMode` — Normaliza una cadena/valor externo al conjunto de opciones admitidas por MyNotes y devuelve un fallback estable si el valor no es reconocido.
+4. `duration` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+5. `easing` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+6. `horizontalOffset` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+7. `verticalOffset` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+8. `AnimatedScreenEntry` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+## 9. Qué no debe romperse al modificarlo
+
+- Evitar trabajo bloqueante durante composición y mantener estado estable para limitar recomposiciones.
+
+## 10. Resumen en lenguaje sencillo
+
+En términos simples: Motor de animaciones/transiciones parametrizado por ajustes de velocidad, intensidad, easing y estilo. La sección función por función anterior describe qué entra, qué devuelve y qué efectos produce cada operación detectada en el fuente actual.

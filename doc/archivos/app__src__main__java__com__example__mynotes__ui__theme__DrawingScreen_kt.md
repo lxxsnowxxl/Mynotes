@@ -1,63 +1,254 @@
-# DrawingScreen.kt — documentación del código actual
-**Ruta real:** `app/src/main/java/com/example/mynotes/ui/theme/DrawingScreen.kt`  **SHA-256:** `313cea20b67577d8000f15174ff73905b26c167106bd2efbd2f150089739eded`  **Líneas:** 843 · **Bytes:** 35465 · **Imports:** 82 · **Declaraciones detectadas:** 9
-> Documento generado fuera de `app/` a partir de lectura del código. El fuente es la única fuente de verdad; no se modificó para generar esta documentación.
-## 1. Responsabilidad
+# DrawingScreen.kt — explicación completa del código
 
-Editor de dibujo integrado: herramientas, colores, lienzo, borrado, expansión y guardado.
-## 2. Package e imports
+**Ruta:** `app/src/main/java/com/example/mynotes/ui/theme/DrawingScreen.kt`  
+**SHA-256:** `313cea20b67577d8000f15174ff73905b26c167106bd2efbd2f150089739eded`  
+**Líneas:** 844  
+**Package:** `com.example.mynotes.ui`
 
-Package declarado: `com.example.mynotes.ui`.
+## 1. Para qué existe este archivo
 
-### Android / Jetpack / Compose
+Editor de dibujo dentro de MyNotes: herramientas, trazo, color, grosor, borrador, lienzo configurable, undo/redo, expansión y guardado PNG.
 
-`android.content.Context`, `android.app.Activity`, `android.content.ContextWrapper`, `android.graphics.Bitmap`, `android.graphics.Paint`, `android.net.Uri`, `androidx.compose.foundation.Canvas`, `androidx.compose.foundation.background`, `androidx.compose.foundation.border`, `androidx.compose.foundation.clickable`, `androidx.compose.foundation.gestures.detectDragGestures`, `androidx.compose.foundation.horizontalScroll`, `androidx.compose.foundation.layout.Arrangement`, `androidx.compose.foundation.layout.Box`, `androidx.compose.foundation.layout.Column`, `androidx.compose.foundation.layout.Row`, `androidx.compose.foundation.layout.Spacer`, `androidx.compose.foundation.layout.fillMaxSize`, `androidx.compose.foundation.layout.fillMaxWidth`, `androidx.compose.foundation.layout.height`, `androidx.compose.foundation.layout.padding`, `androidx.compose.foundation.layout.size`, `androidx.compose.foundation.layout.width`, `androidx.compose.foundation.rememberScrollState`, `androidx.compose.foundation.shape.CircleShape`, `androidx.compose.foundation.shape.RoundedCornerShape`, `androidx.compose.material.icons.Icons`, `androidx.compose.material.icons.filled.ArrowBack`, `androidx.compose.material.icons.filled.Check`, `androidx.compose.material.icons.filled.DeleteSweep`, `androidx.compose.material.icons.filled.Fullscreen`, `androidx.compose.material.icons.filled.FullscreenExit`, `androidx.compose.material.icons.filled.Redo`, `androidx.compose.material.icons.filled.Undo`, `androidx.compose.material3.FilledTonalIconButton`, `androidx.compose.material3.Icon`, `androidx.compose.material3.MaterialTheme`, `androidx.compose.material3.Surface`, `androidx.compose.material3.Text`, `androidx.compose.runtime.Composable`, `androidx.compose.runtime.DisposableEffect`, `androidx.compose.runtime.getValue`, `androidx.compose.runtime.mutableIntStateOf`, `androidx.compose.runtime.mutableStateListOf`, `androidx.compose.runtime.mutableStateOf`, `androidx.compose.runtime.remember`, `androidx.compose.runtime.rememberCoroutineScope`, `androidx.compose.runtime.setValue`, `androidx.compose.ui.Alignment`, `androidx.compose.ui.Modifier`, `androidx.compose.ui.geometry.Offset`, `androidx.compose.ui.graphics.Color`, `androidx.compose.ui.graphics.Path`, `androidx.compose.ui.graphics.StrokeCap`, `androidx.compose.ui.graphics.StrokeJoin`, `androidx.compose.ui.graphics.drawscope.Stroke`, `androidx.compose.ui.graphics.luminance`, `androidx.compose.ui.graphics.toArgb`, `androidx.compose.ui.input.pointer.pointerInput`, `androidx.compose.ui.layout.onSizeChanged`, `androidx.compose.ui.platform.LocalContext`, `androidx.compose.ui.platform.LocalDensity`, `androidx.compose.ui.platform.LocalView`, `androidx.compose.ui.res.stringResource`, `androidx.compose.ui.text.font.FontWeight`, `androidx.compose.ui.unit.IntSize`, `androidx.compose.ui.unit.dp`, `androidx.compose.ui.unit.sp`, `androidx.core.view.ViewCompat`, `androidx.core.view.WindowCompat`, `androidx.core.view.WindowInsetsCompat`, `androidx.core.view.WindowInsetsControllerCompat`
+## 2. Tipos/clases declarados
 
-### Proyecto MyNotes
+- Línea **86** — `private data  class DrawingStrokeData`.
+- Línea **93** — `private enum  class DrawingTool`.
 
-`com.example.mynotes.R`, `com.example.mynotes.settings.AppSettings`, `com.example.mynotes.ui.sound.UiActionSound`, `com.example.mynotes.ui.sound.UiSoundPlayer`, `com.example.mynotes.ui.theme.appFontFamily`
+## 3. Estado, constantes y valores importantes
 
-### Kotlin / Coroutines / Java
+- **`isEraser`** (línea 90) inicia con `false`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`alpha`** (línea 96) inicia con `1f`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`context`** (línea 112) inicia con `LocalContext.current`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`view`** (línea 113) inicia con `LocalView.current`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`density`** (línea 114) inicia con `LocalDensity.current`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`scope`** (línea 115) inicia con `rememberCoroutineScope(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`activity`** (línea 122) inicia con `context.findActivity(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`window`** (línea 123) inicia con `activity?.window`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`controller`** (línea 127) inicia con `WindowCompat.getInsetsController(window`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`statusBars`** (línea 128) inicia con `WindowInsetsCompat.Type.statusBars(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`wasStatusBarVisible`** (línea 129) inicia con `ViewCompat.getRootWindowInsets(view`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`previousBehavior`** (línea 131) inicia con `controller.systemBarsBehavior`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`fontFamily`** (línea 147) inicia con `remember(settings.font`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`defaultPaperColor`** (línea 148) inicia con `MaterialTheme.colorScheme.surface`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`canvasColors`** (línea 150) inicia con `remember(defaultPaperColor`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`outlineColor`** (línea 168) inicia con `MaterialTheme.colorScheme.outline.copy(alpha = 0.55f`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`strokes`** (línea 169) inicia con `remember { mutableStateListOf<DrawingStrokeData>(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`redoStrokes`** (línea 170) inicia con `remember { mutableStateListOf<DrawingStrokeData>(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`currentPoints`** (línea 171) inicia con `remember { mutableStateListOf<Offset>(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`inkColors`** (línea 175) inicia con `remember {`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`thicknessMultipliers`** (línea 198) inicia con `remember { listOf(0.72f`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`selectedInk`** (línea 199) inicia con `inkColors[selectedColorIndex]`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`activeColor`** (línea 201) inicia con `when (selectedTool`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`activeWidthPx`** (línea 205) inicia con `with(density`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`uri`** (línea 255) inicia con `saveDrawingToCache(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`scaleX`** (línea 293) inicia con `newSize.width.toFloat(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`scaleY`** (línea 294) inicia con `newSize.height.toFloat(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`resizedPoints`** (línea 302) inicia con `currentPoints.map { point ->`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`renderedColor`** (línea 340) inicia con `if (strokeData.isEraser`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`path`** (línea 348) inicia con `smoothComposePath(strokeData.points`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`selected`** (línea 517) inicia con `selectedTool != DrawingTool.ERASER && selectedColorIndex == index`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`current`** (línea 771) inicia con `points[index]`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`next`** (línea 772) inicia con `points[index + 1]`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`mid`** (línea 773) inicia con `Offset((current.x + next.x`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`bitmap`** (línea 790) inicia con `Bitmap.createBitmap(size.width`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
 
-`kotlinx.coroutines.Dispatchers`, `kotlinx.coroutines.launch`, `kotlinx.coroutines.withContext`, `java.io.File`, `java.io.FileOutputStream`
+## 4. Funciones y flujo, una por una
 
-## 3. Declaraciones detectadas
+### `DrawingScreen` — líneas 107–664
 
-| Línea | Tipo | Nombre | Firma/inicio |
-|---:|---|---|---|
-| 85 | `class` | `DrawingStrokeData` | `` |
-| 92 | `class` | `DrawingTool` | `` |
-| 105 | `fun` | `DrawingScreen` | `` |
-| 339 | `fun` | `drawStrokeData` | `fun drawStrokeData(strokeData: DrawingStrokeData) {` |
-| 665 | `fun` | `DrawingToolChip` | `` |
-| 705 | `fun` | `DrawingThicknessButton` | `` |
-| 730 | `fun` | `DrawingToolButton` | `` |
-| 755 | `fun` | `DrawingStrokeData` | `` |
-| 762 | `fun` | `smoothComposePath` | `` |
+**Firma:** `fun DrawingScreen( settings: AppSettings, onCancel: () -> Unit, onSave: (Uri) -> Unit )`
 
-## 4. Estado, efectos y límites observables
+Editor Compose del dibujo. Conserva lista de trazos, herramienta/color/grosor/lienzo, undo/redo y modo expandido; al guardar rasteriza el lienzo a PNG y devuelve un adjunto a la nota.
 
-- **Compose state:** 26 aparición/apariciones.
-- **LaunchedEffect/DisposableEffect:** 2 aparición/apariciones.
-- **Coroutines:** 5 aparición/apariciones.
-- **I/O/red:** 3 aparición/apariciones.
-- **coerce*:** 2 aparición/apariciones.
-- **safe calls:** 2 aparición/apariciones.
+**Entradas:**
+- `settings: AppSettings`
+- `onCancel: () -> Unit`
+- `onSave: (Uri) -> Unit`
 
-Estas cifras son indicadores de superficie de cambio, no diagnósticos de error. Cualquier modificación debe preservar contratos de persistencia, lifecycle, límites numéricos y nulabilidad visibles en el fuente.
+**Salida:** Unit o inferido por Kotlin.
 
-## 5. Dependencias internas directas
+**Efectos/APIs observados en el cuerpo:**
+- Lanza trabajo asíncrono mediante coroutines.
+- Procesa imágenes/bitmaps.
+- Participa en estado/efectos de Compose.
 
-- `com.example.mynotes.R`
-- `com.example.mynotes.settings.AppSettings`
-- `com.example.mynotes.ui.sound.UiActionSound`
-- `com.example.mynotes.ui.sound.UiSoundPlayer`
-- `com.example.mynotes.ui.theme.appFontFamily`
+**Decisiones y protecciones visibles:**
+- Limita valores con `coerce*` para evitar estados fuera de rango.
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+- Usa `when` para mapear estados/tipos/opciones.
 
-## 6. Recursos Android referenciados
+**Operaciones/funciones que coordina:** `rememberCoroutineScope`, `DisposableEffect`, `findActivity`, `getInsetsController`, `statusBars`, `getRootWindowInsets`, `isVisible`, `hide`, `show`, `appFontFamily`, `mutableIntStateOf`, `copy`, `luminance`, `toPx`, `fillMaxSize`, `background`, `padding`, `fillMaxWidth`.
 
-- **R.string:** `drawing_back`, `drawing_canvas_color`, `drawing_clear` ×2, `drawing_colors`, `drawing_expand_canvas`, `drawing_medium`, `drawing_redo` ×2, `drawing_restore_canvas`, `drawing_save`, `drawing_subtitle`, `drawing_thick`, `drawing_thickness`, `drawing_thin`, `drawing_title`, `drawing_tool_eraser` ×2, `drawing_tool_fine`, `drawing_tool_highlighter`, `drawing_tool_marker`, `drawing_tool_pen`, `drawing_tool_pencil`, `drawing_tools` ×2, `drawing_undo` ×2
+### `drawStrokeData` — líneas 339–359
 
-## 7. Puntos de revisión al modificarlo
+**Firma:** `fun drawStrokeData(strokeData: DrawingStrokeData)`
 
-- Conservar rangos `coerce*`, claves DataStore y compatibilidad con backups existentes.
-- Mantener coordenadas/trazos al expandir el lienzo y coherencia entre borrador y color de fondo.
+Interpreta DrawingStrokeData y pinta el Path con el comportamiento de la herramienta elegida, incluyendo borrado mediante blend/composición.
+
+**Entradas:**
+- `strokeData: DrawingStrokeData`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `drawCircle`, `first`, `smoothComposePath`, `drawPath`, `Stroke`.
+
+### `DrawingToolChip` — líneas 667–704
+
+**Firma:** `private fun DrawingToolChip( selected: Boolean, text: String, previewWidthDp: Float, onClick: () -> Unit )`
+
+Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+**Entradas:**
+- `selected: Boolean`
+- `text: String`
+- `previewWidthDp: Float`
+- `onClick: () -> Unit`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Decisiones y protecciones visibles:**
+- Limita valores con `coerce*` para evitar estados fuera de rango.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `width`, `height`, `clickable`, `RoundedCornerShape`, `padding`, `fillMaxWidth`, `coerceAtMost`, `background`.
+
+### `DrawingThicknessButton` — líneas 707–729
+
+**Firma:** `private fun DrawingThicknessButton( modifier: Modifier = Modifier, selected: Boolean, text: String, onClick: () -> Unit )`
+
+Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+**Entradas:**
+- `modifier: Modifier = Modifier`
+- `selected: Boolean`
+- `text: String`
+- `onClick: () -> Unit`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `height`, `clickable`, `RoundedCornerShape`.
+
+### `DrawingToolButton` — líneas 732–754
+
+**Firma:** `private fun DrawingToolButton( modifier: Modifier = Modifier, selected: Boolean, text: String, onClick: () -> Unit )`
+
+Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+**Entradas:**
+- `modifier: Modifier = Modifier`
+- `selected: Boolean`
+- `text: String`
+- `onClick: () -> Unit`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `height`, `clickable`, `RoundedCornerShape`.
+
+### `scaled` — líneas 756–761
+
+**Firma:** `private fun DrawingStrokeData.scaled(scaleX: Float, scaleY: Float): DrawingStrokeData`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `scaleX: Float`
+- `scaleY: Float`
+
+**Salida:** DrawingStrokeData.
+
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `copy`, `Offset`.
+
+### `smoothComposePath` — líneas 763–779
+
+**Firma:** `private fun smoothComposePath(points: List<Offset>): Path`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `points: List<Offset>`
+
+**Salida:** Path.
+
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `Path`, `isEmpty`, `moveTo`, `first`, `lineTo`, `Offset`, `quadraticBezierTo`, `last`.
+
+### `saveDrawingToCache` — líneas 781–786
+
+**Firma:** `private suspend fun saveDrawingToCache( context: Context, size: IntSize, strokes: List<DrawingStrokeData>, backgroundColor: Color ): Uri?`
+
+Crea un Bitmap con el color del lienzo, reescala los trazos a la resolución final, los dibuja y escribe un PNG temporal utilizable por el editor de notas.
+
+**Entradas:**
+- `context: Context`
+- `size: IntSize`
+- `strokes: List<DrawingStrokeData>`
+- `backgroundColor: Color`
+
+**Salida:** Uri?.
+
+**Efectos/APIs observados en el cuerpo:**
+- Ejecuta trabajo de I/O fuera del hilo principal.
+
+**Operaciones/funciones que coordina:** `withContext`.
+
+### `findActivity` — líneas 839–839
+
+**Firma:** `private tailrec fun Context.findActivity(): Activity?`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Salida:** Activity?.
+
+**Decisiones y protecciones visibles:**
+- Usa `when` para mapear estados/tipos/opciones.
+
+## 5. Cómo se conecta con el resto de MyNotes
+
+- Usa `com.example.mynotes.R`.
+- Usa `com.example.mynotes.settings.AppSettings`.
+- Usa `com.example.mynotes.ui.sound.UiActionSound`.
+- Usa `com.example.mynotes.ui.sound.UiSoundPlayer`.
+- Usa `com.example.mynotes.ui.theme.appFontFamily`.
+
+## 6. Recursos Android que utiliza
+
+- `R.string`: `drawing_back`, `drawing_canvas_color`, `drawing_clear`, `drawing_colors`, `drawing_expand_canvas`, `drawing_medium`, `drawing_redo`, `drawing_restore_canvas`, `drawing_save`, `drawing_subtitle`, `drawing_thick`, `drawing_thickness`, `drawing_thin`, `drawing_title`, `drawing_tool_eraser`, `drawing_tool_fine`, `drawing_tool_highlighter`, `drawing_tool_marker`, `drawing_tool_pen`, `drawing_tool_pencil`, `drawing_tools`, `drawing_undo`
+
+## 7. Tecnologías y efectos relevantes
+
+- Ejecuta trabajo de I/O fuera del hilo principal.
+- Lanza trabajo asíncrono mediante coroutines.
+- Procesa imágenes/bitmaps.
+- Accede al sistema de archivos interno/cache.
+- Participa en estado/efectos de Compose.
+
+## 8. Lectura práctica del flujo
+
+Una forma útil de seguir este archivo en el depurador es recorrer estas operaciones en este orden aproximado:
+1. `DrawingScreen` — Editor Compose del dibujo. Conserva lista de trazos, herramienta/color/grosor/lienzo, undo/redo y modo expandido; al guardar rasteriza el lienzo a PNG y devuelve un adjunto a la nota.
+2. `drawStrokeData` — Interpreta DrawingStrokeData y pinta el Path con el comportamiento de la herramienta elegida, incluyendo borrado mediante blend/composición.
+
+## 9. Qué no debe romperse al modificarlo
+
+- Evitar aumentar resoluciones/cargas sin considerar memoria y scroll; preservar caché y liberación de recursos.
+- Conservar validaciones de Uri/ruta y no confiar en nombres externos sin sanitizar.
+- Evitar trabajo bloqueante durante composición y mantener estado estable para limitar recomposiciones.
+
+## 10. Resumen en lenguaje sencillo
+
+En términos simples: Editor de dibujo dentro de MyNotes: herramientas, trazo, color, grosor, borrador, lienzo configurable, undo/redo, expansión y guardado PNG. La sección función por función anterior describe qué entra, qué devuelve y qué efectos produce cada operación detectada en el fuente actual.

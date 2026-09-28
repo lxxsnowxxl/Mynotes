@@ -1,0 +1,79 @@
+MYNOTES — EXPLICACIÓN ULTRA DETALLADA
+==============================================================================================================
+Archivo 42/72: app/src/main/java/com/example/mynotes/ui/theme/Color.kt
+SHA-256: 985d4a3a3467e6730a5be7a57dc5cfa455d319b2b4a632be69221b5e34418c14
+Líneas del fuente: 11
+Package: com.example.mynotes.ui.theme
+
+1. RESPONSABILIDAD EXACTA DEL ARCHIVO
+----------------------------------------------------------------------
+Constantes base de color del tema; complementa las paletas configurables y los esquemas Material.
+
+2. DÓNDE ENCAJA EN LA ARQUITECTURA
+----------------------------------------------------------------------
+Este archivo pertenece principalmente a la **capa de interfaz Compose/Activities**. No debe analizarse aislado: las referencias cruzadas y callbacks se detallan más abajo.
+
+3. IMPORTACIONES, UNA POR UNA
+----------------------------------------------------------------------
+- `androidx.compose.ui.graphics.Color`: Importa `androidx.compose.ui.graphics.Color` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+
+4. DECLARACIONES Y ESTADO IMPORTANTES
+----------------------------------------------------------------------
+L5: `val Purple80 = Color(0xFFD0BCFF)`
+    Declara `Purple80` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `Color(0xFFD0BCFF)`.
+L6: `val PurpleGrey80 = Color(0xFFCCC2DC)`
+    Declara `PurpleGrey80` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `Color(0xFFCCC2DC)`.
+L7: `val Pink80 = Color(0xFFEFB8C8)`
+    Declara `Pink80` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `Color(0xFFEFB8C8)`.
+L9: `val Purple40 = Color(0xFF6650a4)`
+    Declara `Purple40` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `Color(0xFF6650a4)`.
+L10: `val PurpleGrey40 = Color(0xFF625b71)`
+    Declara `PurpleGrey40` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `Color(0xFF625b71)`.
+L11: `val Pink40 = Color(0xFF7D5260)`
+    Declara `Pink40` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `Color(0xFF7D5260)`.
+
+5. FUNCIONES — EXPLICACIÓN DE CADA UNA
+----------------------------------------------------------------------
+Este archivo no declara funciones Kotlin detectables (puede ser un script Gradle, clase puramente declarativa o modelo).
+
+6. EXPLICACIÓN COMPLETA LÍNEA POR LÍNEA
+----------------------------------------------------------------------
+Esta sección no omite líneas ejecutables. Repite incluso partes ya explicadas en funciones para poder leer el archivo de arriba abajo sin saltar entre secciones.
+L1: `package com.example.mynotes.ui.theme`
+    Declara que este archivo pertenece al package `com.example.mynotes.ui.theme`; esto determina su namespace Kotlin y cómo lo importan otros archivos.
+L3: `import androidx.compose.ui.graphics.Color`
+    Importa `androidx.compose.ui.graphics.Color` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L5: `val Purple80 = Color(0xFFD0BCFF)`
+    Declara `Purple80` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `Color(0xFFD0BCFF)`.
+L6: `val PurpleGrey80 = Color(0xFFCCC2DC)`
+    Declara `PurpleGrey80` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `Color(0xFFCCC2DC)`.
+L7: `val Pink80 = Color(0xFFEFB8C8)`
+    Declara `Pink80` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `Color(0xFFEFB8C8)`.
+L9: `val Purple40 = Color(0xFF6650a4)`
+    Declara `Purple40` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `Color(0xFF6650a4)`.
+L10: `val PurpleGrey40 = Color(0xFF625b71)`
+    Declara `PurpleGrey40` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `Color(0xFF625b71)`.
+L11: `val Pink40 = Color(0xFF7D5260)`
+    Declara `Pink40` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `Color(0xFF7D5260)`.
+
+7. RECURSOS ANDROID REFERENCIADOS
+----------------------------------------------------------------------
+- No hay referencias directas `R.*` en este archivo.
+
+8. QUIÉN USA ESTE COMPONENTE
+----------------------------------------------------------------------
+- No se detectaron referencias externas por nombre a los tipos principales; puede ser punto de entrada Android, recurso invocado por Manifest o archivo de prueba.
+
+9. QUÉ PUEDE ROMPERSE SI LO MODIFICAS
+----------------------------------------------------------------------
+- Conservar firmas públicas/callbacks y comprobar los archivos que aparecen en “quién usa este componente” antes de renombrar o cambiar tipos.
+
+10. CHECKLIST DE PRUEBA DESPUÉS DE MODIFICAR ESTE ARCHIVO
+----------------------------------------------------------------------
+- Compilar `assembleDebug` y resolver primero errores de Kotlin/AAPT.
+- Abrir la pantalla/flujo relacionado y comprobar ida y vuelta (back) sin estado duplicado.
+- Cambiar tema/paleta y verificar contraste si este archivo dibuja UI.
+
+==============================================================================================================
+FIN DEL ARCHIVO
+==============================================================================================================

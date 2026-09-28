@@ -35,7 +35,11 @@
     <string name="pdf_error_image">无法打开图片。</string>
     <string name="pdf_error_save">无法保存 PDF。</string>
     <string name="pdf_ai_crop_done">已应用 AI 抠图。</string>
-    <string name="pdf_ai_crop_not_ready">AI 模型尚不可用。请连接网络后重试。</string>
+    <string name="pdf_ai_crop_not_ready">无法准备 AI 模型。请检查网络连接和可用存储空间，然后重试。</string>
+    <string name="pdf_ai_crop_downloading">正在下载 AI 模型。首次使用需要连接网络。</string>
+    <string name="pdf_ai_crop_play_services">AI 抠图需要在此设备上启用并更新 Google Play 服务。</string>
+    <string name="pdf_ai_crop_error">无法对此图片进行抠图。请重试。</string>
+    <string name="pdf_ai_crop_changed">抠图期间文档或所选内容已更改。请重新选择图片并重试。</string>
     <string name="pdf_go_to_page">跳转到页面</string>
     <string name="pdf_go_to_page_range">请输入 1 到 %1$d 之间的页码。</string>
     <string name="pdf_page_number">页码</string>

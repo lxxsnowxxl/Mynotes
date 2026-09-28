@@ -1,21 +1,32 @@
-# Auditoría de código y cobertura
+# Auditoría de código y cobertura — v63
 
-## Cobertura documental
+## Qué se corrigió respecto de v62
+
+v62 tenía cobertura nominal 72/72, pero varios documentos eran demasiado superficiales: enumeraban imports/declaraciones y no explicaban el funcionamiento interno. v63 regenera cada documento con explicación por función, entradas/salidas, efectos laterales, APIs usadas, integración y precauciones.
+
+## Cobertura cuantitativa
 
 - Fuentes Kotlin/KTS: **72**.
-- Documentos por fuente: **72**.
-- Cobertura: **100%**.
+- Líneas de código fuente: **23794**.
+- Documentos Markdown individuales: **72**.
+- Documentos TXT individuales: **72**.
+- Líneas de explicación Markdown generadas: **17152** (promedio 238.2 por fuente).
+- Documento maestro TXT: `EXPLICACION_COMPLETA_DEL_CODIGO.txt`.
+- Cobertura de fuentes: **100%**.
 
-## Comprobaciones estáticas
+## Qué contiene ahora cada explicación
 
-- No se detectaron referencias `R.string/layout/xml/drawable/raw/mipmap/font` faltantes en el árbol actual.
-- Los componentes propios declarados en Manifest tienen implementación detectable.
-- `widget_collections.xml` y `widget_stats.xml` no existen en el árbol limpio de v61.
-- Collage/Overview no tienen providers ni receivers registrados.
-- `settings/SettingsViewModel.kt` es intencionalmente un stub; la clase real vive en `viewmodel/SettingsViewModel.kt`.
+1. Responsabilidad real del archivo.
+2. Tipos/clases declarados.
+3. Estado, constantes y valores importantes.
+4. Funciones una por una, con líneas, firma, entradas, salida y explicación.
+5. Efectos observados: Room, DataStore, red, archivos, alarmas, notificaciones, RemoteViews, bitmap, audio/háptica, etc.
+6. Dependencias internas de MyNotes.
+7. Recursos Android `R.*`.
+8. Lectura práctica del flujo.
+9. Riesgos/contratos que deben conservarse al editar.
+10. Resumen en lenguaje sencillo.
 
-## Observaciones de mantenimiento
+## Integridad del código
 
-- `local.properties` contiene una ruta local de Windows y no debe tratarse como configuración portable del repositorio.
-- El wrapper apunta a Gradle 9.3.0; una máquina nueva necesita poder resolver esa distribución.
-- La documentación anterior mencionaba README/DEVELOPMENT, pero esos archivos no están presentes en el árbol v61 recibido; no se afirma que formen parte del proyecto actual.
+La generación modifica únicamente `doc/`. El árbol `app/` se copió sin cambios y sus SHA-256 se vuelven a registrar en `02_SHA256_CODIGO_INTACTO.txt`.

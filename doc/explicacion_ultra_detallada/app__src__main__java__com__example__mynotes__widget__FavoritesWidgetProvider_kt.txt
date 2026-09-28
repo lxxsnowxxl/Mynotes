@@ -1,0 +1,524 @@
+MYNOTES — EXPLICACIÓN ULTRA DETALLADA
+==============================================================================================================
+Archivo 60/72: app/src/main/java/com/example/mynotes/widget/FavoritesWidgetProvider.kt
+SHA-256: 06a28b27157d6fade78c977a809890de5366125bc3fe994a33e466e8bd6e0d53
+Líneas del fuente: 103
+Package: com.example.mynotes.widget
+
+1. RESPONSABILIDAD EXACTA DEL ARCHIVO
+----------------------------------------------------------------------
+AppWidgetProvider del widget Favoritas; consulta notas favoritas y llena RemoteViews con estilo/paleta/idioma de MyNotes.
+
+2. DÓNDE ENCAJA EN LA ARQUITECTURA
+----------------------------------------------------------------------
+Este archivo pertenece principalmente a la **integración App Widgets/launcher**. No debe analizarse aislado: las referencias cruzadas y callbacks se detallan más abajo.
+
+3. IMPORTACIONES, UNA POR UNA
+----------------------------------------------------------------------
+- `android.appwidget.AppWidgetManager`: Importa `android.appwidget.AppWidgetManager` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `android.appwidget.AppWidgetProvider`: Importa `android.appwidget.AppWidgetProvider` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `android.content.Context`: Importa `android.content.Context` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `android.view.View`: Importa `android.view.View` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `android.widget.RemoteViews`: Importa `android.widget.RemoteViews` para usar interfaz de App Widgets/notificaciones personalizadas fuera de Compose.
+- `com.example.mynotes.R`: Importa `com.example.mynotes.R`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.data.AppDatabase`: Importa `com.example.mynotes.data.AppDatabase`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.data.Attachment`: Importa `com.example.mynotes.data.Attachment`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.data.Note`: Importa `com.example.mynotes.data.Note`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `kotlinx.coroutines.CoroutineScope`: Importa `kotlinx.coroutines.CoroutineScope` para usar coroutines, Flow y ejecución asíncrona.
+- `kotlinx.coroutines.Dispatchers`: Importa `kotlinx.coroutines.Dispatchers` para usar coroutines, Flow y ejecución asíncrona.
+- `kotlinx.coroutines.SupervisorJob`: Importa `kotlinx.coroutines.SupervisorJob` para usar coroutines, Flow y ejecución asíncrona.
+- `kotlinx.coroutines.launch`: Importa `kotlinx.coroutines.launch` para usar coroutines, Flow y ejecución asíncrona.
+
+4. DECLARACIONES Y ESTADO IMPORTANTES
+----------------------------------------------------------------------
+L17: `class FavoritesWidgetProvider : AppWidgetProvider() {`
+    Declara class `FavoritesWidgetProvider`. A partir de aquí las propiedades y funciones hasta su llave de cierre pertenecen a este tipo.
+L19: `val pendingResult = goAsync()`
+    Declara `pendingResult` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `goAsync()`.
+L22: `val db = AppDatabase.getDatabase(context.applicationContext)`
+    Declara `db` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `AppDatabase.getDatabase(context.applicationContext)`.
+L23: `val notes = db.noteDao().getFavoriteNotesForWidget(2)`
+    Declara `notes` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `db.noteDao().getFavoriteNotesForWidget(2)`.
+L24: `val favoriteCount = db.noteDao().getFavoriteCountForWidget()`
+    Declara `favoriteCount` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `db.noteDao().getFavoriteCountForWidget()`.
+L25: `val theme = WidgetPresentation.theme(context)`
+    Declara `theme` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `WidgetPresentation.theme(context)`.
+L26: `val textContext = WidgetLocale.localizedContext(context)`
+    Declara `textContext` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `WidgetLocale.localizedContext(context)`.
+L27: `val visualMap = WidgetMediaPreview.firstVisualByNote(db.attachmentDao().getAllAttachmentsOnce())`
+    Declara `visualMap` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `WidgetMediaPreview.firstVisualByNote(db.attachmentDao().getAllAttachmentsOnce())`.
+L45: `val views = RemoteViews(context.packageName, R.layout.widget_favorites)`
+    Crea un árbol `RemoteViews`, la UI serializable que Android permite mostrar fuera del proceso normal de Compose (widgets/notificaciones personalizadas).
+L59: `val rowIds = intArrayOf(R.id.widget_favorite_row_1, R.id.widget_favorite_row_2)`
+    Declara `rowIds` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `intArrayOf(R.id.widget_favorite_row_1, R.id.widget_favorite_row_2)`.
+L60: `val titleIds = intArrayOf(R.id.widget_favorite_title_1, R.id.widget_favorite_title_2)`
+    Declara `titleIds` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `intArrayOf(R.id.widget_favorite_title_1, R.id.widget_favorite_title_2)`.
+L61: `val previewIds = intArrayOf(R.id.widget_favorite_preview_1, R.id.widget_favorite_preview_2)`
+    Declara `previewIds` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `intArrayOf(R.id.widget_favorite_preview_1, R.id.widget_favorite_preview_2)`.
+L62: `val metaIds = intArrayOf(R.id.widget_favorite_meta_1, R.id.widget_favorite_meta_2)`
+    Declara `metaIds` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `intArrayOf(R.id.widget_favorite_meta_1, R.id.widget_favorite_meta_2)`.
+L63: `val accentIds = intArrayOf(R.id.widget_favorite_accent_1, R.id.widget_favorite_accent_2)`
+    Declara `accentIds` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `intArrayOf(R.id.widget_favorite_accent_1, R.id.widget_favorite_accent_2)`.
+L64: `val toggleIds = intArrayOf(R.id.widget_favorite_toggle_1, R.id.widget_favorite_toggle_2)`
+    Declara `toggleIds` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `intArrayOf(R.id.widget_favorite_toggle_1, R.id.widget_favorite_toggle_2)`.
+L65: `val thumbIds = intArrayOf(R.id.widget_favorite_thumb_1, R.id.widget_favorite_thumb_2)`
+    Declara `thumbIds` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `intArrayOf(R.id.widget_favorite_thumb_1, R.id.widget_favorite_thumb_2)`.
+L71: `val note = notes.getOrNull(index)`
+    Declara `note` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `notes.getOrNull(index)`.
+L86: `val bitmap = runCatching { WidgetMediaPreview.loadBestPreviewBitmap(context, note, visualMap[note.id], 220, 180) }.getOrNull()`
+    Declara `bitmap` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `runCatching { WidgetMediaPreview.loadBestPreviewBitmap(context, note, visualMap[note.id], 220, 180) }.getOrNull()`.
+
+5. FUNCIONES — EXPLICACIÓN DE CADA UNA
+----------------------------------------------------------------------
+
+5.1 `onUpdate` — líneas 18–33
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
+
+Propósito:
+    Android llama este método para actualizar instancias de un App Widget. Debe reconstruir RemoteViews con datos/configuración actuales.
+
+Parámetros/entradas:
+  - `context: Context`: el llamador proporciona este valor/callback a `onUpdate`. Dentro del cuerpo, las líneas donde aparece `context` muestran exactamente cómo afecta al resultado.
+  - `appWidgetManager: AppWidgetManager`: el llamador proporciona este valor/callback a `onUpdate`. Dentro del cuerpo, las líneas donde aparece `appWidgetManager` muestran exactamente cómo afecta al resultado.
+  - `appWidgetIds: IntArray`: el llamador proporciona este valor/callback a `onUpdate`. Dentro del cuerpo, las líneas donde aparece `appWidgetIds` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L18 [4 espacios] `override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {`
+      → Sobrescribe un método definido por una clase/interfaz base. El bloque de `onUpdate` se detalla después instrucción por instrucción.
+  L19 [8 espacios] `val pendingResult = goAsync()`
+      → Declara `pendingResult` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `goAsync()`.
+  L20 [8 espacios] `CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {`
+      → Lanza una coroutine hija para ejecutar este bloque de forma asíncrona respecto al código llamador.
+  L21 [12 espacios] `try {`
+      → Abre un bloque protegido: si una operación lanza una excepción, el control puede pasar al `catch` correspondiente sin terminar abruptamente el flujo.
+  L22 [16 espacios] `val db = AppDatabase.getDatabase(context.applicationContext)`
+      → Declara `db` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `AppDatabase.getDatabase(context.applicationContext)`.
+  L23 [16 espacios] `val notes = db.noteDao().getFavoriteNotesForWidget(2)`
+      → Declara `notes` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `db.noteDao().getFavoriteNotesForWidget(2)`.
+  L24 [16 espacios] `val favoriteCount = db.noteDao().getFavoriteCountForWidget()`
+      → Declara `favoriteCount` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `db.noteDao().getFavoriteCountForWidget()`.
+  L25 [16 espacios] `val theme = WidgetPresentation.theme(context)`
+      → Declara `theme` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `WidgetPresentation.theme(context)`.
+  L26 [16 espacios] `val textContext = WidgetLocale.localizedContext(context)`
+      → Declara `textContext` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `WidgetLocale.localizedContext(context)`.
+  L27 [16 espacios] `val visualMap = WidgetMediaPreview.firstVisualByNote(db.attachmentDao().getAllAttachmentsOnce())`
+      → Declara `visualMap` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `WidgetMediaPreview.firstVisualByNote(db.attachmentDao().getAllAttachmentsOnce())`.
+  L28 [16 espacios] `appWidgetIds.forEach { appWidgetId -> updateWidget(context, textContext, appWidgetManager, appWidgetId, notes, favoriteCount, theme, visualMap) }`
+      → Define una rama/lambda. Cuando coincide `appWidgetIds.forEach { appWidgetId`, se ejecuta la expresión o bloque situado después de `->`.
+  L29 [12 espacios] `} finally {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L30 [16 espacios] `pendingResult.finish()`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L31 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L32 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L33 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.2 `updateWidget` — líneas 35–102
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        private suspend fun updateWidget(
+            context: Context,
+            textContext: Context,
+            manager: AppWidgetManager,
+            appWidgetId: Int,
+            notes: List<Note>,
+            total: Int,
+            theme: WidgetPresentation.WidgetThemeSpec,
+            visualMap: Map<Int, Attachment>
+        ) {
+
+Propósito:
+    Actualiza el estado/dato indicado por el nombre y propaga el cambio a las capas que dependen de él.
+
+Parámetros/entradas:
+  - `context: Context`: el llamador proporciona este valor/callback a `updateWidget`. Dentro del cuerpo, las líneas donde aparece `context` muestran exactamente cómo afecta al resultado.
+  - `textContext: Context`: el llamador proporciona este valor/callback a `updateWidget`. Dentro del cuerpo, las líneas donde aparece `textContext` muestran exactamente cómo afecta al resultado.
+  - `manager: AppWidgetManager`: el llamador proporciona este valor/callback a `updateWidget`. Dentro del cuerpo, las líneas donde aparece `manager` muestran exactamente cómo afecta al resultado.
+  - `appWidgetId: Int`: el llamador proporciona este valor/callback a `updateWidget`. Dentro del cuerpo, las líneas donde aparece `appWidgetId` muestran exactamente cómo afecta al resultado.
+  - `notes: List<Note>`: el llamador proporciona este valor/callback a `updateWidget`. Dentro del cuerpo, las líneas donde aparece `notes` muestran exactamente cómo afecta al resultado.
+  - `total: Int`: el llamador proporciona este valor/callback a `updateWidget`. Dentro del cuerpo, las líneas donde aparece `total` muestran exactamente cómo afecta al resultado.
+  - `theme: WidgetPresentation.WidgetThemeSpec`: el llamador proporciona este valor/callback a `updateWidget`. Dentro del cuerpo, las líneas donde aparece `theme` muestran exactamente cómo afecta al resultado.
+  - `visualMap: Map<Int, Attachment>`: el llamador proporciona este valor/callback a `updateWidget`. Dentro del cuerpo, las líneas donde aparece `visualMap` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L35 [4 espacios] `private suspend fun updateWidget(`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `updateWidget` se detalla después instrucción por instrucción.
+  L36 [8 espacios] `context: Context,`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `context: Context,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L37 [8 espacios] `textContext: Context,`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `textContext: Context,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L38 [8 espacios] `manager: AppWidgetManager,`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `manager: AppWidgetManager,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L39 [8 espacios] `appWidgetId: Int,`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `appWidgetId: Int,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L40 [8 espacios] `notes: List<Note>,`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `notes: List<Note>,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L41 [8 espacios] `total: Int,`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `total: Int,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L42 [8 espacios] `theme: WidgetPresentation.WidgetThemeSpec,`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `theme: WidgetPresentation.WidgetThemeSpec,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L43 [8 espacios] `visualMap: Map<Int, Attachment>`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `visualMap: Map<Int, Attachment>`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L44 [4 espacios] `) {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L45 [8 espacios] `val views = RemoteViews(context.packageName, R.layout.widget_favorites)`
+      → Crea un árbol `RemoteViews`, la UI serializable que Android permite mostrar fuera del proceso normal de Compose (widgets/notificaciones personalizadas).
+  L46 [8 espacios] `views.setInt(R.id.widget_favorites_root, "setBackgroundResource", theme.rootBackgroundRes)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L47 [8 espacios] `views.setTextViewText(R.id.widget_favorites_title, textContext.getString(R.string.widget_favorites))`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L48 [8 espacios] `views.setTextViewText(R.id.widget_favorites_empty, textContext.getString(R.string.widget_empty_favorites))`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L49 [8 espacios] `views.setTextColor(R.id.widget_favorites_title, theme.textPrimary)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L50 [8 espacios] `views.setTextColor(R.id.widget_favorites_count, theme.textSecondary)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L51 [8 espacios] `views.setTextColor(R.id.widget_favorites_empty, theme.textSecondary)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L52 [8 espacios] `views.setInt(R.id.widget_favorites_add, "setBackgroundResource", theme.primaryActionBackgroundRes)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L53 [8 espacios] `views.setInt(R.id.widget_favorites_add, "setColorFilter", theme.onPrimaryAction)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L54 [8 espacios] `views.setCharSequence(R.id.widget_favorites_add, "setContentDescription", textContext.getString(R.string.widget_new_note))`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L55 [8 espacios] `views.setTextViewText(R.id.widget_favorites_count, textContext.resources.getQuantityString(R.plurals.widget_favorite_count, total, total))`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L56 [8 espacios] `views.setOnClickPendingIntent(R.id.widget_favorites_header, WidgetIntents.openCollection(context, WidgetActions.COLLECTION_FAVORITES, appWidgetId))`
+      → Crea o configura un `PendingIntent`: una autorización empaquetada que Android puede ejecutar más tarde en nombre de MyNotes.
+  L57 [8 espacios] `views.setOnClickPendingIntent(R.id.widget_favorites_add, WidgetIntents.newNote(context, appWidgetId + 201))`
+      → Crea o configura un `PendingIntent`: una autorización empaquetada que Android puede ejecutar más tarde en nombre de MyNotes.
+  L59 [8 espacios] `val rowIds = intArrayOf(R.id.widget_favorite_row_1, R.id.widget_favorite_row_2)`
+      → Declara `rowIds` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `intArrayOf(R.id.widget_favorite_row_1, R.id.widget_favorite_row_2)`.
+  L60 [8 espacios] `val titleIds = intArrayOf(R.id.widget_favorite_title_1, R.id.widget_favorite_title_2)`
+      → Declara `titleIds` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `intArrayOf(R.id.widget_favorite_title_1, R.id.widget_favorite_title_2)`.
+  L61 [8 espacios] `val previewIds = intArrayOf(R.id.widget_favorite_preview_1, R.id.widget_favorite_preview_2)`
+      → Declara `previewIds` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `intArrayOf(R.id.widget_favorite_preview_1, R.id.widget_favorite_preview_2)`.
+  L62 [8 espacios] `val metaIds = intArrayOf(R.id.widget_favorite_meta_1, R.id.widget_favorite_meta_2)`
+      → Declara `metaIds` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `intArrayOf(R.id.widget_favorite_meta_1, R.id.widget_favorite_meta_2)`.
+  L63 [8 espacios] `val accentIds = intArrayOf(R.id.widget_favorite_accent_1, R.id.widget_favorite_accent_2)`
+      → Declara `accentIds` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `intArrayOf(R.id.widget_favorite_accent_1, R.id.widget_favorite_accent_2)`.
+  L64 [8 espacios] `val toggleIds = intArrayOf(R.id.widget_favorite_toggle_1, R.id.widget_favorite_toggle_2)`
+      → Declara `toggleIds` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `intArrayOf(R.id.widget_favorite_toggle_1, R.id.widget_favorite_toggle_2)`.
+  L65 [8 espacios] `val thumbIds = intArrayOf(R.id.widget_favorite_thumb_1, R.id.widget_favorite_thumb_2)`
+      → Declara `thumbIds` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `intArrayOf(R.id.widget_favorite_thumb_1, R.id.widget_favorite_thumb_2)`.
+  L67 [8 espacios] `views.setViewVisibility(R.id.widget_favorites_empty, if (notes.isEmpty()) View.VISIBLE else View.GONE)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L68 [8 espacios] `views.setViewVisibility(R.id.widget_favorites_cards, if (notes.isEmpty()) View.GONE else View.VISIBLE)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L70 [8 espacios] `rowIds.forEachIndexed { index, rowId ->`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `rowIds.forEachIndexed { index, rowId ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L71 [12 espacios] `val note = notes.getOrNull(index)`
+      → Declara `note` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `notes.getOrNull(index)`.
+  L72 [12 espacios] `views.setViewVisibility(rowId, if (note != null) View.VISIBLE else View.GONE)`
+      → Asigna/configura `views.setViewVisibility(rowId, if (note !` usando `null) View.VISIBLE else View.GONE)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L73 [12 espacios] `if (note != null) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `note != null`.
+  L74 [16 espacios] `views.setInt(rowId, "setBackgroundResource", theme.noteRowBackgroundRes)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L75 [16 espacios] `views.setInt(accentIds[index], "setBackgroundColor", WidgetPresentation.noteAccentColor(note, theme.accent))`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L76 [16 espacios] `views.setTextViewText(titleIds[index], WidgetPresentation.title(textContext, note))`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L77 [16 espacios] `views.setTextViewText(previewIds[index], WidgetPresentation.contentPreview(note, 34).ifBlank { WidgetPresentation.preview(textContext, note) })`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L78 [16 espacios] `views.setTextViewText(metaIds[index], WidgetPresentation.metadata(textContext, note))`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L79 [16 espacios] `views.setTextColor(titleIds[index], theme.textPrimary)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L80 [16 espacios] `views.setTextColor(previewIds[index], theme.textSecondary)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L81 [16 espacios] `views.setTextColor(metaIds[index], theme.textMuted)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L82 [16 espacios] `views.setInt(toggleIds[index], "setBackgroundResource", theme.actionBackgroundRes)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L83 [16 espacios] `views.setInt(toggleIds[index], "setColorFilter", 0xFFE0AA2D.toInt())`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L84 [16 espacios] `views.setCharSequence(toggleIds[index], "setContentDescription", textContext.getString(R.string.widget_toggle_favorite))`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L86 [16 espacios] `val bitmap = runCatching { WidgetMediaPreview.loadBestPreviewBitmap(context, note, visualMap[note.id], 220, 180) }.getOrNull()`
+      → Declara `bitmap` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `runCatching { WidgetMediaPreview.loadBestPreviewBitmap(context, note, visualMap[note.id], 220, 180) }.getOrNull()`.
+  L87 [16 espacios] `views.setInt(thumbIds[index], "setBackgroundResource", theme.thumbnailBackgroundRes)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L88 [16 espacios] `if (bitmap != null) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `bitmap != null`.
+  L89 [20 espacios] `views.setImageViewBitmap(thumbIds[index], bitmap)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L90 [20 espacios] `views.setViewPadding(thumbIds[index], 0, 0, 0, 0)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L91 [16 espacios] `} else {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L92 [20 espacios] `views.setImageViewResource(thumbIds[index], R.drawable.widget_thumb_placeholder)`
+      → Referencia un drawable empaquetado en recursos (widget_thumb_placeholder) para usarlo como icono/fondo/imagen.
+  L93 [20 espacios] `views.setViewPadding(thumbIds[index], 16, 16, 16, 16)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L94 [20 espacios] `views.setInt(thumbIds[index], "setColorFilter", theme.textMuted)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L95 [16 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L97 [16 espacios] `views.setOnClickPendingIntent(rowId, WidgetIntents.openNote(context, note.id, appWidgetId * 10 + index + 300))`
+      → Crea o configura un `PendingIntent`: una autorización empaquetada que Android puede ejecutar más tarde en nombre de MyNotes.
+  L98 [16 espacios] `views.setOnClickPendingIntent(toggleIds[index], WidgetIntents.toggleFavorite(context, note.id, appWidgetId * 10 + index + 400))`
+      → Crea o configura un `PendingIntent`: una autorización empaquetada que Android puede ejecutar más tarde en nombre de MyNotes.
+  L99 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L100 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L101 [8 espacios] `manager.updateAppWidget(appWidgetId, views)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L102 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+6. EXPLICACIÓN COMPLETA LÍNEA POR LÍNEA
+----------------------------------------------------------------------
+Esta sección no omite líneas ejecutables. Repite incluso partes ya explicadas en funciones para poder leer el archivo de arriba abajo sin saltar entre secciones.
+L1: `package com.example.mynotes.widget`
+    Declara que este archivo pertenece al package `com.example.mynotes.widget`; esto determina su namespace Kotlin y cómo lo importan otros archivos.
+L3: `import android.appwidget.AppWidgetManager`
+    Importa `android.appwidget.AppWidgetManager` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L4: `import android.appwidget.AppWidgetProvider`
+    Importa `android.appwidget.AppWidgetProvider` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L5: `import android.content.Context`
+    Importa `android.content.Context` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L6: `import android.view.View`
+    Importa `android.view.View` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L7: `import android.widget.RemoteViews`
+    Importa `android.widget.RemoteViews` para usar interfaz de App Widgets/notificaciones personalizadas fuera de Compose.
+L8: `import com.example.mynotes.R`
+    Importa `com.example.mynotes.R`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L9: `import com.example.mynotes.data.AppDatabase`
+    Importa `com.example.mynotes.data.AppDatabase`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L10: `import com.example.mynotes.data.Attachment`
+    Importa `com.example.mynotes.data.Attachment`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L11: `import com.example.mynotes.data.Note`
+    Importa `com.example.mynotes.data.Note`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L12: `import kotlinx.coroutines.CoroutineScope`
+    Importa `kotlinx.coroutines.CoroutineScope` para usar coroutines, Flow y ejecución asíncrona.
+L13: `import kotlinx.coroutines.Dispatchers`
+    Importa `kotlinx.coroutines.Dispatchers` para usar coroutines, Flow y ejecución asíncrona.
+L14: `import kotlinx.coroutines.SupervisorJob`
+    Importa `kotlinx.coroutines.SupervisorJob` para usar coroutines, Flow y ejecución asíncrona.
+L15: `import kotlinx.coroutines.launch`
+    Importa `kotlinx.coroutines.launch` para usar coroutines, Flow y ejecución asíncrona.
+L17: `class FavoritesWidgetProvider : AppWidgetProvider() {`
+    Declara class `FavoritesWidgetProvider`. A partir de aquí las propiedades y funciones hasta su llave de cierre pertenecen a este tipo.
+L18: `override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {`
+    Sobrescribe un método definido por una clase/interfaz base. El bloque de `onUpdate` se detalla después instrucción por instrucción.
+L19: `val pendingResult = goAsync()`
+    Declara `pendingResult` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `goAsync()`.
+L20: `CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {`
+    Lanza una coroutine hija para ejecutar este bloque de forma asíncrona respecto al código llamador.
+L21: `try {`
+    Abre un bloque protegido: si una operación lanza una excepción, el control puede pasar al `catch` correspondiente sin terminar abruptamente el flujo.
+L22: `val db = AppDatabase.getDatabase(context.applicationContext)`
+    Declara `db` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `AppDatabase.getDatabase(context.applicationContext)`.
+L23: `val notes = db.noteDao().getFavoriteNotesForWidget(2)`
+    Declara `notes` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `db.noteDao().getFavoriteNotesForWidget(2)`.
+L24: `val favoriteCount = db.noteDao().getFavoriteCountForWidget()`
+    Declara `favoriteCount` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `db.noteDao().getFavoriteCountForWidget()`.
+L25: `val theme = WidgetPresentation.theme(context)`
+    Declara `theme` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `WidgetPresentation.theme(context)`.
+L26: `val textContext = WidgetLocale.localizedContext(context)`
+    Declara `textContext` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `WidgetLocale.localizedContext(context)`.
+L27: `val visualMap = WidgetMediaPreview.firstVisualByNote(db.attachmentDao().getAllAttachmentsOnce())`
+    Declara `visualMap` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `WidgetMediaPreview.firstVisualByNote(db.attachmentDao().getAllAttachmentsOnce())`.
+L28: `appWidgetIds.forEach { appWidgetId -> updateWidget(context, textContext, appWidgetManager, appWidgetId, notes, favoriteCount, theme, visualMap) }`
+    Define una rama/lambda. Cuando coincide `appWidgetIds.forEach { appWidgetId`, se ejecuta la expresión o bloque situado después de `->`.
+L29: `} finally {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L30: `pendingResult.finish()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L31: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L32: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L33: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L35: `private suspend fun updateWidget(`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `updateWidget` se detalla después instrucción por instrucción.
+L36: `context: Context,`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `context: Context,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L37: `textContext: Context,`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `textContext: Context,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L38: `manager: AppWidgetManager,`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `manager: AppWidgetManager,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L39: `appWidgetId: Int,`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `appWidgetId: Int,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L40: `notes: List<Note>,`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `notes: List<Note>,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L41: `total: Int,`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `total: Int,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L42: `theme: WidgetPresentation.WidgetThemeSpec,`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `theme: WidgetPresentation.WidgetThemeSpec,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L43: `visualMap: Map<Int, Attachment>`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `visualMap: Map<Int, Attachment>`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L44: `) {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L45: `val views = RemoteViews(context.packageName, R.layout.widget_favorites)`
+    Crea un árbol `RemoteViews`, la UI serializable que Android permite mostrar fuera del proceso normal de Compose (widgets/notificaciones personalizadas).
+L46: `views.setInt(R.id.widget_favorites_root, "setBackgroundResource", theme.rootBackgroundRes)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L47: `views.setTextViewText(R.id.widget_favorites_title, textContext.getString(R.string.widget_favorites))`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L48: `views.setTextViewText(R.id.widget_favorites_empty, textContext.getString(R.string.widget_empty_favorites))`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L49: `views.setTextColor(R.id.widget_favorites_title, theme.textPrimary)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L50: `views.setTextColor(R.id.widget_favorites_count, theme.textSecondary)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L51: `views.setTextColor(R.id.widget_favorites_empty, theme.textSecondary)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L52: `views.setInt(R.id.widget_favorites_add, "setBackgroundResource", theme.primaryActionBackgroundRes)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L53: `views.setInt(R.id.widget_favorites_add, "setColorFilter", theme.onPrimaryAction)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L54: `views.setCharSequence(R.id.widget_favorites_add, "setContentDescription", textContext.getString(R.string.widget_new_note))`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L55: `views.setTextViewText(R.id.widget_favorites_count, textContext.resources.getQuantityString(R.plurals.widget_favorite_count, total, total))`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L56: `views.setOnClickPendingIntent(R.id.widget_favorites_header, WidgetIntents.openCollection(context, WidgetActions.COLLECTION_FAVORITES, appWidgetId))`
+    Crea o configura un `PendingIntent`: una autorización empaquetada que Android puede ejecutar más tarde en nombre de MyNotes.
+L57: `views.setOnClickPendingIntent(R.id.widget_favorites_add, WidgetIntents.newNote(context, appWidgetId + 201))`
+    Crea o configura un `PendingIntent`: una autorización empaquetada que Android puede ejecutar más tarde en nombre de MyNotes.
+L59: `val rowIds = intArrayOf(R.id.widget_favorite_row_1, R.id.widget_favorite_row_2)`
+    Declara `rowIds` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `intArrayOf(R.id.widget_favorite_row_1, R.id.widget_favorite_row_2)`.
+L60: `val titleIds = intArrayOf(R.id.widget_favorite_title_1, R.id.widget_favorite_title_2)`
+    Declara `titleIds` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `intArrayOf(R.id.widget_favorite_title_1, R.id.widget_favorite_title_2)`.
+L61: `val previewIds = intArrayOf(R.id.widget_favorite_preview_1, R.id.widget_favorite_preview_2)`
+    Declara `previewIds` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `intArrayOf(R.id.widget_favorite_preview_1, R.id.widget_favorite_preview_2)`.
+L62: `val metaIds = intArrayOf(R.id.widget_favorite_meta_1, R.id.widget_favorite_meta_2)`
+    Declara `metaIds` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `intArrayOf(R.id.widget_favorite_meta_1, R.id.widget_favorite_meta_2)`.
+L63: `val accentIds = intArrayOf(R.id.widget_favorite_accent_1, R.id.widget_favorite_accent_2)`
+    Declara `accentIds` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `intArrayOf(R.id.widget_favorite_accent_1, R.id.widget_favorite_accent_2)`.
+L64: `val toggleIds = intArrayOf(R.id.widget_favorite_toggle_1, R.id.widget_favorite_toggle_2)`
+    Declara `toggleIds` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `intArrayOf(R.id.widget_favorite_toggle_1, R.id.widget_favorite_toggle_2)`.
+L65: `val thumbIds = intArrayOf(R.id.widget_favorite_thumb_1, R.id.widget_favorite_thumb_2)`
+    Declara `thumbIds` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `intArrayOf(R.id.widget_favorite_thumb_1, R.id.widget_favorite_thumb_2)`.
+L67: `views.setViewVisibility(R.id.widget_favorites_empty, if (notes.isEmpty()) View.VISIBLE else View.GONE)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L68: `views.setViewVisibility(R.id.widget_favorites_cards, if (notes.isEmpty()) View.GONE else View.VISIBLE)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L70: `rowIds.forEachIndexed { index, rowId ->`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `rowIds.forEachIndexed { index, rowId ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L71: `val note = notes.getOrNull(index)`
+    Declara `note` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `notes.getOrNull(index)`.
+L72: `views.setViewVisibility(rowId, if (note != null) View.VISIBLE else View.GONE)`
+    Asigna/configura `views.setViewVisibility(rowId, if (note !` usando `null) View.VISIBLE else View.GONE)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L73: `if (note != null) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `note != null`.
+L74: `views.setInt(rowId, "setBackgroundResource", theme.noteRowBackgroundRes)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L75: `views.setInt(accentIds[index], "setBackgroundColor", WidgetPresentation.noteAccentColor(note, theme.accent))`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L76: `views.setTextViewText(titleIds[index], WidgetPresentation.title(textContext, note))`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L77: `views.setTextViewText(previewIds[index], WidgetPresentation.contentPreview(note, 34).ifBlank { WidgetPresentation.preview(textContext, note) })`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L78: `views.setTextViewText(metaIds[index], WidgetPresentation.metadata(textContext, note))`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L79: `views.setTextColor(titleIds[index], theme.textPrimary)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L80: `views.setTextColor(previewIds[index], theme.textSecondary)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L81: `views.setTextColor(metaIds[index], theme.textMuted)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L82: `views.setInt(toggleIds[index], "setBackgroundResource", theme.actionBackgroundRes)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L83: `views.setInt(toggleIds[index], "setColorFilter", 0xFFE0AA2D.toInt())`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L84: `views.setCharSequence(toggleIds[index], "setContentDescription", textContext.getString(R.string.widget_toggle_favorite))`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L86: `val bitmap = runCatching { WidgetMediaPreview.loadBestPreviewBitmap(context, note, visualMap[note.id], 220, 180) }.getOrNull()`
+    Declara `bitmap` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `runCatching { WidgetMediaPreview.loadBestPreviewBitmap(context, note, visualMap[note.id], 220, 180) }.getOrNull()`.
+L87: `views.setInt(thumbIds[index], "setBackgroundResource", theme.thumbnailBackgroundRes)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L88: `if (bitmap != null) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `bitmap != null`.
+L89: `views.setImageViewBitmap(thumbIds[index], bitmap)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L90: `views.setViewPadding(thumbIds[index], 0, 0, 0, 0)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L91: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L92: `views.setImageViewResource(thumbIds[index], R.drawable.widget_thumb_placeholder)`
+    Referencia un drawable empaquetado en recursos (widget_thumb_placeholder) para usarlo como icono/fondo/imagen.
+L93: `views.setViewPadding(thumbIds[index], 16, 16, 16, 16)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L94: `views.setInt(thumbIds[index], "setColorFilter", theme.textMuted)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L95: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L97: `views.setOnClickPendingIntent(rowId, WidgetIntents.openNote(context, note.id, appWidgetId * 10 + index + 300))`
+    Crea o configura un `PendingIntent`: una autorización empaquetada que Android puede ejecutar más tarde en nombre de MyNotes.
+L98: `views.setOnClickPendingIntent(toggleIds[index], WidgetIntents.toggleFavorite(context, note.id, appWidgetId * 10 + index + 400))`
+    Crea o configura un `PendingIntent`: una autorización empaquetada que Android puede ejecutar más tarde en nombre de MyNotes.
+L99: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L100: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L101: `manager.updateAppWidget(appWidgetId, views)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L102: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L103: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+7. RECURSOS ANDROID REFERENCIADOS
+----------------------------------------------------------------------
+- `R.drawable.widget_thumb_placeholder`: referencia a un recurso `drawable` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.id.widget_favorite_accent_1`: referencia a un recurso `id` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.id.widget_favorite_accent_2`: referencia a un recurso `id` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.id.widget_favorite_meta_1`: referencia a un recurso `id` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.id.widget_favorite_meta_2`: referencia a un recurso `id` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.id.widget_favorite_preview_1`: referencia a un recurso `id` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.id.widget_favorite_preview_2`: referencia a un recurso `id` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.id.widget_favorite_row_1`: referencia a un recurso `id` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.id.widget_favorite_row_2`: referencia a un recurso `id` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.id.widget_favorite_thumb_1`: referencia a un recurso `id` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.id.widget_favorite_thumb_2`: referencia a un recurso `id` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.id.widget_favorite_title_1`: referencia a un recurso `id` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.id.widget_favorite_title_2`: referencia a un recurso `id` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.id.widget_favorite_toggle_1`: referencia a un recurso `id` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.id.widget_favorite_toggle_2`: referencia a un recurso `id` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.id.widget_favorites_add`: referencia a un recurso `id` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.id.widget_favorites_cards`: referencia a un recurso `id` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.id.widget_favorites_count`: referencia a un recurso `id` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.id.widget_favorites_empty`: referencia a un recurso `id` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.id.widget_favorites_header`: referencia a un recurso `id` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.id.widget_favorites_root`: referencia a un recurso `id` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.id.widget_favorites_title`: referencia a un recurso `id` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.layout.widget_favorites`: referencia a un recurso `layout` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.widget_empty_favorites`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.widget_favorites`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.widget_new_note`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.widget_toggle_favorite`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+
+8. QUIÉN USA ESTE COMPONENTE
+----------------------------------------------------------------------
+- `FavoritesWidgetProvider` aparece también en 1 archivo(s):
+    - app/src/main/java/com/example/mynotes/widget/MyNotesWidgetUpdater.kt
+
+9. QUÉ PUEDE ROMPERSE SI LO MODIFICAS
+----------------------------------------------------------------------
+- Los widgets usan RemoteViews, no Compose. API 28/Samsung limita propiedades y tintes; no asumir que cualquier API visual de Compose/Views funciona dentro del launcher.
+
+10. CHECKLIST DE PRUEBA DESPUÉS DE MODIFICAR ESTE ARCHIVO
+----------------------------------------------------------------------
+- Compilar `assembleDebug` y resolver primero errores de Kotlin/AAPT.
+- Abrir la pantalla/flujo relacionado y comprobar ida y vuelta (back) sin estado duplicado.
+- Cambiar tema/paleta y verificar contraste si este archivo dibuja UI.
+- Añadir el widget desde el launcher en API 28/Samsung, cambiar idioma/paleta y forzar actualización.
+
+==============================================================================================================
+FIN DEL ARCHIVO
+==============================================================================================================

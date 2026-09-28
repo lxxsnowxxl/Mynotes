@@ -1,0 +1,89 @@
+MYNOTES — EXPLICACIÓN ULTRA DETALLADA
+==============================================================================================================
+Archivo 31/72: app/src/main/java/com/example/mynotes/ui/components/NoteCardStyle.kt
+SHA-256: f43d417b631714babd5201a0ce3b50a9a6744bab642d4adeaf1bf5b3ea4be44b
+Líneas del fuente: 16
+Package: com.example.mynotes.ui.components
+
+1. RESPONSABILIDAD EXACTA DEL ARCHIVO
+----------------------------------------------------------------------
+Modelo derivado de AppSettings que reúne solamente los parámetros necesarios para dibujar NoteCard y evita pasar toda la configuración global.
+
+2. DÓNDE ENCAJA EN LA ARQUITECTURA
+----------------------------------------------------------------------
+Este archivo pertenece principalmente a la **capa de interfaz Compose/Activities**. No debe analizarse aislado: las referencias cruzadas y callbacks se detallan más abajo.
+
+3. IMPORTACIONES, UNA POR UNA
+----------------------------------------------------------------------
+- `androidx.compose.runtime.Immutable`: Importa `androidx.compose.runtime.Immutable` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+- `com.example.mynotes.settings.AppSettings`: Importa `com.example.mynotes.settings.AppSettings`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+
+4. DECLARACIONES Y ESTADO IMPORTANTES
+----------------------------------------------------------------------
+L7: `data class NoteCardStyle(val cornerRadius: Float, val elevation: Float, val padding: Float, val imageHeight: Float,`
+    Declara `NoteCardStyle` como `data class`: Kotlin genera automáticamente igualdad, hash, copia y representación textual a partir de sus propiedades del constructor.
+L8: `val outlineEnabled: Boolean, val outlineWidth: Float, val titleMaxLines: Int,`
+    Declara `outlineEnabled` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L9: `val contentMaxLines: Int, val lineSpacing: Float, val iconSize: Float, val showDate: Boolean, val showCategory: Boolean,`
+    Declara `contentMaxLines` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L10: `val showFavorite: Boolean, val animationsEnabled: Boolean, val animationSpeed: Float)`
+    Declara `showFavorite` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+
+5. FUNCIONES — EXPLICACIÓN DE CADA UNA
+----------------------------------------------------------------------
+Este archivo no declara funciones Kotlin detectables (puede ser un script Gradle, clase puramente declarativa o modelo).
+
+6. EXPLICACIÓN COMPLETA LÍNEA POR LÍNEA
+----------------------------------------------------------------------
+Esta sección no omite líneas ejecutables. Repite incluso partes ya explicadas en funciones para poder leer el archivo de arriba abajo sin saltar entre secciones.
+L1: `package com.example.mynotes.ui.components`
+    Declara que este archivo pertenece al package `com.example.mynotes.ui.components`; esto determina su namespace Kotlin y cómo lo importan otros archivos.
+L3: `import androidx.compose.runtime.Immutable`
+    Importa `androidx.compose.runtime.Immutable` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+L4: `import com.example.mynotes.settings.AppSettings`
+    Importa `com.example.mynotes.settings.AppSettings`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L6: `@Immutable`
+    Aplica la anotación `@Immutable` a la declaración siguiente; la anotación modifica metadatos, generación de código o comportamiento del framework.
+L7: `data class NoteCardStyle(val cornerRadius: Float, val elevation: Float, val padding: Float, val imageHeight: Float,`
+    Declara `NoteCardStyle` como `data class`: Kotlin genera automáticamente igualdad, hash, copia y representación textual a partir de sus propiedades del constructor.
+L8: `val outlineEnabled: Boolean, val outlineWidth: Float, val titleMaxLines: Int,`
+    Declara `outlineEnabled` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L9: `val contentMaxLines: Int, val lineSpacing: Float, val iconSize: Float, val showDate: Boolean, val showCategory: Boolean,`
+    Declara `contentMaxLines` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L10: `val showFavorite: Boolean, val animationsEnabled: Boolean, val animationSpeed: Float)`
+    Declara `showFavorite` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L11: `fun AppSettings.toNoteCardStyle() = NoteCardStyle(cornerRadius = noteCardCornerRadius, elevation = noteCardElevation,`
+    Declara una función. El bloque de `AppSettings` se detalla después instrucción por instrucción.
+L12: `padding = noteCardPadding, imageHeight = noteCardImageHeight, outlineEnabled = noteCardOutlineWidth > 0.01f,`
+    Asigna/configura `padding` usando `noteCardPadding, imageHeight = noteCardImageHeight, outlineEnabled = noteCardOutlineWidth > 0.01f,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L13: `outlineWidth = noteCardOutlineWidth.coerceIn(0f, 6f), titleMaxLines = noteTitleMaxLines,`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L14: `contentMaxLines = noteContentMaxLines, lineSpacing = noteLineSpacing, iconSize = iconSize, showDate = showNoteDate,`
+    Asigna/configura `contentMaxLines` usando `noteContentMaxLines, lineSpacing = noteLineSpacing, iconSize = iconSize, showDate = showNoteDate,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L15: `showCategory = showCategoryChip, showFavorite = showFavoriteIcon, animationsEnabled = animationsEnabled,`
+    Asigna/configura `showCategory` usando `showCategoryChip, showFavorite = showFavoriteIcon, animationsEnabled = animationsEnabled,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L16: `animationSpeed = animationSpeed)`
+    Asigna/configura `animationSpeed` usando `animationSpeed)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+
+7. RECURSOS ANDROID REFERENCIADOS
+----------------------------------------------------------------------
+- No hay referencias directas `R.*` en este archivo.
+
+8. QUIÉN USA ESTE COMPONENTE
+----------------------------------------------------------------------
+- `NoteCardStyle` aparece también en 1 archivo(s):
+    - app/src/main/java/com/example/mynotes/ui/components/NoteCard.kt
+
+9. QUÉ PUEDE ROMPERSE SI LO MODIFICAS
+----------------------------------------------------------------------
+- Conservar firmas públicas/callbacks y comprobar los archivos que aparecen en “quién usa este componente” antes de renombrar o cambiar tipos.
+
+10. CHECKLIST DE PRUEBA DESPUÉS DE MODIFICAR ESTE ARCHIVO
+----------------------------------------------------------------------
+- Compilar `assembleDebug` y resolver primero errores de Kotlin/AAPT.
+- Abrir la pantalla/flujo relacionado y comprobar ida y vuelta (back) sin estado duplicado.
+- Cambiar tema/paleta y verificar contraste si este archivo dibuja UI.
+
+==============================================================================================================
+FIN DEL ARCHIVO
+==============================================================================================================

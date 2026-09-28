@@ -1,0 +1,999 @@
+MYNOTES — EXPLICACIÓN ULTRA DETALLADA
+==============================================================================================================
+Archivo 57/72: app/src/main/java/com/example/mynotes/update/GitHubUpdateManager.kt
+SHA-256: 28439ad2edaaa453050ade9c88515f1bfc0895b9d5502b965e368c87dfd79b30
+Líneas del fuente: 228
+Package: com.example.mynotes.update
+
+1. RESPONSABILIDAD EXACTA DEL ARCHIVO
+----------------------------------------------------------------------
+Consulta GitHub Releases, compara versiones, descarga APK y delega la instalación al instalador oficial mediante FileProvider.
+
+2. DÓNDE ENCAJA EN LA ARQUITECTURA
+----------------------------------------------------------------------
+Este archivo pertenece principalmente a la **actualización de la aplicación**. No debe analizarse aislado: las referencias cruzadas y callbacks se detallan más abajo.
+
+3. IMPORTACIONES, UNA POR UNA
+----------------------------------------------------------------------
+- `android.content.Context`: Importa `android.content.Context` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `android.content.Intent`: Importa `android.content.Intent` para usar mensajería/navegación entre componentes Android.
+- `android.net.Uri`: Importa `android.net.Uri` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `android.os.Build`: Importa `android.os.Build` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `android.provider.Settings`: Importa `android.provider.Settings` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `androidx.core.content.FileProvider`: Importa `androidx.core.content.FileProvider` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `kotlinx.coroutines.Dispatchers`: Importa `kotlinx.coroutines.Dispatchers` para usar coroutines, Flow y ejecución asíncrona.
+- `kotlinx.coroutines.withContext`: Importa `kotlinx.coroutines.withContext` para usar coroutines, Flow y ejecución asíncrona.
+- `org.json.JSONObject`: Importa `org.json.JSONObject` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `java.io.BufferedInputStream`: Importa `java.io.BufferedInputStream` de la biblioteca estándar/JVM para operaciones de lenguaje, fechas, colecciones, I/O o utilidades.
+- `java.io.BufferedOutputStream`: Importa `java.io.BufferedOutputStream` de la biblioteca estándar/JVM para operaciones de lenguaje, fechas, colecciones, I/O o utilidades.
+- `java.io.File`: Importa `java.io.File` de la biblioteca estándar/JVM para operaciones de lenguaje, fechas, colecciones, I/O o utilidades.
+- `java.io.FileOutputStream`: Importa `java.io.FileOutputStream` de la biblioteca estándar/JVM para operaciones de lenguaje, fechas, colecciones, I/O o utilidades.
+- `java.io.IOException`: Importa `java.io.IOException` de la biblioteca estándar/JVM para operaciones de lenguaje, fechas, colecciones, I/O o utilidades.
+- `java.net.HttpURLConnection`: Importa `java.net.HttpURLConnection` de la biblioteca estándar/JVM para operaciones de lenguaje, fechas, colecciones, I/O o utilidades.
+- `java.net.URL`: Importa `java.net.URL` de la biblioteca estándar/JVM para operaciones de lenguaje, fechas, colecciones, I/O o utilidades.
+
+4. DECLARACIONES Y ESTADO IMPORTANTES
+----------------------------------------------------------------------
+L31: `object GitHubUpdateManager {`
+    Declara object `GitHubUpdateManager`. A partir de aquí las propiedades y funciones hasta su llave de cierre pertenecen a este tipo.
+L33: `const val REPOSITORY_URL = "https://github.com/lxxsnowxxl/Mynotes"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L34: `const val RELEASES_URL = "$REPOSITORY_URL/releases"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L35: `private const val LATEST_RELEASE_API = "https://api.github.com/repos/lxxsnowxxl/Mynotes/releases/latest"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L36: `private const val USER_AGENT = "MyNotes-Android-Updater"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L37: `private const val UPDATES_CACHE_DIR = "app_updates"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L39: `data class Release(`
+    Declara `Release` como `data class`: Kotlin genera automáticamente igualdad, hash, copia y representación textual a partir de sus propiedades del constructor.
+L40: `val version: String,`
+    Declara `version` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L41: `val title: String,`
+    Declara `title` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L42: `val notes: String,`
+    Declara `notes` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L43: `val htmlUrl: String,`
+    Declara `htmlUrl` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L44: `val apkDownloadUrl: String?`
+    Declara `apkDownloadUrl` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L47: `sealed class CheckResult {`
+    Declara una jerarquía sellada: todas las variantes conocidas están controladas y pueden representar estados/navegación de forma segura.
+L48: `data class UpdateAvailable(val release: Release, val currentVersion: String) : CheckResult()`
+    Declara `UpdateAvailable` como `data class`: Kotlin genera automáticamente igualdad, hash, copia y representación textual a partir de sus propiedades del constructor.
+L49: `data class UpToDate(val currentVersion: String, val latestVersion: String) : CheckResult()`
+    Declara `UpToDate` como `data class`: Kotlin genera automáticamente igualdad, hash, copia y representación textual a partir de sus propiedades del constructor.
+L50: `data class NoPublishedRelease(val currentVersion: String) : CheckResult()`
+    Declara `NoPublishedRelease` como `data class`: Kotlin genera automáticamente igualdad, hash, copia y representación textual a partir de sus propiedades del constructor.
+L51: `data class Failure(val reason: String) : CheckResult()`
+    Declara `Failure` como `data class`: Kotlin genera automáticamente igualdad, hash, copia y representación textual a partir de sus propiedades del constructor.
+L65: `val current = currentVersionName(context)`
+    Declara `current` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `currentVersionName(context)`.
+L66: `var connection: HttpURLConnection? = null`
+    Prepara/realiza acceso de red a una URL. Este tipo de trabajo debe ejecutarse asíncronamente y manejar errores/tiempos de espera.
+L77: `when (val responseCode = connection.responseCode) {`
+    Abre una decisión `when`: selecciona una rama según el valor/condición, equivalente a un switch más expresivo de Kotlin.
+L79: `val payload = connection.inputStream.bufferedReader(Charsets.UTF_8).use { it.readText() }`
+    Realiza una operación de archivo/stream. Debe mantenerse fuera del hilo principal cuando pueda bloquear y respetar el almacenamiento permitido por Android.
+L80: `val json = JSONObject(payload)`
+    Lee o construye JSON. Las claves extraídas/insertadas representan datos intercambiados o respaldados por MyNotes.
+L81: `val remoteVersion = json.optString("tag_name").ifBlank { json.optString("name") }`
+    Declara `remoteVersion` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `json.optString("tag_name").ifBlank { json.optString("name") }`.
+L82: `val releaseUrl = json.optString("html_url").ifBlank { RELEASES_URL }`
+    Declara `releaseUrl` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `json.optString("html_url").ifBlank { RELEASES_URL }`.
+L83: `val title = json.optString("name").ifBlank { remoteVersion }`
+    Declara `title` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `json.optString("name").ifBlank { remoteVersion }`.
+L84: `val notes = json.optString("body")`
+    Declara `notes` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `json.optString("body")`.
+L85: `val assets = json.optJSONArray("assets")`
+    Lee o construye JSON. Las claves extraídas/insertadas representan datos intercambiados o respaldados por MyNotes.
+L86: `var apkUrl: String? = null`
+    Declara `apkUrl` como variable mutable: el código puede reasignarla para representar estado cambiante. Parte con `null`.
+L89: `val asset = assets.optJSONObject(index) ?: continue`
+    Lee o construye JSON. Las claves extraídas/insertadas representan datos intercambiados o respaldados por MyNotes.
+L90: `val name = asset.optString("name")`
+    Declara `name` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `asset.optString("name")`.
+L98: `val release = Release(`
+    Declara `release` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `Release(`.
+L129: `val remoteParts = Regex("\\d+").findAll(remote).map { it.value.toLongOrNull() ?: 0L }.toList()`
+    Transforma cada valor/elemento de la fuente en otro valor sin mutar la colección/Flow original.
+L130: `val currentParts = Regex("\\d+").findAll(current).map { it.value.toLongOrNull() ?: 0L }.toList()`
+    Transforma cada valor/elemento de la fuente en otro valor sin mutar la colección/Flow original.
+L134: `val count = maxOf(remoteParts.size, currentParts.size)`
+    Declara `count` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `maxOf(remoteParts.size, currentParts.size)`.
+L136: `val remotePart = remoteParts.getOrElse(index) { 0L }`
+    Declara `remotePart` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `remoteParts.getOrElse(index) { 0L }`.
+L137: `val currentPart = currentParts.getOrElse(index) { 0L }`
+    Declara `currentPart` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `currentParts.getOrElse(index) { 0L }`.
+L145: `val downloadUrl = release.apkDownloadUrl ?: throw IOException("The GitHub Release has no APK asset")`
+    Declara `downloadUrl` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `release.apkDownloadUrl ?: throw IOException("The GitHub Release has no APK asset")`.
+L148: `val updateDirectory = File(context.cacheDir, UPDATES_CACHE_DIR).apply {`
+    Realiza una operación de archivo/stream. Debe mantenerse fuera del hilo principal cuando pueda bloquear y respetar el almacenamiento permitido por Android.
+L151: `val safeVersion = release.version.replace(Regex("[^A-Za-z0-9._-]"), "_").ifBlank { "latest" }`
+    Declara `safeVersion` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `release.version.replace(Regex("[^A-Za-z0-9._-]"), "_").ifBlank { "latest" }`.
+L152: `val destination = File(updateDirectory, "MyNotes-$safeVersion.apk")`
+    Realiza una operación de archivo/stream. Debe mantenerse fuera del hilo principal cuando pueda bloquear y respetar el almacenamiento permitido por Android.
+L153: `val temporary = File(updateDirectory, "MyNotes-$safeVersion.download")`
+    Realiza una operación de archivo/stream. Debe mantenerse fuera del hilo principal cuando pueda bloquear y respetar el almacenamiento permitido por Android.
+L156: `var connection: HttpURLConnection? = null`
+    Prepara/realiza acceso de red a una URL. Este tipo de trabajo debe ejecutarse asíncronamente y manejar errores/tiempos de espera.
+L166: `val responseCode = connection.responseCode`
+    Declara `responseCode` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `connection.responseCode`.
+L206: `val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", apkFile)`
+    Realiza una operación de archivo/stream. Debe mantenerse fuera del hilo principal cuando pueda bloquear y respetar el almacenamiento permitido por Android.
+L207: `val intent = Intent(Intent.ACTION_VIEW).apply {`
+    Construye un `Intent` para abrir/enviar una acción a otro componente Android. Los extras añadidos después transportan el contexto necesario.
+L217: `val safeUrl = url.takeIf { it.startsWith("https://github.com/") } ?: RELEASES_URL`
+    Declara `safeUrl` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `url.takeIf { it.startsWith("https://github.com/") } ?: RELEASES_URL`.
+L223: `val uri = Uri.parse(value)`
+    Opera con URI/ContentResolver de Android para acceder a contenido compartido sin asumir una ruta de archivo directa.
+L224: `val host = uri.host.orEmpty().lowercase()`
+    Declara `host` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `uri.host.orEmpty().lowercase()`.
+L225: `val trustedHost = host == "github.com" || host.endsWith(".github.com") || host.endsWith(".githubusercontent.com")`
+    Declara `trustedHost` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `host == "github.com" || host.endsWith(".github.com") || host.endsWith(".githubusercontent.com")`.
+
+5. FUNCIONES — EXPLICACIÓN DE CADA UNA
+----------------------------------------------------------------------
+
+5.1 `currentVersionName` — líneas 56–58
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun currentVersionName(context: Context): String = runCatching {
+
+Propósito:
+    Implementa `currentVersionName`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `context: Context`: el llamador proporciona este valor/callback a `currentVersionName`. Dentro del cuerpo, las líneas donde aparece `context` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `String`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L56 [4 espacios] `fun currentVersionName(context: Context): String = runCatching {`
+      → Declara una función. El bloque de `currentVersionName` se detalla después instrucción por instrucción.
+  L57 [8 espacios] `context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "?"`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "?"`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L58 [4 espacios] `}.getOrDefault("?")`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+
+5.2 `checkForUpdate` — líneas 64–121
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        suspend fun checkForUpdate(context: Context): CheckResult = withContext(Dispatchers.IO) {
+
+Propósito:
+    Implementa `checkForUpdate`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `context: Context): CheckResult = withContext(Dispatchers.IO`: el llamador proporciona este valor/callback a `checkForUpdate`. Dentro del cuerpo, las líneas donde aparece `context` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `CheckResult`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L64 [4 espacios] `suspend fun checkForUpdate(context: Context): CheckResult = withContext(Dispatchers.IO) {`
+      → Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `checkForUpdate` se detalla después instrucción por instrucción.
+  L65 [8 espacios] `val current = currentVersionName(context)`
+      → Declara `current` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `currentVersionName(context)`.
+  L66 [8 espacios] `var connection: HttpURLConnection? = null`
+      → Prepara/realiza acceso de red a una URL. Este tipo de trabajo debe ejecutarse asíncronamente y manejar errores/tiempos de espera.
+  L67 [8 espacios] `try {`
+      → Abre un bloque protegido: si una operación lanza una excepción, el control puede pasar al `catch` correspondiente sin terminar abruptamente el flujo.
+  L68 [12 espacios] `connection = (URL(LATEST_RELEASE_API).openConnection() as HttpURLConnection).apply {`
+      → Prepara/realiza acceso de red a una URL. Este tipo de trabajo debe ejecutarse asíncronamente y manejar errores/tiempos de espera.
+  L69 [16 espacios] `requestMethod = "GET"`
+      → Asigna/configura `requestMethod` usando `"GET"`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L70 [16 espacios] `connectTimeout = 12_000`
+      → Asigna/configura `connectTimeout` usando `12_000`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L71 [16 espacios] `readTimeout = 15_000`
+      → Asigna/configura `readTimeout` usando `15_000`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L72 [16 espacios] `setRequestProperty("Accept", "application/vnd.github+json")`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L73 [16 espacios] `setRequestProperty("User-Agent", USER_AGENT)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L74 [16 espacios] `setRequestProperty("X-GitHub-Api-Version", "2022-11-28")`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L75 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L77 [12 espacios] `when (val responseCode = connection.responseCode) {`
+      → Abre una decisión `when`: selecciona una rama según el valor/condición, equivalente a un switch más expresivo de Kotlin.
+  L78 [16 espacios] `HttpURLConnection.HTTP_OK -> {`
+      → Define una rama/lambda. Cuando coincide `HttpURLConnection.HTTP_OK`, se ejecuta la expresión o bloque situado después de `->`.
+  L79 [20 espacios] `val payload = connection.inputStream.bufferedReader(Charsets.UTF_8).use { it.readText() }`
+      → Realiza una operación de archivo/stream. Debe mantenerse fuera del hilo principal cuando pueda bloquear y respetar el almacenamiento permitido por Android.
+  L80 [20 espacios] `val json = JSONObject(payload)`
+      → Lee o construye JSON. Las claves extraídas/insertadas representan datos intercambiados o respaldados por MyNotes.
+  L81 [20 espacios] `val remoteVersion = json.optString("tag_name").ifBlank { json.optString("name") }`
+      → Declara `remoteVersion` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `json.optString("tag_name").ifBlank { json.optString("name") }`.
+  L82 [20 espacios] `val releaseUrl = json.optString("html_url").ifBlank { RELEASES_URL }`
+      → Declara `releaseUrl` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `json.optString("html_url").ifBlank { RELEASES_URL }`.
+  L83 [20 espacios] `val title = json.optString("name").ifBlank { remoteVersion }`
+      → Declara `title` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `json.optString("name").ifBlank { remoteVersion }`.
+  L84 [20 espacios] `val notes = json.optString("body")`
+      → Declara `notes` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `json.optString("body")`.
+  L85 [20 espacios] `val assets = json.optJSONArray("assets")`
+      → Lee o construye JSON. Las claves extraídas/insertadas representan datos intercambiados o respaldados por MyNotes.
+  L86 [20 espacios] `var apkUrl: String? = null`
+      → Declara `apkUrl` como variable mutable: el código puede reasignarla para representar estado cambiante. Parte con `null`.
+  L87 [20 espacios] `if (assets != null) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `assets != null`.
+  L88 [24 espacios] `for (index in 0 until assets.length()) {`
+      → Inicia un bucle `for`; ejecuta el bloque una vez por cada elemento del iterable/rango indicado.
+  L89 [28 espacios] `val asset = assets.optJSONObject(index) ?: continue`
+      → Lee o construye JSON. Las claves extraídas/insertadas representan datos intercambiados o respaldados por MyNotes.
+  L90 [28 espacios] `val name = asset.optString("name")`
+      → Declara `name` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `asset.optString("name")`.
+  L91 [28 espacios] `if (name.endsWith(".apk", ignoreCase = true)) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `name.endsWith(".apk", ignoreCase = true)`.
+  L92 [32 espacios] `apkUrl = asset.optString("browser_download_url").takeIf { it.isNotBlank() }`
+      → Asigna/configura `apkUrl` usando `asset.optString("browser_download_url").takeIf { it.isNotBlank() }`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L93 [32 espacios] `if (apkUrl != null) break`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `apkUrl != null`.
+  L94 [28 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L95 [24 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L96 [20 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L98 [20 espacios] `val release = Release(`
+      → Declara `release` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `Release(`.
+  L99 [24 espacios] `version = remoteVersion.ifBlank { "?" },`
+      → Asigna/configura `version` usando `remoteVersion.ifBlank { "?" },`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L100 [24 espacios] `title = title,`
+      → Asigna/configura `title` usando `title,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L101 [24 espacios] `notes = notes,`
+      → Asigna/configura `notes` usando `notes,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L102 [24 espacios] `htmlUrl = releaseUrl,`
+      → Asigna/configura `htmlUrl` usando `releaseUrl,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L103 [24 espacios] `apkDownloadUrl = apkUrl`
+      → Asigna/configura `apkDownloadUrl` usando `apkUrl`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L104 [20 espacios] `)`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L106 [20 espacios] `if (isVersionNewer(remoteVersion, current)) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `isVersionNewer(remoteVersion, current)`.
+  L107 [24 espacios] `CheckResult.UpdateAvailable(release, current)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L108 [20 espacios] `} else {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L109 [24 espacios] `CheckResult.UpToDate(current, release.version)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L110 [20 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L111 [16 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L113 [16 espacios] `HttpURLConnection.HTTP_NOT_FOUND -> CheckResult.NoPublishedRelease(current)`
+      → Define una rama/lambda. Cuando coincide `HttpURLConnection.HTTP_NOT_FOUND`, se ejecuta la expresión o bloque situado después de `->`.
+  L114 [16 espacios] `else -> CheckResult.Failure("GitHub HTTP $responseCode")`
+      → Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+  L115 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L116 [8 espacios] `} catch (error: Exception) {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L117 [12 espacios] `CheckResult.Failure(error.message ?: error.javaClass.simpleName)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L118 [8 espacios] `} finally {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L119 [12 espacios] `connection?.disconnect()`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L120 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L121 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.3 `isVersionNewer` — líneas 128–141
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        private fun isVersionNewer(remote: String, current: String): Boolean {
+
+Propósito:
+    Evalúa una condición y devuelve un booleano que otras ramas usan para decidir comportamiento.
+
+Parámetros/entradas:
+  - `remote: String`: el llamador proporciona este valor/callback a `isVersionNewer`. Dentro del cuerpo, las líneas donde aparece `remote` muestran exactamente cómo afecta al resultado.
+  - `current: String`: el llamador proporciona este valor/callback a `isVersionNewer`. Dentro del cuerpo, las líneas donde aparece `current` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Boolean`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L128 [4 espacios] `private fun isVersionNewer(remote: String, current: String): Boolean {`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `isVersionNewer` se detalla después instrucción por instrucción.
+  L129 [8 espacios] `val remoteParts = Regex("\\d+").findAll(remote).map { it.value.toLongOrNull() ?: 0L }.toList()`
+      → Transforma cada valor/elemento de la fuente en otro valor sin mutar la colección/Flow original.
+  L130 [8 espacios] `val currentParts = Regex("\\d+").findAll(current).map { it.value.toLongOrNull() ?: 0L }.toList()`
+      → Transforma cada valor/elemento de la fuente en otro valor sin mutar la colección/Flow original.
+  L131 [8 espacios] `if (remoteParts.isEmpty() && currentParts.isEmpty()) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `remoteParts.isEmpty() && currentParts.isEmpty()`.
+  L132 [12 espacios] `return remote.trim().removePrefix("v") != current.trim().removePrefix("v")`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L133 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L134 [8 espacios] `val count = maxOf(remoteParts.size, currentParts.size)`
+      → Declara `count` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `maxOf(remoteParts.size, currentParts.size)`.
+  L135 [8 espacios] `for (index in 0 until count) {`
+      → Inicia un bucle `for`; ejecuta el bloque una vez por cada elemento del iterable/rango indicado.
+  L136 [12 espacios] `val remotePart = remoteParts.getOrElse(index) { 0L }`
+      → Declara `remotePart` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `remoteParts.getOrElse(index) { 0L }`.
+  L137 [12 espacios] `val currentPart = currentParts.getOrElse(index) { 0L }`
+      → Declara `currentPart` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `currentParts.getOrElse(index) { 0L }`.
+  L138 [12 espacios] `if (remotePart != currentPart) return remotePart > currentPart`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `remotePart != currentPart`.
+  L139 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L140 [8 espacios] `return false`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L141 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.4 `downloadApk` — líneas 144–193
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        suspend fun downloadApk(context: Context, release: Release): File = withContext(Dispatchers.IO) {
+
+Propósito:
+    Implementa `downloadApk`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `context: Context`: el llamador proporciona este valor/callback a `downloadApk`. Dentro del cuerpo, las líneas donde aparece `context` muestran exactamente cómo afecta al resultado.
+  - `release: Release): File = withContext(Dispatchers.IO`: el llamador proporciona este valor/callback a `downloadApk`. Dentro del cuerpo, las líneas donde aparece `release` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `File`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L144 [4 espacios] `suspend fun downloadApk(context: Context, release: Release): File = withContext(Dispatchers.IO) {`
+      → Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `downloadApk` se detalla después instrucción por instrucción.
+  L145 [8 espacios] `val downloadUrl = release.apkDownloadUrl ?: throw IOException("The GitHub Release has no APK asset")`
+      → Declara `downloadUrl` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `release.apkDownloadUrl ?: throw IOException("The GitHub Release has no APK asset")`.
+  L146 [8 espacios] `requireTrustedHttpsUrl(downloadUrl)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L148 [8 espacios] `val updateDirectory = File(context.cacheDir, UPDATES_CACHE_DIR).apply {`
+      → Realiza una operación de archivo/stream. Debe mantenerse fuera del hilo principal cuando pueda bloquear y respetar el almacenamiento permitido por Android.
+  L149 [12 espacios] `if (!exists() && !mkdirs()) throw IOException("Unable to create update cache directory")`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `!exists() && !mkdirs()) throw IOException("Unable to create update cache directory"`.
+  L150 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L151 [8 espacios] `val safeVersion = release.version.replace(Regex("[^A-Za-z0-9._-]"), "_").ifBlank { "latest" }`
+      → Declara `safeVersion` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `release.version.replace(Regex("[^A-Za-z0-9._-]"), "_").ifBlank { "latest" }`.
+  L152 [8 espacios] `val destination = File(updateDirectory, "MyNotes-$safeVersion.apk")`
+      → Realiza una operación de archivo/stream. Debe mantenerse fuera del hilo principal cuando pueda bloquear y respetar el almacenamiento permitido por Android.
+  L153 [8 espacios] `val temporary = File(updateDirectory, "MyNotes-$safeVersion.download")`
+      → Realiza una operación de archivo/stream. Debe mantenerse fuera del hilo principal cuando pueda bloquear y respetar el almacenamiento permitido por Android.
+  L154 [8 espacios] `if (temporary.exists()) temporary.delete()`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `temporary.exists()) temporary.delete(`.
+  L156 [8 espacios] `var connection: HttpURLConnection? = null`
+      → Prepara/realiza acceso de red a una URL. Este tipo de trabajo debe ejecutarse asíncronamente y manejar errores/tiempos de espera.
+  L157 [8 espacios] `try {`
+      → Abre un bloque protegido: si una operación lanza una excepción, el control puede pasar al `catch` correspondiente sin terminar abruptamente el flujo.
+  L158 [12 espacios] `connection = (URL(downloadUrl).openConnection() as HttpURLConnection).apply {`
+      → Prepara/realiza acceso de red a una URL. Este tipo de trabajo debe ejecutarse asíncronamente y manejar errores/tiempos de espera.
+  L159 [16 espacios] `requestMethod = "GET"`
+      → Asigna/configura `requestMethod` usando `"GET"`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L160 [16 espacios] `instanceFollowRedirects = true`
+      → Asigna/configura `instanceFollowRedirects` usando `true`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L161 [16 espacios] `connectTimeout = 15_000`
+      → Asigna/configura `connectTimeout` usando `15_000`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L162 [16 espacios] `readTimeout = 30_000`
+      → Asigna/configura `readTimeout` usando `30_000`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L163 [16 espacios] `setRequestProperty("Accept", "application/octet-stream")`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L164 [16 espacios] `setRequestProperty("User-Agent", USER_AGENT)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L165 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L166 [12 espacios] `val responseCode = connection.responseCode`
+      → Declara `responseCode` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `connection.responseCode`.
+  L167 [12 espacios] `if (responseCode !in 200..299) throw IOException("APK download failed: HTTP $responseCode")`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `responseCode !in 200..299) throw IOException("APK download failed: HTTP $responseCode"`.
+  L169 [12 espacios] `BufferedInputStream(connection.inputStream, 64 * 1024).use { input ->`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `BufferedInputStream(connection.inputStream, 64 * 1024).use { input ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L170 [16 espacios] `BufferedOutputStream(FileOutputStream(temporary), 64 * 1024).use { output ->`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `BufferedOutputStream(FileOutputStream(temporary), 64 * 1024).use { output ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L171 [20 espacios] `input.copyTo(output, 64 * 1024)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L172 [16 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L173 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L174 [12 espacios] `if (temporary.length() < 1024L) throw IOException("Downloaded APK is unexpectedly small")`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `temporary.length() < 1024L) throw IOException("Downloaded APK is unexpectedly small"`.
+  L176 [12 espacios] `// Un APK es un contenedor ZIP; PK evita entregar al instalador una página HTML de error.`
+      → Comentario del autor. No se ejecuta; documenta la intención o una restricción del bloque siguiente.
+  L177 [12 espacios] `temporary.inputStream().use { stream ->`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `temporary.inputStream().use { stream ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L178 [16 espacios] `if (stream.read() != 'P'.code || stream.read() != 'K'.code) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `stream.read() != 'P'.code || stream.read() != 'K'.code`.
+  L179 [20 espacios] `throw IOException("Downloaded file is not a valid APK/ZIP container")`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L180 [16 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L181 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L183 [12 espacios] `if (destination.exists()) destination.delete()`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `destination.exists()) destination.delete(`.
+  L184 [12 espacios] `if (!temporary.renameTo(destination)) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `!temporary.renameTo(destination)`.
+  L185 [16 espacios] `temporary.copyTo(destination, overwrite = true)`
+      → Asigna/configura `temporary.copyTo(destination, overwrite` usando `true)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L186 [16 espacios] `temporary.delete()`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L187 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L188 [12 espacios] `destination`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `destination`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L189 [8 espacios] `} finally {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L190 [12 espacios] `connection?.disconnect()`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L191 [12 espacios] `if (temporary.exists()) temporary.delete()`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `temporary.exists()) temporary.delete(`.
+  L192 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L193 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.5 `canInstallDownloadedPackages` — líneas 196–196
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun canInstallDownloadedPackages(context: Context): Boolean =
+
+Propósito:
+    Evalúa una condición y devuelve un booleano que otras ramas usan para decidir comportamiento.
+
+Parámetros/entradas:
+  - `context: Context`: el llamador proporciona este valor/callback a `canInstallDownloadedPackages`. Dentro del cuerpo, las líneas donde aparece `context` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Boolean`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L196 [4 espacios] `fun canInstallDownloadedPackages(context: Context): Boolean =`
+      → Declara una función. El bloque de `canInstallDownloadedPackages` se detalla después instrucción por instrucción.
+
+5.6 `unknownSourcesSettingsIntent` — líneas 199–199
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun unknownSourcesSettingsIntent(context: Context): Intent = Intent(
+
+Propósito:
+    Implementa `unknownSourcesSettingsIntent`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `context: Context`: el llamador proporciona este valor/callback a `unknownSourcesSettingsIntent`. Dentro del cuerpo, las líneas donde aparece `context` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Intent`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L199 [4 espacios] `fun unknownSourcesSettingsIntent(context: Context): Intent = Intent(`
+      → Declara una función. El bloque de `unknownSourcesSettingsIntent` se detalla después instrucción por instrucción.
+
+5.7 `launchSystemInstaller` — líneas 205–214
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun launchSystemInstaller(context: Context, apkFile: File): Boolean = runCatching {
+
+Propósito:
+    Implementa `launchSystemInstaller`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `context: Context`: el llamador proporciona este valor/callback a `launchSystemInstaller`. Dentro del cuerpo, las líneas donde aparece `context` muestran exactamente cómo afecta al resultado.
+  - `apkFile: File`: el llamador proporciona este valor/callback a `launchSystemInstaller`. Dentro del cuerpo, las líneas donde aparece `apkFile` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Boolean`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L205 [4 espacios] `fun launchSystemInstaller(context: Context, apkFile: File): Boolean = runCatching {`
+      → Declara una función. El bloque de `launchSystemInstaller` se detalla después instrucción por instrucción.
+  L206 [8 espacios] `val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", apkFile)`
+      → Realiza una operación de archivo/stream. Debe mantenerse fuera del hilo principal cuando pueda bloquear y respetar el almacenamiento permitido por Android.
+  L207 [8 espacios] `val intent = Intent(Intent.ACTION_VIEW).apply {`
+      → Construye un `Intent` para abrir/enviar una acción a otro componente Android. Los extras añadidos después transportan el contexto necesario.
+  L208 [12 espacios] `setDataAndType(uri, "application/vnd.android.package-archive")`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L209 [12 espacios] `addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L210 [12 espacios] `addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L211 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L212 [8 espacios] `context.startActivity(intent)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L213 [8 espacios] `true`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `true`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L214 [4 espacios] `}.getOrDefault(false)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+
+5.8 `openReleasePage` — líneas 216–228
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun openReleasePage(context: Context, url: String = RELEASES_URL): Boolean = runCatching {
+
+Propósito:
+    Activa/muestra el elemento indicado por el nombre y configura los datos necesarios antes de hacerlo visible.
+
+Parámetros/entradas:
+  - `context: Context`: el llamador proporciona este valor/callback a `openReleasePage`. Dentro del cuerpo, las líneas donde aparece `context` muestran exactamente cómo afecta al resultado.
+  - `url: String = RELEASES_URL`: el llamador proporciona este valor/callback a `openReleasePage`. Dentro del cuerpo, las líneas donde aparece `url` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Boolean`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L216 [4 espacios] `fun openReleasePage(context: Context, url: String = RELEASES_URL): Boolean = runCatching {`
+      → Declara una función. El bloque de `openReleasePage` se detalla después instrucción por instrucción.
+  L217 [8 espacios] `val safeUrl = url.takeIf { it.startsWith("https://github.com/") } ?: RELEASES_URL`
+      → Declara `safeUrl` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `url.takeIf { it.startsWith("https://github.com/") } ?: RELEASES_URL`.
+  L218 [8 espacios] `context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(safeUrl)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))`
+      → Construye un `Intent` para abrir/enviar una acción a otro componente Android. Los extras añadidos después transportan el contexto necesario.
+  L219 [8 espacios] `true`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `true`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L220 [4 espacios] `}.getOrDefault(false)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L222 [4 espacios] `private fun requireTrustedHttpsUrl(value: String) {`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `requireTrustedHttpsUrl` se detalla después instrucción por instrucción.
+  L223 [8 espacios] `val uri = Uri.parse(value)`
+      → Opera con URI/ContentResolver de Android para acceder a contenido compartido sin asumir una ruta de archivo directa.
+  L224 [8 espacios] `val host = uri.host.orEmpty().lowercase()`
+      → Declara `host` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `uri.host.orEmpty().lowercase()`.
+  L225 [8 espacios] `val trustedHost = host == "github.com" || host.endsWith(".github.com") || host.endsWith(".githubusercontent.com")`
+      → Declara `trustedHost` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `host == "github.com" || host.endsWith(".github.com") || host.endsWith(".githubusercontent.com")`.
+  L226 [8 espacios] `if (uri.scheme != "https" || !trustedHost) throw IOException("Untrusted update URL")`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `uri.scheme != "https" || !trustedHost) throw IOException("Untrusted update URL"`.
+  L227 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L228 [0 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+6. EXPLICACIÓN COMPLETA LÍNEA POR LÍNEA
+----------------------------------------------------------------------
+Esta sección no omite líneas ejecutables. Repite incluso partes ya explicadas en funciones para poder leer el archivo de arriba abajo sin saltar entre secciones.
+L1: `package com.example.mynotes.update`
+    Declara que este archivo pertenece al package `com.example.mynotes.update`; esto determina su namespace Kotlin y cómo lo importan otros archivos.
+L3: `import android.content.Context`
+    Importa `android.content.Context` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L4: `import android.content.Intent`
+    Importa `android.content.Intent` para usar mensajería/navegación entre componentes Android.
+L5: `import android.net.Uri`
+    Importa `android.net.Uri` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L6: `import android.os.Build`
+    Importa `android.os.Build` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L7: `import android.provider.Settings`
+    Importa `android.provider.Settings` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L8: `import androidx.core.content.FileProvider`
+    Importa `androidx.core.content.FileProvider` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L9: `import kotlinx.coroutines.Dispatchers`
+    Importa `kotlinx.coroutines.Dispatchers` para usar coroutines, Flow y ejecución asíncrona.
+L10: `import kotlinx.coroutines.withContext`
+    Importa `kotlinx.coroutines.withContext` para usar coroutines, Flow y ejecución asíncrona.
+L11: `import org.json.JSONObject`
+    Importa `org.json.JSONObject` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L12: `import java.io.BufferedInputStream`
+    Importa `java.io.BufferedInputStream` de la biblioteca estándar/JVM para operaciones de lenguaje, fechas, colecciones, I/O o utilidades.
+L13: `import java.io.BufferedOutputStream`
+    Importa `java.io.BufferedOutputStream` de la biblioteca estándar/JVM para operaciones de lenguaje, fechas, colecciones, I/O o utilidades.
+L14: `import java.io.File`
+    Importa `java.io.File` de la biblioteca estándar/JVM para operaciones de lenguaje, fechas, colecciones, I/O o utilidades.
+L15: `import java.io.FileOutputStream`
+    Importa `java.io.FileOutputStream` de la biblioteca estándar/JVM para operaciones de lenguaje, fechas, colecciones, I/O o utilidades.
+L16: `import java.io.IOException`
+    Importa `java.io.IOException` de la biblioteca estándar/JVM para operaciones de lenguaje, fechas, colecciones, I/O o utilidades.
+L17: `import java.net.HttpURLConnection`
+    Importa `java.net.HttpURLConnection` de la biblioteca estándar/JVM para operaciones de lenguaje, fechas, colecciones, I/O o utilidades.
+L18: `import java.net.URL`
+    Importa `java.net.URL` de la biblioteca estándar/JVM para operaciones de lenguaje, fechas, colecciones, I/O o utilidades.
+L20: `/**`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L21: `* Pequeño cliente de actualización para instalaciones distribuidas desde GitHub.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L22: `*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L23: `* MyNotes no instala nada silenciosamente: consulta la última GitHub Release,`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L24: `* descarga el APK publicado como asset y entrega ese APK al instalador oficial`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L25: `* de Android. La confirmación final siempre pertenece al sistema y al usuario.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L26: `*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L27: `* Para que una actualización pueda instalarse desde aquí, el repositorio debe`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L28: `* publicar una Release con una etiqueta de versión superior a la instalada`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L29: `* (por ejemplo v1.1) y adjuntar al menos un archivo cuyo nombre termine en .apk.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L30: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L31: `object GitHubUpdateManager {`
+    Declara object `GitHubUpdateManager`. A partir de aquí las propiedades y funciones hasta su llave de cierre pertenecen a este tipo.
+L33: `const val REPOSITORY_URL = "https://github.com/lxxsnowxxl/Mynotes"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L34: `const val RELEASES_URL = "$REPOSITORY_URL/releases"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L35: `private const val LATEST_RELEASE_API = "https://api.github.com/repos/lxxsnowxxl/Mynotes/releases/latest"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L36: `private const val USER_AGENT = "MyNotes-Android-Updater"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L37: `private const val UPDATES_CACHE_DIR = "app_updates"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L39: `data class Release(`
+    Declara `Release` como `data class`: Kotlin genera automáticamente igualdad, hash, copia y representación textual a partir de sus propiedades del constructor.
+L40: `val version: String,`
+    Declara `version` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L41: `val title: String,`
+    Declara `title` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L42: `val notes: String,`
+    Declara `notes` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L43: `val htmlUrl: String,`
+    Declara `htmlUrl` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L44: `val apkDownloadUrl: String?`
+    Declara `apkDownloadUrl` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L45: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L47: `sealed class CheckResult {`
+    Declara una jerarquía sellada: todas las variantes conocidas están controladas y pueden representar estados/navegación de forma segura.
+L48: `data class UpdateAvailable(val release: Release, val currentVersion: String) : CheckResult()`
+    Declara `UpdateAvailable` como `data class`: Kotlin genera automáticamente igualdad, hash, copia y representación textual a partir de sus propiedades del constructor.
+L49: `data class UpToDate(val currentVersion: String, val latestVersion: String) : CheckResult()`
+    Declara `UpToDate` como `data class`: Kotlin genera automáticamente igualdad, hash, copia y representación textual a partir de sus propiedades del constructor.
+L50: `data class NoPublishedRelease(val currentVersion: String) : CheckResult()`
+    Declara `NoPublishedRelease` como `data class`: Kotlin genera automáticamente igualdad, hash, copia y representación textual a partir de sus propiedades del constructor.
+L51: `data class Failure(val reason: String) : CheckResult()`
+    Declara `Failure` como `data class`: Kotlin genera automáticamente igualdad, hash, copia y representación textual a partir de sus propiedades del constructor.
+L52: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L54: `/** Devuelve el versionName instalado sin depender directamente de BuildConfig. */`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L55: `@Suppress("DEPRECATION")`
+    Aplica la anotación `@Suppress("DEPRECATION")` a la declaración siguiente; la anotación modifica metadatos, generación de código o comportamiento del framework.
+L56: `fun currentVersionName(context: Context): String = runCatching {`
+    Declara una función. El bloque de `currentVersionName` se detalla después instrucción por instrucción.
+L57: `context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "?"`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `context.packageManager.getPackageInfo(context.packageName, 0).versionName ?: "?"`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L58: `}.getOrDefault("?")`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L60: `/**`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L61: `* Consulta /releases/latest. GitHub excluye borradores y prereleases de este`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L62: `* endpoint, por lo que el botón usa únicamente una Release pública estable.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L63: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L64: `suspend fun checkForUpdate(context: Context): CheckResult = withContext(Dispatchers.IO) {`
+    Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `checkForUpdate` se detalla después instrucción por instrucción.
+L65: `val current = currentVersionName(context)`
+    Declara `current` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `currentVersionName(context)`.
+L66: `var connection: HttpURLConnection? = null`
+    Prepara/realiza acceso de red a una URL. Este tipo de trabajo debe ejecutarse asíncronamente y manejar errores/tiempos de espera.
+L67: `try {`
+    Abre un bloque protegido: si una operación lanza una excepción, el control puede pasar al `catch` correspondiente sin terminar abruptamente el flujo.
+L68: `connection = (URL(LATEST_RELEASE_API).openConnection() as HttpURLConnection).apply {`
+    Prepara/realiza acceso de red a una URL. Este tipo de trabajo debe ejecutarse asíncronamente y manejar errores/tiempos de espera.
+L69: `requestMethod = "GET"`
+    Asigna/configura `requestMethod` usando `"GET"`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L70: `connectTimeout = 12_000`
+    Asigna/configura `connectTimeout` usando `12_000`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L71: `readTimeout = 15_000`
+    Asigna/configura `readTimeout` usando `15_000`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L72: `setRequestProperty("Accept", "application/vnd.github+json")`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L73: `setRequestProperty("User-Agent", USER_AGENT)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L74: `setRequestProperty("X-GitHub-Api-Version", "2022-11-28")`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L75: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L77: `when (val responseCode = connection.responseCode) {`
+    Abre una decisión `when`: selecciona una rama según el valor/condición, equivalente a un switch más expresivo de Kotlin.
+L78: `HttpURLConnection.HTTP_OK -> {`
+    Define una rama/lambda. Cuando coincide `HttpURLConnection.HTTP_OK`, se ejecuta la expresión o bloque situado después de `->`.
+L79: `val payload = connection.inputStream.bufferedReader(Charsets.UTF_8).use { it.readText() }`
+    Realiza una operación de archivo/stream. Debe mantenerse fuera del hilo principal cuando pueda bloquear y respetar el almacenamiento permitido por Android.
+L80: `val json = JSONObject(payload)`
+    Lee o construye JSON. Las claves extraídas/insertadas representan datos intercambiados o respaldados por MyNotes.
+L81: `val remoteVersion = json.optString("tag_name").ifBlank { json.optString("name") }`
+    Declara `remoteVersion` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `json.optString("tag_name").ifBlank { json.optString("name") }`.
+L82: `val releaseUrl = json.optString("html_url").ifBlank { RELEASES_URL }`
+    Declara `releaseUrl` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `json.optString("html_url").ifBlank { RELEASES_URL }`.
+L83: `val title = json.optString("name").ifBlank { remoteVersion }`
+    Declara `title` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `json.optString("name").ifBlank { remoteVersion }`.
+L84: `val notes = json.optString("body")`
+    Declara `notes` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `json.optString("body")`.
+L85: `val assets = json.optJSONArray("assets")`
+    Lee o construye JSON. Las claves extraídas/insertadas representan datos intercambiados o respaldados por MyNotes.
+L86: `var apkUrl: String? = null`
+    Declara `apkUrl` como variable mutable: el código puede reasignarla para representar estado cambiante. Parte con `null`.
+L87: `if (assets != null) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `assets != null`.
+L88: `for (index in 0 until assets.length()) {`
+    Inicia un bucle `for`; ejecuta el bloque una vez por cada elemento del iterable/rango indicado.
+L89: `val asset = assets.optJSONObject(index) ?: continue`
+    Lee o construye JSON. Las claves extraídas/insertadas representan datos intercambiados o respaldados por MyNotes.
+L90: `val name = asset.optString("name")`
+    Declara `name` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `asset.optString("name")`.
+L91: `if (name.endsWith(".apk", ignoreCase = true)) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `name.endsWith(".apk", ignoreCase = true)`.
+L92: `apkUrl = asset.optString("browser_download_url").takeIf { it.isNotBlank() }`
+    Asigna/configura `apkUrl` usando `asset.optString("browser_download_url").takeIf { it.isNotBlank() }`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L93: `if (apkUrl != null) break`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `apkUrl != null`.
+L94: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L95: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L96: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L98: `val release = Release(`
+    Declara `release` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `Release(`.
+L99: `version = remoteVersion.ifBlank { "?" },`
+    Asigna/configura `version` usando `remoteVersion.ifBlank { "?" },`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L100: `title = title,`
+    Asigna/configura `title` usando `title,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L101: `notes = notes,`
+    Asigna/configura `notes` usando `notes,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L102: `htmlUrl = releaseUrl,`
+    Asigna/configura `htmlUrl` usando `releaseUrl,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L103: `apkDownloadUrl = apkUrl`
+    Asigna/configura `apkDownloadUrl` usando `apkUrl`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L104: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L106: `if (isVersionNewer(remoteVersion, current)) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `isVersionNewer(remoteVersion, current)`.
+L107: `CheckResult.UpdateAvailable(release, current)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L108: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L109: `CheckResult.UpToDate(current, release.version)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L110: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L111: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L113: `HttpURLConnection.HTTP_NOT_FOUND -> CheckResult.NoPublishedRelease(current)`
+    Define una rama/lambda. Cuando coincide `HttpURLConnection.HTTP_NOT_FOUND`, se ejecuta la expresión o bloque situado después de `->`.
+L114: `else -> CheckResult.Failure("GitHub HTTP $responseCode")`
+    Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+L115: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L116: `} catch (error: Exception) {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L117: `CheckResult.Failure(error.message ?: error.javaClass.simpleName)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L118: `} finally {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L119: `connection?.disconnect()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L120: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L121: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L123: `/**`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L124: `* Compara etiquetas como 1.0, v1.2.3 o release-2.0.1 por sus componentes`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L125: `* numéricos. Si ninguna etiqueta contiene números, se considera distinta`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L126: `* sólo cuando su texto normalizado difiere.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L127: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L128: `private fun isVersionNewer(remote: String, current: String): Boolean {`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `isVersionNewer` se detalla después instrucción por instrucción.
+L129: `val remoteParts = Regex("\\d+").findAll(remote).map { it.value.toLongOrNull() ?: 0L }.toList()`
+    Transforma cada valor/elemento de la fuente en otro valor sin mutar la colección/Flow original.
+L130: `val currentParts = Regex("\\d+").findAll(current).map { it.value.toLongOrNull() ?: 0L }.toList()`
+    Transforma cada valor/elemento de la fuente en otro valor sin mutar la colección/Flow original.
+L131: `if (remoteParts.isEmpty() && currentParts.isEmpty()) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `remoteParts.isEmpty() && currentParts.isEmpty()`.
+L132: `return remote.trim().removePrefix("v") != current.trim().removePrefix("v")`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L133: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L134: `val count = maxOf(remoteParts.size, currentParts.size)`
+    Declara `count` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `maxOf(remoteParts.size, currentParts.size)`.
+L135: `for (index in 0 until count) {`
+    Inicia un bucle `for`; ejecuta el bloque una vez por cada elemento del iterable/rango indicado.
+L136: `val remotePart = remoteParts.getOrElse(index) { 0L }`
+    Declara `remotePart` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `remoteParts.getOrElse(index) { 0L }`.
+L137: `val currentPart = currentParts.getOrElse(index) { 0L }`
+    Declara `currentPart` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `currentParts.getOrElse(index) { 0L }`.
+L138: `if (remotePart != currentPart) return remotePart > currentPart`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `remotePart != currentPart`.
+L139: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L140: `return false`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L141: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L143: `/** Descarga el asset APK a cacheDir/app_updates sin cargarlo entero en RAM. */`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L144: `suspend fun downloadApk(context: Context, release: Release): File = withContext(Dispatchers.IO) {`
+    Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `downloadApk` se detalla después instrucción por instrucción.
+L145: `val downloadUrl = release.apkDownloadUrl ?: throw IOException("The GitHub Release has no APK asset")`
+    Declara `downloadUrl` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `release.apkDownloadUrl ?: throw IOException("The GitHub Release has no APK asset")`.
+L146: `requireTrustedHttpsUrl(downloadUrl)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L148: `val updateDirectory = File(context.cacheDir, UPDATES_CACHE_DIR).apply {`
+    Realiza una operación de archivo/stream. Debe mantenerse fuera del hilo principal cuando pueda bloquear y respetar el almacenamiento permitido por Android.
+L149: `if (!exists() && !mkdirs()) throw IOException("Unable to create update cache directory")`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `!exists() && !mkdirs()) throw IOException("Unable to create update cache directory"`.
+L150: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L151: `val safeVersion = release.version.replace(Regex("[^A-Za-z0-9._-]"), "_").ifBlank { "latest" }`
+    Declara `safeVersion` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `release.version.replace(Regex("[^A-Za-z0-9._-]"), "_").ifBlank { "latest" }`.
+L152: `val destination = File(updateDirectory, "MyNotes-$safeVersion.apk")`
+    Realiza una operación de archivo/stream. Debe mantenerse fuera del hilo principal cuando pueda bloquear y respetar el almacenamiento permitido por Android.
+L153: `val temporary = File(updateDirectory, "MyNotes-$safeVersion.download")`
+    Realiza una operación de archivo/stream. Debe mantenerse fuera del hilo principal cuando pueda bloquear y respetar el almacenamiento permitido por Android.
+L154: `if (temporary.exists()) temporary.delete()`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `temporary.exists()) temporary.delete(`.
+L156: `var connection: HttpURLConnection? = null`
+    Prepara/realiza acceso de red a una URL. Este tipo de trabajo debe ejecutarse asíncronamente y manejar errores/tiempos de espera.
+L157: `try {`
+    Abre un bloque protegido: si una operación lanza una excepción, el control puede pasar al `catch` correspondiente sin terminar abruptamente el flujo.
+L158: `connection = (URL(downloadUrl).openConnection() as HttpURLConnection).apply {`
+    Prepara/realiza acceso de red a una URL. Este tipo de trabajo debe ejecutarse asíncronamente y manejar errores/tiempos de espera.
+L159: `requestMethod = "GET"`
+    Asigna/configura `requestMethod` usando `"GET"`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L160: `instanceFollowRedirects = true`
+    Asigna/configura `instanceFollowRedirects` usando `true`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L161: `connectTimeout = 15_000`
+    Asigna/configura `connectTimeout` usando `15_000`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L162: `readTimeout = 30_000`
+    Asigna/configura `readTimeout` usando `30_000`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L163: `setRequestProperty("Accept", "application/octet-stream")`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L164: `setRequestProperty("User-Agent", USER_AGENT)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L165: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L166: `val responseCode = connection.responseCode`
+    Declara `responseCode` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `connection.responseCode`.
+L167: `if (responseCode !in 200..299) throw IOException("APK download failed: HTTP $responseCode")`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `responseCode !in 200..299) throw IOException("APK download failed: HTTP $responseCode"`.
+L169: `BufferedInputStream(connection.inputStream, 64 * 1024).use { input ->`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `BufferedInputStream(connection.inputStream, 64 * 1024).use { input ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L170: `BufferedOutputStream(FileOutputStream(temporary), 64 * 1024).use { output ->`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `BufferedOutputStream(FileOutputStream(temporary), 64 * 1024).use { output ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L171: `input.copyTo(output, 64 * 1024)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L172: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L173: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L174: `if (temporary.length() < 1024L) throw IOException("Downloaded APK is unexpectedly small")`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `temporary.length() < 1024L) throw IOException("Downloaded APK is unexpectedly small"`.
+L176: `// Un APK es un contenedor ZIP; PK evita entregar al instalador una página HTML de error.`
+    Comentario del autor. No se ejecuta; documenta la intención o una restricción del bloque siguiente.
+L177: `temporary.inputStream().use { stream ->`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `temporary.inputStream().use { stream ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L178: `if (stream.read() != 'P'.code || stream.read() != 'K'.code) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `stream.read() != 'P'.code || stream.read() != 'K'.code`.
+L179: `throw IOException("Downloaded file is not a valid APK/ZIP container")`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L180: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L181: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L183: `if (destination.exists()) destination.delete()`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `destination.exists()) destination.delete(`.
+L184: `if (!temporary.renameTo(destination)) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `!temporary.renameTo(destination)`.
+L185: `temporary.copyTo(destination, overwrite = true)`
+    Asigna/configura `temporary.copyTo(destination, overwrite` usando `true)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L186: `temporary.delete()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L187: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L188: `destination`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `destination`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L189: `} finally {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L190: `connection?.disconnect()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L191: `if (temporary.exists()) temporary.delete()`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `temporary.exists()) temporary.delete(`.
+L192: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L193: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L195: `/** Android 8+ exige que el usuario autorice explícitamente a MyNotes como origen de APK. */`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L196: `fun canInstallDownloadedPackages(context: Context): Boolean =`
+    Declara una función. El bloque de `canInstallDownloadedPackages` se detalla después instrucción por instrucción.
+L197: `Build.VERSION.SDK_INT < Build.VERSION_CODES.O || context.packageManager.canRequestPackageInstalls()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L199: `fun unknownSourcesSettingsIntent(context: Context): Intent = Intent(`
+    Declara una función. El bloque de `unknownSourcesSettingsIntent` se detalla después instrucción por instrucción.
+L200: `Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES,`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `Settings.ACTION_MANAGE_UNKNOWN_APP_SOURCES,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L201: `Uri.parse("package:${context.packageName}")`
+    Opera con URI/ContentResolver de Android para acceder a contenido compartido sin asumir una ruta de archivo directa.
+L202: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L204: `/** Abre el instalador del sistema. Nunca confirma la instalación automáticamente. */`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L205: `fun launchSystemInstaller(context: Context, apkFile: File): Boolean = runCatching {`
+    Declara una función. El bloque de `launchSystemInstaller` se detalla después instrucción por instrucción.
+L206: `val uri = FileProvider.getUriForFile(context, "${context.packageName}.fileprovider", apkFile)`
+    Realiza una operación de archivo/stream. Debe mantenerse fuera del hilo principal cuando pueda bloquear y respetar el almacenamiento permitido por Android.
+L207: `val intent = Intent(Intent.ACTION_VIEW).apply {`
+    Construye un `Intent` para abrir/enviar una acción a otro componente Android. Los extras añadidos después transportan el contexto necesario.
+L208: `setDataAndType(uri, "application/vnd.android.package-archive")`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L209: `addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L210: `addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L211: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L212: `context.startActivity(intent)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L213: `true`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `true`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L214: `}.getOrDefault(false)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L216: `fun openReleasePage(context: Context, url: String = RELEASES_URL): Boolean = runCatching {`
+    Declara una función. El bloque de `openReleasePage` se detalla después instrucción por instrucción.
+L217: `val safeUrl = url.takeIf { it.startsWith("https://github.com/") } ?: RELEASES_URL`
+    Declara `safeUrl` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `url.takeIf { it.startsWith("https://github.com/") } ?: RELEASES_URL`.
+L218: `context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(safeUrl)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))`
+    Construye un `Intent` para abrir/enviar una acción a otro componente Android. Los extras añadidos después transportan el contexto necesario.
+L219: `true`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `true`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L220: `}.getOrDefault(false)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L222: `private fun requireTrustedHttpsUrl(value: String) {`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `requireTrustedHttpsUrl` se detalla después instrucción por instrucción.
+L223: `val uri = Uri.parse(value)`
+    Opera con URI/ContentResolver de Android para acceder a contenido compartido sin asumir una ruta de archivo directa.
+L224: `val host = uri.host.orEmpty().lowercase()`
+    Declara `host` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `uri.host.orEmpty().lowercase()`.
+L225: `val trustedHost = host == "github.com" || host.endsWith(".github.com") || host.endsWith(".githubusercontent.com")`
+    Declara `trustedHost` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `host == "github.com" || host.endsWith(".github.com") || host.endsWith(".githubusercontent.com")`.
+L226: `if (uri.scheme != "https" || !trustedHost) throw IOException("Untrusted update URL")`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `uri.scheme != "https" || !trustedHost) throw IOException("Untrusted update URL"`.
+L227: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L228: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+7. RECURSOS ANDROID REFERENCIADOS
+----------------------------------------------------------------------
+- No hay referencias directas `R.*` en este archivo.
+
+8. QUIÉN USA ESTE COMPONENTE
+----------------------------------------------------------------------
+- `GitHubUpdateManager` aparece también en 2 archivo(s):
+    - app/src/main/java/com/example/mynotes/ui/theme/SettingsScreen.kt
+    - app/src/main/java/com/example/mynotes/ui/theme/SourceCodeInfoScreen.kt
+- `Release` aparece también en 1 archivo(s):
+    - app/src/main/java/com/example/mynotes/ui/theme/SettingsScreen.kt
+- `CheckResult` aparece también en 1 archivo(s):
+    - app/src/main/java/com/example/mynotes/ui/theme/SettingsScreen.kt
+- `UpdateAvailable` aparece también en 1 archivo(s):
+    - app/src/main/java/com/example/mynotes/ui/theme/SettingsScreen.kt
+- `UpToDate` aparece también en 1 archivo(s):
+    - app/src/main/java/com/example/mynotes/ui/theme/SettingsScreen.kt
+- `NoPublishedRelease` aparece también en 1 archivo(s):
+    - app/src/main/java/com/example/mynotes/ui/theme/SettingsScreen.kt
+- `Failure` aparece también en 1 archivo(s):
+    - app/src/main/java/com/example/mynotes/ui/theme/SettingsScreen.kt
+
+9. QUÉ PUEDE ROMPERSE SI LO MODIFICAS
+----------------------------------------------------------------------
+- Conservar firmas públicas/callbacks y comprobar los archivos que aparecen en “quién usa este componente” antes de renombrar o cambiar tipos.
+
+10. CHECKLIST DE PRUEBA DESPUÉS DE MODIFICAR ESTE ARCHIVO
+----------------------------------------------------------------------
+- Compilar `assembleDebug` y resolver primero errores de Kotlin/AAPT.
+- Abrir la pantalla/flujo relacionado y comprobar ida y vuelta (back) sin estado duplicado.
+- Cambiar tema/paleta y verificar contraste si este archivo dibuja UI.
+
+==============================================================================================================
+FIN DEL ARCHIVO
+==============================================================================================================

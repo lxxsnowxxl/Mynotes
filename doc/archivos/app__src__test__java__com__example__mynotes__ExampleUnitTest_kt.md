@@ -1,38 +1,55 @@
-# ExampleUnitTest.kt — documentación del código actual
-**Ruta real:** `app/src/test/java/com/example/mynotes/ExampleUnitTest.kt`  **SHA-256:** `4be77c1c9460e6c4dcfd772f14ec189b7000b826363740951f1858c12a9a3d86`  **Líneas:** 17 · **Bytes:** 344 · **Imports:** 2 · **Declaraciones detectadas:** 2
-> Documento generado fuera de `app/` a partir de lectura del código. El fuente es la única fuente de verdad; no se modificó para generar esta documentación.
-## 1. Responsabilidad
+# ExampleUnitTest.kt — explicación completa del código
+
+**Ruta:** `app/src/test/java/com/example/mynotes/ExampleUnitTest.kt`  
+**SHA-256:** `4be77c1c9460e6c4dcfd772f14ec189b7000b826363740951f1858c12a9a3d86`  
+**Líneas:** 18  
+**Package:** `com.example.mynotes`
+
+## 1. Para qué existe este archivo
 
 Prueba unitaria de plantilla.
-## 2. Package e imports
 
-Package declarado: `com.example.mynotes`.
+## 2. Tipos/clases declarados
 
-### Terceros / otros
+- Línea **12** — `class ExampleUnitTest`.
 
-`org.junit.Test`, `org.junit.Assert.*`
+## 3. Estado, constantes y valores importantes
 
-## 3. Declaraciones detectadas
+- No se detectaron propiedades inicializadas a nivel visible que necesiten explicación separada.
 
-| Línea | Tipo | Nombre | Firma/inicio |
-|---:|---|---|---|
-| 12 | `class` | `ExampleUnitTest` | `class ExampleUnitTest {` |
-| 13 | `fun` | `addition_isCorrect` | `@Test` |
+## 4. Funciones y flujo, una por una
 
-## 4. Estado, efectos y límites observables
+### `addition_isCorrect` — líneas 14–16
 
-- No aparecen marcadores relevantes de estado/efectos de la lista auditada.
+**Firma:** `fun addition_isCorrect()`
 
-Estas cifras son indicadores de superficie de cambio, no diagnósticos de error. Cualquier modificación debe preservar contratos de persistencia, lifecycle, límites numéricos y nulabilidad visibles en el fuente.
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
 
-## 5. Dependencias internas directas
+**Salida:** Unit o inferido por Kotlin.
 
-No importa directamente otros símbolos `com.example.mynotes.*`.
+**Operaciones/funciones que coordina:** `assertEquals`.
 
-## 6. Recursos Android referenciados
+## 5. Cómo se conecta con el resto de MyNotes
 
-No se detectaron referencias `R.*` directas.
+- No importa directamente otro componente `com.example.mynotes`; funciona como modelo/utilidad base o mediante APIs Android/Jetpack.
 
-## 7. Puntos de revisión al modificarlo
+## 6. Recursos Android que utiliza
 
-- Validar sus llamadores y el comportamiento visible asociado antes de alterar firmas o valores por defecto.
+- No se detectaron referencias directas `R.*` en este archivo.
+
+## 7. Tecnologías y efectos relevantes
+
+- Principalmente lógica Kotlin/Compose sin I/O especial detectado por estas reglas.
+
+## 8. Lectura práctica del flujo
+
+Una forma útil de seguir este archivo en el depurador es recorrer estas operaciones en este orden aproximado:
+1. `addition_isCorrect` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+## 9. Qué no debe romperse al modificarlo
+
+- Mantener las firmas públicas/callbacks que usan los archivos listados en la sección de integración.
+
+## 10. Resumen en lenguaje sencillo
+
+En términos simples: Prueba unitaria de plantilla. La sección función por función anterior describe qué entra, qué devuelve y qué efectos produce cada operación detectada en el fuente actual.

@@ -1,59 +1,247 @@
-# AttachmentPreviewTile.kt — documentación del código actual
-**Ruta real:** `app/src/main/java/com/example/mynotes/ui/components/AttachmentPreviewTile.kt`  **SHA-256:** `02a4cd1294006d450f96ff84ca2d992f00ba900aabd7487bf4ca6b4d93ae1144`  **Líneas:** 329 · **Bytes:** 14733 · **Imports:** 52 · **Declaraciones detectadas:** 9
-> Documento generado fuera de `app/` a partir de lectura del código. El fuente es la única fuente de verdad; no se modificó para generar esta documentación.
-## 1. Responsabilidad
+# AttachmentPreviewTile.kt — explicación completa del código
 
-Tile visual para previsualizar un adjunto dentro del editor o tarjetas.
-## 2. Package e imports
+**Ruta:** `app/src/main/java/com/example/mynotes/ui/components/AttachmentPreviewTile.kt`  
+**SHA-256:** `02a4cd1294006d450f96ff84ca2d992f00ba900aabd7487bf4ca6b4d93ae1144`  
+**Líneas:** 330  
+**Package:** `com.example.mynotes.ui.components`
 
-Package declarado: `com.example.mynotes.ui.components`.
+## 1. Para qué existe este archivo
 
-### Android / Jetpack / Compose
+Componente Compose de preview visual de adjuntos dentro de la interfaz.
 
-`android.content.Context`, `android.net.Uri`, `android.webkit.MimeTypeMap`, `androidx.compose.foundation.Image`, `androidx.compose.foundation.clickable`, `androidx.compose.foundation.layout.Arrangement`, `androidx.compose.foundation.layout.Box`, `androidx.compose.foundation.layout.Column`, `androidx.compose.foundation.layout.Row`, `androidx.compose.foundation.layout.Spacer`, `androidx.compose.foundation.layout.fillMaxSize`, `androidx.compose.foundation.layout.fillMaxWidth`, `androidx.compose.foundation.layout.height`, `androidx.compose.foundation.layout.padding`, `androidx.compose.foundation.layout.size`, `androidx.compose.foundation.layout.width`, `androidx.compose.foundation.shape.CircleShape`, `androidx.compose.foundation.shape.RoundedCornerShape`, `androidx.compose.material.icons.Icons`, `androidx.compose.material.icons.filled.Description`, `androidx.compose.material.icons.filled.Mic`, `androidx.compose.material.icons.filled.MusicNote`, `androidx.compose.material.icons.filled.PlayArrow`, `androidx.compose.material.icons.filled.VideoFile`, `androidx.compose.material3.Icon`, `androidx.compose.material3.MaterialTheme`, `androidx.compose.material3.Surface`, `androidx.compose.material3.Text`, `androidx.compose.runtime.Composable`, `androidx.compose.runtime.getValue`, `androidx.compose.runtime.produceState`, `androidx.compose.ui.Alignment`, `androidx.compose.ui.Modifier`, `androidx.compose.ui.draw.clip`, `androidx.compose.ui.graphics.Color`, `androidx.compose.ui.graphics.asImageBitmap`, `androidx.compose.ui.layout.ContentScale`, `androidx.compose.ui.platform.LocalContext`, `androidx.compose.ui.res.stringResource`, `androidx.compose.ui.text.font.FontFamily`, `androidx.compose.ui.text.font.FontWeight`, `androidx.compose.ui.text.style.TextOverflow`, `androidx.compose.ui.unit.Dp`, `androidx.compose.ui.unit.dp`, `androidx.compose.ui.unit.sp`
+## 2. Tipos/clases declarados
 
-### Proyecto MyNotes
+- No declara una clase/objeto propio; contiene funciones/valores de soporte o es un archivo marcador.
 
-`com.example.mynotes.R`, `com.example.mynotes.data.Attachment`, `com.example.mynotes.performance.AttachmentPreviewCache`, `com.example.mynotes.ui.sound.UiActionSound`, `com.example.mynotes.ui.sound.UiSoundPlayer`, `com.example.mynotes.ui.openAttachmentViewer`
+## 3. Estado, constantes y valores importantes
 
-### Kotlin / Coroutines / Java
+- **`context`** (línea 69) inicia con `LocalContext.current`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`uri`** (línea 70) inicia con `Uri.parse(attachment.uri`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`isBorderlessPreview`** (línea 71) inicia con `attachment.type == "image" || attachment.type == "video" || attachment.name?.substringAfterLast("."`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`bitmap`** (línea 163) inicia con `preview?.bitmap`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`duration`** (línea 186) inicia con `preview?.durationMillis?: 0L`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`extension`** (línea 252) inicia con `attachment.name?.substringAfterLast("."`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`totalSeconds`** (línea 309) inicia con `durationMillis / 1000L`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`minutes`** (línea 310) inicia con `totalSeconds / 60L`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`seconds`** (línea 311) inicia con `totalSeconds % 60L`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
 
-`kotlinx.coroutines.delay`
+## 4. Funciones y flujo, una por una
 
-## 3. Declaraciones detectadas
+### `AttachmentPreviewTile` — líneas 66–108
 
-| Línea | Tipo | Nombre | Firma/inicio |
-|---:|---|---|---|
-| 65 | `fun` | `AttachmentPreviewTile` | `@Composable` |
-| 109 | `fun` | `ImageAttachment` | `` |
-| 146 | `fun` | `VideoAttachment` | `` |
-| 194 | `fun` | `AudioAttachment` | `` |
-| 247 | `fun` | `FileAttachment` | `` |
-| 294 | `fun` | `DurationBadge` | `` |
-| 307 | `fun` | `formatDuration` | `` |
-| 318 | `fun` | `openAttachment` | `fun openAttachment(context: Context, attachment: Attachment) {` |
-| 322 | `fun` | `resolveMimeType` | `` |
+**Firma:** `fun AttachmentPreviewTile(attachment: Attachment, modifier: Modifier = Modifier, fontFamily: FontFamily = FontFamily.Default, showName: Boolean = true, previewDelayMillis: Long = 0L, performanceMode: String = "balanced", tileHeight: Dp = 142.dp, openOnTap: Boolean = true)`
 
-## 4. Estado, efectos y límites observables
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
 
-- **Coroutines:** 5 aparición/apariciones.
-- **safe calls:** 12 aparición/apariciones.
+**Entradas:**
+- `attachment: Attachment`
+- `modifier: Modifier = Modifier`
+- `fontFamily: FontFamily = FontFamily.Default`
+- `showName: Boolean = true`
+- `previewDelayMillis: Long = 0L`
+- `performanceMode: String = "balanced"`
+- `tileHeight: Dp = 142.dp`
+- `openOnTap: Boolean = true`
 
-Estas cifras son indicadores de superficie de cambio, no diagnósticos de error. Cualquier modificación debe preservar contratos de persistencia, lifecycle, límites numéricos y nulabilidad visibles en el fuente.
+**Salida:** Unit o inferido por Kotlin.
 
-## 5. Dependencias internas directas
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+- Usa `when` para mapear estados/tipos/opciones.
 
-- `com.example.mynotes.R`
-- `com.example.mynotes.data.Attachment`
-- `com.example.mynotes.performance.AttachmentPreviewCache`
-- `com.example.mynotes.ui.openAttachmentViewer`
-- `com.example.mynotes.ui.sound.UiActionSound`
-- `com.example.mynotes.ui.sound.UiSoundPlayer`
+**Operaciones/funciones que coordina:** `parse`, `substringAfterLast`, `equals`, `height`, `clip`, `RoundedCornerShape`, `playAction`, `openAttachment`, `ImageAttachment`, `VideoAttachment`, `AudioAttachment`, `FileAttachment`.
 
-## 6. Recursos Android referenciados
+### `ImageAttachment` — líneas 111–145
 
-- **R.string:** `mock_audio`, `mock_file`, `mock_voice_note`
+**Firma:** `private fun ImageAttachment(attachment: Attachment, showName: Boolean, fontFamily: FontFamily, previewDelayMillis: Long, performanceMode: String)`
 
-## 7. Puntos de revisión al modificarlo
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
 
-- No degradar calidad, rutas persistentes ni cachés de adjuntos/miniaturas sin una prueba explícita.
+**Entradas:**
+- `attachment: Attachment`
+- `showName: Boolean`
+- `fontFamily: FontFamily`
+- `previewDelayMillis: Long`
+- `performanceMode: String`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Procesa imágenes/bitmaps.
+
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `produceState`, `delay`, `fillMaxSize`, `loadImagePreview`, `parse`, `Image`, `asImageBitmap`, `clip`, `RoundedCornerShape`, `copy`, `size`.
+
+### `VideoAttachment` — líneas 148–193
+
+**Firma:** `private fun VideoAttachment(attachment: Attachment, uri: Uri, showName: Boolean, fontFamily: FontFamily, previewDelayMillis: Long, performanceMode: String)`
+
+Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+**Entradas:**
+- `attachment: Attachment`
+- `uri: Uri`
+- `showName: Boolean`
+- `fontFamily: FontFamily`
+- `previewDelayMillis: Long`
+- `performanceMode: String`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Procesa imágenes/bitmaps.
+
+**Decisiones y protecciones visibles:**
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `delay`, `loadVideoPreview`, `fillMaxSize`, `Image`, `asImageBitmap`, `clip`, `RoundedCornerShape`, `size`, `align`, `copy`, `padding`, `DurationBadge`.
+
+### `AudioAttachment` — líneas 196–246
+
+**Firma:** `private fun AudioAttachment(attachment: Attachment, uri: Uri, showName: Boolean, fontFamily: FontFamily, previewDelayMillis: Long, performanceMode: String)`
+
+Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+**Entradas:**
+- `attachment: Attachment`
+- `uri: Uri`
+- `showName: Boolean`
+- `fontFamily: FontFamily`
+- `previewDelayMillis: Long`
+- `performanceMode: String`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Procesa imágenes/bitmaps.
+
+**Decisiones y protecciones visibles:**
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `delay`, `loadAudioPreview`, `fillMaxSize`, `Image`, `asImageBitmap`, `clip`, `RoundedCornerShape`, `padding`, `size`, `height`.
+
+### `FileAttachment` — líneas 249–293
+
+**Firma:** `private fun FileAttachment(attachment: Attachment, uri: Uri, showName: Boolean, fontFamily: FontFamily, previewDelayMillis: Long, performanceMode: String)`
+
+Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+**Entradas:**
+- `attachment: Attachment`
+- `uri: Uri`
+- `showName: Boolean`
+- `fontFamily: FontFamily`
+- `previewDelayMillis: Long`
+- `performanceMode: String`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Procesa imágenes/bitmaps.
+
+**Decisiones y protecciones visibles:**
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `substringAfterLast`, `lowercase`, `orEmpty`, `delay`, `loadPdfFirstPage`, `fillMaxSize`, `Image`, `asImageBitmap`, `clip`, `RoundedCornerShape`, `padding`, `size`, `height`.
+
+### `DurationBadge` — líneas 296–306
+
+**Firma:** `private fun DurationBadge(duration: Long, modifier: Modifier = Modifier)`
+
+Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+**Entradas:**
+- `duration: Long`
+- `modifier: Modifier = Modifier`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Operaciones/funciones que coordina:** `padding`, `copy`, `RoundedCornerShape`, `formatDuration`.
+
+### `formatDuration` — líneas 308–313
+
+**Firma:** `private fun formatDuration(durationMillis: Long): String`
+
+Convierte un valor interno a texto breve de presentación para la interfaz.
+
+**Entradas:**
+- `durationMillis: Long`
+
+**Salida:** String.
+
+**Operaciones/funciones que coordina:** `format`.
+
+### `openAttachment` — líneas 318–321
+
+**Firma:** `fun openAttachment(context: Context, attachment: Attachment)`
+
+Construye/ejecuta la operación necesaria para abrir el destino indicado, aplicando las validaciones visibles en el cuerpo.
+
+**Entradas:**
+- `context: Context`
+- `attachment: Attachment`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Operaciones/funciones que coordina:** `openAttachmentViewer`, `resolveMimeType`, `parse`.
+
+### `resolveMimeType` — líneas 323–329
+
+**Firma:** `private fun resolveMimeType(context: Context, uri: Uri, name: String?): String`
+
+Resuelve un valor configurable a su representación efectiva usada por la UI, aplicando reglas de fallback/contraste cuando corresponde.
+
+**Entradas:**
+- `context: Context`
+- `uri: Uri`
+- `name: String?`
+
+**Salida:** String.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lee/escribe Uris mediante ContentResolver.
+
+**Decisiones y protecciones visibles:**
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+
+**Operaciones/funciones que coordina:** `getType`, `substringAfterLast`, `lowercase`, `orEmpty`, `getSingleton`, `getMimeTypeFromExtension`.
+
+## 5. Cómo se conecta con el resto de MyNotes
+
+- Usa `com.example.mynotes.R`.
+- Usa `com.example.mynotes.data.Attachment`.
+- Usa `com.example.mynotes.performance.AttachmentPreviewCache`.
+- Usa `com.example.mynotes.ui.sound.UiActionSound`.
+- Usa `com.example.mynotes.ui.sound.UiSoundPlayer`.
+- Usa `com.example.mynotes.ui.openAttachmentViewer`.
+
+## 6. Recursos Android que utiliza
+
+- `R.string`: `mock_audio`, `mock_file`, `mock_voice_note`
+
+## 7. Tecnologías y efectos relevantes
+
+- Procesa imágenes/bitmaps.
+- Lee/escribe Uris mediante ContentResolver.
+
+## 8. Lectura práctica del flujo
+
+Una forma útil de seguir este archivo en el depurador es recorrer estas operaciones en este orden aproximado:
+1. `AttachmentPreviewTile` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+2. `openAttachment` — Construye/ejecuta la operación necesaria para abrir el destino indicado, aplicando las validaciones visibles en el cuerpo.
+
+## 9. Qué no debe romperse al modificarlo
+
+- Evitar aumentar resoluciones/cargas sin considerar memoria y scroll; preservar caché y liberación de recursos.
+- Conservar validaciones de Uri/ruta y no confiar en nombres externos sin sanitizar.
+- Evitar trabajo bloqueante durante composición y mantener estado estable para limitar recomposiciones.
+- Este archivo toca previews/adjuntos; cualquier cambio debe probar visualización y miniaturas en los perfiles de rendimiento.
+
+## 10. Resumen en lenguaje sencillo
+
+En términos simples: Componente Compose de preview visual de adjuntos dentro de la interfaz. La sección función por función anterior describe qué entra, qué devuelve y qué efectos produce cada operación detectada en el fuente actual.

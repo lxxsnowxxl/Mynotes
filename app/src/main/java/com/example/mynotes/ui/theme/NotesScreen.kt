@@ -72,6 +72,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
@@ -113,6 +114,8 @@ private data class NoteFilterOption(val filter: NoteFilter, val labelRes: Int)
 
 @Immutable
 private data class AttachmentIndex(val byNote: Map<Int, List<Attachment>>, val kindsByNote: Map<Int, Set<String>>)
+
+private data class QuickCreateSpec(val text: String, val icon: ImageVector, val sound: UiActionSound, val action: () -> Unit)
 
 private val FilterOptions = listOf(
     NoteFilterOption(NoteFilter.ALL, R.string.mock_filter_all),
@@ -267,11 +270,7 @@ fun NotesScreen(
         }
     LaunchedEffect(linkPreviewUrls, isGridScrolling, settings.performanceMode) {
         if (!isGridScrolling && linkPreviewUrls.isNotEmpty()) {
-            val idleDelayMs = when (settings.performanceMode) {
-                "performance" -> 900L
-                "quality" -> 450L
-                else -> 650L
-            }
+            val idleDelayMs = AppMotion.performanceValue(settings.performanceMode, performance = 900L, balanced = 650L, quality = 450L)
             delay(idleDelayMs)
             if (!gridState.isScrollInProgress) {
                 preloadLinkPreviews(context = context.applicationContext, urls = linkPreviewUrls, performanceMode = settings.performanceMode)
@@ -424,23 +423,12 @@ fun NotesScreen(
              * galerías: durante el movimiento nunca necesitamos enseñar cómo
              * aparece una imagen pesada desde cero.
              */
-            qualityScrollPreviewAttachments.forEach { attachment ->
-                AttachmentPreviewCache.prewarm(
-                    context = context.applicationContext,
-                    uri = Uri.parse(attachment.uri),
-                    type = attachment.type,
-                    name = attachment.name,
-                    performanceMode = "instant"
-                )
-            }
-            qualityScrollPreviewAttachments.forEach { attachment ->
-                AttachmentPreviewCache.prewarm(
-                    context = context.applicationContext,
-                    uri = Uri.parse(attachment.uri),
-                    type = attachment.type,
-                    name = attachment.name,
-                    performanceMode = "quality"
-                )
+            listOf("instant", "quality").forEach { mode ->
+                qualityScrollPreviewAttachments.forEach { attachment ->
+                    AttachmentPreviewCache.prewarm(
+                        context.applicationContext, Uri.parse(attachment.uri), attachment.type, attachment.name, mode
+                    )
+                }
             }
         }
     }
@@ -473,60 +461,22 @@ fun NotesScreen(
                         horizontalAlignment = Alignment.End,
                         verticalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        QuickCreateActionButton(
-                            text = stringResource(R.string.reminders),
-                            icon = Icons.Default.NotificationsActive,
-                            fontFamily = fontFamily,
-                            containerColor = quickCreateSurfaceColor,
-                            contentColor = quickCreateTextColor,
-                            onClick = {
+                        listOf(
+                            QuickCreateSpec(stringResource(R.string.reminders), Icons.Default.NotificationsActive, UiActionSound.Select, onOpenReminders),
+                            QuickCreateSpec(stringResource(R.string.mock_new_note), Icons.Default.NoteAdd, UiActionSound.Add, onAddNote),
+                            QuickCreateSpec(stringResource(R.string.add_pdf), Icons.Default.PictureAsPdf, UiActionSound.Add, onAddPdf),
+                            QuickCreateSpec(stringResource(R.string.create_drawing), Icons.Default.Brush, UiActionSound.Select, onDrawNote)
+                        ).forEach { item ->
+                            QuickCreateActionButton(item.text, item.icon, fontFamily, quickCreateSurfaceColor, quickCreateTextColor) {
                                 addMenuExpanded = false
-                                UiSoundPlayer.playAction(context = context, action = UiActionSound.Select)
-                                onOpenReminders()
+                                UiSoundPlayer.runAction(context, item.sound, item.action)
                             }
-                        )
-                        QuickCreateActionButton(
-                            text = stringResource(R.string.mock_new_note),
-                            icon = Icons.Default.NoteAdd,
-                            fontFamily = fontFamily,
-                            containerColor = quickCreateSurfaceColor,
-                            contentColor = quickCreateTextColor,
-                            onClick = {
-                                addMenuExpanded = false
-                                UiSoundPlayer.playAction(context = context, action = UiActionSound.Add)
-                                onAddNote()
-                            }
-                        )
-                        QuickCreateActionButton(
-                            text = stringResource(R.string.add_pdf),
-                            icon = Icons.Default.PictureAsPdf,
-                            fontFamily = fontFamily,
-                            containerColor = quickCreateSurfaceColor,
-                            contentColor = quickCreateTextColor,
-                            onClick = {
-                                addMenuExpanded = false
-                                UiSoundPlayer.playAction(context = context, action = UiActionSound.Add)
-                                onAddPdf()
-                            }
-                        )
-                        QuickCreateActionButton(
-                            text = stringResource(R.string.create_drawing),
-                            icon = Icons.Default.Brush,
-                            fontFamily = fontFamily,
-                            containerColor = quickCreateSurfaceColor,
-                            contentColor = quickCreateTextColor,
-                            onClick = {
-                                addMenuExpanded = false
-                                UiSoundPlayer.playAction(context = context, action = UiActionSound.Select)
-                                onDrawNote()
-                            }
-                        )
+                        }
                     }
                 }
 
                 FloatingActionButton(
-                    onClick = {
-                        UiSoundPlayer.playAction(context = context, action = UiActionSound.Menu)
+                    onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Menu) {
                         addMenuExpanded = !addMenuExpanded
                     },
                     modifier = Modifier.size(animatedFabSize),
@@ -565,8 +515,7 @@ fun NotesScreen(
                         fontSize = 14.sp,
                         color = screenSecondaryTextColor)
                 }
-                Surface(modifier = Modifier.size(animatedProfileSize).clip(CircleShape).clickable(onClick = {
-                                    UiSoundPlayer.playAction(context = context, action = UiActionSound.Settings)
+                Surface(modifier = Modifier.size(animatedProfileSize).clip(CircleShape).clickable(onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Settings) {
                                     onOpenSettings()
                                 }), shape = CircleShape, color = MaterialTheme.colorScheme.surfaceContainerHigh) {
                     if (settings.profileImageUri.isNotBlank()) {
@@ -579,8 +528,7 @@ fun NotesScreen(
                         }
                     }
                 }
-                IconButton(onClick = {
-                        UiSoundPlayer.playAction(context = context, action = UiActionSound.Settings)
+                IconButton(onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Settings) {
                         onOpenSettings()
                     }) {
                     Icon(imageVector = Icons.Default.Settings,
@@ -646,8 +594,7 @@ fun NotesScreen(
                         option ->
                     val selected = option.filter == selectedFilter
                     FilterChip(selected = selected,
-                        onClick = {
-                            UiSoundPlayer.playAction(context = context, action = UiActionSound.Select)
+                        onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Select) {
                             selectedFilter = option.filter
                         },
                         colors = FilterChipDefaults.filterChipColors(containerColor = controlSurfaceColor,
@@ -725,35 +672,22 @@ fun NotesScreen(
                             colorMenuHiddenItems = settings.colorMenuHiddenItems,
                             performanceMode = settings.performanceMode,
                             isScrolling = isGridScrolling,
-                            onOpen = {
-                                UiSoundPlayer.playAction(context = context, action = UiActionSound.Open)
-                                onOpenNote(note)
-                            },
+                            onOpen = UiSoundPlayer.actionHandler(context, UiActionSound.Open) { onOpenNote(note) },
                             onEdit = {
                                 UiSoundPlayer.play(context = context, sound = UiSound.Edit)
                                 onEditNote(note)
                             },
-                            onToggleFavorite = {
-                                UiSoundPlayer.playAction(context = context, action = UiActionSound.Favorite)
-                                noteViewModel.toggleFavorite(note)
-                            },
-                            onTogglePinned = {
-                                UiSoundPlayer.playAction(context = context, action = UiActionSound.Pin)
-                                noteViewModel.togglePinned(note)
-                            },
+                            onToggleFavorite = UiSoundPlayer.actionHandler(context, UiActionSound.Favorite) { noteViewModel.toggleFavorite(note) },
+                            onTogglePinned = UiSoundPlayer.actionHandler(context, UiActionSound.Pin) { noteViewModel.togglePinned(note) },
                             onPriorityChange = {
                                     priority ->
                                 UiSoundPlayer.play(context = context, sound = UiSound.Priority)
                                 noteViewModel.changePriority(note = note, priority = priority)
                             },
-                            onColorChange = {
-                                    color ->
-                                UiSoundPlayer.playAction(context = context, action = UiActionSound.Color)
+                            onColorChange = UiSoundPlayer.actionHandler(context, UiActionSound.Color) { color ->
                                 noteViewModel.changeNoteColor(note = note, color = color)
                             },
-                            onCategoryChange = {
-                                    category ->
-                                UiSoundPlayer.playAction(context = context, action = UiActionSound.Category)
+                            onCategoryChange = UiSoundPlayer.actionHandler(context, UiActionSound.Category) { category ->
                                 noteViewModel.changeCategory(note = note, category = category)
                             },
                             onDelete = {
@@ -795,7 +729,7 @@ fun NotesScreen(
 @Composable
 private fun QuickCreateActionButton(
     text: String,
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    icon: ImageVector,
     fontFamily: androidx.compose.ui.text.font.FontFamily,
     containerColor: androidx.compose.ui.graphics.Color,
     contentColor: androidx.compose.ui.graphics.Color,

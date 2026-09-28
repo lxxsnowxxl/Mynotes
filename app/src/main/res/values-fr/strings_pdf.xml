@@ -35,7 +35,11 @@
     <string name="pdf_error_image">Impossible d’ouvrir l’image.</string>
     <string name="pdf_error_save">Impossible d’enregistrer le PDF.</string>
     <string name="pdf_ai_crop_done">Détourage IA appliqué.</string>
-    <string name="pdf_ai_crop_not_ready">Le modèle IA n’est pas encore disponible. Connectez-vous à Internet et réessayez.</string>
+    <string name="pdf_ai_crop_not_ready">Le modèle IA n’a pas pu être préparé. Vérifiez la connexion Internet et l’espace libre, puis réessayez.</string>
+    <string name="pdf_ai_crop_downloading">Téléchargement du modèle IA. La première utilisation nécessite une connexion Internet.</string>
+    <string name="pdf_ai_crop_play_services">Le détourage IA nécessite des services Google Play à jour et activés sur cet appareil.</string>
+    <string name="pdf_ai_crop_error">Impossible de détourer cette image. Réessayez.</string>
+    <string name="pdf_ai_crop_changed">Le document ou la sélection a changé pendant le détourage. Sélectionnez l’image et réessayez.</string>
     <string name="pdf_go_to_page">Aller à la page</string>
     <string name="pdf_go_to_page_range">Saisissez un numéro entre 1 et %1$d.</string>
     <string name="pdf_page_number">Numéro de page</string>

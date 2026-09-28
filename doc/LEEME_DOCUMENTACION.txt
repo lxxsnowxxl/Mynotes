@@ -1,0 +1,16 @@
+MYNOTES — DOCUMENTACIÓN v63
+
+La versión anterior tenía 72/72 archivos cubiertos, pero parte de la explicación era sólo un inventario técnico.
+
+Para leer la explicación completa:
+1. Abra EXPLICACION_COMPLETA_DEL_CODIGO.txt si quiere todo en un solo archivo.
+2. Abra explicacion_texto/ si quiere un TXT por fuente.
+3. Abra archivos/ si prefiere Markdown por fuente.
+
+Cada archivo documenta propósito, tipos, estado, funciones, entradas, salida, efectos, llamadas relevantes, recursos, integración y precauciones.
+
+Fuentes documentadas: 72
+Líneas de código: 23794
+Líneas de explicación individual: 17152
+
+El código dentro de app/ NO se modificó al generar esta documentación.

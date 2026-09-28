@@ -1,37 +1,55 @@
-# PendingAttachment.kt — documentación del código actual
-**Ruta real:** `app/src/main/java/com/example/mynotes/data/PendingAttachment.kt`  **SHA-256:** `93815c8c9aadf6631ce116f4a15f609e32db70efa1f70ab3db02f0758a21fd50`  **Líneas:** 21 · **Bytes:** 295 · **Imports:** 1 · **Declaraciones detectadas:** 1
-> Documento generado fuera de `app/` a partir de lectura del código. El fuente es la única fuente de verdad; no se modificó para generar esta documentación.
-## 1. Responsabilidad
+# PendingAttachment.kt — explicación completa del código
 
-Modelo temporal de adjuntos todavía no persistidos.
-## 2. Package e imports
+**Ruta:** `app/src/main/java/com/example/mynotes/data/PendingAttachment.kt`  
+**SHA-256:** `93815c8c9aadf6631ce116f4a15f609e32db70efa1f70ab3db02f0758a21fd50`  
+**Líneas:** 21  
+**Package:** `com.example.mynotes.data`
 
-Package declarado: `com.example.mynotes.data`.
+## 1. Para qué existe este archivo
 
-### Android / Jetpack / Compose
+Modelo temporal usado por el editor antes de copiar/guardar definitivamente un adjunto.
 
-`android.net.Uri`
+### Contrato de datos
 
-## 3. Declaraciones detectadas
+No es entidad Room. Representa una selección externa o archivo temporal antes de que NoteViewModel lo copie al almacenamiento privado y cree Attachment.
 
-| Línea | Tipo | Nombre | Firma/inicio |
-|---:|---|---|---|
-| 4 | `class` | `PendingAttachment` | `` |
+## 2. Tipos/clases declarados
 
-## 4. Estado, efectos y límites observables
+- Línea **5** — `data  class PendingAttachment`.
 
-- No aparecen marcadores relevantes de estado/efectos de la lista auditada.
+## 3. Estado, constantes y valores importantes
 
-Estas cifras son indicadores de superficie de cambio, no diagnósticos de error. Cualquier modificación debe preservar contratos de persistencia, lifecycle, límites numéricos y nulabilidad visibles en el fuente.
+- **`name`** (línea 17) inicia con `null`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`mimeType`** (línea 19) inicia con `null`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
 
-## 5. Dependencias internas directas
+## 4. Funciones y flujo, una por una
 
-No importa directamente otros símbolos `com.example.mynotes.*`.
+* image
+     * video
+     * audio
+     * voice
+     * file
 
-## 6. Recursos Android referenciados
+## 5. Cómo se conecta con el resto de MyNotes
 
-No se detectaron referencias `R.*` directas.
+- No importa directamente otro componente `com.example.mynotes`; funciona como modelo/utilidad base o mediante APIs Android/Jetpack.
 
-## 7. Puntos de revisión al modificarlo
+## 6. Recursos Android que utiliza
 
-- No degradar calidad, rutas persistentes ni cachés de adjuntos/miniaturas sin una prueba explícita.
+- No se detectaron referencias directas `R.*` en este archivo.
+
+## 7. Tecnologías y efectos relevantes
+
+- Principalmente lógica Kotlin/Compose sin I/O especial detectado por estas reglas.
+
+## 8. Lectura práctica del flujo
+
+No hay flujo ejecutable propio; su contenido sirve de declaración/configuración para otros archivos.
+
+## 9. Qué no debe romperse al modificarlo
+
+- Conservar validaciones de Uri/ruta y no confiar en nombres externos sin sanitizar.
+
+## 10. Resumen en lenguaje sencillo
+
+En términos simples: Modelo temporal usado por el editor antes de copiar/guardar definitivamente un adjunto. La sección función por función anterior describe qué entra, qué devuelve y qué efectos produce cada operación detectada en el fuente actual.

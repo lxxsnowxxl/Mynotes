@@ -35,7 +35,11 @@
     <string name="pdf_error_image">Could not open the image.</string>
     <string name="pdf_error_save">Could not save the PDF.</string>
     <string name="pdf_ai_crop_done">AI cutout applied.</string>
-    <string name="pdf_ai_crop_not_ready">The AI model is not available yet. Connect to the Internet and try again.</string>
+    <string name="pdf_ai_crop_not_ready">The AI model could not be prepared. Check your Internet connection and free storage, then try again.</string>
+    <string name="pdf_ai_crop_downloading">Downloading the AI model. The first use requires an Internet connection.</string>
+    <string name="pdf_ai_crop_play_services">AI cutout requires up-to-date, enabled Google Play services on this device.</string>
+    <string name="pdf_ai_crop_error">This image could not be cut out. Try again.</string>
+    <string name="pdf_ai_crop_changed">The document or selection changed during cutout. Select the image and try again.</string>
     <string name="pdf_go_to_page">Go to page</string>
     <string name="pdf_go_to_page_range">Enter a number from 1 to %1$d.</string>
     <string name="pdf_page_number">Page number</string>

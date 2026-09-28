@@ -1,33 +1,47 @@
-# SettingsViewModel.kt — documentación del código actual
-**Ruta real:** `app/src/main/java/com/example/mynotes/settings/SettingsViewModel.kt`  **SHA-256:** `addc44b9b2a1d1c1072a28a5219cdcaca9737411da8e7e1797498a97491a6d50`  **Líneas:** 6 · **Bytes:** 167 · **Imports:** 0 · **Declaraciones detectadas:** 0
-> Documento generado fuera de `app/` a partir de lectura del código. El fuente es la única fuente de verdad; no se modificó para generar esta documentación.
-## 1. Responsabilidad
+# SettingsViewModel.kt — explicación completa del código
 
-Stub deliberado que documenta que la clase SettingsViewModel real vive en com.example.mynotes.viewmodel; evita una redeclaración en el package settings.
-## 2. Package e imports
+**Ruta:** `app/src/main/java/com/example/mynotes/settings/SettingsViewModel.kt`  
+**SHA-256:** `addc44b9b2a1d1c1072a28a5219cdcaca9737411da8e7e1797498a97491a6d50`  
+**Líneas:** 7  
+**Package:** `com.example.mynotes.settings`
 
-Package declarado: `com.example.mynotes.settings`.
+## 1. Para qué existe este archivo
 
-No contiene imports.
+Archivo marcador intencional. No declara otro SettingsViewModel; documenta que la implementación real vive en com.example.mynotes.viewmodel para evitar redeclaraciones.
 
-## 3. Declaraciones detectadas
+## 2. Tipos/clases declarados
 
-No se detectan clases/objetos/interfaces/funciones declarados; puede ser un archivo de constantes, comentarios o configuración DSL.
+- No declara una clase/objeto propio; contiene funciones/valores de soporte o es un archivo marcador.
 
-## 4. Estado, efectos y límites observables
+## 3. Estado, constantes y valores importantes
 
-- No aparecen marcadores relevantes de estado/efectos de la lista auditada.
+- No se detectaron propiedades inicializadas a nivel visible que necesiten explicación separada.
 
-Estas cifras son indicadores de superficie de cambio, no diagnósticos de error. Cualquier modificación debe preservar contratos de persistencia, lifecycle, límites numéricos y nulabilidad visibles en el fuente.
+## 4. Funciones y flujo, una por una
 
-## 5. Dependencias internas directas
+* SettingsViewModel vive en com.example.mynotes.viewmodel.
+ * Este archivo no declara clase para evitar redeclaraciones.
 
-No importa directamente otros símbolos `com.example.mynotes.*`.
+## 5. Cómo se conecta con el resto de MyNotes
 
-## 6. Recursos Android referenciados
+- No importa directamente otro componente `com.example.mynotes`; funciona como modelo/utilidad base o mediante APIs Android/Jetpack.
 
-No se detectaron referencias `R.*` directas.
+## 6. Recursos Android que utiliza
 
-## 7. Puntos de revisión al modificarlo
+- No se detectaron referencias directas `R.*` en este archivo.
 
-- Conservar rangos `coerce*`, claves DataStore y compatibilidad con backups existentes.
+## 7. Tecnologías y efectos relevantes
+
+- Principalmente lógica Kotlin/Compose sin I/O especial detectado por estas reglas.
+
+## 8. Lectura práctica del flujo
+
+No hay flujo ejecutable propio; su contenido sirve de declaración/configuración para otros archivos.
+
+## 9. Qué no debe romperse al modificarlo
+
+- Mantener las firmas públicas/callbacks que usan los archivos listados en la sección de integración.
+
+## 10. Resumen en lenguaje sencillo
+
+En términos simples: Archivo marcador intencional. No declara otro SettingsViewModel; documenta que la implementación real vive en com.example.mynotes.viewmodel para evitar redeclaraciones. La sección función por función anterior describe qué entra, qué devuelve y qué efectos produce cada operación detectada en el fuente actual.

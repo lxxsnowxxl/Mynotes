@@ -1,49 +1,113 @@
-# ConfigurationModeDialog.kt — documentación del código actual
-**Ruta real:** `app/src/main/java/com/example/mynotes/ui/components/ConfigurationModeDialog.kt`  **SHA-256:** `b9f0581f2c1ed9ab9146a4b89d30d9ad0acd886d9f99b86ad18df604e63719d5`  **Líneas:** 294 · **Bytes:** 12244 · **Imports:** 43 · **Declaraciones detectadas:** 2
-> Documento generado fuera de `app/` a partir de lectura del código. El fuente es la única fuente de verdad; no se modificó para generar esta documentación.
-## 1. Responsabilidad
+# ConfigurationModeDialog.kt — explicación completa del código
 
-Diálogo para elegir modo Básico o Avanzado.
-## 2. Package e imports
+**Ruta:** `app/src/main/java/com/example/mynotes/ui/components/ConfigurationModeDialog.kt`  
+**SHA-256:** `b9f0581f2c1ed9ab9146a4b89d30d9ad0acd886d9f99b86ad18df604e63719d5`  
+**Líneas:** 295  
+**Package:** `com.example.mynotes.ui.components`
 
-Package declarado: `com.example.mynotes.ui.components`.
+## 1. Para qué existe este archivo
 
-### Android / Jetpack / Compose
+Diálogo para seleccionar Basic/Advanced manteniendo el estilo y contraste de MyNotes.
 
-`androidx.compose.foundation.BorderStroke`, `androidx.activity.compose.BackHandler`, `androidx.compose.foundation.background`, `androidx.compose.foundation.gestures.detectTapGestures`, `androidx.compose.foundation.layout.Arrangement`, `androidx.compose.foundation.layout.Box`, `androidx.compose.foundation.layout.Column`, `androidx.compose.foundation.layout.Spacer`, `androidx.compose.foundation.layout.fillMaxSize`, `androidx.compose.foundation.layout.fillMaxWidth`, `androidx.compose.foundation.layout.height`, `androidx.compose.foundation.layout.padding`, `androidx.compose.foundation.layout.widthIn`, `androidx.compose.foundation.shape.RoundedCornerShape`, `androidx.compose.material3.Button`, `androidx.compose.material3.ButtonDefaults`, `androidx.compose.material3.MaterialTheme`, `androidx.compose.material3.OutlinedButton`, `androidx.compose.material3.Surface`, `androidx.compose.material3.Text`, `androidx.compose.runtime.Composable`, `androidx.compose.runtime.getValue`, `androidx.compose.runtime.mutableStateOf`, `androidx.compose.runtime.remember`, `androidx.compose.runtime.setValue`, `androidx.compose.ui.Alignment`, `androidx.compose.ui.Modifier`, `androidx.compose.ui.graphics.Color`, `androidx.compose.ui.input.pointer.pointerInput`, `androidx.compose.ui.platform.LocalContext`, `androidx.compose.ui.text.font.FontFamily`, `androidx.compose.ui.text.font.FontWeight`, `androidx.compose.ui.unit.dp`, `androidx.compose.ui.unit.sp`, `androidx.compose.ui.res.stringResource`
+## 2. Tipos/clases declarados
 
-### Proyecto MyNotes
+- No declara una clase/objeto propio; contiene funciones/valores de soporte o es un archivo marcador.
 
-`com.example.mynotes.R`, `com.example.mynotes.ui.sound.UiActionSound`, `com.example.mynotes.ui.sound.UiSoundPlayer`, `com.example.mynotes.ui.theme.adaptiveUiButtonContainer`, `com.example.mynotes.ui.theme.resolveAdaptiveUiButtonColors`, `com.example.mynotes.ui.theme.automaticUiTextColor`, `com.example.mynotes.ui.theme.ensureUiContrast`, `com.example.mynotes.ui.theme.softenUiColorToContrast`
+## 3. Estado, constantes y valores importantes
 
-## 3. Declaraciones detectadas
+- **`context`** (línea 64) inicia con `LocalContext.current`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`dialogBackground`** (línea 66) inicia con `MaterialTheme.colorScheme.surfaceContainerHigh`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`primaryColor`** (línea 68) inicia con `MaterialTheme.colorScheme.primary`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`unselectedBaseColor`** (línea 69) inicia con `MaterialTheme.colorScheme.surfaceContainer`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`dialogContentColor`** (línea 70) inicia con `remember(dialogBackground`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`dialogSecondaryContentColor`** (línea 73) inicia con `remember(dialogContentColor`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`selectedButtonColors`** (línea 81) inicia con `remember(primaryColor`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`selectedContainerColor`** (línea 90) inicia con `selectedButtonColors.container`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`selectedContentColor`** (línea 91) inicia con `selectedButtonColors.content`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`unselectedButtonColors`** (línea 92) inicia con `remember(unselectedBaseColor`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`unselectedContainerColor`** (línea 101) inicia con `unselectedButtonColors.container`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`unselectedContentColor`** (línea 102) inicia con `unselectedButtonColors.content`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`unselectedBorderColor`** (línea 103) inicia con `remember(unselectedContentColor`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`contentColor`** (línea 248) inicia con `if (selected`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`content`** (línea 249) inicia con `{`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
 
-| Línea | Tipo | Nombre | Firma/inicio |
-|---:|---|---|---|
-| 58 | `fun` | `ConfigurationModeDialog` | `@Composable` |
-| 234 | `fun` | `ConfigurationModeChoiceButton` | `` |
+## 4. Funciones y flujo, una por una
 
-## 4. Estado, efectos y límites observables
+### `ConfigurationModeDialog` — líneas 59–233
 
-- **Compose state:** 9 aparición/apariciones.
+**Firma:** `fun ConfigurationModeDialog( fontFamily: FontFamily, onBasicSelected: () -> Unit, onAdvancedSelected: () -> Unit )`
 
-Estas cifras son indicadores de superficie de cambio, no diagnósticos de error. Cualquier modificación debe preservar contratos de persistencia, lifecycle, límites numéricos y nulabilidad visibles en el fuente.
+Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
 
-## 5. Dependencias internas directas
+**Entradas:**
+- `fontFamily: FontFamily`
+- `onBasicSelected: () -> Unit`
+- `onAdvancedSelected: () -> Unit`
 
-- `com.example.mynotes.R`
-- `com.example.mynotes.ui.sound.UiActionSound`
-- `com.example.mynotes.ui.sound.UiSoundPlayer`
-- `com.example.mynotes.ui.theme.adaptiveUiButtonContainer`
-- `com.example.mynotes.ui.theme.automaticUiTextColor`
-- `com.example.mynotes.ui.theme.ensureUiContrast`
-- `com.example.mynotes.ui.theme.resolveAdaptiveUiButtonColors`
-- `com.example.mynotes.ui.theme.softenUiColorToContrast`
+**Salida:** Unit o inferido por Kotlin.
 
-## 6. Recursos Android referenciados
+**Efectos/APIs observados en el cuerpo:**
+- Participa en estado/efectos de Compose.
 
-- **R.string:** `configuration_mode_advanced`, `configuration_mode_advanced_description`, `configuration_mode_basic`, `configuration_mode_basic_description`, `configuration_mode_change_later`, `configuration_mode_confirm`, `configuration_mode_welcome_description`, `configuration_mode_welcome_title`
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+- Usa `when` para mapear estados/tipos/opciones.
 
-## 7. Puntos de revisión al modificarlo
+**Operaciones/funciones que coordina:** `automaticUiTextColor`, `softenUiColorToContrast`, `resolveAdaptiveUiButtonColors`, `ensureUiContrast`, `BackHandler`, `fillMaxSize`, `background`, `copy`, `pointerInput`, `padding`, `fillMaxWidth`, `widthIn`, `RoundedCornerShape`, `height`, `ConfigurationModeChoiceButton`, `playAction`, `Button`, `onBasicSelected`.
 
-- Validar sus llamadores y el comportamiento visible asociado antes de alterar firmas o valores por defecto.
+### `ConfigurationModeChoiceButton` — líneas 236–293
+
+**Firma:** `private fun ConfigurationModeChoiceButton( selected: Boolean, title: String, description: String, fontFamily: FontFamily, selectedContentColor: androidx.compose.ui.graphics.Color, unselectedContentColor: androidx.compose.ui.graphics.Color, selectedContainerColor: androidx.compose.ui.graphics.Color, unselectedContainerColor: androidx.compose.ui.graphics.Color, unselectedBorderColor: androidx.compose.ui.graphics.Color, onClick: () -> Unit )`
+
+Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+**Entradas:**
+- `selected: Boolean`
+- `title: String`
+- `description: String`
+- `fontFamily: FontFamily`
+- `selectedContentColor: androidx.compose.ui.graphics.Color`
+- `unselectedContentColor: androidx.compose.ui.graphics.Color`
+- `selectedContainerColor: androidx.compose.ui.graphics.Color`
+- `unselectedContainerColor: androidx.compose.ui.graphics.Color`
+- `unselectedBorderColor: androidx.compose.ui.graphics.Color`
+- `onClick: () -> Unit`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `Composable`, `padding`, `Button`, `fillMaxWidth`, `RoundedCornerShape`, `buttonColors`, `content`, `OutlinedButton`, `BorderStroke`, `outlinedButtonColors`.
+
+## 5. Cómo se conecta con el resto de MyNotes
+
+- Usa `com.example.mynotes.R`.
+- Usa `com.example.mynotes.ui.sound.UiActionSound`.
+- Usa `com.example.mynotes.ui.sound.UiSoundPlayer`.
+- Usa `com.example.mynotes.ui.theme.adaptiveUiButtonContainer`.
+- Usa `com.example.mynotes.ui.theme.resolveAdaptiveUiButtonColors`.
+- Usa `com.example.mynotes.ui.theme.automaticUiTextColor`.
+- Usa `com.example.mynotes.ui.theme.ensureUiContrast`.
+- Usa `com.example.mynotes.ui.theme.softenUiColorToContrast`.
+
+## 6. Recursos Android que utiliza
+
+- `R.string`: `configuration_mode_advanced`, `configuration_mode_advanced_description`, `configuration_mode_basic`, `configuration_mode_basic_description`, `configuration_mode_change_later`, `configuration_mode_confirm`, `configuration_mode_welcome_description`, `configuration_mode_welcome_title`
+
+## 7. Tecnologías y efectos relevantes
+
+- Participa en estado/efectos de Compose.
+
+## 8. Lectura práctica del flujo
+
+Una forma útil de seguir este archivo en el depurador es recorrer estas operaciones en este orden aproximado:
+1. `ConfigurationModeDialog` — Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+## 9. Qué no debe romperse al modificarlo
+
+- Evitar trabajo bloqueante durante composición y mantener estado estable para limitar recomposiciones.
+
+## 10. Resumen en lenguaje sencillo
+
+En términos simples: Diálogo para seleccionar Basic/Advanced manteniendo el estilo y contraste de MyNotes. La sección función por función anterior describe qué entra, qué devuelve y qué efectos produce cada operación detectada en el fuente actual.

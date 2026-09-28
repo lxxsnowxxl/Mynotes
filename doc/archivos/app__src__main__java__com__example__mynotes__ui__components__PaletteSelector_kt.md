@@ -1,48 +1,140 @@
-# PaletteSelector.kt — documentación del código actual
-**Ruta real:** `app/src/main/java/com/example/mynotes/ui/components/PaletteSelector.kt`  **SHA-256:** `97497f7e2f3fc5a526543390d39523f071e6e7ef948e6d35cba63292c94ac206`  **Líneas:** 222 · **Bytes:** 10257 · **Imports:** 48 · **Declaraciones detectadas:** 3
-> Documento generado fuera de `app/` a partir de lectura del código. El fuente es la única fuente de verdad; no se modificó para generar esta documentación.
-## 1. Responsabilidad
+# PaletteSelector.kt — explicación completa del código
 
-Selector de paletas/tonos.
-## 2. Package e imports
+**Ruta:** `app/src/main/java/com/example/mynotes/ui/components/PaletteSelector.kt`  
+**SHA-256:** `97497f7e2f3fc5a526543390d39523f071e6e7ef948e6d35cba63292c94ac206`  
+**Líneas:** 223  
+**Package:** `com.example.mynotes.ui.components`
 
-Package declarado: `com.example.mynotes.ui.components`.
+## 1. Para qué existe este archivo
 
-### Android / Jetpack / Compose
+Selector visual reutilizable de paletas/tonos.
 
-`androidx.compose.animation.AnimatedVisibility`, `androidx.compose.animation.fadeIn`, `androidx.compose.animation.fadeOut`, `androidx.compose.animation.scaleIn`, `androidx.compose.animation.scaleOut`, `androidx.compose.animation.core.animateDpAsState`, `androidx.compose.animation.core.tween`, `androidx.compose.foundation.BorderStroke`, `androidx.compose.foundation.background`, `androidx.compose.foundation.border`, `androidx.compose.foundation.clickable`, `androidx.compose.foundation.interaction.MutableInteractionSource`, `androidx.compose.foundation.layout.Arrangement`, `androidx.compose.foundation.layout.aspectRatio`, `androidx.compose.foundation.layout.Box`, `androidx.compose.foundation.layout.Column`, `androidx.compose.foundation.layout.Row`, `androidx.compose.foundation.layout.Spacer`, `androidx.compose.foundation.layout.fillMaxWidth`, `androidx.compose.foundation.layout.padding`, `androidx.compose.foundation.shape.CircleShape`, `androidx.compose.foundation.shape.RoundedCornerShape`, `androidx.compose.material.icons.Icons`, `androidx.compose.material.icons.filled.Check`, `androidx.compose.material3.Icon`, `androidx.compose.material3.MaterialTheme`, `androidx.compose.material3.Surface`, `androidx.compose.material3.Text`, `androidx.compose.runtime.Composable`, `androidx.compose.runtime.getValue`, `androidx.compose.runtime.remember`, `androidx.compose.ui.Alignment`, `androidx.compose.ui.Modifier`, `androidx.compose.ui.draw.clip`, `androidx.compose.ui.graphics.Color`, `androidx.compose.ui.graphics.luminance`, `androidx.compose.ui.platform.LocalContext`, `androidx.compose.ui.res.stringResource`, `androidx.compose.ui.text.font.FontFamily`, `androidx.compose.ui.text.font.FontWeight`, `androidx.compose.ui.text.style.TextOverflow`, `androidx.compose.ui.unit.dp`
+## 2. Tipos/clases declarados
 
-### Proyecto MyNotes
+- No declara una clase/objeto propio; contiene funciones/valores de soporte o es un archivo marcador.
 
-`com.example.mynotes.ui.theme.MyNotesPalette`, `com.example.mynotes.ui.theme.resolveUiTextColor`, `com.example.mynotes.ui.theme.resolveUiGraphicColor`, `com.example.mynotes.ui.motion.AppMotion`, `com.example.mynotes.ui.sound.UiActionSound`, `com.example.mynotes.ui.sound.UiSoundPlayer`
+## 3. Estado, constantes y valores importantes
 
-## 3. Declaraciones detectadas
+- **`paletteRows`** (línea 64) inicia con `remember(palettes`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`context`** (línea 97) inicia con `LocalContext.current`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`shape`** (línea 98) inicia con `RoundedCornerShape(16.dp`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`cardBackground`** (línea 99) inicia con `MaterialTheme.colorScheme.surfaceContainerLow`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`cardTextColor`** (línea 100) inicia con `resolveUiTextColor(value = textColorMode`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`cardGraphicColor`** (línea 101) inicia con `resolveUiGraphicColor(value = textColorMode`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`motionDuration`** (línea 102) inicia con `AppMotion.duration(AppMotion.FAST`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`cardInteractionSource`** (línea 103) inicia con `remember {`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`checkColor`** (línea 177) inicia con `if (color.luminance(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`toneInteractionSource`** (línea 178) inicia con `remember { MutableInteractionSource(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
 
-| Línea | Tipo | Nombre | Firma/inicio |
-|---:|---|---|---|
-| 60 | `fun` | `PaletteSelector` | `@Composable` |
-| 92 | `fun` | `PaletteCard` | `` |
-| 165 | `fun` | `PaletteToneCircle` | `` |
+## 4. Funciones y flujo, una por una
 
-## 4. Estado, efectos y límites observables
+### `PaletteSelector` — líneas 61–91
 
-- **Compose state:** 4 aparición/apariciones.
+**Firma:** `fun PaletteSelector(palettes: List<MyNotesPalette>, selectedPaletteKey: String, selectedToneIndex: Int, onPaletteSelected: (String) -> Unit, onToneSelected: (paletteKey: String, toneIndex: Int) -> Unit, animationsEnabled: Boolean = true, animationSpeed: Float = 1f, textColorMode: String = "auto", fontFamily: FontFamily = FontFamily.Default)`
 
-Estas cifras son indicadores de superficie de cambio, no diagnósticos de error. Cualquier modificación debe preservar contratos de persistencia, lifecycle, límites numéricos y nulabilidad visibles en el fuente.
+Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
 
-## 5. Dependencias internas directas
+**Entradas:**
+- `palettes: List<MyNotesPalette>`
+- `selectedPaletteKey: String`
+- `selectedToneIndex: Int`
+- `onPaletteSelected: (String) -> Unit`
+- `onToneSelected: (paletteKey: String, toneIndex: Int) -> Unit`
+- `animationsEnabled: Boolean = true`
+- `animationSpeed: Float = 1f`
+- `textColorMode: String = "auto"`
+- `fontFamily: FontFamily = FontFamily.Default`
 
-- `com.example.mynotes.ui.motion.AppMotion`
-- `com.example.mynotes.ui.sound.UiActionSound`
-- `com.example.mynotes.ui.sound.UiSoundPlayer`
-- `com.example.mynotes.ui.theme.MyNotesPalette`
-- `com.example.mynotes.ui.theme.resolveUiGraphicColor`
-- `com.example.mynotes.ui.theme.resolveUiTextColor`
+**Salida:** Unit o inferido por Kotlin.
 
-## 6. Recursos Android referenciados
+**Efectos/APIs observados en el cuerpo:**
+- Participa en estado/efectos de Compose.
 
-No se detectaron referencias `R.*` directas.
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
 
-## 7. Puntos de revisión al modificarlo
+**Operaciones/funciones que coordina:** `chunked`, `spacedBy`, `fillMaxWidth`, `PaletteCard`, `weight`.
 
-- Validar sus llamadores y el comportamiento visible asociado antes de alterar firmas o valores por defecto.
+### `PaletteCard` — líneas 94–164
+
+**Firma:** `private fun PaletteCard(modifier: Modifier, palette: MyNotesPalette, selected: Boolean, selectedToneIndex: Int, onPaletteSelected: (String) -> Unit, onToneSelected: (paletteKey: String, toneIndex: Int) -> Unit, animationsEnabled: Boolean, animationSpeed: Float, textColorMode: String, fontFamily: FontFamily)`
+
+Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+**Entradas:**
+- `modifier: Modifier`
+- `palette: MyNotesPalette`
+- `selected: Boolean`
+- `selectedToneIndex: Int`
+- `onPaletteSelected: (String) -> Unit`
+- `onToneSelected: (paletteKey: String, toneIndex: Int) -> Unit`
+- `animationsEnabled: Boolean`
+- `animationSpeed: Float`
+- `textColorMode: String`
+- `fontFamily: FontFamily`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Participa en estado/efectos de Compose.
+
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `RoundedCornerShape`, `resolveUiTextColor`, `resolveUiGraphicColor`, `duration`, `MutableInteractionSource`, `animateDpAsState`, `tween`, `clickable`, `playAction`, `onPaletteSelected`, `BorderStroke`, `fillMaxWidth`, `padding`, `spacedBy`, `weight`, `aspectRatio`, `PaletteToneCircle`, `onToneSelected`.
+
+### `PaletteToneCircle` — líneas 167–222
+
+**Firma:** `private fun PaletteToneCircle( modifier: Modifier = Modifier, color: Color, selected: Boolean, frameColor: Color, indicatorColor: Color, onClick: () -> Unit, animationsEnabled: Boolean, animationSpeed: Float )`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `modifier: Modifier = Modifier`
+- `color: Color`
+- `selected: Boolean`
+- `frameColor: Color`
+- `indicatorColor: Color`
+- `onClick: () -> Unit`
+- `animationsEnabled: Boolean`
+- `animationSpeed: Float`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Participa en estado/efectos de Compose.
+
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `luminance`, `MutableInteractionSource`, `duration`, `aspectRatio`, `clickable`, `fillMaxWidth`, `clip`, `background`, `then`, `border`, `padding`, `AnimatedVisibility`, `fadeIn`, `tween`, `scaleIn`, `fadeOut`, `scaleOut`.
+
+## 5. Cómo se conecta con el resto de MyNotes
+
+- Usa `com.example.mynotes.ui.theme.MyNotesPalette`.
+- Usa `com.example.mynotes.ui.theme.resolveUiTextColor`.
+- Usa `com.example.mynotes.ui.theme.resolveUiGraphicColor`.
+- Usa `com.example.mynotes.ui.motion.AppMotion`.
+- Usa `com.example.mynotes.ui.sound.UiActionSound`.
+- Usa `com.example.mynotes.ui.sound.UiSoundPlayer`.
+
+## 6. Recursos Android que utiliza
+
+- No se detectaron referencias directas `R.*` en este archivo.
+
+## 7. Tecnologías y efectos relevantes
+
+- Participa en estado/efectos de Compose.
+
+## 8. Lectura práctica del flujo
+
+Una forma útil de seguir este archivo en el depurador es recorrer estas operaciones en este orden aproximado:
+1. `PaletteSelector` — Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+## 9. Qué no debe romperse al modificarlo
+
+- Evitar trabajo bloqueante durante composición y mantener estado estable para limitar recomposiciones.
+
+## 10. Resumen en lenguaje sencillo
+
+En términos simples: Selector visual reutilizable de paletas/tonos. La sección función por función anterior describe qué entra, qué devuelve y qué efectos produce cada operación detectada en el fuente actual.

@@ -1,0 +1,312 @@
+# ProfileImageEditorDialog.kt — explicación completa del código
+
+Ruta: app/src/main/java/com/example/mynotes/ui/components/ProfileImageEditorDialog.kt  
+SHA-256: 599379aad0d59ffcc4ab89b6574953d8a9652572cb8cb78196eda25c5769e4d5  
+Líneas: 493  
+Package: com.example.mynotes.ui.components
+
+## 1. Para qué existe este archivo
+
+Editor de foto de perfil con carga, zoom, desplazamiento, recorte circular y persistencia interna.
+
+## 2. Tipos/clases declarados
+
+- No declara una clase/objeto propio; contiene funciones/valores de soporte o es un archivo marcador.
+
+## 3. Estado, constantes y valores importantes
+
+- PROFILE_EDITOR_MAX_SOURCE_SIDE (línea 77) inicia con 2048. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- PROFILE_OUTPUT_SIZE (línea 79) inicia con 1024. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- PROFILE_MIN_ZOOM (línea 80) inicia con 1f. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- PROFILE_MAX_ZOOM (línea 81) inicia con 5f. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- PROFILE_FOLDER (línea 82) inicia con "profile". Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- PROFILE_SOURCE_FILE (línea 83) inicia con "profile_source.bin". Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- PROFILE_SOURCE_OWNER_FILE (línea 84) inicia con "profile_source_owner.txt". Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- context (línea 103) inicia con LocalContext.current. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- scope (línea 104) inicia con rememberCoroutineScope(. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- ownedBitmap (línea 119) inicia con sourceBitmap. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- scrimInteraction (línea 145) inicia con remember { MutableInteractionSource(. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- surfaceInteraction (línea 146) inicia con remember { MutableInteractionSource(. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- bitmap (línea 197) inicia con sourceBitmap!!. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- imageBitmap (línea 198) inicia con remember(bitmap. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- nextZoom (línea 213) inicia con (zoom * gestureZoom. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- baseScale (línea 220) inicia con max(size.width / bitmap.width.toFloat(. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- width (línea 221) inicia con bitmap.width * baseScale * zoom. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- height (línea 222) inicia con bitmap.height * baseScale * zoom. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- left (línea 223) inicia con (size.width - width. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- top (línea 224) inicia con (size.height - height. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- savedUri (línea 304) inicia con withContext(Dispatchers.IO. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- directory (línea 334) inicia con File(context.filesDir. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- source (línea 335) inicia con File(directory. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- owner (línea 336) inicia con File(directory. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- displayedWidth (línea 348) inicia con bitmap.width * baseScale * zoom. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- displayedHeight (línea 349) inicia con bitmap.height * baseScale * zoom. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- maxX (línea 350) inicia con ((displayedWidth - viewport.width. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- maxY (línea 351) inicia con ((displayedHeight - viewport.height. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- path (línea 359) inicia con uri.path ?: return null. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- longest (línea 367) inicia con max(width. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- ratio (línea 369) inicia con PROFILE_EDITOR_MAX_SOURCE_SIDE.toFloat(. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- bounds (línea 383) inicia con BitmapFactory.Options(. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- sample (línea 385) inicia con 1. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- options (línea 387) inicia con BitmapFactory.Options(. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- decoded (línea 391) inicia con openProfileInputStream(context. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+
+## 4. Funciones y flujo, una por una
+
+### ProfileImageEditorDialog — líneas 97–330
+
+Firma: fun ProfileImageEditorDialog( sourceUri: Uri, fontFamily: FontFamily, onDismissRequest: () -> Unit, onImageSaved: (Uri) -> Unit )
+
+UI modal de edición de avatar. Decodifica la imagen, permite zoom/pan dentro de un viewport circular, previsualiza el recorte y guarda al confirmar.
+
+Entradas:
+- sourceUri: Uri
+- fontFamily: FontFamily
+- onDismissRequest: () -> Unit
+- onImageSaved: (Uri) -> Unit
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Ejecuta trabajo de I/O fuera del hilo principal.
+- Lanza trabajo asíncrono mediante coroutines.
+- Procesa imágenes/bitmaps.
+- Participa en estado/efectos de Compose.
+
+Decisiones y protecciones visibles:
+- Limita valores con coerce* para evitar estados fuera de rango.
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (if) para seleccionar comportamiento.
+- Usa when para mapear estados/tipos/opciones.
+
+Operaciones/funciones que coordina: rememberCoroutineScope, mutableFloatStateOf, LaunchedEffect, withContext, decodeProfileBitmap, DisposableEffect, recycle, BackHandler, onDismissRequest, Popup, PopupProperties, MutableInteractionSource, fillMaxSize, background, copy, clickable, fillMaxWidth, widthIn.
+
+### managedProfileSourceUri — líneas 333–338
+
+Firma: fun managedProfileSourceUri(context: Context, currentProfileImageUri: String): Uri?
+
+Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+Entradas:
+- context: Context
+- currentProfileImageUri: String
+
+Salida: Uri?.
+
+Efectos/APIs observados en el cuerpo:
+- Accede al sistema de archivos interno/cache.
+
+Operaciones/funciones que coordina: File, readText, trim, orEmpty, length.
+
+### clearManagedProfileImages — líneas 341–343
+
+Firma: fun clearManagedProfileImages(context: Context)
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+Entradas:
+- context: Context
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Accede al sistema de archivos interno/cache.
+
+Operaciones/funciones que coordina: File, deleteRecursively.
+
+### clampProfileOffset — líneas 345–353
+
+Firma: private fun clampProfileOffset(bitmap: Bitmap, viewport: IntSize, zoom: Float, requested: Offset): Offset
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+Entradas:
+- bitmap: Bitmap
+- viewport: IntSize
+- zoom: Float
+- requested: Offset
+
+Salida: Offset.
+
+Decisiones y protecciones visibles:
+- Limita valores con coerce* para evitar estados fuera de rango.
+- Contiene decisiones condicionales (if) para seleccionar comportamiento.
+
+Operaciones/funciones que coordina: max, toFloat, coerceAtLeast, Offset, coerceIn.
+
+### decodeProfileBitmap — líneas 355–380
+
+Firma: private fun decodeProfileBitmap(context: Context, uri: Uri): Bitmap?
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+Entradas:
+- context: Context
+- uri: Uri
+
+Salida: Bitmap?.
+
+Efectos/APIs observados en el cuerpo:
+- Procesa imágenes/bitmaps.
+- Accede al sistema de archivos interno/cache.
+- Lee/escribe Uris mediante ContentResolver.
+
+Decisiones y protecciones visibles:
+- Limita valores con coerce* para evitar estados fuera de rango.
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (if) para seleccionar comportamiento.
+
+Operaciones/funciones que coordina: createSource, File, decodeBitmap, coerceAtLeast, max, toFloat, setTargetSize, roundToInt, decodeProfileBitmapLegacy.
+
+### decodeProfileBitmapLegacy — líneas 382–393
+
+Firma: private fun decodeProfileBitmapLegacy(context: Context, uri: Uri): Bitmap?
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+Entradas:
+- context: Context
+- uri: Uri
+
+Salida: Bitmap?.
+
+Efectos/APIs observados en el cuerpo:
+- Procesa imágenes/bitmaps.
+
+Decisiones y protecciones visibles:
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+
+Operaciones/funciones que coordina: Options, openProfileInputStream, decodeStream, max, applyLegacyExifOrientation.
+
+### applyLegacyExifOrientation — líneas 395–427
+
+Firma: private fun applyLegacyExifOrientation(context: Context, uri: Uri, bitmap: Bitmap): Bitmap
+
+Aplica una transformación/configuración al valor o componente recibido y devuelve/deja el resultado listo para ser usado por la UI.
+
+Entradas:
+- context: Context
+- uri: Uri
+- bitmap: Bitmap
+
+Salida: Bitmap.
+
+Efectos/APIs observados en el cuerpo:
+- Procesa imágenes/bitmaps.
+- Corrige/consulta orientación EXIF.
+
+Decisiones y protecciones visibles:
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (if) para seleccionar comportamiento.
+- Usa when para mapear estados/tipos/opciones.
+
+Operaciones/funciones que coordina: openProfileInputStream, ExifInterface, getAttributeInt, Matrix, setScale, setRotate, postScale, createBitmap, recycle.
+
+### saveProfileCrop — líneas 429–467
+
+Firma: private fun saveProfileCrop( context: Context, sourceUri: Uri, bitmap: Bitmap, viewportSize: IntSize, zoom: Float, offset: Offset ): Uri?
+
+Calcula la región visible según zoom/offset, rasteriza a bitmap cuadrado/circular de salida y comprime/persiste la imagen administrada.
+
+Entradas:
+- context: Context
+- sourceUri: Uri
+- bitmap: Bitmap
+- viewportSize: IntSize
+- zoom: Float
+- offset: Offset
+
+Salida: Uri?.
+
+Efectos/APIs observados en el cuerpo:
+- Procesa imágenes/bitmaps.
+- Accede al sistema de archivos interno/cache.
+
+Decisiones y protecciones visibles:
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Contiene decisiones condicionales (if) para seleccionar comportamiento.
+
+Operaciones/funciones que coordina: File, mkdirs, persistProfileSource, createBitmap, AndroidCanvas, drawColor, max, toFloat, RectF, Paint, drawBitmap, currentTimeMillis, FileOutputStream, compress, error, recycle, fromFile, writeText.
+
+### persistProfileSource — líneas 469–479
+
+Firma: private fun persistProfileSource(context: Context, sourceUri: Uri, destination: File)
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+Entradas:
+- context: Context
+- sourceUri: Uri
+- destination: File
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Accede al sistema de archivos interno/cache.
+
+Decisiones y protecciones visibles:
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (if) para seleccionar comportamiento.
+
+Operaciones/funciones que coordina: getOrDefault, File, openProfileInputStream, FileOutputStream, copyTo, exists, delete, renameTo.
+
+### openProfileInputStream — líneas 481–492
+
+Firma: private fun openProfileInputStream(context: Context, uri: Uri): InputStream?
+
+Construye/ejecuta la operación necesaria para abrir el destino indicado, aplicando las validaciones visibles en el cuerpo.
+
+Entradas:
+- context: Context
+- uri: Uri
+
+Salida: InputStream?.
+
+Efectos/APIs observados en el cuerpo:
+- Accede al sistema de archivos interno/cache.
+- Lee/escribe Uris mediante ContentResolver.
+
+Decisiones y protecciones visibles:
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (if) para seleccionar comportamiento.
+
+Operaciones/funciones que coordina: FileInputStream, File, openInputStream.
+
+## 5. Cómo se conecta con el resto de MyNotes
+
+- Usa com.example.mynotes.R.
+
+## 6. Recursos Android que utiliza
+
+- R.string: cancel, extreme_profile_apply, extreme_profile_editor_hint, extreme_profile_editor_title, extreme_profile_error, extreme_profile_loading, extreme_profile_reset, extreme_profile_zoom
+
+## 7. Tecnologías y efectos relevantes
+
+- Ejecuta trabajo de I/O fuera del hilo principal.
+- Lanza trabajo asíncrono mediante coroutines.
+- Procesa imágenes/bitmaps.
+- Corrige/consulta orientación EXIF.
+- Accede al sistema de archivos interno/cache.
+- Lee/escribe Uris mediante ContentResolver.
+- Participa en estado/efectos de Compose.
+
+## 8. Lectura práctica del flujo
+
+Una forma útil de seguir este archivo en el depurador es recorrer estas operaciones en este orden aproximado:
+1. ProfileImageEditorDialog — UI modal de edición de avatar. Decodifica la imagen, permite zoom/pan dentro de un viewport circular, previsualiza el recorte y guarda al confirmar.
+2. managedProfileSourceUri — Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+3. clearManagedProfileImages — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+## 9. Qué no debe romperse al modificarlo
+
+- Evitar aumentar resoluciones/cargas sin considerar memoria y scroll; preservar caché y liberación de recursos.
+- Conservar validaciones de Uri/ruta y no confiar en nombres externos sin sanitizar.
+- Evitar trabajo bloqueante durante composición y mantener estado estable para limitar recomposiciones.
+
+## 10. Resumen en lenguaje sencillo
+
+En términos simples: Editor de foto de perfil con carga, zoom, desplazamiento, recorte circular y persistencia interna. La sección función por función anterior describe qué entra, qué devuelve y qué efectos produce cada operación detectada en el fuente actual.

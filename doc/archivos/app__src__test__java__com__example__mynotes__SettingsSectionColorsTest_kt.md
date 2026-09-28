@@ -1,51 +1,91 @@
-# SettingsSectionColorsTest.kt — documentación del código actual
-**Ruta real:** `app/src/test/java/com/example/mynotes/SettingsSectionColorsTest.kt`  **SHA-256:** `e2dccc0e0e4d162da41d9446f597bd43d15e7d76c39f09f3ea791ec067d90e2f`  **Líneas:** 43 · **Bytes:** 1909 · **Imports:** 7 · **Declaraciones detectadas:** 5
-> Documento generado fuera de `app/` a partir de lectura del código. El fuente es la única fuente de verdad; no se modificó para generar esta documentación.
-## 1. Responsabilidad
+# SettingsSectionColorsTest.kt — explicación completa del código
 
-Pruebas de cálculo de colores de secciones de Configuración.
-## 2. Package e imports
+**Ruta:** `app/src/test/java/com/example/mynotes/SettingsSectionColorsTest.kt`  
+**SHA-256:** `e2dccc0e0e4d162da41d9446f597bd43d15e7d76c39f09f3ea791ec067d90e2f`  
+**Líneas:** 44  
+**Package:** `com.example.mynotes`
 
-Package declarado: `com.example.mynotes`.
+## 1. Para qué existe este archivo
 
-### Android / Jetpack / Compose
+Pruebas de contraste para colores de secciones de Configuración.
 
-`androidx.compose.ui.graphics.Color`
+## 2. Tipos/clases declarados
 
-### Proyecto MyNotes
+- Línea **11** — `class SettingsSectionColorsTest`.
 
-`com.example.mynotes.ui.theme.PaletteCatalog`, `com.example.mynotes.ui.theme.settingsSectionColors`, `com.example.mynotes.ui.theme.uiContrastRatio`
+## 3. Estado, constantes y valores importantes
 
-### Terceros / otros
+- **`backgrounds`** (línea 12) inicia con `PaletteCatalog.palettes.flatMap { it.tones } + listOf(Color.Black`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`colors`** (línea 24) inicia con `settingsSectionColors(background`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
 
-`org.junit.Assert.assertEquals`, `org.junit.Assert.assertTrue`, `org.junit.Test`
+## 4. Funciones y flujo, una por una
 
-## 3. Declaraciones detectadas
+### `automaticContentRemainsReadableAcrossReferenceBackgrounds` — líneas 14–20
 
-| Línea | Tipo | Nombre | Firma/inicio |
-|---:|---|---|---|
-| 10 | `class` | `SettingsSectionColorsTest` | `` |
-| 13 | `fun` | `automaticContentRemainsReadableAcrossReferenceBackgrounds` | `@Test` |
-| 21 | `fun` | `manualBlackAndWhiteChoicesRemainUnchanged` | `@Test` |
-| 31 | `fun` | `backgroundIsExactlyTheReferenceWithoutAnotherTranslucentLayer` | `@Test` |
-| 36 | `fun` | `blackReferenceRemainsBlackWithWhiteAutomaticText` | `@Test` |
+**Firma:** `fun automaticContentRemainsReadableAcrossReferenceBackgrounds()`
 
-## 4. Estado, efectos y límites observables
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
 
-- No aparecen marcadores relevantes de estado/efectos de la lista auditada.
+**Salida:** Unit o inferido por Kotlin.
 
-Estas cifras son indicadores de superficie de cambio, no diagnósticos de error. Cualquier modificación debe preservar contratos de persistencia, lifecycle, límites numéricos y nulabilidad visibles en el fuente.
+**Operaciones/funciones que coordina:** `settingsSectionColors`, `assertTrue`, `uiContrastRatio`.
 
-## 5. Dependencias internas directas
+### `manualBlackAndWhiteChoicesRemainUnchanged` — líneas 22–30
 
-- `com.example.mynotes.ui.theme.PaletteCatalog`
-- `com.example.mynotes.ui.theme.settingsSectionColors`
-- `com.example.mynotes.ui.theme.uiContrastRatio`
+**Firma:** `fun manualBlackAndWhiteChoicesRemainUnchanged()`
 
-## 6. Recursos Android referenciados
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
 
-No se detectaron referencias `R.*` directas.
+**Salida:** Unit o inferido por Kotlin.
 
-## 7. Puntos de revisión al modificarlo
+**Operaciones/funciones que coordina:** `settingsSectionColors`, `assertEquals`.
 
-- Conservar rangos `coerce*`, claves DataStore y compatibilidad con backups existentes.
+### `backgroundIsExactlyTheReferenceWithoutAnotherTranslucentLayer` — líneas 32–35
+
+**Firma:** `fun backgroundIsExactlyTheReferenceWithoutAnotherTranslucentLayer()`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Operaciones/funciones que coordina:** `assertEquals`, `settingsSectionColors`.
+
+### `blackReferenceRemainsBlackWithWhiteAutomaticText` — líneas 37–42
+
+**Firma:** `fun blackReferenceRemainsBlackWithWhiteAutomaticText()`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Operaciones/funciones que coordina:** `settingsSectionColors`, `assertEquals`, `assertTrue`, `uiContrastRatio`.
+
+## 5. Cómo se conecta con el resto de MyNotes
+
+- Usa `com.example.mynotes.ui.theme.PaletteCatalog`.
+- Usa `com.example.mynotes.ui.theme.settingsSectionColors`.
+- Usa `com.example.mynotes.ui.theme.uiContrastRatio`.
+
+## 6. Recursos Android que utiliza
+
+- No se detectaron referencias directas `R.*` en este archivo.
+
+## 7. Tecnologías y efectos relevantes
+
+- Principalmente lógica Kotlin/Compose sin I/O especial detectado por estas reglas.
+
+## 8. Lectura práctica del flujo
+
+Una forma útil de seguir este archivo en el depurador es recorrer estas operaciones en este orden aproximado:
+1. `automaticContentRemainsReadableAcrossReferenceBackgrounds` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+2. `manualBlackAndWhiteChoicesRemainUnchanged` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+3. `backgroundIsExactlyTheReferenceWithoutAnotherTranslucentLayer` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+4. `blackReferenceRemainsBlackWithWhiteAutomaticText` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+## 9. Qué no debe romperse al modificarlo
+
+- Evitar trabajo bloqueante durante composición y mantener estado estable para limitar recomposiciones.
+
+## 10. Resumen en lenguaje sencillo
+
+En términos simples: Pruebas de contraste para colores de secciones de Configuración. La sección función por función anterior describe qué entra, qué devuelve y qué efectos produce cada operación detectada en el fuente actual.

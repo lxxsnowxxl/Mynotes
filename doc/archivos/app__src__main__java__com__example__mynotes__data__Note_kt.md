@@ -1,37 +1,73 @@
-# Note.kt — documentación del código actual
-**Ruta real:** `app/src/main/java/com/example/mynotes/data/Note.kt`  **SHA-256:** `9214c204b4c1219e4602869c0d979d961f49b5f2d6e76e20afc4aeaeba7c4544`  **Líneas:** 47 · **Bytes:** 1310 · **Imports:** 4 · **Declaraciones detectadas:** 1
-> Documento generado fuera de `app/` a partir de lectura del código. El fuente es la única fuente de verdad; no se modificó para generar esta documentación.
-## 1. Responsabilidad
+# Note.kt — explicación completa del código
 
-Entidad/modelo persistente de una nota.
-## 2. Package e imports
+**Ruta:** `app/src/main/java/com/example/mynotes/data/Note.kt`  
+**SHA-256:** `9214c204b4c1219e4602869c0d979d961f49b5f2d6e76e20afc4aeaeba7c4544`  
+**Líneas:** 48  
+**Package:** `com.example.mynotes.data`
 
-Package declarado: `com.example.mynotes.data`.
+## 1. Para qué existe este archivo
 
-### Android / Jetpack / Compose
+Entidad Room principal de una nota: texto, color, prioridad, categoría, favorita y fijada.
 
-`androidx.compose.runtime.Immutable`, `androidx.room.Entity`, `androidx.room.Index`, `androidx.room.PrimaryKey`
+### Contrato de datos
 
-## 3. Declaraciones detectadas
+Room utiliza id como clave primaria autogenerada. createdAt sirve para orden/fecha; color es una clave lógica de paleta de nota; priority, category, isFavorite e isPinned alimentan filtros y widgets.
 
-| Línea | Tipo | Nombre | Firma/inicio |
-|---:|---|---|---|
-| 24 | `class` | `Note` | `data class Note(` |
+## 2. Tipos/clases declarados
 
-## 4. Estado, efectos y límites observables
+- Línea **24** — `data  class Note`.
 
-- **Room:** 3 aparición/apariciones.
+## 3. Estado, constantes y valores importantes
 
-Estas cifras son indicadores de superficie de cambio, no diagnósticos de error. Cualquier modificación debe preservar contratos de persistencia, lifecycle, límites numéricos y nulabilidad visibles en el fuente.
+- **`id`** (línea 26) inicia con `0`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`createdAt`** (línea 29) inicia con `System.currentTimeMillis(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`color`** (línea 30) inicia con `"default"`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`priority`** (línea 31) inicia con `0`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`category`** (línea 39) inicia con `"personal"`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`isFavorite`** (línea 43) inicia con `false`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`isPinned`** (línea 47) inicia con `false`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
 
-## 5. Dependencias internas directas
+## 4. Funciones y flujo, una por una
 
-No importa directamente otros símbolos `com.example.mynotes.*`.
+* Se conserva el índice anterior para que Room valide
+         * correctamente instalaciones que ya pasaron por la versión 4.
+          
+         * El orden principal de la pantalla:
+         * fijadas -> prioridad -> fecha.
+          
+         * Acelera filtros Work / Personal.
+          
+     * Categorías usadas por los chips del diseño.
+     *
+     * Valores actuales:
+     * "work"
+     * "personal"
+      
+     * Favorita: aparece en el filtro Favorites.
+      
+     * Fijada: permanece antes que el resto.
 
-## 6. Recursos Android referenciados
+## 5. Cómo se conecta con el resto de MyNotes
 
-No se detectaron referencias `R.*` directas.
+- No importa directamente otro componente `com.example.mynotes`; funciona como modelo/utilidad base o mediante APIs Android/Jetpack.
 
-## 7. Puntos de revisión al modificarlo
+## 6. Recursos Android que utiliza
 
-- Validar sus llamadores y el comportamiento visible asociado antes de alterar firmas o valores por defecto.
+- No se detectaron referencias directas `R.*` en este archivo.
+
+## 7. Tecnologías y efectos relevantes
+
+- Principalmente lógica Kotlin/Compose sin I/O especial detectado por estas reglas.
+
+## 8. Lectura práctica del flujo
+
+No hay flujo ejecutable propio; su contenido sirve de declaración/configuración para otros archivos.
+
+## 9. Qué no debe romperse al modificarlo
+
+- Los cambios de esquema Room requieren revisar versión/migraciones y compatibilidad con datos existentes.
+- Evitar trabajo bloqueante durante composición y mantener estado estable para limitar recomposiciones.
+
+## 10. Resumen en lenguaje sencillo
+
+En términos simples: Entidad Room principal de una nota: texto, color, prioridad, categoría, favorita y fijada. La sección función por función anterior describe qué entra, qué devuelve y qué efectos produce cada operación detectada en el fuente actual.

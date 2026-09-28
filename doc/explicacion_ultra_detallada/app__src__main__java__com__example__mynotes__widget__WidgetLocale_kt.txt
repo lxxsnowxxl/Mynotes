@@ -1,0 +1,248 @@
+MYNOTES — EXPLICACIÓN ULTRA DETALLADA
+==============================================================================================================
+Archivo 68/72: app/src/main/java/com/example/mynotes/widget/WidgetLocale.kt
+SHA-256: b1ad100c06b36528e9ef782ebe2130783ff012838223e0b1e43a66a675fc09ba
+Líneas del fuente: 49
+Package: com.example.mynotes.widget
+
+1. RESPONSABILIDAD EXACTA DEL ARCHIVO
+----------------------------------------------------------------------
+Crea un Context localizado con el idioma configurado dentro de MyNotes para que RemoteViews no dependa solo del idioma del launcher.
+
+2. DÓNDE ENCAJA EN LA ARQUITECTURA
+----------------------------------------------------------------------
+Este archivo pertenece principalmente a la **integración App Widgets/launcher**. No debe analizarse aislado: las referencias cruzadas y callbacks se detallan más abajo.
+
+3. IMPORTACIONES, UNA POR UNA
+----------------------------------------------------------------------
+- `android.content.Context`: Importa `android.content.Context` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `android.content.res.Configuration`: Importa `android.content.res.Configuration` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `java.util.Locale`: Importa `java.util.Locale` de la biblioteca estándar/JVM para operaciones de lenguaje, fechas, colecciones, I/O o utilidades.
+
+4. DECLARACIONES Y ESTADO IMPORTANTES
+----------------------------------------------------------------------
+L17: `object WidgetLocale {`
+    Declara object `WidgetLocale`. A partir de aquí las propiedades y funciones hasta su llave de cierre pertenecen a este tipo.
+L18: `private const val LOCALE_PREFS = "locale_prefs"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L19: `private const val LANGUAGE_KEY = "language"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L20: `private const val SYSTEM_LANGUAGE = "system"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L29: `val language = selectedLanguage(context)`
+    Declara `language` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `selectedLanguage(context)`.
+L32: `val locale = Locale.forLanguageTag(language)`
+    Declara `locale` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `Locale.forLanguageTag(language)`.
+L33: `val configuration = Configuration(context.resources.configuration).apply {`
+    Declara `configuration` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `Configuration(context.resources.configuration).apply {`.
+L41: `val localized = localizedContext(context)`
+    Declara `localized` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `localizedContext(context)`.
+
+5. FUNCIONES — EXPLICACIÓN DE CADA UNA
+----------------------------------------------------------------------
+
+5.1 `selectedLanguage` — líneas 22–22
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun selectedLanguage(context: Context): String =
+
+Propósito:
+    Implementa `selectedLanguage`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `context: Context`: el llamador proporciona este valor/callback a `selectedLanguage`. Dentro del cuerpo, las líneas donde aparece `context` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `String`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L22 [4 espacios] `fun selectedLanguage(context: Context): String =`
+      → Declara una función. El bloque de `selectedLanguage` se detalla después instrucción por instrucción.
+
+5.2 `localizedContext` — líneas 28–38
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun localizedContext(context: Context): Context {
+
+Propósito:
+    Implementa `localizedContext`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `context: Context`: el llamador proporciona este valor/callback a `localizedContext`. Dentro del cuerpo, las líneas donde aparece `context` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Context`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L28 [4 espacios] `fun localizedContext(context: Context): Context {`
+      → Declara una función. El bloque de `localizedContext` se detalla después instrucción por instrucción.
+  L29 [8 espacios] `val language = selectedLanguage(context)`
+      → Declara `language` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `selectedLanguage(context)`.
+  L30 [8 espacios] `if (language == SYSTEM_LANGUAGE) return context`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `language == SYSTEM_LANGUAGE`.
+  L32 [8 espacios] `val locale = Locale.forLanguageTag(language)`
+      → Declara `locale` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `Locale.forLanguageTag(language)`.
+  L33 [8 espacios] `val configuration = Configuration(context.resources.configuration).apply {`
+      → Declara `configuration` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `Configuration(context.resources.configuration).apply {`.
+  L34 [12 espacios] `setLocale(locale)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L35 [12 espacios] `setLayoutDirection(locale)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L36 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L37 [8 espacios] `return context.createConfigurationContext(configuration)`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L38 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.3 `locale` — líneas 40–48
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun locale(context: Context): Locale {
+
+Propósito:
+    Implementa `locale`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `context: Context`: el llamador proporciona este valor/callback a `locale`. Dentro del cuerpo, las líneas donde aparece `context` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Locale`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L40 [4 espacios] `fun locale(context: Context): Locale {`
+      → Declara una función. El bloque de `locale` se detalla después instrucción por instrucción.
+  L41 [8 espacios] `val localized = localizedContext(context)`
+      → Declara `localized` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `localizedContext(context)`.
+  L42 [8 espacios] `return if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L43 [12 espacios] `localized.resources.configuration.locales[0]`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `localized.resources.configuration.locales[0]`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L44 [8 espacios] `} else {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L45 [12 espacios] `@Suppress("DEPRECATION")`
+      → Aplica la anotación `@Suppress("DEPRECATION")` a la declaración siguiente; la anotación modifica metadatos, generación de código o comportamiento del framework.
+  L46 [12 espacios] `localized.resources.configuration.locale`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `localized.resources.configuration.locale`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L47 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L48 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+6. EXPLICACIÓN COMPLETA LÍNEA POR LÍNEA
+----------------------------------------------------------------------
+Esta sección no omite líneas ejecutables. Repite incluso partes ya explicadas en funciones para poder leer el archivo de arriba abajo sin saltar entre secciones.
+L1: `package com.example.mynotes.widget`
+    Declara que este archivo pertenece al package `com.example.mynotes.widget`; esto determina su namespace Kotlin y cómo lo importan otros archivos.
+L3: `import android.content.Context`
+    Importa `android.content.Context` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L4: `import android.content.res.Configuration`
+    Importa `android.content.res.Configuration` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L5: `import java.util.Locale`
+    Importa `java.util.Locale` de la biblioteca estándar/JVM para operaciones de lenguaje, fechas, colecciones, I/O o utilidades.
+L7: `/**`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L8: `* Contexto localizado específicamente para App Widgets.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L9: `*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L10: `* MyNotes permite elegir un idioma independiente al del sistema. Los widgets`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L11: `* viven fuera de la Activity y el launcher infla RemoteViews usando su propia`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L12: `* configuración, por lo que los android:text del XML pueden quedarse en el`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L13: `* idioma del sistema. Este helper replica la preferencia persistida que usa`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L14: `* MainActivity y permite escribir explícitamente el texto ya traducido en cada`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L15: `* RemoteViews.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L16: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L17: `object WidgetLocale {`
+    Declara object `WidgetLocale`. A partir de aquí las propiedades y funciones hasta su llave de cierre pertenecen a este tipo.
+L18: `private const val LOCALE_PREFS = "locale_prefs"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L19: `private const val LANGUAGE_KEY = "language"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L20: `private const val SYSTEM_LANGUAGE = "system"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L22: `fun selectedLanguage(context: Context): String =`
+    Declara una función. El bloque de `selectedLanguage` se detalla después instrucción por instrucción.
+L23: `context.getSharedPreferences(LOCALE_PREFS, Context.MODE_PRIVATE)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L24: `.getString(LANGUAGE_KEY, SYSTEM_LANGUAGE)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L25: `?.takeIf { it.isNotBlank() }`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `?.takeIf { it.isNotBlank() }`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L26: `?: SYSTEM_LANGUAGE`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `?: SYSTEM_LANGUAGE`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L28: `fun localizedContext(context: Context): Context {`
+    Declara una función. El bloque de `localizedContext` se detalla después instrucción por instrucción.
+L29: `val language = selectedLanguage(context)`
+    Declara `language` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `selectedLanguage(context)`.
+L30: `if (language == SYSTEM_LANGUAGE) return context`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `language == SYSTEM_LANGUAGE`.
+L32: `val locale = Locale.forLanguageTag(language)`
+    Declara `locale` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `Locale.forLanguageTag(language)`.
+L33: `val configuration = Configuration(context.resources.configuration).apply {`
+    Declara `configuration` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `Configuration(context.resources.configuration).apply {`.
+L34: `setLocale(locale)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L35: `setLayoutDirection(locale)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L36: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L37: `return context.createConfigurationContext(configuration)`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L38: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L40: `fun locale(context: Context): Locale {`
+    Declara una función. El bloque de `locale` se detalla después instrucción por instrucción.
+L41: `val localized = localizedContext(context)`
+    Declara `localized` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `localizedContext(context)`.
+L42: `return if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L43: `localized.resources.configuration.locales[0]`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `localized.resources.configuration.locales[0]`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L44: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L45: `@Suppress("DEPRECATION")`
+    Aplica la anotación `@Suppress("DEPRECATION")` a la declaración siguiente; la anotación modifica metadatos, generación de código o comportamiento del framework.
+L46: `localized.resources.configuration.locale`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `localized.resources.configuration.locale`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L47: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L48: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L49: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+7. RECURSOS ANDROID REFERENCIADOS
+----------------------------------------------------------------------
+- No hay referencias directas `R.*` en este archivo.
+
+8. QUIÉN USA ESTE COMPONENTE
+----------------------------------------------------------------------
+- `WidgetLocale` aparece también en 5 archivo(s):
+    - app/src/main/java/com/example/mynotes/widget/FavoritesWidgetProvider.kt
+    - app/src/main/java/com/example/mynotes/widget/FocusNoteWidgetProvider.kt
+    - app/src/main/java/com/example/mynotes/widget/QuickNoteWidgetProvider.kt
+    - app/src/main/java/com/example/mynotes/widget/RecentNotesWidgetProvider.kt
+    - app/src/main/java/com/example/mynotes/widget/WidgetPresentation.kt
+
+9. QUÉ PUEDE ROMPERSE SI LO MODIFICAS
+----------------------------------------------------------------------
+- Los widgets usan RemoteViews, no Compose. API 28/Samsung limita propiedades y tintes; no asumir que cualquier API visual de Compose/Views funciona dentro del launcher.
+
+10. CHECKLIST DE PRUEBA DESPUÉS DE MODIFICAR ESTE ARCHIVO
+----------------------------------------------------------------------
+- Compilar `assembleDebug` y resolver primero errores de Kotlin/AAPT.
+- Abrir la pantalla/flujo relacionado y comprobar ida y vuelta (back) sin estado duplicado.
+- Cambiar tema/paleta y verificar contraste si este archivo dibuja UI.
+- Añadir el widget desde el launcher en API 28/Samsung, cambiar idioma/paleta y forzar actualización.
+
+==============================================================================================================
+FIN DEL ARCHIVO
+==============================================================================================================

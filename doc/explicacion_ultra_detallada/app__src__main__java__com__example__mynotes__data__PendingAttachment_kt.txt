@@ -1,0 +1,95 @@
+MYNOTES — EXPLICACIÓN ULTRA DETALLADA
+==============================================================================================================
+Archivo 10/72: app/src/main/java/com/example/mynotes/data/PendingAttachment.kt
+SHA-256: 93815c8c9aadf6631ce116f4a15f609e32db70efa1f70ab3db02f0758a21fd50
+Líneas del fuente: 21
+Package: com.example.mynotes.data
+
+1. RESPONSABILIDAD EXACTA DEL ARCHIVO
+----------------------------------------------------------------------
+Modelo temporal usado mientras un adjunto todavía no se ha asociado definitivamente con una nota guardada.
+
+2. DÓNDE ENCAJA EN LA ARQUITECTURA
+----------------------------------------------------------------------
+Este archivo pertenece principalmente a la **persistencia/modelos Room**. No debe analizarse aislado: las referencias cruzadas y callbacks se detallan más abajo.
+
+3. IMPORTACIONES, UNA POR UNA
+----------------------------------------------------------------------
+- `android.net.Uri`: Importa `android.net.Uri` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+
+4. DECLARACIONES Y ESTADO IMPORTANTES
+----------------------------------------------------------------------
+L5: `data class PendingAttachment(`
+    Declara `PendingAttachment` como `data class`: Kotlin genera automáticamente igualdad, hash, copia y representación textual a partir de sus propiedades del constructor.
+L7: `val uri: Uri,`
+    Declara `uri` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L16: `val type: String,`
+    Declara `type` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L18: `val name: String? = null,`
+    Declara `name` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `null,`.
+L20: `val mimeType: String? = null`
+    Declara `mimeType` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `null`.
+
+5. FUNCIONES — EXPLICACIÓN DE CADA UNA
+----------------------------------------------------------------------
+Este archivo no declara funciones Kotlin detectables (puede ser un script Gradle, clase puramente declarativa o modelo).
+
+6. EXPLICACIÓN COMPLETA LÍNEA POR LÍNEA
+----------------------------------------------------------------------
+Esta sección no omite líneas ejecutables. Repite incluso partes ya explicadas en funciones para poder leer el archivo de arriba abajo sin saltar entre secciones.
+L1: `package com.example.mynotes.data`
+    Declara que este archivo pertenece al package `com.example.mynotes.data`; esto determina su namespace Kotlin y cómo lo importan otros archivos.
+L3: `import android.net.Uri`
+    Importa `android.net.Uri` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L5: `data class PendingAttachment(`
+    Declara `PendingAttachment` como `data class`: Kotlin genera automáticamente igualdad, hash, copia y representación textual a partir de sus propiedades del constructor.
+L7: `val uri: Uri,`
+    Declara `uri` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L9: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L10: `* image`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L11: `* video`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L12: `* audio`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L13: `* voice`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L14: `* file`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L15: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L16: `val type: String,`
+    Declara `type` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L18: `val name: String? = null,`
+    Declara `name` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `null,`.
+L20: `val mimeType: String? = null`
+    Declara `mimeType` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `null`.
+L21: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+7. RECURSOS ANDROID REFERENCIADOS
+----------------------------------------------------------------------
+- No hay referencias directas `R.*` en este archivo.
+
+8. QUIÉN USA ESTE COMPONENTE
+----------------------------------------------------------------------
+- `PendingAttachment` aparece también en 3 archivo(s):
+    - app/src/main/java/com/example/mynotes/MainActivity.kt
+    - app/src/main/java/com/example/mynotes/ui/theme/NoteEditorScreen.kt
+    - app/src/main/java/com/example/mynotes/viewmodel/NoteViewModel.kt
+
+9. QUÉ PUEDE ROMPERSE SI LO MODIFICAS
+----------------------------------------------------------------------
+- Adjuntos/previews son una ruta protegida del proyecto: cambios en decodificación, caché, tamaño, precarga o URI pueden alterar visualización o rendimiento. Modificar solo con una prueba explícita de imagen/vídeo/audio/enlace.
+
+10. CHECKLIST DE PRUEBA DESPUÉS DE MODIFICAR ESTE ARCHIVO
+----------------------------------------------------------------------
+- Compilar `assembleDebug` y resolver primero errores de Kotlin/AAPT.
+- Abrir la pantalla/flujo relacionado y comprobar ida y vuelta (back) sin estado duplicado.
+- Cambiar tema/paleta y verificar contraste si este archivo dibuja UI.
+- Probar imagen, vídeo, audio y URL; hacer scroll rápido y confirmar que previews/miniaturas no parpadean ni cambian calidad.
+
+==============================================================================================================
+FIN DEL ARCHIVO
+==============================================================================================================

@@ -1,0 +1,5 @@
+MYNOTES — FLUJO COMPLETO DE CONFIGURACIÓN
+
+SettingsScreen solo dibuja controles y emite callbacks. SettingsViewModel traduce esos callbacks en coroutines. SettingsRepository es quien realmente persiste valores en DataStore. DataStore emite un Flow que se reconstruye como AppSettings. Theme/NoteColors/AppFonts/AppMotion/UiSoundPlayer/UiHapticPlayer consumen AppSettings para aplicar el comportamiento.
+
+Al añadir una opción nueva hay que seguir la cadena completa: 1) campo AppSettings, 2) PreferencesKey, 3) lectura con default/rango, 4) setter Repository, 5) método ViewModel, 6) callback UI, 7) backup/restore si debe exportarse, 8) consumidor real. Si se omite el paso 8, el control se guarda pero no hace nada.

@@ -1,0 +1,475 @@
+MYNOTES — EXPLICACIÓN ULTRA DETALLADA
+==============================================================================================================
+Archivo 19/72: app/src/main/java/com/example/mynotes/settings/AppSettings.kt
+SHA-256: c0f0b3a5c38f821f6aefbb839a7b6ba20e2469293c9feaf04822bac54ca5eaf4
+Líneas del fuente: 158
+Package: com.example.mynotes.settings
+
+1. RESPONSABILIDAD EXACTA DEL ARCHIVO
+----------------------------------------------------------------------
+Modelo inmutable que agrupa prácticamente todas las preferencias visuales, de sonido, vibración, rendimiento y personalización de MyNotes.
+
+2. DÓNDE ENCAJA EN LA ARQUITECTURA
+----------------------------------------------------------------------
+Este archivo pertenece principalmente a la **persistencia de preferencias/configuración**. No debe analizarse aislado: las referencias cruzadas y callbacks se detallan más abajo.
+
+3. IMPORTACIONES, UNA POR UNA
+----------------------------------------------------------------------
+- `androidx.compose.runtime.Immutable`: Importa `androidx.compose.runtime.Immutable` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+
+4. DECLARACIONES Y ESTADO IMPORTANTES
+----------------------------------------------------------------------
+L6: `data class AppSettings(`
+    Declara `AppSettings` como `data class`: Kotlin genera automáticamente igualdad, hash, copia y representación textual a partir de sus propiedades del constructor.
+L13: `val configurationMode: String = "unset",`
+    Declara `configurationMode` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `"unset",`.
+L14: `val darkMode: Boolean = false,`
+    Declara `darkMode` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `false,`.
+L19: `val backgroundColor: String = "neutral",`
+    Declara `backgroundColor` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `"neutral",`.
+L24: `val backgroundToneIndex: Int = 0,`
+    Declara `backgroundToneIndex` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `0,`.
+L25: `val backgroundIntensity: Float = 0f,`
+    Declara `backgroundIntensity` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `0f,`.
+L32: `val settingsPanelTone: Float = 0f,`
+    Declara `settingsPanelTone` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `0f,`.
+L40: `val surfacePanelIntensity: Float = 72f,`
+    Declara `surfacePanelIntensity` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `72f,`.
+L41: `val headerIntensity: Float = 18f,`
+    Declara `headerIntensity` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `18f,`.
+L50: `val textColor: String = "auto",`
+    Declara `textColor` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `"auto",`.
+L55: `val textOutlineEnabled: Boolean = false,`
+    Declara `textOutlineEnabled` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `false,`.
+L62: `val noteUiTextColor: String = "auto",`
+    Declara `noteUiTextColor` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `"auto",`.
+L66: `val sliderStyle: String = "capsule",`
+    Declara `sliderStyle` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `"capsule",`.
+L67: `val font: String = "google_sans_bold",`
+    Declara `font` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `"google_sans_bold",`.
+L68: `val fontSize: Float = 16f,`
+    Declara `fontSize` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `16f,`.
+L74: `val soundEffectsEnabled: Boolean = true,`
+    Declara `soundEffectsEnabled` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `true,`.
+L75: `val soundEffectsVolume: Float = 65f,`
+    Declara `soundEffectsVolume` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `65f,`.
+L80: `val soundEffectsTheme: String = "classic",`
+    Declara `soundEffectsTheme` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `"classic",`.
+L85: `val hapticEffectsEnabled: Boolean = true,`
+    Declara `hapticEffectsEnabled` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `true,`.
+L86: `val hapticEffectsIntensity: Float = 55f,`
+    Declara `hapticEffectsIntensity` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `55f,`.
+L87: `val hapticEffectsStyle: String = "soft",`
+    Declara `hapticEffectsStyle` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `"soft",`.
+L88: `val language: String = "system",`
+    Declara `language` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `"system",`.
+L89: `val gridColumns: Int = 2,`
+    Declara `gridColumns` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `2,`.
+L90: `val sortOrder: String = "newest",`
+    Declara `sortOrder` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `"newest",`.
+L92: `val profileImageUri: String = "", val profileImageSize: Float = 46f,`
+    Declara `profileImageUri` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `"", val profileImageSize: Float = 46f,`.
+L93: `val iconStyle: String = "rounded", val iconSize: Float = 22f,`
+    Declara `iconStyle` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `"rounded", val iconSize: Float = 22f,`.
+L94: `val accentColor: String = "palette",`
+    Declara `accentColor` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `"palette",`.
+L95: `val noteCardCornerRadius: Float = 18f, val noteCardElevation: Float = 1.5f, val noteCardPadding: Float = 12f,`
+    Declara `noteCardCornerRadius` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `18f, val noteCardElevation: Float = 1.5f, val noteCardPadding: Float = 12f,`.
+L96: `val noteCardImageHeight: Float = 112f,`
+    Declara `noteCardImageHeight` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `112f,`.
+L97: `val noteCardOutlineEnabled: Boolean = false,`
+    Declara `noteCardOutlineEnabled` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `false,`.
+L98: `val noteCardOutlineWidth: Float = 0f,`
+    Declara `noteCardOutlineWidth` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `0f,`.
+L100: `val noteTitleMaxLines: Int = 4, val noteContentMaxLines: Int = 6, val noteLineSpacing: Float = 1.20f,`
+    Declara `noteTitleMaxLines` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `4, val noteContentMaxLines: Int = 6, val noteLineSpacing: Float = 1.20f,`.
+L101: `val showNoteDate: Boolean = true, val showCategoryChip: Boolean = true, val showFavoriteIcon: Boolean = true,`
+    Declara `showNoteDate` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `true, val showCategoryChip: Boolean = true, val showFavoriteIcon: Boolean = true,`.
+L102: `val fabSize: Float = 58f,`
+    Declara `fabSize` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `58f,`.
+L110: `val optionMenuOrder: String = "edit,favorite,pin,priority,color,move,delete",`
+    Declara `optionMenuOrder` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `"edit,favorite,pin,priority,color,move,delete",`.
+L111: `val optionMenuHiddenItems: String = "",`
+    Declara `optionMenuHiddenItems` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `"",`.
+L112: `val optionMenuShowIcons: Boolean = true,`
+    Declara `optionMenuShowIcons` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `true,`.
+L118: `val optionMenuTextColor: String = "note",`
+    Declara `optionMenuTextColor` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `"note",`.
+L122: `val optionMenuOpacity: Float = 100f,`
+    Declara `optionMenuOpacity` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `100f,`.
+L126: `val priorityMenuHiddenItems: String = "",`
+    Declara `priorityMenuHiddenItems` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `"",`.
+L127: `val colorMenuHiddenItems: String = "",`
+    Declara `colorMenuHiddenItems` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `"",`.
+L134: `val performanceMode: String = "balanced",`
+    Declara `performanceMode` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `"balanced",`.
+L138: `val animationsEnabled: Boolean = true,`
+    Declara `animationsEnabled` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `true,`.
+L142: `val animationStyle: String = "zoom",`
+    Declara `animationStyle` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `"zoom",`.
+L146: `val animationEasing: String = "standard",`
+    Declara `animationEasing` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `"standard",`.
+L152: `val animationSpeed: Float = 1f,`
+    Declara `animationSpeed` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `1f,`.
+L158: `val animationIntensity: Float = 1f)`
+    Declara `animationIntensity` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `1f)`.
+
+5. FUNCIONES — EXPLICACIÓN DE CADA UNA
+----------------------------------------------------------------------
+Este archivo no declara funciones Kotlin detectables (puede ser un script Gradle, clase puramente declarativa o modelo).
+
+6. EXPLICACIÓN COMPLETA LÍNEA POR LÍNEA
+----------------------------------------------------------------------
+Esta sección no omite líneas ejecutables. Repite incluso partes ya explicadas en funciones para poder leer el archivo de arriba abajo sin saltar entre secciones.
+L1: `package com.example.mynotes.settings`
+    Declara que este archivo pertenece al package `com.example.mynotes.settings`; esto determina su namespace Kotlin y cómo lo importan otros archivos.
+L3: `import androidx.compose.runtime.Immutable`
+    Importa `androidx.compose.runtime.Immutable` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+L5: `@Immutable`
+    Aplica la anotación `@Immutable` a la declaración siguiente; la anotación modifica metadatos, generación de código o comportamiento del framework.
+L6: `data class AppSettings(`
+    Declara `AppSettings` como `data class`: Kotlin genera automáticamente igualdad, hash, copia y representación textual a partir de sus propiedades del constructor.
+L7: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L8: `* Modo de configuración de la interfaz:`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L9: `* unset    = todavía no se ha elegido en el primer inicio`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L10: `* basic    = muestra únicamente los controles esenciales`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L11: `* advanced = conserva todos los apartados de Configuración`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L12: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L13: `val configurationMode: String = "unset",`
+    Declara `configurationMode` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `"unset",`.
+L14: `val darkMode: Boolean = false,`
+    Declara `darkMode` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `false,`.
+L15: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L16: `* Paleta global. PaletteCatalog contiene actualmente 46 paletas,`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L17: `* cada una con exactamente cuatro tonalidades seleccionables.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L18: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L19: `val backgroundColor: String = "neutral",`
+    Declara `backgroundColor` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `"neutral",`.
+L20: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L21: `* 0 = tono más claro`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L22: `* 3 = tono más oscuro`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L23: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L24: `val backgroundToneIndex: Int = 0,`
+    Declara `backgroundToneIndex` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `0,`.
+L25: `val backgroundIntensity: Float = 0f,`
+    Declara `backgroundIntensity` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `0f,`.
+L26: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L27: `* Tonalidad del gran panel de Configuración.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L28: `*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L29: `* 0%   = surfaceContainerLow original`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L30: `* 100% = tono seleccionado de la paleta`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L31: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L32: `val settingsPanelTone: Float = 0f,`
+    Declara `settingsPanelTone` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `0f,`.
+L33: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L34: `* Intensidad de los recuadros/paneles translúcidos de la interfaz.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L35: `*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L36: `* 0%   = se funden con el fondo`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L37: `* 72%  = apariencia anterior de MyNotes`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L38: `* 100% = máximo contraste del panel`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L39: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L40: `val surfacePanelIntensity: Float = 72f,`
+    Declara `surfacePanelIntensity` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `72f,`.
+L41: `val headerIntensity: Float = 18f,`
+    Declara `headerIntensity` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `18f,`.
+L42: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L43: `* Color global de interfaz.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L44: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L45: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L46: `* auto  = calcula negro/blanco según contraste con el fondo`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L47: `* black = fuerza texto negro`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L48: `* white = fuerza texto blanco`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L49: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L50: `val textColor: String = "auto",`
+    Declara `textColor` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `"auto",`.
+L51: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L52: `* Añade un halo/contorno negro ligero alrededor del texto.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L53: `* Está desactivado por defecto para no añadir trabajo gráfico.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L54: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L55: `val textOutlineEnabled: Boolean = false,`
+    Declara `textOutlineEnabled` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `false,`.
+L56: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L57: `* Color independiente para notas y sus menús.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L58: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L59: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L60: `* Mismo comportamiento, pero aplicado al fondo individual de cada nota.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L61: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L62: `val noteUiTextColor: String = "auto",`
+    Declara `noteUiTextColor` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `"auto",`.
+L63: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L64: `* Diseños conservados para las barras.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L65: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L66: `val sliderStyle: String = "capsule",`
+    Declara `sliderStyle` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `"capsule",`.
+L67: `val font: String = "google_sans_bold",`
+    Declara `font` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `"google_sans_bold",`.
+L68: `val fontSize: Float = 16f,`
+    Declara `fontSize` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `16f,`.
+L69: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L70: `* Efectos cortos de interfaz: editar, borrar, prioridad, sliders`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L71: `* y adjuntos. El volumen se guarda como porcentaje para que sea`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L72: `* sencillo exponerlo en Configuración.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L73: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L74: `val soundEffectsEnabled: Boolean = true,`
+    Declara `soundEffectsEnabled` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `true,`.
+L75: `val soundEffectsVolume: Float = 65f,`
+    Declara `soundEffectsVolume` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `65f,`.
+L76: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L77: `* Paquete de sonidos para los efectos de interfaz.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L78: `* classic, soft, digital, glass, retro o pop.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L79: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L80: `val soundEffectsTheme: String = "classic",`
+    Declara `soundEffectsTheme` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `"classic",`.
+L81: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L82: `* Respuesta háptica independiente del sonido. El estilo cambia el patrón`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L83: `* de vibración y la intensidad se guarda como porcentaje.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L84: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L85: `val hapticEffectsEnabled: Boolean = true,`
+    Declara `hapticEffectsEnabled` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `true,`.
+L86: `val hapticEffectsIntensity: Float = 55f,`
+    Declara `hapticEffectsIntensity` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `55f,`.
+L87: `val hapticEffectsStyle: String = "soft",`
+    Declara `hapticEffectsStyle` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `"soft",`.
+L88: `val language: String = "system",`
+    Declara `language` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `"system",`.
+L89: `val gridColumns: Int = 2,`
+    Declara `gridColumns` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `2,`.
+L90: `val sortOrder: String = "newest",`
+    Declara `sortOrder` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `"newest",`.
+L91: `// Personalización extrema`
+    Comentario del autor. No se ejecuta; documenta la intención o una restricción del bloque siguiente.
+L92: `val profileImageUri: String = "", val profileImageSize: Float = 46f,`
+    Declara `profileImageUri` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `"", val profileImageSize: Float = 46f,`.
+L93: `val iconStyle: String = "rounded", val iconSize: Float = 22f,`
+    Declara `iconStyle` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `"rounded", val iconSize: Float = 22f,`.
+L94: `val accentColor: String = "palette",`
+    Declara `accentColor` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `"palette",`.
+L95: `val noteCardCornerRadius: Float = 18f, val noteCardElevation: Float = 1.5f, val noteCardPadding: Float = 12f,`
+    Declara `noteCardCornerRadius` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `18f, val noteCardElevation: Float = 1.5f, val noteCardPadding: Float = 12f,`.
+L96: `val noteCardImageHeight: Float = 112f,`
+    Declara `noteCardImageHeight` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `112f,`.
+L97: `val noteCardOutlineEnabled: Boolean = false,`
+    Declara `noteCardOutlineEnabled` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `false,`.
+L98: `val noteCardOutlineWidth: Float = 0f,`
+    Declara `noteCardOutlineWidth` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `0f,`.
+L99: `// 4 líneas por defecto para evitar cortar títulos como antes.`
+    Comentario del autor. No se ejecuta; documenta la intención o una restricción del bloque siguiente.
+L100: `val noteTitleMaxLines: Int = 4, val noteContentMaxLines: Int = 6, val noteLineSpacing: Float = 1.20f,`
+    Declara `noteTitleMaxLines` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `4, val noteContentMaxLines: Int = 6, val noteLineSpacing: Float = 1.20f,`.
+L101: `val showNoteDate: Boolean = true, val showCategoryChip: Boolean = true, val showFavoriteIcon: Boolean = true,`
+    Declara `showNoteDate` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `true, val showCategoryChip: Boolean = true, val showFavoriteIcon: Boolean = true,`.
+L102: `val fabSize: Float = 58f,`
+    Declara `fabSize` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `58f,`.
+L103: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L104: `* Personalización del menú ⋮ de cada nota.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L105: `*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L106: `* optionMenuOrder usa claves separadas por comas y permite`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L107: `* cambiar el orden sin migraciones complejas de DataStore.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L108: `* optionMenuHiddenItems contiene las acciones ocultas.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L109: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L110: `val optionMenuOrder: String = "edit,favorite,pin,priority,color,move,delete",`
+    Declara `optionMenuOrder` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `"edit,favorite,pin,priority,color,move,delete",`.
+L111: `val optionMenuHiddenItems: String = "",`
+    Declara `optionMenuHiddenItems` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `"",`.
+L112: `val optionMenuShowIcons: Boolean = true,`
+    Declara `optionMenuShowIcons` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `true,`.
+L113: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L114: `* note  = usa el color configurado para notas`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L115: `* black = fuerza negro`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L116: `* white = fuerza blanco`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L117: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L118: `val optionMenuTextColor: String = "note",`
+    Declara `optionMenuTextColor` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `"note",`.
+L119: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L120: `* Opacidad del fondo del popup, entre 35% y 100%.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L121: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L122: `val optionMenuOpacity: Float = 100f,`
+    Declara `optionMenuOpacity` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `100f,`.
+L123: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L124: `* Elementos ocultos en los submenús.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L125: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L126: `val priorityMenuHiddenItems: String = "",`
+    Declara `priorityMenuHiddenItems` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `"",`.
+L127: `val colorMenuHiddenItems: String = "",`
+    Declara `colorMenuHiddenItems` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `"",`.
+L128: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L129: `* Perfil global de rendimiento:`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L130: `* performance = prioriza fluidez y menor consumo de RAM/CPU`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L131: `* balanced    = equilibrio entre calidad y rendimiento`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L132: `* quality     = máxima fidelidad visual`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L133: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L134: `val performanceMode: String = "balanced",`
+    Declara `performanceMode` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `"balanced",`.
+L135: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L136: `* Animaciones ligeras sincronizadas al frame clock de Compose.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L137: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L138: `val animationsEnabled: Boolean = true,`
+    Declara `animationsEnabled` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `true,`.
+L139: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L140: `* Preset de transición entre pantallas.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L141: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L142: `val animationStyle: String = "zoom",`
+    Declara `animationStyle` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `"zoom",`.
+L143: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L144: `* Curva de aceleración de las transiciones.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L145: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L146: `val animationEasing: String = "standard",`
+    Declara `animationEasing` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `"standard",`.
+L147: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L148: `* 0.5x = más lenta`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L149: `* 1.0x = normal`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L150: `* 2.0x = más rápida`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L151: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L152: `val animationSpeed: Float = 1f,`
+    Declara `animationSpeed` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `1f,`.
+L153: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L154: `* 0.5x = movimiento discreto`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L155: `* 1.0x = normal`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L156: `* 1.5x = movimiento más marcado`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L157: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L158: `val animationIntensity: Float = 1f)`
+    Declara `animationIntensity` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `1f)`.
+
+7. RECURSOS ANDROID REFERENCIADOS
+----------------------------------------------------------------------
+- No hay referencias directas `R.*` en este archivo.
+
+8. QUIÉN USA ESTE COMPONENTE
+----------------------------------------------------------------------
+- `AppSettings` aparece también en 18 archivo(s):
+    - app/src/main/java/com/example/mynotes/MainActivity.kt
+    - app/src/main/java/com/example/mynotes/data/AppDataBackupManager.kt
+    - app/src/main/java/com/example/mynotes/performance/DisplayPerformanceController.kt
+    - app/src/main/java/com/example/mynotes/reminders/ReminderFeedbackPreferences.kt
+    - app/src/main/java/com/example/mynotes/settings/SettingsRepository.kt
+    - app/src/main/java/com/example/mynotes/ui/components/BackupRestoreSection.kt
+    - app/src/main/java/com/example/mynotes/ui/components/ExtremeCustomizationSection.kt
+    - app/src/main/java/com/example/mynotes/ui/components/NoteCardStyle.kt
+    - app/src/main/java/com/example/mynotes/ui/components/OptionsMenuCustomizationSection.kt
+    - app/src/main/java/com/example/mynotes/ui/theme/DevelopmentInfoScreen.kt
+    - app/src/main/java/com/example/mynotes/ui/theme/DrawingScreen.kt
+    - app/src/main/java/com/example/mynotes/ui/theme/NoteDetailScreen.kt
+    - app/src/main/java/com/example/mynotes/ui/theme/NoteEditorScreen.kt
+    - app/src/main/java/com/example/mynotes/ui/theme/NotesScreen.kt
+    - app/src/main/java/com/example/mynotes/ui/theme/ReminderScreen.kt
+    - app/src/main/java/com/example/mynotes/ui/theme/SettingsScreen.kt
+    - app/src/main/java/com/example/mynotes/ui/theme/SourceCodeInfoScreen.kt
+    - app/src/main/java/com/example/mynotes/viewmodel/SettingsViewModel.kt
+
+9. QUÉ PUEDE ROMPERSE SI LO MODIFICAS
+----------------------------------------------------------------------
+- Una preferencia nueva debe añadirse de forma coherente al modelo, clave DataStore, lectura, setter, backup/restore y UI. Si falta una etapa, el control puede verse pero no persistir.
+
+10. CHECKLIST DE PRUEBA DESPUÉS DE MODIFICAR ESTE ARCHIVO
+----------------------------------------------------------------------
+- Compilar `assembleDebug` y resolver primero errores de Kotlin/AAPT.
+- Abrir la pantalla/flujo relacionado y comprobar ida y vuelta (back) sin estado duplicado.
+- Cambiar tema/paleta y verificar contraste si este archivo dibuja UI.
+
+==============================================================================================================
+FIN DEL ARCHIVO
+==============================================================================================================

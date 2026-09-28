@@ -1,0 +1,2179 @@
+MYNOTES — EXPLICACIÓN ULTRA DETALLADA
+==============================================================================================================
+Archivo 58/72: app/src/main/java/com/example/mynotes/viewmodel/NoteViewModel.kt
+SHA-256: 5550157f9fe02c9e1aa09780223e9c0e96e3fe26c4402a8e6858020aca5fda19
+Líneas del fuente: 523
+Package: com.example.mynotes.viewmodel
+
+1. RESPONSABILIDAD EXACTA DEL ARCHIVO
+----------------------------------------------------------------------
+ViewModel de notas. Coordina NoteDao/AttachmentDao, expone Flows/estado a Compose y ejecuta operaciones de notas y adjuntos fuera de la UI.
+
+2. DÓNDE ENCAJA EN LA ARQUITECTURA
+----------------------------------------------------------------------
+Este archivo pertenece principalmente a la **capa ViewModel/estado entre datos y Compose**. No debe analizarse aislado: las referencias cruzadas y callbacks se detallan más abajo.
+
+3. IMPORTACIONES, UNA POR UNA
+----------------------------------------------------------------------
+- `android.app.Application`: Importa `android.app.Application` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `android.net.Uri`: Importa `android.net.Uri` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `android.provider.OpenableColumns`: Importa `android.provider.OpenableColumns` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `androidx.lifecycle.AndroidViewModel`: Importa `androidx.lifecycle.AndroidViewModel` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.lifecycle.viewModelScope`: Importa `androidx.lifecycle.viewModelScope` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.room.withTransaction`: Importa `androidx.room.withTransaction` para usar persistencia SQLite declarativa con Room.
+- `com.example.mynotes.data.AppDatabase`: Importa `com.example.mynotes.data.AppDatabase`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.data.Attachment`: Importa `com.example.mynotes.data.Attachment`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.data.Note`: Importa `com.example.mynotes.data.Note`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.data.PendingAttachment`: Importa `com.example.mynotes.data.PendingAttachment`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.performance.AttachmentPreviewCache`: Importa `com.example.mynotes.performance.AttachmentPreviewCache`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.settings.SettingsRepository`: Importa `com.example.mynotes.settings.SettingsRepository`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.widget.MyNotesWidgetUpdater`: Importa `com.example.mynotes.widget.MyNotesWidgetUpdater`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `kotlinx.coroutines.Dispatchers`: Importa `kotlinx.coroutines.Dispatchers` para usar coroutines, Flow y ejecución asíncrona.
+- `kotlinx.coroutines.flow.SharingStarted`: Importa `kotlinx.coroutines.flow.SharingStarted` para usar coroutines, Flow y ejecución asíncrona.
+- `kotlinx.coroutines.flow.distinctUntilChanged`: Importa `kotlinx.coroutines.flow.distinctUntilChanged` para usar coroutines, Flow y ejecución asíncrona.
+- `kotlinx.coroutines.flow.first`: Importa `kotlinx.coroutines.flow.first` para usar coroutines, Flow y ejecución asíncrona.
+- `kotlinx.coroutines.flow.stateIn`: Importa `kotlinx.coroutines.flow.stateIn` para usar coroutines, Flow y ejecución asíncrona.
+- `kotlinx.coroutines.launch`: Importa `kotlinx.coroutines.launch` para usar coroutines, Flow y ejecución asíncrona.
+- `kotlinx.coroutines.sync.Semaphore`: Importa `kotlinx.coroutines.sync.Semaphore` para usar coroutines, Flow y ejecución asíncrona.
+- `kotlinx.coroutines.sync.withPermit`: Importa `kotlinx.coroutines.sync.withPermit` para usar coroutines, Flow y ejecución asíncrona.
+- `kotlinx.coroutines.withContext`: Importa `kotlinx.coroutines.withContext` para usar coroutines, Flow y ejecución asíncrona.
+- `java.io.File`: Importa `java.io.File` de la biblioteca estándar/JVM para operaciones de lenguaje, fechas, colecciones, I/O o utilidades.
+
+4. DECLARACIONES Y ESTADO IMPORTANTES
+----------------------------------------------------------------------
+L27: `class NoteViewModel(application: Application) : AndroidViewModel(application) {`
+    Declara class `NoteViewModel`. A partir de aquí las propiedades y funciones hasta su llave de cierre pertenecen a este tipo.
+L28: `private val database = AppDatabase.getDatabase(application)`
+    Declara `database` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `AppDatabase.getDatabase(application)`.
+L29: `private val noteDao = database.noteDao()`
+    Declara `noteDao` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `database.noteDao()`.
+L30: `private val attachmentDao = database.attachmentDao()`
+    Declara `attachmentDao` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `database.attachmentDao()`.
+L31: `private val settingsRepository = SettingsRepository(application)`
+    Declara `settingsRepository` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `SettingsRepository(application)`.
+L36: `private val previewSemaphore = Semaphore(permits = 2)`
+    Declara `previewSemaphore` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `Semaphore(permits = 2)`.
+L37: `private data class PreparedAttachment(val attachment: Attachment, val internalUri: Uri, val type: String, val name: String?)`
+    Declara `PreparedAttachment` como `data class`: Kotlin genera automáticamente igualdad, hash, copia y representación textual a partir de sus propiedades del constructor.
+L38: `val notes = noteDao.getAllNotes().distinctUntilChanged().stateIn(scope = viewModelScope, started = SharingStarted`
+    Declara `notes` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `noteDao.getAllNotes().distinctUntilChanged().stateIn(scope = viewModelScope, started = SharingStarted`.
+L47: `val allAttachments = attachmentDao.getAllAttachments().distinctUntilChanged().stateIn(scope = viewModelScope, started = SharingStarted`
+    Declara `allAttachments` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `attachmentDao.getAllAttachments().distinctUntilChanged().stateIn(scope = viewModelScope, started = SharingStarted`.
+L67: `val note = Note(title = title, content = content, color = color)`
+    Declara `note` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `Note(title = title, content = content, color = color)`.
+L68: `val noteId = noteDao.insertNote(note).toInt()`
+    Declara `noteId` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `noteDao.insertNote(note).toInt()`.
+L82: `val prepared = prepareAttachments(noteId = noteId, attachments = attachments, startingIndex = 0)`
+    Declara `prepared` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `prepareAttachments(noteId = noteId, attachments = attachments, startingIndex = 0)`.
+L100: `val realIndex = startingIndex + index`
+    Declara `realIndex` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `startingIndex + index`.
+L101: `val internalUri = copyAttachmentToInternalStorage(pendingAttachment = pendingAttachment, noteId = noteId, index =`
+    Declara `internalUri` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `copyAttachmentToInternalStorage(pendingAttachment = pendingAttachment, noteId = noteId, index =`.
+L104: `val attachmentName = pendingAttachment.name?: getDisplayName(pendingAttachment.uri)?: defaultAttachmentName(`
+    Declara `attachmentName` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `pendingAttachment.name?: getDisplayName(pendingAttachment.uri)?: defaultAttachmentName(`.
+L120: `val selectedPerformanceMode = settingsRepository.settings.first().performanceMode`
+    Declara `selectedPerformanceMode` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `settingsRepository.settings.first().performanceMode`.
+L165: `val context = getApplication<Application>()`
+    Declara `context` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `getApplication<Application>()`.
+L166: `val attachmentsDirectory = File(context.filesDir, "attachments")`
+    Realiza una operación de archivo/stream. Debe mantenerse fuera del hilo principal cuando pueda bloquear y respetar el almacenamiento permitido por Android.
+L170: `val sourceUri = pendingAttachment.uri`
+    Declara `sourceUri` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `pendingAttachment.uri`.
+L176: `val sourcePath = sourceUri.path`
+    Opera con URI/ContentResolver de Android para acceder a contenido compartido sin asumir una ruta de archivo directa.
+L178: `val sourceFile = File(sourcePath)`
+    Realiza una operación de archivo/stream. Debe mantenerse fuera del hilo principal cuando pueda bloquear y respetar el almacenamiento permitido por Android.
+L180: `val rootPath = attachmentsDirectory.canonicalFile.path`
+    Declara `rootPath` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `attachmentsDirectory.canonicalFile.path`.
+L181: `val sourceCanonical = sourceFile.canonicalFile.path`
+    Declara `sourceCanonical` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `sourceFile.canonicalFile.path`.
+L188: `val originalName = pendingAttachment.name?: getDisplayName(sourceUri)`
+    Declara `originalName` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `pendingAttachment.name?: getDisplayName(sourceUri)`.
+L189: `val extension = getExtension(originalName = originalName, mimeType = pendingAttachment.mimeType?: context.contentResolver`
+    Opera con URI/ContentResolver de Android para acceder a contenido compartido sin asumir una ruta de archivo directa.
+L191: `val fileName = "note_${noteId}_${System.currentTimeMillis()}_${index}.$extension"`
+    Declara `fileName` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `"note_${noteId}_${System.currentTimeMillis()}_${index}.$extension"`.
+L192: `val destinationFile = File(attachmentsDirectory, fileName)`
+    Realiza una operación de archivo/stream. Debe mantenerse fuera del hilo principal cuando pueda bloquear y respetar el almacenamiento permitido por Android.
+L195: `val inputStream = context.contentResolver.openInputStream(sourceUri)?: return null`
+    Opera con URI/ContentResolver de Android para acceder a contenido compartido sin asumir una ruta de archivo directa.
+L205: `val sourcePath = sourceUri.path?: return null`
+    Opera con URI/ContentResolver de Android para acceder a contenido compartido sin asumir una ruta de archivo directa.
+L206: `val sourceFile = File(sourcePath)`
+    Realiza una operación de archivo/stream. Debe mantenerse fuera del hilo principal cuando pueda bloquear y respetar el almacenamiento permitido por Android.
+L219: `val inputStream = context.contentResolver.openInputStream(sourceUri)?: return null`
+    Opera con URI/ContentResolver de Android para acceder a contenido compartido sin asumir una ruta de archivo directa.
+L245: `val context = getApplication<Application>()`
+    Declara `context` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `getApplication<Application>()`.
+L253: `val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)`
+    Declara `nameIndex` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)`.
+L275: `val extension = originalName.substringAfterLast(".").lowercase()`
+    Declara `extension` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `originalName.substringAfterLast(".").lowercase()`.
+L369: `val updatedNote = note.copy(title = title, content = content, color = color)`
+    Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+L375: `val currentAttachments = attachmentDao.getAttachmentsOnce(note.id)`
+    Declara `currentAttachments` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `attachmentDao.getAttachmentsOnce(note.id)`.
+L376: `val prepared = prepareAttachments(noteId = note.id, attachments = newAttachments, startingIndex = currentAttachments.size)`
+    Declara `prepared` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `prepareAttachments(noteId = note.id, attachments = newAttachments, startingIndex = currentAttachments.size)`.
+L443: `val normalized = when (category) {`
+    Declara `normalized` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `when (category) {`.
+L495: `val attachments = attachmentDao.getAttachmentsOnce(note.id)`
+    Declara `attachments` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `attachmentDao.getAttachmentsOnce(note.id)`.
+
+5. FUNCIONES — EXPLICACIÓN DE CADA UNA
+----------------------------------------------------------------------
+
+5.1 `addNote` — líneas 62–72
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun addNote(title: String, content: String, color: String = "default", attachments: List<PendingAttachment> = emptyList()) {
+
+Propósito:
+    Implementa `addNote`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `title: String`: el llamador proporciona este valor/callback a `addNote`. Dentro del cuerpo, las líneas donde aparece `title` muestran exactamente cómo afecta al resultado.
+  - `content: String`: el llamador proporciona este valor/callback a `addNote`. Dentro del cuerpo, las líneas donde aparece `content` muestran exactamente cómo afecta al resultado.
+  - `color: String = "default"`: el llamador proporciona este valor/callback a `addNote`. Dentro del cuerpo, las líneas donde aparece `color` muestran exactamente cómo afecta al resultado.
+  - `attachments: List<PendingAttachment> = emptyList()`: el llamador proporciona este valor/callback a `addNote`. Dentro del cuerpo, las líneas donde aparece `attachments` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L62 [4 espacios] `fun addNote(title: String, content: String, color: String = "default", attachments: List<PendingAttachment> = emptyList()) {`
+      → Declara una función. El bloque de `addNote` se detalla después instrucción por instrucción.
+  L63 [8 espacios] `if (title.isBlank() && content.isBlank() && attachments.isEmpty()) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `title.isBlank() && content.isBlank() && attachments.isEmpty()`.
+  L64 [12 espacios] `return`
+      → Finaliza inmediatamente la función actual sin devolver un valor adicional (`Unit`).
+  L65 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L66 [8 espacios] `viewModelScope.launch {`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L67 [12 espacios] `val note = Note(title = title, content = content, color = color)`
+      → Declara `note` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `Note(title = title, content = content, color = color)`.
+  L68 [12 espacios] `val noteId = noteDao.insertNote(note).toInt()`
+      → Declara `noteId` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `noteDao.insertNote(note).toInt()`.
+  L69 [12 espacios] `saveAttachments(noteId = noteId, attachments = attachments)`
+      → Asigna/configura `saveAttachments(noteId` usando `noteId, attachments = attachments)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L70 [12 espacios] `MyNotesWidgetUpdater.requestUpdate(getApplication<Application>())`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L71 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L72 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.2 `saveAttachments` — líneas 78–90
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        private suspend fun saveAttachments(noteId: Int, attachments: List<PendingAttachment>) {
+
+Propósito:
+    Implementa `saveAttachments`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `noteId: Int`: el llamador proporciona este valor/callback a `saveAttachments`. Dentro del cuerpo, las líneas donde aparece `noteId` muestran exactamente cómo afecta al resultado.
+  - `attachments: List<PendingAttachment>`: el llamador proporciona este valor/callback a `saveAttachments`. Dentro del cuerpo, las líneas donde aparece `attachments` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L78 [4 espacios] `private suspend fun saveAttachments(noteId: Int, attachments: List<PendingAttachment>) {`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `saveAttachments` se detalla después instrucción por instrucción.
+  L79 [8 espacios] `if (attachments.isEmpty()) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `attachments.isEmpty()`.
+  L80 [12 espacios] `return`
+      → Finaliza inmediatamente la función actual sin devolver un valor adicional (`Unit`).
+  L81 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L82 [8 espacios] `val prepared = prepareAttachments(noteId = noteId, attachments = attachments, startingIndex = 0)`
+      → Declara `prepared` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `prepareAttachments(noteId = noteId, attachments = attachments, startingIndex = 0)`.
+  L83 [8 espacios] `if (prepared.isEmpty()) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `prepared.isEmpty()`.
+  L84 [12 espacios] `return`
+      → Finaliza inmediatamente la función actual sin devolver un valor adicional (`Unit`).
+  L85 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L86 [8 espacios] `attachmentDao.insertAttachments(prepared.map {`
+      → Transforma cada valor/elemento de la fuente en otro valor sin mutar la colección/Flow original.
+  L87 [20 espacios] `it.attachment`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `it.attachment`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L88 [16 espacios] `})`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L89 [8 espacios] `prewarmAttachments(prepared)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L90 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.3 `prepareAttachments` — líneas 94–113
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        private suspend fun prepareAttachments(noteId: Int, attachments: List<PendingAttachment>, startingIndex: Int
+        ): List<PreparedAttachment> {
+
+Propósito:
+    Implementa `prepareAttachments`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `noteId: Int`: el llamador proporciona este valor/callback a `prepareAttachments`. Dentro del cuerpo, las líneas donde aparece `noteId` muestran exactamente cómo afecta al resultado.
+  - `attachments: List<PendingAttachment>`: el llamador proporciona este valor/callback a `prepareAttachments`. Dentro del cuerpo, las líneas donde aparece `attachments` muestran exactamente cómo afecta al resultado.
+  - `startingIndex: Int`: el llamador proporciona este valor/callback a `prepareAttachments`. Dentro del cuerpo, las líneas donde aparece `startingIndex` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `List<PreparedAttachment>`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L94 [4 espacios] `private suspend fun prepareAttachments(noteId: Int, attachments: List<PendingAttachment>, startingIndex: Int`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `prepareAttachments` se detalla después instrucción por instrucción.
+  L95 [4 espacios] `): List<PreparedAttachment> {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L96 [8 espacios] `return withContext(Dispatchers.IO) {`
+      → Mueve temporalmente el bloque a `Dispatchers.IO`, apropiado para base de datos, archivos o red para no bloquear el hilo principal.
+  L97 [12 espacios] `buildList {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L98 [16 espacios] `attachments.forEachIndexed {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L99 [28 espacios] `index, pendingAttachment ->`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `index, pendingAttachment ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L100 [24 espacios] `val realIndex = startingIndex + index`
+      → Declara `realIndex` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `startingIndex + index`.
+  L101 [24 espacios] `val internalUri = copyAttachmentToInternalStorage(pendingAttachment = pendingAttachment, noteId = noteId, index =`
+      → Declara `internalUri` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `copyAttachmentToInternalStorage(pendingAttachment = pendingAttachment, noteId = noteId, index =`.
+  L102 [36 espacios] `realIndex)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L103 [24 espacios] `if (internalUri != null) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `internalUri != null`.
+  L104 [28 espacios] `val attachmentName = pendingAttachment.name?: getDisplayName(pendingAttachment.uri)?: defaultAttachmentName(`
+      → Declara `attachmentName` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `pendingAttachment.name?: getDisplayName(pendingAttachment.uri)?: defaultAttachmentName(`.
+  L105 [40 espacios] `pendingAttachment.type, realIndex)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L106 [28 espacios] `add(PreparedAttachment(attachment = Attachment(noteId = noteId, type = pendingAttachment.type, uri =`
+      → Asigna/configura `add(PreparedAttachment(attachment` usando `Attachment(noteId = noteId, type = pendingAttachment.type, uri =`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L107 [48 espacios] `internalUri.toString(), name = attachmentName), internalUri = internalUri, type =`
+      → Opera con URI/ContentResolver de Android para acceder a contenido compartido sin asumir una ruta de archivo directa.
+  L108 [40 espacios] `pendingAttachment.type, name = attachmentName))`
+      → Asigna/configura `pendingAttachment.type, name` usando `attachmentName))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L109 [24 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L110 [20 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L111 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L112 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L113 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.4 `prewarmAttachments` — líneas 114–137
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        private fun prewarmAttachments(attachments:
+            List<PreparedAttachment>) {
+
+Propósito:
+    Implementa `prewarmAttachments`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `attachments:
+        List<PreparedAttachment>`: el llamador proporciona este valor/callback a `prewarmAttachments`. Dentro del cuerpo, las líneas donde aparece `attachments` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L114 [4 espacios] `private fun prewarmAttachments(attachments:`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `prewarmAttachments` se detalla después instrucción por instrucción.
+  L115 [8 espacios] `List<PreparedAttachment>) {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L116 [8 espacios] `attachments.forEach {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L117 [16 espacios] `prepared ->`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `prepared ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L118 [12 espacios] `viewModelScope.launch(Dispatchers.IO) {`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L119 [16 espacios] `previewSemaphore.withPermit {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L120 [24 espacios] `val selectedPerformanceMode = settingsRepository.settings.first().performanceMode`
+      → Declara `selectedPerformanceMode` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `settingsRepository.settings.first().performanceMode`.
+  L121 [24 espacios] `/*`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L122 [25 espacios] `* En Maximum quality guardamos también la miniatura`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L123 [25 espacios] `* instantánea. Así una nota recién creada ya tiene un`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L124 [25 espacios] `* placeholder fotográfico real y persistente antes de`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L125 [25 espacios] `* volver al listado; no necesita mostrar un icono y`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L126 [25 espacios] `* reemplazarlo visualmente durante el primer scroll.`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L127 [25 espacios] `*/`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L128 [24 espacios] `if (selectedPerformanceMode == "quality") {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `selectedPerformanceMode == "quality"`.
+  L129 [28 espacios] `AttachmentPreviewCache.prewarm(context = getApplication<Application>(), uri = prepared.internalUri,`
+      → Asigna/configura `AttachmentPreviewCache.prewarm(context` usando `getApplication<Application>(), uri = prepared.internalUri,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L130 [32 espacios] `type = prepared.type, name = prepared.name, performanceMode = "instant")`
+      → Asigna/configura `type` usando `prepared.type, name = prepared.name, performanceMode = "instant")`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L131 [24 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L132 [24 espacios] `AttachmentPreviewCache.prewarm(context = getApplication<Application>(), uri = prepared.internalUri, type =`
+      → Asigna/configura `AttachmentPreviewCache.prewarm(context` usando `getApplication<Application>(), uri = prepared.internalUri, type =`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L133 [36 espacios] `prepared.type, name = prepared.name, performanceMode = selectedPerformanceMode)`
+      → Asigna/configura `prepared.type, name` usando `prepared.name, performanceMode = selectedPerformanceMode)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L134 [20 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L135 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L136 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L137 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.5 `copyAttachmentToInternalStorage` — líneas 150–158
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        private suspend fun copyAttachmentToInternalStorage(pendingAttachment: PendingAttachment, noteId: Int, index: Int): Uri? {
+
+Propósito:
+    Implementa `copyAttachmentToInternalStorage`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `pendingAttachment: PendingAttachment`: el llamador proporciona este valor/callback a `copyAttachmentToInternalStorage`. Dentro del cuerpo, las líneas donde aparece `pendingAttachment` muestran exactamente cómo afecta al resultado.
+  - `noteId: Int`: el llamador proporciona este valor/callback a `copyAttachmentToInternalStorage`. Dentro del cuerpo, las líneas donde aparece `noteId` muestran exactamente cómo afecta al resultado.
+  - `index: Int`: el llamador proporciona este valor/callback a `copyAttachmentToInternalStorage`. Dentro del cuerpo, las líneas donde aparece `index` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Uri?`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L150 [4 espacios] `private suspend fun copyAttachmentToInternalStorage(pendingAttachment: PendingAttachment, noteId: Int, index: Int): Uri? {`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `copyAttachmentToInternalStorage` se detalla después instrucción por instrucción.
+  L151 [8 espacios] `/*`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L152 [9 espacios] `* Cambiamos al dispatcher de I/O y delegamos en una`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L153 [9 espacios] `* función normal que devuelve Uri? directamente.`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L154 [9 espacios] `*/`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L155 [8 espacios] `return withContext(Dispatchers.IO) {`
+      → Mueve temporalmente el bloque a `Dispatchers.IO`, apropiado para base de datos, archivos o red para no bloquear el hilo principal.
+  L156 [12 espacios] `copyAttachmentToInternalStorageBlocking(pendingAttachment = pendingAttachment, noteId = noteId, index = index)`
+      → Asigna/configura `copyAttachmentToInternalStorageBlocking(pendingAttachment` usando `pendingAttachment, noteId = noteId, index = index)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L157 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L158 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.6 `copyAttachmentToInternalStorageBlocking` — líneas 163–238
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        private fun copyAttachmentToInternalStorageBlocking(pendingAttachment: PendingAttachment, noteId: Int, index: Int): Uri? {
+
+Propósito:
+    Implementa `copyAttachmentToInternalStorageBlocking`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `pendingAttachment: PendingAttachment`: el llamador proporciona este valor/callback a `copyAttachmentToInternalStorageBlocking`. Dentro del cuerpo, las líneas donde aparece `pendingAttachment` muestran exactamente cómo afecta al resultado.
+  - `noteId: Int`: el llamador proporciona este valor/callback a `copyAttachmentToInternalStorageBlocking`. Dentro del cuerpo, las líneas donde aparece `noteId` muestran exactamente cómo afecta al resultado.
+  - `index: Int`: el llamador proporciona este valor/callback a `copyAttachmentToInternalStorageBlocking`. Dentro del cuerpo, las líneas donde aparece `index` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Uri?`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L163 [4 espacios] `private fun copyAttachmentToInternalStorageBlocking(pendingAttachment: PendingAttachment, noteId: Int, index: Int): Uri? {`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `copyAttachmentToInternalStorageBlocking` se detalla después instrucción por instrucción.
+  L164 [8 espacios] `return try {`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L165 [12 espacios] `val context = getApplication<Application>()`
+      → Declara `context` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `getApplication<Application>()`.
+  L166 [12 espacios] `val attachmentsDirectory = File(context.filesDir, "attachments")`
+      → Realiza una operación de archivo/stream. Debe mantenerse fuera del hilo principal cuando pueda bloquear y respetar el almacenamiento permitido por Android.
+  L167 [12 espacios] `if (!attachmentsDirectory.exists() && !attachmentsDirectory.mkdirs()) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `!attachmentsDirectory.exists() && !attachmentsDirectory.mkdirs()`.
+  L168 [16 espacios] `return null`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L169 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L170 [12 espacios] `val sourceUri = pendingAttachment.uri`
+      → Declara `sourceUri` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `pendingAttachment.uri`.
+  L171 [12 espacios] `/*`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L172 [13 espacios] `* Si ya es un archivo privado de MyNotes,`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L173 [13 espacios] `* no hacemos una copia adicional.`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L174 [13 espacios] `*/`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L175 [12 espacios] `if (sourceUri.scheme == "file") {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `sourceUri.scheme == "file"`.
+  L176 [16 espacios] `val sourcePath = sourceUri.path`
+      → Opera con URI/ContentResolver de Android para acceder a contenido compartido sin asumir una ruta de archivo directa.
+  L177 [16 espacios] `if (sourcePath != null) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `sourcePath != null`.
+  L178 [20 espacios] `val sourceFile = File(sourcePath)`
+      → Realiza una operación de archivo/stream. Debe mantenerse fuera del hilo principal cuando pueda bloquear y respetar el almacenamiento permitido por Android.
+  L179 [20 espacios] `if (sourceFile.exists()) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `sourceFile.exists()`.
+  L180 [24 espacios] `val rootPath = attachmentsDirectory.canonicalFile.path`
+      → Declara `rootPath` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `attachmentsDirectory.canonicalFile.path`.
+  L181 [24 espacios] `val sourceCanonical = sourceFile.canonicalFile.path`
+      → Declara `sourceCanonical` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `sourceFile.canonicalFile.path`.
+  L182 [24 espacios] `if (sourceCanonical == rootPath || sourceCanonical.startsWith(rootPath + File.separator)) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `sourceCanonical == rootPath || sourceCanonical.startsWith(rootPath + File.separator)`.
+  L183 [28 espacios] `return Uri.fromFile(sourceFile)`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L184 [24 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L185 [20 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L186 [16 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L187 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L188 [12 espacios] `val originalName = pendingAttachment.name?: getDisplayName(sourceUri)`
+      → Declara `originalName` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `pendingAttachment.name?: getDisplayName(sourceUri)`.
+  L189 [12 espacios] `val extension = getExtension(originalName = originalName, mimeType = pendingAttachment.mimeType?: context.contentResolver`
+      → Opera con URI/ContentResolver de Android para acceder a contenido compartido sin asumir una ruta de archivo directa.
+  L190 [32 espacios] `.getType(sourceUri), type = pendingAttachment.type)`
+      → Asigna/configura `.getType(sourceUri), type` usando `pendingAttachment.type)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L191 [12 espacios] `val fileName = "note_${noteId}_${System.currentTimeMillis()}_${index}.$extension"`
+      → Declara `fileName` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `"note_${noteId}_${System.currentTimeMillis()}_${index}.$extension"`.
+  L192 [12 espacios] `val destinationFile = File(attachmentsDirectory, fileName)`
+      → Realiza una operación de archivo/stream. Debe mantenerse fuera del hilo principal cuando pueda bloquear y respetar el almacenamiento permitido por Android.
+  L193 [12 espacios] `when (sourceUri.scheme) {`
+      → Abre una decisión `when`: selecciona una rama según el valor/condición, equivalente a un switch más expresivo de Kotlin.
+  L194 [16 espacios] `"content" -> {`
+      → Define una rama/lambda. Cuando coincide `"content"`, se ejecuta la expresión o bloque situado después de `->`.
+  L195 [20 espacios] `val inputStream = context.contentResolver.openInputStream(sourceUri)?: return null`
+      → Opera con URI/ContentResolver de Android para acceder a contenido compartido sin asumir una ruta de archivo directa.
+  L196 [20 espacios] `inputStream.buffered(64 * 1024).use {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L197 [32 espacios] `input ->`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `input ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L198 [28 espacios] `destinationFile.outputStream().buffered(64 * 1024).use {`
+      → Realiza una operación de archivo/stream. Debe mantenerse fuera del hilo principal cuando pueda bloquear y respetar el almacenamiento permitido por Android.
+  L199 [40 espacios] `output ->`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `output ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L200 [36 espacios] `input.copyTo(out = output, bufferSize = 64 * 1024)`
+      → Asigna/configura `input.copyTo(out` usando `output, bufferSize = 64 * 1024)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L201 [32 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L202 [24 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L203 [16 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L204 [16 espacios] `"file" -> {`
+      → Define una rama/lambda. Cuando coincide `"file"`, se ejecuta la expresión o bloque situado después de `->`.
+  L205 [20 espacios] `val sourcePath = sourceUri.path?: return null`
+      → Opera con URI/ContentResolver de Android para acceder a contenido compartido sin asumir una ruta de archivo directa.
+  L206 [20 espacios] `val sourceFile = File(sourcePath)`
+      → Realiza una operación de archivo/stream. Debe mantenerse fuera del hilo principal cuando pueda bloquear y respetar el almacenamiento permitido por Android.
+  L207 [20 espacios] `if (!sourceFile.exists()) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `!sourceFile.exists()`.
+  L208 [24 espacios] `return null`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L209 [20 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L210 [20 espacios] `sourceFile.inputStream().buffered(64 * 1024).use {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L211 [32 espacios] `input ->`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `input ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L212 [28 espacios] `destinationFile.outputStream().buffered(64 * 1024).use {`
+      → Realiza una operación de archivo/stream. Debe mantenerse fuera del hilo principal cuando pueda bloquear y respetar el almacenamiento permitido por Android.
+  L213 [40 espacios] `output ->`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `output ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L214 [36 espacios] `input.copyTo(out = output, bufferSize = 64 * 1024)`
+      → Asigna/configura `input.copyTo(out` usando `output, bufferSize = 64 * 1024)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L215 [32 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L216 [24 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L217 [16 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L218 [16 espacios] `else -> {`
+      → Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+  L219 [20 espacios] `val inputStream = context.contentResolver.openInputStream(sourceUri)?: return null`
+      → Opera con URI/ContentResolver de Android para acceder a contenido compartido sin asumir una ruta de archivo directa.
+  L220 [20 espacios] `inputStream.buffered(64 * 1024).use {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L221 [32 espacios] `input ->`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `input ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L222 [28 espacios] `destinationFile.outputStream().buffered(64 * 1024).use {`
+      → Realiza una operación de archivo/stream. Debe mantenerse fuera del hilo principal cuando pueda bloquear y respetar el almacenamiento permitido por Android.
+  L223 [40 espacios] `output ->`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `output ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L224 [36 espacios] `input.copyTo(out = output, bufferSize = 64 * 1024)`
+      → Asigna/configura `input.copyTo(out` usando `output, bufferSize = 64 * 1024)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L225 [32 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L226 [24 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L227 [16 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L228 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L229 [12 espacios] `if (!destinationFile.exists() || destinationFile.length() <= 0L) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `!destinationFile.exists() || destinationFile.length() <= 0L`.
+  L230 [16 espacios] `destinationFile.delete()`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L231 [16 espacios] `return null`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L232 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L233 [12 espacios] `Uri.fromFile(destinationFile)`
+      → Opera con URI/ContentResolver de Android para acceder a contenido compartido sin asumir una ruta de archivo directa.
+  L234 [8 espacios] `} catch (e: Exception) {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L235 [12 espacios] `e.printStackTrace()`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L236 [12 espacios] `null`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `null`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L237 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L238 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.7 `getDisplayName` — líneas 244–263
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        private fun getDisplayName(uri: Uri): String? {
+
+Propósito:
+    Obtiene/carga el dato indicado por el nombre de la función, aplicando los fallbacks y transformaciones visibles en su cuerpo.
+
+Parámetros/entradas:
+  - `uri: Uri`: el llamador proporciona este valor/callback a `getDisplayName`. Dentro del cuerpo, las líneas donde aparece `uri` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `String?`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L244 [4 espacios] `private fun getDisplayName(uri: Uri): String? {`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `getDisplayName` se detalla después instrucción por instrucción.
+  L245 [8 espacios] `val context = getApplication<Application>()`
+      → Declara `context` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `getApplication<Application>()`.
+  L246 [8 espacios] `if (uri.scheme == "file") {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `uri.scheme == "file"`.
+  L247 [12 espacios] `return uri.path?.let {`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L248 [20 espacios] `File(it).name`
+      → Realiza una operación de archivo/stream. Debe mantenerse fuera del hilo principal cuando pueda bloquear y respetar el almacenamiento permitido por Android.
+  L249 [16 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L250 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L251 [8 espacios] `return try {`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L252 [12 espacios] `context.contentResolver.query(uri, arrayOf(OpenableColumns.DISPLAY_NAME), null, null, null)?.use { cursor ->`
+      → Opera con URI/ContentResolver de Android para acceder a contenido compartido sin asumir una ruta de archivo directa.
+  L253 [20 espacios] `val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)`
+      → Declara `nameIndex` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)`.
+  L254 [20 espacios] `if (nameIndex >= 0 && cursor.moveToFirst()) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `nameIndex >= 0 && cursor.moveToFirst()`.
+  L255 [24 espacios] `cursor.getString(nameIndex)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L256 [20 espacios] `} else {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L257 [24 espacios] `null`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `null`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L258 [20 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L259 [16 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L260 [8 espacios] `} catch (e: Exception) {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L261 [12 espacios] `null`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `null`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L262 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L263 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.8 `getExtension` — líneas 269–335
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        private fun getExtension(originalName: String?, mimeType: String?, type: String): String {
+
+Propósito:
+    Obtiene/carga el dato indicado por el nombre de la función, aplicando los fallbacks y transformaciones visibles en su cuerpo.
+
+Parámetros/entradas:
+  - `originalName: String?`: el llamador proporciona este valor/callback a `getExtension`. Dentro del cuerpo, las líneas donde aparece `originalName` muestran exactamente cómo afecta al resultado.
+  - `mimeType: String?`: el llamador proporciona este valor/callback a `getExtension`. Dentro del cuerpo, las líneas donde aparece `mimeType` muestran exactamente cómo afecta al resultado.
+  - `type: String`: el llamador proporciona este valor/callback a `getExtension`. Dentro del cuerpo, las líneas donde aparece `type` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `String`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L269 [4 espacios] `private fun getExtension(originalName: String?, mimeType: String?, type: String): String {`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `getExtension` se detalla después instrucción por instrucción.
+  L270 [8 espacios] `/*`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L271 [9 espacios] `* Primero intentamos utilizar`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L272 [9 espacios] `* la extensión original.`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L273 [9 espacios] `*/`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L274 [8 espacios] `if (!originalName.isNullOrBlank() && originalName.contains(".")) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `!originalName.isNullOrBlank() && originalName.contains(".")`.
+  L275 [12 espacios] `val extension = originalName.substringAfterLast(".").lowercase()`
+      → Declara `extension` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `originalName.substringAfterLast(".").lowercase()`.
+  L276 [12 espacios] `if (extension.isNotBlank() && extension.length <= 10) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `extension.isNotBlank() && extension.length <= 10`.
+  L277 [16 espacios] `return extension`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L278 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L279 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L280 [8 espacios] `/*`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L281 [9 espacios] `* Si no encontramos extensión,`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L282 [9 espacios] `* utilizamos MIME.`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L283 [9 espacios] `*/`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L284 [8 espacios] `return when (mimeType) {`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L285 [12 espacios] `/*`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L286 [13 espacios] `* IMÁGENES`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L287 [13 espacios] `*/`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L288 [12 espacios] `"image/jpeg", "image/jpg" -> "jpg"`
+      → Define una rama/lambda. Cuando coincide `"image/jpeg", "image/jpg"`, se ejecuta la expresión o bloque situado después de `->`.
+  L289 [12 espacios] `"image/png" -> "png"`
+      → Define una rama/lambda. Cuando coincide `"image/png"`, se ejecuta la expresión o bloque situado después de `->`.
+  L290 [12 espacios] `"image/webp" -> "webp"`
+      → Define una rama/lambda. Cuando coincide `"image/webp"`, se ejecuta la expresión o bloque situado después de `->`.
+  L291 [12 espacios] `"image/gif" -> "gif"`
+      → Define una rama/lambda. Cuando coincide `"image/gif"`, se ejecuta la expresión o bloque situado después de `->`.
+  L292 [12 espacios] `"image/heic" -> "heic"`
+      → Define una rama/lambda. Cuando coincide `"image/heic"`, se ejecuta la expresión o bloque situado después de `->`.
+  L293 [12 espacios] `"image/heif" -> "heif"`
+      → Define una rama/lambda. Cuando coincide `"image/heif"`, se ejecuta la expresión o bloque situado después de `->`.
+  L294 [12 espacios] `/*`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L295 [13 espacios] `* VIDEO`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L296 [13 espacios] `*/`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L297 [12 espacios] `"video/mp4" -> "mp4"`
+      → Define una rama/lambda. Cuando coincide `"video/mp4"`, se ejecuta la expresión o bloque situado después de `->`.
+  L298 [12 espacios] `"video/3gpp" -> "3gp"`
+      → Define una rama/lambda. Cuando coincide `"video/3gpp"`, se ejecuta la expresión o bloque situado después de `->`.
+  L299 [12 espacios] `"video/webm" -> "webm"`
+      → Define una rama/lambda. Cuando coincide `"video/webm"`, se ejecuta la expresión o bloque situado después de `->`.
+  L300 [12 espacios] `"video/quicktime" -> "mov"`
+      → Define una rama/lambda. Cuando coincide `"video/quicktime"`, se ejecuta la expresión o bloque situado después de `->`.
+  L301 [12 espacios] `/*`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L302 [13 espacios] `* AUDIO`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L303 [13 espacios] `*/`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L304 [12 espacios] `"audio/mpeg" -> "mp3"`
+      → Define una rama/lambda. Cuando coincide `"audio/mpeg"`, se ejecuta la expresión o bloque situado después de `->`.
+  L305 [12 espacios] `"audio/mp4", "audio/x-m4a" -> "m4a"`
+      → Define una rama/lambda. Cuando coincide `"audio/mp4", "audio/x-m4a"`, se ejecuta la expresión o bloque situado después de `->`.
+  L306 [12 espacios] `"audio/wav", "audio/x-wav" -> "wav"`
+      → Define una rama/lambda. Cuando coincide `"audio/wav", "audio/x-wav"`, se ejecuta la expresión o bloque situado después de `->`.
+  L307 [12 espacios] `"audio/ogg" -> "ogg"`
+      → Define una rama/lambda. Cuando coincide `"audio/ogg"`, se ejecuta la expresión o bloque situado después de `->`.
+  L308 [12 espacios] `"audio/flac" -> "flac"`
+      → Define una rama/lambda. Cuando coincide `"audio/flac"`, se ejecuta la expresión o bloque situado después de `->`.
+  L309 [12 espacios] `"audio/aac" -> "aac"`
+      → Define una rama/lambda. Cuando coincide `"audio/aac"`, se ejecuta la expresión o bloque situado después de `->`.
+  L310 [12 espacios] `/*`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L311 [13 espacios] `* DOCUMENTOS`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L312 [13 espacios] `*/`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L313 [12 espacios] `"application/pdf" -> "pdf"`
+      → Define una rama/lambda. Cuando coincide `"application/pdf"`, se ejecuta la expresión o bloque situado después de `->`.
+  L314 [12 espacios] `"text/plain" -> "txt"`
+      → Define una rama/lambda. Cuando coincide `"text/plain"`, se ejecuta la expresión o bloque situado después de `->`.
+  L315 [12 espacios] `"application/zip" -> "zip"`
+      → Define una rama/lambda. Cuando coincide `"application/zip"`, se ejecuta la expresión o bloque situado después de `->`.
+  L316 [12 espacios] `"application/json" -> "json"`
+      → Define una rama/lambda. Cuando coincide `"application/json"`, se ejecuta la expresión o bloque situado después de `->`.
+  L317 [12 espacios] `"application/msword" -> "doc"`
+      → Define una rama/lambda. Cuando coincide `"application/msword"`, se ejecuta la expresión o bloque situado después de `->`.
+  L318 [12 espacios] `"application/vnd.openxmlformats-officedocument.wordprocessingml.document" -> "docx"`
+      → Define una rama/lambda. Cuando coincide `"application/vnd.openxmlformats-officedocument.wordprocessingml.document"`, se ejecuta la expresión o bloque situado después de `->`.
+  L319 [12 espacios] `"application/vnd.ms-excel" -> "xls"`
+      → Define una rama/lambda. Cuando coincide `"application/vnd.ms-excel"`, se ejecuta la expresión o bloque situado después de `->`.
+  L320 [12 espacios] `"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" -> "xlsx"`
+      → Define una rama/lambda. Cuando coincide `"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"`, se ejecuta la expresión o bloque situado después de `->`.
+  L321 [12 espacios] `"application/vnd.ms-powerpoint" -> "ppt"`
+      → Define una rama/lambda. Cuando coincide `"application/vnd.ms-powerpoint"`, se ejecuta la expresión o bloque situado después de `->`.
+  L322 [12 espacios] `"application/vnd.openxmlformats-officedocument.presentationml.presentation" -> "pptx"`
+      → Define una rama/lambda. Cuando coincide `"application/vnd.openxmlformats-officedocument.presentationml.presentation"`, se ejecuta la expresión o bloque situado después de `->`.
+  L323 [12 espacios] `/*`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L324 [13 espacios] `* RESPALDO SEGÚN EL TIPO`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L325 [13 espacios] `*/`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L326 [12 espacios] `else ->`
+      → Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+  L327 [16 espacios] `when (type) {`
+      → Abre una decisión `when`: selecciona una rama según el valor/condición, equivalente a un switch más expresivo de Kotlin.
+  L328 [20 espacios] `"image" -> "jpg"`
+      → Define una rama/lambda. Cuando coincide `"image"`, se ejecuta la expresión o bloque situado después de `->`.
+  L329 [20 espacios] `"video" -> "mp4"`
+      → Define una rama/lambda. Cuando coincide `"video"`, se ejecuta la expresión o bloque situado después de `->`.
+  L330 [20 espacios] `"audio" -> "mp3"`
+      → Define una rama/lambda. Cuando coincide `"audio"`, se ejecuta la expresión o bloque situado después de `->`.
+  L331 [20 espacios] `"voice" -> "m4a"`
+      → Define una rama/lambda. Cuando coincide `"voice"`, se ejecuta la expresión o bloque situado después de `->`.
+  L332 [20 espacios] `else -> "bin"`
+      → Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+  L333 [16 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L334 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L335 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.9 `defaultAttachmentName` — líneas 341–349
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        private fun defaultAttachmentName(type: String, index: Int): String {
+
+Propósito:
+    Implementa `defaultAttachmentName`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `type: String`: el llamador proporciona este valor/callback a `defaultAttachmentName`. Dentro del cuerpo, las líneas donde aparece `type` muestran exactamente cómo afecta al resultado.
+  - `index: Int`: el llamador proporciona este valor/callback a `defaultAttachmentName`. Dentro del cuerpo, las líneas donde aparece `index` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `String`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L341 [4 espacios] `private fun defaultAttachmentName(type: String, index: Int): String {`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `defaultAttachmentName` se detalla después instrucción por instrucción.
+  L342 [8 espacios] `return when (type) {`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L343 [12 espacios] `"image" -> "Imagen ${index + 1}"`
+      → Define una rama/lambda. Cuando coincide `"image"`, se ejecuta la expresión o bloque situado después de `->`.
+  L344 [12 espacios] `"video" -> "Video ${index + 1}"`
+      → Define una rama/lambda. Cuando coincide `"video"`, se ejecuta la expresión o bloque situado después de `->`.
+  L345 [12 espacios] `"audio" -> "Audio ${index + 1}"`
+      → Define una rama/lambda. Cuando coincide `"audio"`, se ejecuta la expresión o bloque situado después de `->`.
+  L346 [12 espacios] `"voice" -> "Nota de voz ${index + 1}"`
+      → Define una rama/lambda. Cuando coincide `"voice"`, se ejecuta la expresión o bloque situado después de `->`.
+  L347 [12 espacios] `else -> "Archivo ${index + 1}"`
+      → Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+  L348 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L349 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.10 `getAttachments` — líneas 355–355
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun getAttachments(noteId: Int) = attachmentDao.getAttachments(noteId)
+
+Propósito:
+    Obtiene/carga el dato indicado por el nombre de la función, aplicando los fallbacks y transformaciones visibles en su cuerpo.
+
+Parámetros/entradas:
+  - `noteId: Int) = attachmentDao.getAttachments(noteId`: el llamador proporciona este valor/callback a `getAttachments`. Dentro del cuerpo, las líneas donde aparece `noteId` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L355 [4 espacios] `fun getAttachments(noteId: Int) = attachmentDao.getAttachments(noteId)`
+      → Declara una función. El bloque de `getAttachments` se detalla después instrucción por instrucción.
+
+5.11 `updateNote` — líneas 366–366
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun updateNote(note: Note, title: String, content: String, color: String = note.color, newAttachments:
+
+Propósito:
+    Persiste cambios de una nota existente conservando su identidad primaria.
+
+Parámetros/entradas:
+  - `note: Note`: el llamador proporciona este valor/callback a `updateNote`. Dentro del cuerpo, las líneas donde aparece `note` muestran exactamente cómo afecta al resultado.
+  - `title: String`: el llamador proporciona este valor/callback a `updateNote`. Dentro del cuerpo, las líneas donde aparece `title` muestran exactamente cómo afecta al resultado.
+  - `content: String`: el llamador proporciona este valor/callback a `updateNote`. Dentro del cuerpo, las líneas donde aparece `content` muestran exactamente cómo afecta al resultado.
+  - `color: String = note.color`: el llamador proporciona este valor/callback a `updateNote`. Dentro del cuerpo, las líneas donde aparece `color` muestran exactamente cómo afecta al resultado.
+  - `newAttachments`: el llamador proporciona este valor/callback a `updateNote`. Dentro del cuerpo, las líneas donde aparece `newAttachments` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L366 [4 espacios] `fun updateNote(note: Note, title: String, content: String, color: String = note.color, newAttachments:`
+      → Declara una función. El bloque de `updateNote` se detalla después instrucción por instrucción.
+
+5.12 `changeNoteColor` — líneas 396–401
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun changeNoteColor(note: Note, color: String) {
+
+Propósito:
+    Implementa `changeNoteColor`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `note: Note`: el llamador proporciona este valor/callback a `changeNoteColor`. Dentro del cuerpo, las líneas donde aparece `note` muestran exactamente cómo afecta al resultado.
+  - `color: String`: el llamador proporciona este valor/callback a `changeNoteColor`. Dentro del cuerpo, las líneas donde aparece `color` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L396 [4 espacios] `fun changeNoteColor(note: Note, color: String) {`
+      → Declara una función. El bloque de `changeNoteColor` se detalla después instrucción por instrucción.
+  L397 [8 espacios] `viewModelScope.launch {`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L398 [12 espacios] `noteDao.updateColor(noteId = note.id, color = color)`
+      → Asigna/configura `noteDao.updateColor(noteId` usando `note.id, color = color)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L399 [12 espacios] `MyNotesWidgetUpdater.requestUpdate(getApplication<Application>())`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L400 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L401 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.13 `changePriority` — líneas 407–412
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun changePriority(note: Note, priority: Int) {
+
+Propósito:
+    Implementa `changePriority`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `note: Note`: el llamador proporciona este valor/callback a `changePriority`. Dentro del cuerpo, las líneas donde aparece `note` muestran exactamente cómo afecta al resultado.
+  - `priority: Int`: el llamador proporciona este valor/callback a `changePriority`. Dentro del cuerpo, las líneas donde aparece `priority` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L407 [4 espacios] `fun changePriority(note: Note, priority: Int) {`
+      → Declara una función. El bloque de `changePriority` se detalla después instrucción por instrucción.
+  L408 [8 espacios] `viewModelScope.launch {`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L409 [12 espacios] `noteDao.updatePriority(noteId = note.id, priority = priority)`
+      → Asigna/configura `noteDao.updatePriority(noteId` usando `note.id, priority = priority)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L410 [12 espacios] `MyNotesWidgetUpdater.requestUpdate(getApplication<Application>())`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L411 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L412 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.14 `toggleFavorite` — líneas 418–423
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun toggleFavorite(note: Note) {
+
+Propósito:
+    Implementa `toggleFavorite`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `note: Note`: el llamador proporciona este valor/callback a `toggleFavorite`. Dentro del cuerpo, las líneas donde aparece `note` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L418 [4 espacios] `fun toggleFavorite(note: Note) {`
+      → Declara una función. El bloque de `toggleFavorite` se detalla después instrucción por instrucción.
+  L419 [8 espacios] `viewModelScope.launch {`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L420 [12 espacios] `noteDao.updateFavorite(noteId = note.id, isFavorite = !note.isFavorite)`
+      → Asigna/configura `noteDao.updateFavorite(noteId` usando `note.id, isFavorite = !note.isFavorite)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L421 [12 espacios] `MyNotesWidgetUpdater.requestUpdate(getApplication<Application>())`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L422 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L423 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.15 `togglePinned` — líneas 429–434
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun togglePinned(note: Note) {
+
+Propósito:
+    Implementa `togglePinned`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `note: Note`: el llamador proporciona este valor/callback a `togglePinned`. Dentro del cuerpo, las líneas donde aparece `note` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L429 [4 espacios] `fun togglePinned(note: Note) {`
+      → Declara una función. El bloque de `togglePinned` se detalla después instrucción por instrucción.
+  L430 [8 espacios] `viewModelScope.launch {`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L431 [12 espacios] `noteDao.updatePinned(noteId = note.id, isPinned = !note.isPinned)`
+      → Asigna/configura `noteDao.updatePinned(noteId` usando `note.id, isPinned = !note.isPinned)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L432 [12 espacios] `MyNotesWidgetUpdater.requestUpdate(getApplication<Application>())`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L433 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L434 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.16 `changeCategory` — líneas 442–451
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun changeCategory(note: Note, category: String) {
+
+Propósito:
+    Implementa `changeCategory`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `note: Note`: el llamador proporciona este valor/callback a `changeCategory`. Dentro del cuerpo, las líneas donde aparece `note` muestran exactamente cómo afecta al resultado.
+  - `category: String`: el llamador proporciona este valor/callback a `changeCategory`. Dentro del cuerpo, las líneas donde aparece `category` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L442 [4 espacios] `fun changeCategory(note: Note, category: String) {`
+      → Declara una función. El bloque de `changeCategory` se detalla después instrucción por instrucción.
+  L443 [8 espacios] `val normalized = when (category) {`
+      → Declara `normalized` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `when (category) {`.
+  L444 [16 espacios] `"work" -> "work"`
+      → Define una rama/lambda. Cuando coincide `"work"`, se ejecuta la expresión o bloque situado después de `->`.
+  L445 [16 espacios] `else -> "personal"`
+      → Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+  L446 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L447 [8 espacios] `viewModelScope.launch {`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L448 [12 espacios] `noteDao.updateCategory(noteId = note.id, category = normalized)`
+      → Asigna/configura `noteDao.updateCategory(noteId` usando `note.id, category = normalized)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L449 [12 espacios] `MyNotesWidgetUpdater.requestUpdate(getApplication<Application>())`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L450 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L451 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.17 `deleteAttachment` — líneas 464–476
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun deleteAttachment(attachment: Attachment) {
+
+Propósito:
+    Implementa `deleteAttachment`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `attachment: Attachment`: el llamador proporciona este valor/callback a `deleteAttachment`. Dentro del cuerpo, las líneas donde aparece `attachment` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L464 [4 espacios] `fun deleteAttachment(attachment: Attachment) {`
+      → Declara una función. El bloque de `deleteAttachment` se detalla después instrucción por instrucción.
+  L465 [8 espacios] `viewModelScope.launch {`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L466 [12 espacios] `/*`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L467 [13 espacios] `* Quitamos primero el registro de Room para que la UI responda`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L468 [13 espacios] `* inmediatamente. La limpieza de caché/archivo ocurre después en IO.`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L469 [13 espacios] `*/`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L470 [12 espacios] `attachmentDao.deleteAttachment(attachment)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L471 [12 espacios] `AttachmentPreviewCache.invalidate(context = getApplication<Application>(), uri = Uri.parse(attachment.uri))`
+      → Opera con URI/ContentResolver de Android para acceder a contenido compartido sin asumir una ruta de archivo directa.
+  L472 [12 espacios] `withContext(Dispatchers.IO) {`
+      → Mueve temporalmente el bloque a `Dispatchers.IO`, apropiado para base de datos, archivos o red para no bloquear el hilo principal.
+  L473 [16 espacios] `deletePrivateFileIfPresent(Uri.parse(attachment.uri))`
+      → Opera con URI/ContentResolver de Android para acceder a contenido compartido sin asumir una ruta de archivo directa.
+  L474 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L475 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L476 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.18 `deleteNote` — líneas 493–513
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun deleteNote(note: Note) {
+
+Propósito:
+    Elimina una nota y ejecuta la limpieza/actualizaciones asociadas que el ViewModel tenga definidas.
+
+Parámetros/entradas:
+  - `note: Note`: el llamador proporciona este valor/callback a `deleteNote`. Dentro del cuerpo, las líneas donde aparece `note` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L493 [4 espacios] `fun deleteNote(note: Note) {`
+      → Declara una función. El bloque de `deleteNote` se detalla después instrucción por instrucción.
+  L494 [8 espacios] `viewModelScope.launch {`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L495 [12 espacios] `val attachments = attachmentDao.getAttachmentsOnce(note.id)`
+      → Declara `attachments` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `attachmentDao.getAttachmentsOnce(note.id)`.
+  L496 [12 espacios] `/*`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L497 [13 espacios] `* Primero actualizamos Room. La nota desaparece de Compose sin esperar`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L498 [13 espacios] `* a que termine la E/S de todos sus adjuntos.`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L499 [13 espacios] `*/`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L500 [12 espacios] `database.withTransaction {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L501 [20 espacios] `attachmentDao.deleteAttachmentsForNote(note.id)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L502 [20 espacios] `noteDao.deleteNote(note)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L503 [16 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L504 [12 espacios] `MyNotesWidgetUpdater.requestUpdate(getApplication<Application>())`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L505 [12 espacios] `attachments.forEach { attachment -> AttachmentPreviewCache.invalidate(context = getApplication<Application>(),`
+      → Define una rama/lambda. Cuando coincide `attachments.forEach { attachment`, se ejecuta la expresión o bloque situado después de `->`.
+  L506 [20 espacios] `uri = Uri.parse(attachment.uri))`
+      → Opera con URI/ContentResolver de Android para acceder a contenido compartido sin asumir una ruta de archivo directa.
+  L507 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L508 [12 espacios] `withContext(Dispatchers.IO) {`
+      → Mueve temporalmente el bloque a `Dispatchers.IO`, apropiado para base de datos, archivos o red para no bloquear el hilo principal.
+  L509 [16 espacios] `attachments.forEach { attachment -> deletePrivateFileIfPresent(Uri.parse(attachment.uri))`
+      → Define una rama/lambda. Cuando coincide `attachments.forEach { attachment`, se ejecuta la expresión o bloque situado después de `->`.
+  L510 [16 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L511 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L512 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L513 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.19 `deletePrivateFileIfPresent` — líneas 514–522
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        private fun deletePrivateFileIfPresent(uri: Uri) {
+
+Propósito:
+    Implementa `deletePrivateFileIfPresent`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `uri: Uri`: el llamador proporciona este valor/callback a `deletePrivateFileIfPresent`. Dentro del cuerpo, las líneas donde aparece `uri` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L514 [4 espacios] `private fun deletePrivateFileIfPresent(uri: Uri) {`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `deletePrivateFileIfPresent` se detalla después instrucción por instrucción.
+  L515 [8 espacios] `try {`
+      → Abre un bloque protegido: si una operación lanza una excepción, el control puede pasar al `catch` correspondiente sin terminar abruptamente el flujo.
+  L516 [12 espacios] `if (uri.scheme == "file") {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `uri.scheme == "file"`.
+  L517 [16 espacios] `uri.path?.let(::File)?.takeIf { it.exists() }?.delete()`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L518 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L519 [8 espacios] `} catch (e: Exception) {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L520 [12 espacios] `e.printStackTrace()`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L521 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L522 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+6. EXPLICACIÓN COMPLETA LÍNEA POR LÍNEA
+----------------------------------------------------------------------
+Esta sección no omite líneas ejecutables. Repite incluso partes ya explicadas en funciones para poder leer el archivo de arriba abajo sin saltar entre secciones.
+L1: `package com.example.mynotes.viewmodel`
+    Declara que este archivo pertenece al package `com.example.mynotes.viewmodel`; esto determina su namespace Kotlin y cómo lo importan otros archivos.
+L3: `import android.app.Application`
+    Importa `android.app.Application` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L4: `import android.net.Uri`
+    Importa `android.net.Uri` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L5: `import android.provider.OpenableColumns`
+    Importa `android.provider.OpenableColumns` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L6: `import androidx.lifecycle.AndroidViewModel`
+    Importa `androidx.lifecycle.AndroidViewModel` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L7: `import androidx.lifecycle.viewModelScope`
+    Importa `androidx.lifecycle.viewModelScope` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L8: `import androidx.room.withTransaction`
+    Importa `androidx.room.withTransaction` para usar persistencia SQLite declarativa con Room.
+L9: `import com.example.mynotes.data.AppDatabase`
+    Importa `com.example.mynotes.data.AppDatabase`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L10: `import com.example.mynotes.data.Attachment`
+    Importa `com.example.mynotes.data.Attachment`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L11: `import com.example.mynotes.data.Note`
+    Importa `com.example.mynotes.data.Note`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L12: `import com.example.mynotes.data.PendingAttachment`
+    Importa `com.example.mynotes.data.PendingAttachment`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L13: `import com.example.mynotes.performance.AttachmentPreviewCache`
+    Importa `com.example.mynotes.performance.AttachmentPreviewCache`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L14: `import com.example.mynotes.settings.SettingsRepository`
+    Importa `com.example.mynotes.settings.SettingsRepository`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L15: `import com.example.mynotes.widget.MyNotesWidgetUpdater`
+    Importa `com.example.mynotes.widget.MyNotesWidgetUpdater`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L16: `import kotlinx.coroutines.Dispatchers`
+    Importa `kotlinx.coroutines.Dispatchers` para usar coroutines, Flow y ejecución asíncrona.
+L17: `import kotlinx.coroutines.flow.SharingStarted`
+    Importa `kotlinx.coroutines.flow.SharingStarted` para usar coroutines, Flow y ejecución asíncrona.
+L18: `import kotlinx.coroutines.flow.distinctUntilChanged`
+    Importa `kotlinx.coroutines.flow.distinctUntilChanged` para usar coroutines, Flow y ejecución asíncrona.
+L19: `import kotlinx.coroutines.flow.first`
+    Importa `kotlinx.coroutines.flow.first` para usar coroutines, Flow y ejecución asíncrona.
+L20: `import kotlinx.coroutines.flow.stateIn`
+    Importa `kotlinx.coroutines.flow.stateIn` para usar coroutines, Flow y ejecución asíncrona.
+L21: `import kotlinx.coroutines.launch`
+    Importa `kotlinx.coroutines.launch` para usar coroutines, Flow y ejecución asíncrona.
+L22: `import kotlinx.coroutines.sync.Semaphore`
+    Importa `kotlinx.coroutines.sync.Semaphore` para usar coroutines, Flow y ejecución asíncrona.
+L23: `import kotlinx.coroutines.sync.withPermit`
+    Importa `kotlinx.coroutines.sync.withPermit` para usar coroutines, Flow y ejecución asíncrona.
+L24: `import kotlinx.coroutines.withContext`
+    Importa `kotlinx.coroutines.withContext` para usar coroutines, Flow y ejecución asíncrona.
+L25: `import java.io.File`
+    Importa `java.io.File` de la biblioteca estándar/JVM para operaciones de lenguaje, fechas, colecciones, I/O o utilidades.
+L27: `class NoteViewModel(application: Application) : AndroidViewModel(application) {`
+    Declara class `NoteViewModel`. A partir de aquí las propiedades y funciones hasta su llave de cierre pertenecen a este tipo.
+L28: `private val database = AppDatabase.getDatabase(application)`
+    Declara `database` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `AppDatabase.getDatabase(application)`.
+L29: `private val noteDao = database.noteDao()`
+    Declara `noteDao` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `database.noteDao()`.
+L30: `private val attachmentDao = database.attachmentDao()`
+    Declara `attachmentDao` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `database.attachmentDao()`.
+L31: `private val settingsRepository = SettingsRepository(application)`
+    Declara `settingsRepository` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `SettingsRepository(application)`.
+L32: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L33: `* Máximo dos previews multimedia pesados al mismo tiempo.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L34: `* Evita picos de CPU/RAM al adjuntar muchos archivos.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L35: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L36: `private val previewSemaphore = Semaphore(permits = 2)`
+    Declara `previewSemaphore` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `Semaphore(permits = 2)`.
+L37: `private data class PreparedAttachment(val attachment: Attachment, val internalUri: Uri, val type: String, val name: String?)`
+    Declara `PreparedAttachment` como `data class`: Kotlin genera automáticamente igualdad, hash, copia y representación textual a partir de sus propiedades del constructor.
+L38: `val notes = noteDao.getAllNotes().distinctUntilChanged().stateIn(scope = viewModelScope, started = SharingStarted`
+    Declara `notes` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `noteDao.getAllNotes().distinctUntilChanged().stateIn(scope = viewModelScope, started = SharingStarted`.
+L39: `.WhileSubscribed(5000), initialValue = emptyList())`
+    Asigna/configura `.WhileSubscribed(5000), initialValue` usando `emptyList())`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L40: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L41: `* =========================================================`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L42: `* TODOS LOS ADJUNTOS EN UN SOLO FLOW`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L43: `* =========================================================`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L44: `*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L45: `* NotesScreen observa esta lista una sola vez.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L46: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L47: `val allAttachments = attachmentDao.getAllAttachments().distinctUntilChanged().stateIn(scope = viewModelScope, started = SharingStarted`
+    Declara `allAttachments` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `attachmentDao.getAllAttachments().distinctUntilChanged().stateIn(scope = viewModelScope, started = SharingStarted`.
+L48: `.WhileSubscribed(5000), initialValue = emptyList())`
+    Asigna/configura `.WhileSubscribed(5000), initialValue` usando `emptyList())`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L49: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L50: `* =========================================================`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L51: `* CREAR NOTA`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L52: `* =========================================================`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L53: `*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L54: `* Ahora una nota puede recibir:`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L55: `*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L56: `* image`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L57: `* video`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L58: `* audio`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L59: `* voice`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L60: `* file`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L61: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L62: `fun addNote(title: String, content: String, color: String = "default", attachments: List<PendingAttachment> = emptyList()) {`
+    Declara una función. El bloque de `addNote` se detalla después instrucción por instrucción.
+L63: `if (title.isBlank() && content.isBlank() && attachments.isEmpty()) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `title.isBlank() && content.isBlank() && attachments.isEmpty()`.
+L64: `return`
+    Finaliza inmediatamente la función actual sin devolver un valor adicional (`Unit`).
+L65: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L66: `viewModelScope.launch {`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L67: `val note = Note(title = title, content = content, color = color)`
+    Declara `note` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `Note(title = title, content = content, color = color)`.
+L68: `val noteId = noteDao.insertNote(note).toInt()`
+    Declara `noteId` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `noteDao.insertNote(note).toInt()`.
+L69: `saveAttachments(noteId = noteId, attachments = attachments)`
+    Asigna/configura `saveAttachments(noteId` usando `noteId, attachments = attachments)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L70: `MyNotesWidgetUpdater.requestUpdate(getApplication<Application>())`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L71: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L72: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L73: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L74: `* =========================================================`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L75: `* GUARDAR ADJUNTOS`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L76: `* =========================================================`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L77: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L78: `private suspend fun saveAttachments(noteId: Int, attachments: List<PendingAttachment>) {`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `saveAttachments` se detalla después instrucción por instrucción.
+L79: `if (attachments.isEmpty()) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `attachments.isEmpty()`.
+L80: `return`
+    Finaliza inmediatamente la función actual sin devolver un valor adicional (`Unit`).
+L81: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L82: `val prepared = prepareAttachments(noteId = noteId, attachments = attachments, startingIndex = 0)`
+    Declara `prepared` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `prepareAttachments(noteId = noteId, attachments = attachments, startingIndex = 0)`.
+L83: `if (prepared.isEmpty()) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `prepared.isEmpty()`.
+L84: `return`
+    Finaliza inmediatamente la función actual sin devolver un valor adicional (`Unit`).
+L85: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L86: `attachmentDao.insertAttachments(prepared.map {`
+    Transforma cada valor/elemento de la fuente en otro valor sin mutar la colección/Flow original.
+L87: `it.attachment`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `it.attachment`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L88: `})`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L89: `prewarmAttachments(prepared)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L90: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L91: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L92: `* Toda la copia y lectura de metadatos ocurre en IO.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L93: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L94: `private suspend fun prepareAttachments(noteId: Int, attachments: List<PendingAttachment>, startingIndex: Int`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `prepareAttachments` se detalla después instrucción por instrucción.
+L95: `): List<PreparedAttachment> {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L96: `return withContext(Dispatchers.IO) {`
+    Mueve temporalmente el bloque a `Dispatchers.IO`, apropiado para base de datos, archivos o red para no bloquear el hilo principal.
+L97: `buildList {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L98: `attachments.forEachIndexed {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L99: `index, pendingAttachment ->`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `index, pendingAttachment ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L100: `val realIndex = startingIndex + index`
+    Declara `realIndex` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `startingIndex + index`.
+L101: `val internalUri = copyAttachmentToInternalStorage(pendingAttachment = pendingAttachment, noteId = noteId, index =`
+    Declara `internalUri` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `copyAttachmentToInternalStorage(pendingAttachment = pendingAttachment, noteId = noteId, index =`.
+L102: `realIndex)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L103: `if (internalUri != null) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `internalUri != null`.
+L104: `val attachmentName = pendingAttachment.name?: getDisplayName(pendingAttachment.uri)?: defaultAttachmentName(`
+    Declara `attachmentName` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `pendingAttachment.name?: getDisplayName(pendingAttachment.uri)?: defaultAttachmentName(`.
+L105: `pendingAttachment.type, realIndex)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L106: `add(PreparedAttachment(attachment = Attachment(noteId = noteId, type = pendingAttachment.type, uri =`
+    Asigna/configura `add(PreparedAttachment(attachment` usando `Attachment(noteId = noteId, type = pendingAttachment.type, uri =`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L107: `internalUri.toString(), name = attachmentName), internalUri = internalUri, type =`
+    Opera con URI/ContentResolver de Android para acceder a contenido compartido sin asumir una ruta de archivo directa.
+L108: `pendingAttachment.type, name = attachmentName))`
+    Asigna/configura `pendingAttachment.type, name` usando `attachmentName))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L109: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L110: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L111: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L112: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L113: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L114: `private fun prewarmAttachments(attachments:`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `prewarmAttachments` se detalla después instrucción por instrucción.
+L115: `List<PreparedAttachment>) {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L116: `attachments.forEach {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L117: `prepared ->`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `prepared ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L118: `viewModelScope.launch(Dispatchers.IO) {`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L119: `previewSemaphore.withPermit {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L120: `val selectedPerformanceMode = settingsRepository.settings.first().performanceMode`
+    Declara `selectedPerformanceMode` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `settingsRepository.settings.first().performanceMode`.
+L121: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L122: `* En Maximum quality guardamos también la miniatura`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L123: `* instantánea. Así una nota recién creada ya tiene un`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L124: `* placeholder fotográfico real y persistente antes de`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L125: `* volver al listado; no necesita mostrar un icono y`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L126: `* reemplazarlo visualmente durante el primer scroll.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L127: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L128: `if (selectedPerformanceMode == "quality") {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `selectedPerformanceMode == "quality"`.
+L129: `AttachmentPreviewCache.prewarm(context = getApplication<Application>(), uri = prepared.internalUri,`
+    Asigna/configura `AttachmentPreviewCache.prewarm(context` usando `getApplication<Application>(), uri = prepared.internalUri,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L130: `type = prepared.type, name = prepared.name, performanceMode = "instant")`
+    Asigna/configura `type` usando `prepared.type, name = prepared.name, performanceMode = "instant")`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L131: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L132: `AttachmentPreviewCache.prewarm(context = getApplication<Application>(), uri = prepared.internalUri, type =`
+    Asigna/configura `AttachmentPreviewCache.prewarm(context` usando `getApplication<Application>(), uri = prepared.internalUri, type =`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L133: `prepared.type, name = prepared.name, performanceMode = selectedPerformanceMode)`
+    Asigna/configura `prepared.type, name` usando `prepared.name, performanceMode = selectedPerformanceMode)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L134: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L135: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L136: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L137: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L138: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L139: `* =========================================================`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L140: `* COPIAR CUALQUIER ARCHIVO AL ALMACENAMIENTO PRIVADO`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L141: `* =========================================================`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L142: `*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L143: `* Destino:`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L144: `*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L145: `* /data/data/com.example.mynotes/files/attachments/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L146: `*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L147: `* Después de copiarlo, la aplicación ya no necesita`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L148: `* cargar el archivo desde Galería, Descargas, Música, etc.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L149: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L150: `private suspend fun copyAttachmentToInternalStorage(pendingAttachment: PendingAttachment, noteId: Int, index: Int): Uri? {`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `copyAttachmentToInternalStorage` se detalla después instrucción por instrucción.
+L151: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L152: `* Cambiamos al dispatcher de I/O y delegamos en una`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L153: `* función normal que devuelve Uri? directamente.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L154: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L155: `return withContext(Dispatchers.IO) {`
+    Mueve temporalmente el bloque a `Dispatchers.IO`, apropiado para base de datos, archivos o red para no bloquear el hilo principal.
+L156: `copyAttachmentToInternalStorageBlocking(pendingAttachment = pendingAttachment, noteId = noteId, index = index)`
+    Asigna/configura `copyAttachmentToInternalStorageBlocking(pendingAttachment` usando `pendingAttachment, noteId = noteId, index = index)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L157: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L158: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L159: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L160: `* Esta función se ejecuta dentro de Dispatchers.IO`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L161: `* y devuelve Uri? directamente.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L162: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L163: `private fun copyAttachmentToInternalStorageBlocking(pendingAttachment: PendingAttachment, noteId: Int, index: Int): Uri? {`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `copyAttachmentToInternalStorageBlocking` se detalla después instrucción por instrucción.
+L164: `return try {`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L165: `val context = getApplication<Application>()`
+    Declara `context` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `getApplication<Application>()`.
+L166: `val attachmentsDirectory = File(context.filesDir, "attachments")`
+    Realiza una operación de archivo/stream. Debe mantenerse fuera del hilo principal cuando pueda bloquear y respetar el almacenamiento permitido por Android.
+L167: `if (!attachmentsDirectory.exists() && !attachmentsDirectory.mkdirs()) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `!attachmentsDirectory.exists() && !attachmentsDirectory.mkdirs()`.
+L168: `return null`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L169: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L170: `val sourceUri = pendingAttachment.uri`
+    Declara `sourceUri` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `pendingAttachment.uri`.
+L171: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L172: `* Si ya es un archivo privado de MyNotes,`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L173: `* no hacemos una copia adicional.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L174: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L175: `if (sourceUri.scheme == "file") {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `sourceUri.scheme == "file"`.
+L176: `val sourcePath = sourceUri.path`
+    Opera con URI/ContentResolver de Android para acceder a contenido compartido sin asumir una ruta de archivo directa.
+L177: `if (sourcePath != null) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `sourcePath != null`.
+L178: `val sourceFile = File(sourcePath)`
+    Realiza una operación de archivo/stream. Debe mantenerse fuera del hilo principal cuando pueda bloquear y respetar el almacenamiento permitido por Android.
+L179: `if (sourceFile.exists()) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `sourceFile.exists()`.
+L180: `val rootPath = attachmentsDirectory.canonicalFile.path`
+    Declara `rootPath` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `attachmentsDirectory.canonicalFile.path`.
+L181: `val sourceCanonical = sourceFile.canonicalFile.path`
+    Declara `sourceCanonical` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `sourceFile.canonicalFile.path`.
+L182: `if (sourceCanonical == rootPath || sourceCanonical.startsWith(rootPath + File.separator)) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `sourceCanonical == rootPath || sourceCanonical.startsWith(rootPath + File.separator)`.
+L183: `return Uri.fromFile(sourceFile)`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L184: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L185: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L186: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L187: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L188: `val originalName = pendingAttachment.name?: getDisplayName(sourceUri)`
+    Declara `originalName` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `pendingAttachment.name?: getDisplayName(sourceUri)`.
+L189: `val extension = getExtension(originalName = originalName, mimeType = pendingAttachment.mimeType?: context.contentResolver`
+    Opera con URI/ContentResolver de Android para acceder a contenido compartido sin asumir una ruta de archivo directa.
+L190: `.getType(sourceUri), type = pendingAttachment.type)`
+    Asigna/configura `.getType(sourceUri), type` usando `pendingAttachment.type)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L191: `val fileName = "note_${noteId}_${System.currentTimeMillis()}_${index}.$extension"`
+    Declara `fileName` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `"note_${noteId}_${System.currentTimeMillis()}_${index}.$extension"`.
+L192: `val destinationFile = File(attachmentsDirectory, fileName)`
+    Realiza una operación de archivo/stream. Debe mantenerse fuera del hilo principal cuando pueda bloquear y respetar el almacenamiento permitido por Android.
+L193: `when (sourceUri.scheme) {`
+    Abre una decisión `when`: selecciona una rama según el valor/condición, equivalente a un switch más expresivo de Kotlin.
+L194: `"content" -> {`
+    Define una rama/lambda. Cuando coincide `"content"`, se ejecuta la expresión o bloque situado después de `->`.
+L195: `val inputStream = context.contentResolver.openInputStream(sourceUri)?: return null`
+    Opera con URI/ContentResolver de Android para acceder a contenido compartido sin asumir una ruta de archivo directa.
+L196: `inputStream.buffered(64 * 1024).use {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L197: `input ->`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `input ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L198: `destinationFile.outputStream().buffered(64 * 1024).use {`
+    Realiza una operación de archivo/stream. Debe mantenerse fuera del hilo principal cuando pueda bloquear y respetar el almacenamiento permitido por Android.
+L199: `output ->`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `output ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L200: `input.copyTo(out = output, bufferSize = 64 * 1024)`
+    Asigna/configura `input.copyTo(out` usando `output, bufferSize = 64 * 1024)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L201: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L202: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L203: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L204: `"file" -> {`
+    Define una rama/lambda. Cuando coincide `"file"`, se ejecuta la expresión o bloque situado después de `->`.
+L205: `val sourcePath = sourceUri.path?: return null`
+    Opera con URI/ContentResolver de Android para acceder a contenido compartido sin asumir una ruta de archivo directa.
+L206: `val sourceFile = File(sourcePath)`
+    Realiza una operación de archivo/stream. Debe mantenerse fuera del hilo principal cuando pueda bloquear y respetar el almacenamiento permitido por Android.
+L207: `if (!sourceFile.exists()) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `!sourceFile.exists()`.
+L208: `return null`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L209: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L210: `sourceFile.inputStream().buffered(64 * 1024).use {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L211: `input ->`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `input ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L212: `destinationFile.outputStream().buffered(64 * 1024).use {`
+    Realiza una operación de archivo/stream. Debe mantenerse fuera del hilo principal cuando pueda bloquear y respetar el almacenamiento permitido por Android.
+L213: `output ->`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `output ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L214: `input.copyTo(out = output, bufferSize = 64 * 1024)`
+    Asigna/configura `input.copyTo(out` usando `output, bufferSize = 64 * 1024)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L215: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L216: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L217: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L218: `else -> {`
+    Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+L219: `val inputStream = context.contentResolver.openInputStream(sourceUri)?: return null`
+    Opera con URI/ContentResolver de Android para acceder a contenido compartido sin asumir una ruta de archivo directa.
+L220: `inputStream.buffered(64 * 1024).use {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L221: `input ->`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `input ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L222: `destinationFile.outputStream().buffered(64 * 1024).use {`
+    Realiza una operación de archivo/stream. Debe mantenerse fuera del hilo principal cuando pueda bloquear y respetar el almacenamiento permitido por Android.
+L223: `output ->`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `output ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L224: `input.copyTo(out = output, bufferSize = 64 * 1024)`
+    Asigna/configura `input.copyTo(out` usando `output, bufferSize = 64 * 1024)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L225: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L226: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L227: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L228: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L229: `if (!destinationFile.exists() || destinationFile.length() <= 0L) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `!destinationFile.exists() || destinationFile.length() <= 0L`.
+L230: `destinationFile.delete()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L231: `return null`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L232: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L233: `Uri.fromFile(destinationFile)`
+    Opera con URI/ContentResolver de Android para acceder a contenido compartido sin asumir una ruta de archivo directa.
+L234: `} catch (e: Exception) {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L235: `e.printStackTrace()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L236: `null`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `null`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L237: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L238: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L239: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L240: `* =========================================================`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L241: `* OBTENER NOMBRE ORIGINAL`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L242: `* =========================================================`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L243: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L244: `private fun getDisplayName(uri: Uri): String? {`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `getDisplayName` se detalla después instrucción por instrucción.
+L245: `val context = getApplication<Application>()`
+    Declara `context` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `getApplication<Application>()`.
+L246: `if (uri.scheme == "file") {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `uri.scheme == "file"`.
+L247: `return uri.path?.let {`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L248: `File(it).name`
+    Realiza una operación de archivo/stream. Debe mantenerse fuera del hilo principal cuando pueda bloquear y respetar el almacenamiento permitido por Android.
+L249: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L250: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L251: `return try {`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L252: `context.contentResolver.query(uri, arrayOf(OpenableColumns.DISPLAY_NAME), null, null, null)?.use { cursor ->`
+    Opera con URI/ContentResolver de Android para acceder a contenido compartido sin asumir una ruta de archivo directa.
+L253: `val nameIndex = cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)`
+    Declara `nameIndex` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `cursor.getColumnIndex(OpenableColumns.DISPLAY_NAME)`.
+L254: `if (nameIndex >= 0 && cursor.moveToFirst()) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `nameIndex >= 0 && cursor.moveToFirst()`.
+L255: `cursor.getString(nameIndex)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L256: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L257: `null`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `null`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L258: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L259: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L260: `} catch (e: Exception) {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L261: `null`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `null`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L262: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L263: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L264: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L265: `* =========================================================`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L266: `* DETERMINAR EXTENSIÓN`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L267: `* =========================================================`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L268: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L269: `private fun getExtension(originalName: String?, mimeType: String?, type: String): String {`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `getExtension` se detalla después instrucción por instrucción.
+L270: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L271: `* Primero intentamos utilizar`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L272: `* la extensión original.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L273: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L274: `if (!originalName.isNullOrBlank() && originalName.contains(".")) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `!originalName.isNullOrBlank() && originalName.contains(".")`.
+L275: `val extension = originalName.substringAfterLast(".").lowercase()`
+    Declara `extension` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `originalName.substringAfterLast(".").lowercase()`.
+L276: `if (extension.isNotBlank() && extension.length <= 10) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `extension.isNotBlank() && extension.length <= 10`.
+L277: `return extension`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L278: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L279: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L280: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L281: `* Si no encontramos extensión,`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L282: `* utilizamos MIME.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L283: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L284: `return when (mimeType) {`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L285: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L286: `* IMÁGENES`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L287: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L288: `"image/jpeg", "image/jpg" -> "jpg"`
+    Define una rama/lambda. Cuando coincide `"image/jpeg", "image/jpg"`, se ejecuta la expresión o bloque situado después de `->`.
+L289: `"image/png" -> "png"`
+    Define una rama/lambda. Cuando coincide `"image/png"`, se ejecuta la expresión o bloque situado después de `->`.
+L290: `"image/webp" -> "webp"`
+    Define una rama/lambda. Cuando coincide `"image/webp"`, se ejecuta la expresión o bloque situado después de `->`.
+L291: `"image/gif" -> "gif"`
+    Define una rama/lambda. Cuando coincide `"image/gif"`, se ejecuta la expresión o bloque situado después de `->`.
+L292: `"image/heic" -> "heic"`
+    Define una rama/lambda. Cuando coincide `"image/heic"`, se ejecuta la expresión o bloque situado después de `->`.
+L293: `"image/heif" -> "heif"`
+    Define una rama/lambda. Cuando coincide `"image/heif"`, se ejecuta la expresión o bloque situado después de `->`.
+L294: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L295: `* VIDEO`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L296: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L297: `"video/mp4" -> "mp4"`
+    Define una rama/lambda. Cuando coincide `"video/mp4"`, se ejecuta la expresión o bloque situado después de `->`.
+L298: `"video/3gpp" -> "3gp"`
+    Define una rama/lambda. Cuando coincide `"video/3gpp"`, se ejecuta la expresión o bloque situado después de `->`.
+L299: `"video/webm" -> "webm"`
+    Define una rama/lambda. Cuando coincide `"video/webm"`, se ejecuta la expresión o bloque situado después de `->`.
+L300: `"video/quicktime" -> "mov"`
+    Define una rama/lambda. Cuando coincide `"video/quicktime"`, se ejecuta la expresión o bloque situado después de `->`.
+L301: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L302: `* AUDIO`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L303: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L304: `"audio/mpeg" -> "mp3"`
+    Define una rama/lambda. Cuando coincide `"audio/mpeg"`, se ejecuta la expresión o bloque situado después de `->`.
+L305: `"audio/mp4", "audio/x-m4a" -> "m4a"`
+    Define una rama/lambda. Cuando coincide `"audio/mp4", "audio/x-m4a"`, se ejecuta la expresión o bloque situado después de `->`.
+L306: `"audio/wav", "audio/x-wav" -> "wav"`
+    Define una rama/lambda. Cuando coincide `"audio/wav", "audio/x-wav"`, se ejecuta la expresión o bloque situado después de `->`.
+L307: `"audio/ogg" -> "ogg"`
+    Define una rama/lambda. Cuando coincide `"audio/ogg"`, se ejecuta la expresión o bloque situado después de `->`.
+L308: `"audio/flac" -> "flac"`
+    Define una rama/lambda. Cuando coincide `"audio/flac"`, se ejecuta la expresión o bloque situado después de `->`.
+L309: `"audio/aac" -> "aac"`
+    Define una rama/lambda. Cuando coincide `"audio/aac"`, se ejecuta la expresión o bloque situado después de `->`.
+L310: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L311: `* DOCUMENTOS`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L312: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L313: `"application/pdf" -> "pdf"`
+    Define una rama/lambda. Cuando coincide `"application/pdf"`, se ejecuta la expresión o bloque situado después de `->`.
+L314: `"text/plain" -> "txt"`
+    Define una rama/lambda. Cuando coincide `"text/plain"`, se ejecuta la expresión o bloque situado después de `->`.
+L315: `"application/zip" -> "zip"`
+    Define una rama/lambda. Cuando coincide `"application/zip"`, se ejecuta la expresión o bloque situado después de `->`.
+L316: `"application/json" -> "json"`
+    Define una rama/lambda. Cuando coincide `"application/json"`, se ejecuta la expresión o bloque situado después de `->`.
+L317: `"application/msword" -> "doc"`
+    Define una rama/lambda. Cuando coincide `"application/msword"`, se ejecuta la expresión o bloque situado después de `->`.
+L318: `"application/vnd.openxmlformats-officedocument.wordprocessingml.document" -> "docx"`
+    Define una rama/lambda. Cuando coincide `"application/vnd.openxmlformats-officedocument.wordprocessingml.document"`, se ejecuta la expresión o bloque situado después de `->`.
+L319: `"application/vnd.ms-excel" -> "xls"`
+    Define una rama/lambda. Cuando coincide `"application/vnd.ms-excel"`, se ejecuta la expresión o bloque situado después de `->`.
+L320: `"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" -> "xlsx"`
+    Define una rama/lambda. Cuando coincide `"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"`, se ejecuta la expresión o bloque situado después de `->`.
+L321: `"application/vnd.ms-powerpoint" -> "ppt"`
+    Define una rama/lambda. Cuando coincide `"application/vnd.ms-powerpoint"`, se ejecuta la expresión o bloque situado después de `->`.
+L322: `"application/vnd.openxmlformats-officedocument.presentationml.presentation" -> "pptx"`
+    Define una rama/lambda. Cuando coincide `"application/vnd.openxmlformats-officedocument.presentationml.presentation"`, se ejecuta la expresión o bloque situado después de `->`.
+L323: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L324: `* RESPALDO SEGÚN EL TIPO`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L325: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L326: `else ->`
+    Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+L327: `when (type) {`
+    Abre una decisión `when`: selecciona una rama según el valor/condición, equivalente a un switch más expresivo de Kotlin.
+L328: `"image" -> "jpg"`
+    Define una rama/lambda. Cuando coincide `"image"`, se ejecuta la expresión o bloque situado después de `->`.
+L329: `"video" -> "mp4"`
+    Define una rama/lambda. Cuando coincide `"video"`, se ejecuta la expresión o bloque situado después de `->`.
+L330: `"audio" -> "mp3"`
+    Define una rama/lambda. Cuando coincide `"audio"`, se ejecuta la expresión o bloque situado después de `->`.
+L331: `"voice" -> "m4a"`
+    Define una rama/lambda. Cuando coincide `"voice"`, se ejecuta la expresión o bloque situado después de `->`.
+L332: `else -> "bin"`
+    Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+L333: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L334: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L335: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L336: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L337: `* =========================================================`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L338: `* NOMBRE PREDETERMINADO`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L339: `* =========================================================`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L340: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L341: `private fun defaultAttachmentName(type: String, index: Int): String {`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `defaultAttachmentName` se detalla después instrucción por instrucción.
+L342: `return when (type) {`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L343: `"image" -> "Imagen ${index + 1}"`
+    Define una rama/lambda. Cuando coincide `"image"`, se ejecuta la expresión o bloque situado después de `->`.
+L344: `"video" -> "Video ${index + 1}"`
+    Define una rama/lambda. Cuando coincide `"video"`, se ejecuta la expresión o bloque situado después de `->`.
+L345: `"audio" -> "Audio ${index + 1}"`
+    Define una rama/lambda. Cuando coincide `"audio"`, se ejecuta la expresión o bloque situado después de `->`.
+L346: `"voice" -> "Nota de voz ${index + 1}"`
+    Define una rama/lambda. Cuando coincide `"voice"`, se ejecuta la expresión o bloque situado después de `->`.
+L347: `else -> "Archivo ${index + 1}"`
+    Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+L348: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L349: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L350: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L351: `* =========================================================`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L352: `* OBTENER ADJUNTOS DE UNA NOTA`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L353: `* =========================================================`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L354: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L355: `fun getAttachments(noteId: Int) = attachmentDao.getAttachments(noteId)`
+    Declara una función. El bloque de `getAttachments` se detalla después instrucción por instrucción.
+L356: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L357: `* =========================================================`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L358: `* EDITAR NOTA`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L359: `* =========================================================`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L360: `*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L361: `* Los adjuntos existentes permanecen.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L362: `*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L363: `* Además dejamos preparado el método para que posteriormente`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L364: `* el editor pueda añadir nuevos archivos mientras editamos.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L365: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L366: `fun updateNote(note: Note, title: String, content: String, color: String = note.color, newAttachments:`
+    Declara una función. El bloque de `updateNote` se detalla después instrucción por instrucción.
+L367: `List<PendingAttachment> = emptyList()) {`
+    Asigna/configura `List<PendingAttachment>` usando `emptyList()) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L368: `viewModelScope.launch {`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L369: `val updatedNote = note.copy(title = title, content = content, color = color)`
+    Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+L370: `if (newAttachments.isEmpty()) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `newAttachments.isEmpty()`.
+L371: `noteDao.updateNote(updatedNote)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L372: `MyNotesWidgetUpdater.requestUpdate(getApplication<Application>())`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L373: `return@launch`
+    Termina anticipadamente la lambda etiquetada, evitando ejecutar el resto de esa lambda pero sin salir necesariamente de la función exterior.
+L374: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L375: `val currentAttachments = attachmentDao.getAttachmentsOnce(note.id)`
+    Declara `currentAttachments` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `attachmentDao.getAttachmentsOnce(note.id)`.
+L376: `val prepared = prepareAttachments(noteId = note.id, attachments = newAttachments, startingIndex = currentAttachments.size)`
+    Declara `prepared` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `prepareAttachments(noteId = note.id, attachments = newAttachments, startingIndex = currentAttachments.size)`.
+L377: `database.withTransaction {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L378: `noteDao.updateNote(updatedNote)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L379: `if (prepared.isNotEmpty()) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `prepared.isNotEmpty()`.
+L380: `attachmentDao.insertAttachments(prepared.map {`
+    Transforma cada valor/elemento de la fuente en otro valor sin mutar la colección/Flow original.
+L381: `it.attachment`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `it.attachment`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L382: `})`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L383: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L384: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L385: `if (prepared.isNotEmpty()) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `prepared.isNotEmpty()`.
+L386: `prewarmAttachments(prepared)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L387: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L388: `MyNotesWidgetUpdater.requestUpdate(getApplication<Application>())`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L389: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L390: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L391: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L392: `* =========================================================`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L393: `* CAMBIAR COLOR`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L394: `* =========================================================`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L395: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L396: `fun changeNoteColor(note: Note, color: String) {`
+    Declara una función. El bloque de `changeNoteColor` se detalla después instrucción por instrucción.
+L397: `viewModelScope.launch {`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L398: `noteDao.updateColor(noteId = note.id, color = color)`
+    Asigna/configura `noteDao.updateColor(noteId` usando `note.id, color = color)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L399: `MyNotesWidgetUpdater.requestUpdate(getApplication<Application>())`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L400: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L401: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L402: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L403: `* =========================================================`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L404: `* CAMBIAR PRIORIDAD`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L405: `* =========================================================`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L406: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L407: `fun changePriority(note: Note, priority: Int) {`
+    Declara una función. El bloque de `changePriority` se detalla después instrucción por instrucción.
+L408: `viewModelScope.launch {`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L409: `noteDao.updatePriority(noteId = note.id, priority = priority)`
+    Asigna/configura `noteDao.updatePriority(noteId` usando `note.id, priority = priority)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L410: `MyNotesWidgetUpdater.requestUpdate(getApplication<Application>())`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L411: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L412: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L413: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L414: `* =========================================================`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L415: `* FAVORITA`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L416: `* =========================================================`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L417: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L418: `fun toggleFavorite(note: Note) {`
+    Declara una función. El bloque de `toggleFavorite` se detalla después instrucción por instrucción.
+L419: `viewModelScope.launch {`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L420: `noteDao.updateFavorite(noteId = note.id, isFavorite = !note.isFavorite)`
+    Asigna/configura `noteDao.updateFavorite(noteId` usando `note.id, isFavorite = !note.isFavorite)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L421: `MyNotesWidgetUpdater.requestUpdate(getApplication<Application>())`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L422: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L423: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L424: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L425: `* =========================================================`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L426: `* FIJAR / DESFIJAR`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L427: `* =========================================================`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L428: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L429: `fun togglePinned(note: Note) {`
+    Declara una función. El bloque de `togglePinned` se detalla después instrucción por instrucción.
+L430: `viewModelScope.launch {`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L431: `noteDao.updatePinned(noteId = note.id, isPinned = !note.isPinned)`
+    Asigna/configura `noteDao.updatePinned(noteId` usando `note.id, isPinned = !note.isPinned)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L432: `MyNotesWidgetUpdater.requestUpdate(getApplication<Application>())`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L433: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L434: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L435: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L436: `* =========================================================`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L437: `* MOVER ENTRE CATEGORÍAS`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L438: `* =========================================================`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L439: `*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L440: `* El diseño utiliza Work y Personal.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L441: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L442: `fun changeCategory(note: Note, category: String) {`
+    Declara una función. El bloque de `changeCategory` se detalla después instrucción por instrucción.
+L443: `val normalized = when (category) {`
+    Declara `normalized` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `when (category) {`.
+L444: `"work" -> "work"`
+    Define una rama/lambda. Cuando coincide `"work"`, se ejecuta la expresión o bloque situado después de `->`.
+L445: `else -> "personal"`
+    Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+L446: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L447: `viewModelScope.launch {`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L448: `noteDao.updateCategory(noteId = note.id, category = normalized)`
+    Asigna/configura `noteDao.updateCategory(noteId` usando `note.id, category = normalized)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L449: `MyNotesWidgetUpdater.requestUpdate(getApplication<Application>())`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L450: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L451: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L452: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L453: `* =========================================================`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L454: `* ELIMINAR UN ADJUNTO`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L455: `* =========================================================`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L456: `*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L457: `* Se usa desde la pantalla de edición cuando el usuario`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L458: `* marca un adjunto existente con la X y después pulsa Guardar.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L459: `*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L460: `* Borra:`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L461: `* 1. el archivo físico del almacenamiento interno;`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L462: `* 2. el registro Attachment de Room.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L463: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L464: `fun deleteAttachment(attachment: Attachment) {`
+    Declara una función. El bloque de `deleteAttachment` se detalla después instrucción por instrucción.
+L465: `viewModelScope.launch {`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L466: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L467: `* Quitamos primero el registro de Room para que la UI responda`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L468: `* inmediatamente. La limpieza de caché/archivo ocurre después en IO.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L469: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L470: `attachmentDao.deleteAttachment(attachment)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L471: `AttachmentPreviewCache.invalidate(context = getApplication<Application>(), uri = Uri.parse(attachment.uri))`
+    Opera con URI/ContentResolver de Android para acceder a contenido compartido sin asumir una ruta de archivo directa.
+L472: `withContext(Dispatchers.IO) {`
+    Mueve temporalmente el bloque a `Dispatchers.IO`, apropiado para base de datos, archivos o red para no bloquear el hilo principal.
+L473: `deletePrivateFileIfPresent(Uri.parse(attachment.uri))`
+    Opera con URI/ContentResolver de Android para acceder a contenido compartido sin asumir una ruta de archivo directa.
+L474: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L475: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L476: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L477: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L478: `* =========================================================`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L479: `* ELIMINAR NOTA`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L480: `* =========================================================`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L481: `*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L482: `* Ya no eliminamos únicamente imágenes.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L483: `*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L484: `* Eliminamos físicamente:`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L485: `*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L486: `* imágenes`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L487: `* videos`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L488: `* canciones`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L489: `* notas de voz`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L490: `* documentos`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L491: `* cualquier otro archivo privado.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L492: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L493: `fun deleteNote(note: Note) {`
+    Declara una función. El bloque de `deleteNote` se detalla después instrucción por instrucción.
+L494: `viewModelScope.launch {`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L495: `val attachments = attachmentDao.getAttachmentsOnce(note.id)`
+    Declara `attachments` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `attachmentDao.getAttachmentsOnce(note.id)`.
+L496: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L497: `* Primero actualizamos Room. La nota desaparece de Compose sin esperar`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L498: `* a que termine la E/S de todos sus adjuntos.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L499: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L500: `database.withTransaction {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L501: `attachmentDao.deleteAttachmentsForNote(note.id)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L502: `noteDao.deleteNote(note)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L503: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L504: `MyNotesWidgetUpdater.requestUpdate(getApplication<Application>())`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L505: `attachments.forEach { attachment -> AttachmentPreviewCache.invalidate(context = getApplication<Application>(),`
+    Define una rama/lambda. Cuando coincide `attachments.forEach { attachment`, se ejecuta la expresión o bloque situado después de `->`.
+L506: `uri = Uri.parse(attachment.uri))`
+    Opera con URI/ContentResolver de Android para acceder a contenido compartido sin asumir una ruta de archivo directa.
+L507: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L508: `withContext(Dispatchers.IO) {`
+    Mueve temporalmente el bloque a `Dispatchers.IO`, apropiado para base de datos, archivos o red para no bloquear el hilo principal.
+L509: `attachments.forEach { attachment -> deletePrivateFileIfPresent(Uri.parse(attachment.uri))`
+    Define una rama/lambda. Cuando coincide `attachments.forEach { attachment`, se ejecuta la expresión o bloque situado después de `->`.
+L510: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L511: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L512: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L513: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L514: `private fun deletePrivateFileIfPresent(uri: Uri) {`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `deletePrivateFileIfPresent` se detalla después instrucción por instrucción.
+L515: `try {`
+    Abre un bloque protegido: si una operación lanza una excepción, el control puede pasar al `catch` correspondiente sin terminar abruptamente el flujo.
+L516: `if (uri.scheme == "file") {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `uri.scheme == "file"`.
+L517: `uri.path?.let(::File)?.takeIf { it.exists() }?.delete()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L518: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L519: `} catch (e: Exception) {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L520: `e.printStackTrace()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L521: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L522: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L523: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+7. RECURSOS ANDROID REFERENCIADOS
+----------------------------------------------------------------------
+- No hay referencias directas `R.*` en este archivo.
+
+8. QUIÉN USA ESTE COMPONENTE
+----------------------------------------------------------------------
+- `NoteViewModel` aparece también en 4 archivo(s):
+    - app/src/main/java/com/example/mynotes/MainActivity.kt
+    - app/src/main/java/com/example/mynotes/ui/theme/NoteDetailScreen.kt
+    - app/src/main/java/com/example/mynotes/ui/theme/NotesScreen.kt
+    - app/src/main/java/com/example/mynotes/ui/theme/SourceCodeInfoScreen.kt
+
+9. QUÉ PUEDE ROMPERSE SI LO MODIFICAS
+----------------------------------------------------------------------
+- Conservar firmas públicas/callbacks y comprobar los archivos que aparecen en “quién usa este componente” antes de renombrar o cambiar tipos.
+
+10. CHECKLIST DE PRUEBA DESPUÉS DE MODIFICAR ESTE ARCHIVO
+----------------------------------------------------------------------
+- Compilar `assembleDebug` y resolver primero errores de Kotlin/AAPT.
+- Abrir la pantalla/flujo relacionado y comprobar ida y vuelta (back) sin estado duplicado.
+- Cambiar tema/paleta y verificar contraste si este archivo dibuja UI.
+
+==============================================================================================================
+FIN DEL ARCHIVO
+==============================================================================================================

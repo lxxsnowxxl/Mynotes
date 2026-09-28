@@ -1,0 +1,1322 @@
+MYNOTES — EXPLICACIÓN ULTRA DETALLADA
+==============================================================================================================
+Archivo 43/72: app/src/main/java/com/example/mynotes/ui/theme/DevelopmentInfoScreen.kt
+SHA-256: 7527be1880ad5b104da099e58b86e03824344db995b295eabef0558c7d1a42e5
+Líneas del fuente: 312
+Package: com.example.mynotes.ui
+
+1. RESPONSABILIDAD EXACTA DEL ARCHIVO
+----------------------------------------------------------------------
+Pantalla informativa de desarrollo: datos de versión/proyecto y navegación hacia información técnica adicional.
+
+2. DÓNDE ENCAJA EN LA ARQUITECTURA
+----------------------------------------------------------------------
+Este archivo pertenece principalmente a la **capa de interfaz Compose/Activities**. No debe analizarse aislado: las referencias cruzadas y callbacks se detallan más abajo.
+
+3. IMPORTACIONES, UNA POR UNA
+----------------------------------------------------------------------
+- `android.content.Intent`: Importa `android.content.Intent` para usar mensajería/navegación entre componentes Android.
+- `android.content.pm.ApplicationInfo`: Importa `android.content.pm.ApplicationInfo` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `android.net.Uri`: Importa `android.net.Uri` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `android.os.Build`: Importa `android.os.Build` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `androidx.compose.foundation.BorderStroke`: Importa `androidx.compose.foundation.BorderStroke` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.layout.Arrangement`: Importa `androidx.compose.foundation.layout.Arrangement` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.layout.Box`: Importa `androidx.compose.foundation.layout.Box` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.layout.Column`: Importa `androidx.compose.foundation.layout.Column` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.layout.Row`: Importa `androidx.compose.foundation.layout.Row` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.layout.Spacer`: Importa `androidx.compose.foundation.layout.Spacer` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.layout.fillMaxSize`: Importa `androidx.compose.foundation.layout.fillMaxSize` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.layout.fillMaxWidth`: Importa `androidx.compose.foundation.layout.fillMaxWidth` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.layout.height`: Importa `androidx.compose.foundation.layout.height` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.layout.padding`: Importa `androidx.compose.foundation.layout.padding` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.layout.size`: Importa `androidx.compose.foundation.layout.size` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.layout.widthIn`: Importa `androidx.compose.foundation.layout.widthIn` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.rememberScrollState`: Importa `androidx.compose.foundation.rememberScrollState` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.shape.RoundedCornerShape`: Importa `androidx.compose.foundation.shape.RoundedCornerShape` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.verticalScroll`: Importa `androidx.compose.foundation.verticalScroll` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.material.icons.Icons`: Importa `androidx.compose.material.icons.Icons` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.material.icons.automirrored.filled.ArrowBack`: Importa `androidx.compose.material.icons.automirrored.filled.ArrowBack` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.material.icons.filled.Info`: Importa `androidx.compose.material.icons.filled.Info` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.material.icons.filled.OpenInNew`: Importa `androidx.compose.material.icons.filled.OpenInNew` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.material.icons.filled.Code`: Importa `androidx.compose.material.icons.filled.Code` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.material3.ButtonDefaults`: Importa `androidx.compose.material3.ButtonDefaults` para usar componentes y tema Material 3.
+- `androidx.compose.material3.Icon`: Importa `androidx.compose.material3.Icon` para usar componentes y tema Material 3.
+- `androidx.compose.material3.ExperimentalMaterial3Api`: Importa `androidx.compose.material3.ExperimentalMaterial3Api` para usar componentes y tema Material 3.
+- `androidx.compose.material3.MaterialTheme`: Importa `androidx.compose.material3.MaterialTheme` para usar componentes y tema Material 3.
+- `androidx.compose.material3.Scaffold`: Importa `androidx.compose.material3.Scaffold` para usar componentes y tema Material 3.
+- `androidx.compose.material3.Surface`: Importa `androidx.compose.material3.Surface` para usar componentes y tema Material 3.
+- `androidx.compose.material3.Text`: Importa `androidx.compose.material3.Text` para usar componentes y tema Material 3.
+- `androidx.compose.material3.TextButton`: Importa `androidx.compose.material3.TextButton` para usar componentes y tema Material 3.
+- `androidx.compose.material3.TopAppBar`: Importa `androidx.compose.material3.TopAppBar` para usar componentes y tema Material 3.
+- `androidx.compose.runtime.Composable`: Importa `androidx.compose.runtime.Composable` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+- `androidx.compose.runtime.remember`: Importa `androidx.compose.runtime.remember` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+- `androidx.compose.ui.Alignment`: Importa `androidx.compose.ui.Alignment` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.Modifier`: Importa `androidx.compose.ui.Modifier` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.graphics.Color`: Importa `androidx.compose.ui.graphics.Color` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.platform.LocalContext`: Importa `androidx.compose.ui.platform.LocalContext` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.res.stringResource`: Importa `androidx.compose.ui.res.stringResource` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.text.font.FontWeight`: Importa `androidx.compose.ui.text.font.FontWeight` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.unit.dp`: Importa `androidx.compose.ui.unit.dp` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.unit.sp`: Importa `androidx.compose.ui.unit.sp` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `com.example.mynotes.R`: Importa `com.example.mynotes.R`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.settings.AppSettings`: Importa `com.example.mynotes.settings.AppSettings`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.ui.components.ScrollPositionCapsule`: Importa `com.example.mynotes.ui.components.ScrollPositionCapsule`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.ui.motion.AnimatedScreenEntry`: Importa `com.example.mynotes.ui.motion.AnimatedScreenEntry`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.ui.sound.UiActionSound`: Importa `com.example.mynotes.ui.sound.UiActionSound`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.ui.sound.UiSoundPlayer`: Importa `com.example.mynotes.ui.sound.UiSoundPlayer`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.ui.theme.appFontFamily`: Importa `com.example.mynotes.ui.theme.appFontFamily`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.ui.theme.ensureUiContrast`: Importa `com.example.mynotes.ui.theme.ensureUiContrast`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.ui.theme.resolveSecondaryUiTextColor`: Importa `com.example.mynotes.ui.theme.resolveSecondaryUiTextColor`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.ui.theme.resolveUiTextColor`: Importa `com.example.mynotes.ui.theme.resolveUiTextColor`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `java.util.Calendar`: Importa `java.util.Calendar` de la biblioteca estándar/JVM para operaciones de lenguaje, fechas, colecciones, I/O o utilidades.
+
+4. DECLARACIONES Y ESTADO IMPORTANTES
+----------------------------------------------------------------------
+L58: `private const val MYNOTES_REPOSITORY_URL = "https://github.com/lxxsnowxxl/Mynotes"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L59: `private const val MYNOTES_COMPILE_SDK = 37`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L60: `private const val MYNOTES_JAVA_COMPATIBILITY = 11`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L72: `val context = LocalContext.current`
+    Declara `context` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `LocalContext.current`.
+L73: `val fontFamily = remember(settings.font) { appFontFamily(settings.font) }`
+    Memoriza el resultado durante recomposiciones de Compose. Solo se recalcula cuando cambian las claves de `remember`, reduciendo trabajo y preservando identidad/estado local.
+L74: `val developmentScrollState = rememberScrollState()`
+    Declara `developmentScrollState` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `rememberScrollState()`.
+L75: `val packageInfo = remember(context.packageName) {`
+    Memoriza el resultado durante recomposiciones de Compose. Solo se recalcula cuando cambian las claves de `remember`, reduciendo trabajo y preservando identidad/estado local.
+L79: `val versionName = packageInfo.versionName.orEmpty().ifBlank { "1.0" }`
+    Declara `versionName` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `packageInfo.versionName.orEmpty().ifBlank { "1.0" }`.
+L80: `val versionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) packageInfo.longVersionCode else {`
+    Declara `versionCode` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) packageInfo.longVersionCode else {`.
+L84: `val applicationInfo = context.applicationInfo`
+    Declara `applicationInfo` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `context.applicationInfo`.
+L85: `val buildType = if ((applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) != 0) {`
+    Declara `buildType` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if ((applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) != 0) {`.
+L90: `val minSdk = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) applicationInfo.minSdkVersion else 24`
+    Declara `minSdk` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) applicationInfo.minSdkVersion else 24`.
+L91: `val targetSdk = applicationInfo.targetSdkVersion`
+    Declara `targetSdk` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `applicationInfo.targetSdkVersion`.
+L92: `val screenBackground = MaterialTheme.colorScheme.background`
+    Declara `screenBackground` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `MaterialTheme.colorScheme.background`.
+L93: `val primaryText = resolveUiTextColor(settings.textColor, screenBackground)`
+    Declara `primaryText` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolveUiTextColor(settings.textColor, screenBackground)`.
+L94: `val secondaryText = resolveSecondaryUiTextColor(settings.textColor, screenBackground)`
+    Declara `secondaryText` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolveSecondaryUiTextColor(settings.textColor, screenBackground)`.
+L95: `val currentYear = remember { Calendar.getInstance().get(Calendar.YEAR) }`
+    Memoriza el resultado durante recomposiciones de Compose. Solo se recalcula cuando cambian las claves de `remember`, reduciendo trabajo y preservando identidad/estado local.
+L258: `val background = MaterialTheme.colorScheme.surfaceContainerLow`
+    Declara `background` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `MaterialTheme.colorScheme.surfaceContainerLow`.
+L259: `val text = resolveUiTextColor(settings.textColor, background)`
+    Declara `text` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolveUiTextColor(settings.textColor, background)`.
+L260: `val border = ensureUiContrast(MaterialTheme.colorScheme.outline.copy(alpha = 0.55f), background, 2.2f)`
+    Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+L274: `val background = MaterialTheme.colorScheme.surfaceContainerLow`
+    Declara `background` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `MaterialTheme.colorScheme.surfaceContainerLow`.
+L275: `val text = resolveUiTextColor(settings.textColor, background)`
+    Declara `text` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolveUiTextColor(settings.textColor, background)`.
+L276: `val secondary = resolveSecondaryUiTextColor(settings.textColor, background)`
+    Declara `secondary` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolveSecondaryUiTextColor(settings.textColor, background)`.
+L288: `val background = MaterialTheme.colorScheme.surfaceContainerLow`
+    Declara `background` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `MaterialTheme.colorScheme.surfaceContainerLow`.
+L289: `val secondary = resolveSecondaryUiTextColor(settings.textColor, background)`
+    Declara `secondary` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolveSecondaryUiTextColor(settings.textColor, background)`.
+L295: `val container = if (selected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHigh`
+    Declara `container` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (selected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHigh`.
+L296: `val titleColor = resolveUiTextColor(settings.textColor, container)`
+    Declara `titleColor` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolveUiTextColor(settings.textColor, container)`.
+L297: `val detailColor = resolveSecondaryUiTextColor(settings.textColor, container)`
+    Declara `detailColor` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolveSecondaryUiTextColor(settings.textColor, container)`.
+
+5. FUNCIONES — EXPLICACIÓN DE CADA UNA
+----------------------------------------------------------------------
+
+5.1 `DevelopmentInfoScreen` — líneas 71–254
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    fun DevelopmentInfoScreen(settings: AppSettings, onOpenSourceCode: () -> Unit, onBack: () -> Unit) {
+
+Propósito:
+    Implementa `DevelopmentInfoScreen`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `settings: AppSettings`: el llamador proporciona este valor/callback a `DevelopmentInfoScreen`. Dentro del cuerpo, las líneas donde aparece `settings` muestran exactamente cómo afecta al resultado.
+  - `onOpenSourceCode: () -> Unit`: el llamador proporciona este valor/callback a `DevelopmentInfoScreen`. Dentro del cuerpo, las líneas donde aparece `onOpenSourceCode` muestran exactamente cómo afecta al resultado.
+  - `onBack: () -> Unit`: el llamador proporciona este valor/callback a `DevelopmentInfoScreen`. Dentro del cuerpo, las líneas donde aparece `onBack` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L71 [0 espacios] `fun DevelopmentInfoScreen(settings: AppSettings, onOpenSourceCode: () -> Unit, onBack: () -> Unit) {`
+      → Declara una función. El bloque de `DevelopmentInfoScreen` se detalla después instrucción por instrucción.
+  L72 [4 espacios] `val context = LocalContext.current`
+      → Declara `context` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `LocalContext.current`.
+  L73 [4 espacios] `val fontFamily = remember(settings.font) { appFontFamily(settings.font) }`
+      → Memoriza el resultado durante recomposiciones de Compose. Solo se recalcula cuando cambian las claves de `remember`, reduciendo trabajo y preservando identidad/estado local.
+  L74 [4 espacios] `val developmentScrollState = rememberScrollState()`
+      → Declara `developmentScrollState` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `rememberScrollState()`.
+  L75 [4 espacios] `val packageInfo = remember(context.packageName) {`
+      → Memoriza el resultado durante recomposiciones de Compose. Solo se recalcula cuando cambian las claves de `remember`, reduciendo trabajo y preservando identidad/estado local.
+  L76 [8 espacios] `@Suppress("DEPRECATION")`
+      → Aplica la anotación `@Suppress("DEPRECATION")` a la declaración siguiente; la anotación modifica metadatos, generación de código o comportamiento del framework.
+  L77 [8 espacios] `context.packageManager.getPackageInfo(context.packageName, 0)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L78 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L79 [4 espacios] `val versionName = packageInfo.versionName.orEmpty().ifBlank { "1.0" }`
+      → Declara `versionName` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `packageInfo.versionName.orEmpty().ifBlank { "1.0" }`.
+  L80 [4 espacios] `val versionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) packageInfo.longVersionCode else {`
+      → Declara `versionCode` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) packageInfo.longVersionCode else {`.
+  L81 [8 espacios] `@Suppress("DEPRECATION")`
+      → Aplica la anotación `@Suppress("DEPRECATION")` a la declaración siguiente; la anotación modifica metadatos, generación de código o comportamiento del framework.
+  L82 [8 espacios] `packageInfo.versionCode.toLong()`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L83 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L84 [4 espacios] `val applicationInfo = context.applicationInfo`
+      → Declara `applicationInfo` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `context.applicationInfo`.
+  L85 [4 espacios] `val buildType = if ((applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) != 0) {`
+      → Declara `buildType` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if ((applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) != 0) {`.
+  L86 [8 espacios] `stringResource(R.string.development_build_debug)`
+      → Obtiene una cadena localizada desde `res/values*` (`development_build_debug`), de modo que la UI siga el idioma activo.
+  L87 [4 espacios] `} else {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L88 [8 espacios] `stringResource(R.string.development_build_release)`
+      → Obtiene una cadena localizada desde `res/values*` (`development_build_release`), de modo que la UI siga el idioma activo.
+  L89 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L90 [4 espacios] `val minSdk = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) applicationInfo.minSdkVersion else 24`
+      → Declara `minSdk` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) applicationInfo.minSdkVersion else 24`.
+  L91 [4 espacios] `val targetSdk = applicationInfo.targetSdkVersion`
+      → Declara `targetSdk` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `applicationInfo.targetSdkVersion`.
+  L92 [4 espacios] `val screenBackground = MaterialTheme.colorScheme.background`
+      → Declara `screenBackground` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `MaterialTheme.colorScheme.background`.
+  L93 [4 espacios] `val primaryText = resolveUiTextColor(settings.textColor, screenBackground)`
+      → Declara `primaryText` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolveUiTextColor(settings.textColor, screenBackground)`.
+  L94 [4 espacios] `val secondaryText = resolveSecondaryUiTextColor(settings.textColor, screenBackground)`
+      → Declara `secondaryText` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolveSecondaryUiTextColor(settings.textColor, screenBackground)`.
+  L95 [4 espacios] `val currentYear = remember { Calendar.getInstance().get(Calendar.YEAR) }`
+      → Memoriza el resultado durante recomposiciones de Compose. Solo se recalcula cuando cambian las claves de `remember`, reduciendo trabajo y preservando identidad/estado local.
+  L97 [4 espacios] `AnimatedScreenEntry(animationsEnabled = settings.animationsEnabled, animationSpeed = settings.animationSpeed) {`
+      → Asigna/configura `AnimatedScreenEntry(animationsEnabled` usando `settings.animationsEnabled, animationSpeed = settings.animationSpeed) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L98 [8 espacios] `Scaffold(containerColor = screenBackground,`
+      → Crea la estructura Material de una pantalla Compose y reserva slots para contenido, barras y/o FAB manteniendo insets coherentes.
+  L99 [12 espacios] `topBar = {`
+      → Asigna/configura `topBar` usando `{`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L100 [16 espacios] `TopAppBar(title = {`
+      → Asigna/configura `TopAppBar(title` usando `{`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L101 [24 espacios] `Text(text = stringResource(R.string.development_info_title), fontFamily = fontFamily,`
+      → Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+  L102 [28 espacios] `fontWeight = FontWeight.Bold, fontSize = 24.sp)`
+      → Asigna/configura `fontWeight` usando `FontWeight.Bold, fontSize = 24.sp)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L103 [20 espacios] `},`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L104 [20 espacios] `navigationIcon = {`
+      → Asigna/configura `navigationIcon` usando `{`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L105 [24 espacios] `TextButton(onClick = {`
+      → Crea un control pulsable Material. Su callback `onClick` ejecuta la acción del usuario y sus colores/forma se derivan de la configuración.
+  L106 [32 espacios] `UiSoundPlayer.playAction(context = context, action = UiActionSound.Back)`
+      → Asigna/configura `UiSoundPlayer.playAction(context` usando `context, action = UiActionSound.Back)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L107 [32 espacios] `onBack()`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L108 [28 espacios] `}, colors = ButtonDefaults.textButtonColors(contentColor = primaryText)) {`
+      → Asigna/configura `}, colors` usando `ButtonDefaults.textButtonColors(contentColor = primaryText)) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L109 [28 espacios] `Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack,`
+      → Renderiza un recurso visual. El modelo/painter y los modifiers siguientes determinan qué se muestra, tamaño, recorte y accesibilidad.
+  L110 [32 espacios] `contentDescription = stringResource(R.string.mock_back), modifier = Modifier.size(25.dp))`
+      → Obtiene una cadena localizada desde `res/values*` (`mock_back`), de modo que la UI siga el idioma activo.
+  L111 [24 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L112 [20 espacios] `})`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L113 [12 espacios] `}) { paddingValues ->`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `}) { paddingValues ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L114 [12 espacios] `Box(modifier = Modifier.fillMaxSize()) {`
+      → Crea un `Box` de Compose que superpone/posiciona hijos dentro de un mismo contenedor. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+  L115 [12 espacios] `Column(modifier = Modifier.fillMaxSize().padding(paddingValues).verticalScroll(developmentScrollState)`
+      → Crea un `Column` de Compose que organiza hijos verticalmente. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+  L116 [20 espacios] `.widthIn(max = 840.dp).padding(horizontal = 14.dp, vertical = 16.dp)) {`
+      → Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+  L117 [16 espacios] `Row(verticalAlignment = Alignment.CenterVertically) {`
+      → Crea un `Row` de Compose que organiza hijos horizontalmente. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+  L118 [20 espacios] `Icon(imageVector = Icons.Default.Info, contentDescription = null, tint = primaryText,`
+      → Renderiza un recurso visual. El modelo/painter y los modifiers siguientes determinan qué se muestra, tamaño, recorte y accesibilidad.
+  L119 [24 espacios] `modifier = Modifier.size(28.dp))`
+      → Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+  L120 [20 espacios] `Column(modifier = Modifier.padding(start = 12.dp)) {`
+      → Crea un `Column` de Compose que organiza hijos verticalmente. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+  L121 [24 espacios] `Text(text = "MyNotes", color = primaryText, fontFamily = fontFamily,`
+      → Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+  L122 [28 espacios] `fontWeight = FontWeight.Bold, fontSize = 24.sp)`
+      → Asigna/configura `fontWeight` usando `FontWeight.Bold, fontSize = 24.sp)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L123 [24 espacios] `Text(text = stringResource(R.string.development_info_subtitle), color = secondaryText,`
+      → Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+  L124 [28 espacios] `fontFamily = fontFamily, fontSize = 13.sp)`
+      → Asigna/configura `fontFamily` usando `fontFamily, fontSize = 13.sp)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L125 [20 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L126 [16 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L127 [16 espacios] `Spacer(Modifier.height(18.dp))`
+      → Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+  L129 [16 espacios] `DevelopmentSection(title = stringResource(R.string.development_app_section), settings = settings) {`
+      → Obtiene una cadena localizada desde `res/values*` (`development_app_section`), de modo que la UI siga el idioma activo.
+  L130 [20 espacios] `DevelopmentValueRow(stringResource(R.string.development_version), "$versionName ($versionCode)", settings)`
+      → Obtiene una cadena localizada desde `res/values*` (`development_version`), de modo que la UI siga el idioma activo.
+  L131 [20 espacios] `DevelopmentValueRow(stringResource(R.string.development_package), context.packageName, settings)`
+      → Obtiene una cadena localizada desde `res/values*` (`development_package`), de modo que la UI siga el idioma activo.
+  L132 [20 espacios] `DevelopmentValueRow(stringResource(R.string.development_build_type), buildType, settings)`
+      → Obtiene una cadena localizada desde `res/values*` (`development_build_type`), de modo que la UI siga el idioma activo.
+  L133 [16 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L135 [16 espacios] `DevelopmentSection(title = stringResource(R.string.development_sdk_section), settings = settings) {`
+      → Obtiene una cadena localizada desde `res/values*` (`development_sdk_section`), de modo que la UI siga el idioma activo.
+  L136 [20 espacios] `DevelopmentValueRow(stringResource(R.string.development_min_sdk), "API $minSdk", settings)`
+      → Obtiene una cadena localizada desde `res/values*` (`development_min_sdk`), de modo que la UI siga el idioma activo.
+  L137 [20 espacios] `DevelopmentValueRow(stringResource(R.string.development_target_sdk), "API $targetSdk", settings)`
+      → Obtiene una cadena localizada desde `res/values*` (`development_target_sdk`), de modo que la UI siga el idioma activo.
+  L138 [20 espacios] `DevelopmentValueRow(stringResource(R.string.development_compile_sdk), "API $MYNOTES_COMPILE_SDK", settings)`
+      → Obtiene una cadena localizada desde `res/values*` (`development_compile_sdk`), de modo que la UI siga el idioma activo.
+  L139 [20 espacios] `DevelopmentValueRow(stringResource(R.string.development_device_sdk), "API ${Build.VERSION.SDK_INT}", settings)`
+      → Obtiene una cadena localizada desde `res/values*` (`development_device_sdk`), de modo que la UI siga el idioma activo.
+  L140 [16 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L142 [16 espacios] `DevelopmentSection(title = stringResource(R.string.development_build_section), settings = settings) {`
+      → Obtiene una cadena localizada desde `res/values*` (`development_build_section`), de modo que la UI siga el idioma activo.
+  L143 [20 espacios] `DevelopmentValueRow(stringResource(R.string.development_build_system),`
+      → Obtiene una cadena localizada desde `res/values*` (`development_build_system`), de modo que la UI siga el idioma activo.
+  L144 [24 espacios] `stringResource(R.string.development_build_system_value), settings)`
+      → Obtiene una cadena localizada desde `res/values*` (`development_build_system_value`), de modo que la UI siga el idioma activo.
+  L145 [20 espacios] `DevelopmentValueRow(stringResource(R.string.development_java_compatibility),`
+      → Obtiene una cadena localizada desde `res/values*` (`development_java_compatibility`), de modo que la UI siga el idioma activo.
+  L146 [24 espacios] `"Java $MYNOTES_JAVA_COMPATIBILITY", settings)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L147 [20 espacios] `DevelopmentValueRow(stringResource(R.string.development_release_optimization),`
+      → Obtiene una cadena localizada desde `res/values*` (`development_release_optimization`), de modo que la UI siga el idioma activo.
+  L148 [24 espacios] `stringResource(R.string.development_release_optimization_value), settings)`
+      → Obtiene una cadena localizada desde `res/values*` (`development_release_optimization_value`), de modo que la UI siga el idioma activo.
+  L149 [20 espacios] `Spacer(Modifier.height(6.dp))`
+      → Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+  L150 [20 espacios] `DevelopmentParagraph(stringResource(R.string.development_build_body), settings)`
+      → Obtiene una cadena localizada desde `res/values*` (`development_build_body`), de modo que la UI siga el idioma activo.
+  L151 [16 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L153 [16 espacios] `DevelopmentSection(title = stringResource(R.string.development_ui_section), settings = settings) {`
+      → Obtiene una cadena localizada desde `res/values*` (`development_ui_section`), de modo que la UI siga el idioma activo.
+  L154 [20 espacios] `DevelopmentParagraph(stringResource(R.string.development_ui_body), settings)`
+      → Obtiene una cadena localizada desde `res/values*` (`development_ui_body`), de modo que la UI siga el idioma activo.
+  L155 [16 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L157 [16 espacios] `DevelopmentSection(title = stringResource(R.string.development_architecture_section), settings = settings) {`
+      → Obtiene una cadena localizada desde `res/values*` (`development_architecture_section`), de modo que la UI siga el idioma activo.
+  L158 [20 espacios] `DevelopmentParagraph(stringResource(R.string.development_architecture_body), settings)`
+      → Obtiene una cadena localizada desde `res/values*` (`development_architecture_body`), de modo que la UI siga el idioma activo.
+  L159 [16 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L161 [16 espacios] `DevelopmentSection(title = stringResource(R.string.development_storage_section), settings = settings) {`
+      → Obtiene una cadena localizada desde `res/values*` (`development_storage_section`), de modo que la UI siga el idioma activo.
+  L162 [20 espacios] `DevelopmentParagraph(stringResource(R.string.development_storage_body), settings)`
+      → Obtiene una cadena localizada desde `res/values*` (`development_storage_body`), de modo que la UI siga el idioma activo.
+  L163 [16 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L165 [16 espacios] `DevelopmentSection(title = stringResource(R.string.development_media_section), settings = settings) {`
+      → Obtiene una cadena localizada desde `res/values*` (`development_media_section`), de modo que la UI siga el idioma activo.
+  L166 [20 espacios] `DevelopmentParagraph(stringResource(R.string.development_media_body), settings)`
+      → Obtiene una cadena localizada desde `res/values*` (`development_media_body`), de modo que la UI siga el idioma activo.
+  L167 [16 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L169 [16 espacios] `DevelopmentSection(title = stringResource(R.string.development_performance_section), settings = settings) {`
+      → Obtiene una cadena localizada desde `res/values*` (`development_performance_section`), de modo que la UI siga el idioma activo.
+  L170 [20 espacios] `DevelopmentParagraph(stringResource(R.string.development_performance_intro), settings)`
+      → Obtiene una cadena localizada desde `res/values*` (`development_performance_intro`), de modo que la UI siga el idioma activo.
+  L171 [20 espacios] `Spacer(Modifier.height(10.dp))`
+      → Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+  L172 [20 espacios] `PerformanceProfileRow(title = stringResource(R.string.development_profile_performance),`
+      → Obtiene una cadena localizada desde `res/values*` (`development_profile_performance`), de modo que la UI siga el idioma activo.
+  L173 [24 espacios] `detail = stringResource(R.string.development_profile_performance_detail), selected = settings.performanceMode == "performance",`
+      → Obtiene una cadena localizada desde `res/values*` (`development_profile_performance_detail`), de modo que la UI siga el idioma activo.
+  L174 [24 espacios] `settings = settings)`
+      → Asigna/configura `settings` usando `settings)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L175 [20 espacios] `Spacer(Modifier.height(8.dp))`
+      → Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+  L176 [20 espacios] `PerformanceProfileRow(title = stringResource(R.string.development_profile_balanced),`
+      → Obtiene una cadena localizada desde `res/values*` (`development_profile_balanced`), de modo que la UI siga el idioma activo.
+  L177 [24 espacios] `detail = stringResource(R.string.development_profile_balanced_detail), selected = settings.performanceMode == "balanced",`
+      → Obtiene una cadena localizada desde `res/values*` (`development_profile_balanced_detail`), de modo que la UI siga el idioma activo.
+  L178 [24 espacios] `settings = settings)`
+      → Asigna/configura `settings` usando `settings)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L179 [20 espacios] `Spacer(Modifier.height(8.dp))`
+      → Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+  L180 [20 espacios] `PerformanceProfileRow(title = stringResource(R.string.development_profile_quality),`
+      → Obtiene una cadena localizada desde `res/values*` (`development_profile_quality`), de modo que la UI siga el idioma activo.
+  L181 [24 espacios] `detail = stringResource(R.string.development_profile_quality_detail), selected = settings.performanceMode == "quality",`
+      → Obtiene una cadena localizada desde `res/values*` (`development_profile_quality_detail`), de modo que la UI siga el idioma activo.
+  L182 [24 espacios] `settings = settings)`
+      → Asigna/configura `settings` usando `settings)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L183 [16 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L185 [16 espacios] `DevelopmentSection(title = stringResource(R.string.development_stack_section), settings = settings) {`
+      → Obtiene una cadena localizada desde `res/values*` (`development_stack_section`), de modo que la UI siga el idioma activo.
+  L186 [20 espacios] `DevelopmentParagraph(stringResource(R.string.development_stack_body), settings)`
+      → Obtiene una cadena localizada desde `res/values*` (`development_stack_body`), de modo que la UI siga el idioma activo.
+  L187 [16 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L189 [16 espacios] `DevelopmentSection(title = stringResource(R.string.development_compatibility_section), settings = settings) {`
+      → Obtiene una cadena localizada desde `res/values*` (`development_compatibility_section`), de modo que la UI siga el idioma activo.
+  L190 [20 espacios] `DevelopmentParagraph(stringResource(R.string.development_compatibility_body), settings)`
+      → Obtiene una cadena localizada desde `res/values*` (`development_compatibility_body`), de modo que la UI siga el idioma activo.
+  L191 [16 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L193 [16 espacios] `DevelopmentSection(title = stringResource(R.string.development_android_integration_section), settings = settings) {`
+      → Obtiene una cadena localizada desde `res/values*` (`development_android_integration_section`), de modo que la UI siga el idioma activo.
+  L194 [20 espacios] `DevelopmentParagraph(stringResource(R.string.development_android_integration_body), settings)`
+      → Obtiene una cadena localizada desde `res/values*` (`development_android_integration_body`), de modo que la UI siga el idioma activo.
+  L195 [16 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L197 [16 espacios] `DevelopmentSection(title = stringResource(R.string.development_credits_section), settings = settings) {`
+      → Obtiene una cadena localizada desde `res/values*` (`development_credits_section`), de modo que la UI siga el idioma activo.
+  L198 [20 espacios] `DevelopmentValueRow(stringResource(R.string.development_primary_author),`
+      → Obtiene una cadena localizada desde `res/values*` (`development_primary_author`), de modo que la UI siga el idioma activo.
+  L199 [24 espacios] `stringResource(R.string.development_primary_author_value), settings)`
+      → Obtiene una cadena localizada desde `res/values*` (`development_primary_author_value`), de modo que la UI siga el idioma activo.
+  L200 [20 espacios] `DevelopmentValueRow(stringResource(R.string.development_github_account), "@lxxsnowxxl", settings)`
+      → Obtiene una cadena localizada desde `res/values*` (`development_github_account`), de modo que la UI siga el idioma activo.
+  L201 [20 espacios] `DevelopmentValueRow(stringResource(R.string.development_assistance),`
+      → Obtiene una cadena localizada desde `res/values*` (`development_assistance`), de modo que la UI siga el idioma activo.
+  L202 [24 espacios] `stringResource(R.string.development_assistance_value), settings)`
+      → Obtiene una cadena localizada desde `res/values*` (`development_assistance_value`), de modo que la UI siga el idioma activo.
+  L203 [20 espacios] `Spacer(Modifier.height(6.dp))`
+      → Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+  L204 [20 espacios] `DevelopmentParagraph(stringResource(R.string.development_credits_body), settings)`
+      → Obtiene una cadena localizada desde `res/values*` (`development_credits_body`), de modo que la UI siga el idioma activo.
+  L205 [16 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L207 [16 espacios] `DevelopmentSection(title = stringResource(R.string.development_repository_section), settings = settings) {`
+      → Obtiene una cadena localizada desde `res/values*` (`development_repository_section`), de modo que la UI siga el idioma activo.
+  L208 [20 espacios] `DevelopmentValueRow(stringResource(R.string.development_repository_host), "GitHub", settings)`
+      → Obtiene una cadena localizada desde `res/values*` (`development_repository_host`), de modo que la UI siga el idioma activo.
+  L209 [20 espacios] `DevelopmentValueRow(stringResource(R.string.development_repository_name), "lxxsnowxxl/Mynotes", settings)`
+      → Obtiene una cadena localizada desde `res/values*` (`development_repository_name`), de modo que la UI siga el idioma activo.
+  L210 [20 espacios] `DevelopmentParagraph(MYNOTES_REPOSITORY_URL, settings)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L211 [20 espacios] `Spacer(Modifier.height(8.dp))`
+      → Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+  L212 [20 espacios] `TextButton(onClick = {`
+      → Crea un control pulsable Material. Su callback `onClick` ejecuta la acción del usuario y sus colores/forma se derivan de la configuración.
+  L213 [24 espacios] `UiSoundPlayer.playAction(context = context, action = UiActionSound.Menu)`
+      → Asigna/configura `UiSoundPlayer.playAction(context` usando `context, action = UiActionSound.Menu)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L214 [24 espacios] `runCatching {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L215 [28 espacios] `context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(MYNOTES_REPOSITORY_URL)))`
+      → Construye un `Intent` para abrir/enviar una acción a otro componente Android. Los extras añadidos después transportan el contexto necesario.
+  L216 [24 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L217 [20 espacios] `}, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.textButtonColors(contentColor = primaryText)) {`
+      → Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+  L218 [24 espacios] `Icon(imageVector = Icons.Default.OpenInNew, contentDescription = null, modifier = Modifier.size(19.dp))`
+      → Renderiza un recurso visual. El modelo/painter y los modifiers siguientes determinan qué se muestra, tamaño, recorte y accesibilidad.
+  L219 [24 espacios] `Text(text = stringResource(R.string.development_repository_open), modifier = Modifier.padding(start = 8.dp),`
+      → Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+  L220 [28 espacios] `fontFamily = fontFamily, fontWeight = FontWeight.SemiBold, fontSize = 13.sp)`
+      → Asigna/configura `fontFamily` usando `fontFamily, fontWeight = FontWeight.SemiBold, fontSize = 13.sp)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L221 [20 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L222 [16 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L224 [16 espacios] `DevelopmentSection(title = stringResource(R.string.development_source_section), settings = settings) {`
+      → Obtiene una cadena localizada desde `res/values*` (`development_source_section`), de modo que la UI siga el idioma activo.
+  L225 [20 espacios] `DevelopmentParagraph(stringResource(R.string.development_source_intro), settings)`
+      → Obtiene una cadena localizada desde `res/values*` (`development_source_intro`), de modo que la UI siga el idioma activo.
+  L226 [20 espacios] `Spacer(Modifier.height(8.dp))`
+      → Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+  L227 [20 espacios] `TextButton(onClick = {`
+      → Crea un control pulsable Material. Su callback `onClick` ejecuta la acción del usuario y sus colores/forma se derivan de la configuración.
+  L228 [24 espacios] `UiSoundPlayer.playAction(context = context, action = UiActionSound.Menu)`
+      → Asigna/configura `UiSoundPlayer.playAction(context` usando `context, action = UiActionSound.Menu)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L229 [24 espacios] `onOpenSourceCode()`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L230 [20 espacios] `}, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.textButtonColors(contentColor = primaryText)) {`
+      → Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+  L231 [24 espacios] `Icon(imageVector = Icons.Default.Code, contentDescription = null, modifier = Modifier.size(19.dp))`
+      → Renderiza un recurso visual. El modelo/painter y los modifiers siguientes determinan qué se muestra, tamaño, recorte y accesibilidad.
+  L232 [24 espacios] `Text(text = stringResource(R.string.development_source_open), modifier = Modifier.padding(start = 8.dp),`
+      → Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+  L233 [28 espacios] `fontFamily = fontFamily, fontWeight = FontWeight.SemiBold, fontSize = 13.sp)`
+      → Asigna/configura `fontFamily` usando `fontFamily, fontWeight = FontWeight.SemiBold, fontSize = 13.sp)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L234 [20 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L235 [16 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L237 [16 espacios] `DevelopmentSection(title = stringResource(R.string.development_legal_section), settings = settings) {`
+      → Obtiene una cadena localizada desde `res/values*` (`development_legal_section`), de modo que la UI siga el idioma activo.
+  L238 [20 espacios] `DevelopmentValueRow(stringResource(R.string.development_copyright),`
+      → Obtiene una cadena localizada desde `res/values*` (`development_copyright`), de modo que la UI siga el idioma activo.
+  L239 [24 espacios] `stringResource(R.string.development_copyright_value, currentYear), settings)`
+      → Obtiene una cadena localizada desde `res/values*` (`development_copyright_value`), de modo que la UI siga el idioma activo.
+  L240 [20 espacios] `DevelopmentValueRow(stringResource(R.string.development_license),`
+      → Obtiene una cadena localizada desde `res/values*` (`development_license`), de modo que la UI siga el idioma activo.
+  L241 [24 espacios] `stringResource(R.string.development_license_value), settings)`
+      → Obtiene una cadena localizada desde `res/values*` (`development_license_value`), de modo que la UI siga el idioma activo.
+  L242 [20 espacios] `Spacer(Modifier.height(6.dp))`
+      → Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+  L243 [20 espacios] `DevelopmentParagraph(stringResource(R.string.development_legal_body), settings)`
+      → Obtiene una cadena localizada desde `res/values*` (`development_legal_body`), de modo que la UI siga el idioma activo.
+  L244 [16 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L246 [16 espacios] `Spacer(Modifier.height(24.dp))`
+      → Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+  L247 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L248 [12 espacios] `ScrollPositionCapsule(state = developmentScrollState,`
+      → Asigna/configura `ScrollPositionCapsule(state` usando `developmentScrollState,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L249 [16 espacios] `modifier = Modifier.align(Alignment.CenterEnd).padding(paddingValues),`
+      → Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+  L250 [16 espacios] `backgroundColor = screenBackground, preferredColor = primaryText)`
+      → Asigna/configura `backgroundColor` usando `screenBackground, preferredColor = primaryText)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L251 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L252 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L253 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L254 [0 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.2 `DevelopmentSection` — líneas 257–270
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    private fun DevelopmentSection(title: String, settings: AppSettings, content: @Composable () -> Unit) {
+
+Propósito:
+    Implementa `DevelopmentSection`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `title: String`: el llamador proporciona este valor/callback a `DevelopmentSection`. Dentro del cuerpo, las líneas donde aparece `title` muestran exactamente cómo afecta al resultado.
+  - `settings: AppSettings`: el llamador proporciona este valor/callback a `DevelopmentSection`. Dentro del cuerpo, las líneas donde aparece `settings` muestran exactamente cómo afecta al resultado.
+  - `content: @Composable () -> Unit`: el llamador proporciona este valor/callback a `DevelopmentSection`. Dentro del cuerpo, las líneas donde aparece `content` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L257 [0 espacios] `private fun DevelopmentSection(title: String, settings: AppSettings, content: @Composable () -> Unit) {`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `DevelopmentSection` se detalla después instrucción por instrucción.
+  L258 [4 espacios] `val background = MaterialTheme.colorScheme.surfaceContainerLow`
+      → Declara `background` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `MaterialTheme.colorScheme.surfaceContainerLow`.
+  L259 [4 espacios] `val text = resolveUiTextColor(settings.textColor, background)`
+      → Declara `text` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolveUiTextColor(settings.textColor, background)`.
+  L260 [4 espacios] `val border = ensureUiContrast(MaterialTheme.colorScheme.outline.copy(alpha = 0.55f), background, 2.2f)`
+      → Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+  L261 [4 espacios] `Surface(modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp), shape = RoundedCornerShape(18.dp),`
+      → Crea una superficie visual Material que agrupa contenido y puede aplicar forma, fondo, elevación, borde y click.
+  L262 [8 espacios] `color = background, border = BorderStroke(1.dp, border), tonalElevation = 0.dp) {`
+      → Asigna/configura `color` usando `background, border = BorderStroke(1.dp, border), tonalElevation = 0.dp) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L263 [8 espacios] `Column(modifier = Modifier.padding(16.dp)) {`
+      → Crea un `Column` de Compose que organiza hijos verticalmente. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+  L264 [12 espacios] `Text(text = title, color = text, fontFamily = appFontFamily(settings.font),`
+      → Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+  L265 [16 espacios] `fontWeight = FontWeight.Bold, fontSize = 17.sp)`
+      → Asigna/configura `fontWeight` usando `FontWeight.Bold, fontSize = 17.sp)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L266 [12 espacios] `Spacer(Modifier.height(10.dp))`
+      → Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+  L267 [12 espacios] `content()`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L268 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L269 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L270 [0 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.3 `DevelopmentValueRow` — líneas 273–284
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    private fun DevelopmentValueRow(label: String, value: String, settings: AppSettings) {
+
+Propósito:
+    Implementa `DevelopmentValueRow`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `label: String`: el llamador proporciona este valor/callback a `DevelopmentValueRow`. Dentro del cuerpo, las líneas donde aparece `label` muestran exactamente cómo afecta al resultado.
+  - `value: String`: el llamador proporciona este valor/callback a `DevelopmentValueRow`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+  - `settings: AppSettings`: el llamador proporciona este valor/callback a `DevelopmentValueRow`. Dentro del cuerpo, las líneas donde aparece `settings` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L273 [0 espacios] `private fun DevelopmentValueRow(label: String, value: String, settings: AppSettings) {`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `DevelopmentValueRow` se detalla después instrucción por instrucción.
+  L274 [4 espacios] `val background = MaterialTheme.colorScheme.surfaceContainerLow`
+      → Declara `background` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `MaterialTheme.colorScheme.surfaceContainerLow`.
+  L275 [4 espacios] `val text = resolveUiTextColor(settings.textColor, background)`
+      → Declara `text` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolveUiTextColor(settings.textColor, background)`.
+  L276 [4 espacios] `val secondary = resolveSecondaryUiTextColor(settings.textColor, background)`
+      → Declara `secondary` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolveSecondaryUiTextColor(settings.textColor, background)`.
+  L277 [4 espacios] `Row(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp), horizontalArrangement = Arrangement.SpaceBetween,`
+      → Crea un `Row` de Compose que organiza hijos horizontalmente. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+  L278 [8 espacios] `verticalAlignment = Alignment.Top) {`
+      → Asigna/configura `verticalAlignment` usando `Alignment.Top) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L279 [8 espacios] `Text(text = label, modifier = Modifier.weight(0.42f), color = secondary,`
+      → Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+  L280 [12 espacios] `fontFamily = appFontFamily(settings.font), fontSize = 13.sp)`
+      → Asigna/configura `fontFamily` usando `appFontFamily(settings.font), fontSize = 13.sp)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L281 [8 espacios] `Text(text = value, modifier = Modifier.weight(0.58f), color = text, fontFamily = appFontFamily(settings.font),`
+      → Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+  L282 [12 espacios] `fontWeight = FontWeight.SemiBold, fontSize = 13.sp)`
+      → Asigna/configura `fontWeight` usando `FontWeight.SemiBold, fontSize = 13.sp)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L283 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L284 [0 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.4 `DevelopmentParagraph` — líneas 287–291
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    private fun DevelopmentParagraph(text: String, settings: AppSettings) {
+
+Propósito:
+    Implementa `DevelopmentParagraph`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `text: String`: el llamador proporciona este valor/callback a `DevelopmentParagraph`. Dentro del cuerpo, las líneas donde aparece `text` muestran exactamente cómo afecta al resultado.
+  - `settings: AppSettings`: el llamador proporciona este valor/callback a `DevelopmentParagraph`. Dentro del cuerpo, las líneas donde aparece `settings` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L287 [0 espacios] `private fun DevelopmentParagraph(text: String, settings: AppSettings) {`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `DevelopmentParagraph` se detalla después instrucción por instrucción.
+  L288 [4 espacios] `val background = MaterialTheme.colorScheme.surfaceContainerLow`
+      → Declara `background` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `MaterialTheme.colorScheme.surfaceContainerLow`.
+  L289 [4 espacios] `val secondary = resolveSecondaryUiTextColor(settings.textColor, background)`
+      → Declara `secondary` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolveSecondaryUiTextColor(settings.textColor, background)`.
+  L290 [4 espacios] `Text(text = text, color = secondary, fontFamily = appFontFamily(settings.font), fontSize = 13.sp, lineHeight = 19.sp)`
+      → Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+  L291 [0 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.5 `PerformanceProfileRow` — líneas 294–312
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    private fun PerformanceProfileRow(title: String, detail: String, selected: Boolean, settings: AppSettings) {
+
+Propósito:
+    Implementa `PerformanceProfileRow`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `title: String`: el llamador proporciona este valor/callback a `PerformanceProfileRow`. Dentro del cuerpo, las líneas donde aparece `title` muestran exactamente cómo afecta al resultado.
+  - `detail: String`: el llamador proporciona este valor/callback a `PerformanceProfileRow`. Dentro del cuerpo, las líneas donde aparece `detail` muestran exactamente cómo afecta al resultado.
+  - `selected: Boolean`: el llamador proporciona este valor/callback a `PerformanceProfileRow`. Dentro del cuerpo, las líneas donde aparece `selected` muestran exactamente cómo afecta al resultado.
+  - `settings: AppSettings`: el llamador proporciona este valor/callback a `PerformanceProfileRow`. Dentro del cuerpo, las líneas donde aparece `settings` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L294 [0 espacios] `private fun PerformanceProfileRow(title: String, detail: String, selected: Boolean, settings: AppSettings) {`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `PerformanceProfileRow` se detalla después instrucción por instrucción.
+  L295 [4 espacios] `val container = if (selected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHigh`
+      → Declara `container` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (selected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHigh`.
+  L296 [4 espacios] `val titleColor = resolveUiTextColor(settings.textColor, container)`
+      → Declara `titleColor` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolveUiTextColor(settings.textColor, container)`.
+  L297 [4 espacios] `val detailColor = resolveSecondaryUiTextColor(settings.textColor, container)`
+      → Declara `detailColor` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolveSecondaryUiTextColor(settings.textColor, container)`.
+  L298 [4 espacios] `Surface(modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(14.dp), color = container, tonalElevation = 0.dp) {`
+      → Crea una superficie visual Material que agrupa contenido y puede aplicar forma, fondo, elevación, borde y click.
+  L299 [8 espacios] `Column(modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp)) {`
+      → Crea un `Column` de Compose que organiza hijos verticalmente. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+  L300 [12 espacios] `Row(verticalAlignment = Alignment.CenterVertically) {`
+      → Crea un `Row` de Compose que organiza hijos horizontalmente. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+  L301 [16 espacios] `Text(text = title, modifier = Modifier.weight(1f), color = titleColor, fontFamily = appFontFamily(settings.font),`
+      → Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+  L302 [20 espacios] `fontWeight = FontWeight.SemiBold, fontSize = 14.sp)`
+      → Asigna/configura `fontWeight` usando `FontWeight.SemiBold, fontSize = 14.sp)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L303 [16 espacios] `if (selected) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `selected`.
+  L304 [20 espacios] `Text(text = stringResource(R.string.development_current_profile), color = titleColor,`
+      → Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+  L305 [24 espacios] `fontFamily = appFontFamily(settings.font), fontWeight = FontWeight.Bold, fontSize = 11.sp)`
+      → Asigna/configura `fontFamily` usando `appFontFamily(settings.font), fontWeight = FontWeight.Bold, fontSize = 11.sp)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L306 [16 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L307 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L308 [12 espacios] `Text(text = detail, modifier = Modifier.padding(top = 3.dp), color = detailColor,`
+      → Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+  L309 [16 espacios] `fontFamily = appFontFamily(settings.font), fontSize = 12.sp, lineHeight = 17.sp)`
+      → Asigna/configura `fontFamily` usando `appFontFamily(settings.font), fontSize = 12.sp, lineHeight = 17.sp)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L310 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L311 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L312 [0 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+6. EXPLICACIÓN COMPLETA LÍNEA POR LÍNEA
+----------------------------------------------------------------------
+Esta sección no omite líneas ejecutables. Repite incluso partes ya explicadas en funciones para poder leer el archivo de arriba abajo sin saltar entre secciones.
+L1: `package com.example.mynotes.ui`
+    Declara que este archivo pertenece al package `com.example.mynotes.ui`; esto determina su namespace Kotlin y cómo lo importan otros archivos.
+L3: `import android.content.Intent`
+    Importa `android.content.Intent` para usar mensajería/navegación entre componentes Android.
+L4: `import android.content.pm.ApplicationInfo`
+    Importa `android.content.pm.ApplicationInfo` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L5: `import android.net.Uri`
+    Importa `android.net.Uri` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L6: `import android.os.Build`
+    Importa `android.os.Build` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L7: `import androidx.compose.foundation.BorderStroke`
+    Importa `androidx.compose.foundation.BorderStroke` para usar layouts, gestos y primitivas visuales de Compose.
+L8: `import androidx.compose.foundation.layout.Arrangement`
+    Importa `androidx.compose.foundation.layout.Arrangement` para usar layouts, gestos y primitivas visuales de Compose.
+L9: `import androidx.compose.foundation.layout.Box`
+    Importa `androidx.compose.foundation.layout.Box` para usar layouts, gestos y primitivas visuales de Compose.
+L10: `import androidx.compose.foundation.layout.Column`
+    Importa `androidx.compose.foundation.layout.Column` para usar layouts, gestos y primitivas visuales de Compose.
+L11: `import androidx.compose.foundation.layout.Row`
+    Importa `androidx.compose.foundation.layout.Row` para usar layouts, gestos y primitivas visuales de Compose.
+L12: `import androidx.compose.foundation.layout.Spacer`
+    Importa `androidx.compose.foundation.layout.Spacer` para usar layouts, gestos y primitivas visuales de Compose.
+L13: `import androidx.compose.foundation.layout.fillMaxSize`
+    Importa `androidx.compose.foundation.layout.fillMaxSize` para usar layouts, gestos y primitivas visuales de Compose.
+L14: `import androidx.compose.foundation.layout.fillMaxWidth`
+    Importa `androidx.compose.foundation.layout.fillMaxWidth` para usar layouts, gestos y primitivas visuales de Compose.
+L15: `import androidx.compose.foundation.layout.height`
+    Importa `androidx.compose.foundation.layout.height` para usar layouts, gestos y primitivas visuales de Compose.
+L16: `import androidx.compose.foundation.layout.padding`
+    Importa `androidx.compose.foundation.layout.padding` para usar layouts, gestos y primitivas visuales de Compose.
+L17: `import androidx.compose.foundation.layout.size`
+    Importa `androidx.compose.foundation.layout.size` para usar layouts, gestos y primitivas visuales de Compose.
+L18: `import androidx.compose.foundation.layout.widthIn`
+    Importa `androidx.compose.foundation.layout.widthIn` para usar layouts, gestos y primitivas visuales de Compose.
+L19: `import androidx.compose.foundation.rememberScrollState`
+    Importa `androidx.compose.foundation.rememberScrollState` para usar layouts, gestos y primitivas visuales de Compose.
+L20: `import androidx.compose.foundation.shape.RoundedCornerShape`
+    Importa `androidx.compose.foundation.shape.RoundedCornerShape` para usar layouts, gestos y primitivas visuales de Compose.
+L21: `import androidx.compose.foundation.verticalScroll`
+    Importa `androidx.compose.foundation.verticalScroll` para usar layouts, gestos y primitivas visuales de Compose.
+L22: `import androidx.compose.material.icons.Icons`
+    Importa `androidx.compose.material.icons.Icons` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L23: `import androidx.compose.material.icons.automirrored.filled.ArrowBack`
+    Importa `androidx.compose.material.icons.automirrored.filled.ArrowBack` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L24: `import androidx.compose.material.icons.filled.Info`
+    Importa `androidx.compose.material.icons.filled.Info` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L25: `import androidx.compose.material.icons.filled.OpenInNew`
+    Importa `androidx.compose.material.icons.filled.OpenInNew` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L26: `import androidx.compose.material.icons.filled.Code`
+    Importa `androidx.compose.material.icons.filled.Code` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L27: `import androidx.compose.material3.ButtonDefaults`
+    Importa `androidx.compose.material3.ButtonDefaults` para usar componentes y tema Material 3.
+L28: `import androidx.compose.material3.Icon`
+    Importa `androidx.compose.material3.Icon` para usar componentes y tema Material 3.
+L29: `import androidx.compose.material3.ExperimentalMaterial3Api`
+    Importa `androidx.compose.material3.ExperimentalMaterial3Api` para usar componentes y tema Material 3.
+L30: `import androidx.compose.material3.MaterialTheme`
+    Importa `androidx.compose.material3.MaterialTheme` para usar componentes y tema Material 3.
+L31: `import androidx.compose.material3.Scaffold`
+    Importa `androidx.compose.material3.Scaffold` para usar componentes y tema Material 3.
+L32: `import androidx.compose.material3.Surface`
+    Importa `androidx.compose.material3.Surface` para usar componentes y tema Material 3.
+L33: `import androidx.compose.material3.Text`
+    Importa `androidx.compose.material3.Text` para usar componentes y tema Material 3.
+L34: `import androidx.compose.material3.TextButton`
+    Importa `androidx.compose.material3.TextButton` para usar componentes y tema Material 3.
+L35: `import androidx.compose.material3.TopAppBar`
+    Importa `androidx.compose.material3.TopAppBar` para usar componentes y tema Material 3.
+L36: `import androidx.compose.runtime.Composable`
+    Importa `androidx.compose.runtime.Composable` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+L37: `import androidx.compose.runtime.remember`
+    Importa `androidx.compose.runtime.remember` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+L38: `import androidx.compose.ui.Alignment`
+    Importa `androidx.compose.ui.Alignment` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L39: `import androidx.compose.ui.Modifier`
+    Importa `androidx.compose.ui.Modifier` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L40: `import androidx.compose.ui.graphics.Color`
+    Importa `androidx.compose.ui.graphics.Color` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L41: `import androidx.compose.ui.platform.LocalContext`
+    Importa `androidx.compose.ui.platform.LocalContext` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L42: `import androidx.compose.ui.res.stringResource`
+    Importa `androidx.compose.ui.res.stringResource` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L43: `import androidx.compose.ui.text.font.FontWeight`
+    Importa `androidx.compose.ui.text.font.FontWeight` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L44: `import androidx.compose.ui.unit.dp`
+    Importa `androidx.compose.ui.unit.dp` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L45: `import androidx.compose.ui.unit.sp`
+    Importa `androidx.compose.ui.unit.sp` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L46: `import com.example.mynotes.R`
+    Importa `com.example.mynotes.R`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L47: `import com.example.mynotes.settings.AppSettings`
+    Importa `com.example.mynotes.settings.AppSettings`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L48: `import com.example.mynotes.ui.components.ScrollPositionCapsule`
+    Importa `com.example.mynotes.ui.components.ScrollPositionCapsule`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L49: `import com.example.mynotes.ui.motion.AnimatedScreenEntry`
+    Importa `com.example.mynotes.ui.motion.AnimatedScreenEntry`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L50: `import com.example.mynotes.ui.sound.UiActionSound`
+    Importa `com.example.mynotes.ui.sound.UiActionSound`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L51: `import com.example.mynotes.ui.sound.UiSoundPlayer`
+    Importa `com.example.mynotes.ui.sound.UiSoundPlayer`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L52: `import com.example.mynotes.ui.theme.appFontFamily`
+    Importa `com.example.mynotes.ui.theme.appFontFamily`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L53: `import com.example.mynotes.ui.theme.ensureUiContrast`
+    Importa `com.example.mynotes.ui.theme.ensureUiContrast`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L54: `import com.example.mynotes.ui.theme.resolveSecondaryUiTextColor`
+    Importa `com.example.mynotes.ui.theme.resolveSecondaryUiTextColor`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L55: `import com.example.mynotes.ui.theme.resolveUiTextColor`
+    Importa `com.example.mynotes.ui.theme.resolveUiTextColor`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L56: `import java.util.Calendar`
+    Importa `java.util.Calendar` de la biblioteca estándar/JVM para operaciones de lenguaje, fechas, colecciones, I/O o utilidades.
+L58: `private const val MYNOTES_REPOSITORY_URL = "https://github.com/lxxsnowxxl/Mynotes"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L59: `private const val MYNOTES_COMPILE_SDK = 37`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L60: `private const val MYNOTES_JAVA_COMPATIBILITY = 11`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L62: `/**`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L63: `* Pantalla secundaria puramente informativa.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L64: `*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L65: `* No modifica AppSettings, notas, adjuntos ni cachés. Su única responsabilidad`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L66: `* es mostrar, con datos obtenidos del paquete y de la configuración actual,`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L67: `* cómo está construida MyNotes y qué decisiones técnicas usa en ejecución.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L68: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L69: `@OptIn(ExperimentalMaterial3Api::class)`
+    Aplica la anotación `@OptIn(ExperimentalMaterial3Api::class)` a la declaración siguiente; la anotación modifica metadatos, generación de código o comportamiento del framework.
+L70: `@Composable`
+    Marca la función siguiente como Composable: Compose puede ejecutarla durante composición/recomposición para describir UI a partir de estado.
+L71: `fun DevelopmentInfoScreen(settings: AppSettings, onOpenSourceCode: () -> Unit, onBack: () -> Unit) {`
+    Declara una función. El bloque de `DevelopmentInfoScreen` se detalla después instrucción por instrucción.
+L72: `val context = LocalContext.current`
+    Declara `context` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `LocalContext.current`.
+L73: `val fontFamily = remember(settings.font) { appFontFamily(settings.font) }`
+    Memoriza el resultado durante recomposiciones de Compose. Solo se recalcula cuando cambian las claves de `remember`, reduciendo trabajo y preservando identidad/estado local.
+L74: `val developmentScrollState = rememberScrollState()`
+    Declara `developmentScrollState` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `rememberScrollState()`.
+L75: `val packageInfo = remember(context.packageName) {`
+    Memoriza el resultado durante recomposiciones de Compose. Solo se recalcula cuando cambian las claves de `remember`, reduciendo trabajo y preservando identidad/estado local.
+L76: `@Suppress("DEPRECATION")`
+    Aplica la anotación `@Suppress("DEPRECATION")` a la declaración siguiente; la anotación modifica metadatos, generación de código o comportamiento del framework.
+L77: `context.packageManager.getPackageInfo(context.packageName, 0)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L78: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L79: `val versionName = packageInfo.versionName.orEmpty().ifBlank { "1.0" }`
+    Declara `versionName` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `packageInfo.versionName.orEmpty().ifBlank { "1.0" }`.
+L80: `val versionCode = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) packageInfo.longVersionCode else {`
+    Declara `versionCode` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.P) packageInfo.longVersionCode else {`.
+L81: `@Suppress("DEPRECATION")`
+    Aplica la anotación `@Suppress("DEPRECATION")` a la declaración siguiente; la anotación modifica metadatos, generación de código o comportamiento del framework.
+L82: `packageInfo.versionCode.toLong()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L83: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L84: `val applicationInfo = context.applicationInfo`
+    Declara `applicationInfo` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `context.applicationInfo`.
+L85: `val buildType = if ((applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) != 0) {`
+    Declara `buildType` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if ((applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) != 0) {`.
+L86: `stringResource(R.string.development_build_debug)`
+    Obtiene una cadena localizada desde `res/values*` (`development_build_debug`), de modo que la UI siga el idioma activo.
+L87: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L88: `stringResource(R.string.development_build_release)`
+    Obtiene una cadena localizada desde `res/values*` (`development_build_release`), de modo que la UI siga el idioma activo.
+L89: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L90: `val minSdk = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) applicationInfo.minSdkVersion else 24`
+    Declara `minSdk` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) applicationInfo.minSdkVersion else 24`.
+L91: `val targetSdk = applicationInfo.targetSdkVersion`
+    Declara `targetSdk` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `applicationInfo.targetSdkVersion`.
+L92: `val screenBackground = MaterialTheme.colorScheme.background`
+    Declara `screenBackground` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `MaterialTheme.colorScheme.background`.
+L93: `val primaryText = resolveUiTextColor(settings.textColor, screenBackground)`
+    Declara `primaryText` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolveUiTextColor(settings.textColor, screenBackground)`.
+L94: `val secondaryText = resolveSecondaryUiTextColor(settings.textColor, screenBackground)`
+    Declara `secondaryText` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolveSecondaryUiTextColor(settings.textColor, screenBackground)`.
+L95: `val currentYear = remember { Calendar.getInstance().get(Calendar.YEAR) }`
+    Memoriza el resultado durante recomposiciones de Compose. Solo se recalcula cuando cambian las claves de `remember`, reduciendo trabajo y preservando identidad/estado local.
+L97: `AnimatedScreenEntry(animationsEnabled = settings.animationsEnabled, animationSpeed = settings.animationSpeed) {`
+    Asigna/configura `AnimatedScreenEntry(animationsEnabled` usando `settings.animationsEnabled, animationSpeed = settings.animationSpeed) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L98: `Scaffold(containerColor = screenBackground,`
+    Crea la estructura Material de una pantalla Compose y reserva slots para contenido, barras y/o FAB manteniendo insets coherentes.
+L99: `topBar = {`
+    Asigna/configura `topBar` usando `{`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L100: `TopAppBar(title = {`
+    Asigna/configura `TopAppBar(title` usando `{`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L101: `Text(text = stringResource(R.string.development_info_title), fontFamily = fontFamily,`
+    Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+L102: `fontWeight = FontWeight.Bold, fontSize = 24.sp)`
+    Asigna/configura `fontWeight` usando `FontWeight.Bold, fontSize = 24.sp)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L103: `},`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L104: `navigationIcon = {`
+    Asigna/configura `navigationIcon` usando `{`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L105: `TextButton(onClick = {`
+    Crea un control pulsable Material. Su callback `onClick` ejecuta la acción del usuario y sus colores/forma se derivan de la configuración.
+L106: `UiSoundPlayer.playAction(context = context, action = UiActionSound.Back)`
+    Asigna/configura `UiSoundPlayer.playAction(context` usando `context, action = UiActionSound.Back)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L107: `onBack()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L108: `}, colors = ButtonDefaults.textButtonColors(contentColor = primaryText)) {`
+    Asigna/configura `}, colors` usando `ButtonDefaults.textButtonColors(contentColor = primaryText)) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L109: `Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack,`
+    Renderiza un recurso visual. El modelo/painter y los modifiers siguientes determinan qué se muestra, tamaño, recorte y accesibilidad.
+L110: `contentDescription = stringResource(R.string.mock_back), modifier = Modifier.size(25.dp))`
+    Obtiene una cadena localizada desde `res/values*` (`mock_back`), de modo que la UI siga el idioma activo.
+L111: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L112: `})`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L113: `}) { paddingValues ->`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `}) { paddingValues ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L114: `Box(modifier = Modifier.fillMaxSize()) {`
+    Crea un `Box` de Compose que superpone/posiciona hijos dentro de un mismo contenedor. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+L115: `Column(modifier = Modifier.fillMaxSize().padding(paddingValues).verticalScroll(developmentScrollState)`
+    Crea un `Column` de Compose que organiza hijos verticalmente. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+L116: `.widthIn(max = 840.dp).padding(horizontal = 14.dp, vertical = 16.dp)) {`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L117: `Row(verticalAlignment = Alignment.CenterVertically) {`
+    Crea un `Row` de Compose que organiza hijos horizontalmente. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+L118: `Icon(imageVector = Icons.Default.Info, contentDescription = null, tint = primaryText,`
+    Renderiza un recurso visual. El modelo/painter y los modifiers siguientes determinan qué se muestra, tamaño, recorte y accesibilidad.
+L119: `modifier = Modifier.size(28.dp))`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L120: `Column(modifier = Modifier.padding(start = 12.dp)) {`
+    Crea un `Column` de Compose que organiza hijos verticalmente. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+L121: `Text(text = "MyNotes", color = primaryText, fontFamily = fontFamily,`
+    Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+L122: `fontWeight = FontWeight.Bold, fontSize = 24.sp)`
+    Asigna/configura `fontWeight` usando `FontWeight.Bold, fontSize = 24.sp)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L123: `Text(text = stringResource(R.string.development_info_subtitle), color = secondaryText,`
+    Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+L124: `fontFamily = fontFamily, fontSize = 13.sp)`
+    Asigna/configura `fontFamily` usando `fontFamily, fontSize = 13.sp)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L125: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L126: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L127: `Spacer(Modifier.height(18.dp))`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L129: `DevelopmentSection(title = stringResource(R.string.development_app_section), settings = settings) {`
+    Obtiene una cadena localizada desde `res/values*` (`development_app_section`), de modo que la UI siga el idioma activo.
+L130: `DevelopmentValueRow(stringResource(R.string.development_version), "$versionName ($versionCode)", settings)`
+    Obtiene una cadena localizada desde `res/values*` (`development_version`), de modo que la UI siga el idioma activo.
+L131: `DevelopmentValueRow(stringResource(R.string.development_package), context.packageName, settings)`
+    Obtiene una cadena localizada desde `res/values*` (`development_package`), de modo que la UI siga el idioma activo.
+L132: `DevelopmentValueRow(stringResource(R.string.development_build_type), buildType, settings)`
+    Obtiene una cadena localizada desde `res/values*` (`development_build_type`), de modo que la UI siga el idioma activo.
+L133: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L135: `DevelopmentSection(title = stringResource(R.string.development_sdk_section), settings = settings) {`
+    Obtiene una cadena localizada desde `res/values*` (`development_sdk_section`), de modo que la UI siga el idioma activo.
+L136: `DevelopmentValueRow(stringResource(R.string.development_min_sdk), "API $minSdk", settings)`
+    Obtiene una cadena localizada desde `res/values*` (`development_min_sdk`), de modo que la UI siga el idioma activo.
+L137: `DevelopmentValueRow(stringResource(R.string.development_target_sdk), "API $targetSdk", settings)`
+    Obtiene una cadena localizada desde `res/values*` (`development_target_sdk`), de modo que la UI siga el idioma activo.
+L138: `DevelopmentValueRow(stringResource(R.string.development_compile_sdk), "API $MYNOTES_COMPILE_SDK", settings)`
+    Obtiene una cadena localizada desde `res/values*` (`development_compile_sdk`), de modo que la UI siga el idioma activo.
+L139: `DevelopmentValueRow(stringResource(R.string.development_device_sdk), "API ${Build.VERSION.SDK_INT}", settings)`
+    Obtiene una cadena localizada desde `res/values*` (`development_device_sdk`), de modo que la UI siga el idioma activo.
+L140: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L142: `DevelopmentSection(title = stringResource(R.string.development_build_section), settings = settings) {`
+    Obtiene una cadena localizada desde `res/values*` (`development_build_section`), de modo que la UI siga el idioma activo.
+L143: `DevelopmentValueRow(stringResource(R.string.development_build_system),`
+    Obtiene una cadena localizada desde `res/values*` (`development_build_system`), de modo que la UI siga el idioma activo.
+L144: `stringResource(R.string.development_build_system_value), settings)`
+    Obtiene una cadena localizada desde `res/values*` (`development_build_system_value`), de modo que la UI siga el idioma activo.
+L145: `DevelopmentValueRow(stringResource(R.string.development_java_compatibility),`
+    Obtiene una cadena localizada desde `res/values*` (`development_java_compatibility`), de modo que la UI siga el idioma activo.
+L146: `"Java $MYNOTES_JAVA_COMPATIBILITY", settings)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L147: `DevelopmentValueRow(stringResource(R.string.development_release_optimization),`
+    Obtiene una cadena localizada desde `res/values*` (`development_release_optimization`), de modo que la UI siga el idioma activo.
+L148: `stringResource(R.string.development_release_optimization_value), settings)`
+    Obtiene una cadena localizada desde `res/values*` (`development_release_optimization_value`), de modo que la UI siga el idioma activo.
+L149: `Spacer(Modifier.height(6.dp))`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L150: `DevelopmentParagraph(stringResource(R.string.development_build_body), settings)`
+    Obtiene una cadena localizada desde `res/values*` (`development_build_body`), de modo que la UI siga el idioma activo.
+L151: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L153: `DevelopmentSection(title = stringResource(R.string.development_ui_section), settings = settings) {`
+    Obtiene una cadena localizada desde `res/values*` (`development_ui_section`), de modo que la UI siga el idioma activo.
+L154: `DevelopmentParagraph(stringResource(R.string.development_ui_body), settings)`
+    Obtiene una cadena localizada desde `res/values*` (`development_ui_body`), de modo que la UI siga el idioma activo.
+L155: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L157: `DevelopmentSection(title = stringResource(R.string.development_architecture_section), settings = settings) {`
+    Obtiene una cadena localizada desde `res/values*` (`development_architecture_section`), de modo que la UI siga el idioma activo.
+L158: `DevelopmentParagraph(stringResource(R.string.development_architecture_body), settings)`
+    Obtiene una cadena localizada desde `res/values*` (`development_architecture_body`), de modo que la UI siga el idioma activo.
+L159: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L161: `DevelopmentSection(title = stringResource(R.string.development_storage_section), settings = settings) {`
+    Obtiene una cadena localizada desde `res/values*` (`development_storage_section`), de modo que la UI siga el idioma activo.
+L162: `DevelopmentParagraph(stringResource(R.string.development_storage_body), settings)`
+    Obtiene una cadena localizada desde `res/values*` (`development_storage_body`), de modo que la UI siga el idioma activo.
+L163: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L165: `DevelopmentSection(title = stringResource(R.string.development_media_section), settings = settings) {`
+    Obtiene una cadena localizada desde `res/values*` (`development_media_section`), de modo que la UI siga el idioma activo.
+L166: `DevelopmentParagraph(stringResource(R.string.development_media_body), settings)`
+    Obtiene una cadena localizada desde `res/values*` (`development_media_body`), de modo que la UI siga el idioma activo.
+L167: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L169: `DevelopmentSection(title = stringResource(R.string.development_performance_section), settings = settings) {`
+    Obtiene una cadena localizada desde `res/values*` (`development_performance_section`), de modo que la UI siga el idioma activo.
+L170: `DevelopmentParagraph(stringResource(R.string.development_performance_intro), settings)`
+    Obtiene una cadena localizada desde `res/values*` (`development_performance_intro`), de modo que la UI siga el idioma activo.
+L171: `Spacer(Modifier.height(10.dp))`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L172: `PerformanceProfileRow(title = stringResource(R.string.development_profile_performance),`
+    Obtiene una cadena localizada desde `res/values*` (`development_profile_performance`), de modo que la UI siga el idioma activo.
+L173: `detail = stringResource(R.string.development_profile_performance_detail), selected = settings.performanceMode == "performance",`
+    Obtiene una cadena localizada desde `res/values*` (`development_profile_performance_detail`), de modo que la UI siga el idioma activo.
+L174: `settings = settings)`
+    Asigna/configura `settings` usando `settings)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L175: `Spacer(Modifier.height(8.dp))`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L176: `PerformanceProfileRow(title = stringResource(R.string.development_profile_balanced),`
+    Obtiene una cadena localizada desde `res/values*` (`development_profile_balanced`), de modo que la UI siga el idioma activo.
+L177: `detail = stringResource(R.string.development_profile_balanced_detail), selected = settings.performanceMode == "balanced",`
+    Obtiene una cadena localizada desde `res/values*` (`development_profile_balanced_detail`), de modo que la UI siga el idioma activo.
+L178: `settings = settings)`
+    Asigna/configura `settings` usando `settings)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L179: `Spacer(Modifier.height(8.dp))`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L180: `PerformanceProfileRow(title = stringResource(R.string.development_profile_quality),`
+    Obtiene una cadena localizada desde `res/values*` (`development_profile_quality`), de modo que la UI siga el idioma activo.
+L181: `detail = stringResource(R.string.development_profile_quality_detail), selected = settings.performanceMode == "quality",`
+    Obtiene una cadena localizada desde `res/values*` (`development_profile_quality_detail`), de modo que la UI siga el idioma activo.
+L182: `settings = settings)`
+    Asigna/configura `settings` usando `settings)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L183: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L185: `DevelopmentSection(title = stringResource(R.string.development_stack_section), settings = settings) {`
+    Obtiene una cadena localizada desde `res/values*` (`development_stack_section`), de modo que la UI siga el idioma activo.
+L186: `DevelopmentParagraph(stringResource(R.string.development_stack_body), settings)`
+    Obtiene una cadena localizada desde `res/values*` (`development_stack_body`), de modo que la UI siga el idioma activo.
+L187: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L189: `DevelopmentSection(title = stringResource(R.string.development_compatibility_section), settings = settings) {`
+    Obtiene una cadena localizada desde `res/values*` (`development_compatibility_section`), de modo que la UI siga el idioma activo.
+L190: `DevelopmentParagraph(stringResource(R.string.development_compatibility_body), settings)`
+    Obtiene una cadena localizada desde `res/values*` (`development_compatibility_body`), de modo que la UI siga el idioma activo.
+L191: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L193: `DevelopmentSection(title = stringResource(R.string.development_android_integration_section), settings = settings) {`
+    Obtiene una cadena localizada desde `res/values*` (`development_android_integration_section`), de modo que la UI siga el idioma activo.
+L194: `DevelopmentParagraph(stringResource(R.string.development_android_integration_body), settings)`
+    Obtiene una cadena localizada desde `res/values*` (`development_android_integration_body`), de modo que la UI siga el idioma activo.
+L195: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L197: `DevelopmentSection(title = stringResource(R.string.development_credits_section), settings = settings) {`
+    Obtiene una cadena localizada desde `res/values*` (`development_credits_section`), de modo que la UI siga el idioma activo.
+L198: `DevelopmentValueRow(stringResource(R.string.development_primary_author),`
+    Obtiene una cadena localizada desde `res/values*` (`development_primary_author`), de modo que la UI siga el idioma activo.
+L199: `stringResource(R.string.development_primary_author_value), settings)`
+    Obtiene una cadena localizada desde `res/values*` (`development_primary_author_value`), de modo que la UI siga el idioma activo.
+L200: `DevelopmentValueRow(stringResource(R.string.development_github_account), "@lxxsnowxxl", settings)`
+    Obtiene una cadena localizada desde `res/values*` (`development_github_account`), de modo que la UI siga el idioma activo.
+L201: `DevelopmentValueRow(stringResource(R.string.development_assistance),`
+    Obtiene una cadena localizada desde `res/values*` (`development_assistance`), de modo que la UI siga el idioma activo.
+L202: `stringResource(R.string.development_assistance_value), settings)`
+    Obtiene una cadena localizada desde `res/values*` (`development_assistance_value`), de modo que la UI siga el idioma activo.
+L203: `Spacer(Modifier.height(6.dp))`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L204: `DevelopmentParagraph(stringResource(R.string.development_credits_body), settings)`
+    Obtiene una cadena localizada desde `res/values*` (`development_credits_body`), de modo que la UI siga el idioma activo.
+L205: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L207: `DevelopmentSection(title = stringResource(R.string.development_repository_section), settings = settings) {`
+    Obtiene una cadena localizada desde `res/values*` (`development_repository_section`), de modo que la UI siga el idioma activo.
+L208: `DevelopmentValueRow(stringResource(R.string.development_repository_host), "GitHub", settings)`
+    Obtiene una cadena localizada desde `res/values*` (`development_repository_host`), de modo que la UI siga el idioma activo.
+L209: `DevelopmentValueRow(stringResource(R.string.development_repository_name), "lxxsnowxxl/Mynotes", settings)`
+    Obtiene una cadena localizada desde `res/values*` (`development_repository_name`), de modo que la UI siga el idioma activo.
+L210: `DevelopmentParagraph(MYNOTES_REPOSITORY_URL, settings)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L211: `Spacer(Modifier.height(8.dp))`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L212: `TextButton(onClick = {`
+    Crea un control pulsable Material. Su callback `onClick` ejecuta la acción del usuario y sus colores/forma se derivan de la configuración.
+L213: `UiSoundPlayer.playAction(context = context, action = UiActionSound.Menu)`
+    Asigna/configura `UiSoundPlayer.playAction(context` usando `context, action = UiActionSound.Menu)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L214: `runCatching {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L215: `context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(MYNOTES_REPOSITORY_URL)))`
+    Construye un `Intent` para abrir/enviar una acción a otro componente Android. Los extras añadidos después transportan el contexto necesario.
+L216: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L217: `}, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.textButtonColors(contentColor = primaryText)) {`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L218: `Icon(imageVector = Icons.Default.OpenInNew, contentDescription = null, modifier = Modifier.size(19.dp))`
+    Renderiza un recurso visual. El modelo/painter y los modifiers siguientes determinan qué se muestra, tamaño, recorte y accesibilidad.
+L219: `Text(text = stringResource(R.string.development_repository_open), modifier = Modifier.padding(start = 8.dp),`
+    Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+L220: `fontFamily = fontFamily, fontWeight = FontWeight.SemiBold, fontSize = 13.sp)`
+    Asigna/configura `fontFamily` usando `fontFamily, fontWeight = FontWeight.SemiBold, fontSize = 13.sp)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L221: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L222: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L224: `DevelopmentSection(title = stringResource(R.string.development_source_section), settings = settings) {`
+    Obtiene una cadena localizada desde `res/values*` (`development_source_section`), de modo que la UI siga el idioma activo.
+L225: `DevelopmentParagraph(stringResource(R.string.development_source_intro), settings)`
+    Obtiene una cadena localizada desde `res/values*` (`development_source_intro`), de modo que la UI siga el idioma activo.
+L226: `Spacer(Modifier.height(8.dp))`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L227: `TextButton(onClick = {`
+    Crea un control pulsable Material. Su callback `onClick` ejecuta la acción del usuario y sus colores/forma se derivan de la configuración.
+L228: `UiSoundPlayer.playAction(context = context, action = UiActionSound.Menu)`
+    Asigna/configura `UiSoundPlayer.playAction(context` usando `context, action = UiActionSound.Menu)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L229: `onOpenSourceCode()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L230: `}, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.textButtonColors(contentColor = primaryText)) {`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L231: `Icon(imageVector = Icons.Default.Code, contentDescription = null, modifier = Modifier.size(19.dp))`
+    Renderiza un recurso visual. El modelo/painter y los modifiers siguientes determinan qué se muestra, tamaño, recorte y accesibilidad.
+L232: `Text(text = stringResource(R.string.development_source_open), modifier = Modifier.padding(start = 8.dp),`
+    Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+L233: `fontFamily = fontFamily, fontWeight = FontWeight.SemiBold, fontSize = 13.sp)`
+    Asigna/configura `fontFamily` usando `fontFamily, fontWeight = FontWeight.SemiBold, fontSize = 13.sp)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L234: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L235: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L237: `DevelopmentSection(title = stringResource(R.string.development_legal_section), settings = settings) {`
+    Obtiene una cadena localizada desde `res/values*` (`development_legal_section`), de modo que la UI siga el idioma activo.
+L238: `DevelopmentValueRow(stringResource(R.string.development_copyright),`
+    Obtiene una cadena localizada desde `res/values*` (`development_copyright`), de modo que la UI siga el idioma activo.
+L239: `stringResource(R.string.development_copyright_value, currentYear), settings)`
+    Obtiene una cadena localizada desde `res/values*` (`development_copyright_value`), de modo que la UI siga el idioma activo.
+L240: `DevelopmentValueRow(stringResource(R.string.development_license),`
+    Obtiene una cadena localizada desde `res/values*` (`development_license`), de modo que la UI siga el idioma activo.
+L241: `stringResource(R.string.development_license_value), settings)`
+    Obtiene una cadena localizada desde `res/values*` (`development_license_value`), de modo que la UI siga el idioma activo.
+L242: `Spacer(Modifier.height(6.dp))`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L243: `DevelopmentParagraph(stringResource(R.string.development_legal_body), settings)`
+    Obtiene una cadena localizada desde `res/values*` (`development_legal_body`), de modo que la UI siga el idioma activo.
+L244: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L246: `Spacer(Modifier.height(24.dp))`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L247: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L248: `ScrollPositionCapsule(state = developmentScrollState,`
+    Asigna/configura `ScrollPositionCapsule(state` usando `developmentScrollState,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L249: `modifier = Modifier.align(Alignment.CenterEnd).padding(paddingValues),`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L250: `backgroundColor = screenBackground, preferredColor = primaryText)`
+    Asigna/configura `backgroundColor` usando `screenBackground, preferredColor = primaryText)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L251: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L252: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L253: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L254: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L256: `@Composable`
+    Marca la función siguiente como Composable: Compose puede ejecutarla durante composición/recomposición para describir UI a partir de estado.
+L257: `private fun DevelopmentSection(title: String, settings: AppSettings, content: @Composable () -> Unit) {`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `DevelopmentSection` se detalla después instrucción por instrucción.
+L258: `val background = MaterialTheme.colorScheme.surfaceContainerLow`
+    Declara `background` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `MaterialTheme.colorScheme.surfaceContainerLow`.
+L259: `val text = resolveUiTextColor(settings.textColor, background)`
+    Declara `text` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolveUiTextColor(settings.textColor, background)`.
+L260: `val border = ensureUiContrast(MaterialTheme.colorScheme.outline.copy(alpha = 0.55f), background, 2.2f)`
+    Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+L261: `Surface(modifier = Modifier.fillMaxWidth().padding(bottom = 12.dp), shape = RoundedCornerShape(18.dp),`
+    Crea una superficie visual Material que agrupa contenido y puede aplicar forma, fondo, elevación, borde y click.
+L262: `color = background, border = BorderStroke(1.dp, border), tonalElevation = 0.dp) {`
+    Asigna/configura `color` usando `background, border = BorderStroke(1.dp, border), tonalElevation = 0.dp) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L263: `Column(modifier = Modifier.padding(16.dp)) {`
+    Crea un `Column` de Compose que organiza hijos verticalmente. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+L264: `Text(text = title, color = text, fontFamily = appFontFamily(settings.font),`
+    Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+L265: `fontWeight = FontWeight.Bold, fontSize = 17.sp)`
+    Asigna/configura `fontWeight` usando `FontWeight.Bold, fontSize = 17.sp)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L266: `Spacer(Modifier.height(10.dp))`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L267: `content()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L268: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L269: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L270: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L272: `@Composable`
+    Marca la función siguiente como Composable: Compose puede ejecutarla durante composición/recomposición para describir UI a partir de estado.
+L273: `private fun DevelopmentValueRow(label: String, value: String, settings: AppSettings) {`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `DevelopmentValueRow` se detalla después instrucción por instrucción.
+L274: `val background = MaterialTheme.colorScheme.surfaceContainerLow`
+    Declara `background` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `MaterialTheme.colorScheme.surfaceContainerLow`.
+L275: `val text = resolveUiTextColor(settings.textColor, background)`
+    Declara `text` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolveUiTextColor(settings.textColor, background)`.
+L276: `val secondary = resolveSecondaryUiTextColor(settings.textColor, background)`
+    Declara `secondary` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolveSecondaryUiTextColor(settings.textColor, background)`.
+L277: `Row(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp), horizontalArrangement = Arrangement.SpaceBetween,`
+    Crea un `Row` de Compose que organiza hijos horizontalmente. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+L278: `verticalAlignment = Alignment.Top) {`
+    Asigna/configura `verticalAlignment` usando `Alignment.Top) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L279: `Text(text = label, modifier = Modifier.weight(0.42f), color = secondary,`
+    Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+L280: `fontFamily = appFontFamily(settings.font), fontSize = 13.sp)`
+    Asigna/configura `fontFamily` usando `appFontFamily(settings.font), fontSize = 13.sp)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L281: `Text(text = value, modifier = Modifier.weight(0.58f), color = text, fontFamily = appFontFamily(settings.font),`
+    Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+L282: `fontWeight = FontWeight.SemiBold, fontSize = 13.sp)`
+    Asigna/configura `fontWeight` usando `FontWeight.SemiBold, fontSize = 13.sp)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L283: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L284: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L286: `@Composable`
+    Marca la función siguiente como Composable: Compose puede ejecutarla durante composición/recomposición para describir UI a partir de estado.
+L287: `private fun DevelopmentParagraph(text: String, settings: AppSettings) {`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `DevelopmentParagraph` se detalla después instrucción por instrucción.
+L288: `val background = MaterialTheme.colorScheme.surfaceContainerLow`
+    Declara `background` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `MaterialTheme.colorScheme.surfaceContainerLow`.
+L289: `val secondary = resolveSecondaryUiTextColor(settings.textColor, background)`
+    Declara `secondary` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolveSecondaryUiTextColor(settings.textColor, background)`.
+L290: `Text(text = text, color = secondary, fontFamily = appFontFamily(settings.font), fontSize = 13.sp, lineHeight = 19.sp)`
+    Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+L291: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L293: `@Composable`
+    Marca la función siguiente como Composable: Compose puede ejecutarla durante composición/recomposición para describir UI a partir de estado.
+L294: `private fun PerformanceProfileRow(title: String, detail: String, selected: Boolean, settings: AppSettings) {`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `PerformanceProfileRow` se detalla después instrucción por instrucción.
+L295: `val container = if (selected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHigh`
+    Declara `container` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (selected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHigh`.
+L296: `val titleColor = resolveUiTextColor(settings.textColor, container)`
+    Declara `titleColor` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolveUiTextColor(settings.textColor, container)`.
+L297: `val detailColor = resolveSecondaryUiTextColor(settings.textColor, container)`
+    Declara `detailColor` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolveSecondaryUiTextColor(settings.textColor, container)`.
+L298: `Surface(modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(14.dp), color = container, tonalElevation = 0.dp) {`
+    Crea una superficie visual Material que agrupa contenido y puede aplicar forma, fondo, elevación, borde y click.
+L299: `Column(modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp)) {`
+    Crea un `Column` de Compose que organiza hijos verticalmente. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+L300: `Row(verticalAlignment = Alignment.CenterVertically) {`
+    Crea un `Row` de Compose que organiza hijos horizontalmente. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+L301: `Text(text = title, modifier = Modifier.weight(1f), color = titleColor, fontFamily = appFontFamily(settings.font),`
+    Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+L302: `fontWeight = FontWeight.SemiBold, fontSize = 14.sp)`
+    Asigna/configura `fontWeight` usando `FontWeight.SemiBold, fontSize = 14.sp)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L303: `if (selected) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `selected`.
+L304: `Text(text = stringResource(R.string.development_current_profile), color = titleColor,`
+    Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+L305: `fontFamily = appFontFamily(settings.font), fontWeight = FontWeight.Bold, fontSize = 11.sp)`
+    Asigna/configura `fontFamily` usando `appFontFamily(settings.font), fontWeight = FontWeight.Bold, fontSize = 11.sp)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L306: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L307: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L308: `Text(text = detail, modifier = Modifier.padding(top = 3.dp), color = detailColor,`
+    Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+L309: `fontFamily = appFontFamily(settings.font), fontSize = 12.sp, lineHeight = 17.sp)`
+    Asigna/configura `fontFamily` usando `appFontFamily(settings.font), fontSize = 12.sp, lineHeight = 17.sp)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L310: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L311: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L312: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+7. RECURSOS ANDROID REFERENCIADOS
+----------------------------------------------------------------------
+- `R.string.development_android_integration_body`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_android_integration_section`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_app_section`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_architecture_body`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_architecture_section`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_assistance`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_assistance_value`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_build_body`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_build_debug`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_build_release`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_build_section`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_build_system`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_build_system_value`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_build_type`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_compatibility_body`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_compatibility_section`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_compile_sdk`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_copyright`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_copyright_value`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_credits_body`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_credits_section`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_current_profile`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_device_sdk`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_github_account`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_info_subtitle`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_info_title`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_java_compatibility`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_legal_body`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_legal_section`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_license`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_license_value`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_media_body`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_media_section`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_min_sdk`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_package`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_performance_intro`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_performance_section`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_primary_author`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_primary_author_value`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_profile_balanced`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_profile_balanced_detail`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_profile_performance`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_profile_performance_detail`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_profile_quality`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_profile_quality_detail`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_release_optimization`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_release_optimization_value`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_repository_host`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_repository_name`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_repository_open`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_repository_section`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_sdk_section`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_source_intro`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_source_open`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_source_section`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_stack_body`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_stack_section`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_storage_body`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_storage_section`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_target_sdk`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_ui_body`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_ui_section`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.development_version`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.mock_back`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+
+8. QUIÉN USA ESTE COMPONENTE
+----------------------------------------------------------------------
+- No se detectaron referencias externas por nombre a los tipos principales; puede ser punto de entrada Android, recurso invocado por Manifest o archivo de prueba.
+
+9. QUÉ PUEDE ROMPERSE SI LO MODIFICAS
+----------------------------------------------------------------------
+- Conservar firmas públicas/callbacks y comprobar los archivos que aparecen en “quién usa este componente” antes de renombrar o cambiar tipos.
+
+10. CHECKLIST DE PRUEBA DESPUÉS DE MODIFICAR ESTE ARCHIVO
+----------------------------------------------------------------------
+- Compilar `assembleDebug` y resolver primero errores de Kotlin/AAPT.
+- Abrir la pantalla/flujo relacionado y comprobar ida y vuelta (back) sin estado duplicado.
+- Cambiar tema/paleta y verificar contraste si este archivo dibuja UI.
+
+==============================================================================================================
+FIN DEL ARCHIVO
+==============================================================================================================

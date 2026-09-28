@@ -1,0 +1,106 @@
+MYNOTES — EXPLICACIÓN ULTRA DETALLADA
+==============================================================================================================
+Archivo 52/72: app/src/main/java/com/example/mynotes/ui/theme/SettingsSectionColors.kt
+SHA-256: 5ecc52a515728448c4813dee55972736a4bd13c563b8a3bcefabbc6009f17b57
+Líneas del fuente: 17
+Package: com.example.mynotes.ui.theme
+
+1. RESPONSABILIDAD EXACTA DEL ARCHIVO
+----------------------------------------------------------------------
+Calcula colores internos de secciones/paneles de Settings con contraste adecuado.
+
+2. DÓNDE ENCAJA EN LA ARQUITECTURA
+----------------------------------------------------------------------
+Este archivo pertenece principalmente a la **capa de interfaz Compose/Activities**. No debe analizarse aislado: las referencias cruzadas y callbacks se detallan más abajo.
+
+3. IMPORTACIONES, UNA POR UNA
+----------------------------------------------------------------------
+- `androidx.compose.runtime.Immutable`: Importa `androidx.compose.runtime.Immutable` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+- `androidx.compose.ui.graphics.Color`: Importa `androidx.compose.ui.graphics.Color` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+
+4. DECLARACIONES Y ESTADO IMPORTANTES
+----------------------------------------------------------------------
+L7: `internal data class SettingsSectionColors(val background: Color, val text: Color, val secondaryText: Color, val graphic: Color)`
+    Declara `SettingsSectionColors` como `data class`: Kotlin genera automáticamente igualdad, hash, copia y representación textual a partir de sus propiedades del constructor.
+
+5. FUNCIONES — EXPLICACIÓN DE CADA UNA
+----------------------------------------------------------------------
+
+5.1 `settingsSectionColors` — líneas 14–17
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    internal fun settingsSectionColors(background: Color, textColorMode: String): SettingsSectionColors {
+
+Propósito:
+    Cambia el valor asociado a `tingsSectionColors`. En repositorios suele persistirlo; en UI suele emitir el callback que termina persistiendo el ajuste.
+
+Parámetros/entradas:
+  - `background: Color`: el llamador proporciona este valor/callback a `settingsSectionColors`. Dentro del cuerpo, las líneas donde aparece `background` muestran exactamente cómo afecta al resultado.
+  - `textColorMode: String`: el llamador proporciona este valor/callback a `settingsSectionColors`. Dentro del cuerpo, las líneas donde aparece `textColorMode` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `SettingsSectionColors`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L14 [0 espacios] `internal fun settingsSectionColors(background: Color, textColorMode: String): SettingsSectionColors {`
+      → Declara una función. El bloque de `settingsSectionColors` se detalla después instrucción por instrucción.
+  L15 [4 espacios] `return SettingsSectionColors(background = background, text = resolveUiTextColor(textColorMode, background),`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L16 [8 espacios] `secondaryText = resolveSecondaryUiTextColor(textColorMode, background), graphic = resolveUiGraphicColor(textColorMode, background))`
+      → Asigna/configura `secondaryText` usando `resolveSecondaryUiTextColor(textColorMode, background), graphic = resolveUiGraphicColor(textColorMode, background))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L17 [0 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+6. EXPLICACIÓN COMPLETA LÍNEA POR LÍNEA
+----------------------------------------------------------------------
+Esta sección no omite líneas ejecutables. Repite incluso partes ya explicadas en funciones para poder leer el archivo de arriba abajo sin saltar entre secciones.
+L1: `package com.example.mynotes.ui.theme`
+    Declara que este archivo pertenece al package `com.example.mynotes.ui.theme`; esto determina su namespace Kotlin y cómo lo importan otros archivos.
+L3: `import androidx.compose.runtime.Immutable`
+    Importa `androidx.compose.runtime.Immutable` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+L4: `import androidx.compose.ui.graphics.Color`
+    Importa `androidx.compose.ui.graphics.Color` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L6: `@Immutable`
+    Aplica la anotación `@Immutable` a la declaración siguiente; la anotación modifica metadatos, generación de código o comportamiento del framework.
+L7: `internal data class SettingsSectionColors(val background: Color, val text: Color, val secondaryText: Color, val graphic: Color)`
+    Declara `SettingsSectionColors` como `data class`: Kotlin genera automáticamente igualdad, hash, copia y representación textual a partir de sus propiedades del constructor.
+L9: `/**`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L10: `* Resuelve el texto contra el fondo exacto de la tarjeta de referencia.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L11: `* El tema ya incorpora la paleta y la intensidad: no se agrega otro alpha`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L12: `* que aclararía el negro y haría diferentes Sonido, Vibración y los demás grupos.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L13: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L14: `internal fun settingsSectionColors(background: Color, textColorMode: String): SettingsSectionColors {`
+    Declara una función. El bloque de `settingsSectionColors` se detalla después instrucción por instrucción.
+L15: `return SettingsSectionColors(background = background, text = resolveUiTextColor(textColorMode, background),`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L16: `secondaryText = resolveSecondaryUiTextColor(textColorMode, background), graphic = resolveUiGraphicColor(textColorMode, background))`
+    Asigna/configura `secondaryText` usando `resolveSecondaryUiTextColor(textColorMode, background), graphic = resolveUiGraphicColor(textColorMode, background))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L17: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+7. RECURSOS ANDROID REFERENCIADOS
+----------------------------------------------------------------------
+- No hay referencias directas `R.*` en este archivo.
+
+8. QUIÉN USA ESTE COMPONENTE
+----------------------------------------------------------------------
+- No se detectaron referencias externas por nombre a los tipos principales; puede ser punto de entrada Android, recurso invocado por Manifest o archivo de prueba.
+
+9. QUÉ PUEDE ROMPERSE SI LO MODIFICAS
+----------------------------------------------------------------------
+- Conservar firmas públicas/callbacks y comprobar los archivos que aparecen en “quién usa este componente” antes de renombrar o cambiar tipos.
+
+10. CHECKLIST DE PRUEBA DESPUÉS DE MODIFICAR ESTE ARCHIVO
+----------------------------------------------------------------------
+- Compilar `assembleDebug` y resolver primero errores de Kotlin/AAPT.
+- Abrir la pantalla/flujo relacionado y comprobar ida y vuelta (back) sin estado duplicado.
+- Cambiar tema/paleta y verificar contraste si este archivo dibuja UI.
+
+==============================================================================================================
+FIN DEL ARCHIVO
+==============================================================================================================

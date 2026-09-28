@@ -1,0 +1,247 @@
+MYNOTES — EXPLICACIÓN ULTRA DETALLADA
+==============================================================================================================
+Archivo 63/72: app/src/main/java/com/example/mynotes/widget/QuickNoteWidgetProvider.kt
+SHA-256: 0a537061d639aab8528197a80831a667935dd0ca81f63baca2885d7fec3d5b10
+Líneas del fuente: 45
+Package: com.example.mynotes.widget
+
+1. RESPONSABILIDAD EXACTA DEL ARCHIVO
+----------------------------------------------------------------------
+Widget de Nota rápida; ofrece un acceso inmediato para crear una nota y muestra textos localizados.
+
+2. DÓNDE ENCAJA EN LA ARQUITECTURA
+----------------------------------------------------------------------
+Este archivo pertenece principalmente a la **integración App Widgets/launcher**. No debe analizarse aislado: las referencias cruzadas y callbacks se detallan más abajo.
+
+3. IMPORTACIONES, UNA POR UNA
+----------------------------------------------------------------------
+- `android.appwidget.AppWidgetManager`: Importa `android.appwidget.AppWidgetManager` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `android.appwidget.AppWidgetProvider`: Importa `android.appwidget.AppWidgetProvider` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `android.content.Context`: Importa `android.content.Context` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `android.widget.RemoteViews`: Importa `android.widget.RemoteViews` para usar interfaz de App Widgets/notificaciones personalizadas fuera de Compose.
+- `com.example.mynotes.R`: Importa `com.example.mynotes.R`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `kotlinx.coroutines.CoroutineScope`: Importa `kotlinx.coroutines.CoroutineScope` para usar coroutines, Flow y ejecución asíncrona.
+- `kotlinx.coroutines.Dispatchers`: Importa `kotlinx.coroutines.Dispatchers` para usar coroutines, Flow y ejecución asíncrona.
+- `kotlinx.coroutines.SupervisorJob`: Importa `kotlinx.coroutines.SupervisorJob` para usar coroutines, Flow y ejecución asíncrona.
+- `kotlinx.coroutines.launch`: Importa `kotlinx.coroutines.launch` para usar coroutines, Flow y ejecución asíncrona.
+
+4. DECLARACIONES Y ESTADO IMPORTANTES
+----------------------------------------------------------------------
+L13: `class QuickNoteWidgetProvider : AppWidgetProvider() {`
+    Declara class `QuickNoteWidgetProvider`. A partir de aquí las propiedades y funciones hasta su llave de cierre pertenecen a este tipo.
+L15: `val pendingResult = goAsync()`
+    Declara `pendingResult` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `goAsync()`.
+L18: `val theme = WidgetPresentation.theme(context)`
+    Declara `theme` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `WidgetPresentation.theme(context)`.
+L19: `val textContext = WidgetLocale.localizedContext(context)`
+    Declara `textContext` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `WidgetLocale.localizedContext(context)`.
+L21: `val views = RemoteViews(context.packageName, R.layout.widget_quick_note)`
+    Crea un árbol `RemoteViews`, la UI serializable que Android permite mostrar fuera del proceso normal de Compose (widgets/notificaciones personalizadas).
+
+5. FUNCIONES — EXPLICACIÓN DE CADA UNA
+----------------------------------------------------------------------
+
+5.1 `onUpdate` — líneas 14–44
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
+
+Propósito:
+    Android llama este método para actualizar instancias de un App Widget. Debe reconstruir RemoteViews con datos/configuración actuales.
+
+Parámetros/entradas:
+  - `context: Context`: el llamador proporciona este valor/callback a `onUpdate`. Dentro del cuerpo, las líneas donde aparece `context` muestran exactamente cómo afecta al resultado.
+  - `appWidgetManager: AppWidgetManager`: el llamador proporciona este valor/callback a `onUpdate`. Dentro del cuerpo, las líneas donde aparece `appWidgetManager` muestran exactamente cómo afecta al resultado.
+  - `appWidgetIds: IntArray`: el llamador proporciona este valor/callback a `onUpdate`. Dentro del cuerpo, las líneas donde aparece `appWidgetIds` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L14 [4 espacios] `override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {`
+      → Sobrescribe un método definido por una clase/interfaz base. El bloque de `onUpdate` se detalla después instrucción por instrucción.
+  L15 [8 espacios] `val pendingResult = goAsync()`
+      → Declara `pendingResult` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `goAsync()`.
+  L16 [8 espacios] `CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {`
+      → Lanza una coroutine hija para ejecutar este bloque de forma asíncrona respecto al código llamador.
+  L17 [12 espacios] `try {`
+      → Abre un bloque protegido: si una operación lanza una excepción, el control puede pasar al `catch` correspondiente sin terminar abruptamente el flujo.
+  L18 [16 espacios] `val theme = WidgetPresentation.theme(context)`
+      → Declara `theme` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `WidgetPresentation.theme(context)`.
+  L19 [16 espacios] `val textContext = WidgetLocale.localizedContext(context)`
+      → Declara `textContext` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `WidgetLocale.localizedContext(context)`.
+  L20 [16 espacios] `appWidgetIds.forEach { appWidgetId ->`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `appWidgetIds.forEach { appWidgetId ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L21 [20 espacios] `val views = RemoteViews(context.packageName, R.layout.widget_quick_note)`
+      → Crea un árbol `RemoteViews`, la UI serializable que Android permite mostrar fuera del proceso normal de Compose (widgets/notificaciones personalizadas).
+  L22 [20 espacios] `views.setInt(R.id.widget_quick_root, "setBackgroundResource", theme.rootBackgroundRes)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L23 [20 espacios] `views.setInt(R.id.widget_quick_accent, "setBackgroundColor", theme.accent)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L24 [20 espacios] `views.setTextViewText(R.id.widget_quick_title, textContext.getString(R.string.widget_quick_capture))`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L25 [20 espacios] `views.setTextViewText(R.id.widget_quick_subtitle, textContext.getString(R.string.widget_quick_capture_hint))`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L26 [20 espacios] `views.setTextColor(R.id.widget_quick_title, theme.textPrimary)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L27 [20 espacios] `views.setTextColor(R.id.widget_quick_subtitle, theme.textSecondary)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L28 [20 espacios] `views.setInt(R.id.widget_quick_icon, "setBackgroundResource", theme.actionBackgroundRes)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L29 [20 espacios] `views.setInt(R.id.widget_quick_search, "setBackgroundResource", theme.actionBackgroundRes)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L30 [20 espacios] `views.setInt(R.id.widget_quick_search, "setColorFilter", theme.onAction)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L31 [20 espacios] `views.setInt(R.id.widget_quick_plus, "setBackgroundResource", theme.primaryActionBackgroundRes)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L32 [20 espacios] `views.setInt(R.id.widget_quick_plus, "setColorFilter", theme.onPrimaryAction)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L33 [20 espacios] `views.setCharSequence(R.id.widget_quick_search, "setContentDescription", textContext.getString(R.string.widget_search))`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L34 [20 espacios] `views.setCharSequence(R.id.widget_quick_plus, "setContentDescription", textContext.getString(R.string.widget_new_note))`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L35 [20 espacios] `views.setOnClickPendingIntent(R.id.widget_quick_root, WidgetIntents.openApp(context, appWidgetId))`
+      → Crea o configura un `PendingIntent`: una autorización empaquetada que Android puede ejecutar más tarde en nombre de MyNotes.
+  L36 [20 espacios] `views.setOnClickPendingIntent(R.id.widget_quick_search, WidgetIntents.search(context, appWidgetId))`
+      → Crea o configura un `PendingIntent`: una autorización empaquetada que Android puede ejecutar más tarde en nombre de MyNotes.
+  L37 [20 espacios] `views.setOnClickPendingIntent(R.id.widget_quick_plus, WidgetIntents.newNote(context, appWidgetId))`
+      → Crea o configura un `PendingIntent`: una autorización empaquetada que Android puede ejecutar más tarde en nombre de MyNotes.
+  L38 [20 espacios] `appWidgetManager.updateAppWidget(appWidgetId, views)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L39 [16 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L40 [12 espacios] `} finally {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L41 [16 espacios] `pendingResult.finish()`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L42 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L43 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L44 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+6. EXPLICACIÓN COMPLETA LÍNEA POR LÍNEA
+----------------------------------------------------------------------
+Esta sección no omite líneas ejecutables. Repite incluso partes ya explicadas en funciones para poder leer el archivo de arriba abajo sin saltar entre secciones.
+L1: `package com.example.mynotes.widget`
+    Declara que este archivo pertenece al package `com.example.mynotes.widget`; esto determina su namespace Kotlin y cómo lo importan otros archivos.
+L3: `import android.appwidget.AppWidgetManager`
+    Importa `android.appwidget.AppWidgetManager` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L4: `import android.appwidget.AppWidgetProvider`
+    Importa `android.appwidget.AppWidgetProvider` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L5: `import android.content.Context`
+    Importa `android.content.Context` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L6: `import android.widget.RemoteViews`
+    Importa `android.widget.RemoteViews` para usar interfaz de App Widgets/notificaciones personalizadas fuera de Compose.
+L7: `import com.example.mynotes.R`
+    Importa `com.example.mynotes.R`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L8: `import kotlinx.coroutines.CoroutineScope`
+    Importa `kotlinx.coroutines.CoroutineScope` para usar coroutines, Flow y ejecución asíncrona.
+L9: `import kotlinx.coroutines.Dispatchers`
+    Importa `kotlinx.coroutines.Dispatchers` para usar coroutines, Flow y ejecución asíncrona.
+L10: `import kotlinx.coroutines.SupervisorJob`
+    Importa `kotlinx.coroutines.SupervisorJob` para usar coroutines, Flow y ejecución asíncrona.
+L11: `import kotlinx.coroutines.launch`
+    Importa `kotlinx.coroutines.launch` para usar coroutines, Flow y ejecución asíncrona.
+L13: `class QuickNoteWidgetProvider : AppWidgetProvider() {`
+    Declara class `QuickNoteWidgetProvider`. A partir de aquí las propiedades y funciones hasta su llave de cierre pertenecen a este tipo.
+L14: `override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {`
+    Sobrescribe un método definido por una clase/interfaz base. El bloque de `onUpdate` se detalla después instrucción por instrucción.
+L15: `val pendingResult = goAsync()`
+    Declara `pendingResult` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `goAsync()`.
+L16: `CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {`
+    Lanza una coroutine hija para ejecutar este bloque de forma asíncrona respecto al código llamador.
+L17: `try {`
+    Abre un bloque protegido: si una operación lanza una excepción, el control puede pasar al `catch` correspondiente sin terminar abruptamente el flujo.
+L18: `val theme = WidgetPresentation.theme(context)`
+    Declara `theme` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `WidgetPresentation.theme(context)`.
+L19: `val textContext = WidgetLocale.localizedContext(context)`
+    Declara `textContext` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `WidgetLocale.localizedContext(context)`.
+L20: `appWidgetIds.forEach { appWidgetId ->`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `appWidgetIds.forEach { appWidgetId ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L21: `val views = RemoteViews(context.packageName, R.layout.widget_quick_note)`
+    Crea un árbol `RemoteViews`, la UI serializable que Android permite mostrar fuera del proceso normal de Compose (widgets/notificaciones personalizadas).
+L22: `views.setInt(R.id.widget_quick_root, "setBackgroundResource", theme.rootBackgroundRes)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L23: `views.setInt(R.id.widget_quick_accent, "setBackgroundColor", theme.accent)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L24: `views.setTextViewText(R.id.widget_quick_title, textContext.getString(R.string.widget_quick_capture))`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L25: `views.setTextViewText(R.id.widget_quick_subtitle, textContext.getString(R.string.widget_quick_capture_hint))`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L26: `views.setTextColor(R.id.widget_quick_title, theme.textPrimary)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L27: `views.setTextColor(R.id.widget_quick_subtitle, theme.textSecondary)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L28: `views.setInt(R.id.widget_quick_icon, "setBackgroundResource", theme.actionBackgroundRes)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L29: `views.setInt(R.id.widget_quick_search, "setBackgroundResource", theme.actionBackgroundRes)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L30: `views.setInt(R.id.widget_quick_search, "setColorFilter", theme.onAction)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L31: `views.setInt(R.id.widget_quick_plus, "setBackgroundResource", theme.primaryActionBackgroundRes)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L32: `views.setInt(R.id.widget_quick_plus, "setColorFilter", theme.onPrimaryAction)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L33: `views.setCharSequence(R.id.widget_quick_search, "setContentDescription", textContext.getString(R.string.widget_search))`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L34: `views.setCharSequence(R.id.widget_quick_plus, "setContentDescription", textContext.getString(R.string.widget_new_note))`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L35: `views.setOnClickPendingIntent(R.id.widget_quick_root, WidgetIntents.openApp(context, appWidgetId))`
+    Crea o configura un `PendingIntent`: una autorización empaquetada que Android puede ejecutar más tarde en nombre de MyNotes.
+L36: `views.setOnClickPendingIntent(R.id.widget_quick_search, WidgetIntents.search(context, appWidgetId))`
+    Crea o configura un `PendingIntent`: una autorización empaquetada que Android puede ejecutar más tarde en nombre de MyNotes.
+L37: `views.setOnClickPendingIntent(R.id.widget_quick_plus, WidgetIntents.newNote(context, appWidgetId))`
+    Crea o configura un `PendingIntent`: una autorización empaquetada que Android puede ejecutar más tarde en nombre de MyNotes.
+L38: `appWidgetManager.updateAppWidget(appWidgetId, views)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L39: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L40: `} finally {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L41: `pendingResult.finish()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L42: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L43: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L44: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L45: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+7. RECURSOS ANDROID REFERENCIADOS
+----------------------------------------------------------------------
+- `R.id.widget_quick_accent`: referencia a un recurso `id` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.id.widget_quick_icon`: referencia a un recurso `id` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.id.widget_quick_plus`: referencia a un recurso `id` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.id.widget_quick_root`: referencia a un recurso `id` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.id.widget_quick_search`: referencia a un recurso `id` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.id.widget_quick_subtitle`: referencia a un recurso `id` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.id.widget_quick_title`: referencia a un recurso `id` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.layout.widget_quick_note`: referencia a un recurso `layout` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.widget_new_note`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.widget_quick_capture`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.widget_quick_capture_hint`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.widget_search`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+
+8. QUIÉN USA ESTE COMPONENTE
+----------------------------------------------------------------------
+- `QuickNoteWidgetProvider` aparece también en 1 archivo(s):
+    - app/src/main/java/com/example/mynotes/widget/MyNotesWidgetUpdater.kt
+
+9. QUÉ PUEDE ROMPERSE SI LO MODIFICAS
+----------------------------------------------------------------------
+- Los widgets usan RemoteViews, no Compose. API 28/Samsung limita propiedades y tintes; no asumir que cualquier API visual de Compose/Views funciona dentro del launcher.
+
+10. CHECKLIST DE PRUEBA DESPUÉS DE MODIFICAR ESTE ARCHIVO
+----------------------------------------------------------------------
+- Compilar `assembleDebug` y resolver primero errores de Kotlin/AAPT.
+- Abrir la pantalla/flujo relacionado y comprobar ida y vuelta (back) sin estado duplicado.
+- Cambiar tema/paleta y verificar contraste si este archivo dibuja UI.
+- Añadir el widget desde el launcher en API 28/Samsung, cambiar idioma/paleta y forzar actualización.
+
+==============================================================================================================
+FIN DEL ARCHIVO
+==============================================================================================================

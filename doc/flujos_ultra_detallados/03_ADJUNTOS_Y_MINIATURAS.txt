@@ -1,0 +1,10 @@
+MYNOTES — FLUJO COMPLETO DE ADJUNTOS Y MINIATURAS
+
+1. El editor recibe URI seleccionada/grabada y crea PendingAttachment mientras la nota aún puede no tener id.
+2. Al guardar la nota, NoteViewModel/DAO convierten el adjunto pendiente en Attachment asociado a noteId.
+3. NoteCard/NoteDetail/InlineNoteAttachment solicitan representación del adjunto.
+4. AttachmentPreviewCache evita decodificar/recalcular repetidamente durante scroll y respeta los perfiles de rendimiento.
+5. AttachmentViewerActivity abre el contenido completo con el visor apropiado.
+6. WidgetMediaPreview contiene una ruta separada adaptada a RemoteViews.
+
+RESTRICCIÓN IMPORTANTE DEL PROYECTO: no alterar calidad, tamaño, caché o precarga de adjuntos/miniaturas como efecto colateral de una optimización general.

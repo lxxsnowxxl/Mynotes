@@ -1,0 +1,235 @@
+# NoteDetailScreen.kt — explicación completa del código
+
+Ruta: app/src/main/java/com/example/mynotes/ui/theme/NoteDetailScreen.kt  
+SHA-256: 1e5c9c6df03155d89ffac32cead81c734acf989fbf9f8a86f63190dd130fb39a  
+Líneas: 709  
+Package: com.example.mynotes.ui
+
+## 1. Para qué existe este archivo
+
+Vista completa de una nota con adjuntos, acciones, compartir y menús configurables.
+
+## 2. Tipos/clases declarados
+
+- No declara una clase/objeto propio; contiene funciones/valores de soporte o es un archivo marcador.
+
+## 3. Estado, constantes y valores importantes
+
+- FavoriteGold (línea 102) inicia con Color(0xFFF5A623. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- DetailMenuKeys (línea 104) inicia con listOf("edit". Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- DetailPriorityKeys (línea 106) inicia con listOf("none". Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- DetailColorKeys (línea 108) inicia con listOf("default". Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- attachmentsFlow (línea 118) inicia con remember(note.id. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- context (línea 123) inicia con LocalContext.current. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- noteLinks (línea 124) inicia con remember(note.content. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- displayContent (línea 127) inicia con remember(note.content. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- fontFamily (línea 130) inicia con remember(settings.font. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- detailBackground (línea 133) inicia con noteBackgroundColor(note.color. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- noteTextColor (línea 134) inicia con resolveUiTextColor(value = settings.noteUiTextColor. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- noteSecondaryTextColor (línea 135) inicia con resolveSecondaryUiTextColor(value = settings.noteUiTextColor. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- noteGraphicColor (línea 136) inicia con resolveUiGraphicColor(value = settings.noteUiTextColor. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- favoriteIconColor (línea 137) inicia con ensureUiContrast(preferred = FavoriteGold. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- attachmentAddButtonContainerColor (línea 138) inicia con MaterialTheme.colorScheme.surfaceContainerHigh. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- attachmentAddButtonContentColor (línea 139) inicia con resolveUiTextColor(value = settings.noteUiTextColor. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- useDarkDateChip (línea 141) inicia con noteTextColor.luminance(. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- dateChipContainerColor (línea 142) inicia con if (useDarkDateChip. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- dateChipTextColor (línea 147) inicia con if (useDarkDateChip. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- dateChipIconColor (línea 152) inicia con if (useDarkDateChip. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- dateChipBorderColor (línea 157) inicia con if (useDarkDateChip. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- motionDuration (línea 182) inicia con AppMotion.duration(AppMotion.FAST. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- popupBaseColor (línea 183) inicia con when (settings.optionMenuTextColor. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- popupAlpha (línea 187) inicia con (settings.optionMenuOpacity / 100f. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- popupBackground (línea 188) inicia con popupBaseColor.copy(alpha = popupAlpha. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- popupVisualBackground (línea 189) inicia con compositeUiColor(foreground = popupBackground. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- optionMenuTextColor (línea 190) inicia con resolveUiTextColor(value = settings.optionMenuTextColor. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- hiddenMainMenuItems (línea 191) inicia con remember(settings.optionMenuHiddenItems. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- visibleDetailMenuItems (línea 194) inicia con remember(settings.optionMenuOrder. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- hiddenPriorityMenuItems (línea 205) inicia con remember(settings.priorityMenuHiddenItems. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- hiddenColorMenuItems (línea 208) inicia con remember(settings.colorMenuHiddenItems. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- detailScrollState (línea 211) inicia con rememberScrollState(. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- baseDelay (línea 536) inicia con when (settings.performanceMode. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- staggerDelay (línea 541) inicia con when (settings.performanceMode. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- label (línea 594) inicia con when (priority. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+
+## 4. Funciones y flujo, una por una
+
+### NoteDetailScreen — líneas 113–589
+
+Firma: fun NoteDetailScreen(note: Note, noteViewModel: NoteViewModel, settings: AppSettings, onBack: () -> Unit, onEdit: (Note) -> Unit)
+
+Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+Entradas:
+- note: Note
+- noteViewModel: NoteViewModel
+- settings: AppSettings
+- onBack: () -> Unit
+- onEdit: (Note) -> Unit
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Participa en estado/efectos de Compose.
+
+Decisiones y protecciones visibles:
+- Limita valores con coerce* para evitar estados fuera de rango.
+- Contiene decisiones condicionales (if) para seleccionar comportamiento.
+- Usa when para mapear estados/tipos/opciones.
+
+Operaciones/funciones que coordina: getAttachments, collectAsStateWithLifecycle, emptyList, extractLinkUrls, noteTextForDisplay, appFontFamily, noteBackgroundColor, resolveUiTextColor, resolveSecondaryUiTextColor, resolveUiGraphicColor, ensureUiContrast, luminance, compositeUiColor, copy, duration, coerceIn, parseDetailMenuKeys, normalizedDetailMenuOrder.
+
+### PriorityPill — líneas 592–634
+
+Firma: private fun PriorityPill(priority: Int, fontFamily: FontFamily = FontFamily.Default, neutralForeground: Color = Color(0xFF4A4A4A), neutralBackground: Color = Color(0xFFF1F1F1), neutralBorder: Color = Color(0x334A4A4A))
+
+Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+Entradas:
+- priority: Int
+- fontFamily: FontFamily = FontFamily.Default
+- neutralForeground: Color = Color(0xFF4A4A4A)
+- neutralBackground: Color = Color(0xFFF1F1F1)
+- neutralBorder: Color = Color(0x334A4A4A)
+
+Salida: Unit o inferido por Kotlin.
+
+Decisiones y protecciones visibles:
+- Contiene decisiones condicionales (if) para seleccionar comportamiento.
+- Usa when para mapear estados/tipos/opciones.
+
+Operaciones/funciones que coordina: copy, RoundedCornerShape, BorderStroke, padding, size.
+
+### DetailConfigurableMenuItem — líneas 637–653
+
+Firma: private fun DetailConfigurableMenuItem(label: String, icon: androidx.compose.ui.graphics.vector.ImageVector, showIcon: Boolean, textColor: Color, fontFamily: FontFamily = FontFamily.Default, onClick: () -> Unit)
+
+Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+Entradas:
+- label: String
+- icon: androidx.compose.ui.graphics.vector.ImageVector
+- showIcon: Boolean
+- textColor: Color
+- fontFamily: FontFamily = FontFamily.Default
+- onClick: () -> Unit
+
+Salida: Unit o inferido por Kotlin.
+
+Decisiones y protecciones visibles:
+- Contiene decisiones condicionales (if) para seleccionar comportamiento.
+
+Operaciones/funciones que coordina: DropdownMenuItem, defaultMinSize, PaddingValues.
+
+### DetailBottomAction — líneas 656–673
+
+Firma: private fun DetailBottomAction(modifier: Modifier = Modifier, icon: androidx.compose.ui.graphics.vector.ImageVector, label: String, color: Color, fontFamily: FontFamily = FontFamily.Default, onClick: () -> Unit)
+
+Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+Entradas:
+- modifier: Modifier = Modifier
+- icon: androidx.compose.ui.graphics.vector.ImageVector
+- label: String
+- color: Color
+- fontFamily: FontFamily = FontFamily.Default
+- onClick: () -> Unit
+
+Salida: Unit o inferido por Kotlin.
+
+Operaciones/funciones que coordina: IconButton, size.
+
+### shareNote — líneas 675–685
+
+Firma: private fun shareNote(context: Context, note: Note)
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+Entradas:
+- context: Context
+- note: Note
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Inicia o prepara navegación/acción mediante Intent.
+
+Decisiones y protecciones visibles:
+- Contiene decisiones condicionales (if) para seleccionar comportamiento.
+
+Operaciones/funciones que coordina: isNotBlank, append, noteTextForDisplay, extractLinkUrls, Intent, setType, putExtra, startActivity, createChooser.
+
+### normalizedDetailMenuOrder — líneas 687–699
+
+Firma: private fun normalizedDetailMenuOrder(raw: String): List<String>
+
+Normaliza una cadena/valor externo al conjunto de opciones admitidas por MyNotes y devuelve un fallback estable si el valor no es reconocido.
+
+Entradas:
+- raw: String
+
+Salida: List<String>.
+
+Operaciones/funciones que coordina: split, trim, distinct.
+
+### parseDetailMenuKeys — líneas 701–708
+
+Firma: private fun parseDetailMenuKeys(raw: String, validKeys: List<String>): Set<String>
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+Entradas:
+- raw: String
+- validKeys: List<String>
+
+Salida: Set<String>.
+
+Operaciones/funciones que coordina: split, trim, toSet.
+
+## 5. Cómo se conecta con el resto de MyNotes
+
+- Usa com.example.mynotes.R.
+- Usa com.example.mynotes.ui.components.AppAlertDialog.
+- Usa com.example.mynotes.ui.components.ScrollPositionCapsule.
+- Usa com.example.mynotes.ui.components.AppDropdownMenu.
+- Usa com.example.mynotes.data.Note.
+- Usa com.example.mynotes.settings.AppSettings.
+- Usa com.example.mynotes.ui.components.InlineNoteAttachment.
+- Usa com.example.mynotes.ui.components.LinkPreviewCard.
+- Usa com.example.mynotes.ui.components.extractLinkUrls.
+- Usa com.example.mynotes.ui.components.noteTextForDisplay.
+- Usa com.example.mynotes.ui.components.CategoryPill.
+- Usa com.example.mynotes.ui.motion.AnimatedScreenEntry.
+- Usa com.example.mynotes.ui.motion.AppMotion.
+- Usa com.example.mynotes.ui.sound.UiActionSound.
+- Usa com.example.mynotes.ui.sound.UiSound.
+- Usa com.example.mynotes.ui.sound.UiSoundPlayer.
+- Usa com.example.mynotes.ui.theme.appFontFamily.
+- Usa com.example.mynotes.ui.theme.resolveUiTextColor.
+- Usa com.example.mynotes.ui.theme.resolveSecondaryUiTextColor.
+- Usa com.example.mynotes.ui.theme.resolveUiGraphicColor.
+- Usa com.example.mynotes.ui.theme.compositeUiColor.
+- Usa com.example.mynotes.ui.theme.ensureUiContrast.
+- Usa com.example.mynotes.ui.theme.noteBackgroundColor.
+- Usa com.example.mynotes.viewmodel.NoteViewModel.
+
+## 6. Recursos Android que utiliza
+
+- R.string: mock_attachments, mock_back, mock_cancel, mock_color, mock_color_blue, mock_color_brown, mock_color_cyan, mock_color_default, mock_color_gray, mock_color_green, mock_color_lime, mock_color_mint, mock_color_orange, mock_color_pink, mock_color_purple, mock_color_red, mock_color_teal, mock_color_yellow, mock_delete, mock_delete_note_message, mock_delete_note_title, mock_edit, mock_favorites, mock_move, mock_no_attachments, mock_personal, mock_pin, mock_priority, mock_priority_high, mock_priority_low, mock_priority_medium, mock_priority_none, mock_share, mock_unpin, mock_untitled, mock_work
+
+## 7. Tecnologías y efectos relevantes
+
+- Participa en estado/efectos de Compose.
+- Inicia o prepara navegación/acción mediante Intent.
+
+## 8. Lectura práctica del flujo
+
+Una forma útil de seguir este archivo en el depurador es recorrer estas operaciones en este orden aproximado:
+1. NoteDetailScreen — Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+## 9. Qué no debe romperse al modificarlo
+
+- Evitar trabajo bloqueante durante composición y mantener estado estable para limitar recomposiciones.
+
+## 10. Resumen en lenguaje sencillo
+
+En términos simples: Vista completa de una nota con adjuntos, acciones, compartir y menús configurables. La sección función por función anterior describe qué entra, qué devuelve y qué efectos produce cada operación detectada en el fuente actual.

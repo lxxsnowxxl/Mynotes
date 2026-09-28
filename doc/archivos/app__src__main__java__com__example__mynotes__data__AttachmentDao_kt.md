@@ -1,44 +1,155 @@
-# AttachmentDao.kt — documentación del código actual
-**Ruta real:** `app/src/main/java/com/example/mynotes/data/AttachmentDao.kt`  **SHA-256:** `b08c95b65977d9cd903a61de27f1ae385743249f560299c65cae57b7171e1ae1`  **Líneas:** 69 · **Bytes:** 1724 · **Imports:** 6 · **Declaraciones detectadas:** 3
-> Documento generado fuera de `app/` a partir de lectura del código. El fuente es la única fuente de verdad; no se modificó para generar esta documentación.
-## 1. Responsabilidad
+# AttachmentDao.kt — explicación completa del código
 
-Consultas Room para adjuntos.
-## 2. Package e imports
+**Ruta:** `app/src/main/java/com/example/mynotes/data/AttachmentDao.kt`  
+**SHA-256:** `b08c95b65977d9cd903a61de27f1ae385743249f560299c65cae57b7171e1ae1`  
+**Líneas:** 70  
+**Package:** `com.example.mynotes.data`
 
-Package declarado: `com.example.mynotes.data`.
+## 1. Para qué existe este archivo
 
-### Android / Jetpack / Compose
+Contrato Room para consultar, insertar y borrar adjuntos.
 
-`androidx.room.Dao`, `androidx.room.Delete`, `androidx.room.Insert`, `androidx.room.OnConflictStrategy`, `androidx.room.Query`
+## 2. Tipos/clases declarados
 
-### Kotlin / Coroutines / Java
+- Línea **11** — `interface AttachmentDao`.
 
-`kotlinx.coroutines.flow.Flow`
+## 3. Estado, constantes y valores importantes
 
-## 3. Declaraciones detectadas
+- No se detectaron propiedades inicializadas a nivel visible que necesiten explicación separada.
 
-| Línea | Tipo | Nombre | Firma/inicio |
-|---:|---|---|---|
-| 9 | `interface` | `AttachmentDao` | `` |
-| 23 | `fun` | `getAllAttachments` | `fun getAllAttachments():` |
-| 46 | `fun` | `getAttachments` | `fun getAttachments(noteId: Int): Flow<List<Attachment>>` |
+## 4. Funciones y flujo, una por una
 
-## 4. Estado, efectos y límites observables
+### `getAllAttachments` — líneas 23–23
 
-- **Flow/StateFlow:** 3 aparición/apariciones.
-- **Room:** 15 aparición/apariciones.
+**Firma:** `fun getAllAttachments():`
 
-Estas cifras son indicadores de superficie de cambio, no diagnósticos de error. Cualquier modificación debe preservar contratos de persistencia, lifecycle, límites numéricos y nulabilidad visibles en el fuente.
+Obtiene el dato solicitado desde la fuente o estructura que maneja este archivo, sin cambiar el contrato público del resto del módulo.
 
-## 5. Dependencias internas directas
+**Salida:** Unit o inferido por Kotlin.
 
-No importa directamente otros símbolos `com.example.mynotes.*`.
+### `getAllAttachmentsOnce` — líneas 32–32
 
-## 6. Recursos Android referenciados
+**Firma:** `suspend fun getAllAttachmentsOnce():`
 
-No se detectaron referencias `R.*` directas.
+Obtiene el dato solicitado desde la fuente o estructura que maneja este archivo, sin cambiar el contrato público del resto del módulo.
 
-## 7. Puntos de revisión al modificarlo
+**Salida:** Unit o inferido por Kotlin.
 
-- No degradar calidad, rutas persistentes ni cachés de adjuntos/miniaturas sin una prueba explícita.
+### `insertAttachmentsForRestore` — líneas 35–35
+
+**Firma:** `suspend fun insertAttachmentsForRestore(attachments: List<Attachment>)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `attachments: List<Attachment>`
+
+**Salida:** Unit o inferido por Kotlin.
+
+### `deleteAllAttachments` — líneas 37–37
+
+**Firma:** `suspend fun deleteAllAttachments()`
+
+Elimina el elemento indicado. El cuerpo coordina la capa de persistencia y, cuando hay archivos asociados, realiza la limpieza correspondiente.
+
+**Salida:** Unit o inferido por Kotlin.
+
+### `getAttachments` — líneas 46–46
+
+**Firma:** `fun getAttachments(noteId: Int): Flow<List<Attachment>>`
+
+Obtiene el dato solicitado desde la fuente o estructura que maneja este archivo, sin cambiar el contrato público del resto del módulo.
+
+**Entradas:**
+- `noteId: Int`
+
+**Salida:** Flow<List<Attachment>>.
+
+### `getAttachmentsOnce` — líneas 55–55
+
+**Firma:** `suspend fun getAttachmentsOnce(noteId: Int): List<Attachment>`
+
+Obtiene el dato solicitado desde la fuente o estructura que maneja este archivo, sin cambiar el contrato público del resto del módulo.
+
+**Entradas:**
+- `noteId: Int`
+
+**Salida:** List<Attachment>.
+
+### `insertAttachment` — líneas 57–57
+
+**Firma:** `suspend fun insertAttachment(attachment: Attachment)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `attachment: Attachment`
+
+**Salida:** Unit o inferido por Kotlin.
+
+### `insertAttachments` — líneas 59–59
+
+**Firma:** `suspend fun insertAttachments(attachments: List<Attachment>)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `attachments: List<Attachment>`
+
+**Salida:** Unit o inferido por Kotlin.
+
+### `deleteAttachment` — líneas 61–61
+
+**Firma:** `suspend fun deleteAttachment(attachment: Attachment)`
+
+Elimina el elemento indicado. El cuerpo coordina la capa de persistencia y, cuando hay archivos asociados, realiza la limpieza correspondiente.
+
+**Entradas:**
+- `attachment: Attachment`
+
+**Salida:** Unit o inferido por Kotlin.
+
+### `deleteAttachmentsForNote` — líneas 68–68
+
+**Firma:** `suspend fun deleteAttachmentsForNote(noteId: Int)`
+
+Elimina el elemento indicado. El cuerpo coordina la capa de persistencia y, cuando hay archivos asociados, realiza la limpieza correspondiente.
+
+**Entradas:**
+- `noteId: Int`
+
+**Salida:** Unit o inferido por Kotlin.
+
+## 5. Cómo se conecta con el resto de MyNotes
+
+- No importa directamente otro componente `com.example.mynotes`; funciona como modelo/utilidad base o mediante APIs Android/Jetpack.
+
+## 6. Recursos Android que utiliza
+
+- No se detectaron referencias directas `R.*` en este archivo.
+
+## 7. Tecnologías y efectos relevantes
+
+- Accede a la base Room/DAO.
+
+## 8. Lectura práctica del flujo
+
+Una forma útil de seguir este archivo en el depurador es recorrer estas operaciones en este orden aproximado:
+1. `getAllAttachments` — Obtiene el dato solicitado desde la fuente o estructura que maneja este archivo, sin cambiar el contrato público del resto del módulo.
+2. `getAllAttachmentsOnce` — Obtiene el dato solicitado desde la fuente o estructura que maneja este archivo, sin cambiar el contrato público del resto del módulo.
+3. `insertAttachmentsForRestore` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+4. `deleteAllAttachments` — Elimina el elemento indicado. El cuerpo coordina la capa de persistencia y, cuando hay archivos asociados, realiza la limpieza correspondiente.
+5. `getAttachments` — Obtiene el dato solicitado desde la fuente o estructura que maneja este archivo, sin cambiar el contrato público del resto del módulo.
+6. `getAttachmentsOnce` — Obtiene el dato solicitado desde la fuente o estructura que maneja este archivo, sin cambiar el contrato público del resto del módulo.
+7. `insertAttachment` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+8. `insertAttachments` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+9. `deleteAttachment` — Elimina el elemento indicado. El cuerpo coordina la capa de persistencia y, cuando hay archivos asociados, realiza la limpieza correspondiente.
+10. `deleteAttachmentsForNote` — Elimina el elemento indicado. El cuerpo coordina la capa de persistencia y, cuando hay archivos asociados, realiza la limpieza correspondiente.
+
+## 9. Qué no debe romperse al modificarlo
+
+- Los cambios de esquema Room requieren revisar versión/migraciones y compatibilidad con datos existentes.
+
+## 10. Resumen en lenguaje sencillo
+
+En términos simples: Contrato Room para consultar, insertar y borrar adjuntos. La sección función por función anterior describe qué entra, qué devuelve y qué efectos produce cada operación detectada en el fuente actual.

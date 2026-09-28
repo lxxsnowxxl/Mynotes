@@ -1,56 +1,127 @@
-# RecentNotesWidgetProvider.kt — documentación del código actual
-**Ruta real:** `app/src/main/java/com/example/mynotes/widget/RecentNotesWidgetProvider.kt`  **SHA-256:** `2d4cda8ead1872b77c85c11cd06e98532ccdf625b45ece3b72054c0b5ca6c0a3`  **Líneas:** 107 · **Bytes:** 6629 · **Imports:** 13 · **Declaraciones detectadas:** 1
-> Documento generado fuera de `app/` a partir de lectura del código. El fuente es la única fuente de verdad; no se modificó para generar esta documentación.
-## 1. Responsabilidad
+# RecentNotesWidgetProvider.kt — explicación completa del código
 
-AppWidgetProvider de notas recientes.
-## 2. Package e imports
+**Ruta:** `app/src/main/java/com/example/mynotes/widget/RecentNotesWidgetProvider.kt`  
+**SHA-256:** `2d4cda8ead1872b77c85c11cd06e98532ccdf625b45ece3b72054c0b5ca6c0a3`  
+**Líneas:** 108  
+**Package:** `com.example.mynotes.widget`
 
-Package declarado: `com.example.mynotes.widget`.
+## 1. Para qué existe este archivo
 
-### Android / Jetpack / Compose
+Provider del widget Notas recientes; carga varias notas y sus miniaturas.
 
-`android.appwidget.AppWidgetManager`, `android.appwidget.AppWidgetProvider`, `android.content.Context`, `android.view.View`, `android.widget.RemoteViews`
+## 2. Tipos/clases declarados
 
-### Proyecto MyNotes
+- Línea **17** — `class RecentNotesWidgetProvider`.
 
-`com.example.mynotes.R`, `com.example.mynotes.data.AppDatabase`, `com.example.mynotes.data.Attachment`, `com.example.mynotes.data.Note`
+## 3. Estado, constantes y valores importantes
 
-### Kotlin / Coroutines / Java
+- **`pendingResult`** (línea 19) inicia con `goAsync(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`db`** (línea 22) inicia con `AppDatabase.getDatabase(context.applicationContext`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`notes`** (línea 23) inicia con `db.noteDao(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`total`** (línea 24) inicia con `db.noteDao(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`theme`** (línea 25) inicia con `WidgetPresentation.theme(context`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`textContext`** (línea 26) inicia con `WidgetLocale.localizedContext(context`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`visualMap`** (línea 27) inicia con `WidgetMediaPreview.firstVisualByNote(db.attachmentDao(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`views`** (línea 47) inicia con `RemoteViews(context.packageName`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`rowIds`** (línea 64) inicia con `intArrayOf(R.id.widget_note_row_1`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`titleIds`** (línea 66) inicia con `intArrayOf(R.id.widget_note_title_1`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`previewIds`** (línea 67) inicia con `intArrayOf(R.id.widget_note_preview_1`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`metaIds`** (línea 68) inicia con `intArrayOf(R.id.widget_note_meta_1`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`badgeIds`** (línea 69) inicia con `intArrayOf(R.id.widget_note_badge_1`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`accentIds`** (línea 70) inicia con `intArrayOf(R.id.widget_note_accent_1`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`thumbIds`** (línea 71) inicia con `intArrayOf(R.id.widget_note_thumb_1`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`note`** (línea 77) inicia con `notes.getOrNull(index`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`bitmap`** (línea 91) inicia con `runCatching { WidgetMediaPreview.loadBestPreviewBitmap(context`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
 
-`kotlinx.coroutines.CoroutineScope`, `kotlinx.coroutines.Dispatchers`, `kotlinx.coroutines.SupervisorJob`, `kotlinx.coroutines.launch`
+## 4. Funciones y flujo, una por una
 
-## 3. Declaraciones detectadas
+### `onUpdate` — líneas 18–35
 
-| Línea | Tipo | Nombre | Firma/inicio |
-|---:|---|---|---|
-| 16 | `class` | `RecentNotesWidgetProvider` | `` |
+**Firma:** `override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray)`
 
-## 4. Estado, efectos y límites observables
+Callback del framework Android. Recibe el evento del sistema y coordina la actualización/acción correspondiente sin depender de una pantalla Compose activa.
 
-- **Coroutines:** 2 aparición/apariciones.
-- **RemoteViews/widgets:** 2 aparición/apariciones.
-- **try/catch:** 1 aparición/apariciones.
+**Entradas:**
+- `context: Context`
+- `appWidgetManager: AppWidgetManager`
+- `appWidgetIds: IntArray`
 
-Estas cifras son indicadores de superficie de cambio, no diagnósticos de error. Cualquier modificación debe preservar contratos de persistencia, lifecycle, límites numéricos y nulabilidad visibles en el fuente.
+**Salida:** Unit o inferido por Kotlin.
 
-## 5. Dependencias internas directas
+**Efectos/APIs observados en el cuerpo:**
+- Ejecuta trabajo de I/O fuera del hilo principal.
+- Lanza trabajo asíncrono mediante coroutines.
+- Accede a la base Room/DAO.
 
-- `com.example.mynotes.R`
-- `com.example.mynotes.data.AppDatabase`
-- `com.example.mynotes.data.Attachment`
-- `com.example.mynotes.data.Note`
+**Decisiones y protecciones visibles:**
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
 
-## 6. Recursos Android referenciados
+**Operaciones/funciones que coordina:** `goAsync`, `CoroutineScope`, `SupervisorJob`, `getDatabase`, `noteDao`, `getRecentNotesForWidget`, `getNoteCountForWidget`, `theme`, `localizedContext`, `firstVisualByNote`, `attachmentDao`, `getAllAttachmentsOnce`, `updateWidget`, `finish`.
 
-- **R.drawable:** `widget_thumb_placeholder`
+### `updateWidget` — líneas 37–106
 
-- **R.id:** `widget_note_accent_1`, `widget_note_accent_2`, `widget_note_badge_1`, `widget_note_badge_2`, `widget_note_meta_1`, `widget_note_meta_2`, `widget_note_preview_1`, `widget_note_preview_2`, `widget_note_row_1`, `widget_note_row_2`, `widget_note_thumb_1`, `widget_note_thumb_2`, `widget_note_title_1`, `widget_note_title_2`, `widget_recent_add` ×4, `widget_recent_cards`, `widget_recent_count` ×2, `widget_recent_empty` ×3, `widget_recent_header`, `widget_recent_root`, `widget_recent_search` ×4, `widget_recent_title` ×2
+**Firma:** `private suspend fun updateWidget( context: Context, textContext: Context, manager: AppWidgetManager, appWidgetId: Int, notes: List<Note>, total: Int, theme: WidgetPresentation.WidgetThemeSpec, visualMap: Map<Int, Attachment> )`
 
-- **R.layout:** `widget_recent_notes`
+Actualiza el estado/datos indicados por sus parámetros y propaga el cambio a las dependencias utilizadas en el cuerpo.
 
-- **R.string:** `widget_empty_notes`, `widget_new_note`, `widget_recent_notes`, `widget_search`
+**Entradas:**
+- `context: Context`
+- `textContext: Context`
+- `manager: AppWidgetManager`
+- `appWidgetId: Int`
+- `notes: List<Note>`
+- `total: Int`
+- `theme: WidgetPresentation.WidgetThemeSpec`
+- `visualMap: Map<Int, Attachment>`
 
-## 7. Puntos de revisión al modificarlo
+**Salida:** Unit o inferido por Kotlin.
 
-- Probar en launcher real/API 28: RemoteViews tiene restricciones distintas a Compose y no admite todos los tintes/Views.
+**Efectos/APIs observados en el cuerpo:**
+- Opera con RemoteViews/AppWidget fuera de Compose.
+- Procesa imágenes/bitmaps.
+- Crea un PendingIntent para una acción futura del sistema.
+- Inicia o prepara navegación/acción mediante Intent.
+
+**Decisiones y protecciones visibles:**
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `RemoteViews`, `setInt`, `setTextViewText`, `getString`, `setTextColor`, `setCharSequence`, `getQuantityString`, `setOnClickPendingIntent`, `openCollection`, `search`, `newNote`, `intArrayOf`, `setViewVisibility`, `isEmpty`, `getOrNull`, `noteAccentColor`, `title`, `contentPreview`.
+
+## 5. Cómo se conecta con el resto de MyNotes
+
+- Usa `com.example.mynotes.R`.
+- Usa `com.example.mynotes.data.AppDatabase`.
+- Usa `com.example.mynotes.data.Attachment`.
+- Usa `com.example.mynotes.data.Note`.
+
+## 6. Recursos Android que utiliza
+
+- `R.drawable`: `widget_thumb_placeholder`
+- `R.id`: `widget_note_accent_1`, `widget_note_accent_2`, `widget_note_badge_1`, `widget_note_badge_2`, `widget_note_meta_1`, `widget_note_meta_2`, `widget_note_preview_1`, `widget_note_preview_2`, `widget_note_row_1`, `widget_note_row_2`, `widget_note_thumb_1`, `widget_note_thumb_2`, `widget_note_title_1`, `widget_note_title_2`, `widget_recent_add`, `widget_recent_cards`, `widget_recent_count`, `widget_recent_empty`, `widget_recent_header`, `widget_recent_root`, `widget_recent_search`, `widget_recent_title`
+- `R.layout`: `widget_recent_notes`
+- `R.string`: `widget_empty_notes`, `widget_new_note`, `widget_recent_notes`, `widget_search`
+
+## 7. Tecnologías y efectos relevantes
+
+- Ejecuta trabajo de I/O fuera del hilo principal.
+- Lanza trabajo asíncrono mediante coroutines.
+- Accede a la base Room/DAO.
+- Opera con RemoteViews/AppWidget fuera de Compose.
+- Procesa imágenes/bitmaps.
+- Crea un PendingIntent para una acción futura del sistema.
+- Inicia o prepara navegación/acción mediante Intent.
+
+## 8. Lectura práctica del flujo
+
+Una forma útil de seguir este archivo en el depurador es recorrer estas operaciones en este orden aproximado:
+1. `onUpdate` — Callback del framework Android. Recibe el evento del sistema y coordina la actualización/acción correspondiente sin depender de una pantalla Compose activa.
+
+## 9. Qué no debe romperse al modificarlo
+
+- RemoteViews tiene restricciones, especialmente en Samsung/API 28; probar el widget en launcher real.
+- Evitar aumentar resoluciones/cargas sin considerar memoria y scroll; preservar caché y liberación de recursos.
+
+## 10. Resumen en lenguaje sencillo
+
+En términos simples: Provider del widget Notas recientes; carga varias notas y sus miniaturas. La sección función por función anterior describe qué entra, qué devuelve y qué efectos produce cada operación detectada en el fuente actual.

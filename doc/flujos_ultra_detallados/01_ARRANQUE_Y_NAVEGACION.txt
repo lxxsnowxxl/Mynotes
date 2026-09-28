@@ -1,0 +1,12 @@
+MYNOTES — FLUJO COMPLETO DE ARRANQUE Y NAVEGACIÓN
+
+1. Android crea MainActivity. Antes de construir Compose, attachBaseContext puede aplicar el idioma elegido mediante un Context localizado.
+2. onCreate procesa Intents de widgets/recordatorios/share. No abre pantallas directamente desde receivers: convierte la entrada en flags/estado pendiente.
+3. Se crean NoteViewModel, SettingsViewModel y ReminderRepository. Sus Flows alimentan la composición.
+4. AppSettings decide tema efectivo, paleta, tipografía, sonido, vibración y personalización.
+5. MainActivity mantiene el destino actual y muestra NotesScreen, editor, detalle, DrawingScreen, ReminderScreen o SettingsScreen según el estado.
+6. La navegación desde widget/notificación entra también por MainActivity para reutilizar las mismas pantallas y datos.
+
+ARCHIVOS CLAVE: MainActivity.kt, NoteViewModel.kt, SettingsViewModel.kt, ReminderRepository.kt, Theme.kt.
+
+RIESGO: usar varios booleanos de pantalla sin limpiar el anterior puede mostrar un destino equivocado al volver de background. Por eso los handlers consumen flags pendientes y los LaunchedEffect cambian el destino de forma controlada.

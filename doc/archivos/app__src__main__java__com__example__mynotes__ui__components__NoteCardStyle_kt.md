@@ -1,42 +1,55 @@
-# NoteCardStyle.kt — documentación del código actual
-**Ruta real:** `app/src/main/java/com/example/mynotes/ui/components/NoteCardStyle.kt`  **SHA-256:** `f43d417b631714babd5201a0ce3b50a9a6744bab642d4adeaf1bf5b3ea4be44b`  **Líneas:** 16 · **Bytes:** 1168 · **Imports:** 2 · **Declaraciones detectadas:** 2
-> Documento generado fuera de `app/` a partir de lectura del código. El fuente es la única fuente de verdad; no se modificó para generar esta documentación.
-## 1. Responsabilidad
+# NoteCardStyle.kt — explicación completa del código
 
-Modelo derivado de AppSettings con parámetros visuales de NoteCard.
-## 2. Package e imports
+**Ruta:** `app/src/main/java/com/example/mynotes/ui/components/NoteCardStyle.kt`  
+**SHA-256:** `f43d417b631714babd5201a0ce3b50a9a6744bab642d4adeaf1bf5b3ea4be44b`  
+**Líneas:** 17  
+**Package:** `com.example.mynotes.ui.components`
 
-Package declarado: `com.example.mynotes.ui.components`.
+## 1. Para qué existe este archivo
 
-### Android / Jetpack / Compose
+Transforma AppSettings en un objeto compacto de estilo para las tarjetas de notas.
 
-`androidx.compose.runtime.Immutable`
+## 2. Tipos/clases declarados
 
-### Proyecto MyNotes
+- Línea **7** — `data  class NoteCardStyle`.
 
-`com.example.mynotes.settings.AppSettings`
+## 3. Estado, constantes y valores importantes
 
-## 3. Declaraciones detectadas
+- No se detectaron propiedades inicializadas a nivel visible que necesiten explicación separada.
 
-| Línea | Tipo | Nombre | Firma/inicio |
-|---:|---|---|---|
-| 5 | `class` | `NoteCardStyle` | `` |
-| 11 | `fun` | `AppSettings` | `fun AppSettings.toNoteCardStyle() = NoteCardStyle(cornerRadius = noteCardCornerRadius, elevation = noteCardElevation,` |
+## 4. Funciones y flujo, una por una
 
-## 4. Estado, efectos y límites observables
+### `toNoteCardStyle` — líneas 11–11
 
-- **coerce*:** 1 aparición/apariciones.
+**Firma:** `fun AppSettings.toNoteCardStyle()`
 
-Estas cifras son indicadores de superficie de cambio, no diagnósticos de error. Cualquier modificación debe preservar contratos de persistencia, lifecycle, límites numéricos y nulabilidad visibles en el fuente.
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
 
-## 5. Dependencias internas directas
+**Salida:** Unit o inferido por Kotlin.
 
-- `com.example.mynotes.settings.AppSettings`
+**Operaciones/funciones que coordina:** `NoteCardStyle`.
 
-## 6. Recursos Android referenciados
+## 5. Cómo se conecta con el resto de MyNotes
 
-No se detectaron referencias `R.*` directas.
+- Usa `com.example.mynotes.settings.AppSettings`.
 
-## 7. Puntos de revisión al modificarlo
+## 6. Recursos Android que utiliza
 
-- Conservar rangos `coerce*`, claves DataStore y compatibilidad con backups existentes.
+- No se detectaron referencias directas `R.*` en este archivo.
+
+## 7. Tecnologías y efectos relevantes
+
+- Principalmente lógica Kotlin/Compose sin I/O especial detectado por estas reglas.
+
+## 8. Lectura práctica del flujo
+
+Una forma útil de seguir este archivo en el depurador es recorrer estas operaciones en este orden aproximado:
+1. `toNoteCardStyle` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+## 9. Qué no debe romperse al modificarlo
+
+- Evitar trabajo bloqueante durante composición y mantener estado estable para limitar recomposiciones.
+
+## 10. Resumen en lenguaje sencillo
+
+En términos simples: Transforma AppSettings en un objeto compacto de estilo para las tarjetas de notas. La sección función por función anterior describe qué entra, qué devuelve y qué efectos produce cada operación detectada en el fuente actual.

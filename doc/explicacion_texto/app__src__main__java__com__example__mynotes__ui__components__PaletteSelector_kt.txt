@@ -1,0 +1,140 @@
+# PaletteSelector.kt — explicación completa del código
+
+Ruta: app/src/main/java/com/example/mynotes/ui/components/PaletteSelector.kt  
+SHA-256: 97497f7e2f3fc5a526543390d39523f071e6e7ef948e6d35cba63292c94ac206  
+Líneas: 223  
+Package: com.example.mynotes.ui.components
+
+## 1. Para qué existe este archivo
+
+Selector visual reutilizable de paletas/tonos.
+
+## 2. Tipos/clases declarados
+
+- No declara una clase/objeto propio; contiene funciones/valores de soporte o es un archivo marcador.
+
+## 3. Estado, constantes y valores importantes
+
+- paletteRows (línea 64) inicia con remember(palettes. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- context (línea 97) inicia con LocalContext.current. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- shape (línea 98) inicia con RoundedCornerShape(16.dp. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- cardBackground (línea 99) inicia con MaterialTheme.colorScheme.surfaceContainerLow. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- cardTextColor (línea 100) inicia con resolveUiTextColor(value = textColorMode. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- cardGraphicColor (línea 101) inicia con resolveUiGraphicColor(value = textColorMode. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- motionDuration (línea 102) inicia con AppMotion.duration(AppMotion.FAST. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- cardInteractionSource (línea 103) inicia con remember {. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- checkColor (línea 177) inicia con if (color.luminance(. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- toneInteractionSource (línea 178) inicia con remember { MutableInteractionSource(. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+
+## 4. Funciones y flujo, una por una
+
+### PaletteSelector — líneas 61–91
+
+Firma: fun PaletteSelector(palettes: List<MyNotesPalette>, selectedPaletteKey: String, selectedToneIndex: Int, onPaletteSelected: (String) -> Unit, onToneSelected: (paletteKey: String, toneIndex: Int) -> Unit, animationsEnabled: Boolean = true, animationSpeed: Float = 1f, textColorMode: String = "auto", fontFamily: FontFamily = FontFamily.Default)
+
+Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+Entradas:
+- palettes: List<MyNotesPalette>
+- selectedPaletteKey: String
+- selectedToneIndex: Int
+- onPaletteSelected: (String) -> Unit
+- onToneSelected: (paletteKey: String, toneIndex: Int) -> Unit
+- animationsEnabled: Boolean = true
+- animationSpeed: Float = 1f
+- textColorMode: String = "auto"
+- fontFamily: FontFamily = FontFamily.Default
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Participa en estado/efectos de Compose.
+
+Decisiones y protecciones visibles:
+- Contiene decisiones condicionales (if) para seleccionar comportamiento.
+
+Operaciones/funciones que coordina: chunked, spacedBy, fillMaxWidth, PaletteCard, weight.
+
+### PaletteCard — líneas 94–164
+
+Firma: private fun PaletteCard(modifier: Modifier, palette: MyNotesPalette, selected: Boolean, selectedToneIndex: Int, onPaletteSelected: (String) -> Unit, onToneSelected: (paletteKey: String, toneIndex: Int) -> Unit, animationsEnabled: Boolean, animationSpeed: Float, textColorMode: String, fontFamily: FontFamily)
+
+Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+Entradas:
+- modifier: Modifier
+- palette: MyNotesPalette
+- selected: Boolean
+- selectedToneIndex: Int
+- onPaletteSelected: (String) -> Unit
+- onToneSelected: (paletteKey: String, toneIndex: Int) -> Unit
+- animationsEnabled: Boolean
+- animationSpeed: Float
+- textColorMode: String
+- fontFamily: FontFamily
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Participa en estado/efectos de Compose.
+
+Decisiones y protecciones visibles:
+- Contiene decisiones condicionales (if) para seleccionar comportamiento.
+
+Operaciones/funciones que coordina: RoundedCornerShape, resolveUiTextColor, resolveUiGraphicColor, duration, MutableInteractionSource, animateDpAsState, tween, clickable, playAction, onPaletteSelected, BorderStroke, fillMaxWidth, padding, spacedBy, weight, aspectRatio, PaletteToneCircle, onToneSelected.
+
+### PaletteToneCircle — líneas 167–222
+
+Firma: private fun PaletteToneCircle( modifier: Modifier = Modifier, color: Color, selected: Boolean, frameColor: Color, indicatorColor: Color, onClick: () -> Unit, animationsEnabled: Boolean, animationSpeed: Float )
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+Entradas:
+- modifier: Modifier = Modifier
+- color: Color
+- selected: Boolean
+- frameColor: Color
+- indicatorColor: Color
+- onClick: () -> Unit
+- animationsEnabled: Boolean
+- animationSpeed: Float
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Participa en estado/efectos de Compose.
+
+Decisiones y protecciones visibles:
+- Contiene decisiones condicionales (if) para seleccionar comportamiento.
+
+Operaciones/funciones que coordina: luminance, MutableInteractionSource, duration, aspectRatio, clickable, fillMaxWidth, clip, background, then, border, padding, AnimatedVisibility, fadeIn, tween, scaleIn, fadeOut, scaleOut.
+
+## 5. Cómo se conecta con el resto de MyNotes
+
+- Usa com.example.mynotes.ui.theme.MyNotesPalette.
+- Usa com.example.mynotes.ui.theme.resolveUiTextColor.
+- Usa com.example.mynotes.ui.theme.resolveUiGraphicColor.
+- Usa com.example.mynotes.ui.motion.AppMotion.
+- Usa com.example.mynotes.ui.sound.UiActionSound.
+- Usa com.example.mynotes.ui.sound.UiSoundPlayer.
+
+## 6. Recursos Android que utiliza
+
+- No se detectaron referencias directas R.* en este archivo.
+
+## 7. Tecnologías y efectos relevantes
+
+- Participa en estado/efectos de Compose.
+
+## 8. Lectura práctica del flujo
+
+Una forma útil de seguir este archivo en el depurador es recorrer estas operaciones en este orden aproximado:
+1. PaletteSelector — Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+## 9. Qué no debe romperse al modificarlo
+
+- Evitar trabajo bloqueante durante composición y mantener estado estable para limitar recomposiciones.
+
+## 10. Resumen en lenguaje sencillo
+
+En términos simples: Selector visual reutilizable de paletas/tonos. La sección función por función anterior describe qué entra, qué devuelve y qué efectos produce cada operación detectada en el fuente actual.

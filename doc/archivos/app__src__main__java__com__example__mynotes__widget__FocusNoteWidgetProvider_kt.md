@@ -1,54 +1,92 @@
-# FocusNoteWidgetProvider.kt — documentación del código actual
-**Ruta real:** `app/src/main/java/com/example/mynotes/widget/FocusNoteWidgetProvider.kt`  **SHA-256:** `c245da786b39799731847ab11b371c235110cb117d795793735a6c73a5d94dbd`  **Líneas:** 93 · **Bytes:** 7242 · **Imports:** 11 · **Declaraciones detectadas:** 1
-> Documento generado fuera de `app/` a partir de lectura del código. El fuente es la única fuente de verdad; no se modificó para generar esta documentación.
-## 1. Responsabilidad
+# FocusNoteWidgetProvider.kt — explicación completa del código
 
-AppWidgetProvider para una nota destacada/en foco.
-## 2. Package e imports
+**Ruta:** `app/src/main/java/com/example/mynotes/widget/FocusNoteWidgetProvider.kt`  
+**SHA-256:** `c245da786b39799731847ab11b371c235110cb117d795793735a6c73a5d94dbd`  
+**Líneas:** 94  
+**Package:** `com.example.mynotes.widget`
 
-Package declarado: `com.example.mynotes.widget`.
+## 1. Para qué existe este archivo
 
-### Android / Jetpack / Compose
+Provider del widget Nota destacada/en foco.
 
-`android.appwidget.AppWidgetManager`, `android.appwidget.AppWidgetProvider`, `android.content.Context`, `android.view.View`, `android.widget.RemoteViews`
+## 2. Tipos/clases declarados
 
-### Proyecto MyNotes
+- Línea **15** — `class FocusNoteWidgetProvider`.
 
-`com.example.mynotes.R`, `com.example.mynotes.data.AppDatabase`
+## 3. Estado, constantes y valores importantes
 
-### Kotlin / Coroutines / Java
+- **`pendingResult`** (línea 17) inicia con `goAsync(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`db`** (línea 20) inicia con `AppDatabase.getDatabase(context.applicationContext`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`note`** (línea 21) inicia con `db.noteDao(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`theme`** (línea 22) inicia con `WidgetPresentation.theme(context`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`textContext`** (línea 23) inicia con `WidgetLocale.localizedContext(context`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`visualMap`** (línea 24) inicia con `WidgetMediaPreview.firstVisualByNote(db.attachmentDao(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`views`** (línea 26) inicia con `RemoteViews(context.packageName`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`bitmap`** (línea 64) inicia con `runCatching { WidgetMediaPreview.loadBestPreviewBitmap(context`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`open`** (línea 75) inicia con `WidgetIntents.openNote(context`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
 
-`kotlinx.coroutines.CoroutineScope`, `kotlinx.coroutines.Dispatchers`, `kotlinx.coroutines.SupervisorJob`, `kotlinx.coroutines.launch`
+## 4. Funciones y flujo, una por una
 
-## 3. Declaraciones detectadas
+### `onUpdate` — líneas 16–92
 
-| Línea | Tipo | Nombre | Firma/inicio |
-|---:|---|---|---|
-| 14 | `class` | `FocusNoteWidgetProvider` | `` |
+**Firma:** `override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray)`
 
-## 4. Estado, efectos y límites observables
+Callback del framework Android. Recibe el evento del sistema y coordina la actualización/acción correspondiente sin depender de una pantalla Compose activa.
 
-- **Coroutines:** 2 aparición/apariciones.
-- **RemoteViews/widgets:** 2 aparición/apariciones.
-- **try/catch:** 1 aparición/apariciones.
+**Entradas:**
+- `context: Context`
+- `appWidgetManager: AppWidgetManager`
+- `appWidgetIds: IntArray`
 
-Estas cifras son indicadores de superficie de cambio, no diagnósticos de error. Cualquier modificación debe preservar contratos de persistencia, lifecycle, límites numéricos y nulabilidad visibles en el fuente.
+**Salida:** Unit o inferido por Kotlin.
 
-## 5. Dependencias internas directas
+**Efectos/APIs observados en el cuerpo:**
+- Ejecuta trabajo de I/O fuera del hilo principal.
+- Lanza trabajo asíncrono mediante coroutines.
+- Accede a la base Room/DAO.
+- Opera con RemoteViews/AppWidget fuera de Compose.
+- Procesa imágenes/bitmaps.
+- Crea un PendingIntent para una acción futura del sistema.
+- Inicia o prepara navegación/acción mediante Intent.
 
-- `com.example.mynotes.R`
-- `com.example.mynotes.data.AppDatabase`
+**Decisiones y protecciones visibles:**
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
 
-## 6. Recursos Android referenciados
+**Operaciones/funciones que coordina:** `goAsync`, `CoroutineScope`, `SupervisorJob`, `getDatabase`, `noteDao`, `getFocusNoteForWidget`, `theme`, `localizedContext`, `firstVisualByNote`, `attachmentDao`, `getAllAttachmentsOnce`, `RemoteViews`, `setInt`, `setTextViewText`, `getString`, `setTextColor`, `setCharSequence`, `setOnClickPendingIntent`.
 
-- **R.drawable:** `widget_ic_pin`, `widget_ic_pin_outline`, `widget_ic_star`, `widget_ic_star_outline`, `widget_thumb_placeholder`
+## 5. Cómo se conecta con el resto de MyNotes
 
-- **R.id:** `widget_focus_add` ×4, `widget_focus_badge` ×3, `widget_focus_card` ×4, `widget_focus_empty` ×5, `widget_focus_favorite` ×5, `widget_focus_header`, `widget_focus_meta` ×2, `widget_focus_open` ×4, `widget_focus_pin` ×5, `widget_focus_preview` ×2, `widget_focus_root`, `widget_focus_subtitle` ×2, `widget_focus_thumb` ×6, `widget_focus_title` ×2, `widget_focus_title_label` ×2
+- Usa `com.example.mynotes.R`.
+- Usa `com.example.mynotes.data.AppDatabase`.
 
-- **R.layout:** `widget_focus_note`
+## 6. Recursos Android que utiliza
 
-- **R.string:** `widget_empty_notes`, `widget_focus_note`, `widget_focus_note_hint`, `widget_new_note`, `widget_open_note`, `widget_toggle_favorite`, `widget_toggle_pin`
+- `R.drawable`: `widget_ic_pin`, `widget_ic_pin_outline`, `widget_ic_star`, `widget_ic_star_outline`, `widget_thumb_placeholder`
+- `R.id`: `widget_focus_add`, `widget_focus_badge`, `widget_focus_card`, `widget_focus_empty`, `widget_focus_favorite`, `widget_focus_header`, `widget_focus_meta`, `widget_focus_open`, `widget_focus_pin`, `widget_focus_preview`, `widget_focus_root`, `widget_focus_subtitle`, `widget_focus_thumb`, `widget_focus_title`, `widget_focus_title_label`
+- `R.layout`: `widget_focus_note`
+- `R.string`: `widget_empty_notes`, `widget_focus_note`, `widget_focus_note_hint`, `widget_new_note`, `widget_open_note`, `widget_toggle_favorite`, `widget_toggle_pin`
 
-## 7. Puntos de revisión al modificarlo
+## 7. Tecnologías y efectos relevantes
 
-- Probar en launcher real/API 28: RemoteViews tiene restricciones distintas a Compose y no admite todos los tintes/Views.
+- Ejecuta trabajo de I/O fuera del hilo principal.
+- Lanza trabajo asíncrono mediante coroutines.
+- Accede a la base Room/DAO.
+- Opera con RemoteViews/AppWidget fuera de Compose.
+- Procesa imágenes/bitmaps.
+- Crea un PendingIntent para una acción futura del sistema.
+- Inicia o prepara navegación/acción mediante Intent.
+
+## 8. Lectura práctica del flujo
+
+Una forma útil de seguir este archivo en el depurador es recorrer estas operaciones en este orden aproximado:
+1. `onUpdate` — Callback del framework Android. Recibe el evento del sistema y coordina la actualización/acción correspondiente sin depender de una pantalla Compose activa.
+
+## 9. Qué no debe romperse al modificarlo
+
+- RemoteViews tiene restricciones, especialmente en Samsung/API 28; probar el widget en launcher real.
+- Evitar aumentar resoluciones/cargas sin considerar memoria y scroll; preservar caché y liberación de recursos.
+
+## 10. Resumen en lenguaje sencillo
+
+En términos simples: Provider del widget Nota destacada/en foco. La sección función por función anterior describe qué entra, qué devuelve y qué efectos produce cada operación detectada en el fuente actual.

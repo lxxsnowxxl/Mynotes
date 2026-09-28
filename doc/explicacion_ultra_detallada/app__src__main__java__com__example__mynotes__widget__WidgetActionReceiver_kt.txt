@@ -1,0 +1,196 @@
+MYNOTES — EXPLICACIÓN ULTRA DETALLADA
+==============================================================================================================
+Archivo 65/72: app/src/main/java/com/example/mynotes/widget/WidgetActionReceiver.kt
+SHA-256: f4119fe7bdf5b806c33aee9f043d020b0e4a39175debbca8ccf80d55ad057279
+Líneas del fuente: 37
+Package: com.example.mynotes.widget
+
+1. RESPONSABILIDAD EXACTA DEL ARCHIVO
+----------------------------------------------------------------------
+Recibe acciones de botones de widgets y las traduce a Intents/operaciones dentro de MyNotes.
+
+2. DÓNDE ENCAJA EN LA ARQUITECTURA
+----------------------------------------------------------------------
+Este archivo pertenece principalmente a la **integración App Widgets/launcher**. No debe analizarse aislado: las referencias cruzadas y callbacks se detallan más abajo.
+
+3. IMPORTACIONES, UNA POR UNA
+----------------------------------------------------------------------
+- `android.content.BroadcastReceiver`: Importa `android.content.BroadcastReceiver` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `android.content.Context`: Importa `android.content.Context` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `android.content.Intent`: Importa `android.content.Intent` para usar mensajería/navegación entre componentes Android.
+- `com.example.mynotes.data.AppDatabase`: Importa `com.example.mynotes.data.AppDatabase`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `kotlinx.coroutines.CoroutineScope`: Importa `kotlinx.coroutines.CoroutineScope` para usar coroutines, Flow y ejecución asíncrona.
+- `kotlinx.coroutines.Dispatchers`: Importa `kotlinx.coroutines.Dispatchers` para usar coroutines, Flow y ejecución asíncrona.
+- `kotlinx.coroutines.SupervisorJob`: Importa `kotlinx.coroutines.SupervisorJob` para usar coroutines, Flow y ejecución asíncrona.
+- `kotlinx.coroutines.launch`: Importa `kotlinx.coroutines.launch` para usar coroutines, Flow y ejecución asíncrona.
+
+4. DECLARACIONES Y ESTADO IMPORTANTES
+----------------------------------------------------------------------
+L12: `class WidgetActionReceiver : BroadcastReceiver() {`
+    Declara class `WidgetActionReceiver`. A partir de aquí las propiedades y funciones hasta su llave de cierre pertenecen a este tipo.
+L14: `val noteId = intent.getIntExtra(WidgetActions.EXTRA_NOTE_ID, -1)`
+    Declara `noteId` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `intent.getIntExtra(WidgetActions.EXTRA_NOTE_ID, -1)`.
+L17: `val pendingResult = goAsync()`
+    Declara `pendingResult` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `goAsync()`.
+L20: `val dao = AppDatabase.getDatabase(context.applicationContext).noteDao()`
+    Declara `dao` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `AppDatabase.getDatabase(context.applicationContext).noteDao()`.
+L21: `val note = dao.getNoteByIdOnce(noteId) ?: return@launch`
+    Declara `note` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `dao.getNoteByIdOnce(noteId) ?: return@launch`.
+
+5. FUNCIONES — EXPLICACIÓN DE CADA UNA
+----------------------------------------------------------------------
+
+5.1 `onReceive` — líneas 13–36
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        override fun onReceive(context: Context, intent: Intent) {
+
+Propósito:
+    Punto de entrada de un BroadcastReceiver. Android llama aquí cuando llega la acción registrada y el método decide cómo responder.
+
+Parámetros/entradas:
+  - `context: Context`: el llamador proporciona este valor/callback a `onReceive`. Dentro del cuerpo, las líneas donde aparece `context` muestran exactamente cómo afecta al resultado.
+  - `intent: Intent`: el llamador proporciona este valor/callback a `onReceive`. Dentro del cuerpo, las líneas donde aparece `intent` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L13 [4 espacios] `override fun onReceive(context: Context, intent: Intent) {`
+      → Sobrescribe un método definido por una clase/interfaz base. El bloque de `onReceive` se detalla después instrucción por instrucción.
+  L14 [8 espacios] `val noteId = intent.getIntExtra(WidgetActions.EXTRA_NOTE_ID, -1)`
+      → Declara `noteId` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `intent.getIntExtra(WidgetActions.EXTRA_NOTE_ID, -1)`.
+  L15 [8 espacios] `if (noteId <= 0) return`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `noteId <= 0`.
+  L17 [8 espacios] `val pendingResult = goAsync()`
+      → Declara `pendingResult` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `goAsync()`.
+  L18 [8 espacios] `CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {`
+      → Lanza una coroutine hija para ejecutar este bloque de forma asíncrona respecto al código llamador.
+  L19 [12 espacios] `try {`
+      → Abre un bloque protegido: si una operación lanza una excepción, el control puede pasar al `catch` correspondiente sin terminar abruptamente el flujo.
+  L20 [16 espacios] `val dao = AppDatabase.getDatabase(context.applicationContext).noteDao()`
+      → Declara `dao` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `AppDatabase.getDatabase(context.applicationContext).noteDao()`.
+  L21 [16 espacios] `val note = dao.getNoteByIdOnce(noteId) ?: return@launch`
+      → Declara `note` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `dao.getNoteByIdOnce(noteId) ?: return@launch`.
+  L23 [16 espacios] `when (intent.action) {`
+      → Abre una decisión `when`: selecciona una rama según el valor/condición, equivalente a un switch más expresivo de Kotlin.
+  L24 [20 espacios] `WidgetActions.ACTION_TOGGLE_FAVORITE -> {`
+      → Define una rama/lambda. Cuando coincide `WidgetActions.ACTION_TOGGLE_FAVORITE`, se ejecuta la expresión o bloque situado después de `->`.
+  L25 [24 espacios] `dao.updateFavorite(noteId, !note.isFavorite)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L26 [20 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L27 [20 espacios] `WidgetActions.ACTION_TOGGLE_PIN -> {`
+      → Define una rama/lambda. Cuando coincide `WidgetActions.ACTION_TOGGLE_PIN`, se ejecuta la expresión o bloque situado después de `->`.
+  L28 [24 espacios] `dao.updatePinned(noteId, !note.isPinned)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L29 [20 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L30 [16 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L31 [16 espacios] `MyNotesWidgetUpdater.requestUpdate(context.applicationContext)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L32 [12 espacios] `} finally {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L33 [16 espacios] `pendingResult.finish()`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L34 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L35 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L36 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+6. EXPLICACIÓN COMPLETA LÍNEA POR LÍNEA
+----------------------------------------------------------------------
+Esta sección no omite líneas ejecutables. Repite incluso partes ya explicadas en funciones para poder leer el archivo de arriba abajo sin saltar entre secciones.
+L1: `package com.example.mynotes.widget`
+    Declara que este archivo pertenece al package `com.example.mynotes.widget`; esto determina su namespace Kotlin y cómo lo importan otros archivos.
+L3: `import android.content.BroadcastReceiver`
+    Importa `android.content.BroadcastReceiver` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L4: `import android.content.Context`
+    Importa `android.content.Context` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L5: `import android.content.Intent`
+    Importa `android.content.Intent` para usar mensajería/navegación entre componentes Android.
+L6: `import com.example.mynotes.data.AppDatabase`
+    Importa `com.example.mynotes.data.AppDatabase`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L7: `import kotlinx.coroutines.CoroutineScope`
+    Importa `kotlinx.coroutines.CoroutineScope` para usar coroutines, Flow y ejecución asíncrona.
+L8: `import kotlinx.coroutines.Dispatchers`
+    Importa `kotlinx.coroutines.Dispatchers` para usar coroutines, Flow y ejecución asíncrona.
+L9: `import kotlinx.coroutines.SupervisorJob`
+    Importa `kotlinx.coroutines.SupervisorJob` para usar coroutines, Flow y ejecución asíncrona.
+L10: `import kotlinx.coroutines.launch`
+    Importa `kotlinx.coroutines.launch` para usar coroutines, Flow y ejecución asíncrona.
+L12: `class WidgetActionReceiver : BroadcastReceiver() {`
+    Declara class `WidgetActionReceiver`. A partir de aquí las propiedades y funciones hasta su llave de cierre pertenecen a este tipo.
+L13: `override fun onReceive(context: Context, intent: Intent) {`
+    Sobrescribe un método definido por una clase/interfaz base. El bloque de `onReceive` se detalla después instrucción por instrucción.
+L14: `val noteId = intent.getIntExtra(WidgetActions.EXTRA_NOTE_ID, -1)`
+    Declara `noteId` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `intent.getIntExtra(WidgetActions.EXTRA_NOTE_ID, -1)`.
+L15: `if (noteId <= 0) return`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `noteId <= 0`.
+L17: `val pendingResult = goAsync()`
+    Declara `pendingResult` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `goAsync()`.
+L18: `CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {`
+    Lanza una coroutine hija para ejecutar este bloque de forma asíncrona respecto al código llamador.
+L19: `try {`
+    Abre un bloque protegido: si una operación lanza una excepción, el control puede pasar al `catch` correspondiente sin terminar abruptamente el flujo.
+L20: `val dao = AppDatabase.getDatabase(context.applicationContext).noteDao()`
+    Declara `dao` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `AppDatabase.getDatabase(context.applicationContext).noteDao()`.
+L21: `val note = dao.getNoteByIdOnce(noteId) ?: return@launch`
+    Declara `note` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `dao.getNoteByIdOnce(noteId) ?: return@launch`.
+L23: `when (intent.action) {`
+    Abre una decisión `when`: selecciona una rama según el valor/condición, equivalente a un switch más expresivo de Kotlin.
+L24: `WidgetActions.ACTION_TOGGLE_FAVORITE -> {`
+    Define una rama/lambda. Cuando coincide `WidgetActions.ACTION_TOGGLE_FAVORITE`, se ejecuta la expresión o bloque situado después de `->`.
+L25: `dao.updateFavorite(noteId, !note.isFavorite)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L26: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L27: `WidgetActions.ACTION_TOGGLE_PIN -> {`
+    Define una rama/lambda. Cuando coincide `WidgetActions.ACTION_TOGGLE_PIN`, se ejecuta la expresión o bloque situado después de `->`.
+L28: `dao.updatePinned(noteId, !note.isPinned)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L29: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L30: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L31: `MyNotesWidgetUpdater.requestUpdate(context.applicationContext)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L32: `} finally {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L33: `pendingResult.finish()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L34: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L35: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L36: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L37: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+7. RECURSOS ANDROID REFERENCIADOS
+----------------------------------------------------------------------
+- No hay referencias directas `R.*` en este archivo.
+
+8. QUIÉN USA ESTE COMPONENTE
+----------------------------------------------------------------------
+- `WidgetActionReceiver` aparece también en 1 archivo(s):
+    - app/src/main/java/com/example/mynotes/widget/WidgetIntents.kt
+
+9. QUÉ PUEDE ROMPERSE SI LO MODIFICAS
+----------------------------------------------------------------------
+- Los widgets usan RemoteViews, no Compose. API 28/Samsung limita propiedades y tintes; no asumir que cualquier API visual de Compose/Views funciona dentro del launcher.
+
+10. CHECKLIST DE PRUEBA DESPUÉS DE MODIFICAR ESTE ARCHIVO
+----------------------------------------------------------------------
+- Compilar `assembleDebug` y resolver primero errores de Kotlin/AAPT.
+- Abrir la pantalla/flujo relacionado y comprobar ida y vuelta (back) sin estado duplicado.
+- Cambiar tema/paleta y verificar contraste si este archivo dibuja UI.
+- Añadir el widget desde el launcher en API 28/Samsung, cambiar idioma/paleta y forzar actualización.
+
+==============================================================================================================
+FIN DEL ARCHIVO
+==============================================================================================================

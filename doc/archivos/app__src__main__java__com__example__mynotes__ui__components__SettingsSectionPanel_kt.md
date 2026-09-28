@@ -1,42 +1,69 @@
-# SettingsSectionPanel.kt — documentación del código actual
-**Ruta real:** `app/src/main/java/com/example/mynotes/ui/components/SettingsSectionPanel.kt`  **SHA-256:** `8f7337521be321d39c572afa9be295b43450d11897a2dbc09bf7f718f62b14d5`  **Líneas:** 46 · **Bytes:** 2183 · **Imports:** 17 · **Declaraciones detectadas:** 1
-> Documento generado fuera de `app/` a partir de lectura del código. El fuente es la única fuente de verdad; no se modificó para generar esta documentación.
-## 1. Responsabilidad
+# SettingsSectionPanel.kt — explicación completa del código
+
+**Ruta:** `app/src/main/java/com/example/mynotes/ui/components/SettingsSectionPanel.kt`  
+**SHA-256:** `8f7337521be321d39c572afa9be295b43450d11897a2dbc09bf7f718f62b14d5`  
+**Líneas:** 47  
+**Package:** `com.example.mynotes.ui.components`
+
+## 1. Para qué existe este archivo
 
 Contenedor visual reutilizable para secciones de Configuración.
-## 2. Package e imports
 
-Package declarado: `com.example.mynotes.ui.components`.
+## 2. Tipos/clases declarados
 
-### Android / Jetpack / Compose
+- No declara una clase/objeto propio; contiene funciones/valores de soporte o es un archivo marcador.
 
-`androidx.compose.foundation.layout.Column`, `androidx.compose.foundation.layout.ColumnScope`, `androidx.compose.foundation.layout.PaddingValues`, `androidx.compose.foundation.layout.fillMaxWidth`, `androidx.compose.foundation.layout.padding`, `androidx.compose.material3.MaterialTheme`, `androidx.compose.runtime.Composable`, `androidx.compose.runtime.remember`, `androidx.compose.ui.Modifier`, `androidx.compose.ui.draw.drawBehind`, `androidx.compose.ui.geometry.CornerRadius`, `androidx.compose.ui.geometry.Offset`, `androidx.compose.ui.geometry.Size`, `androidx.compose.ui.unit.Dp`, `androidx.compose.ui.unit.dp`
+## 3. Estado, constantes y valores importantes
 
-### Proyecto MyNotes
+- **`background`** (línea 34) inicia con `MaterialTheme.colorScheme.surfaceContainerLow`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`colors`** (línea 35) inicia con `remember(background`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`outset`** (línea 39) inicia con `horizontalOutset.toPx(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`radius`** (línea 40) inicia con `18.dp.toPx(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
 
-`com.example.mynotes.ui.theme.SettingsSectionColors`, `com.example.mynotes.ui.theme.settingsSectionColors`
+## 4. Funciones y flujo, una por una
 
-## 3. Declaraciones detectadas
+### `SettingsSectionPanel` — líneas 31–46
 
-| Línea | Tipo | Nombre | Firma/inicio |
-|---:|---|---|---|
-| 30 | `fun` | `SettingsSectionPanel` | `@Composable` |
+**Firma:** `internal fun SettingsSectionPanel(textColorMode: String, modifier: Modifier = Modifier, contentPadding: PaddingValues = PaddingValues(14.dp), horizontalOutset: Dp = 8.dp, content: @Composable ColumnScope.(SettingsSectionColors) -> Unit)`
 
-## 4. Estado, efectos y límites observables
+Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
 
-- **Compose state:** 2 aparición/apariciones.
+**Entradas:**
+- `textColorMode: String`
+- `modifier: Modifier = Modifier`
+- `contentPadding: PaddingValues = PaddingValues(14.dp)`
+- `horizontalOutset: Dp = 8.dp`
+- `content: @Composable ColumnScope.(SettingsSectionColors) -> Unit`
 
-Estas cifras son indicadores de superficie de cambio, no diagnósticos de error. Cualquier modificación debe preservar contratos de persistencia, lifecycle, límites numéricos y nulabilidad visibles en el fuente.
+**Salida:** Unit o inferido por Kotlin.
 
-## 5. Dependencias internas directas
+**Efectos/APIs observados en el cuerpo:**
+- Participa en estado/efectos de Compose.
 
-- `com.example.mynotes.ui.theme.SettingsSectionColors`
-- `com.example.mynotes.ui.theme.settingsSectionColors`
+**Operaciones/funciones que coordina:** `settingsSectionColors`, `fillMaxWidth`, `toPx`, `drawRoundRect`, `Offset`, `Size`, `CornerRadius`, `padding`, `content`.
 
-## 6. Recursos Android referenciados
+## 5. Cómo se conecta con el resto de MyNotes
 
-No se detectaron referencias `R.*` directas.
+- Usa `com.example.mynotes.ui.theme.SettingsSectionColors`.
+- Usa `com.example.mynotes.ui.theme.settingsSectionColors`.
 
-## 7. Puntos de revisión al modificarlo
+## 6. Recursos Android que utiliza
 
-- Conservar rangos `coerce*`, claves DataStore y compatibilidad con backups existentes.
+- No se detectaron referencias directas `R.*` en este archivo.
+
+## 7. Tecnologías y efectos relevantes
+
+- Participa en estado/efectos de Compose.
+
+## 8. Lectura práctica del flujo
+
+Una forma útil de seguir este archivo en el depurador es recorrer estas operaciones en este orden aproximado:
+1. `SettingsSectionPanel` — Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+## 9. Qué no debe romperse al modificarlo
+
+- Evitar trabajo bloqueante durante composición y mantener estado estable para limitar recomposiciones.
+
+## 10. Resumen en lenguaje sencillo
+
+En términos simples: Contenedor visual reutilizable para secciones de Configuración. La sección función por función anterior describe qué entra, qué devuelve y qué efectos produce cada operación detectada en el fuente actual.

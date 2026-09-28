@@ -1,0 +1,822 @@
+MYNOTES — EXPLICACIÓN ULTRA DETALLADA
+==============================================================================================================
+Archivo 9/72: app/src/main/java/com/example/mynotes/data/NoteDao.kt
+SHA-256: 7f974ecce790f4e5bcde975e34a669d746ecfe25c96c3e5fab3fe797b94e98db
+Líneas del fuente: 142
+Package: com.example.mynotes.data
+
+1. RESPONSABILIDAD EXACTA DEL ARCHIVO
+----------------------------------------------------------------------
+Contrato Room para consultar, insertar, actualizar y eliminar notas. Expone Flows reactivos que alimentan la UI y consultas auxiliares para widgets/estadísticas.
+
+2. DÓNDE ENCAJA EN LA ARQUITECTURA
+----------------------------------------------------------------------
+Este archivo pertenece principalmente a la **persistencia/modelos Room**. No debe analizarse aislado: las referencias cruzadas y callbacks se detallan más abajo.
+
+3. IMPORTACIONES, UNA POR UNA
+----------------------------------------------------------------------
+- `androidx.room.Dao`: Importa `androidx.room.Dao` para usar persistencia SQLite declarativa con Room.
+- `androidx.room.Delete`: Importa `androidx.room.Delete` para usar persistencia SQLite declarativa con Room.
+- `androidx.room.Insert`: Importa `androidx.room.Insert` para usar persistencia SQLite declarativa con Room.
+- `androidx.room.OnConflictStrategy`: Importa `androidx.room.OnConflictStrategy` para usar persistencia SQLite declarativa con Room.
+- `androidx.room.Query`: Importa `androidx.room.Query` para usar persistencia SQLite declarativa con Room.
+- `androidx.room.Update`: Importa `androidx.room.Update` para usar persistencia SQLite declarativa con Room.
+- `kotlinx.coroutines.flow.Flow`: Importa `kotlinx.coroutines.flow.Flow` para usar coroutines, Flow y ejecución asíncrona.
+
+4. DECLARACIONES Y ESTADO IMPORTANTES
+----------------------------------------------------------------------
+L12: `data class WidgetNoteStats(`
+    Declara `WidgetNoteStats` como `data class`: Kotlin genera automáticamente igualdad, hash, copia y representación textual a partir de sus propiedades del constructor.
+L13: `val totalCount: Int,`
+    Declara `totalCount` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L14: `val favoriteCount: Int,`
+    Declara `favoriteCount` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L15: `val pinnedCount: Int,`
+    Declara `pinnedCount` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L16: `val highPriorityCount: Int,`
+    Declara `highPriorityCount` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L17: `val workCount: Int,`
+    Declara `workCount` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L18: `val personalCount: Int`
+    Declara `personalCount` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L22: `interface NoteDao {`
+    Declara interface `NoteDao`. A partir de aquí las propiedades y funciones hasta su llave de cierre pertenecen a este tipo.
+
+5. FUNCIONES — EXPLICACIÓN DE CADA UNA
+----------------------------------------------------------------------
+
+5.1 `getAllNotes` — líneas 42–54
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun getAllNotes():
+            Flow<List<Note>>
+        @Query(
+            """
+            SELECT *
+            FROM notes
+            ORDER BY id ASC
+            """
+        )
+        suspend fun getAllNotesOnce():
+            List<Note>
+    
+        @Query("SELECT * FROM notes WHERE id = :noteId LIMIT 1")
+
+Propósito:
+    Obtiene/carga el dato indicado por el nombre de la función, aplicando los fallbacks y transformaciones visibles en su cuerpo.
+
+Parámetros/entradas:
+  - `):
+        Flow<List<Note>>
+    @Query(
+        """
+        SELECT *
+        FROM notes
+        ORDER BY id ASC
+        """
+    )
+    suspend fun getAllNotesOnce():
+        List<Note>
+
+    @Query("SELECT * FROM notes WHERE id = :noteId LIMIT 1"`: el llamador proporciona este valor/callback a `getAllNotes`. Dentro del cuerpo, las líneas donde aparece `)` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Flow<List<Note>> @Query( """ SELECT * FROM notes ORDER BY id ASC """ ) suspend fun getAllNotesOnce(): List<Note>  @Query("SELECT * FROM notes WHERE id`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L42 [4 espacios] `fun getAllNotes():`
+      → Declara una función. El bloque de `getAllNotes` se detalla después instrucción por instrucción.
+  L43 [8 espacios] `Flow<List<Note>>`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `Flow<List<Note>>`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L44 [4 espacios] `@Query(`
+      → Asocia a la función siguiente una consulta SQL que Room compila y valida.
+  L45 [8 espacios] `"""`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"""`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L46 [8 espacios] `SELECT *`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `SELECT *`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L47 [8 espacios] `FROM notes`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `FROM notes`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L48 [8 espacios] `ORDER BY id ASC`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `ORDER BY id ASC`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L49 [8 espacios] `"""`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"""`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L50 [4 espacios] `)`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L51 [4 espacios] `suspend fun getAllNotesOnce():`
+      → Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `getAllNotesOnce` se detalla después instrucción por instrucción.
+  L52 [8 espacios] `List<Note>`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `List<Note>`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L54 [4 espacios] `@Query("SELECT * FROM notes WHERE id = :noteId LIMIT 1")`
+      → Asocia a la función siguiente una consulta SQL que Room compila y valida. SQL declarado: "SELECT * FROM notes WHERE id = :noteId LIMIT 1".
+
+5.2 `getNoteByIdOnce` — líneas 55–70
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        suspend fun getNoteByIdOnce(noteId: Int): Note?
+    
+        @Query(
+            """
+            SELECT *
+            FROM notes
+            ORDER BY createdAt DESC
+            LIMIT :limit
+            """
+        )
+        suspend fun getRecentNotesForWidget(limit: Int): List<Note>
+    
+        @Query("SELECT COUNT(*) FROM notes")
+        suspend fun getNoteCountForWidget(): Int
+    
+        @Query("SELECT COUNT(*) FROM notes WHERE isFavorite = 1")
+
+Propósito:
+    Obtiene/carga el dato indicado por el nombre de la función, aplicando los fallbacks y transformaciones visibles en su cuerpo.
+
+Parámetros/entradas:
+  - `noteId: Int): Note?
+
+    @Query(
+        """
+        SELECT *
+        FROM notes
+        ORDER BY createdAt DESC
+        LIMIT :limit
+        """
+    )
+    suspend fun getRecentNotesForWidget(limit: Int): List<Note>
+
+    @Query("SELECT COUNT(*) FROM notes")
+    suspend fun getNoteCountForWidget(): Int
+
+    @Query("SELECT COUNT(*) FROM notes WHERE isFavorite = 1"`: el llamador proporciona este valor/callback a `getNoteByIdOnce`. Dentro del cuerpo, las líneas donde aparece `noteId` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Note?  @Query( """ SELECT * FROM notes ORDER BY createdAt DESC LIMIT :limit """ ) suspend fun getRecentNotesForWidget(limit: Int): List<Note>  @Query("SELECT COUNT(*) FROM notes") suspend fun getNoteCountForWidget(): Int  @Query("SELECT COUNT(*) FROM notes WHERE isFavorite`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L55 [4 espacios] `suspend fun getNoteByIdOnce(noteId: Int): Note?`
+      → Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `getNoteByIdOnce` se detalla después instrucción por instrucción.
+  L57 [4 espacios] `@Query(`
+      → Asocia a la función siguiente una consulta SQL que Room compila y valida.
+  L58 [8 espacios] `"""`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"""`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L59 [8 espacios] `SELECT *`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `SELECT *`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L60 [8 espacios] `FROM notes`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `FROM notes`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L61 [8 espacios] `ORDER BY createdAt DESC`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `ORDER BY createdAt DESC`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L62 [8 espacios] `LIMIT :limit`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `LIMIT :limit`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L63 [8 espacios] `"""`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"""`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L64 [4 espacios] `)`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L65 [4 espacios] `suspend fun getRecentNotesForWidget(limit: Int): List<Note>`
+      → Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `getRecentNotesForWidget` se detalla después instrucción por instrucción.
+  L67 [4 espacios] `@Query("SELECT COUNT(*) FROM notes")`
+      → Asocia a la función siguiente una consulta SQL que Room compila y valida. SQL declarado: "SELECT COUNT(*) FROM notes".
+  L68 [4 espacios] `suspend fun getNoteCountForWidget(): Int`
+      → Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `getNoteCountForWidget` se detalla después instrucción por instrucción.
+  L70 [4 espacios] `@Query("SELECT COUNT(*) FROM notes WHERE isFavorite = 1")`
+      → Asocia a la función siguiente una consulta SQL que Room compila y valida. SQL declarado: "SELECT COUNT(*) FROM notes WHERE isFavorite = 1".
+
+5.3 `getFavoriteCountForWidget` — líneas 71–77
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        suspend fun getFavoriteCountForWidget(): Int
+    
+        @Query(
+            """
+            SELECT
+                COUNT(*) AS totalCount,
+                COALESCE(SUM(CASE WHEN isFavorite = 1 THEN 1 ELSE 0 END), 0) AS favoriteCount,
+
+Propósito:
+    Obtiene/carga el dato indicado por el nombre de la función, aplicando los fallbacks y transformaciones visibles en su cuerpo.
+
+Parámetros/entradas:
+  - `): Int
+
+    @Query(
+        """
+        SELECT
+            COUNT(*) AS totalCount,
+            COALESCE(SUM(CASE WHEN isFavorite = 1 THEN 1 ELSE 0 END), 0`: el llamador proporciona este valor/callback a `getFavoriteCountForWidget`. Dentro del cuerpo, las líneas donde aparece `)` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Int  @Query( """ SELECT COUNT(*) AS totalCount, COALESCE(SUM(CASE WHEN isFavorite`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L71 [4 espacios] `suspend fun getFavoriteCountForWidget(): Int`
+      → Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `getFavoriteCountForWidget` se detalla después instrucción por instrucción.
+  L73 [4 espacios] `@Query(`
+      → Asocia a la función siguiente una consulta SQL que Room compila y valida.
+  L74 [8 espacios] `"""`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"""`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L75 [8 espacios] `SELECT`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `SELECT`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L76 [12 espacios] `COUNT(*) AS totalCount,`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `COUNT(*) AS totalCount,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L77 [12 espacios] `COALESCE(SUM(CASE WHEN isFavorite = 1 THEN 1 ELSE 0 END), 0) AS favoriteCount,`
+      → Asigna/configura `COALESCE(SUM(CASE WHEN isFavorite` usando `1 THEN 1 ELSE 0 END), 0) AS favoriteCount,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+
+5.4 `getWidgetStats` — líneas 85–91
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        suspend fun getWidgetStats(): WidgetNoteStats
+    
+        @Query(
+            """
+            SELECT *
+            FROM notes
+            WHERE isFavorite = 1
+
+Propósito:
+    Obtiene/carga el dato indicado por el nombre de la función, aplicando los fallbacks y transformaciones visibles en su cuerpo.
+
+Parámetros/entradas:
+  - No recibe parámetros explícitos.
+
+Salida:
+  - Tipo declarado `WidgetNoteStats  @Query( """ SELECT * FROM notes WHERE isFavorite`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L85 [4 espacios] `suspend fun getWidgetStats(): WidgetNoteStats`
+      → Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `getWidgetStats` se detalla después instrucción por instrucción.
+  L87 [4 espacios] `@Query(`
+      → Asocia a la función siguiente una consulta SQL que Room compila y valida.
+  L88 [8 espacios] `"""`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"""`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L89 [8 espacios] `SELECT *`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `SELECT *`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L90 [8 espacios] `FROM notes`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `FROM notes`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L91 [8 espacios] `WHERE isFavorite = 1`
+      → Asigna/configura `WHERE isFavorite` usando `1`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+
+5.5 `getFavoriteNotesForWidget` — líneas 96–102
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        suspend fun getFavoriteNotesForWidget(limit: Int): List<Note>
+    
+        @Query(
+            """
+            SELECT *
+            FROM notes
+            WHERE isPinned = 1
+
+Propósito:
+    Obtiene/carga el dato indicado por el nombre de la función, aplicando los fallbacks y transformaciones visibles en su cuerpo.
+
+Parámetros/entradas:
+  - `limit: Int`: el llamador proporciona este valor/callback a `getFavoriteNotesForWidget`. Dentro del cuerpo, las líneas donde aparece `limit` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `List<Note>  @Query( """ SELECT * FROM notes WHERE isPinned`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L96 [4 espacios] `suspend fun getFavoriteNotesForWidget(limit: Int): List<Note>`
+      → Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `getFavoriteNotesForWidget` se detalla después instrucción por instrucción.
+  L98 [4 espacios] `@Query(`
+      → Asocia a la función siguiente una consulta SQL que Room compila y valida.
+  L99 [8 espacios] `"""`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"""`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L100 [8 espacios] `SELECT *`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `SELECT *`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L101 [8 espacios] `FROM notes`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `FROM notes`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L102 [8 espacios] `WHERE isPinned = 1`
+      → Asigna/configura `WHERE isPinned` usando `1`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+
+5.6 `getPinnedNotesForWidget` — líneas 107–118
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        suspend fun getPinnedNotesForWidget(limit: Int): List<Note>
+    
+        @Query(
+            """
+            SELECT *
+            FROM notes
+            ORDER BY isPinned DESC, priority DESC, isFavorite DESC, createdAt DESC
+            LIMIT 1
+            """
+        )
+        suspend fun getFocusNoteForWidget(): Note?
+        @Insert(onConflict = OnConflictStrategy.REPLACE)
+
+Propósito:
+    Obtiene/carga el dato indicado por el nombre de la función, aplicando los fallbacks y transformaciones visibles en su cuerpo.
+
+Parámetros/entradas:
+  - `limit: Int): List<Note>
+
+    @Query(
+        """
+        SELECT *
+        FROM notes
+        ORDER BY isPinned DESC, priority DESC, isFavorite DESC, createdAt DESC
+        LIMIT 1
+        """
+    )
+    suspend fun getFocusNoteForWidget(): Note?
+    @Insert(onConflict = OnConflictStrategy.REPLACE`: el llamador proporciona este valor/callback a `getPinnedNotesForWidget`. Dentro del cuerpo, las líneas donde aparece `limit` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `List<Note>  @Query( """ SELECT * FROM notes ORDER BY isPinned DESC, priority DESC, isFavorite DESC, createdAt DESC LIMIT 1 """ ) suspend fun getFocusNoteForWidget(): Note? @Insert(onConflict`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L107 [4 espacios] `suspend fun getPinnedNotesForWidget(limit: Int): List<Note>`
+      → Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `getPinnedNotesForWidget` se detalla después instrucción por instrucción.
+  L109 [4 espacios] `@Query(`
+      → Asocia a la función siguiente una consulta SQL que Room compila y valida.
+  L110 [8 espacios] `"""`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"""`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L111 [8 espacios] `SELECT *`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `SELECT *`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L112 [8 espacios] `FROM notes`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `FROM notes`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L113 [8 espacios] `ORDER BY isPinned DESC, priority DESC, isFavorite DESC, createdAt DESC`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `ORDER BY isPinned DESC, priority DESC, isFavorite DESC, createdAt DESC`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L114 [8 espacios] `LIMIT 1`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `LIMIT 1`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L115 [8 espacios] `"""`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"""`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L116 [4 espacios] `)`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L117 [4 espacios] `suspend fun getFocusNoteForWidget(): Note?`
+      → Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `getFocusNoteForWidget` se detalla después instrucción por instrucción.
+  L118 [4 espacios] `@Insert(onConflict = OnConflictStrategy.REPLACE)`
+      → Indica a Room que la función siguiente inserta una entidad; la estrategia de conflicto indicada decide qué ocurre con claves repetidas.
+
+5.7 `insertNotes` — líneas 119–130
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        suspend fun insertNotes(notes: List<Note>)
+        @Query("DELETE FROM notes")
+        suspend fun deleteAllNotes()
+        @Insert
+        suspend fun insertNote(note: Note): Long
+        @Update
+        suspend fun updateNote(note: Note)
+        /*
+         * Actualizaciones parciales: evitan escribir toda la fila cuando solo
+         * cambia un atributo visual o de organización.
+         */
+        @Query("UPDATE notes SET color = :color WHERE id = :noteId")
+
+Propósito:
+    Implementa `insertNotes`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `notes: List<Note>)
+    @Query("DELETE FROM notes")
+    suspend fun deleteAllNotes()
+    @Insert
+    suspend fun insertNote(note: Note): Long
+    @Update
+    suspend fun updateNote(note: Note)
+    /*
+     * Actualizaciones parciales: evitan escribir toda la fila cuando solo
+     * cambia un atributo visual o de organización.
+     */
+    @Query("UPDATE notes SET color = :color WHERE id = :noteId"`: el llamador proporciona este valor/callback a `insertNotes`. Dentro del cuerpo, las líneas donde aparece `notes` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Long @Update suspend fun updateNote(note: Note) /* * Actualizaciones parciales: evitan escribir toda la fila cuando solo * cambia un atributo visual o de organización. */ @Query("UPDATE notes SET color`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L119 [4 espacios] `suspend fun insertNotes(notes: List<Note>)`
+      → Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `insertNotes` se detalla después instrucción por instrucción.
+  L120 [4 espacios] `@Query("DELETE FROM notes")`
+      → Asocia a la función siguiente una consulta SQL que Room compila y valida. SQL declarado: "DELETE FROM notes".
+  L121 [4 espacios] `suspend fun deleteAllNotes()`
+      → Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `deleteAllNotes` se detalla después instrucción por instrucción.
+  L122 [4 espacios] `@Insert`
+      → Indica a Room que la función siguiente inserta una entidad; la estrategia de conflicto indicada decide qué ocurre con claves repetidas.
+  L123 [4 espacios] `suspend fun insertNote(note: Note): Long`
+      → Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `insertNote` se detalla después instrucción por instrucción.
+  L124 [4 espacios] `@Update`
+      → Indica a Room que la función siguiente actualiza una fila usando la clave primaria de la entidad.
+  L125 [4 espacios] `suspend fun updateNote(note: Note)`
+      → Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `updateNote` se detalla después instrucción por instrucción.
+  L126 [4 espacios] `/*`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L127 [5 espacios] `* Actualizaciones parciales: evitan escribir toda la fila cuando solo`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L128 [5 espacios] `* cambia un atributo visual o de organización.`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L129 [5 espacios] `*/`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L130 [4 espacios] `@Query("UPDATE notes SET color = :color WHERE id = :noteId")`
+      → Asocia a la función siguiente una consulta SQL que Room compila y valida. SQL declarado: "UPDATE notes SET color = :color WHERE id = :noteId".
+
+5.8 `updateColor` — líneas 131–132
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        suspend fun updateColor(noteId: Int, color: String)
+        @Query("UPDATE notes SET priority = :priority WHERE id = :noteId")
+
+Propósito:
+    Actualiza el estado/dato indicado por el nombre y propaga el cambio a las capas que dependen de él.
+
+Parámetros/entradas:
+  - `noteId: Int`: el llamador proporciona este valor/callback a `updateColor`. Dentro del cuerpo, las líneas donde aparece `noteId` muestran exactamente cómo afecta al resultado.
+  - `color: String)
+    @Query("UPDATE notes SET priority = :priority WHERE id = :noteId"`: el llamador proporciona este valor/callback a `updateColor`. Dentro del cuerpo, las líneas donde aparece `color` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L131 [4 espacios] `suspend fun updateColor(noteId: Int, color: String)`
+      → Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `updateColor` se detalla después instrucción por instrucción.
+  L132 [4 espacios] `@Query("UPDATE notes SET priority = :priority WHERE id = :noteId")`
+      → Asocia a la función siguiente una consulta SQL que Room compila y valida. SQL declarado: "UPDATE notes SET priority = :priority WHERE id = :noteId".
+
+5.9 `updatePriority` — líneas 133–134
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        suspend fun updatePriority(noteId: Int, priority: Int)
+        @Query("UPDATE notes SET isFavorite = :isFavorite WHERE id = :noteId")
+
+Propósito:
+    Actualiza el estado/dato indicado por el nombre y propaga el cambio a las capas que dependen de él.
+
+Parámetros/entradas:
+  - `noteId: Int`: el llamador proporciona este valor/callback a `updatePriority`. Dentro del cuerpo, las líneas donde aparece `noteId` muestran exactamente cómo afecta al resultado.
+  - `priority: Int)
+    @Query("UPDATE notes SET isFavorite = :isFavorite WHERE id = :noteId"`: el llamador proporciona este valor/callback a `updatePriority`. Dentro del cuerpo, las líneas donde aparece `priority` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L133 [4 espacios] `suspend fun updatePriority(noteId: Int, priority: Int)`
+      → Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `updatePriority` se detalla después instrucción por instrucción.
+  L134 [4 espacios] `@Query("UPDATE notes SET isFavorite = :isFavorite WHERE id = :noteId")`
+      → Asocia a la función siguiente una consulta SQL que Room compila y valida. SQL declarado: "UPDATE notes SET isFavorite = :isFavorite WHERE id = :noteId".
+
+5.10 `updateFavorite` — líneas 135–136
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        suspend fun updateFavorite(noteId: Int, isFavorite: Boolean)
+        @Query("UPDATE notes SET isPinned = :isPinned WHERE id = :noteId")
+
+Propósito:
+    Actualiza el estado/dato indicado por el nombre y propaga el cambio a las capas que dependen de él.
+
+Parámetros/entradas:
+  - `noteId: Int`: el llamador proporciona este valor/callback a `updateFavorite`. Dentro del cuerpo, las líneas donde aparece `noteId` muestran exactamente cómo afecta al resultado.
+  - `isFavorite: Boolean)
+    @Query("UPDATE notes SET isPinned = :isPinned WHERE id = :noteId"`: el llamador proporciona este valor/callback a `updateFavorite`. Dentro del cuerpo, las líneas donde aparece `isFavorite` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L135 [4 espacios] `suspend fun updateFavorite(noteId: Int, isFavorite: Boolean)`
+      → Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `updateFavorite` se detalla después instrucción por instrucción.
+  L136 [4 espacios] `@Query("UPDATE notes SET isPinned = :isPinned WHERE id = :noteId")`
+      → Asocia a la función siguiente una consulta SQL que Room compila y valida. SQL declarado: "UPDATE notes SET isPinned = :isPinned WHERE id = :noteId".
+
+5.11 `updatePinned` — líneas 137–138
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        suspend fun updatePinned(noteId: Int, isPinned: Boolean)
+        @Query("UPDATE notes SET category = :category WHERE id = :noteId")
+
+Propósito:
+    Actualiza el estado/dato indicado por el nombre y propaga el cambio a las capas que dependen de él.
+
+Parámetros/entradas:
+  - `noteId: Int`: el llamador proporciona este valor/callback a `updatePinned`. Dentro del cuerpo, las líneas donde aparece `noteId` muestran exactamente cómo afecta al resultado.
+  - `isPinned: Boolean)
+    @Query("UPDATE notes SET category = :category WHERE id = :noteId"`: el llamador proporciona este valor/callback a `updatePinned`. Dentro del cuerpo, las líneas donde aparece `isPinned` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L137 [4 espacios] `suspend fun updatePinned(noteId: Int, isPinned: Boolean)`
+      → Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `updatePinned` se detalla después instrucción por instrucción.
+  L138 [4 espacios] `@Query("UPDATE notes SET category = :category WHERE id = :noteId")`
+      → Asocia a la función siguiente una consulta SQL que Room compila y valida. SQL declarado: "UPDATE notes SET category = :category WHERE id = :noteId".
+
+5.12 `updateCategory` — líneas 139–143
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        suspend fun updateCategory(noteId: Int, category: String)
+        @Delete
+        suspend fun deleteNote(note: Note)
+    }
+
+Propósito:
+    Actualiza el estado/dato indicado por el nombre y propaga el cambio a las capas que dependen de él.
+
+Parámetros/entradas:
+  - `noteId: Int`: el llamador proporciona este valor/callback a `updateCategory`. Dentro del cuerpo, las líneas donde aparece `noteId` muestran exactamente cómo afecta al resultado.
+  - `category: String)
+    @Delete
+    suspend fun deleteNote(note: Note`: el llamador proporciona este valor/callback a `updateCategory`. Dentro del cuerpo, las líneas donde aparece `category` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L139 [4 espacios] `suspend fun updateCategory(noteId: Int, category: String)`
+      → Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `updateCategory` se detalla después instrucción por instrucción.
+  L140 [4 espacios] `@Delete`
+      → Indica a Room que la función siguiente elimina la entidad recibida.
+  L141 [4 espacios] `suspend fun deleteNote(note: Note)`
+      → Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `deleteNote` se detalla después instrucción por instrucción.
+  L142 [0 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+6. EXPLICACIÓN COMPLETA LÍNEA POR LÍNEA
+----------------------------------------------------------------------
+Esta sección no omite líneas ejecutables. Repite incluso partes ya explicadas en funciones para poder leer el archivo de arriba abajo sin saltar entre secciones.
+L1: `package com.example.mynotes.data`
+    Declara que este archivo pertenece al package `com.example.mynotes.data`; esto determina su namespace Kotlin y cómo lo importan otros archivos.
+L3: `import androidx.room.Dao`
+    Importa `androidx.room.Dao` para usar persistencia SQLite declarativa con Room.
+L4: `import androidx.room.Delete`
+    Importa `androidx.room.Delete` para usar persistencia SQLite declarativa con Room.
+L5: `import androidx.room.Insert`
+    Importa `androidx.room.Insert` para usar persistencia SQLite declarativa con Room.
+L6: `import androidx.room.OnConflictStrategy`
+    Importa `androidx.room.OnConflictStrategy` para usar persistencia SQLite declarativa con Room.
+L7: `import androidx.room.Query`
+    Importa `androidx.room.Query` para usar persistencia SQLite declarativa con Room.
+L8: `import androidx.room.Update`
+    Importa `androidx.room.Update` para usar persistencia SQLite declarativa con Room.
+L9: `import kotlinx.coroutines.flow.Flow`
+    Importa `kotlinx.coroutines.flow.Flow` para usar coroutines, Flow y ejecución asíncrona.
+L12: `data class WidgetNoteStats(`
+    Declara `WidgetNoteStats` como `data class`: Kotlin genera automáticamente igualdad, hash, copia y representación textual a partir de sus propiedades del constructor.
+L13: `val totalCount: Int,`
+    Declara `totalCount` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L14: `val favoriteCount: Int,`
+    Declara `favoriteCount` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L15: `val pinnedCount: Int,`
+    Declara `pinnedCount` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L16: `val highPriorityCount: Int,`
+    Declara `highPriorityCount` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L17: `val workCount: Int,`
+    Declara `workCount` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L18: `val personalCount: Int`
+    Declara `personalCount` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L19: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L21: `@Dao`
+    Declara un DAO de Room. Room generará la implementación concreta de las funciones SQL definidas en esta interfaz.
+L22: `interface NoteDao {`
+    Declara interface `NoteDao`. A partir de aquí las propiedades y funciones hasta su llave de cierre pertenecen a este tipo.
+L23: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L24: `* Room devuelve la lista ya ordenada.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L25: `*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L26: `* 1. Fijadas.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L27: `* 2. Prioridad alta -> baja.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L28: `* 3. Más recientes.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L29: `*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L30: `* De esta forma Compose no ordena la colección en cada cambio.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L31: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L32: `@Query(`
+    Asocia a la función siguiente una consulta SQL que Room compila y valida.
+L33: `"""`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"""`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L34: `SELECT *`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `SELECT *`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L35: `FROM notes`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `FROM notes`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L36: `ORDER BY`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `ORDER BY`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L37: `isPinned DESC,`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `isPinned DESC,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L38: `priority DESC,`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `priority DESC,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L39: `createdAt DESC`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `createdAt DESC`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L40: `"""`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"""`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L41: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L42: `fun getAllNotes():`
+    Declara una función. El bloque de `getAllNotes` se detalla después instrucción por instrucción.
+L43: `Flow<List<Note>>`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `Flow<List<Note>>`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L44: `@Query(`
+    Asocia a la función siguiente una consulta SQL que Room compila y valida.
+L45: `"""`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"""`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L46: `SELECT *`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `SELECT *`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L47: `FROM notes`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `FROM notes`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L48: `ORDER BY id ASC`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `ORDER BY id ASC`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L49: `"""`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"""`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L50: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L51: `suspend fun getAllNotesOnce():`
+    Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `getAllNotesOnce` se detalla después instrucción por instrucción.
+L52: `List<Note>`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `List<Note>`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L54: `@Query("SELECT * FROM notes WHERE id = :noteId LIMIT 1")`
+    Asocia a la función siguiente una consulta SQL que Room compila y valida. SQL declarado: "SELECT * FROM notes WHERE id = :noteId LIMIT 1".
+L55: `suspend fun getNoteByIdOnce(noteId: Int): Note?`
+    Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `getNoteByIdOnce` se detalla después instrucción por instrucción.
+L57: `@Query(`
+    Asocia a la función siguiente una consulta SQL que Room compila y valida.
+L58: `"""`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"""`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L59: `SELECT *`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `SELECT *`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L60: `FROM notes`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `FROM notes`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L61: `ORDER BY createdAt DESC`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `ORDER BY createdAt DESC`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L62: `LIMIT :limit`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `LIMIT :limit`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L63: `"""`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"""`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L64: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L65: `suspend fun getRecentNotesForWidget(limit: Int): List<Note>`
+    Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `getRecentNotesForWidget` se detalla después instrucción por instrucción.
+L67: `@Query("SELECT COUNT(*) FROM notes")`
+    Asocia a la función siguiente una consulta SQL que Room compila y valida. SQL declarado: "SELECT COUNT(*) FROM notes".
+L68: `suspend fun getNoteCountForWidget(): Int`
+    Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `getNoteCountForWidget` se detalla después instrucción por instrucción.
+L70: `@Query("SELECT COUNT(*) FROM notes WHERE isFavorite = 1")`
+    Asocia a la función siguiente una consulta SQL que Room compila y valida. SQL declarado: "SELECT COUNT(*) FROM notes WHERE isFavorite = 1".
+L71: `suspend fun getFavoriteCountForWidget(): Int`
+    Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `getFavoriteCountForWidget` se detalla después instrucción por instrucción.
+L73: `@Query(`
+    Asocia a la función siguiente una consulta SQL que Room compila y valida.
+L74: `"""`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"""`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L75: `SELECT`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `SELECT`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L76: `COUNT(*) AS totalCount,`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `COUNT(*) AS totalCount,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L77: `COALESCE(SUM(CASE WHEN isFavorite = 1 THEN 1 ELSE 0 END), 0) AS favoriteCount,`
+    Asigna/configura `COALESCE(SUM(CASE WHEN isFavorite` usando `1 THEN 1 ELSE 0 END), 0) AS favoriteCount,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L78: `COALESCE(SUM(CASE WHEN isPinned = 1 THEN 1 ELSE 0 END), 0) AS pinnedCount,`
+    Asigna/configura `COALESCE(SUM(CASE WHEN isPinned` usando `1 THEN 1 ELSE 0 END), 0) AS pinnedCount,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L79: `COALESCE(SUM(CASE WHEN priority = 3 THEN 1 ELSE 0 END), 0) AS highPriorityCount,`
+    Asigna/configura `COALESCE(SUM(CASE WHEN priority` usando `3 THEN 1 ELSE 0 END), 0) AS highPriorityCount,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L80: `COALESCE(SUM(CASE WHEN category = 'work' THEN 1 ELSE 0 END), 0) AS workCount,`
+    Asigna/configura `COALESCE(SUM(CASE WHEN category` usando `'work' THEN 1 ELSE 0 END), 0) AS workCount,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L81: `COALESCE(SUM(CASE WHEN category != 'work' THEN 1 ELSE 0 END), 0) AS personalCount`
+    Asigna/configura `COALESCE(SUM(CASE WHEN category !` usando `'work' THEN 1 ELSE 0 END), 0) AS personalCount`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L82: `FROM notes`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `FROM notes`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L83: `"""`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"""`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L84: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L85: `suspend fun getWidgetStats(): WidgetNoteStats`
+    Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `getWidgetStats` se detalla después instrucción por instrucción.
+L87: `@Query(`
+    Asocia a la función siguiente una consulta SQL que Room compila y valida.
+L88: `"""`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"""`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L89: `SELECT *`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `SELECT *`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L90: `FROM notes`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `FROM notes`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L91: `WHERE isFavorite = 1`
+    Asigna/configura `WHERE isFavorite` usando `1`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L92: `ORDER BY isPinned DESC, priority DESC, createdAt DESC`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `ORDER BY isPinned DESC, priority DESC, createdAt DESC`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L93: `LIMIT :limit`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `LIMIT :limit`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L94: `"""`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"""`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L95: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L96: `suspend fun getFavoriteNotesForWidget(limit: Int): List<Note>`
+    Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `getFavoriteNotesForWidget` se detalla después instrucción por instrucción.
+L98: `@Query(`
+    Asocia a la función siguiente una consulta SQL que Room compila y valida.
+L99: `"""`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"""`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L100: `SELECT *`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `SELECT *`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L101: `FROM notes`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `FROM notes`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L102: `WHERE isPinned = 1`
+    Asigna/configura `WHERE isPinned` usando `1`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L103: `ORDER BY priority DESC, createdAt DESC`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `ORDER BY priority DESC, createdAt DESC`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L104: `LIMIT :limit`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `LIMIT :limit`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L105: `"""`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"""`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L106: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L107: `suspend fun getPinnedNotesForWidget(limit: Int): List<Note>`
+    Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `getPinnedNotesForWidget` se detalla después instrucción por instrucción.
+L109: `@Query(`
+    Asocia a la función siguiente una consulta SQL que Room compila y valida.
+L110: `"""`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"""`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L111: `SELECT *`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `SELECT *`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L112: `FROM notes`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `FROM notes`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L113: `ORDER BY isPinned DESC, priority DESC, isFavorite DESC, createdAt DESC`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `ORDER BY isPinned DESC, priority DESC, isFavorite DESC, createdAt DESC`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L114: `LIMIT 1`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `LIMIT 1`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L115: `"""`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"""`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L116: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L117: `suspend fun getFocusNoteForWidget(): Note?`
+    Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `getFocusNoteForWidget` se detalla después instrucción por instrucción.
+L118: `@Insert(onConflict = OnConflictStrategy.REPLACE)`
+    Indica a Room que la función siguiente inserta una entidad; la estrategia de conflicto indicada decide qué ocurre con claves repetidas.
+L119: `suspend fun insertNotes(notes: List<Note>)`
+    Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `insertNotes` se detalla después instrucción por instrucción.
+L120: `@Query("DELETE FROM notes")`
+    Asocia a la función siguiente una consulta SQL que Room compila y valida. SQL declarado: "DELETE FROM notes".
+L121: `suspend fun deleteAllNotes()`
+    Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `deleteAllNotes` se detalla después instrucción por instrucción.
+L122: `@Insert`
+    Indica a Room que la función siguiente inserta una entidad; la estrategia de conflicto indicada decide qué ocurre con claves repetidas.
+L123: `suspend fun insertNote(note: Note): Long`
+    Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `insertNote` se detalla después instrucción por instrucción.
+L124: `@Update`
+    Indica a Room que la función siguiente actualiza una fila usando la clave primaria de la entidad.
+L125: `suspend fun updateNote(note: Note)`
+    Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `updateNote` se detalla después instrucción por instrucción.
+L126: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L127: `* Actualizaciones parciales: evitan escribir toda la fila cuando solo`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L128: `* cambia un atributo visual o de organización.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L129: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L130: `@Query("UPDATE notes SET color = :color WHERE id = :noteId")`
+    Asocia a la función siguiente una consulta SQL que Room compila y valida. SQL declarado: "UPDATE notes SET color = :color WHERE id = :noteId".
+L131: `suspend fun updateColor(noteId: Int, color: String)`
+    Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `updateColor` se detalla después instrucción por instrucción.
+L132: `@Query("UPDATE notes SET priority = :priority WHERE id = :noteId")`
+    Asocia a la función siguiente una consulta SQL que Room compila y valida. SQL declarado: "UPDATE notes SET priority = :priority WHERE id = :noteId".
+L133: `suspend fun updatePriority(noteId: Int, priority: Int)`
+    Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `updatePriority` se detalla después instrucción por instrucción.
+L134: `@Query("UPDATE notes SET isFavorite = :isFavorite WHERE id = :noteId")`
+    Asocia a la función siguiente una consulta SQL que Room compila y valida. SQL declarado: "UPDATE notes SET isFavorite = :isFavorite WHERE id = :noteId".
+L135: `suspend fun updateFavorite(noteId: Int, isFavorite: Boolean)`
+    Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `updateFavorite` se detalla después instrucción por instrucción.
+L136: `@Query("UPDATE notes SET isPinned = :isPinned WHERE id = :noteId")`
+    Asocia a la función siguiente una consulta SQL que Room compila y valida. SQL declarado: "UPDATE notes SET isPinned = :isPinned WHERE id = :noteId".
+L137: `suspend fun updatePinned(noteId: Int, isPinned: Boolean)`
+    Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `updatePinned` se detalla después instrucción por instrucción.
+L138: `@Query("UPDATE notes SET category = :category WHERE id = :noteId")`
+    Asocia a la función siguiente una consulta SQL que Room compila y valida. SQL declarado: "UPDATE notes SET category = :category WHERE id = :noteId".
+L139: `suspend fun updateCategory(noteId: Int, category: String)`
+    Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `updateCategory` se detalla después instrucción por instrucción.
+L140: `@Delete`
+    Indica a Room que la función siguiente elimina la entidad recibida.
+L141: `suspend fun deleteNote(note: Note)`
+    Declara una función suspendible: puede pausar una coroutine sin bloquear el hilo. El bloque de `deleteNote` se detalla después instrucción por instrucción.
+L142: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+7. RECURSOS ANDROID REFERENCIADOS
+----------------------------------------------------------------------
+- No hay referencias directas `R.*` en este archivo.
+
+8. QUIÉN USA ESTE COMPONENTE
+----------------------------------------------------------------------
+- `NoteDao` aparece también en 2 archivo(s):
+    - app/src/main/java/com/example/mynotes/data/AppDatabase.kt
+    - app/src/main/java/com/example/mynotes/ui/theme/SourceCodeInfoScreen.kt
+
+9. QUÉ PUEDE ROMPERSE SI LO MODIFICAS
+----------------------------------------------------------------------
+- Cambiar el esquema Room puede requerir aumentar versión y definir migración. Hacerlo sin migración puede impedir abrir bases existentes o forzar pérdida de datos si se usa destructive migration.
+
+10. CHECKLIST DE PRUEBA DESPUÉS DE MODIFICAR ESTE ARCHIVO
+----------------------------------------------------------------------
+- Compilar `assembleDebug` y resolver primero errores de Kotlin/AAPT.
+- Abrir la pantalla/flujo relacionado y comprobar ida y vuelta (back) sin estado duplicado.
+- Cambiar tema/paleta y verificar contraste si este archivo dibuja UI.
+
+==============================================================================================================
+FIN DEL ARCHIVO
+==============================================================================================================

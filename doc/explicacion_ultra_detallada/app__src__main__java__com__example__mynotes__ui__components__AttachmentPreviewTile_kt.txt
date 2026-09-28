@@ -1,0 +1,1367 @@
+MYNOTES — EXPLICACIÓN ULTRA DETALLADA
+==============================================================================================================
+Archivo 24/72: app/src/main/java/com/example/mynotes/ui/components/AttachmentPreviewTile.kt
+SHA-256: 02a4cd1294006d450f96ff84ca2d992f00ba900aabd7487bf4ca6b4d93ae1144
+Líneas del fuente: 329
+Package: com.example.mynotes.ui.components
+
+1. RESPONSABILIDAD EXACTA DEL ARCHIVO
+----------------------------------------------------------------------
+Composable que representa una miniatura/preview compacta de un adjunto dentro de la interfaz de notas.
+
+2. DÓNDE ENCAJA EN LA ARQUITECTURA
+----------------------------------------------------------------------
+Este archivo pertenece principalmente a la **capa de interfaz Compose/Activities**. No debe analizarse aislado: las referencias cruzadas y callbacks se detallan más abajo.
+
+3. IMPORTACIONES, UNA POR UNA
+----------------------------------------------------------------------
+- `android.content.Context`: Importa `android.content.Context` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `android.net.Uri`: Importa `android.net.Uri` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `android.webkit.MimeTypeMap`: Importa `android.webkit.MimeTypeMap` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `androidx.compose.foundation.Image`: Importa `androidx.compose.foundation.Image` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.clickable`: Importa `androidx.compose.foundation.clickable` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.layout.Arrangement`: Importa `androidx.compose.foundation.layout.Arrangement` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.layout.Box`: Importa `androidx.compose.foundation.layout.Box` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.layout.Column`: Importa `androidx.compose.foundation.layout.Column` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.layout.Row`: Importa `androidx.compose.foundation.layout.Row` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.layout.Spacer`: Importa `androidx.compose.foundation.layout.Spacer` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.layout.fillMaxSize`: Importa `androidx.compose.foundation.layout.fillMaxSize` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.layout.fillMaxWidth`: Importa `androidx.compose.foundation.layout.fillMaxWidth` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.layout.height`: Importa `androidx.compose.foundation.layout.height` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.layout.padding`: Importa `androidx.compose.foundation.layout.padding` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.layout.size`: Importa `androidx.compose.foundation.layout.size` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.layout.width`: Importa `androidx.compose.foundation.layout.width` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.shape.CircleShape`: Importa `androidx.compose.foundation.shape.CircleShape` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.shape.RoundedCornerShape`: Importa `androidx.compose.foundation.shape.RoundedCornerShape` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.material.icons.Icons`: Importa `androidx.compose.material.icons.Icons` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.material.icons.filled.Description`: Importa `androidx.compose.material.icons.filled.Description` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.material.icons.filled.Mic`: Importa `androidx.compose.material.icons.filled.Mic` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.material.icons.filled.MusicNote`: Importa `androidx.compose.material.icons.filled.MusicNote` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.material.icons.filled.PlayArrow`: Importa `androidx.compose.material.icons.filled.PlayArrow` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.material.icons.filled.VideoFile`: Importa `androidx.compose.material.icons.filled.VideoFile` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.material3.Icon`: Importa `androidx.compose.material3.Icon` para usar componentes y tema Material 3.
+- `androidx.compose.material3.MaterialTheme`: Importa `androidx.compose.material3.MaterialTheme` para usar componentes y tema Material 3.
+- `androidx.compose.material3.Surface`: Importa `androidx.compose.material3.Surface` para usar componentes y tema Material 3.
+- `androidx.compose.material3.Text`: Importa `androidx.compose.material3.Text` para usar componentes y tema Material 3.
+- `androidx.compose.runtime.Composable`: Importa `androidx.compose.runtime.Composable` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+- `androidx.compose.runtime.getValue`: Importa `androidx.compose.runtime.getValue` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+- `androidx.compose.runtime.produceState`: Importa `androidx.compose.runtime.produceState` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+- `androidx.compose.ui.Alignment`: Importa `androidx.compose.ui.Alignment` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.Modifier`: Importa `androidx.compose.ui.Modifier` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.draw.clip`: Importa `androidx.compose.ui.draw.clip` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.graphics.Color`: Importa `androidx.compose.ui.graphics.Color` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.graphics.asImageBitmap`: Importa `androidx.compose.ui.graphics.asImageBitmap` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.layout.ContentScale`: Importa `androidx.compose.ui.layout.ContentScale` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.platform.LocalContext`: Importa `androidx.compose.ui.platform.LocalContext` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.res.stringResource`: Importa `androidx.compose.ui.res.stringResource` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.text.font.FontFamily`: Importa `androidx.compose.ui.text.font.FontFamily` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.text.font.FontWeight`: Importa `androidx.compose.ui.text.font.FontWeight` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.text.style.TextOverflow`: Importa `androidx.compose.ui.text.style.TextOverflow` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.unit.Dp`: Importa `androidx.compose.ui.unit.Dp` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.unit.dp`: Importa `androidx.compose.ui.unit.dp` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.unit.sp`: Importa `androidx.compose.ui.unit.sp` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `com.example.mynotes.R`: Importa `com.example.mynotes.R`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.data.Attachment`: Importa `com.example.mynotes.data.Attachment`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.performance.AttachmentPreviewCache`: Importa `com.example.mynotes.performance.AttachmentPreviewCache`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.ui.sound.UiActionSound`: Importa `com.example.mynotes.ui.sound.UiActionSound`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.ui.sound.UiSoundPlayer`: Importa `com.example.mynotes.ui.sound.UiSoundPlayer`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.ui.openAttachmentViewer`: Importa `com.example.mynotes.ui.openAttachmentViewer`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `kotlinx.coroutines.delay`: Importa `kotlinx.coroutines.delay` para usar coroutines, Flow y ejecución asíncrona.
+
+4. DECLARACIONES Y ESTADO IMPORTANTES
+----------------------------------------------------------------------
+L69: `val context = LocalContext.current`
+    Declara `context` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `LocalContext.current`.
+L70: `val uri = Uri.parse(attachment.uri)`
+    Opera con URI/ContentResolver de Android para acceder a contenido compartido sin asumir una ruta de archivo directa.
+L71: `val isBorderlessPreview = attachment.type == "image" || attachment.type == "video" || attachment.name?.substringAfterLast(".", "")`
+    Declara `isBorderlessPreview` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `attachment.type == "image" || attachment.type == "video" || attachment.name?.substringAfterLast(".", "")`.
+L113: `val previewReady by`
+    Declara `previewReady` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L123: `val context = LocalContext.current`
+    Declara `context` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `LocalContext.current`.
+L124: `val preview by`
+    Declara `preview` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L150: `val context = LocalContext.current`
+    Declara `context` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `LocalContext.current`.
+L151: `val preview by`
+    Declara `preview` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L163: `val bitmap = preview?.bitmap`
+    Declara `bitmap` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `preview?.bitmap`.
+L186: `val duration = preview?.durationMillis?: 0L`
+    Declara `duration` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `preview?.durationMillis?: 0L`.
+L198: `val context = LocalContext.current`
+    Declara `context` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `LocalContext.current`.
+L199: `val preview by`
+    Declara `preview` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L211: `val bitmap = preview?.bitmap`
+    Declara `bitmap` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `preview?.bitmap`.
+L251: `val context = LocalContext.current`
+    Declara `context` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `LocalContext.current`.
+L252: `val extension = attachment.name?.substringAfterLast(".", "")?.lowercase()?: uri.path?.substringAfterLast(".", "")?.lowercase()`
+    Declara `extension` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `attachment.name?.substringAfterLast(".", "")?.lowercase()?: uri.path?.substringAfterLast(".", "")?.lowercase()`.
+L255: `val preview by`
+    Declara `preview` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L309: `val totalSeconds = durationMillis / 1000L`
+    Declara `totalSeconds` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `durationMillis / 1000L`.
+L310: `val minutes = totalSeconds / 60L`
+    Declara `minutes` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `totalSeconds / 60L`.
+L311: `val seconds = totalSeconds % 60L`
+    Declara `seconds` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `totalSeconds % 60L`.
+L327: `val extension = name?.substringAfterLast(".", "")?.lowercase().orEmpty()`
+    Declara `extension` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `name?.substringAfterLast(".", "")?.lowercase().orEmpty()`.
+
+5. FUNCIONES — EXPLICACIÓN DE CADA UNA
+----------------------------------------------------------------------
+
+5.1 `AttachmentPreviewTile` — líneas 66–66
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    fun AttachmentPreviewTile(attachment: Attachment, modifier: Modifier = Modifier, fontFamily: FontFamily = FontFamily.Default,
+
+Propósito:
+    Implementa `AttachmentPreviewTile`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `attachment: Attachment`: el llamador proporciona este valor/callback a `AttachmentPreviewTile`. Dentro del cuerpo, las líneas donde aparece `attachment` muestran exactamente cómo afecta al resultado.
+  - `modifier: Modifier = Modifier`: el llamador proporciona este valor/callback a `AttachmentPreviewTile`. Dentro del cuerpo, las líneas donde aparece `modifier` muestran exactamente cómo afecta al resultado.
+  - `fontFamily: FontFamily = FontFamily.Default`: el llamador proporciona este valor/callback a `AttachmentPreviewTile`. Dentro del cuerpo, las líneas donde aparece `fontFamily` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L66 [0 espacios] `fun AttachmentPreviewTile(attachment: Attachment, modifier: Modifier = Modifier, fontFamily: FontFamily = FontFamily.Default,`
+      → Declara una función. El bloque de `AttachmentPreviewTile` se detalla después instrucción por instrucción.
+
+5.2 `ImageAttachment` — líneas 111–145
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    private fun ImageAttachment(attachment: Attachment, showName: Boolean, fontFamily: FontFamily, previewDelayMillis: Long,
+        performanceMode: String) {
+
+Propósito:
+    Implementa `ImageAttachment`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `attachment: Attachment`: el llamador proporciona este valor/callback a `ImageAttachment`. Dentro del cuerpo, las líneas donde aparece `attachment` muestran exactamente cómo afecta al resultado.
+  - `showName: Boolean`: el llamador proporciona este valor/callback a `ImageAttachment`. Dentro del cuerpo, las líneas donde aparece `showName` muestran exactamente cómo afecta al resultado.
+  - `fontFamily: FontFamily`: el llamador proporciona este valor/callback a `ImageAttachment`. Dentro del cuerpo, las líneas donde aparece `fontFamily` muestran exactamente cómo afecta al resultado.
+  - `previewDelayMillis: Long`: el llamador proporciona este valor/callback a `ImageAttachment`. Dentro del cuerpo, las líneas donde aparece `previewDelayMillis` muestran exactamente cómo afecta al resultado.
+  - `performanceMode: String`: el llamador proporciona este valor/callback a `ImageAttachment`. Dentro del cuerpo, las líneas donde aparece `performanceMode` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L111 [0 espacios] `private fun ImageAttachment(attachment: Attachment, showName: Boolean, fontFamily: FontFamily, previewDelayMillis: Long,`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `ImageAttachment` se detalla después instrucción por instrucción.
+  L112 [4 espacios] `performanceMode: String) {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L113 [4 espacios] `val previewReady by`
+      → Declara `previewReady` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+  L114 [8 espacios] `produceState(initialValue = previewDelayMillis <= 0L, key1 = attachment.uri, key2 = previewDelayMillis) {`
+      → Asigna/configura `produceState(initialValue` usando `previewDelayMillis <= 0L, key1 = attachment.uri, key2 = previewDelayMillis) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L115 [12 espacios] `if (previewDelayMillis > 0L) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `previewDelayMillis > 0L`.
+  L116 [16 espacios] `delay(previewDelayMillis)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L117 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L118 [12 espacios] `value = true`
+      → Asigna/configura `value` usando `true`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L119 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L120 [4 espacios] `Box(modifier = Modifier.fillMaxSize(),`
+      → Crea un `Box` de Compose que superpone/posiciona hijos dentro de un mismo contenedor. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+  L121 [8 espacios] `contentAlignment = Alignment.Center) {`
+      → Asigna/configura `contentAlignment` usando `Alignment.Center) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L122 [8 espacios] `if (previewReady) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `previewReady`.
+  L123 [12 espacios] `val context = LocalContext.current`
+      → Declara `context` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `LocalContext.current`.
+  L124 [12 espacios] `val preview by`
+      → Declara `preview` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+  L125 [16 espacios] `produceState<android.graphics.Bitmap?>(initialValue = null, key1 = attachment.uri, key2 = performanceMode) {`
+      → Asigna/configura `produceState<android.graphics.Bitmap?>(initialValue` usando `null, key1 = attachment.uri, key2 = performanceMode) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L126 [20 espacios] `value = AttachmentPreviewCache.withPreviewPermit {`
+      → Asigna/configura `value` usando `AttachmentPreviewCache.withPreviewPermit {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L127 [32 espacios] `AttachmentPreviewCache.loadImagePreview(context = context, uri = Uri.parse(attachment.uri),`
+      → Opera con URI/ContentResolver de Android para acceder a contenido compartido sin asumir una ruta de archivo directa.
+  L128 [40 espacios] `performanceMode = performanceMode)`
+      → Asigna/configura `performanceMode` usando `performanceMode)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L129 [28 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L130 [16 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L131 [12 espacios] `if (preview != null) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `preview != null`.
+  L132 [16 espacios] `Image(bitmap = preview!!.asImageBitmap(), contentDescription = attachment.name, modifier = Modifier.fillMaxSize().clip(`
+      → Renderiza un recurso visual. El modelo/painter y los modifiers siguientes determinan qué se muestra, tamaño, recorte y accesibilidad.
+  L133 [32 espacios] `RoundedCornerShape(16.dp)), contentScale = ContentScale.Fit)`
+      → Asigna/configura `RoundedCornerShape(16.dp)), contentScale` usando `ContentScale.Fit)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L134 [12 espacios] `} else {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L135 [16 espacios] `Icon(imageVector = Icons.Default.Description, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant`
+      → Renderiza un recurso visual. El modelo/painter y los modifiers siguientes determinan qué se muestra, tamaño, recorte y accesibilidad.
+  L136 [28 espacios] `.copy(alpha = 0.42f), modifier = Modifier.size(30.dp))`
+      → Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+  L137 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L138 [8 espacios] `} else {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L139 [12 espacios] `Icon(imageVector = Icons.Default.Description,`
+      → Renderiza un recurso visual. El modelo/painter y los modifiers siguientes determinan qué se muestra, tamaño, recorte y accesibilidad.
+  L140 [16 espacios] `contentDescription = null,`
+      → Asigna/configura `contentDescription` usando `null,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L141 [16 espacios] `tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.42f),`
+      → Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+  L142 [16 espacios] `modifier = Modifier.size(30.dp))`
+      → Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+  L143 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L144 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L145 [0 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.3 `VideoAttachment` — líneas 148–193
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    private fun VideoAttachment(attachment: Attachment, uri: Uri, showName: Boolean, fontFamily: FontFamily, previewDelayMillis: Long,
+        performanceMode: String) {
+
+Propósito:
+    Implementa `VideoAttachment`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `attachment: Attachment`: el llamador proporciona este valor/callback a `VideoAttachment`. Dentro del cuerpo, las líneas donde aparece `attachment` muestran exactamente cómo afecta al resultado.
+  - `uri: Uri`: el llamador proporciona este valor/callback a `VideoAttachment`. Dentro del cuerpo, las líneas donde aparece `uri` muestran exactamente cómo afecta al resultado.
+  - `showName: Boolean`: el llamador proporciona este valor/callback a `VideoAttachment`. Dentro del cuerpo, las líneas donde aparece `showName` muestran exactamente cómo afecta al resultado.
+  - `fontFamily: FontFamily`: el llamador proporciona este valor/callback a `VideoAttachment`. Dentro del cuerpo, las líneas donde aparece `fontFamily` muestran exactamente cómo afecta al resultado.
+  - `previewDelayMillis: Long`: el llamador proporciona este valor/callback a `VideoAttachment`. Dentro del cuerpo, las líneas donde aparece `previewDelayMillis` muestran exactamente cómo afecta al resultado.
+  - `performanceMode: String`: el llamador proporciona este valor/callback a `VideoAttachment`. Dentro del cuerpo, las líneas donde aparece `performanceMode` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L148 [0 espacios] `private fun VideoAttachment(attachment: Attachment, uri: Uri, showName: Boolean, fontFamily: FontFamily, previewDelayMillis: Long,`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `VideoAttachment` se detalla después instrucción por instrucción.
+  L149 [4 espacios] `performanceMode: String) {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L150 [4 espacios] `val context = LocalContext.current`
+      → Declara `context` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `LocalContext.current`.
+  L151 [4 espacios] `val preview by`
+      → Declara `preview` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+  L152 [8 espacios] `produceState<`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `produceState<`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L153 [12 espacios] `AttachmentPreviewCache.MediaPreview?`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `AttachmentPreviewCache.MediaPreview?`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L154 [12 espacios] `>(initialValue = null, key1 = attachment.uri, key2 = performanceMode) {`
+      → Asigna/configura `>(initialValue` usando `null, key1 = attachment.uri, key2 = performanceMode) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L155 [12 espacios] `if (previewDelayMillis > 0L) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `previewDelayMillis > 0L`.
+  L156 [16 espacios] `delay(previewDelayMillis)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L157 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L158 [12 espacios] `value = AttachmentPreviewCache.withPreviewPermit {`
+      → Asigna/configura `value` usando `AttachmentPreviewCache.withPreviewPermit {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L159 [24 espacios] `AttachmentPreviewCache.loadVideoPreview(context = context, uri = uri, performanceMode = performanceMode)`
+      → Asigna/configura `AttachmentPreviewCache.loadVideoPreview(context` usando `context, uri = uri, performanceMode = performanceMode)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L160 [20 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L161 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L162 [4 espacios] `Box(modifier = Modifier.fillMaxSize()) {`
+      → Crea un `Box` de Compose que superpone/posiciona hijos dentro de un mismo contenedor. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+  L163 [8 espacios] `val bitmap = preview?.bitmap`
+      → Declara `bitmap` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `preview?.bitmap`.
+  L164 [8 espacios] `if (bitmap != null) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `bitmap != null`.
+  L165 [12 espacios] `Image(bitmap = bitmap.asImageBitmap(),`
+      → Renderiza un recurso visual. El modelo/painter y los modifiers siguientes determinan qué se muestra, tamaño, recorte y accesibilidad.
+  L166 [16 espacios] `contentDescription = attachment.name,`
+      → Asigna/configura `contentDescription` usando `attachment.name,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L167 [16 espacios] `modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(16.dp)),`
+      → Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+  L168 [16 espacios] `contentScale = ContentScale.Fit)`
+      → Asigna/configura `contentScale` usando `ContentScale.Fit)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L169 [8 espacios] `} else {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L170 [12 espacios] `Column(modifier = Modifier.fillMaxSize(),`
+      → Crea un `Column` de Compose que organiza hijos verticalmente. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+  L171 [16 espacios] `horizontalAlignment = Alignment.CenterHorizontally,`
+      → Asigna/configura `horizontalAlignment` usando `Alignment.CenterHorizontally,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L172 [16 espacios] `verticalArrangement = Arrangement.Center) {`
+      → Asigna/configura `verticalArrangement` usando `Arrangement.Center) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L173 [16 espacios] `Icon(imageVector = Icons.Default.VideoFile,`
+      → Renderiza un recurso visual. El modelo/painter y los modifiers siguientes determinan qué se muestra, tamaño, recorte y accesibilidad.
+  L174 [20 espacios] `contentDescription = null,`
+      → Asigna/configura `contentDescription` usando `null,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L175 [20 espacios] `modifier = Modifier.size(36.dp))`
+      → Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+  L176 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L177 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L178 [8 espacios] `Surface(modifier = Modifier.align(Alignment.Center),`
+      → Crea una superficie visual Material que agrupa contenido y puede aplicar forma, fondo, elevación, borde y click.
+  L179 [12 espacios] `shape = CircleShape,`
+      → Asigna/configura `shape` usando `CircleShape,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L180 [12 espacios] `color = Color.Black.copy(alpha = 0.62f)) {`
+      → Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+  L181 [12 espacios] `Icon(imageVector = Icons.Default.PlayArrow,`
+      → Renderiza un recurso visual. El modelo/painter y los modifiers siguientes determinan qué se muestra, tamaño, recorte y accesibilidad.
+  L182 [16 espacios] `contentDescription = null,`
+      → Asigna/configura `contentDescription` usando `null,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L183 [16 espacios] `tint = Color.White,`
+      → Asigna/configura `tint` usando `Color.White,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L184 [16 espacios] `modifier = Modifier.padding(7.dp).size(22.dp))`
+      → Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+  L185 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L186 [8 espacios] `val duration = preview?.durationMillis?: 0L`
+      → Declara `duration` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `preview?.durationMillis?: 0L`.
+  L187 [8 espacios] `if (duration >`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera.
+  L188 [12 espacios] `0L) {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L189 [12 espacios] `DurationBadge(duration = duration,`
+      → Asigna/configura `DurationBadge(duration` usando `duration,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L190 [16 espacios] `modifier = Modifier.align(Alignment.BottomEnd))`
+      → Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+  L191 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L192 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L193 [0 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.4 `AudioAttachment` — líneas 196–246
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    private fun AudioAttachment(attachment: Attachment, uri: Uri, showName: Boolean, fontFamily: FontFamily, previewDelayMillis: Long,
+        performanceMode: String) {
+
+Propósito:
+    Implementa `AudioAttachment`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `attachment: Attachment`: el llamador proporciona este valor/callback a `AudioAttachment`. Dentro del cuerpo, las líneas donde aparece `attachment` muestran exactamente cómo afecta al resultado.
+  - `uri: Uri`: el llamador proporciona este valor/callback a `AudioAttachment`. Dentro del cuerpo, las líneas donde aparece `uri` muestran exactamente cómo afecta al resultado.
+  - `showName: Boolean`: el llamador proporciona este valor/callback a `AudioAttachment`. Dentro del cuerpo, las líneas donde aparece `showName` muestran exactamente cómo afecta al resultado.
+  - `fontFamily: FontFamily`: el llamador proporciona este valor/callback a `AudioAttachment`. Dentro del cuerpo, las líneas donde aparece `fontFamily` muestran exactamente cómo afecta al resultado.
+  - `previewDelayMillis: Long`: el llamador proporciona este valor/callback a `AudioAttachment`. Dentro del cuerpo, las líneas donde aparece `previewDelayMillis` muestran exactamente cómo afecta al resultado.
+  - `performanceMode: String`: el llamador proporciona este valor/callback a `AudioAttachment`. Dentro del cuerpo, las líneas donde aparece `performanceMode` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L196 [0 espacios] `private fun AudioAttachment(attachment: Attachment, uri: Uri, showName: Boolean, fontFamily: FontFamily, previewDelayMillis: Long,`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `AudioAttachment` se detalla después instrucción por instrucción.
+  L197 [4 espacios] `performanceMode: String) {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L198 [4 espacios] `val context = LocalContext.current`
+      → Declara `context` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `LocalContext.current`.
+  L199 [4 espacios] `val preview by`
+      → Declara `preview` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+  L200 [8 espacios] `produceState<`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `produceState<`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L201 [12 espacios] `AttachmentPreviewCache.MediaPreview?`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `AttachmentPreviewCache.MediaPreview?`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L202 [12 espacios] `>(initialValue = null, key1 = attachment.uri, key2 = performanceMode) {`
+      → Asigna/configura `>(initialValue` usando `null, key1 = attachment.uri, key2 = performanceMode) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L203 [12 espacios] `if (previewDelayMillis > 0L) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `previewDelayMillis > 0L`.
+  L204 [16 espacios] `delay(previewDelayMillis)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L205 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L206 [12 espacios] `value = AttachmentPreviewCache.withPreviewPermit {`
+      → Asigna/configura `value` usando `AttachmentPreviewCache.withPreviewPermit {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L207 [24 espacios] `AttachmentPreviewCache.loadAudioPreview(context = context, uri = uri, loadAlbumArt = true, performanceMode =`
+      → Asigna/configura `AttachmentPreviewCache.loadAudioPreview(context` usando `context, uri = uri, loadAlbumArt = true, performanceMode =`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L208 [36 espacios] `performanceMode)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L209 [20 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L210 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L211 [4 espacios] `val bitmap = preview?.bitmap`
+      → Declara `bitmap` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `preview?.bitmap`.
+  L212 [4 espacios] `if (bitmap != null) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `bitmap != null`.
+  L213 [8 espacios] `Box(modifier = Modifier.fillMaxSize()) {`
+      → Crea un `Box` de Compose que superpone/posiciona hijos dentro de un mismo contenedor. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+  L214 [12 espacios] `Image(bitmap = bitmap.asImageBitmap(),`
+      → Renderiza un recurso visual. El modelo/painter y los modifiers siguientes determinan qué se muestra, tamaño, recorte y accesibilidad.
+  L215 [16 espacios] `contentDescription = attachment.name,`
+      → Asigna/configura `contentDescription` usando `attachment.name,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L216 [16 espacios] `modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(16.dp)),`
+      → Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+  L217 [16 espacios] `contentScale = ContentScale.Fit)`
+      → Asigna/configura `contentScale` usando `ContentScale.Fit)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L218 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L219 [4 espacios] `} else {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L220 [8 espacios] `Column(modifier = Modifier.fillMaxSize().padding(12.dp),`
+      → Crea un `Column` de Compose que organiza hijos verticalmente. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+  L221 [12 espacios] `horizontalAlignment = Alignment.CenterHorizontally,`
+      → Asigna/configura `horizontalAlignment` usando `Alignment.CenterHorizontally,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L222 [12 espacios] `verticalArrangement = Arrangement.Center) {`
+      → Asigna/configura `verticalArrangement` usando `Arrangement.Center) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L223 [12 espacios] `Icon(imageVector = if (attachment.type == "voice") {`
+      → Renderiza un recurso visual. El modelo/painter y los modifiers siguientes determinan qué se muestra, tamaño, recorte y accesibilidad.
+  L224 [24 espacios] `Icons.Default.Mic`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `Icons.Default.Mic`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L225 [20 espacios] `} else {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L226 [24 espacios] `Icons.Default.MusicNote`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `Icons.Default.MusicNote`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L227 [20 espacios] `},`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L228 [16 espacios] `contentDescription = null,`
+      → Asigna/configura `contentDescription` usando `null,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L229 [16 espacios] `tint = MaterialTheme.colorScheme.primary,`
+      → Asigna/configura `tint` usando `MaterialTheme.colorScheme.primary,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L230 [16 espacios] `modifier = Modifier.size(34.dp))`
+      → Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+  L231 [12 espacios] `if (showName) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `showName`.
+  L232 [16 espacios] `Spacer(modifier = Modifier.height(7.dp))`
+      → Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+  L233 [16 espacios] `Text(text = if (attachment.type == "voice") {`
+      → Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+  L234 [28 espacios] `stringResource(R.string.mock_voice_note)`
+      → Obtiene una cadena localizada desde `res/values*` (`mock_voice_note`), de modo que la UI siga el idioma activo.
+  L235 [24 espacios] `} else {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L236 [28 espacios] `attachment.name?: stringResource(R.string.mock_audio)`
+      → Obtiene una cadena localizada desde `res/values*` (`mock_audio`), de modo que la UI siga el idioma activo.
+  L237 [24 espacios] `},`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L238 [20 espacios] `fontFamily = fontFamily,`
+      → Asigna/configura `fontFamily` usando `fontFamily,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L239 [20 espacios] `fontWeight = FontWeight.SemiBold,`
+      → Asigna/configura `fontWeight` usando `FontWeight.SemiBold,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L240 [20 espacios] `fontSize = 11.sp,`
+      → Asigna/configura `fontSize` usando `11.sp,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L241 [20 espacios] `maxLines = 2,`
+      → Asigna/configura `maxLines` usando `2,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L242 [20 espacios] `overflow = TextOverflow.Ellipsis)`
+      → Asigna/configura `overflow` usando `TextOverflow.Ellipsis)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L243 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L244 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L245 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L246 [0 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.5 `FileAttachment` — líneas 249–293
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    private fun FileAttachment(attachment: Attachment, uri: Uri, showName: Boolean, fontFamily: FontFamily, previewDelayMillis: Long,
+        performanceMode: String) {
+
+Propósito:
+    Implementa `FileAttachment`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `attachment: Attachment`: el llamador proporciona este valor/callback a `FileAttachment`. Dentro del cuerpo, las líneas donde aparece `attachment` muestran exactamente cómo afecta al resultado.
+  - `uri: Uri`: el llamador proporciona este valor/callback a `FileAttachment`. Dentro del cuerpo, las líneas donde aparece `uri` muestran exactamente cómo afecta al resultado.
+  - `showName: Boolean`: el llamador proporciona este valor/callback a `FileAttachment`. Dentro del cuerpo, las líneas donde aparece `showName` muestran exactamente cómo afecta al resultado.
+  - `fontFamily: FontFamily`: el llamador proporciona este valor/callback a `FileAttachment`. Dentro del cuerpo, las líneas donde aparece `fontFamily` muestran exactamente cómo afecta al resultado.
+  - `previewDelayMillis: Long`: el llamador proporciona este valor/callback a `FileAttachment`. Dentro del cuerpo, las líneas donde aparece `previewDelayMillis` muestran exactamente cómo afecta al resultado.
+  - `performanceMode: String`: el llamador proporciona este valor/callback a `FileAttachment`. Dentro del cuerpo, las líneas donde aparece `performanceMode` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L249 [0 espacios] `private fun FileAttachment(attachment: Attachment, uri: Uri, showName: Boolean, fontFamily: FontFamily, previewDelayMillis: Long,`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `FileAttachment` se detalla después instrucción por instrucción.
+  L250 [4 espacios] `performanceMode: String) {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L251 [4 espacios] `val context = LocalContext.current`
+      → Declara `context` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `LocalContext.current`.
+  L252 [4 espacios] `val extension = attachment.name?.substringAfterLast(".", "")?.lowercase()?: uri.path?.substringAfterLast(".", "")?.lowercase()`
+      → Declara `extension` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `attachment.name?.substringAfterLast(".", "")?.lowercase()?: uri.path?.substringAfterLast(".", "")?.lowercase()`.
+  L253 [16 espacios] `.orEmpty()`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L254 [4 espacios] `if (extension == "pdf") {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `extension == "pdf"`.
+  L255 [8 espacios] `val preview by`
+      → Declara `preview` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+  L256 [12 espacios] `produceState<`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `produceState<`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L257 [16 espacios] `android.graphics.Bitmap?`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `android.graphics.Bitmap?`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L258 [16 espacios] `>(initialValue = null, key1 = attachment.uri, key2 = performanceMode) {`
+      → Asigna/configura `>(initialValue` usando `null, key1 = attachment.uri, key2 = performanceMode) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L259 [16 espacios] `if (previewDelayMillis > 0L) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `previewDelayMillis > 0L`.
+  L260 [20 espacios] `delay(previewDelayMillis)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L261 [16 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L262 [16 espacios] `value = AttachmentPreviewCache.withPreviewPermit {`
+      → Asigna/configura `value` usando `AttachmentPreviewCache.withPreviewPermit {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L263 [28 espacios] `AttachmentPreviewCache.loadPdfFirstPage(context = context, uri = uri, performanceMode = performanceMode)`
+      → Asigna/configura `AttachmentPreviewCache.loadPdfFirstPage(context` usando `context, uri = uri, performanceMode = performanceMode)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L264 [24 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L265 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L266 [8 espacios] `if (preview != null) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `preview != null`.
+  L267 [12 espacios] `Box(modifier = Modifier.fillMaxSize()) {`
+      → Crea un `Box` de Compose que superpone/posiciona hijos dentro de un mismo contenedor. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+  L268 [16 espacios] `Image(bitmap = preview!!.asImageBitmap(),`
+      → Renderiza un recurso visual. El modelo/painter y los modifiers siguientes determinan qué se muestra, tamaño, recorte y accesibilidad.
+  L269 [20 espacios] `contentDescription = attachment.name,`
+      → Asigna/configura `contentDescription` usando `attachment.name,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L270 [20 espacios] `modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(16.dp)),`
+      → Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+  L271 [20 espacios] `contentScale = ContentScale.Fit)`
+      → Asigna/configura `contentScale` usando `ContentScale.Fit)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L272 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L273 [12 espacios] `return`
+      → Finaliza inmediatamente la función actual sin devolver un valor adicional (`Unit`).
+  L274 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L275 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L276 [4 espacios] `Column(modifier = Modifier.fillMaxSize().padding(12.dp),`
+      → Crea un `Column` de Compose que organiza hijos verticalmente. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+  L277 [8 espacios] `horizontalAlignment = Alignment.CenterHorizontally,`
+      → Asigna/configura `horizontalAlignment` usando `Alignment.CenterHorizontally,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L278 [8 espacios] `verticalArrangement = Arrangement.Center) {`
+      → Asigna/configura `verticalArrangement` usando `Arrangement.Center) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L279 [8 espacios] `Icon(imageVector = Icons.Default.Description,`
+      → Renderiza un recurso visual. El modelo/painter y los modifiers siguientes determinan qué se muestra, tamaño, recorte y accesibilidad.
+  L280 [12 espacios] `contentDescription = null,`
+      → Asigna/configura `contentDescription` usando `null,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L281 [12 espacios] `tint = MaterialTheme.colorScheme.primary,`
+      → Asigna/configura `tint` usando `MaterialTheme.colorScheme.primary,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L282 [12 espacios] `modifier = Modifier.size(35.dp))`
+      → Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+  L283 [8 espacios] `if (showName) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `showName`.
+  L284 [12 espacios] `Spacer(modifier = Modifier.height(7.dp))`
+      → Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+  L285 [12 espacios] `Text(text = attachment.name?: stringResource(R.string.mock_file),`
+      → Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+  L286 [16 espacios] `fontFamily = fontFamily,`
+      → Asigna/configura `fontFamily` usando `fontFamily,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L287 [16 espacios] `fontWeight = FontWeight.SemiBold,`
+      → Asigna/configura `fontWeight` usando `FontWeight.SemiBold,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L288 [16 espacios] `fontSize = 11.sp,`
+      → Asigna/configura `fontSize` usando `11.sp,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L289 [16 espacios] `maxLines = 2,`
+      → Asigna/configura `maxLines` usando `2,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L290 [16 espacios] `overflow = TextOverflow.Ellipsis)`
+      → Asigna/configura `overflow` usando `TextOverflow.Ellipsis)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L291 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L292 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L293 [0 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.6 `DurationBadge` — líneas 296–306
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    private fun DurationBadge(duration: Long, modifier: Modifier = Modifier) {
+
+Propósito:
+    Implementa `DurationBadge`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `duration: Long`: el llamador proporciona este valor/callback a `DurationBadge`. Dentro del cuerpo, las líneas donde aparece `duration` muestran exactamente cómo afecta al resultado.
+  - `modifier: Modifier = Modifier`: el llamador proporciona este valor/callback a `DurationBadge`. Dentro del cuerpo, las líneas donde aparece `modifier` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L296 [0 espacios] `private fun DurationBadge(duration: Long, modifier: Modifier = Modifier) {`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `DurationBadge` se detalla después instrucción por instrucción.
+  L297 [4 espacios] `Surface(modifier = modifier.padding(7.dp),`
+      → Crea una superficie visual Material que agrupa contenido y puede aplicar forma, fondo, elevación, borde y click.
+  L298 [8 espacios] `color = Color.Black.copy(alpha = 0.68f),`
+      → Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+  L299 [8 espacios] `shape = RoundedCornerShape(7.dp)) {`
+      → Asigna/configura `shape` usando `RoundedCornerShape(7.dp)) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L300 [8 espacios] `Text(text = formatDuration(duration),`
+      → Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+  L301 [12 espacios] `modifier = Modifier.padding(horizontal = 6.dp, vertical = 3.dp),`
+      → Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+  L302 [12 espacios] `color = Color.White,`
+      → Asigna/configura `color` usando `Color.White,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L303 [12 espacios] `fontSize = 9.sp,`
+      → Asigna/configura `fontSize` usando `9.sp,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L304 [12 espacios] `fontWeight = FontWeight.Medium)`
+      → Asigna/configura `fontWeight` usando `FontWeight.Medium)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L305 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L306 [0 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.7 `formatDuration` — líneas 308–313
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    private fun formatDuration(durationMillis: Long): String {
+
+Propósito:
+    Implementa `formatDuration`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `durationMillis: Long`: el llamador proporciona este valor/callback a `formatDuration`. Dentro del cuerpo, las líneas donde aparece `durationMillis` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `String`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L308 [0 espacios] `private fun formatDuration(durationMillis: Long): String {`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `formatDuration` se detalla después instrucción por instrucción.
+  L309 [4 espacios] `val totalSeconds = durationMillis / 1000L`
+      → Declara `totalSeconds` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `durationMillis / 1000L`.
+  L310 [4 espacios] `val minutes = totalSeconds / 60L`
+      → Declara `minutes` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `totalSeconds / 60L`.
+  L311 [4 espacios] `val seconds = totalSeconds % 60L`
+      → Declara `seconds` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `totalSeconds % 60L`.
+  L312 [4 espacios] `return "%d:%02d".format(minutes, seconds)`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L313 [0 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.8 `openAttachment` — líneas 318–321
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    fun openAttachment(context: Context, attachment: Attachment) {
+
+Propósito:
+    Activa/muestra el elemento indicado por el nombre y configura los datos necesarios antes de hacerlo visible.
+
+Parámetros/entradas:
+  - `context: Context`: el llamador proporciona este valor/callback a `openAttachment`. Dentro del cuerpo, las líneas donde aparece `context` muestran exactamente cómo afecta al resultado.
+  - `attachment: Attachment`: el llamador proporciona este valor/callback a `openAttachment`. Dentro del cuerpo, las líneas donde aparece `attachment` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L318 [0 espacios] `fun openAttachment(context: Context, attachment: Attachment) {`
+      → Declara una función. El bloque de `openAttachment` se detalla después instrucción por instrucción.
+  L319 [4 espacios] `openAttachmentViewer(context = context, uri = attachment.uri, type = attachment.type, name = attachment.name,`
+      → Asigna/configura `openAttachmentViewer(context` usando `context, uri = attachment.uri, type = attachment.type, name = attachment.name,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L320 [8 espacios] `mimeType = resolveMimeType(context = context, uri = Uri.parse(attachment.uri), name = attachment.name))`
+      → Opera con URI/ContentResolver de Android para acceder a contenido compartido sin asumir una ruta de archivo directa.
+  L321 [0 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.9 `resolveMimeType` — líneas 323–329
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    private fun resolveMimeType(context: Context, uri: Uri, name: String?): String {
+
+Propósito:
+    Calcula un valor derivado sin que el llamador tenga que conocer la regla interna; revisa cada rama del cuerpo para ver el criterio exacto.
+
+Parámetros/entradas:
+  - `context: Context`: el llamador proporciona este valor/callback a `resolveMimeType`. Dentro del cuerpo, las líneas donde aparece `context` muestran exactamente cómo afecta al resultado.
+  - `uri: Uri`: el llamador proporciona este valor/callback a `resolveMimeType`. Dentro del cuerpo, las líneas donde aparece `uri` muestran exactamente cómo afecta al resultado.
+  - `name: String?`: el llamador proporciona este valor/callback a `resolveMimeType`. Dentro del cuerpo, las líneas donde aparece `name` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `String`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L323 [0 espacios] `private fun resolveMimeType(context: Context, uri: Uri, name: String?): String {`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `resolveMimeType` se detalla después instrucción por instrucción.
+  L324 [4 espacios] `context.contentResolver.getType(uri)?.let {`
+      → Opera con URI/ContentResolver de Android para acceder a contenido compartido sin asumir una ruta de archivo directa.
+  L325 [12 espacios] `return it`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L326 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L327 [4 espacios] `val extension = name?.substringAfterLast(".", "")?.lowercase().orEmpty()`
+      → Declara `extension` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `name?.substringAfterLast(".", "")?.lowercase().orEmpty()`.
+  L328 [4 espacios] `return MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)?: "*/*"`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L329 [0 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+6. EXPLICACIÓN COMPLETA LÍNEA POR LÍNEA
+----------------------------------------------------------------------
+Esta sección no omite líneas ejecutables. Repite incluso partes ya explicadas en funciones para poder leer el archivo de arriba abajo sin saltar entre secciones.
+L1: `package com.example.mynotes.ui.components`
+    Declara que este archivo pertenece al package `com.example.mynotes.ui.components`; esto determina su namespace Kotlin y cómo lo importan otros archivos.
+L3: `import android.content.Context`
+    Importa `android.content.Context` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L4: `import android.net.Uri`
+    Importa `android.net.Uri` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L5: `import android.webkit.MimeTypeMap`
+    Importa `android.webkit.MimeTypeMap` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L6: `import androidx.compose.foundation.Image`
+    Importa `androidx.compose.foundation.Image` para usar layouts, gestos y primitivas visuales de Compose.
+L7: `import androidx.compose.foundation.clickable`
+    Importa `androidx.compose.foundation.clickable` para usar layouts, gestos y primitivas visuales de Compose.
+L8: `import androidx.compose.foundation.layout.Arrangement`
+    Importa `androidx.compose.foundation.layout.Arrangement` para usar layouts, gestos y primitivas visuales de Compose.
+L9: `import androidx.compose.foundation.layout.Box`
+    Importa `androidx.compose.foundation.layout.Box` para usar layouts, gestos y primitivas visuales de Compose.
+L10: `import androidx.compose.foundation.layout.Column`
+    Importa `androidx.compose.foundation.layout.Column` para usar layouts, gestos y primitivas visuales de Compose.
+L11: `import androidx.compose.foundation.layout.Row`
+    Importa `androidx.compose.foundation.layout.Row` para usar layouts, gestos y primitivas visuales de Compose.
+L12: `import androidx.compose.foundation.layout.Spacer`
+    Importa `androidx.compose.foundation.layout.Spacer` para usar layouts, gestos y primitivas visuales de Compose.
+L13: `import androidx.compose.foundation.layout.fillMaxSize`
+    Importa `androidx.compose.foundation.layout.fillMaxSize` para usar layouts, gestos y primitivas visuales de Compose.
+L14: `import androidx.compose.foundation.layout.fillMaxWidth`
+    Importa `androidx.compose.foundation.layout.fillMaxWidth` para usar layouts, gestos y primitivas visuales de Compose.
+L15: `import androidx.compose.foundation.layout.height`
+    Importa `androidx.compose.foundation.layout.height` para usar layouts, gestos y primitivas visuales de Compose.
+L16: `import androidx.compose.foundation.layout.padding`
+    Importa `androidx.compose.foundation.layout.padding` para usar layouts, gestos y primitivas visuales de Compose.
+L17: `import androidx.compose.foundation.layout.size`
+    Importa `androidx.compose.foundation.layout.size` para usar layouts, gestos y primitivas visuales de Compose.
+L18: `import androidx.compose.foundation.layout.width`
+    Importa `androidx.compose.foundation.layout.width` para usar layouts, gestos y primitivas visuales de Compose.
+L19: `import androidx.compose.foundation.shape.CircleShape`
+    Importa `androidx.compose.foundation.shape.CircleShape` para usar layouts, gestos y primitivas visuales de Compose.
+L20: `import androidx.compose.foundation.shape.RoundedCornerShape`
+    Importa `androidx.compose.foundation.shape.RoundedCornerShape` para usar layouts, gestos y primitivas visuales de Compose.
+L21: `import androidx.compose.material.icons.Icons`
+    Importa `androidx.compose.material.icons.Icons` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L22: `import androidx.compose.material.icons.filled.Description`
+    Importa `androidx.compose.material.icons.filled.Description` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L23: `import androidx.compose.material.icons.filled.Mic`
+    Importa `androidx.compose.material.icons.filled.Mic` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L24: `import androidx.compose.material.icons.filled.MusicNote`
+    Importa `androidx.compose.material.icons.filled.MusicNote` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L25: `import androidx.compose.material.icons.filled.PlayArrow`
+    Importa `androidx.compose.material.icons.filled.PlayArrow` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L26: `import androidx.compose.material.icons.filled.VideoFile`
+    Importa `androidx.compose.material.icons.filled.VideoFile` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L27: `import androidx.compose.material3.Icon`
+    Importa `androidx.compose.material3.Icon` para usar componentes y tema Material 3.
+L28: `import androidx.compose.material3.MaterialTheme`
+    Importa `androidx.compose.material3.MaterialTheme` para usar componentes y tema Material 3.
+L29: `import androidx.compose.material3.Surface`
+    Importa `androidx.compose.material3.Surface` para usar componentes y tema Material 3.
+L30: `import androidx.compose.material3.Text`
+    Importa `androidx.compose.material3.Text` para usar componentes y tema Material 3.
+L31: `import androidx.compose.runtime.Composable`
+    Importa `androidx.compose.runtime.Composable` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+L32: `import androidx.compose.runtime.getValue`
+    Importa `androidx.compose.runtime.getValue` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+L33: `import androidx.compose.runtime.produceState`
+    Importa `androidx.compose.runtime.produceState` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+L34: `import androidx.compose.ui.Alignment`
+    Importa `androidx.compose.ui.Alignment` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L35: `import androidx.compose.ui.Modifier`
+    Importa `androidx.compose.ui.Modifier` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L36: `import androidx.compose.ui.draw.clip`
+    Importa `androidx.compose.ui.draw.clip` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L37: `import androidx.compose.ui.graphics.Color`
+    Importa `androidx.compose.ui.graphics.Color` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L38: `import androidx.compose.ui.graphics.asImageBitmap`
+    Importa `androidx.compose.ui.graphics.asImageBitmap` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L39: `import androidx.compose.ui.layout.ContentScale`
+    Importa `androidx.compose.ui.layout.ContentScale` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L40: `import androidx.compose.ui.platform.LocalContext`
+    Importa `androidx.compose.ui.platform.LocalContext` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L41: `import androidx.compose.ui.res.stringResource`
+    Importa `androidx.compose.ui.res.stringResource` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L42: `import androidx.compose.ui.text.font.FontFamily`
+    Importa `androidx.compose.ui.text.font.FontFamily` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L43: `import androidx.compose.ui.text.font.FontWeight`
+    Importa `androidx.compose.ui.text.font.FontWeight` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L44: `import androidx.compose.ui.text.style.TextOverflow`
+    Importa `androidx.compose.ui.text.style.TextOverflow` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L45: `import androidx.compose.ui.unit.Dp`
+    Importa `androidx.compose.ui.unit.Dp` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L46: `import androidx.compose.ui.unit.dp`
+    Importa `androidx.compose.ui.unit.dp` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L47: `import androidx.compose.ui.unit.sp`
+    Importa `androidx.compose.ui.unit.sp` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L48: `import com.example.mynotes.R`
+    Importa `com.example.mynotes.R`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L49: `import com.example.mynotes.data.Attachment`
+    Importa `com.example.mynotes.data.Attachment`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L50: `import com.example.mynotes.performance.AttachmentPreviewCache`
+    Importa `com.example.mynotes.performance.AttachmentPreviewCache`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L51: `import com.example.mynotes.ui.sound.UiActionSound`
+    Importa `com.example.mynotes.ui.sound.UiActionSound`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L52: `import com.example.mynotes.ui.sound.UiSoundPlayer`
+    Importa `com.example.mynotes.ui.sound.UiSoundPlayer`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L53: `import com.example.mynotes.ui.openAttachmentViewer`
+    Importa `com.example.mynotes.ui.openAttachmentViewer`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L54: `import kotlinx.coroutines.delay`
+    Importa `kotlinx.coroutines.delay` para usar coroutines, Flow y ejecución asíncrona.
+L56: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L57: `* Vista reutilizable de adjuntos para NoteDetailScreen.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L58: `*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L59: `* - image: miniatura cacheada según el perfil de rendimiento;`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L60: `* - video: thumbnail cacheado + botón play;`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L61: `* - audio/voice: carátula cacheada cuando existe;`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L62: `* - PDF: primera página cacheada;`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L63: `* - otros archivos: tarjeta con icono.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L64: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L65: `@Composable`
+    Marca la función siguiente como Composable: Compose puede ejecutarla durante composición/recomposición para describir UI a partir de estado.
+L66: `fun AttachmentPreviewTile(attachment: Attachment, modifier: Modifier = Modifier, fontFamily: FontFamily = FontFamily.Default,`
+    Declara una función. El bloque de `AttachmentPreviewTile` se detalla después instrucción por instrucción.
+L67: `showName: Boolean = true, previewDelayMillis: Long = 0L, performanceMode: String = "balanced", tileHeight: Dp = 142.dp,`
+    Asigna/configura `showName: Boolean` usando `true, previewDelayMillis: Long = 0L, performanceMode: String = "balanced", tileHeight: Dp = 142.dp,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L68: `openOnTap: Boolean = true) {`
+    Asigna/configura `openOnTap: Boolean` usando `true) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L69: `val context = LocalContext.current`
+    Declara `context` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `LocalContext.current`.
+L70: `val uri = Uri.parse(attachment.uri)`
+    Opera con URI/ContentResolver de Android para acceder a contenido compartido sin asumir una ruta de archivo directa.
+L71: `val isBorderlessPreview = attachment.type == "image" || attachment.type == "video" || attachment.name?.substringAfterLast(".", "")`
+    Declara `isBorderlessPreview` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `attachment.type == "image" || attachment.type == "video" || attachment.name?.substringAfterLast(".", "")`.
+L72: `?.equals("pdf", ignoreCase = true) == true`
+    Asigna/configura `?.equals("pdf", ignoreCase` usando `true) == true`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L73: `Surface(modifier = modifier.height(tileHeight).clip(RoundedCornerShape(24.dp)).let { baseModifier -> if (openOnTap) {`
+    Define una rama/lambda. Cuando coincide `Surface(modifier = modifier.height(tileHeight).clip(RoundedCornerShape(24.dp)).let { baseModifier`, se ejecuta la expresión o bloque situado después de `->`.
+L74: `baseModifier.clickable {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L75: `UiSoundPlayer.playAction(context = context, action = UiActionSound.Open)`
+    Asigna/configura `UiSoundPlayer.playAction(context` usando `context, action = UiActionSound.Open)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L76: `openAttachment(context = context, attachment = attachment)`
+    Asigna/configura `openAttachment(context` usando `context, attachment = attachment)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L77: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L78: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L79: `baseModifier`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `baseModifier`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L80: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L81: `},`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L82: `shape = RoundedCornerShape(24.dp),`
+    Asigna/configura `shape` usando `RoundedCornerShape(24.dp),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L83: `color = if (isBorderlessPreview) {`
+    Asigna/configura `color` usando `if (isBorderlessPreview) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L84: `Color.Transparent`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `Color.Transparent`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L85: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L86: `MaterialTheme.colorScheme.surfaceContainerLow`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `MaterialTheme.colorScheme.surfaceContainerLow`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L87: `},`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L88: `tonalElevation = 0.dp, shadowElevation = 0.dp) {`
+    Asigna/configura `tonalElevation` usando `0.dp, shadowElevation = 0.dp) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L89: `when (attachment.type) {`
+    Abre una decisión `when`: selecciona una rama según el valor/condición, equivalente a un switch más expresivo de Kotlin.
+L90: `"image" -> {`
+    Define una rama/lambda. Cuando coincide `"image"`, se ejecuta la expresión o bloque situado después de `->`.
+L91: `ImageAttachment(attachment = attachment, showName = showName, fontFamily = fontFamily, previewDelayMillis =`
+    Asigna/configura `ImageAttachment(attachment` usando `attachment, showName = showName, fontFamily = fontFamily, previewDelayMillis =`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L92: `previewDelayMillis, performanceMode = performanceMode)`
+    Asigna/configura `previewDelayMillis, performanceMode` usando `performanceMode)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L93: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L94: `"video" -> {`
+    Define una rama/lambda. Cuando coincide `"video"`, se ejecuta la expresión o bloque situado después de `->`.
+L95: `VideoAttachment(attachment = attachment, uri = uri, showName = showName, fontFamily = fontFamily, previewDelayMillis =`
+    Asigna/configura `VideoAttachment(attachment` usando `attachment, uri = uri, showName = showName, fontFamily = fontFamily, previewDelayMillis =`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L96: `previewDelayMillis, performanceMode = performanceMode)`
+    Asigna/configura `previewDelayMillis, performanceMode` usando `performanceMode)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L97: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L98: `"audio", "voice" -> {`
+    Define una rama/lambda. Cuando coincide `"audio", "voice"`, se ejecuta la expresión o bloque situado después de `->`.
+L99: `AudioAttachment(attachment = attachment, uri = uri, showName = showName, fontFamily = fontFamily, previewDelayMillis =`
+    Asigna/configura `AudioAttachment(attachment` usando `attachment, uri = uri, showName = showName, fontFamily = fontFamily, previewDelayMillis =`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L100: `previewDelayMillis, performanceMode = performanceMode)`
+    Asigna/configura `previewDelayMillis, performanceMode` usando `performanceMode)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L101: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L102: `else -> {`
+    Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+L103: `FileAttachment(attachment = attachment, uri = uri, showName = showName, fontFamily = fontFamily, previewDelayMillis =`
+    Asigna/configura `FileAttachment(attachment` usando `attachment, uri = uri, showName = showName, fontFamily = fontFamily, previewDelayMillis =`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L104: `previewDelayMillis, performanceMode = performanceMode)`
+    Asigna/configura `previewDelayMillis, performanceMode` usando `performanceMode)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L105: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L106: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L107: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L108: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L110: `@Composable`
+    Marca la función siguiente como Composable: Compose puede ejecutarla durante composición/recomposición para describir UI a partir de estado.
+L111: `private fun ImageAttachment(attachment: Attachment, showName: Boolean, fontFamily: FontFamily, previewDelayMillis: Long,`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `ImageAttachment` se detalla después instrucción por instrucción.
+L112: `performanceMode: String) {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L113: `val previewReady by`
+    Declara `previewReady` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L114: `produceState(initialValue = previewDelayMillis <= 0L, key1 = attachment.uri, key2 = previewDelayMillis) {`
+    Asigna/configura `produceState(initialValue` usando `previewDelayMillis <= 0L, key1 = attachment.uri, key2 = previewDelayMillis) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L115: `if (previewDelayMillis > 0L) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `previewDelayMillis > 0L`.
+L116: `delay(previewDelayMillis)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L117: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L118: `value = true`
+    Asigna/configura `value` usando `true`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L119: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L120: `Box(modifier = Modifier.fillMaxSize(),`
+    Crea un `Box` de Compose que superpone/posiciona hijos dentro de un mismo contenedor. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+L121: `contentAlignment = Alignment.Center) {`
+    Asigna/configura `contentAlignment` usando `Alignment.Center) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L122: `if (previewReady) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `previewReady`.
+L123: `val context = LocalContext.current`
+    Declara `context` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `LocalContext.current`.
+L124: `val preview by`
+    Declara `preview` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L125: `produceState<android.graphics.Bitmap?>(initialValue = null, key1 = attachment.uri, key2 = performanceMode) {`
+    Asigna/configura `produceState<android.graphics.Bitmap?>(initialValue` usando `null, key1 = attachment.uri, key2 = performanceMode) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L126: `value = AttachmentPreviewCache.withPreviewPermit {`
+    Asigna/configura `value` usando `AttachmentPreviewCache.withPreviewPermit {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L127: `AttachmentPreviewCache.loadImagePreview(context = context, uri = Uri.parse(attachment.uri),`
+    Opera con URI/ContentResolver de Android para acceder a contenido compartido sin asumir una ruta de archivo directa.
+L128: `performanceMode = performanceMode)`
+    Asigna/configura `performanceMode` usando `performanceMode)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L129: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L130: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L131: `if (preview != null) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `preview != null`.
+L132: `Image(bitmap = preview!!.asImageBitmap(), contentDescription = attachment.name, modifier = Modifier.fillMaxSize().clip(`
+    Renderiza un recurso visual. El modelo/painter y los modifiers siguientes determinan qué se muestra, tamaño, recorte y accesibilidad.
+L133: `RoundedCornerShape(16.dp)), contentScale = ContentScale.Fit)`
+    Asigna/configura `RoundedCornerShape(16.dp)), contentScale` usando `ContentScale.Fit)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L134: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L135: `Icon(imageVector = Icons.Default.Description, contentDescription = null, tint = MaterialTheme.colorScheme.onSurfaceVariant`
+    Renderiza un recurso visual. El modelo/painter y los modifiers siguientes determinan qué se muestra, tamaño, recorte y accesibilidad.
+L136: `.copy(alpha = 0.42f), modifier = Modifier.size(30.dp))`
+    Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+L137: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L138: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L139: `Icon(imageVector = Icons.Default.Description,`
+    Renderiza un recurso visual. El modelo/painter y los modifiers siguientes determinan qué se muestra, tamaño, recorte y accesibilidad.
+L140: `contentDescription = null,`
+    Asigna/configura `contentDescription` usando `null,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L141: `tint = MaterialTheme.colorScheme.onSurfaceVariant.copy(alpha = 0.42f),`
+    Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+L142: `modifier = Modifier.size(30.dp))`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L143: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L144: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L145: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L147: `@Composable`
+    Marca la función siguiente como Composable: Compose puede ejecutarla durante composición/recomposición para describir UI a partir de estado.
+L148: `private fun VideoAttachment(attachment: Attachment, uri: Uri, showName: Boolean, fontFamily: FontFamily, previewDelayMillis: Long,`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `VideoAttachment` se detalla después instrucción por instrucción.
+L149: `performanceMode: String) {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L150: `val context = LocalContext.current`
+    Declara `context` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `LocalContext.current`.
+L151: `val preview by`
+    Declara `preview` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L152: `produceState<`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `produceState<`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L153: `AttachmentPreviewCache.MediaPreview?`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `AttachmentPreviewCache.MediaPreview?`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L154: `>(initialValue = null, key1 = attachment.uri, key2 = performanceMode) {`
+    Asigna/configura `>(initialValue` usando `null, key1 = attachment.uri, key2 = performanceMode) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L155: `if (previewDelayMillis > 0L) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `previewDelayMillis > 0L`.
+L156: `delay(previewDelayMillis)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L157: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L158: `value = AttachmentPreviewCache.withPreviewPermit {`
+    Asigna/configura `value` usando `AttachmentPreviewCache.withPreviewPermit {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L159: `AttachmentPreviewCache.loadVideoPreview(context = context, uri = uri, performanceMode = performanceMode)`
+    Asigna/configura `AttachmentPreviewCache.loadVideoPreview(context` usando `context, uri = uri, performanceMode = performanceMode)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L160: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L161: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L162: `Box(modifier = Modifier.fillMaxSize()) {`
+    Crea un `Box` de Compose que superpone/posiciona hijos dentro de un mismo contenedor. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+L163: `val bitmap = preview?.bitmap`
+    Declara `bitmap` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `preview?.bitmap`.
+L164: `if (bitmap != null) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `bitmap != null`.
+L165: `Image(bitmap = bitmap.asImageBitmap(),`
+    Renderiza un recurso visual. El modelo/painter y los modifiers siguientes determinan qué se muestra, tamaño, recorte y accesibilidad.
+L166: `contentDescription = attachment.name,`
+    Asigna/configura `contentDescription` usando `attachment.name,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L167: `modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(16.dp)),`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L168: `contentScale = ContentScale.Fit)`
+    Asigna/configura `contentScale` usando `ContentScale.Fit)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L169: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L170: `Column(modifier = Modifier.fillMaxSize(),`
+    Crea un `Column` de Compose que organiza hijos verticalmente. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+L171: `horizontalAlignment = Alignment.CenterHorizontally,`
+    Asigna/configura `horizontalAlignment` usando `Alignment.CenterHorizontally,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L172: `verticalArrangement = Arrangement.Center) {`
+    Asigna/configura `verticalArrangement` usando `Arrangement.Center) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L173: `Icon(imageVector = Icons.Default.VideoFile,`
+    Renderiza un recurso visual. El modelo/painter y los modifiers siguientes determinan qué se muestra, tamaño, recorte y accesibilidad.
+L174: `contentDescription = null,`
+    Asigna/configura `contentDescription` usando `null,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L175: `modifier = Modifier.size(36.dp))`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L176: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L177: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L178: `Surface(modifier = Modifier.align(Alignment.Center),`
+    Crea una superficie visual Material que agrupa contenido y puede aplicar forma, fondo, elevación, borde y click.
+L179: `shape = CircleShape,`
+    Asigna/configura `shape` usando `CircleShape,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L180: `color = Color.Black.copy(alpha = 0.62f)) {`
+    Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+L181: `Icon(imageVector = Icons.Default.PlayArrow,`
+    Renderiza un recurso visual. El modelo/painter y los modifiers siguientes determinan qué se muestra, tamaño, recorte y accesibilidad.
+L182: `contentDescription = null,`
+    Asigna/configura `contentDescription` usando `null,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L183: `tint = Color.White,`
+    Asigna/configura `tint` usando `Color.White,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L184: `modifier = Modifier.padding(7.dp).size(22.dp))`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L185: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L186: `val duration = preview?.durationMillis?: 0L`
+    Declara `duration` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `preview?.durationMillis?: 0L`.
+L187: `if (duration >`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera.
+L188: `0L) {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L189: `DurationBadge(duration = duration,`
+    Asigna/configura `DurationBadge(duration` usando `duration,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L190: `modifier = Modifier.align(Alignment.BottomEnd))`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L191: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L192: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L193: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L195: `@Composable`
+    Marca la función siguiente como Composable: Compose puede ejecutarla durante composición/recomposición para describir UI a partir de estado.
+L196: `private fun AudioAttachment(attachment: Attachment, uri: Uri, showName: Boolean, fontFamily: FontFamily, previewDelayMillis: Long,`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `AudioAttachment` se detalla después instrucción por instrucción.
+L197: `performanceMode: String) {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L198: `val context = LocalContext.current`
+    Declara `context` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `LocalContext.current`.
+L199: `val preview by`
+    Declara `preview` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L200: `produceState<`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `produceState<`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L201: `AttachmentPreviewCache.MediaPreview?`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `AttachmentPreviewCache.MediaPreview?`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L202: `>(initialValue = null, key1 = attachment.uri, key2 = performanceMode) {`
+    Asigna/configura `>(initialValue` usando `null, key1 = attachment.uri, key2 = performanceMode) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L203: `if (previewDelayMillis > 0L) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `previewDelayMillis > 0L`.
+L204: `delay(previewDelayMillis)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L205: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L206: `value = AttachmentPreviewCache.withPreviewPermit {`
+    Asigna/configura `value` usando `AttachmentPreviewCache.withPreviewPermit {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L207: `AttachmentPreviewCache.loadAudioPreview(context = context, uri = uri, loadAlbumArt = true, performanceMode =`
+    Asigna/configura `AttachmentPreviewCache.loadAudioPreview(context` usando `context, uri = uri, loadAlbumArt = true, performanceMode =`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L208: `performanceMode)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L209: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L210: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L211: `val bitmap = preview?.bitmap`
+    Declara `bitmap` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `preview?.bitmap`.
+L212: `if (bitmap != null) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `bitmap != null`.
+L213: `Box(modifier = Modifier.fillMaxSize()) {`
+    Crea un `Box` de Compose que superpone/posiciona hijos dentro de un mismo contenedor. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+L214: `Image(bitmap = bitmap.asImageBitmap(),`
+    Renderiza un recurso visual. El modelo/painter y los modifiers siguientes determinan qué se muestra, tamaño, recorte y accesibilidad.
+L215: `contentDescription = attachment.name,`
+    Asigna/configura `contentDescription` usando `attachment.name,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L216: `modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(16.dp)),`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L217: `contentScale = ContentScale.Fit)`
+    Asigna/configura `contentScale` usando `ContentScale.Fit)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L218: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L219: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L220: `Column(modifier = Modifier.fillMaxSize().padding(12.dp),`
+    Crea un `Column` de Compose que organiza hijos verticalmente. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+L221: `horizontalAlignment = Alignment.CenterHorizontally,`
+    Asigna/configura `horizontalAlignment` usando `Alignment.CenterHorizontally,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L222: `verticalArrangement = Arrangement.Center) {`
+    Asigna/configura `verticalArrangement` usando `Arrangement.Center) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L223: `Icon(imageVector = if (attachment.type == "voice") {`
+    Renderiza un recurso visual. El modelo/painter y los modifiers siguientes determinan qué se muestra, tamaño, recorte y accesibilidad.
+L224: `Icons.Default.Mic`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `Icons.Default.Mic`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L225: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L226: `Icons.Default.MusicNote`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `Icons.Default.MusicNote`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L227: `},`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L228: `contentDescription = null,`
+    Asigna/configura `contentDescription` usando `null,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L229: `tint = MaterialTheme.colorScheme.primary,`
+    Asigna/configura `tint` usando `MaterialTheme.colorScheme.primary,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L230: `modifier = Modifier.size(34.dp))`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L231: `if (showName) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `showName`.
+L232: `Spacer(modifier = Modifier.height(7.dp))`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L233: `Text(text = if (attachment.type == "voice") {`
+    Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+L234: `stringResource(R.string.mock_voice_note)`
+    Obtiene una cadena localizada desde `res/values*` (`mock_voice_note`), de modo que la UI siga el idioma activo.
+L235: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L236: `attachment.name?: stringResource(R.string.mock_audio)`
+    Obtiene una cadena localizada desde `res/values*` (`mock_audio`), de modo que la UI siga el idioma activo.
+L237: `},`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L238: `fontFamily = fontFamily,`
+    Asigna/configura `fontFamily` usando `fontFamily,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L239: `fontWeight = FontWeight.SemiBold,`
+    Asigna/configura `fontWeight` usando `FontWeight.SemiBold,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L240: `fontSize = 11.sp,`
+    Asigna/configura `fontSize` usando `11.sp,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L241: `maxLines = 2,`
+    Asigna/configura `maxLines` usando `2,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L242: `overflow = TextOverflow.Ellipsis)`
+    Asigna/configura `overflow` usando `TextOverflow.Ellipsis)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L243: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L244: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L245: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L246: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L248: `@Composable`
+    Marca la función siguiente como Composable: Compose puede ejecutarla durante composición/recomposición para describir UI a partir de estado.
+L249: `private fun FileAttachment(attachment: Attachment, uri: Uri, showName: Boolean, fontFamily: FontFamily, previewDelayMillis: Long,`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `FileAttachment` se detalla después instrucción por instrucción.
+L250: `performanceMode: String) {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L251: `val context = LocalContext.current`
+    Declara `context` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `LocalContext.current`.
+L252: `val extension = attachment.name?.substringAfterLast(".", "")?.lowercase()?: uri.path?.substringAfterLast(".", "")?.lowercase()`
+    Declara `extension` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `attachment.name?.substringAfterLast(".", "")?.lowercase()?: uri.path?.substringAfterLast(".", "")?.lowercase()`.
+L253: `.orEmpty()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L254: `if (extension == "pdf") {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `extension == "pdf"`.
+L255: `val preview by`
+    Declara `preview` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L256: `produceState<`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `produceState<`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L257: `android.graphics.Bitmap?`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `android.graphics.Bitmap?`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L258: `>(initialValue = null, key1 = attachment.uri, key2 = performanceMode) {`
+    Asigna/configura `>(initialValue` usando `null, key1 = attachment.uri, key2 = performanceMode) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L259: `if (previewDelayMillis > 0L) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `previewDelayMillis > 0L`.
+L260: `delay(previewDelayMillis)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L261: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L262: `value = AttachmentPreviewCache.withPreviewPermit {`
+    Asigna/configura `value` usando `AttachmentPreviewCache.withPreviewPermit {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L263: `AttachmentPreviewCache.loadPdfFirstPage(context = context, uri = uri, performanceMode = performanceMode)`
+    Asigna/configura `AttachmentPreviewCache.loadPdfFirstPage(context` usando `context, uri = uri, performanceMode = performanceMode)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L264: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L265: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L266: `if (preview != null) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `preview != null`.
+L267: `Box(modifier = Modifier.fillMaxSize()) {`
+    Crea un `Box` de Compose que superpone/posiciona hijos dentro de un mismo contenedor. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+L268: `Image(bitmap = preview!!.asImageBitmap(),`
+    Renderiza un recurso visual. El modelo/painter y los modifiers siguientes determinan qué se muestra, tamaño, recorte y accesibilidad.
+L269: `contentDescription = attachment.name,`
+    Asigna/configura `contentDescription` usando `attachment.name,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L270: `modifier = Modifier.fillMaxSize().clip(RoundedCornerShape(16.dp)),`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L271: `contentScale = ContentScale.Fit)`
+    Asigna/configura `contentScale` usando `ContentScale.Fit)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L272: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L273: `return`
+    Finaliza inmediatamente la función actual sin devolver un valor adicional (`Unit`).
+L274: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L275: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L276: `Column(modifier = Modifier.fillMaxSize().padding(12.dp),`
+    Crea un `Column` de Compose que organiza hijos verticalmente. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+L277: `horizontalAlignment = Alignment.CenterHorizontally,`
+    Asigna/configura `horizontalAlignment` usando `Alignment.CenterHorizontally,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L278: `verticalArrangement = Arrangement.Center) {`
+    Asigna/configura `verticalArrangement` usando `Arrangement.Center) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L279: `Icon(imageVector = Icons.Default.Description,`
+    Renderiza un recurso visual. El modelo/painter y los modifiers siguientes determinan qué se muestra, tamaño, recorte y accesibilidad.
+L280: `contentDescription = null,`
+    Asigna/configura `contentDescription` usando `null,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L281: `tint = MaterialTheme.colorScheme.primary,`
+    Asigna/configura `tint` usando `MaterialTheme.colorScheme.primary,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L282: `modifier = Modifier.size(35.dp))`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L283: `if (showName) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `showName`.
+L284: `Spacer(modifier = Modifier.height(7.dp))`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L285: `Text(text = attachment.name?: stringResource(R.string.mock_file),`
+    Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+L286: `fontFamily = fontFamily,`
+    Asigna/configura `fontFamily` usando `fontFamily,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L287: `fontWeight = FontWeight.SemiBold,`
+    Asigna/configura `fontWeight` usando `FontWeight.SemiBold,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L288: `fontSize = 11.sp,`
+    Asigna/configura `fontSize` usando `11.sp,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L289: `maxLines = 2,`
+    Asigna/configura `maxLines` usando `2,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L290: `overflow = TextOverflow.Ellipsis)`
+    Asigna/configura `overflow` usando `TextOverflow.Ellipsis)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L291: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L292: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L293: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L295: `@Composable`
+    Marca la función siguiente como Composable: Compose puede ejecutarla durante composición/recomposición para describir UI a partir de estado.
+L296: `private fun DurationBadge(duration: Long, modifier: Modifier = Modifier) {`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `DurationBadge` se detalla después instrucción por instrucción.
+L297: `Surface(modifier = modifier.padding(7.dp),`
+    Crea una superficie visual Material que agrupa contenido y puede aplicar forma, fondo, elevación, borde y click.
+L298: `color = Color.Black.copy(alpha = 0.68f),`
+    Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+L299: `shape = RoundedCornerShape(7.dp)) {`
+    Asigna/configura `shape` usando `RoundedCornerShape(7.dp)) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L300: `Text(text = formatDuration(duration),`
+    Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+L301: `modifier = Modifier.padding(horizontal = 6.dp, vertical = 3.dp),`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L302: `color = Color.White,`
+    Asigna/configura `color` usando `Color.White,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L303: `fontSize = 9.sp,`
+    Asigna/configura `fontSize` usando `9.sp,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L304: `fontWeight = FontWeight.Medium)`
+    Asigna/configura `fontWeight` usando `FontWeight.Medium)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L305: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L306: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L308: `private fun formatDuration(durationMillis: Long): String {`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `formatDuration` se detalla después instrucción por instrucción.
+L309: `val totalSeconds = durationMillis / 1000L`
+    Declara `totalSeconds` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `durationMillis / 1000L`.
+L310: `val minutes = totalSeconds / 60L`
+    Declara `minutes` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `totalSeconds / 60L`.
+L311: `val seconds = totalSeconds % 60L`
+    Declara `seconds` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `totalSeconds % 60L`.
+L312: `return "%d:%02d".format(minutes, seconds)`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L313: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L315: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L316: `* Abre file:// internos mediante FileProvider y conserva content://.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L317: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L318: `fun openAttachment(context: Context, attachment: Attachment) {`
+    Declara una función. El bloque de `openAttachment` se detalla después instrucción por instrucción.
+L319: `openAttachmentViewer(context = context, uri = attachment.uri, type = attachment.type, name = attachment.name,`
+    Asigna/configura `openAttachmentViewer(context` usando `context, uri = attachment.uri, type = attachment.type, name = attachment.name,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L320: `mimeType = resolveMimeType(context = context, uri = Uri.parse(attachment.uri), name = attachment.name))`
+    Opera con URI/ContentResolver de Android para acceder a contenido compartido sin asumir una ruta de archivo directa.
+L321: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L323: `private fun resolveMimeType(context: Context, uri: Uri, name: String?): String {`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `resolveMimeType` se detalla después instrucción por instrucción.
+L324: `context.contentResolver.getType(uri)?.let {`
+    Opera con URI/ContentResolver de Android para acceder a contenido compartido sin asumir una ruta de archivo directa.
+L325: `return it`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L326: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L327: `val extension = name?.substringAfterLast(".", "")?.lowercase().orEmpty()`
+    Declara `extension` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `name?.substringAfterLast(".", "")?.lowercase().orEmpty()`.
+L328: `return MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)?: "*/*"`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L329: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+7. RECURSOS ANDROID REFERENCIADOS
+----------------------------------------------------------------------
+- `R.string.mock_audio`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.mock_file`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.mock_voice_note`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+
+8. QUIÉN USA ESTE COMPONENTE
+----------------------------------------------------------------------
+- No se detectaron referencias externas por nombre a los tipos principales; puede ser punto de entrada Android, recurso invocado por Manifest o archivo de prueba.
+
+9. QUÉ PUEDE ROMPERSE SI LO MODIFICAS
+----------------------------------------------------------------------
+- Adjuntos/previews son una ruta protegida del proyecto: cambios en decodificación, caché, tamaño, precarga o URI pueden alterar visualización o rendimiento. Modificar solo con una prueba explícita de imagen/vídeo/audio/enlace.
+
+10. CHECKLIST DE PRUEBA DESPUÉS DE MODIFICAR ESTE ARCHIVO
+----------------------------------------------------------------------
+- Compilar `assembleDebug` y resolver primero errores de Kotlin/AAPT.
+- Abrir la pantalla/flujo relacionado y comprobar ida y vuelta (back) sin estado duplicado.
+- Cambiar tema/paleta y verificar contraste si este archivo dibuja UI.
+- Probar imagen, vídeo, audio y URL; hacer scroll rápido y confirmar que previews/miniaturas no parpadean ni cambian calidad.
+
+==============================================================================================================
+FIN DEL ARCHIVO
+==============================================================================================================

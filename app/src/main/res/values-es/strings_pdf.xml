@@ -35,7 +35,11 @@
     <string name="pdf_error_image">No se pudo abrir la imagen.</string>
     <string name="pdf_error_save">No se pudo guardar el PDF.</string>
     <string name="pdf_ai_crop_done">Recorte por IA aplicado.</string>
-    <string name="pdf_ai_crop_not_ready">El modelo de IA todavía no está disponible. Conéctate a Internet e inténtalo de nuevo.</string>
+    <string name="pdf_ai_crop_not_ready">No se pudo preparar el modelo de IA. Revisa la conexión a Internet y el espacio libre e inténtalo de nuevo.</string>
+    <string name="pdf_ai_crop_downloading">Descargando el modelo de IA. El primer uso requiere Internet.</string>
+    <string name="pdf_ai_crop_play_services">El recorte IA necesita Servicios de Google Play actualizados y habilitados en este dispositivo.</string>
+    <string name="pdf_ai_crop_error">No se pudo recortar esta imagen. Inténtalo de nuevo.</string>
+    <string name="pdf_ai_crop_changed">El documento o la selección cambió durante el recorte. Selecciona la imagen e inténtalo de nuevo.</string>
     <string name="pdf_go_to_page">Ir a página</string>
     <string name="pdf_go_to_page_range">Escribe un número entre 1 y %1$d.</string>
     <string name="pdf_page_number">Número de página</string>

@@ -1,0 +1,75 @@
+# WidgetActionReceiver.kt — explicación completa del código
+
+Ruta: app/src/main/java/com/example/mynotes/widget/WidgetActionReceiver.kt  
+SHA-256: f4119fe7bdf5b806c33aee9f043d020b0e4a39175debbca8ccf80d55ad057279  
+Líneas: 38  
+Package: com.example.mynotes.widget
+
+## 1. Para qué existe este archivo
+
+Receiver de acciones de widget que modifican favorita/pin y solicita refresco.
+
+## 2. Tipos/clases declarados
+
+- Línea 12 — class WidgetActionReceiver.
+
+## 3. Estado, constantes y valores importantes
+
+- noteId (línea 14) inicia con intent.getIntExtra(WidgetActions.EXTRA_NOTE_ID. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- pendingResult (línea 16) inicia con goAsync(. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- dao (línea 20) inicia con AppDatabase.getDatabase(context.applicationContext. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- note (línea 21) inicia con dao.getNoteByIdOnce(noteId. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+
+## 4. Funciones y flujo, una por una
+
+### onReceive — líneas 13–36
+
+Firma: override fun onReceive(context: Context, intent: Intent)
+
+Recibe toggles de favorita/pin desde un widget, actualiza Room en coroutine y solicita refresco de widgets.
+
+Entradas:
+- context: Context
+- intent: Intent
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Ejecuta trabajo de I/O fuera del hilo principal.
+- Lanza trabajo asíncrono mediante coroutines.
+- Accede a la base Room/DAO.
+
+Decisiones y protecciones visibles:
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (if) para seleccionar comportamiento.
+- Usa when para mapear estados/tipos/opciones.
+
+Operaciones/funciones que coordina: getIntExtra, goAsync, CoroutineScope, SupervisorJob, getDatabase, noteDao, getNoteByIdOnce, updateFavorite, updatePinned, requestUpdate, finish.
+
+## 5. Cómo se conecta con el resto de MyNotes
+
+- Usa com.example.mynotes.data.AppDatabase.
+
+## 6. Recursos Android que utiliza
+
+- No se detectaron referencias directas R.* en este archivo.
+
+## 7. Tecnologías y efectos relevantes
+
+- Ejecuta trabajo de I/O fuera del hilo principal.
+- Lanza trabajo asíncrono mediante coroutines.
+- Accede a la base Room/DAO.
+
+## 8. Lectura práctica del flujo
+
+Una forma útil de seguir este archivo en el depurador es recorrer estas operaciones en este orden aproximado:
+1. onReceive — Recibe toggles de favorita/pin desde un widget, actualiza Room en coroutine y solicita refresco de widgets.
+
+## 9. Qué no debe romperse al modificarlo
+
+- Mantener las firmas públicas/callbacks que usan los archivos listados en la sección de integración.
+
+## 10. Resumen en lenguaje sencillo
+
+En términos simples: Receiver de acciones de widget que modifican favorita/pin y solicita refresco. La sección función por función anterior describe qué entra, qué devuelve y qué efectos produce cada operación detectada en el fuente actual.

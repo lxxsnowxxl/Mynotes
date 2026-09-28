@@ -1,0 +1,458 @@
+MYNOTES — EXPLICACIÓN ULTRA DETALLADA
+==============================================================================================================
+Archivo 67/72: app/src/main/java/com/example/mynotes/widget/WidgetIntents.kt
+SHA-256: 6699c32c4694794462bbea7ee6c9367655e8c1a09c05cbb0b1b487c0560b58bc
+Líneas del fuente: 78
+Package: com.example.mynotes.widget
+
+1. RESPONSABILIDAD EXACTA DEL ARCHIVO
+----------------------------------------------------------------------
+Constructores de PendingIntent/Intent reutilizables para abrir MyNotes desde cada elemento del widget.
+
+2. DÓNDE ENCAJA EN LA ARQUITECTURA
+----------------------------------------------------------------------
+Este archivo pertenece principalmente a la **integración App Widgets/launcher**. No debe analizarse aislado: las referencias cruzadas y callbacks se detallan más abajo.
+
+3. IMPORTACIONES, UNA POR UNA
+----------------------------------------------------------------------
+- `android.app.PendingIntent`: Importa `android.app.PendingIntent` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `android.content.Context`: Importa `android.content.Context` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `android.content.Intent`: Importa `android.content.Intent` para usar mensajería/navegación entre componentes Android.
+- `android.net.Uri`: Importa `android.net.Uri` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `com.example.mynotes.MainActivity`: Importa `com.example.mynotes.MainActivity`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+
+4. DECLARACIONES Y ESTADO IMPORTANTES
+----------------------------------------------------------------------
+L9: `object WidgetIntents {`
+    Declara object `WidgetIntents`. A partir de aquí las propiedades y funciones hasta su llave de cierre pertenecen a este tipo.
+L10: `private const val ACTIVITY_FLAGS = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L11: `private const val PENDING_FLAGS = PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE`
+    Crea o configura un `PendingIntent`: una autorización empaquetada que Android puede ejecutar más tarde en nombre de MyNotes.
+L14: `val intent = Intent(context, MainActivity::class.java).apply {`
+    Construye un `Intent` para abrir/enviar una acción a otro componente Android. Los extras añadidos después transportan el contexto necesario.
+L24: `val intent = Intent(context, MainActivity::class.java).apply {`
+    Construye un `Intent` para abrir/enviar una acción a otro componente Android. Los extras añadidos después transportan el contexto necesario.
+L33: `val intent = Intent(context, MainActivity::class.java).apply {`
+    Construye un `Intent` para abrir/enviar una acción a otro componente Android. Los extras añadidos después transportan el contexto necesario.
+L43: `val intent = Intent(context, MainActivity::class.java).apply {`
+    Construye un `Intent` para abrir/enviar una acción a otro componente Android. Los extras añadidos después transportan el contexto necesario.
+L53: `val intent = Intent(context, MainActivity::class.java).apply {`
+    Construye un `Intent` para abrir/enviar una acción a otro componente Android. Los extras añadidos después transportan el contexto necesario.
+L62: `val intent = Intent(context, WidgetActionReceiver::class.java).apply {`
+    Construye un `Intent` para abrir/enviar una acción a otro componente Android. Los extras añadidos después transportan el contexto necesario.
+L71: `val intent = Intent(context, WidgetActionReceiver::class.java).apply {`
+    Construye un `Intent` para abrir/enviar una acción a otro componente Android. Los extras añadidos después transportan el contexto necesario.
+
+5. FUNCIONES — EXPLICACIÓN DE CADA UNA
+----------------------------------------------------------------------
+
+5.1 `openApp` — líneas 13–21
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun openApp(context: Context, uniqueId: Int): PendingIntent {
+
+Propósito:
+    Activa/muestra el elemento indicado por el nombre y configura los datos necesarios antes de hacerlo visible.
+
+Parámetros/entradas:
+  - `context: Context`: el llamador proporciona este valor/callback a `openApp`. Dentro del cuerpo, las líneas donde aparece `context` muestran exactamente cómo afecta al resultado.
+  - `uniqueId: Int`: el llamador proporciona este valor/callback a `openApp`. Dentro del cuerpo, las líneas donde aparece `uniqueId` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `PendingIntent`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L13 [4 espacios] `fun openApp(context: Context, uniqueId: Int): PendingIntent {`
+      → Declara una función. El bloque de `openApp` se detalla después instrucción por instrucción.
+  L14 [8 espacios] `val intent = Intent(context, MainActivity::class.java).apply {`
+      → Construye un `Intent` para abrir/enviar una acción a otro componente Android. Los extras añadidos después transportan el contexto necesario.
+  L15 [12 espacios] `action = Intent.ACTION_MAIN`
+      → Asigna/configura `action` usando `Intent.ACTION_MAIN`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L16 [12 espacios] `addCategory(Intent.CATEGORY_LAUNCHER)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L17 [12 espacios] `data = Uri.parse("mynotes://widget/app/$uniqueId")`
+      → Opera con URI/ContentResolver de Android para acceder a contenido compartido sin asumir una ruta de archivo directa.
+  L18 [12 espacios] `flags = ACTIVITY_FLAGS`
+      → Asigna/configura `flags` usando `ACTIVITY_FLAGS`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L19 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L20 [8 espacios] `return PendingIntent.getActivity(context, 10_000 + uniqueId, intent, PENDING_FLAGS)`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L21 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.2 `newNote` — líneas 23–30
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun newNote(context: Context, uniqueId: Int): PendingIntent {
+
+Propósito:
+    Implementa `newNote`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `context: Context`: el llamador proporciona este valor/callback a `newNote`. Dentro del cuerpo, las líneas donde aparece `context` muestran exactamente cómo afecta al resultado.
+  - `uniqueId: Int`: el llamador proporciona este valor/callback a `newNote`. Dentro del cuerpo, las líneas donde aparece `uniqueId` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `PendingIntent`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L23 [4 espacios] `fun newNote(context: Context, uniqueId: Int): PendingIntent {`
+      → Declara una función. El bloque de `newNote` se detalla después instrucción por instrucción.
+  L24 [8 espacios] `val intent = Intent(context, MainActivity::class.java).apply {`
+      → Construye un `Intent` para abrir/enviar una acción a otro componente Android. Los extras añadidos después transportan el contexto necesario.
+  L25 [12 espacios] `action = WidgetActions.ACTION_NEW_NOTE`
+      → Asigna/configura `action` usando `WidgetActions.ACTION_NEW_NOTE`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L26 [12 espacios] `data = Uri.parse("mynotes://widget/new/$uniqueId")`
+      → Opera con URI/ContentResolver de Android para acceder a contenido compartido sin asumir una ruta de archivo directa.
+  L27 [12 espacios] `flags = ACTIVITY_FLAGS`
+      → Asigna/configura `flags` usando `ACTIVITY_FLAGS`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L28 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L29 [8 espacios] `return PendingIntent.getActivity(context, 20_000 + uniqueId, intent, PENDING_FLAGS)`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L30 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.3 `openNote` — líneas 32–40
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun openNote(context: Context, noteId: Int, uniqueId: Int): PendingIntent {
+
+Propósito:
+    Activa/muestra el elemento indicado por el nombre y configura los datos necesarios antes de hacerlo visible.
+
+Parámetros/entradas:
+  - `context: Context`: el llamador proporciona este valor/callback a `openNote`. Dentro del cuerpo, las líneas donde aparece `context` muestran exactamente cómo afecta al resultado.
+  - `noteId: Int`: el llamador proporciona este valor/callback a `openNote`. Dentro del cuerpo, las líneas donde aparece `noteId` muestran exactamente cómo afecta al resultado.
+  - `uniqueId: Int`: el llamador proporciona este valor/callback a `openNote`. Dentro del cuerpo, las líneas donde aparece `uniqueId` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `PendingIntent`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L32 [4 espacios] `fun openNote(context: Context, noteId: Int, uniqueId: Int): PendingIntent {`
+      → Declara una función. El bloque de `openNote` se detalla después instrucción por instrucción.
+  L33 [8 espacios] `val intent = Intent(context, MainActivity::class.java).apply {`
+      → Construye un `Intent` para abrir/enviar una acción a otro componente Android. Los extras añadidos después transportan el contexto necesario.
+  L34 [12 espacios] `action = WidgetActions.ACTION_OPEN_NOTE`
+      → Asigna/configura `action` usando `WidgetActions.ACTION_OPEN_NOTE`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L35 [12 espacios] `data = Uri.parse("mynotes://widget/note/$noteId/$uniqueId")`
+      → Opera con URI/ContentResolver de Android para acceder a contenido compartido sin asumir una ruta de archivo directa.
+  L36 [12 espacios] `putExtra(WidgetActions.EXTRA_NOTE_ID, noteId)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L37 [12 espacios] `flags = ACTIVITY_FLAGS`
+      → Asigna/configura `flags` usando `ACTIVITY_FLAGS`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L38 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L39 [8 espacios] `return PendingIntent.getActivity(context, 30_000 + uniqueId, intent, PENDING_FLAGS)`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L40 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.4 `openCollection` — líneas 42–50
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun openCollection(context: Context, collection: String, uniqueId: Int): PendingIntent {
+
+Propósito:
+    Activa/muestra el elemento indicado por el nombre y configura los datos necesarios antes de hacerlo visible.
+
+Parámetros/entradas:
+  - `context: Context`: el llamador proporciona este valor/callback a `openCollection`. Dentro del cuerpo, las líneas donde aparece `context` muestran exactamente cómo afecta al resultado.
+  - `collection: String`: el llamador proporciona este valor/callback a `openCollection`. Dentro del cuerpo, las líneas donde aparece `collection` muestran exactamente cómo afecta al resultado.
+  - `uniqueId: Int`: el llamador proporciona este valor/callback a `openCollection`. Dentro del cuerpo, las líneas donde aparece `uniqueId` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `PendingIntent`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L42 [4 espacios] `fun openCollection(context: Context, collection: String, uniqueId: Int): PendingIntent {`
+      → Declara una función. El bloque de `openCollection` se detalla después instrucción por instrucción.
+  L43 [8 espacios] `val intent = Intent(context, MainActivity::class.java).apply {`
+      → Construye un `Intent` para abrir/enviar una acción a otro componente Android. Los extras añadidos después transportan el contexto necesario.
+  L44 [12 espacios] `action = WidgetActions.ACTION_OPEN_COLLECTION`
+      → Asigna/configura `action` usando `WidgetActions.ACTION_OPEN_COLLECTION`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L45 [12 espacios] `data = Uri.parse("mynotes://widget/collection/$collection/$uniqueId")`
+      → Opera con URI/ContentResolver de Android para acceder a contenido compartido sin asumir una ruta de archivo directa.
+  L46 [12 espacios] `putExtra(WidgetActions.EXTRA_COLLECTION, collection)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L47 [12 espacios] `flags = ACTIVITY_FLAGS`
+      → Asigna/configura `flags` usando `ACTIVITY_FLAGS`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L48 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L49 [8 espacios] `return PendingIntent.getActivity(context, 40_000 + uniqueId, intent, PENDING_FLAGS)`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L50 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.5 `search` — líneas 52–59
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun search(context: Context, uniqueId: Int): PendingIntent {
+
+Propósito:
+    Implementa `search`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `context: Context`: el llamador proporciona este valor/callback a `search`. Dentro del cuerpo, las líneas donde aparece `context` muestran exactamente cómo afecta al resultado.
+  - `uniqueId: Int`: el llamador proporciona este valor/callback a `search`. Dentro del cuerpo, las líneas donde aparece `uniqueId` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `PendingIntent`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L52 [4 espacios] `fun search(context: Context, uniqueId: Int): PendingIntent {`
+      → Declara una función. El bloque de `search` se detalla después instrucción por instrucción.
+  L53 [8 espacios] `val intent = Intent(context, MainActivity::class.java).apply {`
+      → Construye un `Intent` para abrir/enviar una acción a otro componente Android. Los extras añadidos después transportan el contexto necesario.
+  L54 [12 espacios] `action = WidgetActions.ACTION_SEARCH`
+      → Asigna/configura `action` usando `WidgetActions.ACTION_SEARCH`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L55 [12 espacios] `data = Uri.parse("mynotes://widget/search/$uniqueId")`
+      → Opera con URI/ContentResolver de Android para acceder a contenido compartido sin asumir una ruta de archivo directa.
+  L56 [12 espacios] `flags = ACTIVITY_FLAGS`
+      → Asigna/configura `flags` usando `ACTIVITY_FLAGS`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L57 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L58 [8 espacios] `return PendingIntent.getActivity(context, 50_000 + uniqueId, intent, PENDING_FLAGS)`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L59 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.6 `toggleFavorite` — líneas 61–68
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun toggleFavorite(context: Context, noteId: Int, uniqueId: Int): PendingIntent {
+
+Propósito:
+    Implementa `toggleFavorite`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `context: Context`: el llamador proporciona este valor/callback a `toggleFavorite`. Dentro del cuerpo, las líneas donde aparece `context` muestran exactamente cómo afecta al resultado.
+  - `noteId: Int`: el llamador proporciona este valor/callback a `toggleFavorite`. Dentro del cuerpo, las líneas donde aparece `noteId` muestran exactamente cómo afecta al resultado.
+  - `uniqueId: Int`: el llamador proporciona este valor/callback a `toggleFavorite`. Dentro del cuerpo, las líneas donde aparece `uniqueId` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `PendingIntent`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L61 [4 espacios] `fun toggleFavorite(context: Context, noteId: Int, uniqueId: Int): PendingIntent {`
+      → Declara una función. El bloque de `toggleFavorite` se detalla después instrucción por instrucción.
+  L62 [8 espacios] `val intent = Intent(context, WidgetActionReceiver::class.java).apply {`
+      → Construye un `Intent` para abrir/enviar una acción a otro componente Android. Los extras añadidos después transportan el contexto necesario.
+  L63 [12 espacios] `action = WidgetActions.ACTION_TOGGLE_FAVORITE`
+      → Asigna/configura `action` usando `WidgetActions.ACTION_TOGGLE_FAVORITE`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L64 [12 espacios] `data = Uri.parse("mynotes://widget/favorite/$noteId/$uniqueId")`
+      → Opera con URI/ContentResolver de Android para acceder a contenido compartido sin asumir una ruta de archivo directa.
+  L65 [12 espacios] `putExtra(WidgetActions.EXTRA_NOTE_ID, noteId)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L66 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L67 [8 espacios] `return PendingIntent.getBroadcast(context, 60_000 + uniqueId, intent, PENDING_FLAGS)`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L68 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.7 `togglePin` — líneas 70–77
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun togglePin(context: Context, noteId: Int, uniqueId: Int): PendingIntent {
+
+Propósito:
+    Implementa `togglePin`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `context: Context`: el llamador proporciona este valor/callback a `togglePin`. Dentro del cuerpo, las líneas donde aparece `context` muestran exactamente cómo afecta al resultado.
+  - `noteId: Int`: el llamador proporciona este valor/callback a `togglePin`. Dentro del cuerpo, las líneas donde aparece `noteId` muestran exactamente cómo afecta al resultado.
+  - `uniqueId: Int`: el llamador proporciona este valor/callback a `togglePin`. Dentro del cuerpo, las líneas donde aparece `uniqueId` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `PendingIntent`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L70 [4 espacios] `fun togglePin(context: Context, noteId: Int, uniqueId: Int): PendingIntent {`
+      → Declara una función. El bloque de `togglePin` se detalla después instrucción por instrucción.
+  L71 [8 espacios] `val intent = Intent(context, WidgetActionReceiver::class.java).apply {`
+      → Construye un `Intent` para abrir/enviar una acción a otro componente Android. Los extras añadidos después transportan el contexto necesario.
+  L72 [12 espacios] `action = WidgetActions.ACTION_TOGGLE_PIN`
+      → Asigna/configura `action` usando `WidgetActions.ACTION_TOGGLE_PIN`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L73 [12 espacios] `data = Uri.parse("mynotes://widget/pin/$noteId/$uniqueId")`
+      → Opera con URI/ContentResolver de Android para acceder a contenido compartido sin asumir una ruta de archivo directa.
+  L74 [12 espacios] `putExtra(WidgetActions.EXTRA_NOTE_ID, noteId)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L75 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L76 [8 espacios] `return PendingIntent.getBroadcast(context, 70_000 + uniqueId, intent, PENDING_FLAGS)`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L77 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+6. EXPLICACIÓN COMPLETA LÍNEA POR LÍNEA
+----------------------------------------------------------------------
+Esta sección no omite líneas ejecutables. Repite incluso partes ya explicadas en funciones para poder leer el archivo de arriba abajo sin saltar entre secciones.
+L1: `package com.example.mynotes.widget`
+    Declara que este archivo pertenece al package `com.example.mynotes.widget`; esto determina su namespace Kotlin y cómo lo importan otros archivos.
+L3: `import android.app.PendingIntent`
+    Importa `android.app.PendingIntent` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L4: `import android.content.Context`
+    Importa `android.content.Context` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L5: `import android.content.Intent`
+    Importa `android.content.Intent` para usar mensajería/navegación entre componentes Android.
+L6: `import android.net.Uri`
+    Importa `android.net.Uri` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L7: `import com.example.mynotes.MainActivity`
+    Importa `com.example.mynotes.MainActivity`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L9: `object WidgetIntents {`
+    Declara object `WidgetIntents`. A partir de aquí las propiedades y funciones hasta su llave de cierre pertenecen a este tipo.
+L10: `private const val ACTIVITY_FLAGS = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L11: `private const val PENDING_FLAGS = PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE`
+    Crea o configura un `PendingIntent`: una autorización empaquetada que Android puede ejecutar más tarde en nombre de MyNotes.
+L13: `fun openApp(context: Context, uniqueId: Int): PendingIntent {`
+    Declara una función. El bloque de `openApp` se detalla después instrucción por instrucción.
+L14: `val intent = Intent(context, MainActivity::class.java).apply {`
+    Construye un `Intent` para abrir/enviar una acción a otro componente Android. Los extras añadidos después transportan el contexto necesario.
+L15: `action = Intent.ACTION_MAIN`
+    Asigna/configura `action` usando `Intent.ACTION_MAIN`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L16: `addCategory(Intent.CATEGORY_LAUNCHER)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L17: `data = Uri.parse("mynotes://widget/app/$uniqueId")`
+    Opera con URI/ContentResolver de Android para acceder a contenido compartido sin asumir una ruta de archivo directa.
+L18: `flags = ACTIVITY_FLAGS`
+    Asigna/configura `flags` usando `ACTIVITY_FLAGS`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L19: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L20: `return PendingIntent.getActivity(context, 10_000 + uniqueId, intent, PENDING_FLAGS)`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L21: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L23: `fun newNote(context: Context, uniqueId: Int): PendingIntent {`
+    Declara una función. El bloque de `newNote` se detalla después instrucción por instrucción.
+L24: `val intent = Intent(context, MainActivity::class.java).apply {`
+    Construye un `Intent` para abrir/enviar una acción a otro componente Android. Los extras añadidos después transportan el contexto necesario.
+L25: `action = WidgetActions.ACTION_NEW_NOTE`
+    Asigna/configura `action` usando `WidgetActions.ACTION_NEW_NOTE`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L26: `data = Uri.parse("mynotes://widget/new/$uniqueId")`
+    Opera con URI/ContentResolver de Android para acceder a contenido compartido sin asumir una ruta de archivo directa.
+L27: `flags = ACTIVITY_FLAGS`
+    Asigna/configura `flags` usando `ACTIVITY_FLAGS`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L28: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L29: `return PendingIntent.getActivity(context, 20_000 + uniqueId, intent, PENDING_FLAGS)`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L30: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L32: `fun openNote(context: Context, noteId: Int, uniqueId: Int): PendingIntent {`
+    Declara una función. El bloque de `openNote` se detalla después instrucción por instrucción.
+L33: `val intent = Intent(context, MainActivity::class.java).apply {`
+    Construye un `Intent` para abrir/enviar una acción a otro componente Android. Los extras añadidos después transportan el contexto necesario.
+L34: `action = WidgetActions.ACTION_OPEN_NOTE`
+    Asigna/configura `action` usando `WidgetActions.ACTION_OPEN_NOTE`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L35: `data = Uri.parse("mynotes://widget/note/$noteId/$uniqueId")`
+    Opera con URI/ContentResolver de Android para acceder a contenido compartido sin asumir una ruta de archivo directa.
+L36: `putExtra(WidgetActions.EXTRA_NOTE_ID, noteId)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L37: `flags = ACTIVITY_FLAGS`
+    Asigna/configura `flags` usando `ACTIVITY_FLAGS`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L38: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L39: `return PendingIntent.getActivity(context, 30_000 + uniqueId, intent, PENDING_FLAGS)`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L40: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L42: `fun openCollection(context: Context, collection: String, uniqueId: Int): PendingIntent {`
+    Declara una función. El bloque de `openCollection` se detalla después instrucción por instrucción.
+L43: `val intent = Intent(context, MainActivity::class.java).apply {`
+    Construye un `Intent` para abrir/enviar una acción a otro componente Android. Los extras añadidos después transportan el contexto necesario.
+L44: `action = WidgetActions.ACTION_OPEN_COLLECTION`
+    Asigna/configura `action` usando `WidgetActions.ACTION_OPEN_COLLECTION`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L45: `data = Uri.parse("mynotes://widget/collection/$collection/$uniqueId")`
+    Opera con URI/ContentResolver de Android para acceder a contenido compartido sin asumir una ruta de archivo directa.
+L46: `putExtra(WidgetActions.EXTRA_COLLECTION, collection)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L47: `flags = ACTIVITY_FLAGS`
+    Asigna/configura `flags` usando `ACTIVITY_FLAGS`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L48: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L49: `return PendingIntent.getActivity(context, 40_000 + uniqueId, intent, PENDING_FLAGS)`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L50: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L52: `fun search(context: Context, uniqueId: Int): PendingIntent {`
+    Declara una función. El bloque de `search` se detalla después instrucción por instrucción.
+L53: `val intent = Intent(context, MainActivity::class.java).apply {`
+    Construye un `Intent` para abrir/enviar una acción a otro componente Android. Los extras añadidos después transportan el contexto necesario.
+L54: `action = WidgetActions.ACTION_SEARCH`
+    Asigna/configura `action` usando `WidgetActions.ACTION_SEARCH`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L55: `data = Uri.parse("mynotes://widget/search/$uniqueId")`
+    Opera con URI/ContentResolver de Android para acceder a contenido compartido sin asumir una ruta de archivo directa.
+L56: `flags = ACTIVITY_FLAGS`
+    Asigna/configura `flags` usando `ACTIVITY_FLAGS`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L57: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L58: `return PendingIntent.getActivity(context, 50_000 + uniqueId, intent, PENDING_FLAGS)`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L59: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L61: `fun toggleFavorite(context: Context, noteId: Int, uniqueId: Int): PendingIntent {`
+    Declara una función. El bloque de `toggleFavorite` se detalla después instrucción por instrucción.
+L62: `val intent = Intent(context, WidgetActionReceiver::class.java).apply {`
+    Construye un `Intent` para abrir/enviar una acción a otro componente Android. Los extras añadidos después transportan el contexto necesario.
+L63: `action = WidgetActions.ACTION_TOGGLE_FAVORITE`
+    Asigna/configura `action` usando `WidgetActions.ACTION_TOGGLE_FAVORITE`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L64: `data = Uri.parse("mynotes://widget/favorite/$noteId/$uniqueId")`
+    Opera con URI/ContentResolver de Android para acceder a contenido compartido sin asumir una ruta de archivo directa.
+L65: `putExtra(WidgetActions.EXTRA_NOTE_ID, noteId)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L66: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L67: `return PendingIntent.getBroadcast(context, 60_000 + uniqueId, intent, PENDING_FLAGS)`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L68: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L70: `fun togglePin(context: Context, noteId: Int, uniqueId: Int): PendingIntent {`
+    Declara una función. El bloque de `togglePin` se detalla después instrucción por instrucción.
+L71: `val intent = Intent(context, WidgetActionReceiver::class.java).apply {`
+    Construye un `Intent` para abrir/enviar una acción a otro componente Android. Los extras añadidos después transportan el contexto necesario.
+L72: `action = WidgetActions.ACTION_TOGGLE_PIN`
+    Asigna/configura `action` usando `WidgetActions.ACTION_TOGGLE_PIN`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L73: `data = Uri.parse("mynotes://widget/pin/$noteId/$uniqueId")`
+    Opera con URI/ContentResolver de Android para acceder a contenido compartido sin asumir una ruta de archivo directa.
+L74: `putExtra(WidgetActions.EXTRA_NOTE_ID, noteId)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L75: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L76: `return PendingIntent.getBroadcast(context, 70_000 + uniqueId, intent, PENDING_FLAGS)`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L77: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L78: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+7. RECURSOS ANDROID REFERENCIADOS
+----------------------------------------------------------------------
+- No hay referencias directas `R.*` en este archivo.
+
+8. QUIÉN USA ESTE COMPONENTE
+----------------------------------------------------------------------
+- `WidgetIntents` aparece también en 4 archivo(s):
+    - app/src/main/java/com/example/mynotes/widget/FavoritesWidgetProvider.kt
+    - app/src/main/java/com/example/mynotes/widget/FocusNoteWidgetProvider.kt
+    - app/src/main/java/com/example/mynotes/widget/QuickNoteWidgetProvider.kt
+    - app/src/main/java/com/example/mynotes/widget/RecentNotesWidgetProvider.kt
+
+9. QUÉ PUEDE ROMPERSE SI LO MODIFICAS
+----------------------------------------------------------------------
+- Los widgets usan RemoteViews, no Compose. API 28/Samsung limita propiedades y tintes; no asumir que cualquier API visual de Compose/Views funciona dentro del launcher.
+
+10. CHECKLIST DE PRUEBA DESPUÉS DE MODIFICAR ESTE ARCHIVO
+----------------------------------------------------------------------
+- Compilar `assembleDebug` y resolver primero errores de Kotlin/AAPT.
+- Abrir la pantalla/flujo relacionado y comprobar ida y vuelta (back) sin estado duplicado.
+- Cambiar tema/paleta y verificar contraste si este archivo dibuja UI.
+- Añadir el widget desde el launcher en API 28/Samsung, cambiar idioma/paleta y forzar actualización.
+
+==============================================================================================================
+FIN DEL ARCHIVO
+==============================================================================================================

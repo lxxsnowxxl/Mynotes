@@ -1,0 +1,8 @@
+MYNOTES — FLUJO COMPLETO DE VISTA PREVIA DE ENLACES
+
+1. NoteEditorScreen detecta una URL en el texto.
+2. LinkPreviewRepository normaliza/consulta la URL y obtiene título, descripción e imagen con reglas/fallbacks.
+3. Cuando la preview está lista, el enlace puede desaparecer del texto visible pero permanece como metadato necesario para conservar la tarjeta clicable.
+4. LinkPreviewCard representa estados loading/success/error y usa Coil/cachés donde corresponde.
+5. NoteCard y detalle muestran la tarjeta sin reinsertar el URL como texto visible.
+6. En widgets se usa una estrategia compatible con RemoteViews y caché local.

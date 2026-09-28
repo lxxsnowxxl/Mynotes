@@ -1,0 +1,87 @@
+MYNOTES v64 — ÍNDICE DE DOCUMENTACIÓN ULTRA DETALLADA
+==============================================================================================================
+
+Fuentes Kotlin/KTS documentadas: 72
+XML explicados: 445
+
+CONTENIDO PRINCIPAL:
+- `EXPLICACION_ULTRA_DETALLADA_DEL_CODIGO.txt`: documento maestro con los 72 fuentes y explicación instrucción por instrucción.
+- `explicacion_ultra_detallada/`: un TXT independiente por cada archivo Kotlin/KTS.
+- `flujos_ultra_detallados/`: recorridos completos de funciones de la app de principio a fin.
+- `RECURSOS_ANDROID_ULTRA_DETALLADOS.txt`: explicación de cada XML de src/main.
+- `ANDROID_MANIFEST_ULTRA_DETALLADO.txt`: Manifest línea por línea.
+
+ARCHIVOS FUENTE:
+01. app/build.gradle.kts — 79 líneas — 0 funciones detectadas — doc: app__build_gradle_kts.txt
+02. app/src/androidTest/java/com/example/mynotes/ExampleInstrumentedTest.kt — 24 líneas — 1 funciones detectadas — doc: app__src__androidTest__java__com__example__mynotes__ExampleInstrumentedTest_kt.txt
+03. app/src/main/java/com/example/mynotes/MainActivity.kt — 1169 líneas — 19 funciones detectadas — doc: app__src__main__java__com__example__mynotes__MainActivity_kt.txt
+04. app/src/main/java/com/example/mynotes/data/AppDataBackupManager.kt — 499 líneas — 13 funciones detectadas — doc: app__src__main__java__com__example__mynotes__data__AppDataBackupManager_kt.txt
+05. app/src/main/java/com/example/mynotes/data/AppDatabase.kt — 123 líneas — 1 funciones detectadas — doc: app__src__main__java__com__example__mynotes__data__AppDatabase_kt.txt
+06. app/src/main/java/com/example/mynotes/data/Attachment.kt — 24 líneas — 0 funciones detectadas — doc: app__src__main__java__com__example__mynotes__data__Attachment_kt.txt
+07. app/src/main/java/com/example/mynotes/data/AttachmentDao.kt — 69 líneas — 5 funciones detectadas — doc: app__src__main__java__com__example__mynotes__data__AttachmentDao_kt.txt
+08. app/src/main/java/com/example/mynotes/data/Note.kt — 47 líneas — 0 funciones detectadas — doc: app__src__main__java__com__example__mynotes__data__Note_kt.txt
+09. app/src/main/java/com/example/mynotes/data/NoteDao.kt — 142 líneas — 12 funciones detectadas — doc: app__src__main__java__com__example__mynotes__data__NoteDao_kt.txt
+10. app/src/main/java/com/example/mynotes/data/PendingAttachment.kt — 21 líneas — 0 funciones detectadas — doc: app__src__main__java__com__example__mynotes__data__PendingAttachment_kt.txt
+11. app/src/main/java/com/example/mynotes/links/LinkPreviewRepository.kt — 606 líneas — 9 funciones detectadas — doc: app__src__main__java__com__example__mynotes__links__LinkPreviewRepository_kt.txt
+12. app/src/main/java/com/example/mynotes/performance/AttachmentPreviewCache.kt — 819 líneas — 32 funciones detectadas — doc: app__src__main__java__com__example__mynotes__performance__AttachmentPreviewCache_kt.txt
+13. app/src/main/java/com/example/mynotes/performance/DisplayPerformanceController.kt — 129 líneas — 7 funciones detectadas — doc: app__src__main__java__com__example__mynotes__performance__DisplayPerformanceController_kt.txt
+14. app/src/main/java/com/example/mynotes/reminders/Reminder.kt — 25 líneas — 0 funciones detectadas — doc: app__src__main__java__com__example__mynotes__reminders__Reminder_kt.txt
+15. app/src/main/java/com/example/mynotes/reminders/ReminderAlarmScheduler.kt — 53 líneas — 3 funciones detectadas — doc: app__src__main__java__com__example__mynotes__reminders__ReminderAlarmScheduler_kt.txt
+16. app/src/main/java/com/example/mynotes/reminders/ReminderFeedbackPreferences.kt — 172 líneas — 3 funciones detectadas — doc: app__src__main__java__com__example__mynotes__reminders__ReminderFeedbackPreferences_kt.txt
+17. app/src/main/java/com/example/mynotes/reminders/ReminderReceiver.kt — 250 líneas — 6 funciones detectadas — doc: app__src__main__java__com__example__mynotes__reminders__ReminderReceiver_kt.txt
+18. app/src/main/java/com/example/mynotes/reminders/ReminderRepository.kt — 153 líneas — 9 funciones detectadas — doc: app__src__main__java__com__example__mynotes__reminders__ReminderRepository_kt.txt
+19. app/src/main/java/com/example/mynotes/settings/AppSettings.kt — 158 líneas — 0 funciones detectadas — doc: app__src__main__java__com__example__mynotes__settings__AppSettings_kt.txt
+20. app/src/main/java/com/example/mynotes/settings/SettingsRepository.kt — 640 líneas — 71 funciones detectadas — doc: app__src__main__java__com__example__mynotes__settings__SettingsRepository_kt.txt
+21. app/src/main/java/com/example/mynotes/settings/SettingsViewModel.kt — 6 líneas — 0 funciones detectadas — doc: app__src__main__java__com__example__mynotes__settings__SettingsViewModel_kt.txt
+22. app/src/main/java/com/example/mynotes/ui/AttachmentViewerActivity.kt — 1288 líneas — 35 funciones detectadas — doc: app__src__main__java__com__example__mynotes__ui__AttachmentViewerActivity_kt.txt
+23. app/src/main/java/com/example/mynotes/ui/components/AppPopupStyles.kt — 143 líneas — 2 funciones detectadas — doc: app__src__main__java__com__example__mynotes__ui__components__AppPopupStyles_kt.txt
+24. app/src/main/java/com/example/mynotes/ui/components/AttachmentPreviewTile.kt — 329 líneas — 9 funciones detectadas — doc: app__src__main__java__com__example__mynotes__ui__components__AttachmentPreviewTile_kt.txt
+25. app/src/main/java/com/example/mynotes/ui/components/BackupRestoreSection.kt — 163 líneas — 1 funciones detectadas — doc: app__src__main__java__com__example__mynotes__ui__components__BackupRestoreSection_kt.txt
+26. app/src/main/java/com/example/mynotes/ui/components/ConfigurationModeDialog.kt — 294 líneas — 2 funciones detectadas — doc: app__src__main__java__com__example__mynotes__ui__components__ConfigurationModeDialog_kt.txt
+27. app/src/main/java/com/example/mynotes/ui/components/ExtremeCustomizationSection.kt — 631 líneas — 5 funciones detectadas — doc: app__src__main__java__com__example__mynotes__ui__components__ExtremeCustomizationSection_kt.txt
+28. app/src/main/java/com/example/mynotes/ui/components/InlineNoteAttachment.kt — 745 líneas — 9 funciones detectadas — doc: app__src__main__java__com__example__mynotes__ui__components__InlineNoteAttachment_kt.txt
+29. app/src/main/java/com/example/mynotes/ui/components/LinkPreviewCard.kt — 1781 líneas — 26 funciones detectadas — doc: app__src__main__java__com__example__mynotes__ui__components__LinkPreviewCard_kt.txt
+30. app/src/main/java/com/example/mynotes/ui/components/NoteCard.kt — 883 líneas — 12 funciones detectadas — doc: app__src__main__java__com__example__mynotes__ui__components__NoteCard_kt.txt
+31. app/src/main/java/com/example/mynotes/ui/components/NoteCardStyle.kt — 16 líneas — 0 funciones detectadas — doc: app__src__main__java__com__example__mynotes__ui__components__NoteCardStyle_kt.txt
+32. app/src/main/java/com/example/mynotes/ui/components/OptionsMenuCustomizationSection.kt — 368 líneas — 7 funciones detectadas — doc: app__src__main__java__com__example__mynotes__ui__components__OptionsMenuCustomizationSection_kt.txt
+33. app/src/main/java/com/example/mynotes/ui/components/PaletteSelector.kt — 222 líneas — 3 funciones detectadas — doc: app__src__main__java__com__example__mynotes__ui__components__PaletteSelector_kt.txt
+34. app/src/main/java/com/example/mynotes/ui/components/ProfileImageEditorDialog.kt — 492 líneas — 10 funciones detectadas — doc: app__src__main__java__com__example__mynotes__ui__components__ProfileImageEditorDialog_kt.txt
+35. app/src/main/java/com/example/mynotes/ui/components/ScrollPositionCapsule.kt — 272 líneas — 5 funciones detectadas — doc: app__src__main__java__com__example__mynotes__ui__components__ScrollPositionCapsule_kt.txt
+36. app/src/main/java/com/example/mynotes/ui/components/SettingsSectionPanel.kt — 46 líneas — 1 funciones detectadas — doc: app__src__main__java__com__example__mynotes__ui__components__SettingsSectionPanel_kt.txt
+37. app/src/main/java/com/example/mynotes/ui/components/StyledSettingsSlider.kt — 281 líneas — 1 funciones detectadas — doc: app__src__main__java__com__example__mynotes__ui__components__StyledSettingsSlider_kt.txt
+38. app/src/main/java/com/example/mynotes/ui/motion/AppMotion.kt — 342 líneas — 13 funciones detectadas — doc: app__src__main__java__com__example__mynotes__ui__motion__AppMotion_kt.txt
+39. app/src/main/java/com/example/mynotes/ui/sound/UiHapticPlayer.kt — 215 líneas — 12 funciones detectadas — doc: app__src__main__java__com__example__mynotes__ui__sound__UiHapticPlayer_kt.txt
+40. app/src/main/java/com/example/mynotes/ui/sound/UiSoundPlayer.kt — 402 líneas — 19 funciones detectadas — doc: app__src__main__java__com__example__mynotes__ui__sound__UiSoundPlayer_kt.txt
+41. app/src/main/java/com/example/mynotes/ui/theme/AppFonts.kt — 51 líneas — 1 funciones detectadas — doc: app__src__main__java__com__example__mynotes__ui__theme__AppFonts_kt.txt
+42. app/src/main/java/com/example/mynotes/ui/theme/Color.kt — 11 líneas — 0 funciones detectadas — doc: app__src__main__java__com__example__mynotes__ui__theme__Color_kt.txt
+43. app/src/main/java/com/example/mynotes/ui/theme/DevelopmentInfoScreen.kt — 312 líneas — 5 funciones detectadas — doc: app__src__main__java__com__example__mynotes__ui__theme__DevelopmentInfoScreen_kt.txt
+44. app/src/main/java/com/example/mynotes/ui/theme/DrawingScreen.kt — 843 líneas — 6 funciones detectadas — doc: app__src__main__java__com__example__mynotes__ui__theme__DrawingScreen_kt.txt
+45. app/src/main/java/com/example/mynotes/ui/theme/NoteColors.kt — 328 líneas — 17 funciones detectadas — doc: app__src__main__java__com__example__mynotes__ui__theme__NoteColors_kt.txt
+46. app/src/main/java/com/example/mynotes/ui/theme/NoteDetailScreen.kt — 708 líneas — 7 funciones detectadas — doc: app__src__main__java__com__example__mynotes__ui__theme__NoteDetailScreen_kt.txt
+47. app/src/main/java/com/example/mynotes/ui/theme/NoteEditorScreen.kt — 1068 líneas — 9 funciones detectadas — doc: app__src__main__java__com__example__mynotes__ui__theme__NoteEditorScreen_kt.txt
+48. app/src/main/java/com/example/mynotes/ui/theme/NotesScreen.kt — 854 líneas — 4 funciones detectadas — doc: app__src__main__java__com__example__mynotes__ui__theme__NotesScreen_kt.txt
+49. app/src/main/java/com/example/mynotes/ui/theme/PaletteCatalog.kt — 71 líneas — 2 funciones detectadas — doc: app__src__main__java__com__example__mynotes__ui__theme__PaletteCatalog_kt.txt
+50. app/src/main/java/com/example/mynotes/ui/theme/ReminderScreen.kt — 901 líneas — 9 funciones detectadas — doc: app__src__main__java__com__example__mynotes__ui__theme__ReminderScreen_kt.txt
+51. app/src/main/java/com/example/mynotes/ui/theme/SettingsScreen.kt — 1816 líneas — 8 funciones detectadas — doc: app__src__main__java__com__example__mynotes__ui__theme__SettingsScreen_kt.txt
+52. app/src/main/java/com/example/mynotes/ui/theme/SettingsSectionColors.kt — 17 líneas — 1 funciones detectadas — doc: app__src__main__java__com__example__mynotes__ui__theme__SettingsSectionColors_kt.txt
+53. app/src/main/java/com/example/mynotes/ui/theme/SliderColors.kt — 57 líneas — 1 funciones detectadas — doc: app__src__main__java__com__example__mynotes__ui__theme__SliderColors_kt.txt
+54. app/src/main/java/com/example/mynotes/ui/theme/SourceCodeInfoScreen.kt — 220 líneas — 4 funciones detectadas — doc: app__src__main__java__com__example__mynotes__ui__theme__SourceCodeInfoScreen_kt.txt
+55. app/src/main/java/com/example/mynotes/ui/theme/Theme.kt — 269 líneas — 12 funciones detectadas — doc: app__src__main__java__com__example__mynotes__ui__theme__Theme_kt.txt
+56. app/src/main/java/com/example/mynotes/ui/theme/Type.kt — 28 líneas — 0 funciones detectadas — doc: app__src__main__java__com__example__mynotes__ui__theme__Type_kt.txt
+57. app/src/main/java/com/example/mynotes/update/GitHubUpdateManager.kt — 228 líneas — 8 funciones detectadas — doc: app__src__main__java__com__example__mynotes__update__GitHubUpdateManager_kt.txt
+58. app/src/main/java/com/example/mynotes/viewmodel/NoteViewModel.kt — 523 líneas — 19 funciones detectadas — doc: app__src__main__java__com__example__mynotes__viewmodel__NoteViewModel_kt.txt
+59. app/src/main/java/com/example/mynotes/viewmodel/SettingsViewModel.kt — 303 líneas — 54 funciones detectadas — doc: app__src__main__java__com__example__mynotes__viewmodel__SettingsViewModel_kt.txt
+60. app/src/main/java/com/example/mynotes/widget/FavoritesWidgetProvider.kt — 103 líneas — 2 funciones detectadas — doc: app__src__main__java__com__example__mynotes__widget__FavoritesWidgetProvider_kt.txt
+61. app/src/main/java/com/example/mynotes/widget/FocusNoteWidgetProvider.kt — 93 líneas — 1 funciones detectadas — doc: app__src__main__java__com__example__mynotes__widget__FocusNoteWidgetProvider_kt.txt
+62. app/src/main/java/com/example/mynotes/widget/MyNotesWidgetUpdater.kt — 65 líneas — 2 funciones detectadas — doc: app__src__main__java__com__example__mynotes__widget__MyNotesWidgetUpdater_kt.txt
+63. app/src/main/java/com/example/mynotes/widget/QuickNoteWidgetProvider.kt — 45 líneas — 1 funciones detectadas — doc: app__src__main__java__com__example__mynotes__widget__QuickNoteWidgetProvider_kt.txt
+64. app/src/main/java/com/example/mynotes/widget/RecentNotesWidgetProvider.kt — 107 líneas — 2 funciones detectadas — doc: app__src__main__java__com__example__mynotes__widget__RecentNotesWidgetProvider_kt.txt
+65. app/src/main/java/com/example/mynotes/widget/WidgetActionReceiver.kt — 37 líneas — 1 funciones detectadas — doc: app__src__main__java__com__example__mynotes__widget__WidgetActionReceiver_kt.txt
+66. app/src/main/java/com/example/mynotes/widget/WidgetActions.kt — 22 líneas — 0 funciones detectadas — doc: app__src__main__java__com__example__mynotes__widget__WidgetActions_kt.txt
+67. app/src/main/java/com/example/mynotes/widget/WidgetIntents.kt — 78 líneas — 7 funciones detectadas — doc: app__src__main__java__com__example__mynotes__widget__WidgetIntents_kt.txt
+68. app/src/main/java/com/example/mynotes/widget/WidgetLocale.kt — 49 líneas — 3 funciones detectadas — doc: app__src__main__java__com__example__mynotes__widget__WidgetLocale_kt.txt
+69. app/src/main/java/com/example/mynotes/widget/WidgetMediaPreview.kt — 142 líneas — 9 funciones detectadas — doc: app__src__main__java__com__example__mynotes__widget__WidgetMediaPreview_kt.txt
+70. app/src/main/java/com/example/mynotes/widget/WidgetPresentation.kt — 264 líneas — 14 funciones detectadas — doc: app__src__main__java__com__example__mynotes__widget__WidgetPresentation_kt.txt
+71. app/src/test/java/com/example/mynotes/ExampleUnitTest.kt — 17 líneas — 1 funciones detectadas — doc: app__src__test__java__com__example__mynotes__ExampleUnitTest_kt.txt
+72. app/src/test/java/com/example/mynotes/SettingsSectionColorsTest.kt — 43 líneas — 4 funciones detectadas — doc: app__src__test__java__com__example__mynotes__SettingsSectionColorsTest_kt.txt
+- `17_PDF_STUDIO_V65.md` - Editor PDF, importación/exportación, imágenes y recorte por IA.

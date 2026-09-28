@@ -1,0 +1,549 @@
+MYNOTES — EXPLICACIÓN ULTRA DETALLADA
+==============================================================================================================
+Archivo 5/72: app/src/main/java/com/example/mynotes/data/AppDatabase.kt
+SHA-256: 1fa3a2fe21723358f1effe2847ca51c55e0b5a570ba228dd55d016e0e824fa1d
+Líneas del fuente: 123
+Package: com.example.mynotes.data
+
+1. RESPONSABILIDAD EXACTA DEL ARCHIVO
+----------------------------------------------------------------------
+Declara la base de datos Room de MyNotes, sus entidades, versión y DAOs. Es el punto que transforma las interfaces DAO en implementaciones generadas por Room.
+
+2. DÓNDE ENCAJA EN LA ARQUITECTURA
+----------------------------------------------------------------------
+Este archivo pertenece principalmente a la **persistencia/modelos Room**. No debe analizarse aislado: las referencias cruzadas y callbacks se detallan más abajo.
+
+3. IMPORTACIONES, UNA POR UNA
+----------------------------------------------------------------------
+- `android.content.Context`: Importa `android.content.Context` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `androidx.room.Database`: Importa `androidx.room.Database` para usar persistencia SQLite declarativa con Room.
+- `androidx.room.Room`: Importa `androidx.room.Room` para usar persistencia SQLite declarativa con Room.
+- `androidx.room.RoomDatabase`: Importa `androidx.room.RoomDatabase` para usar persistencia SQLite declarativa con Room.
+- `androidx.room.migration.Migration`: Importa `androidx.room.migration.Migration` para usar persistencia SQLite declarativa con Room.
+- `androidx.sqlite.db.SupportSQLiteDatabase`: Importa `androidx.sqlite.db.SupportSQLiteDatabase` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+
+4. DECLARACIONES Y ESTADO IMPORTANTES
+----------------------------------------------------------------------
+L11: `abstract class AppDatabase :`
+    Declara class `AppDatabase`. A partir de aquí las propiedades y funciones hasta su llave de cierre pertenecen a este tipo.
+L19: `private var INSTANCE:`
+    Declara `INSTANCE` como variable mutable: el código puede reasignarla para representar estado cambiante. La inicialización continúa en líneas siguientes.
+L31: `private val MIGRATION_3_4 = object :`
+    Declara `MIGRATION_3_4` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `object :`.
+L65: `private val MIGRATION_4_5 = object :`
+    Declara `MIGRATION_4_5` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `object :`.
+L112: `val instance = Room.databaseBuilder(context.applicationContext, AppDatabase::class.java, "notes_database")`
+    Construye/abre la base de datos Room usando la clase de esquema y el nombre de archivo indicados.
+
+5. FUNCIONES — EXPLICACIÓN DE CADA UNA
+----------------------------------------------------------------------
+
+5.1 `noteDao` — líneas 13–122
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        abstract fun noteDao():
+            NoteDao
+        abstract fun attachmentDao():
+            AttachmentDao
+        companion object {
+
+Propósito:
+    Implementa `noteDao`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `):
+        NoteDao
+    abstract fun attachmentDao(`: el llamador proporciona este valor/callback a `noteDao`. Dentro del cuerpo, las líneas donde aparece `)` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `NoteDao abstract fun attachmentDao(): AttachmentDao companion object`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L13 [4 espacios] `abstract fun noteDao():`
+      → Declara una función. El bloque de `noteDao` se detalla después instrucción por instrucción.
+  L14 [8 espacios] `NoteDao`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `NoteDao`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L15 [4 espacios] `abstract fun attachmentDao():`
+      → Declara una función. El bloque de `attachmentDao` se detalla después instrucción por instrucción.
+  L16 [8 espacios] `AttachmentDao`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `AttachmentDao`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L17 [4 espacios] `companion object {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L18 [8 espacios] `@Volatile`
+      → Aplica la anotación `@Volatile` a la declaración siguiente; la anotación modifica metadatos, generación de código o comportamiento del framework.
+  L19 [8 espacios] `private var INSTANCE:`
+      → Declara `INSTANCE` como variable mutable: el código puede reasignarla para representar estado cambiante. La inicialización continúa en líneas siguientes.
+  L20 [16 espacios] `AppDatabase? = null`
+      → Asigna/configura `AppDatabase?` usando `null`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L21 [8 espacios] `/*`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L22 [9 espacios] `* -----------------------------------------------------`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L23 [9 espacios] `* 3 -> 4`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L24 [9 espacios] `* -----------------------------------------------------`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L25 [9 espacios] `*`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L26 [9 espacios] `* Esta es la migración de la fase de rendimiento anterior.`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L27 [9 espacios] `* Se incluye también aquí para que una instalación que aún`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L28 [9 espacios] `* esté en versión 3 pueda llegar hasta versión 5 sin borrar`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L29 [9 espacios] `* ninguna nota.`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L30 [9 espacios] `*/`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L31 [8 espacios] `private val MIGRATION_3_4 = object :`
+      → Declara `MIGRATION_3_4` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `object :`.
+  L32 [16 espacios] `Migration(3, 4) {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L33 [16 espacios] `override fun migrate(database:`
+      → Sobrescribe un método definido por una clase/interfaz base. El bloque de `migrate` se detalla después instrucción por instrucción.
+  L34 [20 espacios] `SupportSQLiteDatabase) {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L35 [20 espacios] `database.execSQL(`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `database.execSQL(`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L36 [24 espacios] `"""`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"""`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L37 [24 espacios] `CREATE INDEX IF NOT EXISTS`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `CREATE INDEX IF NOT EXISTS`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L38 [24 espacios] ``index_notes_priority_createdAt``
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: ``index_notes_priority_createdAt``. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L39 [24 espacios] `ON `notes` (`priority`, `createdAt`)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L40 [24 espacios] `""".trimIndent()`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L41 [20 espacios] `)`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L42 [20 espacios] `database.execSQL(`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `database.execSQL(`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L43 [24 espacios] `"""`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"""`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L44 [24 espacios] `CREATE INDEX IF NOT EXISTS`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `CREATE INDEX IF NOT EXISTS`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L45 [24 espacios] ``index_attachments_noteId_createdAt``
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: ``index_attachments_noteId_createdAt``. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L46 [24 espacios] `ON `attachments` (`noteId`, `createdAt`)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L47 [24 espacios] `""".trimIndent()`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L48 [20 espacios] `)`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L49 [16 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L50 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L51 [8 espacios] `/*`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L52 [9 espacios] `* -----------------------------------------------------`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L53 [9 espacios] `* 4 -> 5`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L54 [9 espacios] `* -----------------------------------------------------`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L55 [9 espacios] `*`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L56 [9 espacios] `* Añade exclusivamente las propiedades necesarias para`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L57 [9 espacios] `* el diseño nuevo:`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L58 [9 espacios] `*`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L59 [9 espacios] `* - category`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L60 [9 espacios] `* - isFavorite`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L61 [9 espacios] `* - isPinned`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L62 [9 espacios] `*`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L63 [9 espacios] `* No se elimina ni recrea ninguna tabla.`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L64 [9 espacios] `*/`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L65 [8 espacios] `private val MIGRATION_4_5 = object :`
+      → Declara `MIGRATION_4_5` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `object :`.
+  L66 [16 espacios] `Migration(4, 5) {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L67 [16 espacios] `override fun migrate(database:`
+      → Sobrescribe un método definido por una clase/interfaz base. El bloque de `migrate` se detalla después instrucción por instrucción.
+  L68 [20 espacios] `SupportSQLiteDatabase) {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L69 [20 espacios] `database.execSQL(`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `database.execSQL(`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L70 [24 espacios] `"""`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"""`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L71 [24 espacios] `ALTER TABLE `notes``
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `ALTER TABLE `notes``. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L72 [24 espacios] `ADD COLUMN `category``
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `ADD COLUMN `category``. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L73 [24 espacios] `TEXT NOT NULL`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `TEXT NOT NULL`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L74 [24 espacios] `DEFAULT 'personal'`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `DEFAULT 'personal'`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L75 [24 espacios] `""".trimIndent()`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L76 [20 espacios] `)`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L77 [20 espacios] `database.execSQL(`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `database.execSQL(`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L78 [24 espacios] `"""`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"""`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L79 [24 espacios] `ALTER TABLE `notes``
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `ALTER TABLE `notes``. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L80 [24 espacios] `ADD COLUMN `isFavorite``
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `ADD COLUMN `isFavorite``. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L81 [24 espacios] `INTEGER NOT NULL`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `INTEGER NOT NULL`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L82 [24 espacios] `DEFAULT 0`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `DEFAULT 0`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L83 [24 espacios] `""".trimIndent()`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L84 [20 espacios] `)`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L85 [20 espacios] `database.execSQL(`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `database.execSQL(`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L86 [24 espacios] `"""`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"""`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L87 [24 espacios] `ALTER TABLE `notes``
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `ALTER TABLE `notes``. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L88 [24 espacios] `ADD COLUMN `isPinned``
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `ADD COLUMN `isPinned``. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L89 [24 espacios] `INTEGER NOT NULL`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `INTEGER NOT NULL`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L90 [24 espacios] `DEFAULT 0`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `DEFAULT 0`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L91 [24 espacios] `""".trimIndent()`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L92 [20 espacios] `)`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L93 [20 espacios] `database.execSQL(`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `database.execSQL(`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L94 [24 espacios] `"""`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"""`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L95 [24 espacios] `CREATE INDEX IF NOT EXISTS`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `CREATE INDEX IF NOT EXISTS`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L96 [24 espacios] ``index_notes_isPinned_priority_createdAt``
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: ``index_notes_isPinned_priority_createdAt``. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L97 [24 espacios] `ON `notes``
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `ON `notes``. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L98 [24 espacios] `(`isPinned`, `priority`, `createdAt`)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L99 [24 espacios] `""".trimIndent()`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L100 [20 espacios] `)`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L101 [20 espacios] `database.execSQL(`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `database.execSQL(`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L102 [24 espacios] `"""`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"""`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L103 [24 espacios] `CREATE INDEX IF NOT EXISTS`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `CREATE INDEX IF NOT EXISTS`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L104 [24 espacios] ``index_notes_category``
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: ``index_notes_category``. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L105 [24 espacios] `ON `notes` (`category`)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L106 [24 espacios] `""".trimIndent()`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L107 [20 espacios] `)`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L108 [16 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L109 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L110 [8 espacios] `fun getDatabase(context: Context): AppDatabase {`
+      → Declara una función. El bloque de `getDatabase` se detalla después instrucción por instrucción.
+  L111 [12 espacios] `return INSTANCE?: synchronized(this) {`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L112 [20 espacios] `val instance = Room.databaseBuilder(context.applicationContext, AppDatabase::class.java, "notes_database")`
+      → Construye/abre la base de datos Room usando la clase de esquema y el nombre de archivo indicados.
+  L113 [28 espacios] `/*`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L114 [29 espacios] `* Importante:`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L115 [29 espacios] `* no usamos fallback destructivo.`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L116 [29 espacios] `*/`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L117 [28 espacios] `.addMigrations(MIGRATION_3_4, MIGRATION_4_5).build()`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L118 [20 espacios] `INSTANCE = instance`
+      → Asigna/configura `INSTANCE` usando `instance`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L119 [20 espacios] `instance`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `instance`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L120 [16 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L121 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L122 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+6. EXPLICACIÓN COMPLETA LÍNEA POR LÍNEA
+----------------------------------------------------------------------
+Esta sección no omite líneas ejecutables. Repite incluso partes ya explicadas en funciones para poder leer el archivo de arriba abajo sin saltar entre secciones.
+L1: `package com.example.mynotes.data`
+    Declara que este archivo pertenece al package `com.example.mynotes.data`; esto determina su namespace Kotlin y cómo lo importan otros archivos.
+L3: `import android.content.Context`
+    Importa `android.content.Context` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L4: `import androidx.room.Database`
+    Importa `androidx.room.Database` para usar persistencia SQLite declarativa con Room.
+L5: `import androidx.room.Room`
+    Importa `androidx.room.Room` para usar persistencia SQLite declarativa con Room.
+L6: `import androidx.room.RoomDatabase`
+    Importa `androidx.room.RoomDatabase` para usar persistencia SQLite declarativa con Room.
+L7: `import androidx.room.migration.Migration`
+    Importa `androidx.room.migration.Migration` para usar persistencia SQLite declarativa con Room.
+L8: `import androidx.sqlite.db.SupportSQLiteDatabase`
+    Importa `androidx.sqlite.db.SupportSQLiteDatabase` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L10: `@Database(entities = [Note::class, Attachment::class], version = 5, exportSchema = false)`
+    Configura la clase RoomDatabase: entidades incluidas, versión del esquema y opciones de exportación/migración.
+L11: `abstract class AppDatabase :`
+    Declara class `AppDatabase`. A partir de aquí las propiedades y funciones hasta su llave de cierre pertenecen a este tipo.
+L12: `RoomDatabase() {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L13: `abstract fun noteDao():`
+    Declara una función. El bloque de `noteDao` se detalla después instrucción por instrucción.
+L14: `NoteDao`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `NoteDao`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L15: `abstract fun attachmentDao():`
+    Declara una función. El bloque de `attachmentDao` se detalla después instrucción por instrucción.
+L16: `AttachmentDao`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `AttachmentDao`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L17: `companion object {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L18: `@Volatile`
+    Aplica la anotación `@Volatile` a la declaración siguiente; la anotación modifica metadatos, generación de código o comportamiento del framework.
+L19: `private var INSTANCE:`
+    Declara `INSTANCE` como variable mutable: el código puede reasignarla para representar estado cambiante. La inicialización continúa en líneas siguientes.
+L20: `AppDatabase? = null`
+    Asigna/configura `AppDatabase?` usando `null`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L21: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L22: `* -----------------------------------------------------`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L23: `* 3 -> 4`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L24: `* -----------------------------------------------------`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L25: `*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L26: `* Esta es la migración de la fase de rendimiento anterior.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L27: `* Se incluye también aquí para que una instalación que aún`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L28: `* esté en versión 3 pueda llegar hasta versión 5 sin borrar`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L29: `* ninguna nota.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L30: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L31: `private val MIGRATION_3_4 = object :`
+    Declara `MIGRATION_3_4` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `object :`.
+L32: `Migration(3, 4) {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L33: `override fun migrate(database:`
+    Sobrescribe un método definido por una clase/interfaz base. El bloque de `migrate` se detalla después instrucción por instrucción.
+L34: `SupportSQLiteDatabase) {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L35: `database.execSQL(`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `database.execSQL(`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L36: `"""`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"""`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L37: `CREATE INDEX IF NOT EXISTS`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `CREATE INDEX IF NOT EXISTS`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L38: ``index_notes_priority_createdAt``
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: ``index_notes_priority_createdAt``. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L39: `ON `notes` (`priority`, `createdAt`)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L40: `""".trimIndent()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L41: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L42: `database.execSQL(`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `database.execSQL(`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L43: `"""`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"""`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L44: `CREATE INDEX IF NOT EXISTS`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `CREATE INDEX IF NOT EXISTS`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L45: ``index_attachments_noteId_createdAt``
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: ``index_attachments_noteId_createdAt``. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L46: `ON `attachments` (`noteId`, `createdAt`)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L47: `""".trimIndent()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L48: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L49: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L50: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L51: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L52: `* -----------------------------------------------------`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L53: `* 4 -> 5`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L54: `* -----------------------------------------------------`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L55: `*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L56: `* Añade exclusivamente las propiedades necesarias para`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L57: `* el diseño nuevo:`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L58: `*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L59: `* - category`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L60: `* - isFavorite`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L61: `* - isPinned`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L62: `*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L63: `* No se elimina ni recrea ninguna tabla.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L64: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L65: `private val MIGRATION_4_5 = object :`
+    Declara `MIGRATION_4_5` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `object :`.
+L66: `Migration(4, 5) {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L67: `override fun migrate(database:`
+    Sobrescribe un método definido por una clase/interfaz base. El bloque de `migrate` se detalla después instrucción por instrucción.
+L68: `SupportSQLiteDatabase) {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L69: `database.execSQL(`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `database.execSQL(`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L70: `"""`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"""`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L71: `ALTER TABLE `notes``
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `ALTER TABLE `notes``. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L72: `ADD COLUMN `category``
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `ADD COLUMN `category``. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L73: `TEXT NOT NULL`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `TEXT NOT NULL`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L74: `DEFAULT 'personal'`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `DEFAULT 'personal'`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L75: `""".trimIndent()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L76: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L77: `database.execSQL(`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `database.execSQL(`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L78: `"""`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"""`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L79: `ALTER TABLE `notes``
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `ALTER TABLE `notes``. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L80: `ADD COLUMN `isFavorite``
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `ADD COLUMN `isFavorite``. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L81: `INTEGER NOT NULL`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `INTEGER NOT NULL`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L82: `DEFAULT 0`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `DEFAULT 0`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L83: `""".trimIndent()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L84: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L85: `database.execSQL(`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `database.execSQL(`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L86: `"""`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"""`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L87: `ALTER TABLE `notes``
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `ALTER TABLE `notes``. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L88: `ADD COLUMN `isPinned``
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `ADD COLUMN `isPinned``. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L89: `INTEGER NOT NULL`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `INTEGER NOT NULL`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L90: `DEFAULT 0`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `DEFAULT 0`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L91: `""".trimIndent()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L92: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L93: `database.execSQL(`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `database.execSQL(`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L94: `"""`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"""`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L95: `CREATE INDEX IF NOT EXISTS`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `CREATE INDEX IF NOT EXISTS`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L96: ``index_notes_isPinned_priority_createdAt``
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: ``index_notes_isPinned_priority_createdAt``. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L97: `ON `notes``
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `ON `notes``. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L98: `(`isPinned`, `priority`, `createdAt`)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L99: `""".trimIndent()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L100: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L101: `database.execSQL(`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `database.execSQL(`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L102: `"""`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"""`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L103: `CREATE INDEX IF NOT EXISTS`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `CREATE INDEX IF NOT EXISTS`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L104: ``index_notes_category``
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: ``index_notes_category``. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L105: `ON `notes` (`category`)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L106: `""".trimIndent()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L107: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L108: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L109: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L110: `fun getDatabase(context: Context): AppDatabase {`
+    Declara una función. El bloque de `getDatabase` se detalla después instrucción por instrucción.
+L111: `return INSTANCE?: synchronized(this) {`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L112: `val instance = Room.databaseBuilder(context.applicationContext, AppDatabase::class.java, "notes_database")`
+    Construye/abre la base de datos Room usando la clase de esquema y el nombre de archivo indicados.
+L113: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L114: `* Importante:`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L115: `* no usamos fallback destructivo.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L116: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L117: `.addMigrations(MIGRATION_3_4, MIGRATION_4_5).build()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L118: `INSTANCE = instance`
+    Asigna/configura `INSTANCE` usando `instance`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L119: `instance`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `instance`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L120: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L121: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L122: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L123: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+7. RECURSOS ANDROID REFERENCIADOS
+----------------------------------------------------------------------
+- No hay referencias directas `R.*` en este archivo.
+
+8. QUIÉN USA ESTE COMPONENTE
+----------------------------------------------------------------------
+- No se detectaron referencias externas por nombre a los tipos principales; puede ser punto de entrada Android, recurso invocado por Manifest o archivo de prueba.
+
+9. QUÉ PUEDE ROMPERSE SI LO MODIFICAS
+----------------------------------------------------------------------
+- Cambiar el esquema Room puede requerir aumentar versión y definir migración. Hacerlo sin migración puede impedir abrir bases existentes o forzar pérdida de datos si se usa destructive migration.
+
+10. CHECKLIST DE PRUEBA DESPUÉS DE MODIFICAR ESTE ARCHIVO
+----------------------------------------------------------------------
+- Compilar `assembleDebug` y resolver primero errores de Kotlin/AAPT.
+- Abrir la pantalla/flujo relacionado y comprobar ida y vuelta (back) sin estado duplicado.
+- Cambiar tema/paleta y verificar contraste si este archivo dibuja UI.
+
+==============================================================================================================
+FIN DEL ARCHIVO
+==============================================================================================================

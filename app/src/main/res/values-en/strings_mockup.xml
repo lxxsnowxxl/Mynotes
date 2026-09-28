@@ -89,5 +89,5 @@
     <string name="mock_voice_note">Voice note</string>
     <string name="mock_audio">Audio</string>
     <string name="mock_file">File</string>
-    <string name="mock_font_google_sans_flex">Google Sans Flex</string>
+    <string name="mock_font_google_sans_flex">Google Sans Bold</string>
 </resources>

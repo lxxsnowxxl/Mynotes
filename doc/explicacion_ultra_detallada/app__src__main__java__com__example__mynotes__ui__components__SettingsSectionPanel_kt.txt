@@ -1,0 +1,181 @@
+MYNOTES — EXPLICACIÓN ULTRA DETALLADA
+==============================================================================================================
+Archivo 36/72: app/src/main/java/com/example/mynotes/ui/components/SettingsSectionPanel.kt
+SHA-256: 8f7337521be321d39c572afa9be295b43450d11897a2dbc09bf7f718f62b14d5
+Líneas del fuente: 46
+Package: com.example.mynotes.ui.components
+
+1. RESPONSABILIDAD EXACTA DEL ARCHIVO
+----------------------------------------------------------------------
+Contenedor visual reutilizable de secciones de Configuración con fondo, padding, forma y contraste comunes.
+
+2. DÓNDE ENCAJA EN LA ARQUITECTURA
+----------------------------------------------------------------------
+Este archivo pertenece principalmente a la **capa de interfaz Compose/Activities**. No debe analizarse aislado: las referencias cruzadas y callbacks se detallan más abajo.
+
+3. IMPORTACIONES, UNA POR UNA
+----------------------------------------------------------------------
+- `androidx.compose.foundation.layout.Column`: Importa `androidx.compose.foundation.layout.Column` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.layout.ColumnScope`: Importa `androidx.compose.foundation.layout.ColumnScope` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.layout.PaddingValues`: Importa `androidx.compose.foundation.layout.PaddingValues` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.layout.fillMaxWidth`: Importa `androidx.compose.foundation.layout.fillMaxWidth` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.layout.padding`: Importa `androidx.compose.foundation.layout.padding` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.material3.MaterialTheme`: Importa `androidx.compose.material3.MaterialTheme` para usar componentes y tema Material 3.
+- `androidx.compose.runtime.Composable`: Importa `androidx.compose.runtime.Composable` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+- `androidx.compose.runtime.remember`: Importa `androidx.compose.runtime.remember` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+- `androidx.compose.ui.Modifier`: Importa `androidx.compose.ui.Modifier` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.draw.drawBehind`: Importa `androidx.compose.ui.draw.drawBehind` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.geometry.CornerRadius`: Importa `androidx.compose.ui.geometry.CornerRadius` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.geometry.Offset`: Importa `androidx.compose.ui.geometry.Offset` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.geometry.Size`: Importa `androidx.compose.ui.geometry.Size` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.unit.Dp`: Importa `androidx.compose.ui.unit.Dp` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.unit.dp`: Importa `androidx.compose.ui.unit.dp` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `com.example.mynotes.ui.theme.SettingsSectionColors`: Importa `com.example.mynotes.ui.theme.SettingsSectionColors`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.ui.theme.settingsSectionColors`: Importa `com.example.mynotes.ui.theme.settingsSectionColors`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+
+4. DECLARACIONES Y ESTADO IMPORTANTES
+----------------------------------------------------------------------
+L34: `val background = MaterialTheme.colorScheme.surfaceContainerLow`
+    Declara `background` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `MaterialTheme.colorScheme.surfaceContainerLow`.
+L35: `val colors = remember(background, textColorMode) {`
+    Memoriza el resultado durante recomposiciones de Compose. Solo se recalcula cuando cambian las claves de `remember`, reduciendo trabajo y preservando identidad/estado local.
+L39: `val outset = horizontalOutset.toPx()`
+    Declara `outset` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `horizontalOutset.toPx()`.
+L40: `val radius = 18.dp.toPx()`
+    Declara `radius` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `18.dp.toPx()`.
+
+5. FUNCIONES — EXPLICACIÓN DE CADA UNA
+----------------------------------------------------------------------
+
+5.1 `SettingsSectionPanel` — líneas 31–31
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    internal fun SettingsSectionPanel(textColorMode: String, modifier: Modifier = Modifier,
+
+Propósito:
+    Cambia el valor asociado a `tingsSectionPanel`. En repositorios suele persistirlo; en UI suele emitir el callback que termina persistiendo el ajuste.
+
+Parámetros/entradas:
+  - `textColorMode: String`: el llamador proporciona este valor/callback a `SettingsSectionPanel`. Dentro del cuerpo, las líneas donde aparece `textColorMode` muestran exactamente cómo afecta al resultado.
+  - `modifier: Modifier = Modifier`: el llamador proporciona este valor/callback a `SettingsSectionPanel`. Dentro del cuerpo, las líneas donde aparece `modifier` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L31 [0 espacios] `internal fun SettingsSectionPanel(textColorMode: String, modifier: Modifier = Modifier,`
+      → Declara una función. El bloque de `SettingsSectionPanel` se detalla después instrucción por instrucción.
+
+6. EXPLICACIÓN COMPLETA LÍNEA POR LÍNEA
+----------------------------------------------------------------------
+Esta sección no omite líneas ejecutables. Repite incluso partes ya explicadas en funciones para poder leer el archivo de arriba abajo sin saltar entre secciones.
+L1: `package com.example.mynotes.ui.components`
+    Declara que este archivo pertenece al package `com.example.mynotes.ui.components`; esto determina su namespace Kotlin y cómo lo importan otros archivos.
+L3: `import androidx.compose.foundation.layout.Column`
+    Importa `androidx.compose.foundation.layout.Column` para usar layouts, gestos y primitivas visuales de Compose.
+L4: `import androidx.compose.foundation.layout.ColumnScope`
+    Importa `androidx.compose.foundation.layout.ColumnScope` para usar layouts, gestos y primitivas visuales de Compose.
+L5: `import androidx.compose.foundation.layout.PaddingValues`
+    Importa `androidx.compose.foundation.layout.PaddingValues` para usar layouts, gestos y primitivas visuales de Compose.
+L6: `import androidx.compose.foundation.layout.fillMaxWidth`
+    Importa `androidx.compose.foundation.layout.fillMaxWidth` para usar layouts, gestos y primitivas visuales de Compose.
+L7: `import androidx.compose.foundation.layout.padding`
+    Importa `androidx.compose.foundation.layout.padding` para usar layouts, gestos y primitivas visuales de Compose.
+L8: `import androidx.compose.material3.MaterialTheme`
+    Importa `androidx.compose.material3.MaterialTheme` para usar componentes y tema Material 3.
+L9: `import androidx.compose.runtime.Composable`
+    Importa `androidx.compose.runtime.Composable` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+L10: `import androidx.compose.runtime.remember`
+    Importa `androidx.compose.runtime.remember` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+L11: `import androidx.compose.ui.Modifier`
+    Importa `androidx.compose.ui.Modifier` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L12: `import androidx.compose.ui.draw.drawBehind`
+    Importa `androidx.compose.ui.draw.drawBehind` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L13: `import androidx.compose.ui.geometry.CornerRadius`
+    Importa `androidx.compose.ui.geometry.CornerRadius` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L14: `import androidx.compose.ui.geometry.Offset`
+    Importa `androidx.compose.ui.geometry.Offset` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L15: `import androidx.compose.ui.geometry.Size`
+    Importa `androidx.compose.ui.geometry.Size` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L16: `import androidx.compose.ui.unit.Dp`
+    Importa `androidx.compose.ui.unit.Dp` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L17: `import androidx.compose.ui.unit.dp`
+    Importa `androidx.compose.ui.unit.dp` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L18: `import com.example.mynotes.ui.theme.SettingsSectionColors`
+    Importa `com.example.mynotes.ui.theme.SettingsSectionColors`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L19: `import com.example.mynotes.ui.theme.settingsSectionColors`
+    Importa `com.example.mynotes.ui.theme.settingsSectionColors`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L21: `/**`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L22: `* El mismo fondo y radio de las tarjetas Perfil / Iconos de la referencia.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L23: `* Usa el color del tema: conserva la paleta y la intensidad elegidas.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L24: `*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L25: `* Todos los paneles de Configuración comparten por defecto un outset horizontal`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L26: `* de 8 dp. Así los recuadros mantienen la misma anchura visual aunque procedan`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L27: `* de secciones distintas (Perfil, Sonido, Vibración, Backup, personalización,`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L28: `* etc.). El parámetro sigue disponible para casos excepcionales.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L29: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L30: `@Composable`
+    Marca la función siguiente como Composable: Compose puede ejecutarla durante composición/recomposición para describir UI a partir de estado.
+L31: `internal fun SettingsSectionPanel(textColorMode: String, modifier: Modifier = Modifier,`
+    Declara una función. El bloque de `SettingsSectionPanel` se detalla después instrucción por instrucción.
+L32: `contentPadding: PaddingValues = PaddingValues(14.dp), horizontalOutset: Dp = 8.dp,`
+    Asigna/configura `contentPadding: PaddingValues` usando `PaddingValues(14.dp), horizontalOutset: Dp = 8.dp,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L33: `content: @Composable ColumnScope.(SettingsSectionColors) -> Unit) {`
+    Define una rama/lambda. Cuando coincide `content: @Composable ColumnScope.(SettingsSectionColors)`, se ejecuta la expresión o bloque situado después de `->`.
+L34: `val background = MaterialTheme.colorScheme.surfaceContainerLow`
+    Declara `background` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `MaterialTheme.colorScheme.surfaceContainerLow`.
+L35: `val colors = remember(background, textColorMode) {`
+    Memoriza el resultado durante recomposiciones de Compose. Solo se recalcula cuando cambian las claves de `remember`, reduciendo trabajo y preservando identidad/estado local.
+L36: `settingsSectionColors(background, textColorMode)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L37: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L38: `Column(modifier = modifier.fillMaxWidth().drawBehind {`
+    Crea un `Column` de Compose que organiza hijos verticalmente. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+L39: `val outset = horizontalOutset.toPx()`
+    Declara `outset` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `horizontalOutset.toPx()`.
+L40: `val radius = 18.dp.toPx()`
+    Declara `radius` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `18.dp.toPx()`.
+L41: `drawRoundRect(color = colors.background, topLeft = Offset(-outset, 0f), size = Size(size.width + outset * 2f, size.height),`
+    Asigna/configura `drawRoundRect(color` usando `colors.background, topLeft = Offset(-outset, 0f), size = Size(size.width + outset * 2f, size.height),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L42: `cornerRadius = CornerRadius(radius, radius))`
+    Asigna/configura `cornerRadius` usando `CornerRadius(radius, radius))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L43: `}.padding(contentPadding)) {`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L44: `content(colors)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L45: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L46: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+7. RECURSOS ANDROID REFERENCIADOS
+----------------------------------------------------------------------
+- No hay referencias directas `R.*` en este archivo.
+
+8. QUIÉN USA ESTE COMPONENTE
+----------------------------------------------------------------------
+- No se detectaron referencias externas por nombre a los tipos principales; puede ser punto de entrada Android, recurso invocado por Manifest o archivo de prueba.
+
+9. QUÉ PUEDE ROMPERSE SI LO MODIFICAS
+----------------------------------------------------------------------
+- Conservar firmas públicas/callbacks y comprobar los archivos que aparecen en “quién usa este componente” antes de renombrar o cambiar tipos.
+
+10. CHECKLIST DE PRUEBA DESPUÉS DE MODIFICAR ESTE ARCHIVO
+----------------------------------------------------------------------
+- Compilar `assembleDebug` y resolver primero errores de Kotlin/AAPT.
+- Abrir la pantalla/flujo relacionado y comprobar ida y vuelta (back) sin estado duplicado.
+- Cambiar tema/paleta y verificar contraste si este archivo dibuja UI.
+
+==============================================================================================================
+FIN DEL ARCHIVO
+==============================================================================================================

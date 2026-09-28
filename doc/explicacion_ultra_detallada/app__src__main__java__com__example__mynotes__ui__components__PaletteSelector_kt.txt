@@ -1,0 +1,772 @@
+MYNOTES — EXPLICACIÓN ULTRA DETALLADA
+==============================================================================================================
+Archivo 33/72: app/src/main/java/com/example/mynotes/ui/components/PaletteSelector.kt
+SHA-256: 97497f7e2f3fc5a526543390d39523f071e6e7ef948e6d35cba63292c94ac206
+Líneas del fuente: 222
+Package: com.example.mynotes.ui.components
+
+1. RESPONSABILIDAD EXACTA DEL ARCHIVO
+----------------------------------------------------------------------
+Selector visual de paletas/tonos. Traduce una selección del usuario a la clave/color almacenado en Settings.
+
+2. DÓNDE ENCAJA EN LA ARQUITECTURA
+----------------------------------------------------------------------
+Este archivo pertenece principalmente a la **capa de interfaz Compose/Activities**. No debe analizarse aislado: las referencias cruzadas y callbacks se detallan más abajo.
+
+3. IMPORTACIONES, UNA POR UNA
+----------------------------------------------------------------------
+- `androidx.compose.animation.AnimatedVisibility`: Importa `androidx.compose.animation.AnimatedVisibility` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.animation.fadeIn`: Importa `androidx.compose.animation.fadeIn` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.animation.fadeOut`: Importa `androidx.compose.animation.fadeOut` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.animation.scaleIn`: Importa `androidx.compose.animation.scaleIn` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.animation.scaleOut`: Importa `androidx.compose.animation.scaleOut` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.animation.core.animateDpAsState`: Importa `androidx.compose.animation.core.animateDpAsState` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.animation.core.tween`: Importa `androidx.compose.animation.core.tween` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.foundation.BorderStroke`: Importa `androidx.compose.foundation.BorderStroke` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.background`: Importa `androidx.compose.foundation.background` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.border`: Importa `androidx.compose.foundation.border` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.clickable`: Importa `androidx.compose.foundation.clickable` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.interaction.MutableInteractionSource`: Importa `androidx.compose.foundation.interaction.MutableInteractionSource` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.layout.Arrangement`: Importa `androidx.compose.foundation.layout.Arrangement` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.layout.aspectRatio`: Importa `androidx.compose.foundation.layout.aspectRatio` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.layout.Box`: Importa `androidx.compose.foundation.layout.Box` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.layout.Column`: Importa `androidx.compose.foundation.layout.Column` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.layout.Row`: Importa `androidx.compose.foundation.layout.Row` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.layout.Spacer`: Importa `androidx.compose.foundation.layout.Spacer` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.layout.fillMaxWidth`: Importa `androidx.compose.foundation.layout.fillMaxWidth` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.layout.padding`: Importa `androidx.compose.foundation.layout.padding` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.shape.CircleShape`: Importa `androidx.compose.foundation.shape.CircleShape` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.shape.RoundedCornerShape`: Importa `androidx.compose.foundation.shape.RoundedCornerShape` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.material.icons.Icons`: Importa `androidx.compose.material.icons.Icons` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.material.icons.filled.Check`: Importa `androidx.compose.material.icons.filled.Check` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.material3.Icon`: Importa `androidx.compose.material3.Icon` para usar componentes y tema Material 3.
+- `androidx.compose.material3.MaterialTheme`: Importa `androidx.compose.material3.MaterialTheme` para usar componentes y tema Material 3.
+- `androidx.compose.material3.Surface`: Importa `androidx.compose.material3.Surface` para usar componentes y tema Material 3.
+- `androidx.compose.material3.Text`: Importa `androidx.compose.material3.Text` para usar componentes y tema Material 3.
+- `androidx.compose.runtime.Composable`: Importa `androidx.compose.runtime.Composable` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+- `androidx.compose.runtime.getValue`: Importa `androidx.compose.runtime.getValue` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+- `androidx.compose.runtime.remember`: Importa `androidx.compose.runtime.remember` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+- `androidx.compose.ui.Alignment`: Importa `androidx.compose.ui.Alignment` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.Modifier`: Importa `androidx.compose.ui.Modifier` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.draw.clip`: Importa `androidx.compose.ui.draw.clip` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.graphics.Color`: Importa `androidx.compose.ui.graphics.Color` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.graphics.luminance`: Importa `androidx.compose.ui.graphics.luminance` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.platform.LocalContext`: Importa `androidx.compose.ui.platform.LocalContext` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.res.stringResource`: Importa `androidx.compose.ui.res.stringResource` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.text.font.FontFamily`: Importa `androidx.compose.ui.text.font.FontFamily` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.text.font.FontWeight`: Importa `androidx.compose.ui.text.font.FontWeight` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.text.style.TextOverflow`: Importa `androidx.compose.ui.text.style.TextOverflow` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.unit.dp`: Importa `androidx.compose.ui.unit.dp` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `com.example.mynotes.ui.theme.MyNotesPalette`: Importa `com.example.mynotes.ui.theme.MyNotesPalette`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.ui.theme.resolveUiTextColor`: Importa `com.example.mynotes.ui.theme.resolveUiTextColor`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.ui.theme.resolveUiGraphicColor`: Importa `com.example.mynotes.ui.theme.resolveUiGraphicColor`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.ui.motion.AppMotion`: Importa `com.example.mynotes.ui.motion.AppMotion`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.ui.sound.UiActionSound`: Importa `com.example.mynotes.ui.sound.UiActionSound`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.ui.sound.UiSoundPlayer`: Importa `com.example.mynotes.ui.sound.UiSoundPlayer`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+
+4. DECLARACIONES Y ESTADO IMPORTANTES
+----------------------------------------------------------------------
+L64: `val paletteRows = remember(palettes) {`
+    Memoriza el resultado durante recomposiciones de Compose. Solo se recalcula cuando cambian las claves de `remember`, reduciendo trabajo y preservando identidad/estado local.
+L97: `val context = LocalContext.current`
+    Declara `context` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `LocalContext.current`.
+L98: `val shape = RoundedCornerShape(16.dp)`
+    Declara `shape` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `RoundedCornerShape(16.dp)`.
+L99: `val cardBackground = MaterialTheme.colorScheme.surfaceContainerLow`
+    Declara `cardBackground` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `MaterialTheme.colorScheme.surfaceContainerLow`.
+L100: `val cardTextColor = resolveUiTextColor(value = textColorMode, background = cardBackground)`
+    Declara `cardTextColor` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolveUiTextColor(value = textColorMode, background = cardBackground)`.
+L101: `val cardGraphicColor = resolveUiGraphicColor(value = textColorMode, background = cardBackground)`
+    Declara `cardGraphicColor` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolveUiGraphicColor(value = textColorMode, background = cardBackground)`.
+L102: `val motionDuration = AppMotion.duration(AppMotion.FAST, animationsEnabled, animationSpeed)`
+    Declara `motionDuration` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `AppMotion.duration(AppMotion.FAST, animationsEnabled, animationSpeed)`.
+L103: `val cardInteractionSource = remember {`
+    Memoriza el resultado durante recomposiciones de Compose. Solo se recalcula cuando cambian las claves de `remember`, reduciendo trabajo y preservando identidad/estado local.
+L106: `val animatedBorderWidth by`
+    Declara `animatedBorderWidth` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L177: `val checkColor = if (color.luminance() > 0.48f) Color.Black else Color.White`
+    Declara `checkColor` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (color.luminance() > 0.48f) Color.Black else Color.White`.
+L178: `val toneInteractionSource = remember { MutableInteractionSource() }`
+    Memoriza el resultado durante recomposiciones de Compose. Solo se recalcula cuando cambian las claves de `remember`, reduciendo trabajo y preservando identidad/estado local.
+L179: `val motionDuration = AppMotion.duration(AppMotion.FAST, animationsEnabled, animationSpeed)`
+    Declara `motionDuration` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `AppMotion.duration(AppMotion.FAST, animationsEnabled, animationSpeed)`.
+
+5. FUNCIONES — EXPLICACIÓN DE CADA UNA
+----------------------------------------------------------------------
+
+5.1 `PaletteSelector` — líneas 61–62
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    fun PaletteSelector(palettes: List<MyNotesPalette>, selectedPaletteKey: String, selectedToneIndex: Int, onPaletteSelected: (String) -> Unit,
+        onToneSelected: (paletteKey: String, toneIndex: Int) -> Unit, animationsEnabled: Boolean = true, animationSpeed: Float = 1f,
+
+Propósito:
+    Implementa `PaletteSelector`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `palettes: List<MyNotesPalette>`: el llamador proporciona este valor/callback a `PaletteSelector`. Dentro del cuerpo, las líneas donde aparece `palettes` muestran exactamente cómo afecta al resultado.
+  - `selectedPaletteKey: String`: el llamador proporciona este valor/callback a `PaletteSelector`. Dentro del cuerpo, las líneas donde aparece `selectedPaletteKey` muestran exactamente cómo afecta al resultado.
+  - `selectedToneIndex: Int`: el llamador proporciona este valor/callback a `PaletteSelector`. Dentro del cuerpo, las líneas donde aparece `selectedToneIndex` muestran exactamente cómo afecta al resultado.
+  - `onPaletteSelected: (String) -> Unit`: el llamador proporciona este valor/callback a `PaletteSelector`. Dentro del cuerpo, las líneas donde aparece `onPaletteSelected` muestran exactamente cómo afecta al resultado.
+  - `onToneSelected: (paletteKey: String, toneIndex: Int`: el llamador proporciona este valor/callback a `PaletteSelector`. Dentro del cuerpo, las líneas donde aparece `onToneSelected` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L61 [0 espacios] `fun PaletteSelector(palettes: List<MyNotesPalette>, selectedPaletteKey: String, selectedToneIndex: Int, onPaletteSelected: (String) -> Unit,`
+      → Declara una función. El bloque de `PaletteSelector` se detalla después instrucción por instrucción.
+  L62 [4 espacios] `onToneSelected: (paletteKey: String, toneIndex: Int) -> Unit, animationsEnabled: Boolean = true, animationSpeed: Float = 1f,`
+      → Define una rama/lambda. Cuando coincide `onToneSelected: (paletteKey: String, toneIndex: Int)`, se ejecuta la expresión o bloque situado después de `->`.
+
+5.2 `PaletteCard` — líneas 94–164
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    private fun PaletteCard(modifier: Modifier, palette: MyNotesPalette, selected: Boolean, selectedToneIndex: Int,
+        onPaletteSelected: (String) -> Unit, onToneSelected: (paletteKey: String, toneIndex: Int) -> Unit, animationsEnabled: Boolean,
+        animationSpeed: Float, textColorMode: String, fontFamily: FontFamily) {
+
+Propósito:
+    Implementa `PaletteCard`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `modifier: Modifier`: el llamador proporciona este valor/callback a `PaletteCard`. Dentro del cuerpo, las líneas donde aparece `modifier` muestran exactamente cómo afecta al resultado.
+  - `palette: MyNotesPalette`: el llamador proporciona este valor/callback a `PaletteCard`. Dentro del cuerpo, las líneas donde aparece `palette` muestran exactamente cómo afecta al resultado.
+  - `selected: Boolean`: el llamador proporciona este valor/callback a `PaletteCard`. Dentro del cuerpo, las líneas donde aparece `selected` muestran exactamente cómo afecta al resultado.
+  - `selectedToneIndex: Int`: el llamador proporciona este valor/callback a `PaletteCard`. Dentro del cuerpo, las líneas donde aparece `selectedToneIndex` muestran exactamente cómo afecta al resultado.
+  - `onPaletteSelected: (String) -> Unit`: el llamador proporciona este valor/callback a `PaletteCard`. Dentro del cuerpo, las líneas donde aparece `onPaletteSelected` muestran exactamente cómo afecta al resultado.
+  - `onToneSelected: (paletteKey: String, toneIndex: Int) -> Unit`: el llamador proporciona este valor/callback a `PaletteCard`. Dentro del cuerpo, las líneas donde aparece `onToneSelected` muestran exactamente cómo afecta al resultado.
+  - `animationsEnabled: Boolean`: el llamador proporciona este valor/callback a `PaletteCard`. Dentro del cuerpo, las líneas donde aparece `animationsEnabled` muestran exactamente cómo afecta al resultado.
+  - `animationSpeed: Float`: el llamador proporciona este valor/callback a `PaletteCard`. Dentro del cuerpo, las líneas donde aparece `animationSpeed` muestran exactamente cómo afecta al resultado.
+  - `textColorMode: String`: el llamador proporciona este valor/callback a `PaletteCard`. Dentro del cuerpo, las líneas donde aparece `textColorMode` muestran exactamente cómo afecta al resultado.
+  - `fontFamily: FontFamily`: el llamador proporciona este valor/callback a `PaletteCard`. Dentro del cuerpo, las líneas donde aparece `fontFamily` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L94 [0 espacios] `private fun PaletteCard(modifier: Modifier, palette: MyNotesPalette, selected: Boolean, selectedToneIndex: Int,`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `PaletteCard` se detalla después instrucción por instrucción.
+  L95 [4 espacios] `onPaletteSelected: (String) -> Unit, onToneSelected: (paletteKey: String, toneIndex: Int) -> Unit, animationsEnabled: Boolean,`
+      → Define una rama/lambda. Cuando coincide `onPaletteSelected: (String)`, se ejecuta la expresión o bloque situado después de `->`.
+  L96 [4 espacios] `animationSpeed: Float, textColorMode: String, fontFamily: FontFamily) {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L97 [4 espacios] `val context = LocalContext.current`
+      → Declara `context` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `LocalContext.current`.
+  L98 [4 espacios] `val shape = RoundedCornerShape(16.dp)`
+      → Declara `shape` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `RoundedCornerShape(16.dp)`.
+  L99 [4 espacios] `val cardBackground = MaterialTheme.colorScheme.surfaceContainerLow`
+      → Declara `cardBackground` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `MaterialTheme.colorScheme.surfaceContainerLow`.
+  L100 [4 espacios] `val cardTextColor = resolveUiTextColor(value = textColorMode, background = cardBackground)`
+      → Declara `cardTextColor` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolveUiTextColor(value = textColorMode, background = cardBackground)`.
+  L101 [4 espacios] `val cardGraphicColor = resolveUiGraphicColor(value = textColorMode, background = cardBackground)`
+      → Declara `cardGraphicColor` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolveUiGraphicColor(value = textColorMode, background = cardBackground)`.
+  L102 [4 espacios] `val motionDuration = AppMotion.duration(AppMotion.FAST, animationsEnabled, animationSpeed)`
+      → Declara `motionDuration` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `AppMotion.duration(AppMotion.FAST, animationsEnabled, animationSpeed)`.
+  L103 [4 espacios] `val cardInteractionSource = remember {`
+      → Memoriza el resultado durante recomposiciones de Compose. Solo se recalcula cuando cambian las claves de `remember`, reduciendo trabajo y preservando identidad/estado local.
+  L104 [12 espacios] `MutableInteractionSource()`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L105 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L106 [4 espacios] `val animatedBorderWidth by`
+      → Declara `animatedBorderWidth` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+  L107 [8 espacios] `animateDpAsState(targetValue = if (selected) {`
+      → Asigna/configura `animateDpAsState(targetValue` usando `if (selected) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L108 [20 espacios] `1.8.dp`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `1.8.dp`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L109 [16 espacios] `} else {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L110 [20 espacios] `1.dp`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `1.dp`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L111 [16 espacios] `}, animationSpec = tween(durationMillis = motionDuration), label = "paletteBorder")`
+      → Asigna/configura `}, animationSpec` usando `tween(durationMillis = motionDuration), label = "paletteBorder")`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L112 [4 espacios] `Surface(modifier = modifier.clickable(interactionSource = cardInteractionSource, indication = null, onClick = {`
+      → Crea una superficie visual Material que agrupa contenido y puede aplicar forma, fondo, elevación, borde y click.
+  L113 [24 espacios] `UiSoundPlayer.playAction(context = context, action = UiActionSound.Theme)`
+      → Asigna/configura `UiSoundPlayer.playAction(context` usando `context, action = UiActionSound.Theme)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L114 [24 espacios] `onPaletteSelected(palette.key)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L115 [20 espacios] `}),`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L116 [8 espacios] `shape = shape,`
+      → Asigna/configura `shape` usando `shape,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L117 [8 espacios] `color = cardBackground,`
+      → Asigna/configura `color` usando `cardBackground,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L118 [8 espacios] `contentColor = cardTextColor,`
+      → Asigna/configura `contentColor` usando `cardTextColor,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L119 [8 espacios] `tonalElevation = 0.dp,`
+      → Asigna/configura `tonalElevation` usando `0.dp,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L120 [8 espacios] `shadowElevation = 0.dp,`
+      → Asigna/configura `shadowElevation` usando `0.dp,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L121 [8 espacios] `border = BorderStroke(width = animatedBorderWidth,`
+      → Asigna/configura `border` usando `BorderStroke(width = animatedBorderWidth,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L122 [16 espacios] `color = cardGraphicColor)) {`
+      → Asigna/configura `color` usando `cardGraphicColor)) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L123 [8 espacios] `Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp,`
+      → Crea un `Column` de Compose que organiza hijos verticalmente. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+  L124 [24 espacios] `vertical = 11.dp)) {`
+      → Asigna/configura `vertical` usando `11.dp)) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L125 [12 espacios] `Text(text = stringResource(palette.labelRes),`
+      → Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+  L126 [16 espacios] `style = MaterialTheme.typography.labelLarge,`
+      → Asigna/configura `style` usando `MaterialTheme.typography.labelLarge,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L127 [16 espacios] `fontFamily = fontFamily,`
+      → Asigna/configura `fontFamily` usando `fontFamily,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L128 [16 espacios] `fontWeight = FontWeight.SemiBold,`
+      → Asigna/configura `fontWeight` usando `FontWeight.SemiBold,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L129 [16 espacios] `color = cardTextColor,`
+      → Asigna/configura `color` usando `cardTextColor,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L130 [16 espacios] `maxLines = 1,`
+      → Asigna/configura `maxLines` usando `1,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L131 [16 espacios] `overflow = TextOverflow.Ellipsis)`
+      → Asigna/configura `overflow` usando `TextOverflow.Ellipsis)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L132 [12 espacios] `Row(modifier = Modifier.fillMaxWidth().padding(top = 10.dp),`
+      → Crea un `Row` de Compose que organiza hijos horizontalmente. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+  L133 [16 espacios] `horizontalArrangement = Arrangement.spacedBy(6.dp),`
+      → Asigna/configura `horizontalArrangement` usando `Arrangement.spacedBy(6.dp),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L134 [16 espacios] `verticalAlignment = Alignment.CenterVertically) {`
+      → Asigna/configura `verticalAlignment` usando `Alignment.CenterVertically) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L135 [16 espacios] `/*`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L136 [17 espacios] `* Cada tono recibe exactamente el mismo peso.`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L137 [17 espacios] `*`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L138 [17 espacios] `* Resultado:`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L139 [17 espacios] `* - los cuatro círculos siempre tienen el mismo diámetro;`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L140 [17 espacios] `* - aprovechan todo el ancho de la tarjeta;`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L141 [17 espacios] `* - no queda un hueco grande al final;`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L142 [17 espacios] `* - todas las paletas mantienen la misma proporción.`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L143 [17 espacios] `*/`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L144 [16 espacios] `palette.tones.forEachIndexed {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L145 [28 espacios] `index, tone ->`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `index, tone ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L146 [24 espacios] `Box(modifier = Modifier.weight(1f).aspectRatio(1f),`
+      → Crea un `Box` de Compose que superpone/posiciona hijos dentro de un mismo contenedor. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+  L147 [28 espacios] `contentAlignment = Alignment.Center) {`
+      → Asigna/configura `contentAlignment` usando `Alignment.Center) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L148 [28 espacios] `PaletteToneCircle(modifier = Modifier.fillMaxWidth(),`
+      → Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+  L149 [32 espacios] `color = tone,`
+      → Asigna/configura `color` usando `tone,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L150 [32 espacios] `selected = selected && selectedToneIndex == index,`
+      → Asigna/configura `selected` usando `selected && selectedToneIndex == index,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L151 [32 espacios] `frameColor = cardBackground,`
+      → Asigna/configura `frameColor` usando `cardBackground,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L152 [32 espacios] `indicatorColor = cardGraphicColor,`
+      → Asigna/configura `indicatorColor` usando `cardGraphicColor,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L153 [32 espacios] `onClick = {`
+      → Asigna un callback de interacción. El código situado a la derecha se ejecutará cuando el usuario produzca ese evento.
+  L154 [36 espacios] `UiSoundPlayer.playAction(context = context, action = UiActionSound.Color)`
+      → Asigna/configura `UiSoundPlayer.playAction(context` usando `context, action = UiActionSound.Color)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L155 [36 espacios] `onToneSelected(palette.key, index)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L156 [32 espacios] `},`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L157 [32 espacios] `animationsEnabled = animationsEnabled,`
+      → Asigna/configura `animationsEnabled` usando `animationsEnabled,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L158 [32 espacios] `animationSpeed = animationSpeed)`
+      → Asigna/configura `animationSpeed` usando `animationSpeed)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L159 [24 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L160 [20 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L161 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L162 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L163 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L164 [0 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.3 `PaletteToneCircle` — líneas 167–168
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    private fun PaletteToneCircle(
+        modifier: Modifier = Modifier,
+
+Propósito:
+    Implementa `PaletteToneCircle`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `modifier: Modifier = Modifier`: el llamador proporciona este valor/callback a `PaletteToneCircle`. Dentro del cuerpo, las líneas donde aparece `modifier` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L167 [0 espacios] `private fun PaletteToneCircle(`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `PaletteToneCircle` se detalla después instrucción por instrucción.
+  L168 [4 espacios] `modifier: Modifier = Modifier,`
+      → Asigna/configura `modifier: Modifier` usando `Modifier,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+
+6. EXPLICACIÓN COMPLETA LÍNEA POR LÍNEA
+----------------------------------------------------------------------
+Esta sección no omite líneas ejecutables. Repite incluso partes ya explicadas en funciones para poder leer el archivo de arriba abajo sin saltar entre secciones.
+L1: `package com.example.mynotes.ui.components`
+    Declara que este archivo pertenece al package `com.example.mynotes.ui.components`; esto determina su namespace Kotlin y cómo lo importan otros archivos.
+L3: `import androidx.compose.animation.AnimatedVisibility`
+    Importa `androidx.compose.animation.AnimatedVisibility` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L4: `import androidx.compose.animation.fadeIn`
+    Importa `androidx.compose.animation.fadeIn` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L5: `import androidx.compose.animation.fadeOut`
+    Importa `androidx.compose.animation.fadeOut` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L6: `import androidx.compose.animation.scaleIn`
+    Importa `androidx.compose.animation.scaleIn` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L7: `import androidx.compose.animation.scaleOut`
+    Importa `androidx.compose.animation.scaleOut` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L8: `import androidx.compose.animation.core.animateDpAsState`
+    Importa `androidx.compose.animation.core.animateDpAsState` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L9: `import androidx.compose.animation.core.tween`
+    Importa `androidx.compose.animation.core.tween` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L10: `import androidx.compose.foundation.BorderStroke`
+    Importa `androidx.compose.foundation.BorderStroke` para usar layouts, gestos y primitivas visuales de Compose.
+L11: `import androidx.compose.foundation.background`
+    Importa `androidx.compose.foundation.background` para usar layouts, gestos y primitivas visuales de Compose.
+L12: `import androidx.compose.foundation.border`
+    Importa `androidx.compose.foundation.border` para usar layouts, gestos y primitivas visuales de Compose.
+L13: `import androidx.compose.foundation.clickable`
+    Importa `androidx.compose.foundation.clickable` para usar layouts, gestos y primitivas visuales de Compose.
+L14: `import androidx.compose.foundation.interaction.MutableInteractionSource`
+    Importa `androidx.compose.foundation.interaction.MutableInteractionSource` para usar layouts, gestos y primitivas visuales de Compose.
+L15: `import androidx.compose.foundation.layout.Arrangement`
+    Importa `androidx.compose.foundation.layout.Arrangement` para usar layouts, gestos y primitivas visuales de Compose.
+L16: `import androidx.compose.foundation.layout.aspectRatio`
+    Importa `androidx.compose.foundation.layout.aspectRatio` para usar layouts, gestos y primitivas visuales de Compose.
+L17: `import androidx.compose.foundation.layout.Box`
+    Importa `androidx.compose.foundation.layout.Box` para usar layouts, gestos y primitivas visuales de Compose.
+L18: `import androidx.compose.foundation.layout.Column`
+    Importa `androidx.compose.foundation.layout.Column` para usar layouts, gestos y primitivas visuales de Compose.
+L19: `import androidx.compose.foundation.layout.Row`
+    Importa `androidx.compose.foundation.layout.Row` para usar layouts, gestos y primitivas visuales de Compose.
+L20: `import androidx.compose.foundation.layout.Spacer`
+    Importa `androidx.compose.foundation.layout.Spacer` para usar layouts, gestos y primitivas visuales de Compose.
+L21: `import androidx.compose.foundation.layout.fillMaxWidth`
+    Importa `androidx.compose.foundation.layout.fillMaxWidth` para usar layouts, gestos y primitivas visuales de Compose.
+L22: `import androidx.compose.foundation.layout.padding`
+    Importa `androidx.compose.foundation.layout.padding` para usar layouts, gestos y primitivas visuales de Compose.
+L23: `import androidx.compose.foundation.shape.CircleShape`
+    Importa `androidx.compose.foundation.shape.CircleShape` para usar layouts, gestos y primitivas visuales de Compose.
+L24: `import androidx.compose.foundation.shape.RoundedCornerShape`
+    Importa `androidx.compose.foundation.shape.RoundedCornerShape` para usar layouts, gestos y primitivas visuales de Compose.
+L25: `import androidx.compose.material.icons.Icons`
+    Importa `androidx.compose.material.icons.Icons` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L26: `import androidx.compose.material.icons.filled.Check`
+    Importa `androidx.compose.material.icons.filled.Check` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L27: `import androidx.compose.material3.Icon`
+    Importa `androidx.compose.material3.Icon` para usar componentes y tema Material 3.
+L28: `import androidx.compose.material3.MaterialTheme`
+    Importa `androidx.compose.material3.MaterialTheme` para usar componentes y tema Material 3.
+L29: `import androidx.compose.material3.Surface`
+    Importa `androidx.compose.material3.Surface` para usar componentes y tema Material 3.
+L30: `import androidx.compose.material3.Text`
+    Importa `androidx.compose.material3.Text` para usar componentes y tema Material 3.
+L31: `import androidx.compose.runtime.Composable`
+    Importa `androidx.compose.runtime.Composable` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+L32: `import androidx.compose.runtime.getValue`
+    Importa `androidx.compose.runtime.getValue` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+L33: `import androidx.compose.runtime.remember`
+    Importa `androidx.compose.runtime.remember` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+L34: `import androidx.compose.ui.Alignment`
+    Importa `androidx.compose.ui.Alignment` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L35: `import androidx.compose.ui.Modifier`
+    Importa `androidx.compose.ui.Modifier` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L36: `import androidx.compose.ui.draw.clip`
+    Importa `androidx.compose.ui.draw.clip` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L37: `import androidx.compose.ui.graphics.Color`
+    Importa `androidx.compose.ui.graphics.Color` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L38: `import androidx.compose.ui.graphics.luminance`
+    Importa `androidx.compose.ui.graphics.luminance` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L39: `import androidx.compose.ui.platform.LocalContext`
+    Importa `androidx.compose.ui.platform.LocalContext` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L40: `import androidx.compose.ui.res.stringResource`
+    Importa `androidx.compose.ui.res.stringResource` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L41: `import androidx.compose.ui.text.font.FontFamily`
+    Importa `androidx.compose.ui.text.font.FontFamily` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L42: `import androidx.compose.ui.text.font.FontWeight`
+    Importa `androidx.compose.ui.text.font.FontWeight` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L43: `import androidx.compose.ui.text.style.TextOverflow`
+    Importa `androidx.compose.ui.text.style.TextOverflow` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L44: `import androidx.compose.ui.unit.dp`
+    Importa `androidx.compose.ui.unit.dp` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L45: `import com.example.mynotes.ui.theme.MyNotesPalette`
+    Importa `com.example.mynotes.ui.theme.MyNotesPalette`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L46: `import com.example.mynotes.ui.theme.resolveUiTextColor`
+    Importa `com.example.mynotes.ui.theme.resolveUiTextColor`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L47: `import com.example.mynotes.ui.theme.resolveUiGraphicColor`
+    Importa `com.example.mynotes.ui.theme.resolveUiGraphicColor`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L48: `import com.example.mynotes.ui.motion.AppMotion`
+    Importa `com.example.mynotes.ui.motion.AppMotion`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L49: `import com.example.mynotes.ui.sound.UiActionSound`
+    Importa `com.example.mynotes.ui.sound.UiActionSound`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L50: `import com.example.mynotes.ui.sound.UiSoundPlayer`
+    Importa `com.example.mynotes.ui.sound.UiSoundPlayer`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L52: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L53: `* El selector reproduce la idea del mockup:`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L54: `*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L55: `* - dos tarjetas por fila;`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L56: `* - cada tarjeta contiene exactamente cuatro tonos;`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L57: `* - cada círculo se puede pulsar de manera individual;`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L58: `* - el tono activo muestra una marca de verificación.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L59: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L60: `@Composable`
+    Marca la función siguiente como Composable: Compose puede ejecutarla durante composición/recomposición para describir UI a partir de estado.
+L61: `fun PaletteSelector(palettes: List<MyNotesPalette>, selectedPaletteKey: String, selectedToneIndex: Int, onPaletteSelected: (String) -> Unit,`
+    Declara una función. El bloque de `PaletteSelector` se detalla después instrucción por instrucción.
+L62: `onToneSelected: (paletteKey: String, toneIndex: Int) -> Unit, animationsEnabled: Boolean = true, animationSpeed: Float = 1f,`
+    Define una rama/lambda. Cuando coincide `onToneSelected: (paletteKey: String, toneIndex: Int)`, se ejecuta la expresión o bloque situado después de `->`.
+L63: `textColorMode: String = "auto", fontFamily: FontFamily = FontFamily.Default) {`
+    Asigna/configura `textColorMode: String` usando `"auto", fontFamily: FontFamily = FontFamily.Default) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L64: `val paletteRows = remember(palettes) {`
+    Memoriza el resultado durante recomposiciones de Compose. Solo se recalcula cuando cambian las claves de `remember`, reduciendo trabajo y preservando identidad/estado local.
+L65: `palettes.chunked(2)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L66: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L67: `Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {`
+    Crea un `Column` de Compose que organiza hijos verticalmente. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+L68: `paletteRows.forEach {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L69: `rowPalettes ->`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `rowPalettes ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L70: `Row(modifier = Modifier.fillMaxWidth(),`
+    Crea un `Row` de Compose que organiza hijos horizontalmente. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+L71: `horizontalArrangement = Arrangement.spacedBy(10.dp)) {`
+    Asigna/configura `horizontalArrangement` usando `Arrangement.spacedBy(10.dp)) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L72: `rowPalettes.forEach {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L73: `palette ->`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `palette ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L74: `PaletteCard(modifier = Modifier.weight(1f),`
+    Asigna/configura `PaletteCard(modifier` usando `Modifier.weight(1f),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L75: `palette = palette,`
+    Asigna/configura `palette` usando `palette,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L76: `selected = palette.key == selectedPaletteKey,`
+    Asigna/configura `selected` usando `palette.key == selectedPaletteKey,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L77: `selectedToneIndex = selectedToneIndex,`
+    Asigna/configura `selectedToneIndex` usando `selectedToneIndex,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L78: `onPaletteSelected = onPaletteSelected,`
+    Asigna/configura `onPaletteSelected` usando `onPaletteSelected,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L79: `onToneSelected = onToneSelected,`
+    Asigna/configura `onToneSelected` usando `onToneSelected,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L80: `animationsEnabled = animationsEnabled,`
+    Asigna/configura `animationsEnabled` usando `animationsEnabled,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L81: `animationSpeed = animationSpeed,`
+    Asigna/configura `animationSpeed` usando `animationSpeed,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L82: `textColorMode = textColorMode,`
+    Asigna/configura `textColorMode` usando `textColorMode,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L83: `fontFamily = fontFamily)`
+    Asigna/configura `fontFamily` usando `fontFamily)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L84: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L85: `if (rowPalettes.size == 1) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `rowPalettes.size == 1`.
+L86: `Spacer(modifier = Modifier.weight(1f))`
+    Asigna/configura `Spacer(modifier` usando `Modifier.weight(1f))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L87: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L88: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L89: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L90: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L91: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L93: `@Composable`
+    Marca la función siguiente como Composable: Compose puede ejecutarla durante composición/recomposición para describir UI a partir de estado.
+L94: `private fun PaletteCard(modifier: Modifier, palette: MyNotesPalette, selected: Boolean, selectedToneIndex: Int,`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `PaletteCard` se detalla después instrucción por instrucción.
+L95: `onPaletteSelected: (String) -> Unit, onToneSelected: (paletteKey: String, toneIndex: Int) -> Unit, animationsEnabled: Boolean,`
+    Define una rama/lambda. Cuando coincide `onPaletteSelected: (String)`, se ejecuta la expresión o bloque situado después de `->`.
+L96: `animationSpeed: Float, textColorMode: String, fontFamily: FontFamily) {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L97: `val context = LocalContext.current`
+    Declara `context` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `LocalContext.current`.
+L98: `val shape = RoundedCornerShape(16.dp)`
+    Declara `shape` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `RoundedCornerShape(16.dp)`.
+L99: `val cardBackground = MaterialTheme.colorScheme.surfaceContainerLow`
+    Declara `cardBackground` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `MaterialTheme.colorScheme.surfaceContainerLow`.
+L100: `val cardTextColor = resolveUiTextColor(value = textColorMode, background = cardBackground)`
+    Declara `cardTextColor` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolveUiTextColor(value = textColorMode, background = cardBackground)`.
+L101: `val cardGraphicColor = resolveUiGraphicColor(value = textColorMode, background = cardBackground)`
+    Declara `cardGraphicColor` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolveUiGraphicColor(value = textColorMode, background = cardBackground)`.
+L102: `val motionDuration = AppMotion.duration(AppMotion.FAST, animationsEnabled, animationSpeed)`
+    Declara `motionDuration` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `AppMotion.duration(AppMotion.FAST, animationsEnabled, animationSpeed)`.
+L103: `val cardInteractionSource = remember {`
+    Memoriza el resultado durante recomposiciones de Compose. Solo se recalcula cuando cambian las claves de `remember`, reduciendo trabajo y preservando identidad/estado local.
+L104: `MutableInteractionSource()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L105: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L106: `val animatedBorderWidth by`
+    Declara `animatedBorderWidth` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L107: `animateDpAsState(targetValue = if (selected) {`
+    Asigna/configura `animateDpAsState(targetValue` usando `if (selected) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L108: `1.8.dp`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `1.8.dp`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L109: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L110: `1.dp`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `1.dp`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L111: `}, animationSpec = tween(durationMillis = motionDuration), label = "paletteBorder")`
+    Asigna/configura `}, animationSpec` usando `tween(durationMillis = motionDuration), label = "paletteBorder")`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L112: `Surface(modifier = modifier.clickable(interactionSource = cardInteractionSource, indication = null, onClick = {`
+    Crea una superficie visual Material que agrupa contenido y puede aplicar forma, fondo, elevación, borde y click.
+L113: `UiSoundPlayer.playAction(context = context, action = UiActionSound.Theme)`
+    Asigna/configura `UiSoundPlayer.playAction(context` usando `context, action = UiActionSound.Theme)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L114: `onPaletteSelected(palette.key)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L115: `}),`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L116: `shape = shape,`
+    Asigna/configura `shape` usando `shape,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L117: `color = cardBackground,`
+    Asigna/configura `color` usando `cardBackground,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L118: `contentColor = cardTextColor,`
+    Asigna/configura `contentColor` usando `cardTextColor,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L119: `tonalElevation = 0.dp,`
+    Asigna/configura `tonalElevation` usando `0.dp,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L120: `shadowElevation = 0.dp,`
+    Asigna/configura `shadowElevation` usando `0.dp,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L121: `border = BorderStroke(width = animatedBorderWidth,`
+    Asigna/configura `border` usando `BorderStroke(width = animatedBorderWidth,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L122: `color = cardGraphicColor)) {`
+    Asigna/configura `color` usando `cardGraphicColor)) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L123: `Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp,`
+    Crea un `Column` de Compose que organiza hijos verticalmente. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+L124: `vertical = 11.dp)) {`
+    Asigna/configura `vertical` usando `11.dp)) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L125: `Text(text = stringResource(palette.labelRes),`
+    Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+L126: `style = MaterialTheme.typography.labelLarge,`
+    Asigna/configura `style` usando `MaterialTheme.typography.labelLarge,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L127: `fontFamily = fontFamily,`
+    Asigna/configura `fontFamily` usando `fontFamily,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L128: `fontWeight = FontWeight.SemiBold,`
+    Asigna/configura `fontWeight` usando `FontWeight.SemiBold,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L129: `color = cardTextColor,`
+    Asigna/configura `color` usando `cardTextColor,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L130: `maxLines = 1,`
+    Asigna/configura `maxLines` usando `1,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L131: `overflow = TextOverflow.Ellipsis)`
+    Asigna/configura `overflow` usando `TextOverflow.Ellipsis)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L132: `Row(modifier = Modifier.fillMaxWidth().padding(top = 10.dp),`
+    Crea un `Row` de Compose que organiza hijos horizontalmente. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+L133: `horizontalArrangement = Arrangement.spacedBy(6.dp),`
+    Asigna/configura `horizontalArrangement` usando `Arrangement.spacedBy(6.dp),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L134: `verticalAlignment = Alignment.CenterVertically) {`
+    Asigna/configura `verticalAlignment` usando `Alignment.CenterVertically) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L135: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L136: `* Cada tono recibe exactamente el mismo peso.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L137: `*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L138: `* Resultado:`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L139: `* - los cuatro círculos siempre tienen el mismo diámetro;`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L140: `* - aprovechan todo el ancho de la tarjeta;`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L141: `* - no queda un hueco grande al final;`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L142: `* - todas las paletas mantienen la misma proporción.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L143: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L144: `palette.tones.forEachIndexed {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L145: `index, tone ->`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `index, tone ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L146: `Box(modifier = Modifier.weight(1f).aspectRatio(1f),`
+    Crea un `Box` de Compose que superpone/posiciona hijos dentro de un mismo contenedor. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+L147: `contentAlignment = Alignment.Center) {`
+    Asigna/configura `contentAlignment` usando `Alignment.Center) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L148: `PaletteToneCircle(modifier = Modifier.fillMaxWidth(),`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L149: `color = tone,`
+    Asigna/configura `color` usando `tone,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L150: `selected = selected && selectedToneIndex == index,`
+    Asigna/configura `selected` usando `selected && selectedToneIndex == index,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L151: `frameColor = cardBackground,`
+    Asigna/configura `frameColor` usando `cardBackground,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L152: `indicatorColor = cardGraphicColor,`
+    Asigna/configura `indicatorColor` usando `cardGraphicColor,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L153: `onClick = {`
+    Asigna un callback de interacción. El código situado a la derecha se ejecutará cuando el usuario produzca ese evento.
+L154: `UiSoundPlayer.playAction(context = context, action = UiActionSound.Color)`
+    Asigna/configura `UiSoundPlayer.playAction(context` usando `context, action = UiActionSound.Color)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L155: `onToneSelected(palette.key, index)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L156: `},`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L157: `animationsEnabled = animationsEnabled,`
+    Asigna/configura `animationsEnabled` usando `animationsEnabled,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L158: `animationSpeed = animationSpeed)`
+    Asigna/configura `animationSpeed` usando `animationSpeed)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L159: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L160: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L161: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L162: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L163: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L164: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L166: `@Composable`
+    Marca la función siguiente como Composable: Compose puede ejecutarla durante composición/recomposición para describir UI a partir de estado.
+L167: `private fun PaletteToneCircle(`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `PaletteToneCircle` se detalla después instrucción por instrucción.
+L168: `modifier: Modifier = Modifier,`
+    Asigna/configura `modifier: Modifier` usando `Modifier,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L169: `color: Color,`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `color: Color,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L170: `selected: Boolean,`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `selected: Boolean,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L171: `frameColor: Color,`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `frameColor: Color,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L172: `indicatorColor: Color,`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `indicatorColor: Color,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L173: `onClick: () -> Unit,`
+    Define una rama/lambda. Cuando coincide `onClick: ()`, se ejecuta la expresión o bloque situado después de `->`.
+L174: `animationsEnabled: Boolean,`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `animationsEnabled: Boolean,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L175: `animationSpeed: Float`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `animationSpeed: Float`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L176: `) {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L177: `val checkColor = if (color.luminance() > 0.48f) Color.Black else Color.White`
+    Declara `checkColor` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (color.luminance() > 0.48f) Color.Black else Color.White`.
+L178: `val toneInteractionSource = remember { MutableInteractionSource() }`
+    Memoriza el resultado durante recomposiciones de Compose. Solo se recalcula cuando cambian las claves de `remember`, reduciendo trabajo y preservando identidad/estado local.
+L179: `val motionDuration = AppMotion.duration(AppMotion.FAST, animationsEnabled, animationSpeed)`
+    Declara `motionDuration` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `AppMotion.duration(AppMotion.FAST, animationsEnabled, animationSpeed)`.
+L180: `Box(`
+    Crea un `Box` de Compose que superpone/posiciona hijos dentro de un mismo contenedor. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+L181: `modifier = modifier`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L182: `.aspectRatio(1f)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L183: `.clickable(interactionSource = toneInteractionSource, indication = null, onClick = onClick),`
+    Asigna/configura `.clickable(interactionSource` usando `toneInteractionSource, indication = null, onClick = onClick),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L184: `contentAlignment = Alignment.Center`
+    Asigna/configura `contentAlignment` usando `Alignment.Center`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L185: `) {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L186: `Box(`
+    Crea un `Box` de Compose que superpone/posiciona hijos dentro de un mismo contenedor. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+L187: `modifier = Modifier`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L188: `.fillMaxWidth()`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L189: `.aspectRatio(1f)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L190: `.clip(CircleShape)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L191: `.background(if (selected) frameColor else Color.Transparent)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L192: `.then(`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `.then(`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L193: `if (selected) Modifier.border(width = 2.dp, color = indicatorColor, shape = CircleShape)`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `selected) Modifier.border(width = 2.dp, color = indicatorColor, shape = CircleShape`.
+L194: `else Modifier`
+    Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+L195: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L196: `.padding(if (selected) 4.dp else 0.dp),`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L197: `contentAlignment = Alignment.Center`
+    Asigna/configura `contentAlignment` usando `Alignment.Center`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L198: `) {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L199: `Box(`
+    Crea un `Box` de Compose que superpone/posiciona hijos dentro de un mismo contenedor. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+L200: `modifier = Modifier`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L201: `.fillMaxWidth()`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L202: `.aspectRatio(1f)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L203: `.clip(CircleShape)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L204: `.background(color)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L205: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L206: `AnimatedVisibility(`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `AnimatedVisibility(`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L207: `visible = selected,`
+    Asigna/configura `visible` usando `selected,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L208: `enter = fadeIn(animationSpec = tween(durationMillis = motionDuration)) +`
+    Asigna/configura `enter` usando `fadeIn(animationSpec = tween(durationMillis = motionDuration)) +`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L209: `scaleIn(animationSpec = tween(durationMillis = motionDuration), initialScale = 0.55f),`
+    Asigna/configura `scaleIn(animationSpec` usando `tween(durationMillis = motionDuration), initialScale = 0.55f),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L210: `exit = fadeOut(animationSpec = tween(durationMillis = motionDuration)) +`
+    Asigna/configura `exit` usando `fadeOut(animationSpec = tween(durationMillis = motionDuration)) +`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L211: `scaleOut(animationSpec = tween(durationMillis = motionDuration), targetScale = 0.55f)`
+    Asigna/configura `scaleOut(animationSpec` usando `tween(durationMillis = motionDuration), targetScale = 0.55f)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L212: `) {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L213: `Icon(`
+    Renderiza un recurso visual. El modelo/painter y los modifiers siguientes determinan qué se muestra, tamaño, recorte y accesibilidad.
+L214: `imageVector = Icons.Default.Check,`
+    Asigna/configura `imageVector` usando `Icons.Default.Check,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L215: `contentDescription = null,`
+    Asigna/configura `contentDescription` usando `null,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L216: `tint = checkColor,`
+    Asigna/configura `tint` usando `checkColor,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L217: `modifier = Modifier.fillMaxWidth(0.48f).aspectRatio(1f)`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L218: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L219: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L220: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L221: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L222: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+7. RECURSOS ANDROID REFERENCIADOS
+----------------------------------------------------------------------
+- No hay referencias directas `R.*` en este archivo.
+
+8. QUIÉN USA ESTE COMPONENTE
+----------------------------------------------------------------------
+- No se detectaron referencias externas por nombre a los tipos principales; puede ser punto de entrada Android, recurso invocado por Manifest o archivo de prueba.
+
+9. QUÉ PUEDE ROMPERSE SI LO MODIFICAS
+----------------------------------------------------------------------
+- Conservar firmas públicas/callbacks y comprobar los archivos que aparecen en “quién usa este componente” antes de renombrar o cambiar tipos.
+
+10. CHECKLIST DE PRUEBA DESPUÉS DE MODIFICAR ESTE ARCHIVO
+----------------------------------------------------------------------
+- Compilar `assembleDebug` y resolver primero errores de Kotlin/AAPT.
+- Abrir la pantalla/flujo relacionado y comprobar ida y vuelta (back) sin estado duplicado.
+- Cambiar tema/paleta y verificar contraste si este archivo dibuja UI.
+
+==============================================================================================================
+FIN DEL ARCHIVO
+==============================================================================================================

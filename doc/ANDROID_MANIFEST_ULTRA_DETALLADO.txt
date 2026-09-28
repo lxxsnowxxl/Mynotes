@@ -1,0 +1,292 @@
+MYNOTES — ANDROIDMANIFEST EXPLICADO LÍNEA POR LÍNEA
+==============================================================================================================
+L1: `<?xml version="1.0" encoding="utf-8"?>`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L2: `<manifest xmlns:android="http://schemas.android.com/apk/res/android"`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L3: `xmlns:tools="http://schemas.android.com/tools">`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L5: `<uses-permission`
+    Declara un permiso que MyNotes puede necesitar. La presencia en Manifest no garantiza concesión en runtime si Android exige permiso dinámico.
+L6: `android:name="android.permission.INTERNET" />`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L8: `<uses-permission`
+    Declara un permiso que MyNotes puede necesitar. La presencia en Manifest no garantiza concesión en runtime si Android exige permiso dinámico.
+L9: `android:name="android.permission.RECORD_AUDIO" />`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L11: `<uses-permission`
+    Declara un permiso que MyNotes puede necesitar. La presencia en Manifest no garantiza concesión en runtime si Android exige permiso dinámico.
+L12: `android:name="android.permission.VIBRATE" />`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L14: `<uses-permission`
+    Declara un permiso que MyNotes puede necesitar. La presencia en Manifest no garantiza concesión en runtime si Android exige permiso dinámico.
+L15: `android:name="android.permission.POST_NOTIFICATIONS" />`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L17: `<uses-permission`
+    Declara un permiso que MyNotes puede necesitar. La presencia en Manifest no garantiza concesión en runtime si Android exige permiso dinámico.
+L18: `android:name="android.permission.RECEIVE_BOOT_COMPLETED" />`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L20: `<!--`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L21: `Permite silenciar temporalmente el canal de sonidos de sistema mientras`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L22: `el teclado está visible. Es un permiso normal: no muestra diálogo al`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L23: `usuario y el canal se restaura al cerrar el IME o salir de MyNotes.`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L24: `-->`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L25: `<uses-permission`
+    Declara un permiso que MyNotes puede necesitar. La presencia en Manifest no garantiza concesión en runtime si Android exige permiso dinámico.
+L26: `android:name="android.permission.MODIFY_AUDIO_SETTINGS" />`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L28: `<!--`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L29: `Necesario únicamente para entregar al instalador del sistema los APK`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L30: `descargados desde GitHub Releases. En Android 8+ el usuario debe`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L31: `autorizar explícitamente a MyNotes en "Instalar apps desconocidas".`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L32: `-->`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L33: `<uses-permission`
+    Declara un permiso que MyNotes puede necesitar. La presencia en Manifest no garantiza concesión en runtime si Android exige permiso dinámico.
+L34: `android:name="android.permission.REQUEST_INSTALL_PACKAGES" />`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L36: `<!--`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L37: `La aplicación funciona sin micrófono. Declararlo como opcional evita`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L38: `que Google Play excluya tablets, Chromebooks u otros equipos que no`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L39: `dispongan de uno. La grabación de voz se desactiva en tiempo de`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L40: `ejecución cuando el hardware no existe.`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L41: `-->`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L42: `<uses-feature`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L43: `android:name="android.hardware.microphone"`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L44: `android:required="false" />`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L46: `<application`
+    Abre la configuración global de la aplicación: tema, iconos, backup y componentes hijos.
+L47: `android:allowBackup="true"`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L48: `android:dataExtractionRules="@xml/data_extraction_rules"`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L49: `android:fullBackupContent="@xml/backup_rules"`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L50: `android:hardwareAccelerated="true"`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L51: `android:icon="@mipmap/ic_launcher"`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L52: `android:label="@string/app_name"`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L53: `android:roundIcon="@mipmap/ic_launcher_round"`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L54: `android:supportsRtl="true"`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L55: `android:theme="@style/Theme.MyNotes">`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L57: `<activity`
+    Registra una Activity que Android puede instanciar. exported/intents determinan si puede recibir llamadas externas.
+L58: `android:name=".ui.AttachmentViewerActivity"`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L59: `android:exported="false"`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L60: `android:resizeableActivity="true"`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L61: `android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout"`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L62: `android:theme="@style/Theme.MyNotes" />`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L64: `<activity`
+    Registra una Activity que Android puede instanciar. exported/intents determinan si puede recibir llamadas externas.
+L65: `android:name=".MainActivity"`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L66: `android:exported="true"`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L67: `android:label="@string/app_name"`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L68: `android:resizeableActivity="true"`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L69: `android:configChanges="orientation|screenSize|smallestScreenSize|screenLayout"`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L70: `android:theme="@style/Theme.MyNotes.Starting"`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L71: `android:windowSoftInputMode="adjustResize">`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L73: `<intent-filter>`
+    Empieza un filtro de Intent; Android usa sus actions/categories/data para decidir cuándo ofrecer/activar este componente.
+L75: `<action`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L76: `android:name="android.intent.action.MAIN" />`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L78: `<category`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L79: `android:name="android.intent.category.LAUNCHER" />`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L81: `</intent-filter>`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L83: `<!--`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L84: `Permite crear una nota directamente desde Compartir en`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L85: `navegadores, YouTube, Spotify y otras apps que envían texto.`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L86: `-->`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L87: `<intent-filter>`
+    Empieza un filtro de Intent; Android usa sus actions/categories/data para decidir cuándo ofrecer/activar este componente.
+L89: `<action`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L90: `android:name="android.intent.action.SEND" />`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L92: `<category`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L93: `android:name="android.intent.category.DEFAULT" />`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L95: `<data`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L96: `android:mimeType="text/plain" />`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L98: `</intent-filter>`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L100: `</activity>`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L102: `<receiver`
+    Registra un BroadcastReceiver para widgets, recordatorios o eventos del sistema.
+L103: `android:name=".reminders.ReminderReceiver"`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L104: `android:exported="true">`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L105: `<intent-filter>`
+    Empieza un filtro de Intent; Android usa sus actions/categories/data para decidir cuándo ofrecer/activar este componente.
+L106: `<action android:name="android.intent.action.BOOT_COMPLETED" />`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L107: `<action android:name="android.intent.action.MY_PACKAGE_REPLACED" />`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L108: `</intent-filter>`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L109: `</receiver>`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L111: `<receiver`
+    Registra un BroadcastReceiver para widgets, recordatorios o eventos del sistema.
+L112: `android:name=".widget.QuickNoteWidgetProvider"`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L113: `android:exported="true"`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L114: `android:label="@string/widget_new_note">`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L115: `<intent-filter>`
+    Empieza un filtro de Intent; Android usa sus actions/categories/data para decidir cuándo ofrecer/activar este componente.
+L116: `<action android:name="android.appwidget.action.APPWIDGET_UPDATE" />`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L117: `</intent-filter>`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L118: `<meta-data`
+    Adjunta metadata que un framework/componente leerá (por ejemplo definición de widget).
+L119: `android:name="android.appwidget.provider"`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L120: `android:resource="@xml/quick_note_widget_info" />`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L121: `</receiver>`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L123: `<receiver`
+    Registra un BroadcastReceiver para widgets, recordatorios o eventos del sistema.
+L124: `android:name=".widget.RecentNotesWidgetProvider"`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L125: `android:exported="true"`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L126: `android:label="@string/widget_recent_notes">`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L127: `<intent-filter>`
+    Empieza un filtro de Intent; Android usa sus actions/categories/data para decidir cuándo ofrecer/activar este componente.
+L128: `<action android:name="android.appwidget.action.APPWIDGET_UPDATE" />`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L129: `</intent-filter>`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L130: `<meta-data`
+    Adjunta metadata que un framework/componente leerá (por ejemplo definición de widget).
+L131: `android:name="android.appwidget.provider"`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L132: `android:resource="@xml/recent_notes_widget_info" />`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L133: `</receiver>`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L135: `<receiver`
+    Registra un BroadcastReceiver para widgets, recordatorios o eventos del sistema.
+L136: `android:name=".widget.FavoritesWidgetProvider"`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L137: `android:exported="true"`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L138: `android:label="@string/widget_favorites">`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L139: `<intent-filter>`
+    Empieza un filtro de Intent; Android usa sus actions/categories/data para decidir cuándo ofrecer/activar este componente.
+L140: `<action android:name="android.appwidget.action.APPWIDGET_UPDATE" />`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L141: `</intent-filter>`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L142: `<meta-data`
+    Adjunta metadata que un framework/componente leerá (por ejemplo definición de widget).
+L143: `android:name="android.appwidget.provider"`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L144: `android:resource="@xml/favorites_widget_info" />`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L145: `</receiver>`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L147: `<receiver`
+    Registra un BroadcastReceiver para widgets, recordatorios o eventos del sistema.
+L148: `android:name=".widget.FocusNoteWidgetProvider"`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L149: `android:exported="true"`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L150: `android:label="@string/widget_focus_note">`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L151: `<intent-filter>`
+    Empieza un filtro de Intent; Android usa sus actions/categories/data para decidir cuándo ofrecer/activar este componente.
+L152: `<action android:name="android.appwidget.action.APPWIDGET_UPDATE" />`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L153: `</intent-filter>`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L154: `<meta-data`
+    Adjunta metadata que un framework/componente leerá (por ejemplo definición de widget).
+L155: `android:name="android.appwidget.provider"`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L156: `android:resource="@xml/focus_note_widget_info" />`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L157: `</receiver>`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L158: `<receiver`
+    Registra un BroadcastReceiver para widgets, recordatorios o eventos del sistema.
+L159: `android:name=".widget.WidgetActionReceiver"`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L160: `android:exported="false" />`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L162: `<provider`
+    Registra un ContentProvider/FileProvider; authorities y paths controlan qué URIs puede compartir MyNotes.
+L163: `android:name="androidx.core.content.FileProvider"`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L164: `android:authorities="${applicationId}.fileprovider"`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L165: `android:exported="false"`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L166: `android:grantUriPermissions="true">`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L168: `<meta-data`
+    Adjunta metadata que un framework/componente leerá (por ejemplo definición de widget).
+L169: `android:name="android.support.FILE_PROVIDER_PATHS"`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L170: `android:resource="@xml/file_paths" />`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L172: `</provider>`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L174: `</application>`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.
+L176: `</manifest>`
+    Parte declarativa del Manifest; configura atributos o cierra el bloque del componente abierto anteriormente.

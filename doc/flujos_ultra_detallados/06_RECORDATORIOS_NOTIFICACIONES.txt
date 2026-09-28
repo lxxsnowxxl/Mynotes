@@ -1,0 +1,13 @@
+MYNOTES — FLUJO COMPLETO DE RECORDATORIOS Y NOTIFICACIONES
+
+CREACIÓN: speed dial -> ReminderScreen lista -> FAB + -> editor. El editor permite título, descripción, fecha, hora y accesos +5/+10/+15/+30/+60 minutos, repetición, prioridad, color y activo.
+
+PERSISTENCIA: ReminderRepository guarda el Reminder. Si queda activo, ReminderAlarmScheduler programa AlarmManager con PendingIntent identificable; si se desactiva/elimina cancela esa alarma.
+
+DISPARO: Android entrega el PendingIntent a ReminderReceiver aun si la UI no está abierta. El receiver recupera Reminder y ReminderFeedbackPreferences. Publica una notificación: estado colapsado usa plantilla nativa para evitar recorte de One UI; heads-up/expandido pueden conservar presentación personalizada.
+
+FEEDBACK: sonido/vibración se basan en la configuración sincronizada desde AppSettings; el canal se diseña para evitar doble sonido/vibración.
+
+REPETICIÓN: después de disparar, el sistema calcula la siguiente ocurrencia según none/daily/weekdays/weekly/monthly y vuelve a programar si corresponde.
+
+NAVEGACIÓN: tocar la notificación envía un Intent a MainActivity con extra de recordatorios; MainActivity abre la lista completa.

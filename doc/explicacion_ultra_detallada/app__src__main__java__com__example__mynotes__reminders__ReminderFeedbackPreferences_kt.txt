@@ -1,0 +1,725 @@
+MYNOTES — EXPLICACIÓN ULTRA DETALLADA
+==============================================================================================================
+Archivo 16/72: app/src/main/java/com/example/mynotes/reminders/ReminderFeedbackPreferences.kt
+SHA-256: a39bb2849c6406b315ac111fe43bdfe3be08e3ff5eca52f8d9461dea2f1a6c0c
+Líneas del fuente: 172
+Package: com.example.mynotes.reminders
+
+1. RESPONSABILIDAD EXACTA DEL ARCHIVO
+----------------------------------------------------------------------
+Puente entre AppSettings y el receiver de recordatorios. Persiste una instantánea de sonido/vibración/estilo necesaria cuando el aviso se dispara fuera de la UI Compose.
+
+2. DÓNDE ENCAJA EN LA ARQUITECTURA
+----------------------------------------------------------------------
+Este archivo pertenece principalmente a la **subsistema de recordatorios/alarmas/notificaciones**. No debe analizarse aislado: las referencias cruzadas y callbacks se detallan más abajo.
+
+3. IMPORTACIONES, UNA POR UNA
+----------------------------------------------------------------------
+- `android.content.Context`: Importa `android.content.Context` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `android.content.res.Configuration`: Importa `android.content.res.Configuration` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `android.media.MediaPlayer`: Importa `android.media.MediaPlayer` para usar reproducción/control de audio del sistema.
+- `androidx.compose.ui.graphics.toArgb`: Importa `androidx.compose.ui.graphics.toArgb` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `com.example.mynotes.settings.AppSettings`: Importa `com.example.mynotes.settings.AppSettings`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.ui.sound.UiHaptic`: Importa `com.example.mynotes.ui.sound.UiHaptic`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.ui.sound.UiHapticPlayer`: Importa `com.example.mynotes.ui.sound.UiHapticPlayer`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.ui.sound.UiSoundPlayer`: Importa `com.example.mynotes.ui.sound.UiSoundPlayer`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.ui.theme.PaletteCatalog`: Importa `com.example.mynotes.ui.theme.PaletteCatalog`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.ui.theme.darkScheme`: Importa `com.example.mynotes.ui.theme.darkScheme`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.ui.theme.lightScheme`: Importa `com.example.mynotes.ui.theme.lightScheme`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.ui.theme.resolveSecondaryUiTextColor`: Importa `com.example.mynotes.ui.theme.resolveSecondaryUiTextColor`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.ui.theme.resolveUiTextColor`: Importa `com.example.mynotes.ui.theme.resolveUiTextColor`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+
+4. DECLARACIONES Y ESTADO IMPORTANTES
+----------------------------------------------------------------------
+L25: `object ReminderFeedbackPreferences {`
+    Declara object `ReminderFeedbackPreferences`. A partir de aquí las propiedades y funciones hasta su llave de cierre pertenecen a este tipo.
+L26: `private const val PREFS = "reminder_feedback_prefs"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L27: `private const val KEY_SOUND_ENABLED = "sound_enabled"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L28: `private const val KEY_SOUND_VOLUME = "sound_volume"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L29: `private const val KEY_SOUND_THEME = "sound_theme"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L30: `private const val KEY_HAPTIC_ENABLED = "haptic_enabled"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L31: `private const val KEY_HAPTIC_INTENSITY = "haptic_intensity"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L32: `private const val KEY_HAPTIC_STYLE = "haptic_style"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L33: `private const val KEY_NOTIFICATION_BACKGROUND = "notification_background"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L34: `private const val KEY_NOTIFICATION_TEXT = "notification_text"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L35: `private const val KEY_NOTIFICATION_SECONDARY_TEXT = "notification_secondary_text"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L36: `private const val KEY_NOTIFICATION_ACCENT = "notification_accent"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L37: `private const val KEY_NOTIFICATION_FONT_SIZE = "notification_font_size"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L39: `data class Snapshot(`
+    Declara `Snapshot` como `data class`: Kotlin genera automáticamente igualdad, hash, copia y representación textual a partir de sus propiedades del constructor.
+L40: `val soundEnabled: Boolean,`
+    Declara `soundEnabled` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L41: `val soundVolume: Float,`
+    Declara `soundVolume` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L42: `val soundTheme: String,`
+    Declara `soundTheme` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L43: `val hapticEnabled: Boolean,`
+    Declara `hapticEnabled` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L44: `val hapticIntensity: Float,`
+    Declara `hapticIntensity` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L45: `val hapticStyle: String,`
+    Declara `hapticStyle` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L46: `val notificationBackground: Int,`
+    Declara `notificationBackground` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L47: `val notificationText: Int,`
+    Declara `notificationText` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L48: `val notificationSecondaryText: Int,`
+    Declara `notificationSecondaryText` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L49: `val notificationAccent: Int,`
+    Declara `notificationAccent` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L50: `val notificationFontSize: Float`
+    Declara `notificationFontSize` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L54: `val systemDark = (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==`
+    Declara `systemDark` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `(context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==`.
+L56: `val effectiveDark = if (settings.configurationMode == "advanced") settings.darkMode else systemDark`
+    Declara `effectiveDark` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (settings.configurationMode == "advanced") settings.darkMode else systemDark`.
+L57: `val palette = PaletteCatalog.find(settings.backgroundColor)`
+    Declara `palette` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `PaletteCatalog.find(settings.backgroundColor)`.
+L58: `val scheme = if (effectiveDark) {`
+    Declara `scheme` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (effectiveDark) {`.
+L79: `val panel = scheme.surfaceContainer`
+    Declara `panel` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `scheme.surfaceContainer`.
+L80: `val primaryText = resolveUiTextColor(settings.textColor, panel)`
+    Declara `primaryText` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolveUiTextColor(settings.textColor, panel)`.
+L81: `val secondaryText = resolveSecondaryUiTextColor(settings.textColor, panel)`
+    Declara `secondaryText` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolveSecondaryUiTextColor(settings.textColor, panel)`.
+L99: `val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)`
+    Declara `prefs` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)`.
+L120: `val config = read(context)`
+    Declara `config` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `read(context)`.
+L133: `val rawName = if (config.soundTheme == UiSoundPlayer.DEFAULT_THEME) {`
+    Declara `rawName` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (config.soundTheme == UiSoundPlayer.DEFAULT_THEME) {`.
+L138: `var rawId = context.resources.getIdentifier(rawName, "raw", context.packageName)`
+    Declara `rawId` como variable mutable: el código puede reasignarla para representar estado cambiante. Parte con `context.resources.getIdentifier(rawName, "raw", context.packageName)`.
+L149: `val volume = (config.soundVolume / 100f).coerceIn(0f, 1f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L150: `val player = MediaPlayer.create(context.applicationContext, rawId) ?: return`
+    Declara `player` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `MediaPlayer.create(context.applicationContext, rawId) ?: return`.
+L171: `private var activePlayer: MediaPlayer? = null`
+    Declara `activePlayer` como variable mutable: el código puede reasignarla para representar estado cambiante. Parte con `null`.
+
+5. FUNCIONES — EXPLICACIÓN DE CADA UNA
+----------------------------------------------------------------------
+
+5.1 `sync` — líneas 53–96
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun sync(context: Context, settings: AppSettings) {
+
+Propósito:
+    Implementa `sync`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `context: Context`: el llamador proporciona este valor/callback a `sync`. Dentro del cuerpo, las líneas donde aparece `context` muestran exactamente cómo afecta al resultado.
+  - `settings: AppSettings`: el llamador proporciona este valor/callback a `sync`. Dentro del cuerpo, las líneas donde aparece `settings` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L53 [4 espacios] `fun sync(context: Context, settings: AppSettings) {`
+      → Declara una función. El bloque de `sync` se detalla después instrucción por instrucción.
+  L54 [8 espacios] `val systemDark = (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==`
+      → Declara `systemDark` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `(context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==`.
+  L55 [12 espacios] `Configuration.UI_MODE_NIGHT_YES`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `Configuration.UI_MODE_NIGHT_YES`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L56 [8 espacios] `val effectiveDark = if (settings.configurationMode == "advanced") settings.darkMode else systemDark`
+      → Declara `effectiveDark` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (settings.configurationMode == "advanced") settings.darkMode else systemDark`.
+  L57 [8 espacios] `val palette = PaletteCatalog.find(settings.backgroundColor)`
+      → Declara `palette` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `PaletteCatalog.find(settings.backgroundColor)`.
+  L58 [8 espacios] `val scheme = if (effectiveDark) {`
+      → Declara `scheme` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (effectiveDark) {`.
+  L59 [12 espacios] `darkScheme(`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `darkScheme(`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L60 [16 espacios] `palette = palette,`
+      → Asigna/configura `palette` usando `palette,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L61 [16 espacios] `toneIndex = settings.backgroundToneIndex,`
+      → Asigna/configura `toneIndex` usando `settings.backgroundToneIndex,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L62 [16 espacios] `backgroundIntensity = settings.backgroundIntensity,`
+      → Asigna/configura `backgroundIntensity` usando `settings.backgroundIntensity,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L63 [16 espacios] `surfacePanelIntensity = settings.surfacePanelIntensity,`
+      → Asigna/configura `surfacePanelIntensity` usando `settings.surfacePanelIntensity,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L64 [16 espacios] `headerIntensity = settings.headerIntensity,`
+      → Asigna/configura `headerIntensity` usando `settings.headerIntensity,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L65 [16 espacios] `textColor = settings.textColor,`
+      → Asigna/configura `textColor` usando `settings.textColor,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L66 [16 espacios] `accentColor = settings.accentColor`
+      → Asigna/configura `accentColor` usando `settings.accentColor`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L67 [12 espacios] `)`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L68 [8 espacios] `} else {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L69 [12 espacios] `lightScheme(`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `lightScheme(`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L70 [16 espacios] `palette = palette,`
+      → Asigna/configura `palette` usando `palette,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L71 [16 espacios] `toneIndex = settings.backgroundToneIndex,`
+      → Asigna/configura `toneIndex` usando `settings.backgroundToneIndex,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L72 [16 espacios] `backgroundIntensity = settings.backgroundIntensity,`
+      → Asigna/configura `backgroundIntensity` usando `settings.backgroundIntensity,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L73 [16 espacios] `surfacePanelIntensity = settings.surfacePanelIntensity,`
+      → Asigna/configura `surfacePanelIntensity` usando `settings.surfacePanelIntensity,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L74 [16 espacios] `headerIntensity = settings.headerIntensity,`
+      → Asigna/configura `headerIntensity` usando `settings.headerIntensity,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L75 [16 espacios] `textColor = settings.textColor,`
+      → Asigna/configura `textColor` usando `settings.textColor,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L76 [16 espacios] `accentColor = settings.accentColor`
+      → Asigna/configura `accentColor` usando `settings.accentColor`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L77 [12 espacios] `)`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L78 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L79 [8 espacios] `val panel = scheme.surfaceContainer`
+      → Declara `panel` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `scheme.surfaceContainer`.
+  L80 [8 espacios] `val primaryText = resolveUiTextColor(settings.textColor, panel)`
+      → Declara `primaryText` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolveUiTextColor(settings.textColor, panel)`.
+  L81 [8 espacios] `val secondaryText = resolveSecondaryUiTextColor(settings.textColor, panel)`
+      → Declara `secondaryText` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolveSecondaryUiTextColor(settings.textColor, panel)`.
+  L83 [8 espacios] `context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit()`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L84 [12 espacios] `.putBoolean(KEY_SOUND_ENABLED, settings.soundEffectsEnabled)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L85 [12 espacios] `.putFloat(KEY_SOUND_VOLUME, settings.soundEffectsVolume.coerceIn(0f, 100f))`
+      → Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+  L86 [12 espacios] `.putString(KEY_SOUND_THEME, UiSoundPlayer.normalizeTheme(settings.soundEffectsTheme))`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L87 [12 espacios] `.putBoolean(KEY_HAPTIC_ENABLED, settings.hapticEffectsEnabled)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L88 [12 espacios] `.putFloat(KEY_HAPTIC_INTENSITY, settings.hapticEffectsIntensity.coerceIn(0f, 100f))`
+      → Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+  L89 [12 espacios] `.putString(KEY_HAPTIC_STYLE, UiHapticPlayer.normalizeStyle(settings.hapticEffectsStyle))`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L90 [12 espacios] `.putInt(KEY_NOTIFICATION_BACKGROUND, panel.toArgb())`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L91 [12 espacios] `.putInt(KEY_NOTIFICATION_TEXT, primaryText.toArgb())`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L92 [12 espacios] `.putInt(KEY_NOTIFICATION_SECONDARY_TEXT, secondaryText.toArgb())`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L93 [12 espacios] `.putInt(KEY_NOTIFICATION_ACCENT, scheme.primary.toArgb())`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L94 [12 espacios] `.putFloat(KEY_NOTIFICATION_FONT_SIZE, settings.fontSize.coerceIn(12f, 24f))`
+      → Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+  L95 [12 espacios] `.apply()`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L96 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.2 `read` — líneas 98–113
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun read(context: Context): Snapshot {
+
+Propósito:
+    Implementa `read`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `context: Context`: el llamador proporciona este valor/callback a `read`. Dentro del cuerpo, las líneas donde aparece `context` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Snapshot`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L98 [4 espacios] `fun read(context: Context): Snapshot {`
+      → Declara una función. El bloque de `read` se detalla después instrucción por instrucción.
+  L99 [8 espacios] `val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)`
+      → Declara `prefs` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)`.
+  L100 [8 espacios] `return Snapshot(`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L101 [12 espacios] `soundEnabled = prefs.getBoolean(KEY_SOUND_ENABLED, true),`
+      → Asigna/configura `soundEnabled` usando `prefs.getBoolean(KEY_SOUND_ENABLED, true),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L102 [12 espacios] `soundVolume = prefs.getFloat(KEY_SOUND_VOLUME, 65f).coerceIn(0f, 100f),`
+      → Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+  L103 [12 espacios] `soundTheme = UiSoundPlayer.normalizeTheme(prefs.getString(KEY_SOUND_THEME, UiSoundPlayer.DEFAULT_THEME).orEmpty()),`
+      → Asigna/configura `soundTheme` usando `UiSoundPlayer.normalizeTheme(prefs.getString(KEY_SOUND_THEME, UiSoundPlayer.DEFAULT_THEME).orEmpty()),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L104 [12 espacios] `hapticEnabled = prefs.getBoolean(KEY_HAPTIC_ENABLED, true),`
+      → Asigna/configura `hapticEnabled` usando `prefs.getBoolean(KEY_HAPTIC_ENABLED, true),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L105 [12 espacios] `hapticIntensity = prefs.getFloat(KEY_HAPTIC_INTENSITY, 55f).coerceIn(0f, 100f),`
+      → Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+  L106 [12 espacios] `hapticStyle = UiHapticPlayer.normalizeStyle(prefs.getString(KEY_HAPTIC_STYLE, UiHapticPlayer.DEFAULT_STYLE).orEmpty()),`
+      → Asigna/configura `hapticStyle` usando `UiHapticPlayer.normalizeStyle(prefs.getString(KEY_HAPTIC_STYLE, UiHapticPlayer.DEFAULT_STYLE).orEmpty()),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L107 [12 espacios] `notificationBackground = prefs.getInt(KEY_NOTIFICATION_BACKGROUND, 0xFFF3EFE9.toInt()),`
+      → Asigna/configura `notificationBackground` usando `prefs.getInt(KEY_NOTIFICATION_BACKGROUND, 0xFFF3EFE9.toInt()),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L108 [12 espacios] `notificationText = prefs.getInt(KEY_NOTIFICATION_TEXT, 0xFF111111.toInt()),`
+      → Asigna/configura `notificationText` usando `prefs.getInt(KEY_NOTIFICATION_TEXT, 0xFF111111.toInt()),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L109 [12 espacios] `notificationSecondaryText = prefs.getInt(KEY_NOTIFICATION_SECONDARY_TEXT, 0xFF5F5B57.toInt()),`
+      → Asigna/configura `notificationSecondaryText` usando `prefs.getInt(KEY_NOTIFICATION_SECONDARY_TEXT, 0xFF5F5B57.toInt()),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L110 [12 espacios] `notificationAccent = prefs.getInt(KEY_NOTIFICATION_ACCENT, 0xFF4B4743.toInt()),`
+      → Asigna/configura `notificationAccent` usando `prefs.getInt(KEY_NOTIFICATION_ACCENT, 0xFF4B4743.toInt()),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L111 [12 espacios] `notificationFontSize = prefs.getFloat(KEY_NOTIFICATION_FONT_SIZE, 16f).coerceIn(12f, 24f)`
+      → Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+  L112 [8 espacios] `)`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L113 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.3 `playReminderAlert` — líneas 119–168
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun playReminderAlert(context: Context) {
+
+Propósito:
+    Implementa `playReminderAlert`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `context: Context`: el llamador proporciona este valor/callback a `playReminderAlert`. Dentro del cuerpo, las líneas donde aparece `context` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L119 [4 espacios] `fun playReminderAlert(context: Context) {`
+      → Declara una función. El bloque de `playReminderAlert` se detalla después instrucción por instrucción.
+  L120 [8 espacios] `val config = read(context)`
+      → Declara `config` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `read(context)`.
+  L122 [8 espacios] `UiHapticPlayer.configure(`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `UiHapticPlayer.configure(`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L123 [12 espacios] `enabled = config.hapticEnabled,`
+      → Asigna/configura `enabled` usando `config.hapticEnabled,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L124 [12 espacios] `intensityPercent = config.hapticIntensity,`
+      → Asigna/configura `intensityPercent` usando `config.hapticIntensity,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L125 [12 espacios] `style = config.hapticStyle`
+      → Asigna/configura `style` usando `config.hapticStyle`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L126 [8 espacios] `)`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L127 [8 espacios] `if (config.hapticEnabled && config.hapticIntensity > 0f) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `config.hapticEnabled && config.hapticIntensity > 0f`.
+  L128 [12 espacios] `UiHapticPlayer.play(context, UiHaptic.Confirm)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L129 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L131 [8 espacios] `if (!config.soundEnabled || config.soundVolume <= 0f) return`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `!config.soundEnabled || config.soundVolume <= 0f`.
+  L133 [8 espacios] `val rawName = if (config.soundTheme == UiSoundPlayer.DEFAULT_THEME) {`
+      → Declara `rawName` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (config.soundTheme == UiSoundPlayer.DEFAULT_THEME) {`.
+  L134 [12 espacios] `"ui_priority"`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"ui_priority"`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L135 [8 espacios] `} else {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L136 [12 espacios] `"ui_${config.soundTheme}_priority"`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"ui_${config.soundTheme}_priority"`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L137 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L138 [8 espacios] `var rawId = context.resources.getIdentifier(rawName, "raw", context.packageName)`
+      → Declara `rawId` como variable mutable: el código puede reasignarla para representar estado cambiante. Parte con `context.resources.getIdentifier(rawName, "raw", context.packageName)`.
+  L139 [8 espacios] `if (rawId == 0) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `rawId == 0`.
+  L140 [12 espacios] `rawId = context.resources.getIdentifier("ui_priority", "raw", context.packageName)`
+      → Asigna/configura `rawId` usando `context.resources.getIdentifier("ui_priority", "raw", context.packageName)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L141 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L142 [8 espacios] `if (rawId == 0) return`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `rawId == 0`.
+  L144 [8 espacios] `synchronized(this) {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L145 [12 espacios] `activePlayer?.let { previous ->`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `activePlayer?.let { previous ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L146 [16 espacios] `try { previous.stop() } catch (_: IllegalStateException) { }`
+      → Abre un bloque protegido: si una operación lanza una excepción, el control puede pasar al `catch` correspondiente sin terminar abruptamente el flujo.
+  L147 [16 espacios] `previous.release()`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L148 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L149 [12 espacios] `val volume = (config.soundVolume / 100f).coerceIn(0f, 1f)`
+      → Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+  L150 [12 espacios] `val player = MediaPlayer.create(context.applicationContext, rawId) ?: return`
+      → Declara `player` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `MediaPlayer.create(context.applicationContext, rawId) ?: return`.
+  L151 [12 espacios] `activePlayer = player`
+      → Asigna/configura `activePlayer` usando `player`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L152 [12 espacios] `player.setVolume(volume, volume)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L153 [12 espacios] `player.setOnCompletionListener { finished ->`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `player.setOnCompletionListener { finished ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L154 [16 espacios] `finished.release()`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L155 [16 espacios] `synchronized(this) {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L156 [20 espacios] `if (activePlayer === finished) activePlayer = null`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `activePlayer === finished`.
+  L157 [16 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L158 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L159 [12 espacios] `player.setOnErrorListener { failed, _, _ ->`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `player.setOnErrorListener { failed, _, _ ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L160 [16 espacios] `failed.release()`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L161 [16 espacios] `synchronized(this) {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L162 [20 espacios] `if (activePlayer === failed) activePlayer = null`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `activePlayer === failed`.
+  L163 [16 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L164 [16 espacios] `true`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `true`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L165 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L166 [12 espacios] `player.start()`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L167 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L168 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+6. EXPLICACIÓN COMPLETA LÍNEA POR LÍNEA
+----------------------------------------------------------------------
+Esta sección no omite líneas ejecutables. Repite incluso partes ya explicadas en funciones para poder leer el archivo de arriba abajo sin saltar entre secciones.
+L1: `package com.example.mynotes.reminders`
+    Declara que este archivo pertenece al package `com.example.mynotes.reminders`; esto determina su namespace Kotlin y cómo lo importan otros archivos.
+L3: `import android.content.Context`
+    Importa `android.content.Context` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L4: `import android.content.res.Configuration`
+    Importa `android.content.res.Configuration` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L5: `import android.media.MediaPlayer`
+    Importa `android.media.MediaPlayer` para usar reproducción/control de audio del sistema.
+L6: `import androidx.compose.ui.graphics.toArgb`
+    Importa `androidx.compose.ui.graphics.toArgb` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L7: `import com.example.mynotes.settings.AppSettings`
+    Importa `com.example.mynotes.settings.AppSettings`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L8: `import com.example.mynotes.ui.sound.UiHaptic`
+    Importa `com.example.mynotes.ui.sound.UiHaptic`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L9: `import com.example.mynotes.ui.sound.UiHapticPlayer`
+    Importa `com.example.mynotes.ui.sound.UiHapticPlayer`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L10: `import com.example.mynotes.ui.sound.UiSoundPlayer`
+    Importa `com.example.mynotes.ui.sound.UiSoundPlayer`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L11: `import com.example.mynotes.ui.theme.PaletteCatalog`
+    Importa `com.example.mynotes.ui.theme.PaletteCatalog`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L12: `import com.example.mynotes.ui.theme.darkScheme`
+    Importa `com.example.mynotes.ui.theme.darkScheme`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L13: `import com.example.mynotes.ui.theme.lightScheme`
+    Importa `com.example.mynotes.ui.theme.lightScheme`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L14: `import com.example.mynotes.ui.theme.resolveSecondaryUiTextColor`
+    Importa `com.example.mynotes.ui.theme.resolveSecondaryUiTextColor`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L15: `import com.example.mynotes.ui.theme.resolveUiTextColor`
+    Importa `com.example.mynotes.ui.theme.resolveUiTextColor`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L17: `/**`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L18: `* Copia ligera y síncrona de las opciones que necesita ReminderReceiver.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L19: `* DataStore es asíncrono y un BroadcastReceiver no debe quedarse esperando`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L20: `* a un Flow para poder construir la notificación cuando dispara una alarma.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L21: `*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L22: `* Desde v52 también conserva la apariencia actual de MyNotes para que la`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L23: `* notificación use la misma paleta, acento y contraste que la aplicación.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L24: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L25: `object ReminderFeedbackPreferences {`
+    Declara object `ReminderFeedbackPreferences`. A partir de aquí las propiedades y funciones hasta su llave de cierre pertenecen a este tipo.
+L26: `private const val PREFS = "reminder_feedback_prefs"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L27: `private const val KEY_SOUND_ENABLED = "sound_enabled"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L28: `private const val KEY_SOUND_VOLUME = "sound_volume"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L29: `private const val KEY_SOUND_THEME = "sound_theme"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L30: `private const val KEY_HAPTIC_ENABLED = "haptic_enabled"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L31: `private const val KEY_HAPTIC_INTENSITY = "haptic_intensity"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L32: `private const val KEY_HAPTIC_STYLE = "haptic_style"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L33: `private const val KEY_NOTIFICATION_BACKGROUND = "notification_background"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L34: `private const val KEY_NOTIFICATION_TEXT = "notification_text"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L35: `private const val KEY_NOTIFICATION_SECONDARY_TEXT = "notification_secondary_text"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L36: `private const val KEY_NOTIFICATION_ACCENT = "notification_accent"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L37: `private const val KEY_NOTIFICATION_FONT_SIZE = "notification_font_size"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L39: `data class Snapshot(`
+    Declara `Snapshot` como `data class`: Kotlin genera automáticamente igualdad, hash, copia y representación textual a partir de sus propiedades del constructor.
+L40: `val soundEnabled: Boolean,`
+    Declara `soundEnabled` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L41: `val soundVolume: Float,`
+    Declara `soundVolume` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L42: `val soundTheme: String,`
+    Declara `soundTheme` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L43: `val hapticEnabled: Boolean,`
+    Declara `hapticEnabled` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L44: `val hapticIntensity: Float,`
+    Declara `hapticIntensity` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L45: `val hapticStyle: String,`
+    Declara `hapticStyle` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L46: `val notificationBackground: Int,`
+    Declara `notificationBackground` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L47: `val notificationText: Int,`
+    Declara `notificationText` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L48: `val notificationSecondaryText: Int,`
+    Declara `notificationSecondaryText` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L49: `val notificationAccent: Int,`
+    Declara `notificationAccent` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L50: `val notificationFontSize: Float`
+    Declara `notificationFontSize` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L51: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L53: `fun sync(context: Context, settings: AppSettings) {`
+    Declara una función. El bloque de `sync` se detalla después instrucción por instrucción.
+L54: `val systemDark = (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==`
+    Declara `systemDark` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `(context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==`.
+L55: `Configuration.UI_MODE_NIGHT_YES`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `Configuration.UI_MODE_NIGHT_YES`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L56: `val effectiveDark = if (settings.configurationMode == "advanced") settings.darkMode else systemDark`
+    Declara `effectiveDark` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (settings.configurationMode == "advanced") settings.darkMode else systemDark`.
+L57: `val palette = PaletteCatalog.find(settings.backgroundColor)`
+    Declara `palette` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `PaletteCatalog.find(settings.backgroundColor)`.
+L58: `val scheme = if (effectiveDark) {`
+    Declara `scheme` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (effectiveDark) {`.
+L59: `darkScheme(`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `darkScheme(`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L60: `palette = palette,`
+    Asigna/configura `palette` usando `palette,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L61: `toneIndex = settings.backgroundToneIndex,`
+    Asigna/configura `toneIndex` usando `settings.backgroundToneIndex,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L62: `backgroundIntensity = settings.backgroundIntensity,`
+    Asigna/configura `backgroundIntensity` usando `settings.backgroundIntensity,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L63: `surfacePanelIntensity = settings.surfacePanelIntensity,`
+    Asigna/configura `surfacePanelIntensity` usando `settings.surfacePanelIntensity,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L64: `headerIntensity = settings.headerIntensity,`
+    Asigna/configura `headerIntensity` usando `settings.headerIntensity,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L65: `textColor = settings.textColor,`
+    Asigna/configura `textColor` usando `settings.textColor,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L66: `accentColor = settings.accentColor`
+    Asigna/configura `accentColor` usando `settings.accentColor`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L67: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L68: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L69: `lightScheme(`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `lightScheme(`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L70: `palette = palette,`
+    Asigna/configura `palette` usando `palette,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L71: `toneIndex = settings.backgroundToneIndex,`
+    Asigna/configura `toneIndex` usando `settings.backgroundToneIndex,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L72: `backgroundIntensity = settings.backgroundIntensity,`
+    Asigna/configura `backgroundIntensity` usando `settings.backgroundIntensity,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L73: `surfacePanelIntensity = settings.surfacePanelIntensity,`
+    Asigna/configura `surfacePanelIntensity` usando `settings.surfacePanelIntensity,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L74: `headerIntensity = settings.headerIntensity,`
+    Asigna/configura `headerIntensity` usando `settings.headerIntensity,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L75: `textColor = settings.textColor,`
+    Asigna/configura `textColor` usando `settings.textColor,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L76: `accentColor = settings.accentColor`
+    Asigna/configura `accentColor` usando `settings.accentColor`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L77: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L78: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L79: `val panel = scheme.surfaceContainer`
+    Declara `panel` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `scheme.surfaceContainer`.
+L80: `val primaryText = resolveUiTextColor(settings.textColor, panel)`
+    Declara `primaryText` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolveUiTextColor(settings.textColor, panel)`.
+L81: `val secondaryText = resolveSecondaryUiTextColor(settings.textColor, panel)`
+    Declara `secondaryText` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolveSecondaryUiTextColor(settings.textColor, panel)`.
+L83: `context.getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L84: `.putBoolean(KEY_SOUND_ENABLED, settings.soundEffectsEnabled)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L85: `.putFloat(KEY_SOUND_VOLUME, settings.soundEffectsVolume.coerceIn(0f, 100f))`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L86: `.putString(KEY_SOUND_THEME, UiSoundPlayer.normalizeTheme(settings.soundEffectsTheme))`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L87: `.putBoolean(KEY_HAPTIC_ENABLED, settings.hapticEffectsEnabled)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L88: `.putFloat(KEY_HAPTIC_INTENSITY, settings.hapticEffectsIntensity.coerceIn(0f, 100f))`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L89: `.putString(KEY_HAPTIC_STYLE, UiHapticPlayer.normalizeStyle(settings.hapticEffectsStyle))`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L90: `.putInt(KEY_NOTIFICATION_BACKGROUND, panel.toArgb())`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L91: `.putInt(KEY_NOTIFICATION_TEXT, primaryText.toArgb())`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L92: `.putInt(KEY_NOTIFICATION_SECONDARY_TEXT, secondaryText.toArgb())`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L93: `.putInt(KEY_NOTIFICATION_ACCENT, scheme.primary.toArgb())`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L94: `.putFloat(KEY_NOTIFICATION_FONT_SIZE, settings.fontSize.coerceIn(12f, 24f))`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L95: `.apply()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L96: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L98: `fun read(context: Context): Snapshot {`
+    Declara una función. El bloque de `read` se detalla después instrucción por instrucción.
+L99: `val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)`
+    Declara `prefs` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)`.
+L100: `return Snapshot(`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L101: `soundEnabled = prefs.getBoolean(KEY_SOUND_ENABLED, true),`
+    Asigna/configura `soundEnabled` usando `prefs.getBoolean(KEY_SOUND_ENABLED, true),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L102: `soundVolume = prefs.getFloat(KEY_SOUND_VOLUME, 65f).coerceIn(0f, 100f),`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L103: `soundTheme = UiSoundPlayer.normalizeTheme(prefs.getString(KEY_SOUND_THEME, UiSoundPlayer.DEFAULT_THEME).orEmpty()),`
+    Asigna/configura `soundTheme` usando `UiSoundPlayer.normalizeTheme(prefs.getString(KEY_SOUND_THEME, UiSoundPlayer.DEFAULT_THEME).orEmpty()),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L104: `hapticEnabled = prefs.getBoolean(KEY_HAPTIC_ENABLED, true),`
+    Asigna/configura `hapticEnabled` usando `prefs.getBoolean(KEY_HAPTIC_ENABLED, true),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L105: `hapticIntensity = prefs.getFloat(KEY_HAPTIC_INTENSITY, 55f).coerceIn(0f, 100f),`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L106: `hapticStyle = UiHapticPlayer.normalizeStyle(prefs.getString(KEY_HAPTIC_STYLE, UiHapticPlayer.DEFAULT_STYLE).orEmpty()),`
+    Asigna/configura `hapticStyle` usando `UiHapticPlayer.normalizeStyle(prefs.getString(KEY_HAPTIC_STYLE, UiHapticPlayer.DEFAULT_STYLE).orEmpty()),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L107: `notificationBackground = prefs.getInt(KEY_NOTIFICATION_BACKGROUND, 0xFFF3EFE9.toInt()),`
+    Asigna/configura `notificationBackground` usando `prefs.getInt(KEY_NOTIFICATION_BACKGROUND, 0xFFF3EFE9.toInt()),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L108: `notificationText = prefs.getInt(KEY_NOTIFICATION_TEXT, 0xFF111111.toInt()),`
+    Asigna/configura `notificationText` usando `prefs.getInt(KEY_NOTIFICATION_TEXT, 0xFF111111.toInt()),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L109: `notificationSecondaryText = prefs.getInt(KEY_NOTIFICATION_SECONDARY_TEXT, 0xFF5F5B57.toInt()),`
+    Asigna/configura `notificationSecondaryText` usando `prefs.getInt(KEY_NOTIFICATION_SECONDARY_TEXT, 0xFF5F5B57.toInt()),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L110: `notificationAccent = prefs.getInt(KEY_NOTIFICATION_ACCENT, 0xFF4B4743.toInt()),`
+    Asigna/configura `notificationAccent` usando `prefs.getInt(KEY_NOTIFICATION_ACCENT, 0xFF4B4743.toInt()),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L111: `notificationFontSize = prefs.getFloat(KEY_NOTIFICATION_FONT_SIZE, 16f).coerceIn(12f, 24f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L112: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L113: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L115: `/**`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L116: `* Reproduce el feedback del recordatorio usando exactamente el paquete,`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L117: `* volumen y patrón háptico seleccionados en Configuración.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L118: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L119: `fun playReminderAlert(context: Context) {`
+    Declara una función. El bloque de `playReminderAlert` se detalla después instrucción por instrucción.
+L120: `val config = read(context)`
+    Declara `config` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `read(context)`.
+L122: `UiHapticPlayer.configure(`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `UiHapticPlayer.configure(`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L123: `enabled = config.hapticEnabled,`
+    Asigna/configura `enabled` usando `config.hapticEnabled,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L124: `intensityPercent = config.hapticIntensity,`
+    Asigna/configura `intensityPercent` usando `config.hapticIntensity,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L125: `style = config.hapticStyle`
+    Asigna/configura `style` usando `config.hapticStyle`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L126: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L127: `if (config.hapticEnabled && config.hapticIntensity > 0f) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `config.hapticEnabled && config.hapticIntensity > 0f`.
+L128: `UiHapticPlayer.play(context, UiHaptic.Confirm)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L129: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L131: `if (!config.soundEnabled || config.soundVolume <= 0f) return`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `!config.soundEnabled || config.soundVolume <= 0f`.
+L133: `val rawName = if (config.soundTheme == UiSoundPlayer.DEFAULT_THEME) {`
+    Declara `rawName` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (config.soundTheme == UiSoundPlayer.DEFAULT_THEME) {`.
+L134: `"ui_priority"`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"ui_priority"`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L135: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L136: `"ui_${config.soundTheme}_priority"`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"ui_${config.soundTheme}_priority"`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L137: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L138: `var rawId = context.resources.getIdentifier(rawName, "raw", context.packageName)`
+    Declara `rawId` como variable mutable: el código puede reasignarla para representar estado cambiante. Parte con `context.resources.getIdentifier(rawName, "raw", context.packageName)`.
+L139: `if (rawId == 0) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `rawId == 0`.
+L140: `rawId = context.resources.getIdentifier("ui_priority", "raw", context.packageName)`
+    Asigna/configura `rawId` usando `context.resources.getIdentifier("ui_priority", "raw", context.packageName)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L141: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L142: `if (rawId == 0) return`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `rawId == 0`.
+L144: `synchronized(this) {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L145: `activePlayer?.let { previous ->`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `activePlayer?.let { previous ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L146: `try { previous.stop() } catch (_: IllegalStateException) { }`
+    Abre un bloque protegido: si una operación lanza una excepción, el control puede pasar al `catch` correspondiente sin terminar abruptamente el flujo.
+L147: `previous.release()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L148: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L149: `val volume = (config.soundVolume / 100f).coerceIn(0f, 1f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L150: `val player = MediaPlayer.create(context.applicationContext, rawId) ?: return`
+    Declara `player` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `MediaPlayer.create(context.applicationContext, rawId) ?: return`.
+L151: `activePlayer = player`
+    Asigna/configura `activePlayer` usando `player`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L152: `player.setVolume(volume, volume)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L153: `player.setOnCompletionListener { finished ->`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `player.setOnCompletionListener { finished ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L154: `finished.release()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L155: `synchronized(this) {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L156: `if (activePlayer === finished) activePlayer = null`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `activePlayer === finished`.
+L157: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L158: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L159: `player.setOnErrorListener { failed, _, _ ->`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `player.setOnErrorListener { failed, _, _ ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L160: `failed.release()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L161: `synchronized(this) {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L162: `if (activePlayer === failed) activePlayer = null`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `activePlayer === failed`.
+L163: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L164: `true`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `true`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L165: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L166: `player.start()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L167: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L168: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L170: `@Volatile`
+    Aplica la anotación `@Volatile` a la declaración siguiente; la anotación modifica metadatos, generación de código o comportamiento del framework.
+L171: `private var activePlayer: MediaPlayer? = null`
+    Declara `activePlayer` como variable mutable: el código puede reasignarla para representar estado cambiante. Parte con `null`.
+L172: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+7. RECURSOS ANDROID REFERENCIADOS
+----------------------------------------------------------------------
+- No hay referencias directas `R.*` en este archivo.
+
+8. QUIÉN USA ESTE COMPONENTE
+----------------------------------------------------------------------
+- `ReminderFeedbackPreferences` aparece también en 2 archivo(s):
+    - app/src/main/java/com/example/mynotes/MainActivity.kt
+    - app/src/main/java/com/example/mynotes/reminders/ReminderReceiver.kt
+- `Snapshot` aparece también en 1 archivo(s):
+    - app/src/main/java/com/example/mynotes/reminders/ReminderReceiver.kt
+
+9. QUÉ PUEDE ROMPERSE SI LO MODIFICAS
+----------------------------------------------------------------------
+- Los recordatorios combinan persistencia + AlarmManager + BroadcastReceiver + notificación. Cambiar solo la UI sin sincronizar scheduler/receiver puede crear alarmas huérfanas o avisos que no reflejen el estado guardado.
+
+10. CHECKLIST DE PRUEBA DESPUÉS DE MODIFICAR ESTE ARCHIVO
+----------------------------------------------------------------------
+- Compilar `assembleDebug` y resolver primero errores de Kotlin/AAPT.
+- Abrir la pantalla/flujo relacionado y comprobar ida y vuelta (back) sin estado duplicado.
+- Cambiar tema/paleta y verificar contraste si este archivo dibuja UI.
+- Crear un recordatorio a +5 minutos, editarlo, desactivarlo y confirmar que solo aparece la notificación esperada.
+- Reiniciar el dispositivo/emulador y verificar reprogramación de recordatorios activos.
+
+==============================================================================================================
+FIN DEL ARCHIVO
+==============================================================================================================

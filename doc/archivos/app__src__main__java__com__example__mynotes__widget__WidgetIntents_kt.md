@@ -1,48 +1,184 @@
-# WidgetIntents.kt — documentación del código actual
-**Ruta real:** `app/src/main/java/com/example/mynotes/widget/WidgetIntents.kt`  **SHA-256:** `6699c32c4694794462bbea7ee6c9367655e8c1a09c05cbb0b1b487c0560b58bc`  **Líneas:** 78 · **Bytes:** 3561 · **Imports:** 5 · **Declaraciones detectadas:** 8
-> Documento generado fuera de `app/` a partir de lectura del código. El fuente es la única fuente de verdad; no se modificó para generar esta documentación.
-## 1. Responsabilidad
+# WidgetIntents.kt — explicación completa del código
 
-Construcción de PendingIntent/Intent para widgets.
-## 2. Package e imports
+**Ruta:** `app/src/main/java/com/example/mynotes/widget/WidgetIntents.kt`  
+**SHA-256:** `6699c32c4694794462bbea7ee6c9367655e8c1a09c05cbb0b1b487c0560b58bc`  
+**Líneas:** 79  
+**Package:** `com.example.mynotes.widget`
 
-Package declarado: `com.example.mynotes.widget`.
+## 1. Para qué existe este archivo
 
-### Android / Jetpack / Compose
+Fábrica de PendingIntent para abrir app, crear nota, abrir nota/colección, buscar o alternar estados.
 
-`android.app.PendingIntent`, `android.content.Context`, `android.content.Intent`, `android.net.Uri`
+## 2. Tipos/clases declarados
 
-### Proyecto MyNotes
+- Línea **9** — `object WidgetIntents`.
 
-`com.example.mynotes.MainActivity`
+## 3. Estado, constantes y valores importantes
 
-## 3. Declaraciones detectadas
+- **`ACTIVITY_FLAGS`** (línea 10) inicia con `Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_SINGLE_TOP`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`PENDING_FLAGS`** (línea 11) inicia con `PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`intent`** (línea 14) inicia con `Intent(context`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
 
-| Línea | Tipo | Nombre | Firma/inicio |
-|---:|---|---|---|
-| 8 | `object` | `WidgetIntents` | `` |
-| 12 | `fun` | `openApp` | `` |
-| 22 | `fun` | `newNote` | `` |
-| 31 | `fun` | `openNote` | `` |
-| 41 | `fun` | `openCollection` | `` |
-| 51 | `fun` | `search` | `` |
-| 60 | `fun` | `toggleFavorite` | `` |
-| 69 | `fun` | `togglePin` | `` |
+## 4. Funciones y flujo, una por una
 
-## 4. Estado, efectos y límites observables
+### `openApp` — líneas 13–21
 
-- **RemoteViews/widgets:** 17 aparición/apariciones.
+**Firma:** `fun openApp(context: Context, uniqueId: Int): PendingIntent`
 
-Estas cifras son indicadores de superficie de cambio, no diagnósticos de error. Cualquier modificación debe preservar contratos de persistencia, lifecycle, límites numéricos y nulabilidad visibles en el fuente.
+Construye/ejecuta la operación necesaria para abrir el destino indicado, aplicando las validaciones visibles en el cuerpo.
 
-## 5. Dependencias internas directas
+**Entradas:**
+- `context: Context`
+- `uniqueId: Int`
 
-- `com.example.mynotes.MainActivity`
+**Salida:** PendingIntent.
 
-## 6. Recursos Android referenciados
+**Efectos/APIs observados en el cuerpo:**
+- Crea un PendingIntent para una acción futura del sistema.
+- Inicia o prepara navegación/acción mediante Intent.
 
-No se detectaron referencias `R.*` directas.
+**Operaciones/funciones que coordina:** `Intent`, `addCategory`, `parse`, `getActivity`.
 
-## 7. Puntos de revisión al modificarlo
+### `newNote` — líneas 23–30
 
-- Validar sus llamadores y el comportamiento visible asociado antes de alterar firmas o valores por defecto.
+**Firma:** `fun newNote(context: Context, uniqueId: Int): PendingIntent`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `context: Context`
+- `uniqueId: Int`
+
+**Salida:** PendingIntent.
+
+**Efectos/APIs observados en el cuerpo:**
+- Crea un PendingIntent para una acción futura del sistema.
+- Inicia o prepara navegación/acción mediante Intent.
+
+**Operaciones/funciones que coordina:** `Intent`, `parse`, `getActivity`.
+
+### `openNote` — líneas 32–40
+
+**Firma:** `fun openNote(context: Context, noteId: Int, uniqueId: Int): PendingIntent`
+
+Construye/ejecuta la operación necesaria para abrir el destino indicado, aplicando las validaciones visibles en el cuerpo.
+
+**Entradas:**
+- `context: Context`
+- `noteId: Int`
+- `uniqueId: Int`
+
+**Salida:** PendingIntent.
+
+**Efectos/APIs observados en el cuerpo:**
+- Crea un PendingIntent para una acción futura del sistema.
+- Inicia o prepara navegación/acción mediante Intent.
+
+**Operaciones/funciones que coordina:** `Intent`, `parse`, `putExtra`, `getActivity`.
+
+### `openCollection` — líneas 42–50
+
+**Firma:** `fun openCollection(context: Context, collection: String, uniqueId: Int): PendingIntent`
+
+Construye/ejecuta la operación necesaria para abrir el destino indicado, aplicando las validaciones visibles en el cuerpo.
+
+**Entradas:**
+- `context: Context`
+- `collection: String`
+- `uniqueId: Int`
+
+**Salida:** PendingIntent.
+
+**Efectos/APIs observados en el cuerpo:**
+- Crea un PendingIntent para una acción futura del sistema.
+- Inicia o prepara navegación/acción mediante Intent.
+
+**Operaciones/funciones que coordina:** `Intent`, `parse`, `putExtra`, `getActivity`.
+
+### `search` — líneas 52–59
+
+**Firma:** `fun search(context: Context, uniqueId: Int): PendingIntent`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `context: Context`
+- `uniqueId: Int`
+
+**Salida:** PendingIntent.
+
+**Efectos/APIs observados en el cuerpo:**
+- Crea un PendingIntent para una acción futura del sistema.
+- Inicia o prepara navegación/acción mediante Intent.
+
+**Operaciones/funciones que coordina:** `Intent`, `parse`, `getActivity`.
+
+### `toggleFavorite` — líneas 61–68
+
+**Firma:** `fun toggleFavorite(context: Context, noteId: Int, uniqueId: Int): PendingIntent`
+
+Invierte el estado booleano asociado al elemento y propaga el cambio a la capa persistente; después actualiza las superficies que dependen de ese estado cuando el cuerpo lo solicita.
+
+**Entradas:**
+- `context: Context`
+- `noteId: Int`
+- `uniqueId: Int`
+
+**Salida:** PendingIntent.
+
+**Efectos/APIs observados en el cuerpo:**
+- Crea un PendingIntent para una acción futura del sistema.
+- Inicia o prepara navegación/acción mediante Intent.
+
+**Operaciones/funciones que coordina:** `Intent`, `parse`, `putExtra`, `getBroadcast`.
+
+### `togglePin` — líneas 70–77
+
+**Firma:** `fun togglePin(context: Context, noteId: Int, uniqueId: Int): PendingIntent`
+
+Invierte el estado booleano asociado al elemento y propaga el cambio a la capa persistente; después actualiza las superficies que dependen de ese estado cuando el cuerpo lo solicita.
+
+**Entradas:**
+- `context: Context`
+- `noteId: Int`
+- `uniqueId: Int`
+
+**Salida:** PendingIntent.
+
+**Efectos/APIs observados en el cuerpo:**
+- Crea un PendingIntent para una acción futura del sistema.
+- Inicia o prepara navegación/acción mediante Intent.
+
+**Operaciones/funciones que coordina:** `Intent`, `parse`, `putExtra`, `getBroadcast`.
+
+## 5. Cómo se conecta con el resto de MyNotes
+
+- Usa `com.example.mynotes.MainActivity`.
+
+## 6. Recursos Android que utiliza
+
+- No se detectaron referencias directas `R.*` en este archivo.
+
+## 7. Tecnologías y efectos relevantes
+
+- Crea un PendingIntent para una acción futura del sistema.
+- Inicia o prepara navegación/acción mediante Intent.
+
+## 8. Lectura práctica del flujo
+
+Una forma útil de seguir este archivo en el depurador es recorrer estas operaciones en este orden aproximado:
+1. `openApp` — Construye/ejecuta la operación necesaria para abrir el destino indicado, aplicando las validaciones visibles en el cuerpo.
+2. `newNote` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+3. `openNote` — Construye/ejecuta la operación necesaria para abrir el destino indicado, aplicando las validaciones visibles en el cuerpo.
+4. `openCollection` — Construye/ejecuta la operación necesaria para abrir el destino indicado, aplicando las validaciones visibles en el cuerpo.
+5. `search` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+6. `toggleFavorite` — Invierte el estado booleano asociado al elemento y propaga el cambio a la capa persistente; después actualiza las superficies que dependen de ese estado cuando el cuerpo lo solicita.
+7. `togglePin` — Invierte el estado booleano asociado al elemento y propaga el cambio a la capa persistente; después actualiza las superficies que dependen de ese estado cuando el cuerpo lo solicita.
+
+## 9. Qué no debe romperse al modificarlo
+
+- Conservar validaciones de Uri/ruta y no confiar en nombres externos sin sanitizar.
+
+## 10. Resumen en lenguaje sencillo
+
+En términos simples: Fábrica de PendingIntent para abrir app, crear nota, abrir nota/colección, buscar o alternar estados. La sección función por función anterior describe qué entra, qué devuelve y qué efectos produce cada operación detectada en el fuente actual.

@@ -1,0 +1,295 @@
+MYNOTES — EXPLICACIÓN ULTRA DETALLADA
+==============================================================================================================
+Archivo 15/72: app/src/main/java/com/example/mynotes/reminders/ReminderAlarmScheduler.kt
+SHA-256: 2d50b0fc0d0b816ba420f07b2133f50e6843c7a62bfcb1e8c5e3d2c4a1d46992
+Líneas del fuente: 53
+Package: com.example.mynotes.reminders
+
+1. RESPONSABILIDAD EXACTA DEL ARCHIVO
+----------------------------------------------------------------------
+Traduce un Reminder activo a una alarma de Android mediante AlarmManager/PendingIntent y permite cancelar o reprogramar esa alarma.
+
+2. DÓNDE ENCAJA EN LA ARQUITECTURA
+----------------------------------------------------------------------
+Este archivo pertenece principalmente a la **subsistema de recordatorios/alarmas/notificaciones**. No debe analizarse aislado: las referencias cruzadas y callbacks se detallan más abajo.
+
+3. IMPORTACIONES, UNA POR UNA
+----------------------------------------------------------------------
+- `android.app.AlarmManager`: Importa `android.app.AlarmManager` para usar programación de alarmas del sistema.
+- `android.app.PendingIntent`: Importa `android.app.PendingIntent` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `android.content.Context`: Importa `android.content.Context` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `android.content.Intent`: Importa `android.content.Intent` para usar mensajería/navegación entre componentes Android.
+- `android.os.Build`: Importa `android.os.Build` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+
+4. DECLARACIONES Y ESTADO IMPORTANTES
+----------------------------------------------------------------------
+L9: `object ReminderAlarmScheduler {`
+    Declara object `ReminderAlarmScheduler`. A partir de aquí las propiedades y funciones hasta su llave de cierre pertenecen a este tipo.
+L10: `const val ACTION_FIRE_REMINDER = "com.example.mynotes.action.FIRE_REMINDER"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L11: `const val EXTRA_REMINDER_ID = "reminder_id"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L16: `val manager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager`
+    Accede a `AlarmManager`, servicio del sistema que puede despertar/programar la entrega futura del recordatorio.
+L17: `val operation = pendingIntent(context, reminder.id)`
+    Declara `operation` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `pendingIntent(context, reminder.id)`.
+L37: `val manager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager`
+    Accede a `AlarmManager`, servicio del sistema que puede despertar/programar la entrega futura del recordatorio.
+L42: `val intent = Intent(context, ReminderReceiver::class.java).apply {`
+    Construye un `Intent` para abrir/enviar una acción a otro componente Android. Los extras añadidos después transportan el contexto necesario.
+
+5. FUNCIONES — EXPLICACIÓN DE CADA UNA
+----------------------------------------------------------------------
+
+5.1 `schedule` — líneas 13–34
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun schedule(context: Context, reminder: Reminder) {
+
+Propósito:
+    Programa la ejecución futura del recordatorio en AlarmManager y construye el PendingIntent que identificará esa alarma.
+
+Parámetros/entradas:
+  - `context: Context`: el llamador proporciona este valor/callback a `schedule`. Dentro del cuerpo, las líneas donde aparece `context` muestran exactamente cómo afecta al resultado.
+  - `reminder: Reminder`: el llamador proporciona este valor/callback a `schedule`. Dentro del cuerpo, las líneas donde aparece `reminder` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L13 [4 espacios] `fun schedule(context: Context, reminder: Reminder) {`
+      → Declara una función. El bloque de `schedule` se detalla después instrucción por instrucción.
+  L14 [8 espacios] `if (!reminder.enabled) return`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `!reminder.enabled`.
+  L15 [8 espacios] `if (reminder.triggerAtMillis <= System.currentTimeMillis()) return`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `reminder.triggerAtMillis <= System.currentTimeMillis()`.
+  L16 [8 espacios] `val manager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager`
+      → Accede a `AlarmManager`, servicio del sistema que puede despertar/programar la entrega futura del recordatorio.
+  L17 [8 espacios] `val operation = pendingIntent(context, reminder.id)`
+      → Declara `operation` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `pendingIntent(context, reminder.id)`.
+  L18 [8 espacios] `if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `Build.VERSION.SDK_INT < Build.VERSION_CODES.S`.
+  L19 [12 espacios] `// En Android 7–11 podemos conservar la hora exacta sin permiso especial.`
+      → Comentario del autor. No se ejecuta; documenta la intención o una restricción del bloque siguiente.
+  L20 [12 espacios] `manager.setExactAndAllowWhileIdle(`
+      → Programa una alarma exacta incluso durante Doze cuando la versión de Android lo permite; se usa para recordatorios cercanos/precisos.
+  L21 [16 espacios] `AlarmManager.RTC_WAKEUP,`
+      → Accede a `AlarmManager`, servicio del sistema que puede despertar/programar la entrega futura del recordatorio.
+  L22 [16 espacios] `reminder.triggerAtMillis,`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `reminder.triggerAtMillis,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L23 [16 espacios] `operation`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `operation`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L24 [12 espacios] `)`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L25 [8 espacios] `} else {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L26 [12 espacios] `// Android 12+ puede exigir acceso especial para alarmas exactas.`
+      → Comentario del autor. No se ejecuta; documenta la intención o una restricción del bloque siguiente.
+  L27 [12 espacios] `// MyNotes no obliga a concederlo: usa una alarma compatible si no está disponible.`
+      → Comentario del autor. No se ejecuta; documenta la intención o una restricción del bloque siguiente.
+  L28 [12 espacios] `manager.setAndAllowWhileIdle(`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `manager.setAndAllowWhileIdle(`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L29 [16 espacios] `AlarmManager.RTC_WAKEUP,`
+      → Accede a `AlarmManager`, servicio del sistema que puede despertar/programar la entrega futura del recordatorio.
+  L30 [16 espacios] `reminder.triggerAtMillis,`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `reminder.triggerAtMillis,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L31 [16 espacios] `operation`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `operation`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L32 [12 espacios] `)`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L33 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L34 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.2 `cancel` — líneas 36–39
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun cancel(context: Context, reminderId: Long) {
+
+Propósito:
+    Cancela una alarma/operación pendiente previamente registrada para que no se dispare después.
+
+Parámetros/entradas:
+  - `context: Context`: el llamador proporciona este valor/callback a `cancel`. Dentro del cuerpo, las líneas donde aparece `context` muestran exactamente cómo afecta al resultado.
+  - `reminderId: Long`: el llamador proporciona este valor/callback a `cancel`. Dentro del cuerpo, las líneas donde aparece `reminderId` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L36 [4 espacios] `fun cancel(context: Context, reminderId: Long) {`
+      → Declara una función. El bloque de `cancel` se detalla después instrucción por instrucción.
+  L37 [8 espacios] `val manager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager`
+      → Accede a `AlarmManager`, servicio del sistema que puede despertar/programar la entrega futura del recordatorio.
+  L38 [8 espacios] `manager.cancel(pendingIntent(context, reminderId))`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L39 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.3 `pendingIntent` — líneas 41–52
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        private fun pendingIntent(context: Context, reminderId: Long): PendingIntent {
+
+Propósito:
+    Implementa `pendingIntent`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `context: Context`: el llamador proporciona este valor/callback a `pendingIntent`. Dentro del cuerpo, las líneas donde aparece `context` muestran exactamente cómo afecta al resultado.
+  - `reminderId: Long`: el llamador proporciona este valor/callback a `pendingIntent`. Dentro del cuerpo, las líneas donde aparece `reminderId` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `PendingIntent`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L41 [4 espacios] `private fun pendingIntent(context: Context, reminderId: Long): PendingIntent {`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `pendingIntent` se detalla después instrucción por instrucción.
+  L42 [8 espacios] `val intent = Intent(context, ReminderReceiver::class.java).apply {`
+      → Construye un `Intent` para abrir/enviar una acción a otro componente Android. Los extras añadidos después transportan el contexto necesario.
+  L43 [12 espacios] `action = ACTION_FIRE_REMINDER`
+      → Asigna/configura `action` usando `ACTION_FIRE_REMINDER`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L44 [12 espacios] `putExtra(EXTRA_REMINDER_ID, reminderId)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L45 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L46 [8 espacios] `return PendingIntent.getBroadcast(`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L47 [12 espacios] `context,`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `context,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L48 [12 espacios] `(reminderId xor (reminderId ushr 32)).toInt(),`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L49 [12 espacios] `intent,`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `intent,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L50 [12 espacios] `PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE`
+      → Crea o configura un `PendingIntent`: una autorización empaquetada que Android puede ejecutar más tarde en nombre de MyNotes.
+  L51 [8 espacios] `)`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L52 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+6. EXPLICACIÓN COMPLETA LÍNEA POR LÍNEA
+----------------------------------------------------------------------
+Esta sección no omite líneas ejecutables. Repite incluso partes ya explicadas en funciones para poder leer el archivo de arriba abajo sin saltar entre secciones.
+L1: `package com.example.mynotes.reminders`
+    Declara que este archivo pertenece al package `com.example.mynotes.reminders`; esto determina su namespace Kotlin y cómo lo importan otros archivos.
+L3: `import android.app.AlarmManager`
+    Importa `android.app.AlarmManager` para usar programación de alarmas del sistema.
+L4: `import android.app.PendingIntent`
+    Importa `android.app.PendingIntent` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L5: `import android.content.Context`
+    Importa `android.content.Context` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L6: `import android.content.Intent`
+    Importa `android.content.Intent` para usar mensajería/navegación entre componentes Android.
+L7: `import android.os.Build`
+    Importa `android.os.Build` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L9: `object ReminderAlarmScheduler {`
+    Declara object `ReminderAlarmScheduler`. A partir de aquí las propiedades y funciones hasta su llave de cierre pertenecen a este tipo.
+L10: `const val ACTION_FIRE_REMINDER = "com.example.mynotes.action.FIRE_REMINDER"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L11: `const val EXTRA_REMINDER_ID = "reminder_id"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L13: `fun schedule(context: Context, reminder: Reminder) {`
+    Declara una función. El bloque de `schedule` se detalla después instrucción por instrucción.
+L14: `if (!reminder.enabled) return`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `!reminder.enabled`.
+L15: `if (reminder.triggerAtMillis <= System.currentTimeMillis()) return`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `reminder.triggerAtMillis <= System.currentTimeMillis()`.
+L16: `val manager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager`
+    Accede a `AlarmManager`, servicio del sistema que puede despertar/programar la entrega futura del recordatorio.
+L17: `val operation = pendingIntent(context, reminder.id)`
+    Declara `operation` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `pendingIntent(context, reminder.id)`.
+L18: `if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `Build.VERSION.SDK_INT < Build.VERSION_CODES.S`.
+L19: `// En Android 7–11 podemos conservar la hora exacta sin permiso especial.`
+    Comentario del autor. No se ejecuta; documenta la intención o una restricción del bloque siguiente.
+L20: `manager.setExactAndAllowWhileIdle(`
+    Programa una alarma exacta incluso durante Doze cuando la versión de Android lo permite; se usa para recordatorios cercanos/precisos.
+L21: `AlarmManager.RTC_WAKEUP,`
+    Accede a `AlarmManager`, servicio del sistema que puede despertar/programar la entrega futura del recordatorio.
+L22: `reminder.triggerAtMillis,`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `reminder.triggerAtMillis,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L23: `operation`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `operation`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L24: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L25: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L26: `// Android 12+ puede exigir acceso especial para alarmas exactas.`
+    Comentario del autor. No se ejecuta; documenta la intención o una restricción del bloque siguiente.
+L27: `// MyNotes no obliga a concederlo: usa una alarma compatible si no está disponible.`
+    Comentario del autor. No se ejecuta; documenta la intención o una restricción del bloque siguiente.
+L28: `manager.setAndAllowWhileIdle(`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `manager.setAndAllowWhileIdle(`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L29: `AlarmManager.RTC_WAKEUP,`
+    Accede a `AlarmManager`, servicio del sistema que puede despertar/programar la entrega futura del recordatorio.
+L30: `reminder.triggerAtMillis,`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `reminder.triggerAtMillis,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L31: `operation`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `operation`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L32: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L33: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L34: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L36: `fun cancel(context: Context, reminderId: Long) {`
+    Declara una función. El bloque de `cancel` se detalla después instrucción por instrucción.
+L37: `val manager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager`
+    Accede a `AlarmManager`, servicio del sistema que puede despertar/programar la entrega futura del recordatorio.
+L38: `manager.cancel(pendingIntent(context, reminderId))`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L39: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L41: `private fun pendingIntent(context: Context, reminderId: Long): PendingIntent {`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `pendingIntent` se detalla después instrucción por instrucción.
+L42: `val intent = Intent(context, ReminderReceiver::class.java).apply {`
+    Construye un `Intent` para abrir/enviar una acción a otro componente Android. Los extras añadidos después transportan el contexto necesario.
+L43: `action = ACTION_FIRE_REMINDER`
+    Asigna/configura `action` usando `ACTION_FIRE_REMINDER`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L44: `putExtra(EXTRA_REMINDER_ID, reminderId)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L45: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L46: `return PendingIntent.getBroadcast(`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L47: `context,`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `context,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L48: `(reminderId xor (reminderId ushr 32)).toInt(),`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L49: `intent,`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `intent,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L50: `PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE`
+    Crea o configura un `PendingIntent`: una autorización empaquetada que Android puede ejecutar más tarde en nombre de MyNotes.
+L51: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L52: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L53: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+7. RECURSOS ANDROID REFERENCIADOS
+----------------------------------------------------------------------
+- No hay referencias directas `R.*` en este archivo.
+
+8. QUIÉN USA ESTE COMPONENTE
+----------------------------------------------------------------------
+- `ReminderAlarmScheduler` aparece también en 2 archivo(s):
+    - app/src/main/java/com/example/mynotes/reminders/ReminderReceiver.kt
+    - app/src/main/java/com/example/mynotes/reminders/ReminderRepository.kt
+
+9. QUÉ PUEDE ROMPERSE SI LO MODIFICAS
+----------------------------------------------------------------------
+- Los recordatorios combinan persistencia + AlarmManager + BroadcastReceiver + notificación. Cambiar solo la UI sin sincronizar scheduler/receiver puede crear alarmas huérfanas o avisos que no reflejen el estado guardado.
+
+10. CHECKLIST DE PRUEBA DESPUÉS DE MODIFICAR ESTE ARCHIVO
+----------------------------------------------------------------------
+- Compilar `assembleDebug` y resolver primero errores de Kotlin/AAPT.
+- Abrir la pantalla/flujo relacionado y comprobar ida y vuelta (back) sin estado duplicado.
+- Cambiar tema/paleta y verificar contraste si este archivo dibuja UI.
+- Crear un recordatorio a +5 minutos, editarlo, desactivarlo y confirmar que solo aparece la notificación esperada.
+- Reiniciar el dispositivo/emulador y verificar reprogramación de recordatorios activos.
+
+==============================================================================================================
+FIN DEL ARCHIVO
+==============================================================================================================

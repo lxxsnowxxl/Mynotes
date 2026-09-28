@@ -1,0 +1,701 @@
+MYNOTES — EXPLICACIÓN ULTRA DETALLADA
+==============================================================================================================
+Archivo 25/72: app/src/main/java/com/example/mynotes/ui/components/BackupRestoreSection.kt
+SHA-256: 89e8386c8cf33add82aa9ab4b96f66612c65b0dfbbf62788718af85d5a34f20b
+Líneas del fuente: 163
+Package: com.example.mynotes.ui.components
+
+1. RESPONSABILIDAD EXACTA DEL ARCHIVO
+----------------------------------------------------------------------
+Sección de Configuración que presenta controles de exportación/importación y conecta botones con AppDataBackupManager.
+
+2. DÓNDE ENCAJA EN LA ARQUITECTURA
+----------------------------------------------------------------------
+Este archivo pertenece principalmente a la **capa de interfaz Compose/Activities**. No debe analizarse aislado: las referencias cruzadas y callbacks se detallan más abajo.
+
+3. IMPORTACIONES, UNA POR UNA
+----------------------------------------------------------------------
+- `android.app.Activity`: Importa `android.app.Activity` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `android.net.Uri`: Importa `android.net.Uri` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `android.widget.Toast`: Importa `android.widget.Toast` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `androidx.activity.compose.rememberLauncherForActivityResult`: Importa `androidx.activity.compose.rememberLauncherForActivityResult` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.activity.result.contract.ActivityResultContracts`: Importa `androidx.activity.result.contract.ActivityResultContracts` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.foundation.layout.Arrangement`: Importa `androidx.compose.foundation.layout.Arrangement` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.layout.PaddingValues`: Importa `androidx.compose.foundation.layout.PaddingValues` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.layout.Row`: Importa `androidx.compose.foundation.layout.Row` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.layout.Spacer`: Importa `androidx.compose.foundation.layout.Spacer` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.layout.fillMaxWidth`: Importa `androidx.compose.foundation.layout.fillMaxWidth` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.layout.height`: Importa `androidx.compose.foundation.layout.height` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.layout.size`: Importa `androidx.compose.foundation.layout.size` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.material.icons.Icons`: Importa `androidx.compose.material.icons.Icons` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.material.icons.filled.Download`: Importa `androidx.compose.material.icons.filled.Download` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.material.icons.filled.Upload`: Importa `androidx.compose.material.icons.filled.Upload` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.material3.CircularProgressIndicator`: Importa `androidx.compose.material3.CircularProgressIndicator` para usar componentes y tema Material 3.
+- `androidx.compose.material3.Icon`: Importa `androidx.compose.material3.Icon` para usar componentes y tema Material 3.
+- `androidx.compose.material3.OutlinedButton`: Importa `androidx.compose.material3.OutlinedButton` para usar componentes y tema Material 3.
+- `androidx.compose.material3.Text`: Importa `androidx.compose.material3.Text` para usar componentes y tema Material 3.
+- `androidx.compose.material3.TextButton`: Importa `androidx.compose.material3.TextButton` para usar componentes y tema Material 3.
+- `androidx.compose.runtime.Composable`: Importa `androidx.compose.runtime.Composable` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+- `androidx.compose.runtime.getValue`: Importa `androidx.compose.runtime.getValue` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+- `androidx.compose.runtime.mutableStateOf`: Importa `androidx.compose.runtime.mutableStateOf` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+- `androidx.compose.runtime.remember`: Importa `androidx.compose.runtime.remember` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+- `androidx.compose.runtime.rememberCoroutineScope`: Importa `androidx.compose.runtime.rememberCoroutineScope` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+- `androidx.compose.runtime.setValue`: Importa `androidx.compose.runtime.setValue` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+- `androidx.compose.ui.Alignment`: Importa `androidx.compose.ui.Alignment` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.Modifier`: Importa `androidx.compose.ui.Modifier` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.graphics.Color`: Importa `androidx.compose.ui.graphics.Color` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.platform.LocalContext`: Importa `androidx.compose.ui.platform.LocalContext` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.res.stringResource`: Importa `androidx.compose.ui.res.stringResource` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.text.font.FontFamily`: Importa `androidx.compose.ui.text.font.FontFamily` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.text.font.FontWeight`: Importa `androidx.compose.ui.text.font.FontWeight` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.unit.dp`: Importa `androidx.compose.ui.unit.dp` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.unit.sp`: Importa `androidx.compose.ui.unit.sp` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `com.example.mynotes.R`: Importa `com.example.mynotes.R`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.ui.components.AppAlertDialog`: Importa `com.example.mynotes.ui.components.AppAlertDialog`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.data.AppDataBackupManager`: Importa `com.example.mynotes.data.AppDataBackupManager`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.settings.AppSettings`: Importa `com.example.mynotes.settings.AppSettings`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.ui.sound.UiActionSound`: Importa `com.example.mynotes.ui.sound.UiActionSound`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.ui.sound.UiSoundPlayer`: Importa `com.example.mynotes.ui.sound.UiSoundPlayer`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `kotlinx.coroutines.launch`: Importa `kotlinx.coroutines.launch` para usar coroutines, Flow y ejecución asíncrona.
+- `java.text.SimpleDateFormat`: Importa `java.text.SimpleDateFormat` de la biblioteca estándar/JVM para operaciones de lenguaje, fechas, colecciones, I/O o utilidades.
+- `java.util.Date`: Importa `java.util.Date` de la biblioteca estándar/JVM para operaciones de lenguaje, fechas, colecciones, I/O o utilidades.
+- `java.util.Locale`: Importa `java.util.Locale` de la biblioteca estándar/JVM para operaciones de lenguaje, fechas, colecciones, I/O o utilidades.
+
+4. DECLARACIONES Y ESTADO IMPORTANTES
+----------------------------------------------------------------------
+L51: `val context = LocalContext.current`
+    Declara `context` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `LocalContext.current`.
+L52: `val scope = rememberCoroutineScope()`
+    Declara `scope` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `rememberCoroutineScope()`.
+L53: `var busy by remember { mutableStateOf(false) }`
+    Memoriza el resultado durante recomposiciones de Compose. Solo se recalcula cuando cambian las claves de `remember`, reduciendo trabajo y preservando identidad/estado local.
+L54: `var pendingImportUri by remember { mutableStateOf<Uri?>(null) }`
+    Memoriza el resultado durante recomposiciones de Compose. Solo se recalcula cuando cambian las claves de `remember`, reduciendo trabajo y preservando identidad/estado local.
+L55: `var statusMessage by remember { mutableStateOf<String?>(null) }`
+    Memoriza el resultado durante recomposiciones de Compose. Solo se recalcula cuando cambian las claves de `remember`, reduciendo trabajo y preservando identidad/estado local.
+L56: `val exportLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.CreateDocument("application/zip")) { uri ->`
+    Declara `exportLauncher` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `rememberLauncherForActivityResult(contract = ActivityResultContracts.CreateDocument("application/zip")) { uri ->`.
+L61: `val result = AppDataBackupManager.exportBackup(context = context, destination = uri, settings = settings)`
+    Declara `result` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `AppDataBackupManager.exportBackup(context = context, destination = uri, settings = settings)`.
+L74: `val importLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.OpenDocument()) { uri ->`
+    Declara `importLauncher` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `rememberLauncherForActivityResult(contract = ActivityResultContracts.OpenDocument()) { uri ->`.
+L89: `val stamp = SimpleDateFormat("yyyy-MM-dd_HH-mm", Locale.US).format(Date())`
+    Declara `stamp` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `SimpleDateFormat("yyyy-MM-dd_HH-mm", Locale.US).format(Date())`.
+L121: `val importUri = pendingImportUri`
+    Declara `importUri` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `pendingImportUri`.
+L136: `val result = AppDataBackupManager.importBackup(context = context, source = importUri)`
+    Declara `result` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `AppDataBackupManager.importBackup(context = context, source = importUri)`.
+L137: `result.onSuccess { summary -> val message = context.getString(R.string.backup_import_success, summary.noteCount,`
+    Define una rama/lambda. Cuando coincide `result.onSuccess { summary`, se ejecuta la expresión o bloque situado después de `->`.
+
+5. FUNCIONES — EXPLICACIÓN DE CADA UNA
+----------------------------------------------------------------------
+
+5.1 `BackupRestoreSection` — líneas 50–163
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    fun BackupRestoreSection(settings: AppSettings, fontFamily: FontFamily, textColor: Color, secondaryTextColor: Color, graphicColor: Color) {
+
+Propósito:
+    Implementa `BackupRestoreSection`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `settings: AppSettings`: el llamador proporciona este valor/callback a `BackupRestoreSection`. Dentro del cuerpo, las líneas donde aparece `settings` muestran exactamente cómo afecta al resultado.
+  - `fontFamily: FontFamily`: el llamador proporciona este valor/callback a `BackupRestoreSection`. Dentro del cuerpo, las líneas donde aparece `fontFamily` muestran exactamente cómo afecta al resultado.
+  - `textColor: Color`: el llamador proporciona este valor/callback a `BackupRestoreSection`. Dentro del cuerpo, las líneas donde aparece `textColor` muestran exactamente cómo afecta al resultado.
+  - `secondaryTextColor: Color`: el llamador proporciona este valor/callback a `BackupRestoreSection`. Dentro del cuerpo, las líneas donde aparece `secondaryTextColor` muestran exactamente cómo afecta al resultado.
+  - `graphicColor: Color`: el llamador proporciona este valor/callback a `BackupRestoreSection`. Dentro del cuerpo, las líneas donde aparece `graphicColor` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L50 [0 espacios] `fun BackupRestoreSection(settings: AppSettings, fontFamily: FontFamily, textColor: Color, secondaryTextColor: Color, graphicColor: Color) {`
+      → Declara una función. El bloque de `BackupRestoreSection` se detalla después instrucción por instrucción.
+  L51 [4 espacios] `val context = LocalContext.current`
+      → Declara `context` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `LocalContext.current`.
+  L52 [4 espacios] `val scope = rememberCoroutineScope()`
+      → Declara `scope` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `rememberCoroutineScope()`.
+  L53 [4 espacios] `var busy by remember { mutableStateOf(false) }`
+      → Memoriza el resultado durante recomposiciones de Compose. Solo se recalcula cuando cambian las claves de `remember`, reduciendo trabajo y preservando identidad/estado local.
+  L54 [4 espacios] `var pendingImportUri by remember { mutableStateOf<Uri?>(null) }`
+      → Memoriza el resultado durante recomposiciones de Compose. Solo se recalcula cuando cambian las claves de `remember`, reduciendo trabajo y preservando identidad/estado local.
+  L55 [4 espacios] `var statusMessage by remember { mutableStateOf<String?>(null) }`
+      → Memoriza el resultado durante recomposiciones de Compose. Solo se recalcula cuando cambian las claves de `remember`, reduciendo trabajo y preservando identidad/estado local.
+  L56 [4 espacios] `val exportLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.CreateDocument("application/zip")) { uri ->`
+      → Declara `exportLauncher` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `rememberLauncherForActivityResult(contract = ActivityResultContracts.CreateDocument("application/zip")) { uri ->`.
+  L57 [12 espacios] `if (uri != null && !busy) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `uri != null && !busy`.
+  L58 [16 espacios] `scope.launch {`
+      → Lanza una coroutine hija para ejecutar este bloque de forma asíncrona respecto al código llamador.
+  L59 [20 espacios] `busy = true`
+      → Asigna/configura `busy` usando `true`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L60 [20 espacios] `statusMessage = null`
+      → Asigna/configura `statusMessage` usando `null`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L61 [20 espacios] `val result = AppDataBackupManager.exportBackup(context = context, destination = uri, settings = settings)`
+      → Declara `result` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `AppDataBackupManager.exportBackup(context = context, destination = uri, settings = settings)`.
+  L62 [20 espacios] `result.onSuccess { summary -> statusMessage = context.getString(R.string.backup_export_success, summary.noteCount,`
+      → Define una rama/lambda. Cuando coincide `result.onSuccess { summary`, se ejecuta la expresión o bloque situado después de `->`.
+  L63 [36 espacios] `summary.attachmentCount)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L64 [28 espacios] `if (summary.skippedAttachmentCount > 0) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `summary.skippedAttachmentCount > 0`.
+  L65 [32 espacios] `statusMessage += " " + context.getString(R.string.backup_export_skipped, summary.skippedAttachmentCount)`
+      → Asigna/configura `statusMessage +` usando `" " + context.getString(R.string.backup_export_skipped, summary.skippedAttachmentCount)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L66 [28 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L67 [24 espacios] `}.onFailure { error -> statusMessage = context.getString(R.string.backup_operation_error,`
+      → Define una rama/lambda. Cuando coincide `}.onFailure { error`, se ejecuta la expresión o bloque situado después de `->`.
+  L68 [36 espacios] `error.message ?: context.getString(R.string.backup_unknown_error))`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L69 [24 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L70 [20 espacios] `busy = false`
+      → Asigna/configura `busy` usando `false`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L71 [16 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L72 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L73 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L74 [4 espacios] `val importLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.OpenDocument()) { uri ->`
+      → Declara `importLauncher` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `rememberLauncherForActivityResult(contract = ActivityResultContracts.OpenDocument()) { uri ->`.
+  L75 [12 espacios] `if (uri != null && !busy) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `uri != null && !busy`.
+  L76 [16 espacios] `pendingImportUri = uri`
+      → Asigna/configura `pendingImportUri` usando `uri`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L77 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L78 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L79 [4 espacios] `SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(16.dp)) { panelColors -> Text(`
+      → Define una rama/lambda. Cuando coincide `SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(16.dp)) { panelColors`, se ejecuta la expresión o bloque situado después de `->`.
+  L80 [12 espacios] `text = stringResource(R.string.backup_restore_title), color = panelColors.text, fontFamily = fontFamily,`
+      → Obtiene una cadena localizada desde `res/values*` (`backup_restore_title`), de modo que la UI siga el idioma activo.
+  L81 [12 espacios] `fontWeight = FontWeight.Bold, fontSize = 17.sp)`
+      → Asigna/configura `fontWeight` usando `FontWeight.Bold, fontSize = 17.sp)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L82 [8 espacios] `Spacer(Modifier.height(4.dp))`
+      → Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+  L83 [8 espacios] `Text(text = stringResource(R.string.backup_restore_description), color = panelColors.secondaryText, fontFamily = fontFamily,`
+      → Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+  L84 [12 espacios] `fontSize = 12.sp, lineHeight = 17.sp)`
+      → Asigna/configura `fontSize` usando `12.sp, lineHeight = 17.sp)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L85 [8 espacios] `Spacer(Modifier.height(14.dp))`
+      → Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+  L86 [8 espacios] `Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {`
+      → Crea un `Row` de Compose que organiza hijos horizontalmente. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+  L87 [12 espacios] `OutlinedButton(onClick = {`
+      → Asigna/configura `OutlinedButton(onClick` usando `{`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L88 [20 espacios] `UiSoundPlayer.playAction(context = context, action = UiActionSound.Backup)`
+      → Asigna/configura `UiSoundPlayer.playAction(context` usando `context, action = UiActionSound.Backup)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L89 [20 espacios] `val stamp = SimpleDateFormat("yyyy-MM-dd_HH-mm", Locale.US).format(Date())`
+      → Declara `stamp` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `SimpleDateFormat("yyyy-MM-dd_HH-mm", Locale.US).format(Date())`.
+  L90 [20 espacios] `exportLauncher.launch("MyNotes_backup_$stamp.zip")`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L91 [16 espacios] `}, enabled = !busy, modifier = Modifier.weight(1f)) {`
+      → Asigna/configura `}, enabled` usando `!busy, modifier = Modifier.weight(1f)) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L92 [16 espacios] `Icon(imageVector = Icons.Default.Upload, contentDescription = null, modifier = Modifier.size(18.dp), tint = panelColors.text`
+      → Renderiza un recurso visual. El modelo/painter y los modifiers siguientes determinan qué se muestra, tamaño, recorte y accesibilidad.
+  L93 [16 espacios] `)`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L94 [16 espacios] `Spacer(Modifier.size(7.dp))`
+      → Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+  L95 [16 espacios] `Text(text = stringResource(R.string.backup_export_button), color = panelColors.text, fontFamily = fontFamily)`
+      → Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+  L96 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L97 [12 espacios] `OutlinedButton(onClick = {`
+      → Asigna/configura `OutlinedButton(onClick` usando `{`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L98 [20 espacios] `UiSoundPlayer.playAction(context = context, action = UiActionSound.Restore)`
+      → Asigna/configura `UiSoundPlayer.playAction(context` usando `context, action = UiActionSound.Restore)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L99 [20 espacios] `importLauncher.launch(arrayOf("application/zip", "application/octet-stream", "application/x-zip-compressed"))`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L100 [16 espacios] `}, enabled = !busy, modifier = Modifier.weight(1f)) {`
+      → Asigna/configura `}, enabled` usando `!busy, modifier = Modifier.weight(1f)) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L101 [16 espacios] `Icon(imageVector = Icons.Default.Download, contentDescription = null, modifier = Modifier.size(18.dp),`
+      → Renderiza un recurso visual. El modelo/painter y los modifiers siguientes determinan qué se muestra, tamaño, recorte y accesibilidad.
+  L102 [20 espacios] `tint = panelColors.text)`
+      → Asigna/configura `tint` usando `panelColors.text)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L103 [16 espacios] `Spacer(Modifier.size(7.dp))`
+      → Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+  L104 [16 espacios] `Text(text = stringResource(R.string.backup_import_button), color = panelColors.text, fontFamily = fontFamily)`
+      → Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+  L105 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L106 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L107 [8 espacios] `if (busy) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `busy`.
+  L108 [12 espacios] `Spacer(Modifier.height(14.dp))`
+      → Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+  L109 [12 espacios] `Row(verticalAlignment = Alignment.CenterVertically) {`
+      → Crea un `Row` de Compose que organiza hijos horizontalmente. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+  L110 [16 espacios] `CircularProgressIndicator(modifier = Modifier.size(18.dp), strokeWidth = 2.dp, color = panelColors.text)`
+      → Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+  L111 [16 espacios] `Spacer(Modifier.size(9.dp))`
+      → Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+  L112 [16 espacios] `Text(text = stringResource(R.string.backup_processing), color = panelColors.secondaryText, fontFamily = fontFamily,`
+      → Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+  L113 [20 espacios] `fontSize = 12.sp)`
+      → Asigna/configura `fontSize` usando `12.sp)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L114 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L115 [8 espacios] `} else if (!statusMessage.isNullOrBlank()) {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L116 [12 espacios] `Spacer(Modifier.height(12.dp))`
+      → Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+  L117 [12 espacios] `Text(text = statusMessage.orEmpty(), color = panelColors.secondaryText, fontFamily = fontFamily, fontSize = 12.sp,`
+      → Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+  L118 [16 espacios] `lineHeight = 16.sp)`
+      → Asigna/configura `lineHeight` usando `16.sp)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L119 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L120 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L121 [4 espacios] `val importUri = pendingImportUri`
+      → Declara `importUri` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `pendingImportUri`.
+  L122 [4 espacios] `if (importUri != null) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `importUri != null`.
+  L123 [8 espacios] `AppAlertDialog(onDismissRequest = {`
+      → Muestra un diálogo modal Material; sus callbacks definen confirmar, cancelar y cierre al tocar fuera/back.
+  L124 [16 espacios] `if (!busy) pendingImportUri = null`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `!busy`.
+  L125 [12 espacios] `}, title = {`
+      → Asigna/configura `}, title` usando `{`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L126 [16 espacios] `Text(text = stringResource(R.string.backup_import_confirm_title), fontFamily = fontFamily)`
+      → Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+  L127 [12 espacios] `}, text = {`
+      → Asigna/configura `}, text` usando `{`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L128 [16 espacios] `Text(text = stringResource(R.string.backup_import_confirm_message), fontFamily = fontFamily)`
+      → Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+  L129 [12 espacios] `}, confirmButton = {`
+      → Asigna/configura `}, confirmButton` usando `{`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L130 [16 espacios] `TextButton(onClick = {`
+      → Crea un control pulsable Material. Su callback `onClick` ejecuta la acción del usuario y sus colores/forma se derivan de la configuración.
+  L131 [24 espacios] `UiSoundPlayer.playAction(context = context, action = UiActionSound.Confirm)`
+      → Asigna/configura `UiSoundPlayer.playAction(context` usando `context, action = UiActionSound.Confirm)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L132 [24 espacios] `pendingImportUri = null`
+      → Asigna/configura `pendingImportUri` usando `null`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L133 [24 espacios] `scope.launch {`
+      → Lanza una coroutine hija para ejecutar este bloque de forma asíncrona respecto al código llamador.
+  L134 [28 espacios] `busy = true`
+      → Asigna/configura `busy` usando `true`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L135 [28 espacios] `statusMessage = null`
+      → Asigna/configura `statusMessage` usando `null`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L136 [28 espacios] `val result = AppDataBackupManager.importBackup(context = context, source = importUri)`
+      → Declara `result` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `AppDataBackupManager.importBackup(context = context, source = importUri)`.
+  L137 [28 espacios] `result.onSuccess { summary -> val message = context.getString(R.string.backup_import_success, summary.noteCount,`
+      → Define una rama/lambda. Cuando coincide `result.onSuccess { summary`, se ejecuta la expresión o bloque situado después de `->`.
+  L138 [44 espacios] `summary.attachmentCount)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L139 [36 espacios] `statusMessage = message`
+      → Asigna/configura `statusMessage` usando `message`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L140 [36 espacios] `Toast.makeText(context, message, Toast.LENGTH_LONG).show()`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L141 [36 espacios] `/*`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L142 [37 espacios] `* También vuelve a leer el idioma guardado`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L143 [37 espacios] `* por MainActivity.attachBaseContext().`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L144 [37 espacios] `*/`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L145 [36 espacios] `(context as? Activity)?.recreate()`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L146 [32 espacios] `}.onFailure { error -> statusMessage = context.getString(R.string.backup_operation_error,`
+      → Define una rama/lambda. Cuando coincide `}.onFailure { error`, se ejecuta la expresión o bloque situado después de `->`.
+  L147 [44 espacios] `error.message ?: context.getString(R.string.backup_unknown_error))`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L148 [32 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L149 [28 espacios] `busy = false`
+      → Asigna/configura `busy` usando `false`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L150 [24 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L151 [20 espacios] `}) {`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L152 [20 espacios] `Text(stringResource(R.string.backup_import_confirm_action))`
+      → Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+  L153 [16 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L154 [12 espacios] `}, dismissButton = {`
+      → Asigna/configura `}, dismissButton` usando `{`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L155 [16 espacios] `TextButton(onClick = {`
+      → Crea un control pulsable Material. Su callback `onClick` ejecuta la acción del usuario y sus colores/forma se derivan de la configuración.
+  L156 [24 espacios] `UiSoundPlayer.playAction(context = context, action = UiActionSound.Cancel)`
+      → Asigna/configura `UiSoundPlayer.playAction(context` usando `context, action = UiActionSound.Cancel)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L157 [24 espacios] `pendingImportUri = null`
+      → Asigna/configura `pendingImportUri` usando `null`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L158 [20 espacios] `}) {`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L159 [20 espacios] `Text(stringResource(R.string.backup_cancel))`
+      → Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+  L160 [16 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L161 [12 espacios] `})`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L162 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L163 [0 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+6. EXPLICACIÓN COMPLETA LÍNEA POR LÍNEA
+----------------------------------------------------------------------
+Esta sección no omite líneas ejecutables. Repite incluso partes ya explicadas en funciones para poder leer el archivo de arriba abajo sin saltar entre secciones.
+L1: `package com.example.mynotes.ui.components`
+    Declara que este archivo pertenece al package `com.example.mynotes.ui.components`; esto determina su namespace Kotlin y cómo lo importan otros archivos.
+L3: `import android.app.Activity`
+    Importa `android.app.Activity` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L4: `import android.net.Uri`
+    Importa `android.net.Uri` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L5: `import android.widget.Toast`
+    Importa `android.widget.Toast` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L6: `import androidx.activity.compose.rememberLauncherForActivityResult`
+    Importa `androidx.activity.compose.rememberLauncherForActivityResult` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L7: `import androidx.activity.result.contract.ActivityResultContracts`
+    Importa `androidx.activity.result.contract.ActivityResultContracts` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L8: `import androidx.compose.foundation.layout.Arrangement`
+    Importa `androidx.compose.foundation.layout.Arrangement` para usar layouts, gestos y primitivas visuales de Compose.
+L9: `import androidx.compose.foundation.layout.PaddingValues`
+    Importa `androidx.compose.foundation.layout.PaddingValues` para usar layouts, gestos y primitivas visuales de Compose.
+L10: `import androidx.compose.foundation.layout.Row`
+    Importa `androidx.compose.foundation.layout.Row` para usar layouts, gestos y primitivas visuales de Compose.
+L11: `import androidx.compose.foundation.layout.Spacer`
+    Importa `androidx.compose.foundation.layout.Spacer` para usar layouts, gestos y primitivas visuales de Compose.
+L12: `import androidx.compose.foundation.layout.fillMaxWidth`
+    Importa `androidx.compose.foundation.layout.fillMaxWidth` para usar layouts, gestos y primitivas visuales de Compose.
+L13: `import androidx.compose.foundation.layout.height`
+    Importa `androidx.compose.foundation.layout.height` para usar layouts, gestos y primitivas visuales de Compose.
+L14: `import androidx.compose.foundation.layout.size`
+    Importa `androidx.compose.foundation.layout.size` para usar layouts, gestos y primitivas visuales de Compose.
+L15: `import androidx.compose.material.icons.Icons`
+    Importa `androidx.compose.material.icons.Icons` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L16: `import androidx.compose.material.icons.filled.Download`
+    Importa `androidx.compose.material.icons.filled.Download` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L17: `import androidx.compose.material.icons.filled.Upload`
+    Importa `androidx.compose.material.icons.filled.Upload` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L18: `import androidx.compose.material3.CircularProgressIndicator`
+    Importa `androidx.compose.material3.CircularProgressIndicator` para usar componentes y tema Material 3.
+L19: `import androidx.compose.material3.Icon`
+    Importa `androidx.compose.material3.Icon` para usar componentes y tema Material 3.
+L20: `import androidx.compose.material3.OutlinedButton`
+    Importa `androidx.compose.material3.OutlinedButton` para usar componentes y tema Material 3.
+L21: `import androidx.compose.material3.Text`
+    Importa `androidx.compose.material3.Text` para usar componentes y tema Material 3.
+L22: `import androidx.compose.material3.TextButton`
+    Importa `androidx.compose.material3.TextButton` para usar componentes y tema Material 3.
+L23: `import androidx.compose.runtime.Composable`
+    Importa `androidx.compose.runtime.Composable` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+L24: `import androidx.compose.runtime.getValue`
+    Importa `androidx.compose.runtime.getValue` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+L25: `import androidx.compose.runtime.mutableStateOf`
+    Importa `androidx.compose.runtime.mutableStateOf` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+L26: `import androidx.compose.runtime.remember`
+    Importa `androidx.compose.runtime.remember` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+L27: `import androidx.compose.runtime.rememberCoroutineScope`
+    Importa `androidx.compose.runtime.rememberCoroutineScope` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+L28: `import androidx.compose.runtime.setValue`
+    Importa `androidx.compose.runtime.setValue` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+L29: `import androidx.compose.ui.Alignment`
+    Importa `androidx.compose.ui.Alignment` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L30: `import androidx.compose.ui.Modifier`
+    Importa `androidx.compose.ui.Modifier` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L31: `import androidx.compose.ui.graphics.Color`
+    Importa `androidx.compose.ui.graphics.Color` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L32: `import androidx.compose.ui.platform.LocalContext`
+    Importa `androidx.compose.ui.platform.LocalContext` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L33: `import androidx.compose.ui.res.stringResource`
+    Importa `androidx.compose.ui.res.stringResource` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L34: `import androidx.compose.ui.text.font.FontFamily`
+    Importa `androidx.compose.ui.text.font.FontFamily` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L35: `import androidx.compose.ui.text.font.FontWeight`
+    Importa `androidx.compose.ui.text.font.FontWeight` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L36: `import androidx.compose.ui.unit.dp`
+    Importa `androidx.compose.ui.unit.dp` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L37: `import androidx.compose.ui.unit.sp`
+    Importa `androidx.compose.ui.unit.sp` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L38: `import com.example.mynotes.R`
+    Importa `com.example.mynotes.R`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L39: `import com.example.mynotes.ui.components.AppAlertDialog`
+    Importa `com.example.mynotes.ui.components.AppAlertDialog`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L40: `import com.example.mynotes.data.AppDataBackupManager`
+    Importa `com.example.mynotes.data.AppDataBackupManager`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L41: `import com.example.mynotes.settings.AppSettings`
+    Importa `com.example.mynotes.settings.AppSettings`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L42: `import com.example.mynotes.ui.sound.UiActionSound`
+    Importa `com.example.mynotes.ui.sound.UiActionSound`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L43: `import com.example.mynotes.ui.sound.UiSoundPlayer`
+    Importa `com.example.mynotes.ui.sound.UiSoundPlayer`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L44: `import kotlinx.coroutines.launch`
+    Importa `kotlinx.coroutines.launch` para usar coroutines, Flow y ejecución asíncrona.
+L45: `import java.text.SimpleDateFormat`
+    Importa `java.text.SimpleDateFormat` de la biblioteca estándar/JVM para operaciones de lenguaje, fechas, colecciones, I/O o utilidades.
+L46: `import java.util.Date`
+    Importa `java.util.Date` de la biblioteca estándar/JVM para operaciones de lenguaje, fechas, colecciones, I/O o utilidades.
+L47: `import java.util.Locale`
+    Importa `java.util.Locale` de la biblioteca estándar/JVM para operaciones de lenguaje, fechas, colecciones, I/O o utilidades.
+L49: `@Composable`
+    Marca la función siguiente como Composable: Compose puede ejecutarla durante composición/recomposición para describir UI a partir de estado.
+L50: `fun BackupRestoreSection(settings: AppSettings, fontFamily: FontFamily, textColor: Color, secondaryTextColor: Color, graphicColor: Color) {`
+    Declara una función. El bloque de `BackupRestoreSection` se detalla después instrucción por instrucción.
+L51: `val context = LocalContext.current`
+    Declara `context` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `LocalContext.current`.
+L52: `val scope = rememberCoroutineScope()`
+    Declara `scope` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `rememberCoroutineScope()`.
+L53: `var busy by remember { mutableStateOf(false) }`
+    Memoriza el resultado durante recomposiciones de Compose. Solo se recalcula cuando cambian las claves de `remember`, reduciendo trabajo y preservando identidad/estado local.
+L54: `var pendingImportUri by remember { mutableStateOf<Uri?>(null) }`
+    Memoriza el resultado durante recomposiciones de Compose. Solo se recalcula cuando cambian las claves de `remember`, reduciendo trabajo y preservando identidad/estado local.
+L55: `var statusMessage by remember { mutableStateOf<String?>(null) }`
+    Memoriza el resultado durante recomposiciones de Compose. Solo se recalcula cuando cambian las claves de `remember`, reduciendo trabajo y preservando identidad/estado local.
+L56: `val exportLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.CreateDocument("application/zip")) { uri ->`
+    Declara `exportLauncher` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `rememberLauncherForActivityResult(contract = ActivityResultContracts.CreateDocument("application/zip")) { uri ->`.
+L57: `if (uri != null && !busy) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `uri != null && !busy`.
+L58: `scope.launch {`
+    Lanza una coroutine hija para ejecutar este bloque de forma asíncrona respecto al código llamador.
+L59: `busy = true`
+    Asigna/configura `busy` usando `true`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L60: `statusMessage = null`
+    Asigna/configura `statusMessage` usando `null`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L61: `val result = AppDataBackupManager.exportBackup(context = context, destination = uri, settings = settings)`
+    Declara `result` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `AppDataBackupManager.exportBackup(context = context, destination = uri, settings = settings)`.
+L62: `result.onSuccess { summary -> statusMessage = context.getString(R.string.backup_export_success, summary.noteCount,`
+    Define una rama/lambda. Cuando coincide `result.onSuccess { summary`, se ejecuta la expresión o bloque situado después de `->`.
+L63: `summary.attachmentCount)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L64: `if (summary.skippedAttachmentCount > 0) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `summary.skippedAttachmentCount > 0`.
+L65: `statusMessage += " " + context.getString(R.string.backup_export_skipped, summary.skippedAttachmentCount)`
+    Asigna/configura `statusMessage +` usando `" " + context.getString(R.string.backup_export_skipped, summary.skippedAttachmentCount)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L66: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L67: `}.onFailure { error -> statusMessage = context.getString(R.string.backup_operation_error,`
+    Define una rama/lambda. Cuando coincide `}.onFailure { error`, se ejecuta la expresión o bloque situado después de `->`.
+L68: `error.message ?: context.getString(R.string.backup_unknown_error))`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L69: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L70: `busy = false`
+    Asigna/configura `busy` usando `false`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L71: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L72: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L73: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L74: `val importLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.OpenDocument()) { uri ->`
+    Declara `importLauncher` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `rememberLauncherForActivityResult(contract = ActivityResultContracts.OpenDocument()) { uri ->`.
+L75: `if (uri != null && !busy) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `uri != null && !busy`.
+L76: `pendingImportUri = uri`
+    Asigna/configura `pendingImportUri` usando `uri`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L77: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L78: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L79: `SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(16.dp)) { panelColors -> Text(`
+    Define una rama/lambda. Cuando coincide `SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(16.dp)) { panelColors`, se ejecuta la expresión o bloque situado después de `->`.
+L80: `text = stringResource(R.string.backup_restore_title), color = panelColors.text, fontFamily = fontFamily,`
+    Obtiene una cadena localizada desde `res/values*` (`backup_restore_title`), de modo que la UI siga el idioma activo.
+L81: `fontWeight = FontWeight.Bold, fontSize = 17.sp)`
+    Asigna/configura `fontWeight` usando `FontWeight.Bold, fontSize = 17.sp)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L82: `Spacer(Modifier.height(4.dp))`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L83: `Text(text = stringResource(R.string.backup_restore_description), color = panelColors.secondaryText, fontFamily = fontFamily,`
+    Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+L84: `fontSize = 12.sp, lineHeight = 17.sp)`
+    Asigna/configura `fontSize` usando `12.sp, lineHeight = 17.sp)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L85: `Spacer(Modifier.height(14.dp))`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L86: `Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {`
+    Crea un `Row` de Compose que organiza hijos horizontalmente. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+L87: `OutlinedButton(onClick = {`
+    Asigna/configura `OutlinedButton(onClick` usando `{`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L88: `UiSoundPlayer.playAction(context = context, action = UiActionSound.Backup)`
+    Asigna/configura `UiSoundPlayer.playAction(context` usando `context, action = UiActionSound.Backup)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L89: `val stamp = SimpleDateFormat("yyyy-MM-dd_HH-mm", Locale.US).format(Date())`
+    Declara `stamp` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `SimpleDateFormat("yyyy-MM-dd_HH-mm", Locale.US).format(Date())`.
+L90: `exportLauncher.launch("MyNotes_backup_$stamp.zip")`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L91: `}, enabled = !busy, modifier = Modifier.weight(1f)) {`
+    Asigna/configura `}, enabled` usando `!busy, modifier = Modifier.weight(1f)) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L92: `Icon(imageVector = Icons.Default.Upload, contentDescription = null, modifier = Modifier.size(18.dp), tint = panelColors.text`
+    Renderiza un recurso visual. El modelo/painter y los modifiers siguientes determinan qué se muestra, tamaño, recorte y accesibilidad.
+L93: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L94: `Spacer(Modifier.size(7.dp))`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L95: `Text(text = stringResource(R.string.backup_export_button), color = panelColors.text, fontFamily = fontFamily)`
+    Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+L96: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L97: `OutlinedButton(onClick = {`
+    Asigna/configura `OutlinedButton(onClick` usando `{`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L98: `UiSoundPlayer.playAction(context = context, action = UiActionSound.Restore)`
+    Asigna/configura `UiSoundPlayer.playAction(context` usando `context, action = UiActionSound.Restore)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L99: `importLauncher.launch(arrayOf("application/zip", "application/octet-stream", "application/x-zip-compressed"))`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L100: `}, enabled = !busy, modifier = Modifier.weight(1f)) {`
+    Asigna/configura `}, enabled` usando `!busy, modifier = Modifier.weight(1f)) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L101: `Icon(imageVector = Icons.Default.Download, contentDescription = null, modifier = Modifier.size(18.dp),`
+    Renderiza un recurso visual. El modelo/painter y los modifiers siguientes determinan qué se muestra, tamaño, recorte y accesibilidad.
+L102: `tint = panelColors.text)`
+    Asigna/configura `tint` usando `panelColors.text)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L103: `Spacer(Modifier.size(7.dp))`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L104: `Text(text = stringResource(R.string.backup_import_button), color = panelColors.text, fontFamily = fontFamily)`
+    Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+L105: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L106: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L107: `if (busy) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `busy`.
+L108: `Spacer(Modifier.height(14.dp))`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L109: `Row(verticalAlignment = Alignment.CenterVertically) {`
+    Crea un `Row` de Compose que organiza hijos horizontalmente. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+L110: `CircularProgressIndicator(modifier = Modifier.size(18.dp), strokeWidth = 2.dp, color = panelColors.text)`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L111: `Spacer(Modifier.size(9.dp))`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L112: `Text(text = stringResource(R.string.backup_processing), color = panelColors.secondaryText, fontFamily = fontFamily,`
+    Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+L113: `fontSize = 12.sp)`
+    Asigna/configura `fontSize` usando `12.sp)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L114: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L115: `} else if (!statusMessage.isNullOrBlank()) {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L116: `Spacer(Modifier.height(12.dp))`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L117: `Text(text = statusMessage.orEmpty(), color = panelColors.secondaryText, fontFamily = fontFamily, fontSize = 12.sp,`
+    Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+L118: `lineHeight = 16.sp)`
+    Asigna/configura `lineHeight` usando `16.sp)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L119: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L120: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L121: `val importUri = pendingImportUri`
+    Declara `importUri` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `pendingImportUri`.
+L122: `if (importUri != null) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `importUri != null`.
+L123: `AppAlertDialog(onDismissRequest = {`
+    Muestra un diálogo modal Material; sus callbacks definen confirmar, cancelar y cierre al tocar fuera/back.
+L124: `if (!busy) pendingImportUri = null`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `!busy`.
+L125: `}, title = {`
+    Asigna/configura `}, title` usando `{`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L126: `Text(text = stringResource(R.string.backup_import_confirm_title), fontFamily = fontFamily)`
+    Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+L127: `}, text = {`
+    Asigna/configura `}, text` usando `{`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L128: `Text(text = stringResource(R.string.backup_import_confirm_message), fontFamily = fontFamily)`
+    Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+L129: `}, confirmButton = {`
+    Asigna/configura `}, confirmButton` usando `{`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L130: `TextButton(onClick = {`
+    Crea un control pulsable Material. Su callback `onClick` ejecuta la acción del usuario y sus colores/forma se derivan de la configuración.
+L131: `UiSoundPlayer.playAction(context = context, action = UiActionSound.Confirm)`
+    Asigna/configura `UiSoundPlayer.playAction(context` usando `context, action = UiActionSound.Confirm)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L132: `pendingImportUri = null`
+    Asigna/configura `pendingImportUri` usando `null`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L133: `scope.launch {`
+    Lanza una coroutine hija para ejecutar este bloque de forma asíncrona respecto al código llamador.
+L134: `busy = true`
+    Asigna/configura `busy` usando `true`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L135: `statusMessage = null`
+    Asigna/configura `statusMessage` usando `null`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L136: `val result = AppDataBackupManager.importBackup(context = context, source = importUri)`
+    Declara `result` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `AppDataBackupManager.importBackup(context = context, source = importUri)`.
+L137: `result.onSuccess { summary -> val message = context.getString(R.string.backup_import_success, summary.noteCount,`
+    Define una rama/lambda. Cuando coincide `result.onSuccess { summary`, se ejecuta la expresión o bloque situado después de `->`.
+L138: `summary.attachmentCount)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L139: `statusMessage = message`
+    Asigna/configura `statusMessage` usando `message`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L140: `Toast.makeText(context, message, Toast.LENGTH_LONG).show()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L141: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L142: `* También vuelve a leer el idioma guardado`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L143: `* por MainActivity.attachBaseContext().`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L144: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L145: `(context as? Activity)?.recreate()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L146: `}.onFailure { error -> statusMessage = context.getString(R.string.backup_operation_error,`
+    Define una rama/lambda. Cuando coincide `}.onFailure { error`, se ejecuta la expresión o bloque situado después de `->`.
+L147: `error.message ?: context.getString(R.string.backup_unknown_error))`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L148: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L149: `busy = false`
+    Asigna/configura `busy` usando `false`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L150: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L151: `}) {`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L152: `Text(stringResource(R.string.backup_import_confirm_action))`
+    Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+L153: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L154: `}, dismissButton = {`
+    Asigna/configura `}, dismissButton` usando `{`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L155: `TextButton(onClick = {`
+    Crea un control pulsable Material. Su callback `onClick` ejecuta la acción del usuario y sus colores/forma se derivan de la configuración.
+L156: `UiSoundPlayer.playAction(context = context, action = UiActionSound.Cancel)`
+    Asigna/configura `UiSoundPlayer.playAction(context` usando `context, action = UiActionSound.Cancel)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L157: `pendingImportUri = null`
+    Asigna/configura `pendingImportUri` usando `null`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L158: `}) {`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L159: `Text(stringResource(R.string.backup_cancel))`
+    Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+L160: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L161: `})`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L162: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L163: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+7. RECURSOS ANDROID REFERENCIADOS
+----------------------------------------------------------------------
+- `R.string.backup_cancel`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.backup_export_button`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.backup_export_skipped`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.backup_export_success`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.backup_import_button`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.backup_import_confirm_action`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.backup_import_confirm_message`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.backup_import_confirm_title`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.backup_import_success`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.backup_operation_error`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.backup_processing`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.backup_restore_description`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.backup_restore_title`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.backup_unknown_error`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+
+8. QUIÉN USA ESTE COMPONENTE
+----------------------------------------------------------------------
+- No se detectaron referencias externas por nombre a los tipos principales; puede ser punto de entrada Android, recurso invocado por Manifest o archivo de prueba.
+
+9. QUÉ PUEDE ROMPERSE SI LO MODIFICAS
+----------------------------------------------------------------------
+- Conservar firmas públicas/callbacks y comprobar los archivos que aparecen en “quién usa este componente” antes de renombrar o cambiar tipos.
+
+10. CHECKLIST DE PRUEBA DESPUÉS DE MODIFICAR ESTE ARCHIVO
+----------------------------------------------------------------------
+- Compilar `assembleDebug` y resolver primero errores de Kotlin/AAPT.
+- Abrir la pantalla/flujo relacionado y comprobar ida y vuelta (back) sin estado duplicado.
+- Cambiar tema/paleta y verificar contraste si este archivo dibuja UI.
+
+==============================================================================================================
+FIN DEL ARCHIVO
+==============================================================================================================

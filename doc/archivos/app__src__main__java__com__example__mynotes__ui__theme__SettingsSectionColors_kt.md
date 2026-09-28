@@ -1,38 +1,59 @@
-# SettingsSectionColors.kt — documentación del código actual
-**Ruta real:** `app/src/main/java/com/example/mynotes/ui/theme/SettingsSectionColors.kt`  **SHA-256:** `5ecc52a515728448c4813dee55972736a4bd13c563b8a3bcefabbc6009f17b57`  **Líneas:** 17 · **Bytes:** 862 · **Imports:** 2 · **Declaraciones detectadas:** 2
-> Documento generado fuera de `app/` a partir de lectura del código. El fuente es la única fuente de verdad; no se modificó para generar esta documentación.
-## 1. Responsabilidad
+# SettingsSectionColors.kt — explicación completa del código
 
-Cálculo de colores de paneles y secciones de Settings.
-## 2. Package e imports
+**Ruta:** `app/src/main/java/com/example/mynotes/ui/theme/SettingsSectionColors.kt`  
+**SHA-256:** `5ecc52a515728448c4813dee55972736a4bd13c563b8a3bcefabbc6009f17b57`  
+**Líneas:** 18  
+**Package:** `com.example.mynotes.ui.theme`
 
-Package declarado: `com.example.mynotes.ui.theme`.
+## 1. Para qué existe este archivo
 
-### Android / Jetpack / Compose
+Calcula colores de fondo/texto de secciones de Configuración con reglas de contraste.
 
-`androidx.compose.runtime.Immutable`, `androidx.compose.ui.graphics.Color`
+## 2. Tipos/clases declarados
 
-## 3. Declaraciones detectadas
+- Línea **7** — `internal data  class SettingsSectionColors`.
 
-| Línea | Tipo | Nombre | Firma/inicio |
-|---:|---|---|---|
-| 5 | `class` | `SettingsSectionColors` | `` |
-| 14 | `fun` | `settingsSectionColors` | `internal fun settingsSectionColors(background: Color, textColorMode: String): SettingsSectionColors {` |
+## 3. Estado, constantes y valores importantes
 
-## 4. Estado, efectos y límites observables
+- No se detectaron propiedades inicializadas a nivel visible que necesiten explicación separada.
 
-- No aparecen marcadores relevantes de estado/efectos de la lista auditada.
+## 4. Funciones y flujo, una por una
 
-Estas cifras son indicadores de superficie de cambio, no diagnósticos de error. Cualquier modificación debe preservar contratos de persistencia, lifecycle, límites numéricos y nulabilidad visibles en el fuente.
+### `settingsSectionColors` — líneas 14–17
 
-## 5. Dependencias internas directas
+**Firma:** `internal fun settingsSectionColors(background: Color, textColorMode: String): SettingsSectionColors`
 
-No importa directamente otros símbolos `com.example.mynotes.*`.
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
 
-## 6. Recursos Android referenciados
+**Entradas:**
+- `background: Color`
+- `textColorMode: String`
 
-No se detectaron referencias `R.*` directas.
+**Salida:** SettingsSectionColors.
 
-## 7. Puntos de revisión al modificarlo
+**Operaciones/funciones que coordina:** `SettingsSectionColors`, `resolveUiTextColor`, `resolveSecondaryUiTextColor`, `resolveUiGraphicColor`.
 
-- Conservar rangos `coerce*`, claves DataStore y compatibilidad con backups existentes.
+## 5. Cómo se conecta con el resto de MyNotes
+
+- No importa directamente otro componente `com.example.mynotes`; funciona como modelo/utilidad base o mediante APIs Android/Jetpack.
+
+## 6. Recursos Android que utiliza
+
+- No se detectaron referencias directas `R.*` en este archivo.
+
+## 7. Tecnologías y efectos relevantes
+
+- Principalmente lógica Kotlin/Compose sin I/O especial detectado por estas reglas.
+
+## 8. Lectura práctica del flujo
+
+Una forma útil de seguir este archivo en el depurador es recorrer estas operaciones en este orden aproximado:
+1. `settingsSectionColors` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+## 9. Qué no debe romperse al modificarlo
+
+- Evitar trabajo bloqueante durante composición y mantener estado estable para limitar recomposiciones.
+
+## 10. Resumen en lenguaje sencillo
+
+En términos simples: Calcula colores de fondo/texto de secciones de Configuración con reglas de contraste. La sección función por función anterior describe qué entra, qué devuelve y qué efectos produce cada operación detectada en el fuente actual.

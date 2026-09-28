@@ -1,0 +1,986 @@
+MYNOTES — EXPLICACIÓN ULTRA DETALLADA
+==============================================================================================================
+Archivo 39/72: app/src/main/java/com/example/mynotes/ui/sound/UiHapticPlayer.kt
+SHA-256: 66e3744c2bf2cfa7731bd414b9c124994343be006c19ca439962d3d3065cf018
+Líneas del fuente: 215
+Package: com.example.mynotes.ui.sound
+
+1. RESPONSABILIDAD EXACTA DEL ARCHIVO
+----------------------------------------------------------------------
+Centraliza vibraciones/hápticos de la interfaz y adapta patrones/intensidad según Android y preferencias del usuario.
+
+2. DÓNDE ENCAJA EN LA ARQUITECTURA
+----------------------------------------------------------------------
+Este archivo pertenece principalmente a la **capa de interfaz Compose/Activities**. No debe analizarse aislado: las referencias cruzadas y callbacks se detallan más abajo.
+
+3. IMPORTACIONES, UNA POR UNA
+----------------------------------------------------------------------
+- `android.content.Context`: Importa `android.content.Context` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `android.os.Build`: Importa `android.os.Build` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `android.os.SystemClock`: Importa `android.os.SystemClock` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `android.os.VibrationEffect`: Importa `android.os.VibrationEffect` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `android.os.Vibrator`: Importa `android.os.Vibrator` para usar vibración/hápticos del dispositivo.
+- `android.os.VibratorManager`: Importa `android.os.VibratorManager` para usar vibración/hápticos del dispositivo.
+- `java.util.EnumMap`: Importa `java.util.EnumMap` de la biblioteca estándar/JVM para operaciones de lenguaje, fechas, colecciones, I/O o utilidades.
+- `kotlin.math.roundToInt`: Importa `kotlin.math.roundToInt` de la biblioteca estándar/JVM para operaciones de lenguaje, fechas, colecciones, I/O o utilidades.
+
+4. DECLARACIONES Y ESTADO IMPORTANTES
+----------------------------------------------------------------------
+L19: `enum class UiHaptic {`
+    Declara un conjunto cerrado de valores posibles. El resto del código puede usar `when` exhaustivo sobre esos valores.
+L23: `object UiHapticPlayer {`
+    Declara object `UiHapticPlayer`. A partir de aquí las propiedades y funciones hasta su llave de cierre pertenecen a este tipo.
+L24: `const val DEFAULT_STYLE = "soft"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L25: `val availableStyles: List<String> = listOf("soft", "crisp", "deep", "double", "pulse", "stepped", "mechanical", "minimal", "triple",`
+    Declara `availableStyles` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `listOf("soft", "crisp", "deep", "double", "pulse", "stepped", "mechanical", "minimal", "triple",`.
+L27: `private val availableStyleSet = availableStyles.toHashSet()`
+    Declara `availableStyleSet` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `availableStyles.toHashSet()`.
+L29: `private var enabled: Boolean = true`
+    Declara `enabled` como variable mutable: el código puede reasignarla para representar estado cambiante. Parte con `true`.
+L31: `private var intensity: Float = 0.55f`
+    Declara `intensity` como variable mutable: el código puede reasignarla para representar estado cambiante. Parte con `0.55f`.
+L33: `private var style: String = DEFAULT_STYLE`
+    Declara `style` como variable mutable: el código puede reasignarla para representar estado cambiante. Parte con `DEFAULT_STYLE`.
+L34: `private val lastPlayAt = EnumMap<UiHaptic, Long>(UiHaptic::class.java)`
+    Declara `lastPlayAt` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `EnumMap<UiHaptic, Long>(UiHaptic::class.java)`.
+L63: `val haptic = when (sound) {`
+    Declara `haptic` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `when (sound) {`.
+L79: `val haptic = actionHaptics[action] ?: return`
+    Declara `haptic` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `actionHaptics[action] ?: return`.
+L87: `private val actionHaptics = EnumMap<UiActionSound, UiHaptic>(UiActionSound::class.java).apply {`
+    Declara `actionHaptics` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `EnumMap<UiActionSound, UiHaptic>(UiActionSound::class.java).apply {`.
+L118: `val now = SystemClock.uptimeMillis()`
+    Declara `now` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `SystemClock.uptimeMillis()`.
+L120: `val previous = lastPlayAt[haptic] ?: 0L`
+    Declara `previous` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `lastPlayAt[haptic] ?: 0L`.
+L130: `private data class HapticPattern(val timings: LongArray, val amplitudes: IntArray)`
+    Declara `HapticPattern` como `data class`: Kotlin genera automáticamente igualdad, hash, copia y representación textual a partir de sus propiedades del constructor.
+L135: `val vibrator = getVibrator(context) ?: return`
+    Declara `vibrator` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `getVibrator(context) ?: return`.
+L139: `val eventScale = when (haptic) {`
+    Declara `eventScale` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `when (haptic) {`.
+L149: `var pattern = basePattern(normalizeStyle(style))`
+    Declara `pattern` como variable mutable: el código puede reasignarla para representar estado cambiante. Parte con `basePattern(normalizeStyle(style))`.
+L153: `val firstAmp = pattern.amplitudes.firstOrNull { it > 0 }?: 120`
+    Busca el primer elemento que coincide; si no existe devuelve `null` en lugar de lanzar una excepción.
+L157: `val shortenedTimings = LongArray(pattern.timings.size) { index ->`
+    Declara `shortenedTimings` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `LongArray(pattern.timings.size) { index ->`.
+L162: `val scaledAmplitudes = IntArray(pattern.amplitudes.size) { index ->`
+    Declara `scaledAmplitudes` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `IntArray(pattern.amplitudes.size) { index ->`.
+L163: `val amplitude = pattern.amplitudes[index]`
+    Declara `amplitude` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `pattern.amplitudes[index]`.
+L168: `val effect = if (pattern.timings.size <= 2) {`
+    Declara `effect` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (pattern.timings.size <= 2) {`.
+L187: `private val basePatterns: Map<String, HapticPattern> = mapOf(`
+    Declara `basePatterns` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `mapOf(`.
+L205: `private val tickTimings = longArrayOf(0L, 7L)`
+    Declara `tickTimings` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `longArrayOf(0L, 7L)`.
+
+5. FUNCIONES — EXPLICACIÓN DE CADA UNA
+----------------------------------------------------------------------
+
+5.1 `normalizeStyle` — líneas 35–35
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun normalizeStyle(value: String): String = value.trim().lowercase().takeIf { it in availableStyleSet }?: DEFAULT_STYLE
+
+Propósito:
+    Implementa `normalizeStyle`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `value: String): String = value.trim().lowercase(`: el llamador proporciona este valor/callback a `normalizeStyle`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `String`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L35 [4 espacios] `fun normalizeStyle(value: String): String = value.trim().lowercase().takeIf { it in availableStyleSet }?: DEFAULT_STYLE`
+      → Declara una función. El bloque de `normalizeStyle` se detalla después instrucción por instrucción.
+
+5.2 `configure` — líneas 36–40
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun configure(enabled: Boolean, intensityPercent: Float, style: String = DEFAULT_STYLE) {
+
+Propósito:
+    Implementa `configure`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `enabled: Boolean`: el llamador proporciona este valor/callback a `configure`. Dentro del cuerpo, las líneas donde aparece `enabled` muestran exactamente cómo afecta al resultado.
+  - `intensityPercent: Float`: el llamador proporciona este valor/callback a `configure`. Dentro del cuerpo, las líneas donde aparece `intensityPercent` muestran exactamente cómo afecta al resultado.
+  - `style: String = DEFAULT_STYLE`: el llamador proporciona este valor/callback a `configure`. Dentro del cuerpo, las líneas donde aparece `style` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L36 [4 espacios] `fun configure(enabled: Boolean, intensityPercent: Float, style: String = DEFAULT_STYLE) {`
+      → Declara una función. El bloque de `configure` se detalla después instrucción por instrucción.
+  L37 [8 espacios] `this.enabled = enabled`
+      → Asigna/configura `this.enabled` usando `enabled`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L38 [8 espacios] `this.intensity = (intensityPercent / 100f).coerceIn(0f, 1f)`
+      → Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+  L39 [8 espacios] `this.style = normalizeStyle(style)`
+      → Asigna/configura `this.style` usando `normalizeStyle(style)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L40 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.3 `play` — líneas 41–46
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun play(context: Context, haptic: UiHaptic, force: Boolean = false) {
+
+Propósito:
+    Implementa `play`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `context: Context`: el llamador proporciona este valor/callback a `play`. Dentro del cuerpo, las líneas donde aparece `context` muestran exactamente cómo afecta al resultado.
+  - `haptic: UiHaptic`: el llamador proporciona este valor/callback a `play`. Dentro del cuerpo, las líneas donde aparece `haptic` muestran exactamente cómo afecta al resultado.
+  - `force: Boolean = false`: el llamador proporciona este valor/callback a `play`. Dentro del cuerpo, las líneas donde aparece `force` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L41 [4 espacios] `fun play(context: Context, haptic: UiHaptic, force: Boolean = false) {`
+      → Declara una función. El bloque de `play` se detalla después instrucción por instrucción.
+  L42 [8 espacios] `if ((!enabled && !force) || intensity <= 0f) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `(!enabled && !force) || intensity <= 0f`.
+  L43 [12 espacios] `return`
+      → Finaliza inmediatamente la función actual sin devolver un valor adicional (`Unit`).
+  L44 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L45 [8 espacios] `vibrate(context = context, haptic = haptic, style = style, intensity = intensity)`
+      → Asigna/configura `vibrate(context` usando `context, haptic = haptic, style = style, intensity = intensity)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L46 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.4 `playThrottled` — líneas 47–55
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun playThrottled(context: Context, haptic: UiHaptic, minimumIntervalMs: Long = 45L, force: Boolean = false) {
+
+Propósito:
+    Implementa `playThrottled`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `context: Context`: el llamador proporciona este valor/callback a `playThrottled`. Dentro del cuerpo, las líneas donde aparece `context` muestran exactamente cómo afecta al resultado.
+  - `haptic: UiHaptic`: el llamador proporciona este valor/callback a `playThrottled`. Dentro del cuerpo, las líneas donde aparece `haptic` muestran exactamente cómo afecta al resultado.
+  - `minimumIntervalMs: Long = 45L`: el llamador proporciona este valor/callback a `playThrottled`. Dentro del cuerpo, las líneas donde aparece `minimumIntervalMs` muestran exactamente cómo afecta al resultado.
+  - `force: Boolean = false`: el llamador proporciona este valor/callback a `playThrottled`. Dentro del cuerpo, las líneas donde aparece `force` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L47 [4 espacios] `fun playThrottled(context: Context, haptic: UiHaptic, minimumIntervalMs: Long = 45L, force: Boolean = false) {`
+      → Declara una función. El bloque de `playThrottled` se detalla después instrucción por instrucción.
+  L48 [8 espacios] `if ((!enabled && !force) || intensity <= 0f) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `(!enabled && !force) || intensity <= 0f`.
+  L49 [12 espacios] `return`
+      → Finaliza inmediatamente la función actual sin devolver un valor adicional (`Unit`).
+  L50 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L51 [8 espacios] `if (!acquireThrottleSlot(haptic = haptic, minimumIntervalMs = minimumIntervalMs)) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `!acquireThrottleSlot(haptic = haptic, minimumIntervalMs = minimumIntervalMs)`.
+  L52 [12 espacios] `return`
+      → Finaliza inmediatamente la función actual sin devolver un valor adicional (`Unit`).
+  L53 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L54 [8 espacios] `play(context = context, haptic = haptic, force = force)`
+      → Asigna/configura `play(context` usando `context, haptic = haptic, force = force)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L55 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.5 `playToggle` — líneas 56–58
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun playToggle(context: Context, checked: Boolean, force: Boolean = false) {
+
+Propósito:
+    Implementa `playToggle`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `context: Context`: el llamador proporciona este valor/callback a `playToggle`. Dentro del cuerpo, las líneas donde aparece `context` muestran exactamente cómo afecta al resultado.
+  - `checked: Boolean`: el llamador proporciona este valor/callback a `playToggle`. Dentro del cuerpo, las líneas donde aparece `checked` muestran exactamente cómo afecta al resultado.
+  - `force: Boolean = false`: el llamador proporciona este valor/callback a `playToggle`. Dentro del cuerpo, las líneas donde aparece `force` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L56 [4 espacios] `fun playToggle(context: Context, checked: Boolean, force: Boolean = false) {`
+      → Declara una función. El bloque de `playToggle` se detalla después instrucción por instrucción.
+  L57 [8 espacios] `play(context = context, haptic = if (checked) UiHaptic.ToggleOn else UiHaptic.ToggleOff, force = force)`
+      → Asigna/configura `play(context` usando `context, haptic = if (checked) UiHaptic.ToggleOn else UiHaptic.ToggleOff, force = force)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L58 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.6 `previewStyle` — líneas 59–61
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun previewStyle(context: Context, style: String, intensityPercent: Float = 55f, haptic: UiHaptic = UiHaptic.Confirm) {
+
+Propósito:
+    Implementa `previewStyle`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `context: Context`: el llamador proporciona este valor/callback a `previewStyle`. Dentro del cuerpo, las líneas donde aparece `context` muestran exactamente cómo afecta al resultado.
+  - `style: String`: el llamador proporciona este valor/callback a `previewStyle`. Dentro del cuerpo, las líneas donde aparece `style` muestran exactamente cómo afecta al resultado.
+  - `intensityPercent: Float = 55f`: el llamador proporciona este valor/callback a `previewStyle`. Dentro del cuerpo, las líneas donde aparece `intensityPercent` muestran exactamente cómo afecta al resultado.
+  - `haptic: UiHaptic = UiHaptic.Confirm`: el llamador proporciona este valor/callback a `previewStyle`. Dentro del cuerpo, las líneas donde aparece `haptic` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L59 [4 espacios] `fun previewStyle(context: Context, style: String, intensityPercent: Float = 55f, haptic: UiHaptic = UiHaptic.Confirm) {`
+      → Declara una función. El bloque de `previewStyle` se detalla después instrucción por instrucción.
+  L60 [8 espacios] `vibrate(context = context, haptic = haptic, style = normalizeStyle(style), intensity = (intensityPercent / 100f).coerceIn(0f, 1f))`
+      → Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+  L61 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.7 `playForSound` — líneas 62–76
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun playForSound(context: Context, sound: UiSound, throttled: Boolean = false, minimumIntervalMs: Long = 45L) {
+
+Propósito:
+    Implementa `playForSound`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `context: Context`: el llamador proporciona este valor/callback a `playForSound`. Dentro del cuerpo, las líneas donde aparece `context` muestran exactamente cómo afecta al resultado.
+  - `sound: UiSound`: el llamador proporciona este valor/callback a `playForSound`. Dentro del cuerpo, las líneas donde aparece `sound` muestran exactamente cómo afecta al resultado.
+  - `throttled: Boolean = false`: el llamador proporciona este valor/callback a `playForSound`. Dentro del cuerpo, las líneas donde aparece `throttled` muestran exactamente cómo afecta al resultado.
+  - `minimumIntervalMs: Long = 45L`: el llamador proporciona este valor/callback a `playForSound`. Dentro del cuerpo, las líneas donde aparece `minimumIntervalMs` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L62 [4 espacios] `fun playForSound(context: Context, sound: UiSound, throttled: Boolean = false, minimumIntervalMs: Long = 45L) {`
+      → Declara una función. El bloque de `playForSound` se detalla después instrucción por instrucción.
+  L63 [8 espacios] `val haptic = when (sound) {`
+      → Declara `haptic` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `when (sound) {`.
+  L64 [16 espacios] `UiSound.Edit -> UiHaptic.Tap`
+      → Define una rama/lambda. Cuando coincide `UiSound.Edit`, se ejecuta la expresión o bloque situado después de `->`.
+  L65 [16 espacios] `UiSound.Delete -> UiHaptic.Warning`
+      → Define una rama/lambda. Cuando coincide `UiSound.Delete`, se ejecuta la expresión o bloque situado después de `->`.
+  L66 [16 espacios] `UiSound.Priority -> UiHaptic.Selection`
+      → Define una rama/lambda. Cuando coincide `UiSound.Priority`, se ejecuta la expresión o bloque situado después de `->`.
+  L67 [16 espacios] `UiSound.SliderTick -> UiHaptic.Tick`
+      → Define una rama/lambda. Cuando coincide `UiSound.SliderTick`, se ejecuta la expresión o bloque situado después de `->`.
+  L68 [16 espacios] `UiSound.Attachment -> UiHaptic.Attachment`
+      → Define una rama/lambda. Cuando coincide `UiSound.Attachment`, se ejecuta la expresión o bloque situado después de `->`.
+  L69 [16 espacios] `UiSound.Toggle -> UiHaptic.Selection`
+      → Define una rama/lambda. Cuando coincide `UiSound.Toggle`, se ejecuta la expresión o bloque situado después de `->`.
+  L70 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L71 [8 espacios] `if (throttled) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `throttled`.
+  L72 [12 espacios] `playThrottled(context = context, haptic = haptic, minimumIntervalMs = minimumIntervalMs)`
+      → Asigna/configura `playThrottled(context` usando `context, haptic = haptic, minimumIntervalMs = minimumIntervalMs)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L73 [8 espacios] `} else {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L74 [12 espacios] `play(context = context, haptic = haptic)`
+      → Asigna/configura `play(context` usando `context, haptic = haptic)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L75 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L76 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.8 `playForAction` — líneas 77–85
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun playForAction(context: Context, action: UiActionSound, throttled: Boolean = false, minimumIntervalMs: Long = 45L) {
+
+Propósito:
+    Implementa `playForAction`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `context: Context`: el llamador proporciona este valor/callback a `playForAction`. Dentro del cuerpo, las líneas donde aparece `context` muestran exactamente cómo afecta al resultado.
+  - `action: UiActionSound`: el llamador proporciona este valor/callback a `playForAction`. Dentro del cuerpo, las líneas donde aparece `action` muestran exactamente cómo afecta al resultado.
+  - `throttled: Boolean = false`: el llamador proporciona este valor/callback a `playForAction`. Dentro del cuerpo, las líneas donde aparece `throttled` muestran exactamente cómo afecta al resultado.
+  - `minimumIntervalMs: Long = 45L`: el llamador proporciona este valor/callback a `playForAction`. Dentro del cuerpo, las líneas donde aparece `minimumIntervalMs` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L77 [4 espacios] `fun playForAction(context: Context, action: UiActionSound, throttled: Boolean = false, minimumIntervalMs: Long = 45L) {`
+      → Declara una función. El bloque de `playForAction` se detalla después instrucción por instrucción.
+  L78 [8 espacios] `// El mapeo acción -> háptico es constante y se crea una sola vez.`
+      → Comentario del autor. No se ejecuta; documenta la intención o una restricción del bloque siguiente.
+  L79 [8 espacios] `val haptic = actionHaptics[action] ?: return`
+      → Declara `haptic` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `actionHaptics[action] ?: return`.
+  L80 [8 espacios] `if (throttled) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `throttled`.
+  L81 [12 espacios] `playThrottled(context = context, haptic = haptic, minimumIntervalMs = minimumIntervalMs)`
+      → Asigna/configura `playThrottled(context` usando `context, haptic = haptic, minimumIntervalMs = minimumIntervalMs)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L82 [8 espacios] `} else {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L83 [12 espacios] `play(context = context, haptic = haptic)`
+      → Asigna/configura `play(context` usando `context, haptic = haptic)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L84 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L85 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.9 `acquireThrottleSlot` — líneas 117–128
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        private fun acquireThrottleSlot(haptic: UiHaptic, minimumIntervalMs: Long): Boolean {
+
+Propósito:
+    Implementa `acquireThrottleSlot`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `haptic: UiHaptic`: el llamador proporciona este valor/callback a `acquireThrottleSlot`. Dentro del cuerpo, las líneas donde aparece `haptic` muestran exactamente cómo afecta al resultado.
+  - `minimumIntervalMs: Long`: el llamador proporciona este valor/callback a `acquireThrottleSlot`. Dentro del cuerpo, las líneas donde aparece `minimumIntervalMs` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Boolean`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L117 [4 espacios] `private fun acquireThrottleSlot(haptic: UiHaptic, minimumIntervalMs: Long): Boolean {`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `acquireThrottleSlot` se detalla después instrucción por instrucción.
+  L118 [8 espacios] `val now = SystemClock.uptimeMillis()`
+      → Declara `now` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `SystemClock.uptimeMillis()`.
+  L119 [8 espacios] `return synchronized(lastPlayAt) {`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L120 [12 espacios] `val previous = lastPlayAt[haptic] ?: 0L`
+      → Declara `previous` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `lastPlayAt[haptic] ?: 0L`.
+  L121 [12 espacios] `if (now - previous < minimumIntervalMs) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `now - previous < minimumIntervalMs`.
+  L122 [16 espacios] `false`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `false`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L123 [12 espacios] `} else {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L124 [16 espacios] `lastPlayAt[haptic] = now`
+      → Asigna/configura `lastPlayAt[haptic]` usando `now`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L125 [16 espacios] `true`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `true`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L126 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L127 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L128 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.10 `vibrate` — líneas 131–182
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        private fun vibrate(context: Context, haptic: UiHaptic, style: String, intensity: Float) {
+
+Propósito:
+    Implementa `vibrate`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `context: Context`: el llamador proporciona este valor/callback a `vibrate`. Dentro del cuerpo, las líneas donde aparece `context` muestran exactamente cómo afecta al resultado.
+  - `haptic: UiHaptic`: el llamador proporciona este valor/callback a `vibrate`. Dentro del cuerpo, las líneas donde aparece `haptic` muestran exactamente cómo afecta al resultado.
+  - `style: String`: el llamador proporciona este valor/callback a `vibrate`. Dentro del cuerpo, las líneas donde aparece `style` muestran exactamente cómo afecta al resultado.
+  - `intensity: Float`: el llamador proporciona este valor/callback a `vibrate`. Dentro del cuerpo, las líneas donde aparece `intensity` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L131 [4 espacios] `private fun vibrate(context: Context, haptic: UiHaptic, style: String, intensity: Float) {`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `vibrate` se detalla después instrucción por instrucción.
+  L132 [8 espacios] `if (intensity <= 0f) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `intensity <= 0f`.
+  L133 [12 espacios] `return`
+      → Finaliza inmediatamente la función actual sin devolver un valor adicional (`Unit`).
+  L134 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L135 [8 espacios] `val vibrator = getVibrator(context) ?: return`
+      → Declara `vibrator` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `getVibrator(context) ?: return`.
+  L136 [8 espacios] `if (!vibrator.hasVibrator()) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `!vibrator.hasVibrator()`.
+  L137 [12 espacios] `return`
+      → Finaliza inmediatamente la función actual sin devolver un valor adicional (`Unit`).
+  L138 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L139 [8 espacios] `val eventScale = when (haptic) {`
+      → Declara `eventScale` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `when (haptic) {`.
+  L140 [16 espacios] `UiHaptic.Tick -> 0.46f`
+      → Define una rama/lambda. Cuando coincide `UiHaptic.Tick`, se ejecuta la expresión o bloque situado después de `->`.
+  L141 [16 espacios] `UiHaptic.Selection -> 0.68f`
+      → Define una rama/lambda. Cuando coincide `UiHaptic.Selection`, se ejecuta la expresión o bloque situado después de `->`.
+  L142 [16 espacios] `UiHaptic.Tap -> 0.76f`
+      → Define una rama/lambda. Cuando coincide `UiHaptic.Tap`, se ejecuta la expresión o bloque situado después de `->`.
+  L143 [16 espacios] `UiHaptic.ToggleOn -> 0.82f`
+      → Define una rama/lambda. Cuando coincide `UiHaptic.ToggleOn`, se ejecuta la expresión o bloque situado después de `->`.
+  L144 [16 espacios] `UiHaptic.ToggleOff -> 0.64f`
+      → Define una rama/lambda. Cuando coincide `UiHaptic.ToggleOff`, se ejecuta la expresión o bloque situado después de `->`.
+  L145 [16 espacios] `UiHaptic.Attachment -> 0.88f`
+      → Define una rama/lambda. Cuando coincide `UiHaptic.Attachment`, se ejecuta la expresión o bloque situado después de `->`.
+  L146 [16 espacios] `UiHaptic.Confirm -> 0.96f`
+      → Define una rama/lambda. Cuando coincide `UiHaptic.Confirm`, se ejecuta la expresión o bloque situado después de `->`.
+  L147 [16 espacios] `UiHaptic.Warning -> 1.00f`
+      → Define una rama/lambda. Cuando coincide `UiHaptic.Warning`, se ejecuta la expresión o bloque situado después de `->`.
+  L148 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L149 [8 espacios] `var pattern = basePattern(normalizeStyle(style))`
+      → Declara `pattern` como variable mutable: el código puede reasignarla para representar estado cambiante. Parte con `basePattern(normalizeStyle(style))`.
+  L150 [8 espacios] `// Sliders y movimientos de cursor deben sentirse como ticks cortos,`
+      → Comentario del autor. No se ejecuta; documenta la intención o una restricción del bloque siguiente.
+  L151 [8 espacios] `// incluso cuando el usuario eligió un estilo con varios pulsos.`
+      → Comentario del autor. No se ejecuta; documenta la intención o una restricción del bloque siguiente.
+  L152 [8 espacios] `if (haptic == UiHaptic.Tick) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `haptic == UiHaptic.Tick`.
+  L153 [12 espacios] `val firstAmp = pattern.amplitudes.firstOrNull { it > 0 }?: 120`
+      → Busca el primer elemento que coincide; si no existe devuelve `null` en lugar de lanzar una excepción.
+  L154 [12 espacios] `pattern = HapticPattern(timings = tickTimings, amplitudes = intArrayOf(0, firstAmp))`
+      → Asigna/configura `pattern` usando `HapticPattern(timings = tickTimings, amplitudes = intArrayOf(0, firstAmp))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L155 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L156 [8 espacios] `if (haptic == UiHaptic.ToggleOff) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `haptic == UiHaptic.ToggleOff`.
+  L157 [12 espacios] `val shortenedTimings = LongArray(pattern.timings.size) { index ->`
+      → Declara `shortenedTimings` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `LongArray(pattern.timings.size) { index ->`.
+  L158 [16 espacios] `(pattern.timings[index] * 0.85f).roundToInt().coerceAtLeast(1).toLong()`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L159 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L160 [12 espacios] `pattern = HapticPattern(timings = shortenedTimings, amplitudes = pattern.amplitudes)`
+      → Asigna/configura `pattern` usando `HapticPattern(timings = shortenedTimings, amplitudes = pattern.amplitudes)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L161 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L162 [8 espacios] `val scaledAmplitudes = IntArray(pattern.amplitudes.size) { index ->`
+      → Declara `scaledAmplitudes` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `IntArray(pattern.amplitudes.size) { index ->`.
+  L163 [12 espacios] `val amplitude = pattern.amplitudes[index]`
+      → Declara `amplitude` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `pattern.amplitudes[index]`.
+  L164 [12 espacios] `if (amplitude == 0) 0 else (amplitude * intensity * eventScale).roundToInt().coerceIn(1, 255)`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `amplitude == 0) 0 else (amplitude * intensity * eventScale).roundToInt().coerceIn(1, 255`.
+  L165 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L166 [8 espacios] `try {`
+      → Abre un bloque protegido: si una operación lanza una excepción, el control puede pasar al `catch` correspondiente sin terminar abruptamente el flujo.
+  L167 [12 espacios] `if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `Build.VERSION.SDK_INT >= Build.VERSION_CODES.O`.
+  L168 [16 espacios] `val effect = if (pattern.timings.size <= 2) {`
+      → Declara `effect` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (pattern.timings.size <= 2) {`.
+  L169 [24 espacios] `VibrationEffect.createOneShot(pattern.timings.lastOrNull()?.coerceAtLeast(1L) ?: 8L,`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `VibrationEffect.createOneShot(pattern.timings.lastOrNull()?.coerceAtLeast(1L) ?: 8L,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L170 [28 espacios] `scaledAmplitudes.lastOrNull()?.coerceIn(1, 255)?: VibrationEffect.DEFAULT_AMPLITUDE)`
+      → Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+  L171 [20 espacios] `} else {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L172 [24 espacios] `VibrationEffect.createWaveform(pattern.timings, scaledAmplitudes, -1)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L173 [20 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L174 [16 espacios] `vibrator.vibrate(effect)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L175 [12 espacios] `} else {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L176 [16 espacios] `@Suppress("DEPRECATION")`
+      → Aplica la anotación `@Suppress("DEPRECATION")` a la declaración siguiente; la anotación modifica metadatos, generación de código o comportamiento del framework.
+  L177 [16 espacios] `vibrator.vibrate(pattern.timings.sum().coerceIn(5L, 90L))`
+      → Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+  L178 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L179 [8 espacios] `} catch (_: SecurityException) {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L180 [12 espacios] `// No se fuerza feedback si el fabricante bloquea la vibración.`
+      → Comentario del autor. No se ejecuta; documenta la intención o una restricción del bloque siguiente.
+  L181 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L182 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.11 `basePattern` — líneas 207–207
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        private fun basePattern(style: String): HapticPattern = basePatterns[style] ?: basePatterns.getValue(DEFAULT_STYLE)
+
+Propósito:
+    Implementa `basePattern`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `style: String): HapticPattern = basePatterns[style] ?: basePatterns.getValue(DEFAULT_STYLE`: el llamador proporciona este valor/callback a `basePattern`. Dentro del cuerpo, las líneas donde aparece `style` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `HapticPattern`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L207 [4 espacios] `private fun basePattern(style: String): HapticPattern = basePatterns[style] ?: basePatterns.getValue(DEFAULT_STYLE)`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `basePattern` se detalla después instrucción por instrucción.
+
+5.12 `getVibrator` — líneas 209–214
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        private fun getVibrator(context: Context): Vibrator? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {
+
+Propósito:
+    Obtiene/carga el dato indicado por el nombre de la función, aplicando los fallbacks y transformaciones visibles en su cuerpo.
+
+Parámetros/entradas:
+  - `context: Context): Vibrator? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S`: el llamador proporciona este valor/callback a `getVibrator`. Dentro del cuerpo, las líneas donde aparece `context` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Vibrator?`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L209 [4 espacios] `private fun getVibrator(context: Context): Vibrator? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `getVibrator` se detalla después instrucción por instrucción.
+  L210 [12 espacios] `context.getSystemService(VibratorManager::class.java)?.defaultVibrator`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `context.getSystemService(VibratorManager::class.java)?.defaultVibrator`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L211 [8 espacios] `} else {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L212 [12 espacios] `@Suppress("DEPRECATION")`
+      → Aplica la anotación `@Suppress("DEPRECATION")` a la declaración siguiente; la anotación modifica metadatos, generación de código o comportamiento del framework.
+  L213 [12 espacios] `context.getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `context.getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L214 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+6. EXPLICACIÓN COMPLETA LÍNEA POR LÍNEA
+----------------------------------------------------------------------
+Esta sección no omite líneas ejecutables. Repite incluso partes ya explicadas en funciones para poder leer el archivo de arriba abajo sin saltar entre secciones.
+L1: `package com.example.mynotes.ui.sound`
+    Declara que este archivo pertenece al package `com.example.mynotes.ui.sound`; esto determina su namespace Kotlin y cómo lo importan otros archivos.
+L3: `import android.content.Context`
+    Importa `android.content.Context` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L4: `import android.os.Build`
+    Importa `android.os.Build` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L5: `import android.os.SystemClock`
+    Importa `android.os.SystemClock` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L6: `import android.os.VibrationEffect`
+    Importa `android.os.VibrationEffect` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L7: `import android.os.Vibrator`
+    Importa `android.os.Vibrator` para usar vibración/hápticos del dispositivo.
+L8: `import android.os.VibratorManager`
+    Importa `android.os.VibratorManager` para usar vibración/hápticos del dispositivo.
+L9: `import java.util.EnumMap`
+    Importa `java.util.EnumMap` de la biblioteca estándar/JVM para operaciones de lenguaje, fechas, colecciones, I/O o utilidades.
+L10: `import kotlin.math.roundToInt`
+    Importa `kotlin.math.roundToInt` de la biblioteca estándar/JVM para operaciones de lenguaje, fechas, colecciones, I/O o utilidades.
+L12: `/**`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L13: `* Motor centralizado de respuesta háptica para la interfaz.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L14: `*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L15: `* Los estilos se generan con patrones cortos de vibración. La intensidad se`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L16: `* controla desde Configuración y cada acción ajusta ligeramente la fuerza para`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L17: `* que un slider no se sienta igual que borrar, guardar o confirmar.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L18: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L19: `enum class UiHaptic {`
+    Declara un conjunto cerrado de valores posibles. El resto del código puede usar `when` exhaustivo sobre esos valores.
+L20: `Tap, Tick, ToggleOn, ToggleOff, Confirm, Warning, Attachment, Selection`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `Tap, Tick, ToggleOn, ToggleOff, Confirm, Warning, Attachment, Selection`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L21: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L23: `object UiHapticPlayer {`
+    Declara object `UiHapticPlayer`. A partir de aquí las propiedades y funciones hasta su llave de cierre pertenecen a este tipo.
+L24: `const val DEFAULT_STYLE = "soft"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L25: `val availableStyles: List<String> = listOf("soft", "crisp", "deep", "double", "pulse", "stepped", "mechanical", "minimal", "triple",`
+    Declara `availableStyles` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `listOf("soft", "crisp", "deep", "double", "pulse", "stepped", "mechanical", "minimal", "triple",`.
+L26: `"ripple", "heartbeat", "snap", "wave", "heavy", "spring", "echo")`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L27: `private val availableStyleSet = availableStyles.toHashSet()`
+    Declara `availableStyleSet` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `availableStyles.toHashSet()`.
+L28: `@Volatile`
+    Aplica la anotación `@Volatile` a la declaración siguiente; la anotación modifica metadatos, generación de código o comportamiento del framework.
+L29: `private var enabled: Boolean = true`
+    Declara `enabled` como variable mutable: el código puede reasignarla para representar estado cambiante. Parte con `true`.
+L30: `@Volatile`
+    Aplica la anotación `@Volatile` a la declaración siguiente; la anotación modifica metadatos, generación de código o comportamiento del framework.
+L31: `private var intensity: Float = 0.55f`
+    Declara `intensity` como variable mutable: el código puede reasignarla para representar estado cambiante. Parte con `0.55f`.
+L32: `@Volatile`
+    Aplica la anotación `@Volatile` a la declaración siguiente; la anotación modifica metadatos, generación de código o comportamiento del framework.
+L33: `private var style: String = DEFAULT_STYLE`
+    Declara `style` como variable mutable: el código puede reasignarla para representar estado cambiante. Parte con `DEFAULT_STYLE`.
+L34: `private val lastPlayAt = EnumMap<UiHaptic, Long>(UiHaptic::class.java)`
+    Declara `lastPlayAt` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `EnumMap<UiHaptic, Long>(UiHaptic::class.java)`.
+L35: `fun normalizeStyle(value: String): String = value.trim().lowercase().takeIf { it in availableStyleSet }?: DEFAULT_STYLE`
+    Declara una función. El bloque de `normalizeStyle` se detalla después instrucción por instrucción.
+L36: `fun configure(enabled: Boolean, intensityPercent: Float, style: String = DEFAULT_STYLE) {`
+    Declara una función. El bloque de `configure` se detalla después instrucción por instrucción.
+L37: `this.enabled = enabled`
+    Asigna/configura `this.enabled` usando `enabled`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L38: `this.intensity = (intensityPercent / 100f).coerceIn(0f, 1f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L39: `this.style = normalizeStyle(style)`
+    Asigna/configura `this.style` usando `normalizeStyle(style)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L40: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L41: `fun play(context: Context, haptic: UiHaptic, force: Boolean = false) {`
+    Declara una función. El bloque de `play` se detalla después instrucción por instrucción.
+L42: `if ((!enabled && !force) || intensity <= 0f) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `(!enabled && !force) || intensity <= 0f`.
+L43: `return`
+    Finaliza inmediatamente la función actual sin devolver un valor adicional (`Unit`).
+L44: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L45: `vibrate(context = context, haptic = haptic, style = style, intensity = intensity)`
+    Asigna/configura `vibrate(context` usando `context, haptic = haptic, style = style, intensity = intensity)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L46: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L47: `fun playThrottled(context: Context, haptic: UiHaptic, minimumIntervalMs: Long = 45L, force: Boolean = false) {`
+    Declara una función. El bloque de `playThrottled` se detalla después instrucción por instrucción.
+L48: `if ((!enabled && !force) || intensity <= 0f) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `(!enabled && !force) || intensity <= 0f`.
+L49: `return`
+    Finaliza inmediatamente la función actual sin devolver un valor adicional (`Unit`).
+L50: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L51: `if (!acquireThrottleSlot(haptic = haptic, minimumIntervalMs = minimumIntervalMs)) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `!acquireThrottleSlot(haptic = haptic, minimumIntervalMs = minimumIntervalMs)`.
+L52: `return`
+    Finaliza inmediatamente la función actual sin devolver un valor adicional (`Unit`).
+L53: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L54: `play(context = context, haptic = haptic, force = force)`
+    Asigna/configura `play(context` usando `context, haptic = haptic, force = force)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L55: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L56: `fun playToggle(context: Context, checked: Boolean, force: Boolean = false) {`
+    Declara una función. El bloque de `playToggle` se detalla después instrucción por instrucción.
+L57: `play(context = context, haptic = if (checked) UiHaptic.ToggleOn else UiHaptic.ToggleOff, force = force)`
+    Asigna/configura `play(context` usando `context, haptic = if (checked) UiHaptic.ToggleOn else UiHaptic.ToggleOff, force = force)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L58: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L59: `fun previewStyle(context: Context, style: String, intensityPercent: Float = 55f, haptic: UiHaptic = UiHaptic.Confirm) {`
+    Declara una función. El bloque de `previewStyle` se detalla después instrucción por instrucción.
+L60: `vibrate(context = context, haptic = haptic, style = normalizeStyle(style), intensity = (intensityPercent / 100f).coerceIn(0f, 1f))`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L61: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L62: `fun playForSound(context: Context, sound: UiSound, throttled: Boolean = false, minimumIntervalMs: Long = 45L) {`
+    Declara una función. El bloque de `playForSound` se detalla después instrucción por instrucción.
+L63: `val haptic = when (sound) {`
+    Declara `haptic` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `when (sound) {`.
+L64: `UiSound.Edit -> UiHaptic.Tap`
+    Define una rama/lambda. Cuando coincide `UiSound.Edit`, se ejecuta la expresión o bloque situado después de `->`.
+L65: `UiSound.Delete -> UiHaptic.Warning`
+    Define una rama/lambda. Cuando coincide `UiSound.Delete`, se ejecuta la expresión o bloque situado después de `->`.
+L66: `UiSound.Priority -> UiHaptic.Selection`
+    Define una rama/lambda. Cuando coincide `UiSound.Priority`, se ejecuta la expresión o bloque situado después de `->`.
+L67: `UiSound.SliderTick -> UiHaptic.Tick`
+    Define una rama/lambda. Cuando coincide `UiSound.SliderTick`, se ejecuta la expresión o bloque situado después de `->`.
+L68: `UiSound.Attachment -> UiHaptic.Attachment`
+    Define una rama/lambda. Cuando coincide `UiSound.Attachment`, se ejecuta la expresión o bloque situado después de `->`.
+L69: `UiSound.Toggle -> UiHaptic.Selection`
+    Define una rama/lambda. Cuando coincide `UiSound.Toggle`, se ejecuta la expresión o bloque situado después de `->`.
+L70: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L71: `if (throttled) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `throttled`.
+L72: `playThrottled(context = context, haptic = haptic, minimumIntervalMs = minimumIntervalMs)`
+    Asigna/configura `playThrottled(context` usando `context, haptic = haptic, minimumIntervalMs = minimumIntervalMs)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L73: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L74: `play(context = context, haptic = haptic)`
+    Asigna/configura `play(context` usando `context, haptic = haptic)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L75: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L76: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L77: `fun playForAction(context: Context, action: UiActionSound, throttled: Boolean = false, minimumIntervalMs: Long = 45L) {`
+    Declara una función. El bloque de `playForAction` se detalla después instrucción por instrucción.
+L78: `// El mapeo acción -> háptico es constante y se crea una sola vez.`
+    Comentario del autor. No se ejecuta; documenta la intención o una restricción del bloque siguiente.
+L79: `val haptic = actionHaptics[action] ?: return`
+    Declara `haptic` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `actionHaptics[action] ?: return`.
+L80: `if (throttled) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `throttled`.
+L81: `playThrottled(context = context, haptic = haptic, minimumIntervalMs = minimumIntervalMs)`
+    Asigna/configura `playThrottled(context` usando `context, haptic = haptic, minimumIntervalMs = minimumIntervalMs)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L82: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L83: `play(context = context, haptic = haptic)`
+    Asigna/configura `play(context` usando `context, haptic = haptic)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L84: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L85: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L87: `private val actionHaptics = EnumMap<UiActionSound, UiHaptic>(UiActionSound::class.java).apply {`
+    Declara `actionHaptics` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `EnumMap<UiActionSound, UiHaptic>(UiActionSound::class.java).apply {`.
+L88: `put(UiActionSound.Open, UiHaptic.Tap)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L89: `put(UiActionSound.Back, UiHaptic.Selection)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L90: `put(UiActionSound.Save, UiHaptic.Confirm)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L91: `put(UiActionSound.Search, UiHaptic.Tick)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L92: `// TextInput se omite deliberadamente: escribir caracteres no vibra.`
+    Comentario del autor. No se ejecuta; documenta la intención o una restricción del bloque siguiente.
+L93: `put(UiActionSound.Menu, UiHaptic.Selection)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L94: `put(UiActionSound.Select, UiHaptic.Selection)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L95: `put(UiActionSound.Favorite, UiHaptic.Confirm)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L96: `put(UiActionSound.Pin, UiHaptic.Selection)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L97: `put(UiActionSound.Share, UiHaptic.Tap)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L98: `put(UiActionSound.Move, UiHaptic.Selection)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L99: `put(UiActionSound.Color, UiHaptic.Selection)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L100: `put(UiActionSound.Category, UiHaptic.Selection)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L101: `put(UiActionSound.Add, UiHaptic.Attachment)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L102: `put(UiActionSound.Confirm, UiHaptic.Confirm)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L103: `put(UiActionSound.Cancel, UiHaptic.Selection)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L104: `put(UiActionSound.Navigation, UiHaptic.Selection)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L105: `put(UiActionSound.Sort, UiHaptic.Tick)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L106: `put(UiActionSound.Layout, UiHaptic.Selection)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L107: `put(UiActionSound.Language, UiHaptic.Selection)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L108: `put(UiActionSound.Theme, UiHaptic.Selection)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L109: `put(UiActionSound.Link, UiHaptic.Tap)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L110: `put(UiActionSound.PlayPause, UiHaptic.Selection)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L111: `put(UiActionSound.Zoom, UiHaptic.Tick)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L112: `put(UiActionSound.Backup, UiHaptic.Attachment)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L113: `put(UiActionSound.Restore, UiHaptic.Confirm)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L114: `put(UiActionSound.Settings, UiHaptic.Selection)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L115: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L117: `private fun acquireThrottleSlot(haptic: UiHaptic, minimumIntervalMs: Long): Boolean {`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `acquireThrottleSlot` se detalla después instrucción por instrucción.
+L118: `val now = SystemClock.uptimeMillis()`
+    Declara `now` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `SystemClock.uptimeMillis()`.
+L119: `return synchronized(lastPlayAt) {`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L120: `val previous = lastPlayAt[haptic] ?: 0L`
+    Declara `previous` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `lastPlayAt[haptic] ?: 0L`.
+L121: `if (now - previous < minimumIntervalMs) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `now - previous < minimumIntervalMs`.
+L122: `false`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `false`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L123: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L124: `lastPlayAt[haptic] = now`
+    Asigna/configura `lastPlayAt[haptic]` usando `now`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L125: `true`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `true`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L126: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L127: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L128: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L130: `private data class HapticPattern(val timings: LongArray, val amplitudes: IntArray)`
+    Declara `HapticPattern` como `data class`: Kotlin genera automáticamente igualdad, hash, copia y representación textual a partir de sus propiedades del constructor.
+L131: `private fun vibrate(context: Context, haptic: UiHaptic, style: String, intensity: Float) {`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `vibrate` se detalla después instrucción por instrucción.
+L132: `if (intensity <= 0f) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `intensity <= 0f`.
+L133: `return`
+    Finaliza inmediatamente la función actual sin devolver un valor adicional (`Unit`).
+L134: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L135: `val vibrator = getVibrator(context) ?: return`
+    Declara `vibrator` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `getVibrator(context) ?: return`.
+L136: `if (!vibrator.hasVibrator()) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `!vibrator.hasVibrator()`.
+L137: `return`
+    Finaliza inmediatamente la función actual sin devolver un valor adicional (`Unit`).
+L138: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L139: `val eventScale = when (haptic) {`
+    Declara `eventScale` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `when (haptic) {`.
+L140: `UiHaptic.Tick -> 0.46f`
+    Define una rama/lambda. Cuando coincide `UiHaptic.Tick`, se ejecuta la expresión o bloque situado después de `->`.
+L141: `UiHaptic.Selection -> 0.68f`
+    Define una rama/lambda. Cuando coincide `UiHaptic.Selection`, se ejecuta la expresión o bloque situado después de `->`.
+L142: `UiHaptic.Tap -> 0.76f`
+    Define una rama/lambda. Cuando coincide `UiHaptic.Tap`, se ejecuta la expresión o bloque situado después de `->`.
+L143: `UiHaptic.ToggleOn -> 0.82f`
+    Define una rama/lambda. Cuando coincide `UiHaptic.ToggleOn`, se ejecuta la expresión o bloque situado después de `->`.
+L144: `UiHaptic.ToggleOff -> 0.64f`
+    Define una rama/lambda. Cuando coincide `UiHaptic.ToggleOff`, se ejecuta la expresión o bloque situado después de `->`.
+L145: `UiHaptic.Attachment -> 0.88f`
+    Define una rama/lambda. Cuando coincide `UiHaptic.Attachment`, se ejecuta la expresión o bloque situado después de `->`.
+L146: `UiHaptic.Confirm -> 0.96f`
+    Define una rama/lambda. Cuando coincide `UiHaptic.Confirm`, se ejecuta la expresión o bloque situado después de `->`.
+L147: `UiHaptic.Warning -> 1.00f`
+    Define una rama/lambda. Cuando coincide `UiHaptic.Warning`, se ejecuta la expresión o bloque situado después de `->`.
+L148: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L149: `var pattern = basePattern(normalizeStyle(style))`
+    Declara `pattern` como variable mutable: el código puede reasignarla para representar estado cambiante. Parte con `basePattern(normalizeStyle(style))`.
+L150: `// Sliders y movimientos de cursor deben sentirse como ticks cortos,`
+    Comentario del autor. No se ejecuta; documenta la intención o una restricción del bloque siguiente.
+L151: `// incluso cuando el usuario eligió un estilo con varios pulsos.`
+    Comentario del autor. No se ejecuta; documenta la intención o una restricción del bloque siguiente.
+L152: `if (haptic == UiHaptic.Tick) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `haptic == UiHaptic.Tick`.
+L153: `val firstAmp = pattern.amplitudes.firstOrNull { it > 0 }?: 120`
+    Busca el primer elemento que coincide; si no existe devuelve `null` en lugar de lanzar una excepción.
+L154: `pattern = HapticPattern(timings = tickTimings, amplitudes = intArrayOf(0, firstAmp))`
+    Asigna/configura `pattern` usando `HapticPattern(timings = tickTimings, amplitudes = intArrayOf(0, firstAmp))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L155: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L156: `if (haptic == UiHaptic.ToggleOff) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `haptic == UiHaptic.ToggleOff`.
+L157: `val shortenedTimings = LongArray(pattern.timings.size) { index ->`
+    Declara `shortenedTimings` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `LongArray(pattern.timings.size) { index ->`.
+L158: `(pattern.timings[index] * 0.85f).roundToInt().coerceAtLeast(1).toLong()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L159: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L160: `pattern = HapticPattern(timings = shortenedTimings, amplitudes = pattern.amplitudes)`
+    Asigna/configura `pattern` usando `HapticPattern(timings = shortenedTimings, amplitudes = pattern.amplitudes)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L161: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L162: `val scaledAmplitudes = IntArray(pattern.amplitudes.size) { index ->`
+    Declara `scaledAmplitudes` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `IntArray(pattern.amplitudes.size) { index ->`.
+L163: `val amplitude = pattern.amplitudes[index]`
+    Declara `amplitude` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `pattern.amplitudes[index]`.
+L164: `if (amplitude == 0) 0 else (amplitude * intensity * eventScale).roundToInt().coerceIn(1, 255)`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `amplitude == 0) 0 else (amplitude * intensity * eventScale).roundToInt().coerceIn(1, 255`.
+L165: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L166: `try {`
+    Abre un bloque protegido: si una operación lanza una excepción, el control puede pasar al `catch` correspondiente sin terminar abruptamente el flujo.
+L167: `if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `Build.VERSION.SDK_INT >= Build.VERSION_CODES.O`.
+L168: `val effect = if (pattern.timings.size <= 2) {`
+    Declara `effect` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (pattern.timings.size <= 2) {`.
+L169: `VibrationEffect.createOneShot(pattern.timings.lastOrNull()?.coerceAtLeast(1L) ?: 8L,`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `VibrationEffect.createOneShot(pattern.timings.lastOrNull()?.coerceAtLeast(1L) ?: 8L,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L170: `scaledAmplitudes.lastOrNull()?.coerceIn(1, 255)?: VibrationEffect.DEFAULT_AMPLITUDE)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L171: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L172: `VibrationEffect.createWaveform(pattern.timings, scaledAmplitudes, -1)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L173: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L174: `vibrator.vibrate(effect)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L175: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L176: `@Suppress("DEPRECATION")`
+    Aplica la anotación `@Suppress("DEPRECATION")` a la declaración siguiente; la anotación modifica metadatos, generación de código o comportamiento del framework.
+L177: `vibrator.vibrate(pattern.timings.sum().coerceIn(5L, 90L))`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L178: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L179: `} catch (_: SecurityException) {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L180: `// No se fuerza feedback si el fabricante bloquea la vibración.`
+    Comentario del autor. No se ejecuta; documenta la intención o una restricción del bloque siguiente.
+L181: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L182: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L183: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L184: `* Los patrones no cambian durante la vida de la app. Mantenerlos`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L185: `* preconstruidos evita crear LongArray/IntArray en cada pulsación.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L186: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L187: `private val basePatterns: Map<String, HapticPattern> = mapOf(`
+    Declara `basePatterns` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `mapOf(`.
+L188: `"soft" to HapticPattern(longArrayOf(0L, 12L), intArrayOf(0, 115)),`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L189: `"crisp" to HapticPattern(longArrayOf(0L, 9L), intArrayOf(0, 220)),`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L190: `"deep" to HapticPattern(longArrayOf(0L, 24L), intArrayOf(0, 175)),`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L191: `"double" to HapticPattern(longArrayOf(0L, 10L, 34L, 12L), intArrayOf(0, 190, 0, 145)),`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L192: `"pulse" to HapticPattern(longArrayOf(0L, 15L, 22L, 22L), intArrayOf(0, 130, 0, 205)),`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L193: `"stepped" to HapticPattern(longArrayOf(0L, 6L, 10L, 8L, 10L, 11L), intArrayOf(0, 85, 0, 140, 0, 210)),`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L194: `"mechanical" to HapticPattern(longArrayOf(0L, 5L, 8L, 14L), intArrayOf(0, 225, 0, 150)),`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L195: `"minimal" to HapticPattern(longArrayOf(0L, 5L), intArrayOf(0, 125)),`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L196: `"triple" to HapticPattern(longArrayOf(0L, 6L, 10L, 7L, 10L, 9L), intArrayOf(0, 170, 0, 200, 0, 230)),`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L197: `"ripple" to HapticPattern(longArrayOf(0L, 5L, 8L, 7L, 10L, 10L), intArrayOf(0, 225, 0, 155, 0, 90)),`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L198: `"heartbeat" to HapticPattern(longArrayOf(0L, 11L, 38L, 20L), intArrayOf(0, 135, 0, 230)),`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L199: `"snap" to HapticPattern(longArrayOf(0L, 4L, 5L, 11L), intArrayOf(0, 255, 0, 120)),`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L200: `"wave" to HapticPattern(longArrayOf(0L, 10L, 8L, 14L, 8L, 8L), intArrayOf(0, 105, 0, 225, 0, 125)),`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L201: `"heavy" to HapticPattern(longArrayOf(0L, 32L), intArrayOf(0, 235)),`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L202: `"spring" to HapticPattern(longArrayOf(0L, 7L, 12L, 5L, 14L, 4L), intArrayOf(0, 235, 0, 150, 0, 85)),`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L203: `"echo" to HapticPattern(longArrayOf(0L, 10L, 24L, 7L, 22L, 5L), intArrayOf(0, 220, 0, 135, 0, 70))`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L204: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L205: `private val tickTimings = longArrayOf(0L, 7L)`
+    Declara `tickTimings` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `longArrayOf(0L, 7L)`.
+L207: `private fun basePattern(style: String): HapticPattern = basePatterns[style] ?: basePatterns.getValue(DEFAULT_STYLE)`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `basePattern` se detalla después instrucción por instrucción.
+L209: `private fun getVibrator(context: Context): Vibrator? = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S) {`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `getVibrator` se detalla después instrucción por instrucción.
+L210: `context.getSystemService(VibratorManager::class.java)?.defaultVibrator`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `context.getSystemService(VibratorManager::class.java)?.defaultVibrator`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L211: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L212: `@Suppress("DEPRECATION")`
+    Aplica la anotación `@Suppress("DEPRECATION")` a la declaración siguiente; la anotación modifica metadatos, generación de código o comportamiento del framework.
+L213: `context.getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `context.getSystemService(Context.VIBRATOR_SERVICE) as? Vibrator`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L214: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L215: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+7. RECURSOS ANDROID REFERENCIADOS
+----------------------------------------------------------------------
+- No hay referencias directas `R.*` en este archivo.
+
+8. QUIÉN USA ESTE COMPONENTE
+----------------------------------------------------------------------
+- `UiHaptic` aparece también en 2 archivo(s):
+    - app/src/main/java/com/example/mynotes/reminders/ReminderFeedbackPreferences.kt
+    - app/src/main/java/com/example/mynotes/ui/theme/SettingsScreen.kt
+- `UiHapticPlayer` aparece también en 4 archivo(s):
+    - app/src/main/java/com/example/mynotes/reminders/ReminderFeedbackPreferences.kt
+    - app/src/main/java/com/example/mynotes/ui/sound/UiSoundPlayer.kt
+    - app/src/main/java/com/example/mynotes/ui/theme/SettingsScreen.kt
+    - app/src/main/java/com/example/mynotes/ui/theme/SourceCodeInfoScreen.kt
+
+9. QUÉ PUEDE ROMPERSE SI LO MODIFICAS
+----------------------------------------------------------------------
+- Conservar firmas públicas/callbacks y comprobar los archivos que aparecen en “quién usa este componente” antes de renombrar o cambiar tipos.
+
+10. CHECKLIST DE PRUEBA DESPUÉS DE MODIFICAR ESTE ARCHIVO
+----------------------------------------------------------------------
+- Compilar `assembleDebug` y resolver primero errores de Kotlin/AAPT.
+- Abrir la pantalla/flujo relacionado y comprobar ida y vuelta (back) sin estado duplicado.
+- Cambiar tema/paleta y verificar contraste si este archivo dibuja UI.
+
+==============================================================================================================
+FIN DEL ARCHIVO
+==============================================================================================================

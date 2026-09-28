@@ -1,0 +1,3 @@
+MYNOTES — FLUJO COMPLETO DEL EDITOR DE DIBUJO
+
+DrawingScreen mantiene una lista de trazos. Cada trazo conserva puntos/path, herramienta, color, grosor y propiedades necesarias. pointerInput captura movimiento; Canvas recorre trazos y los dibuja. Undo/Redo mueve estados entre historiales. El borrador elimina visualmente respecto al color real del lienzo. El selector de Canvas color cambia el fondo sin tener que abrir otra pantalla. El botón expandir aumenta el lienzo y compacta el panel inferior en la MISMA pantalla; las coordenadas/tamaños deben reajustarse para no cortar trazos. Guardar rasteriza el resultado a PNG y lo devuelve como adjunto de una nota.

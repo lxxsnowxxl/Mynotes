@@ -1,0 +1,131 @@
+MYNOTES — EXPLICACIÓN ULTRA DETALLADA
+==============================================================================================================
+Archivo 6/72: app/src/main/java/com/example/mynotes/data/Attachment.kt
+SHA-256: d84232af3101044da8e2db5fe8ca0039175d6ff21874589361b982eb0ceb42df
+Líneas del fuente: 24
+Package: com.example.mynotes.data
+
+1. RESPONSABILIDAD EXACTA DEL ARCHIVO
+----------------------------------------------------------------------
+Modelo Room que representa un adjunto persistido asociado a una nota, con los metadatos necesarios para recuperar su URI/tipo y ordenarlo.
+
+2. DÓNDE ENCAJA EN LA ARQUITECTURA
+----------------------------------------------------------------------
+Este archivo pertenece principalmente a la **persistencia/modelos Room**. No debe analizarse aislado: las referencias cruzadas y callbacks se detallan más abajo.
+
+3. IMPORTACIONES, UNA POR UNA
+----------------------------------------------------------------------
+- `androidx.compose.runtime.Immutable`: Importa `androidx.compose.runtime.Immutable` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+- `androidx.room.Entity`: Importa `androidx.room.Entity` para usar persistencia SQLite declarativa con Room.
+- `androidx.room.Index`: Importa `androidx.room.Index` para usar persistencia SQLite declarativa con Room.
+- `androidx.room.PrimaryKey`: Importa `androidx.room.PrimaryKey` para usar persistencia SQLite declarativa con Room.
+
+4. DECLARACIONES Y ESTADO IMPORTANTES
+----------------------------------------------------------------------
+L10: `data class Attachment(`
+    Declara `Attachment` como `data class`: Kotlin genera automáticamente igualdad, hash, copia y representación textual a partir de sus propiedades del constructor.
+L12: `val id: Int = 0,`
+    Declara `id` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `0,`.
+L13: `val noteId: Int,`
+    Declara `noteId` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L21: `val type: String,`
+    Declara `type` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L22: `val uri: String,`
+    Declara `uri` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L23: `val name: String? = null,`
+    Declara `name` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `null,`.
+L24: `val createdAt: Long = System.currentTimeMillis())`
+    Declara `createdAt` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `System.currentTimeMillis())`.
+
+5. FUNCIONES — EXPLICACIÓN DE CADA UNA
+----------------------------------------------------------------------
+Este archivo no declara funciones Kotlin detectables (puede ser un script Gradle, clase puramente declarativa o modelo).
+
+6. EXPLICACIÓN COMPLETA LÍNEA POR LÍNEA
+----------------------------------------------------------------------
+Esta sección no omite líneas ejecutables. Repite incluso partes ya explicadas en funciones para poder leer el archivo de arriba abajo sin saltar entre secciones.
+L1: `package com.example.mynotes.data`
+    Declara que este archivo pertenece al package `com.example.mynotes.data`; esto determina su namespace Kotlin y cómo lo importan otros archivos.
+L3: `import androidx.compose.runtime.Immutable`
+    Importa `androidx.compose.runtime.Immutable` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+L4: `import androidx.room.Entity`
+    Importa `androidx.room.Entity` para usar persistencia SQLite declarativa con Room.
+L5: `import androidx.room.Index`
+    Importa `androidx.room.Index` para usar persistencia SQLite declarativa con Room.
+L6: `import androidx.room.PrimaryKey`
+    Importa `androidx.room.PrimaryKey` para usar persistencia SQLite declarativa con Room.
+L8: `@Immutable`
+    Aplica la anotación `@Immutable` a la declaración siguiente; la anotación modifica metadatos, generación de código o comportamiento del framework.
+L9: `@Entity(tableName = "attachments", indices = [Index(value = ["noteId", "createdAt"])])`
+    Declara una entidad Room. Room genera una tabla SQLite a partir de la clase anotada y de sus campos.
+L10: `data class Attachment(`
+    Declara `Attachment` como `data class`: Kotlin genera automáticamente igualdad, hash, copia y representación textual a partir de sus propiedades del constructor.
+L11: `@PrimaryKey(autoGenerate = true)`
+    Aplica la anotación `@PrimaryKey(autoGenerate = true)` a la declaración siguiente; la anotación modifica metadatos, generación de código o comportamiento del framework.
+L12: `val id: Int = 0,`
+    Declara `id` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `0,`.
+L13: `val noteId: Int,`
+    Declara `noteId` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L14: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L15: `* image`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L16: `* video`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L17: `* audio`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L18: `* voice`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L19: `* file`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L20: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L21: `val type: String,`
+    Declara `type` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L22: `val uri: String,`
+    Declara `uri` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L23: `val name: String? = null,`
+    Declara `name` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `null,`.
+L24: `val createdAt: Long = System.currentTimeMillis())`
+    Declara `createdAt` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `System.currentTimeMillis())`.
+
+7. RECURSOS ANDROID REFERENCIADOS
+----------------------------------------------------------------------
+- No hay referencias directas `R.*` en este archivo.
+
+8. QUIÉN USA ESTE COMPONENTE
+----------------------------------------------------------------------
+- `Attachment` aparece también en 17 archivo(s):
+    - app/src/main/java/com/example/mynotes/MainActivity.kt
+    - app/src/main/java/com/example/mynotes/data/AppDataBackupManager.kt
+    - app/src/main/java/com/example/mynotes/data/AppDatabase.kt
+    - app/src/main/java/com/example/mynotes/data/AttachmentDao.kt
+    - app/src/main/java/com/example/mynotes/ui/components/AttachmentPreviewTile.kt
+    - app/src/main/java/com/example/mynotes/ui/components/ExtremeCustomizationSection.kt
+    - app/src/main/java/com/example/mynotes/ui/components/InlineNoteAttachment.kt
+    - app/src/main/java/com/example/mynotes/ui/components/NoteCard.kt
+    - app/src/main/java/com/example/mynotes/ui/sound/UiHapticPlayer.kt
+    - app/src/main/java/com/example/mynotes/ui/sound/UiSoundPlayer.kt
+    - app/src/main/java/com/example/mynotes/ui/theme/NoteEditorScreen.kt
+    - app/src/main/java/com/example/mynotes/ui/theme/NotesScreen.kt
+    - app/src/main/java/com/example/mynotes/ui/theme/SettingsScreen.kt
+    - app/src/main/java/com/example/mynotes/viewmodel/NoteViewModel.kt
+    - app/src/main/java/com/example/mynotes/widget/FavoritesWidgetProvider.kt
+    - app/src/main/java/com/example/mynotes/widget/RecentNotesWidgetProvider.kt
+    - app/src/main/java/com/example/mynotes/widget/WidgetMediaPreview.kt
+
+9. QUÉ PUEDE ROMPERSE SI LO MODIFICAS
+----------------------------------------------------------------------
+- Adjuntos/previews son una ruta protegida del proyecto: cambios en decodificación, caché, tamaño, precarga o URI pueden alterar visualización o rendimiento. Modificar solo con una prueba explícita de imagen/vídeo/audio/enlace.
+- Cambiar el esquema Room puede requerir aumentar versión y definir migración. Hacerlo sin migración puede impedir abrir bases existentes o forzar pérdida de datos si se usa destructive migration.
+
+10. CHECKLIST DE PRUEBA DESPUÉS DE MODIFICAR ESTE ARCHIVO
+----------------------------------------------------------------------
+- Compilar `assembleDebug` y resolver primero errores de Kotlin/AAPT.
+- Abrir la pantalla/flujo relacionado y comprobar ida y vuelta (back) sin estado duplicado.
+- Cambiar tema/paleta y verificar contraste si este archivo dibuja UI.
+- Probar imagen, vídeo, audio y URL; hacer scroll rápido y confirmar que previews/miniaturas no parpadean ni cambian calidad.
+
+==============================================================================================================
+FIN DEL ARCHIVO
+==============================================================================================================

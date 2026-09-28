@@ -1,0 +1,737 @@
+MYNOTES — EXPLICACIÓN ULTRA DETALLADA
+==============================================================================================================
+Archivo 18/72: app/src/main/java/com/example/mynotes/reminders/ReminderRepository.kt
+SHA-256: 825bc3d535ccbf1b43c1f0cdaefd207e72f65a84d3303149ffd78101a2bedc26
+Líneas del fuente: 153
+Package: com.example.mynotes.reminders
+
+1. RESPONSABILIDAD EXACTA DEL ARCHIVO
+----------------------------------------------------------------------
+Repositorio de recordatorios. Guarda, actualiza, elimina y expone la lista, y coordina la persistencia con la programación/cancelación de alarmas.
+
+2. DÓNDE ENCAJA EN LA ARQUITECTURA
+----------------------------------------------------------------------
+Este archivo pertenece principalmente a la **subsistema de recordatorios/alarmas/notificaciones**. No debe analizarse aislado: las referencias cruzadas y callbacks se detallan más abajo.
+
+3. IMPORTACIONES, UNA POR UNA
+----------------------------------------------------------------------
+- `android.content.Context`: Importa `android.content.Context` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `android.content.SharedPreferences`: Importa `android.content.SharedPreferences` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `kotlinx.coroutines.flow.MutableStateFlow`: Importa `kotlinx.coroutines.flow.MutableStateFlow` para usar coroutines, Flow y ejecución asíncrona.
+- `kotlinx.coroutines.flow.StateFlow`: Importa `kotlinx.coroutines.flow.StateFlow` para usar coroutines, Flow y ejecución asíncrona.
+- `kotlinx.coroutines.flow.asStateFlow`: Importa `kotlinx.coroutines.flow.asStateFlow` para usar coroutines, Flow y ejecución asíncrona.
+- `org.json.JSONArray`: Importa `org.json.JSONArray` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `org.json.JSONObject`: Importa `org.json.JSONObject` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `java.util.Calendar`: Importa `java.util.Calendar` de la biblioteca estándar/JVM para operaciones de lenguaje, fechas, colecciones, I/O o utilidades.
+
+4. DECLARACIONES Y ESTADO IMPORTANTES
+----------------------------------------------------------------------
+L17: `class ReminderRepository(context: Context) {`
+    Declara class `ReminderRepository`. A partir de aquí las propiedades y funciones hasta su llave de cierre pertenecen a este tipo.
+L18: `private val appContext = context.applicationContext`
+    Declara `appContext` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `context.applicationContext`.
+L19: `private val preferences = appContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)`
+    Declara `preferences` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `appContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)`.
+L21: `private val _reminders = MutableStateFlow(loadReminders())`
+    Declara `_reminders` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `MutableStateFlow(loadReminders())`.
+L22: `val reminders: StateFlow<List<Reminder>> = _reminders.asStateFlow()`
+    Declara `reminders` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `_reminders.asStateFlow()`.
+L24: `private val preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->`
+    Declara `preferenceListener` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `SharedPreferences.OnSharedPreferenceChangeListener { _, key ->`.
+L37: `val current = loadReminders().toMutableList()`
+    Declara `current` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `loadReminders().toMutableList()`.
+L38: `val index = current.indexOfFirst { it.id == reminder.id }`
+    Declara `index` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `current.indexOfFirst { it.id == reminder.id }`.
+L54: `val reminder = getReminder(id) ?: return`
+    Declara `reminder` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `getReminder(id) ?: return`.
+L60: `val reminder = getReminder(id) ?: return`
+    Declara `reminder` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `getReminder(id) ?: return`.
+L65: `val next = nextTrigger(reminder.triggerAtMillis, reminder.repeatMode, System.currentTimeMillis())`
+    Declara `next` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `nextTrigger(reminder.triggerAtMillis, reminder.repeatMode, System.currentTimeMillis())`.
+L71: `val normalized = if (reminder.triggerAtMillis <= System.currentTimeMillis()) {`
+    Declara `normalized` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (reminder.triggerAtMillis <= System.currentTimeMillis()) {`.
+L84: `val sorted = items.sortedWith(compareByDescending<Reminder> { it.enabled }.thenBy { it.triggerAtMillis })`
+    Declara `sorted` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `items.sortedWith(compareByDescending<Reminder> { it.enabled }.thenBy { it.triggerAtMillis })`.
+L85: `val array = JSONArray()`
+    Lee o construye JSON. Las claves extraídas/insertadas representan datos intercambiados o respaldados por MyNotes.
+L104: `val raw = preferences.getString(KEY_REMINDERS, null) ?: return emptyList()`
+    Declara `raw` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `preferences.getString(KEY_REMINDERS, null) ?: return emptyList()`.
+L106: `val array = JSONArray(raw)`
+    Lee o construye JSON. Las claves extraídas/insertadas representan datos intercambiados o respaldados por MyNotes.
+L109: `val item = array.getJSONObject(index)`
+    Lee o construye JSON. Las claves extraídas/insertadas representan datos intercambiados o respaldados por MyNotes.
+L129: `private const val PREFS_NAME = "reminder_prefs"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L130: `private const val KEY_REMINDERS = "reminders_json"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L133: `var candidate = previous`
+    Declara `candidate` como variable mutable: el código puede reasignarla para representar estado cambiante. Parte con `previous`.
+L135: `val calendar = Calendar.getInstance().apply { timeInMillis = candidate }`
+    Declara `calendar` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `Calendar.getInstance().apply { timeInMillis = candidate }`.
+
+5. FUNCIONES — EXPLICACIÓN DE CADA UNA
+----------------------------------------------------------------------
+
+5.1 `getReminder` — líneas 34–34
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun getReminder(id: Long): Reminder? = loadReminders().firstOrNull { it.id == id }
+
+Propósito:
+    Obtiene/carga el dato indicado por el nombre de la función, aplicando los fallbacks y transformaciones visibles en su cuerpo.
+
+Parámetros/entradas:
+  - `id: Long): Reminder? = loadReminders(`: el llamador proporciona este valor/callback a `getReminder`. Dentro del cuerpo, las líneas donde aparece `id` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Reminder?`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L34 [4 espacios] `fun getReminder(id: Long): Reminder? = loadReminders().firstOrNull { it.id == id }`
+      → Declara una función. El bloque de `getReminder` se detalla después instrucción por instrucción.
+
+5.2 `upsert` — líneas 36–46
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun upsert(reminder: Reminder) {
+
+Propósito:
+    Implementa `upsert`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `reminder: Reminder`: el llamador proporciona este valor/callback a `upsert`. Dentro del cuerpo, las líneas donde aparece `reminder` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L36 [4 espacios] `fun upsert(reminder: Reminder) {`
+      → Declara una función. El bloque de `upsert` se detalla después instrucción por instrucción.
+  L37 [8 espacios] `val current = loadReminders().toMutableList()`
+      → Declara `current` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `loadReminders().toMutableList()`.
+  L38 [8 espacios] `val index = current.indexOfFirst { it.id == reminder.id }`
+      → Declara `index` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `current.indexOfFirst { it.id == reminder.id }`.
+  L39 [8 espacios] `if (index >= 0) current[index] = reminder else current += reminder`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `index >= 0`.
+  L40 [8 espacios] `save(current)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L41 [8 espacios] `if (reminder.enabled) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `reminder.enabled`.
+  L42 [12 espacios] `ReminderAlarmScheduler.schedule(appContext, reminder)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L43 [8 espacios] `} else {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L44 [12 espacios] `ReminderAlarmScheduler.cancel(appContext, reminder.id)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L45 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L46 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.3 `delete` — líneas 48–51
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun delete(id: Long) {
+
+Propósito:
+    Implementa `delete`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `id: Long`: el llamador proporciona este valor/callback a `delete`. Dentro del cuerpo, las líneas donde aparece `id` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L48 [4 espacios] `fun delete(id: Long) {`
+      → Declara una función. El bloque de `delete` se detalla después instrucción por instrucción.
+  L49 [8 espacios] `ReminderAlarmScheduler.cancel(appContext, id)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L50 [8 espacios] `save(loadReminders().filterNot { it.id == id })`
+      → Asigna/configura `save(loadReminders().filterNot { it.id` usando `= id })`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L51 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.4 `setEnabled` — líneas 53–56
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun setEnabled(id: Long, enabled: Boolean) {
+
+Propósito:
+    Cambia el valor asociado a `Enabled`. En repositorios suele persistirlo; en UI suele emitir el callback que termina persistiendo el ajuste.
+
+Parámetros/entradas:
+  - `id: Long`: el llamador proporciona este valor/callback a `setEnabled`. Dentro del cuerpo, las líneas donde aparece `id` muestran exactamente cómo afecta al resultado.
+  - `enabled: Boolean`: el llamador proporciona este valor/callback a `setEnabled`. Dentro del cuerpo, las líneas donde aparece `enabled` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L53 [4 espacios] `fun setEnabled(id: Long, enabled: Boolean) {`
+      → Declara una función. El bloque de `setEnabled` se detalla después instrucción por instrucción.
+  L54 [8 espacios] `val reminder = getReminder(id) ?: return`
+      → Declara `reminder` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `getReminder(id) ?: return`.
+  L55 [8 espacios] `upsert(reminder.copy(enabled = enabled))`
+      → Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+  L56 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.5 `advanceAfterTrigger` — líneas 59–67
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun advanceAfterTrigger(id: Long) {
+
+Propósito:
+    Implementa `advanceAfterTrigger`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `id: Long`: el llamador proporciona este valor/callback a `advanceAfterTrigger`. Dentro del cuerpo, las líneas donde aparece `id` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L59 [4 espacios] `fun advanceAfterTrigger(id: Long) {`
+      → Declara una función. El bloque de `advanceAfterTrigger` se detalla después instrucción por instrucción.
+  L60 [8 espacios] `val reminder = getReminder(id) ?: return`
+      → Declara `reminder` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `getReminder(id) ?: return`.
+  L61 [8 espacios] `if (reminder.repeatMode == Reminder.REPEAT_NONE) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `reminder.repeatMode == Reminder.REPEAT_NONE`.
+  L62 [12 espacios] `upsert(reminder.copy(enabled = false))`
+      → Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+  L63 [12 espacios] `return`
+      → Finaliza inmediatamente la función actual sin devolver un valor adicional (`Unit`).
+  L64 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L65 [8 espacios] `val next = nextTrigger(reminder.triggerAtMillis, reminder.repeatMode, System.currentTimeMillis())`
+      → Declara `next` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `nextTrigger(reminder.triggerAtMillis, reminder.repeatMode, System.currentTimeMillis())`.
+  L66 [8 espacios] `upsert(reminder.copy(triggerAtMillis = next, enabled = true))`
+      → Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+  L67 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.6 `rescheduleAll` — líneas 69–81
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun rescheduleAll() {
+
+Propósito:
+    Implementa `rescheduleAll`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - No recibe parámetros explícitos.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L69 [4 espacios] `fun rescheduleAll() {`
+      → Declara una función. El bloque de `rescheduleAll` se detalla después instrucción por instrucción.
+  L70 [8 espacios] `loadReminders().filter { it.enabled }.forEach { reminder ->`
+      → Conserva únicamente los elementos que cumplen la condición indicada.
+  L71 [12 espacios] `val normalized = if (reminder.triggerAtMillis <= System.currentTimeMillis()) {`
+      → Declara `normalized` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (reminder.triggerAtMillis <= System.currentTimeMillis()) {`.
+  L72 [16 espacios] `if (reminder.repeatMode == Reminder.REPEAT_NONE) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `reminder.repeatMode == Reminder.REPEAT_NONE`.
+  L73 [20 espacios] `reminder.copy(enabled = false)`
+      → Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+  L74 [16 espacios] `} else {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L75 [20 espacios] `reminder.copy(triggerAtMillis = nextTrigger(reminder.triggerAtMillis, reminder.repeatMode, System.currentTimeMillis()))`
+      → Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+  L76 [16 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L77 [12 espacios] `} else reminder`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `} else reminder`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L78 [12 espacios] `if (normalized != reminder) upsert(normalized)`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `normalized != reminder) upsert(normalized`.
+  L79 [12 espacios] `if (normalized.enabled) ReminderAlarmScheduler.schedule(appContext, normalized)`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `normalized.enabled) ReminderAlarmScheduler.schedule(appContext, normalized`.
+  L80 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L81 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.7 `save` — líneas 83–101
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        private fun save(items: List<Reminder>) {
+
+Propósito:
+    Implementa `save`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `items: List<Reminder>`: el llamador proporciona este valor/callback a `save`. Dentro del cuerpo, las líneas donde aparece `items` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L83 [4 espacios] `private fun save(items: List<Reminder>) {`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `save` se detalla después instrucción por instrucción.
+  L84 [8 espacios] `val sorted = items.sortedWith(compareByDescending<Reminder> { it.enabled }.thenBy { it.triggerAtMillis })`
+      → Declara `sorted` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `items.sortedWith(compareByDescending<Reminder> { it.enabled }.thenBy { it.triggerAtMillis })`.
+  L85 [8 espacios] `val array = JSONArray()`
+      → Lee o construye JSON. Las claves extraídas/insertadas representan datos intercambiados o respaldados por MyNotes.
+  L86 [8 espacios] `sorted.forEach { reminder ->`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `sorted.forEach { reminder ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L87 [12 espacios] `array.put(JSONObject().apply {`
+      → Lee o construye JSON. Las claves extraídas/insertadas representan datos intercambiados o respaldados por MyNotes.
+  L88 [16 espacios] `put("id", reminder.id)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L89 [16 espacios] `put("title", reminder.title)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L90 [16 espacios] `put("description", reminder.description)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L91 [16 espacios] `put("triggerAtMillis", reminder.triggerAtMillis)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L92 [16 espacios] `put("repeatMode", reminder.repeatMode)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L93 [16 espacios] `put("priority", reminder.priority)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L94 [16 espacios] `put("colorKey", reminder.colorKey)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L95 [16 espacios] `put("enabled", reminder.enabled)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L96 [16 espacios] `put("createdAt", reminder.createdAt)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L97 [12 espacios] `})`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L98 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L99 [8 espacios] `preferences.edit().putString(KEY_REMINDERS, array.toString()).apply()`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L100 [8 espacios] `_reminders.value = sorted`
+      → Asigna/configura `_reminders.value` usando `sorted`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L101 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.8 `loadReminders` — líneas 103–126
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        private fun loadReminders(): List<Reminder> {
+
+Propósito:
+    Obtiene/carga el dato indicado por el nombre de la función, aplicando los fallbacks y transformaciones visibles en su cuerpo.
+
+Parámetros/entradas:
+  - No recibe parámetros explícitos.
+
+Salida:
+  - Tipo declarado `List<Reminder>`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L103 [4 espacios] `private fun loadReminders(): List<Reminder> {`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `loadReminders` se detalla después instrucción por instrucción.
+  L104 [8 espacios] `val raw = preferences.getString(KEY_REMINDERS, null) ?: return emptyList()`
+      → Declara `raw` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `preferences.getString(KEY_REMINDERS, null) ?: return emptyList()`.
+  L105 [8 espacios] `return runCatching {`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L106 [12 espacios] `val array = JSONArray(raw)`
+      → Lee o construye JSON. Las claves extraídas/insertadas representan datos intercambiados o respaldados por MyNotes.
+  L107 [12 espacios] `buildList {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L108 [16 espacios] `for (index in 0 until array.length()) {`
+      → Inicia un bucle `for`; ejecuta el bloque una vez por cada elemento del iterable/rango indicado.
+  L109 [20 espacios] `val item = array.getJSONObject(index)`
+      → Lee o construye JSON. Las claves extraídas/insertadas representan datos intercambiados o respaldados por MyNotes.
+  L110 [20 espacios] `add(`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `add(`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L111 [24 espacios] `Reminder(`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `Reminder(`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L112 [28 espacios] `id = item.optLong("id", System.currentTimeMillis() + index),`
+      → Asigna/configura `id` usando `item.optLong("id", System.currentTimeMillis() + index),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L113 [28 espacios] `title = item.optString("title"),`
+      → Asigna/configura `title` usando `item.optString("title"),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L114 [28 espacios] `description = item.optString("description"),`
+      → Asigna/configura `description` usando `item.optString("description"),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L115 [28 espacios] `triggerAtMillis = item.optLong("triggerAtMillis"),`
+      → Asigna/configura `triggerAtMillis` usando `item.optLong("triggerAtMillis"),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L116 [28 espacios] `repeatMode = item.optString("repeatMode", Reminder.REPEAT_NONE),`
+      → Asigna/configura `repeatMode` usando `item.optString("repeatMode", Reminder.REPEAT_NONE),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L117 [28 espacios] `priority = item.optString("priority", Reminder.PRIORITY_NORMAL),`
+      → Asigna/configura `priority` usando `item.optString("priority", Reminder.PRIORITY_NORMAL),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L118 [28 espacios] `colorKey = item.optString("colorKey", "palette"),`
+      → Asigna/configura `colorKey` usando `item.optString("colorKey", "palette"),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L119 [28 espacios] `enabled = item.optBoolean("enabled", true),`
+      → Asigna/configura `enabled` usando `item.optBoolean("enabled", true),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L120 [28 espacios] `createdAt = item.optLong("createdAt", System.currentTimeMillis())`
+      → Asigna/configura `createdAt` usando `item.optLong("createdAt", System.currentTimeMillis())`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L121 [24 espacios] `)`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L122 [20 espacios] `)`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L123 [16 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L124 [12 espacios] `}.sortedWith(compareByDescending<Reminder> { it.enabled }.thenBy { it.triggerAtMillis })`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L125 [8 espacios] `}.getOrDefault(emptyList())`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L126 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.9 `nextTrigger` — líneas 132–151
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+            fun nextTrigger(previous: Long, repeatMode: String, now: Long): Long {
+
+Propósito:
+    Implementa `nextTrigger`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `previous: Long`: el llamador proporciona este valor/callback a `nextTrigger`. Dentro del cuerpo, las líneas donde aparece `previous` muestran exactamente cómo afecta al resultado.
+  - `repeatMode: String`: el llamador proporciona este valor/callback a `nextTrigger`. Dentro del cuerpo, las líneas donde aparece `repeatMode` muestran exactamente cómo afecta al resultado.
+  - `now: Long`: el llamador proporciona este valor/callback a `nextTrigger`. Dentro del cuerpo, las líneas donde aparece `now` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Long`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L132 [8 espacios] `fun nextTrigger(previous: Long, repeatMode: String, now: Long): Long {`
+      → Declara una función. El bloque de `nextTrigger` se detalla después instrucción por instrucción.
+  L133 [12 espacios] `var candidate = previous`
+      → Declara `candidate` como variable mutable: el código puede reasignarla para representar estado cambiante. Parte con `previous`.
+  L134 [12 espacios] `do {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L135 [16 espacios] `val calendar = Calendar.getInstance().apply { timeInMillis = candidate }`
+      → Declara `calendar` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `Calendar.getInstance().apply { timeInMillis = candidate }`.
+  L136 [16 espacios] `when (repeatMode) {`
+      → Abre una decisión `when`: selecciona una rama según el valor/condición, equivalente a un switch más expresivo de Kotlin.
+  L137 [20 espacios] `Reminder.REPEAT_DAILY -> calendar.add(Calendar.DAY_OF_YEAR, 1)`
+      → Define una rama/lambda. Cuando coincide `Reminder.REPEAT_DAILY`, se ejecuta la expresión o bloque situado después de `->`.
+  L138 [20 espacios] `Reminder.REPEAT_WEEKLY -> calendar.add(Calendar.WEEK_OF_YEAR, 1)`
+      → Define una rama/lambda. Cuando coincide `Reminder.REPEAT_WEEKLY`, se ejecuta la expresión o bloque situado después de `->`.
+  L139 [20 espacios] `Reminder.REPEAT_MONTHLY -> calendar.add(Calendar.MONTH, 1)`
+      → Define una rama/lambda. Cuando coincide `Reminder.REPEAT_MONTHLY`, se ejecuta la expresión o bloque situado después de `->`.
+  L140 [20 espacios] `Reminder.REPEAT_WEEKDAYS -> {`
+      → Define una rama/lambda. Cuando coincide `Reminder.REPEAT_WEEKDAYS`, se ejecuta la expresión o bloque situado después de `->`.
+  L141 [24 espacios] `do {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L142 [28 espacios] `calendar.add(Calendar.DAY_OF_YEAR, 1)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L143 [24 espacios] `} while (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY ||`
+      → Asigna/configura `} while (calendar.get(Calendar.DAY_OF_WEEK)` usando `= Calendar.SATURDAY ||`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L144 [28 espacios] `calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY)`
+      → Asigna/configura `calendar.get(Calendar.DAY_OF_WEEK)` usando `= Calendar.SUNDAY)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L145 [20 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L146 [20 espacios] `else -> return previous`
+      → Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+  L147 [16 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L148 [16 espacios] `candidate = calendar.timeInMillis`
+      → Asigna/configura `candidate` usando `calendar.timeInMillis`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L149 [12 espacios] `} while (candidate <= now)`
+      → Asigna/configura `} while (candidate <` usando `now)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L150 [12 espacios] `return candidate`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L151 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+6. EXPLICACIÓN COMPLETA LÍNEA POR LÍNEA
+----------------------------------------------------------------------
+Esta sección no omite líneas ejecutables. Repite incluso partes ya explicadas en funciones para poder leer el archivo de arriba abajo sin saltar entre secciones.
+L1: `package com.example.mynotes.reminders`
+    Declara que este archivo pertenece al package `com.example.mynotes.reminders`; esto determina su namespace Kotlin y cómo lo importan otros archivos.
+L3: `import android.content.Context`
+    Importa `android.content.Context` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L4: `import android.content.SharedPreferences`
+    Importa `android.content.SharedPreferences` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L5: `import kotlinx.coroutines.flow.MutableStateFlow`
+    Importa `kotlinx.coroutines.flow.MutableStateFlow` para usar coroutines, Flow y ejecución asíncrona.
+L6: `import kotlinx.coroutines.flow.StateFlow`
+    Importa `kotlinx.coroutines.flow.StateFlow` para usar coroutines, Flow y ejecución asíncrona.
+L7: `import kotlinx.coroutines.flow.asStateFlow`
+    Importa `kotlinx.coroutines.flow.asStateFlow` para usar coroutines, Flow y ejecución asíncrona.
+L8: `import org.json.JSONArray`
+    Importa `org.json.JSONArray` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L9: `import org.json.JSONObject`
+    Importa `org.json.JSONObject` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L10: `import java.util.Calendar`
+    Importa `java.util.Calendar` de la biblioteca estándar/JVM para operaciones de lenguaje, fechas, colecciones, I/O o utilidades.
+L12: `/**`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L13: `* Almacén ligero e independiente de Room para recordatorios.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L14: `* Esto evita tocar el esquema de notas/adjuntos y, por tanto, no introduce`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L15: `* ninguna migración que pueda poner en riesgo datos existentes.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L16: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L17: `class ReminderRepository(context: Context) {`
+    Declara class `ReminderRepository`. A partir de aquí las propiedades y funciones hasta su llave de cierre pertenecen a este tipo.
+L18: `private val appContext = context.applicationContext`
+    Declara `appContext` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `context.applicationContext`.
+L19: `private val preferences = appContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)`
+    Declara `preferences` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `appContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)`.
+L21: `private val _reminders = MutableStateFlow(loadReminders())`
+    Declara `_reminders` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `MutableStateFlow(loadReminders())`.
+L22: `val reminders: StateFlow<List<Reminder>> = _reminders.asStateFlow()`
+    Declara `reminders` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `_reminders.asStateFlow()`.
+L24: `private val preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->`
+    Declara `preferenceListener` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `SharedPreferences.OnSharedPreferenceChangeListener { _, key ->`.
+L25: `if (key == KEY_REMINDERS) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `key == KEY_REMINDERS`.
+L26: `_reminders.value = loadReminders()`
+    Asigna/configura `_reminders.value` usando `loadReminders()`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L27: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L28: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L30: `init {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L31: `preferences.registerOnSharedPreferenceChangeListener(preferenceListener)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L32: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L34: `fun getReminder(id: Long): Reminder? = loadReminders().firstOrNull { it.id == id }`
+    Declara una función. El bloque de `getReminder` se detalla después instrucción por instrucción.
+L36: `fun upsert(reminder: Reminder) {`
+    Declara una función. El bloque de `upsert` se detalla después instrucción por instrucción.
+L37: `val current = loadReminders().toMutableList()`
+    Declara `current` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `loadReminders().toMutableList()`.
+L38: `val index = current.indexOfFirst { it.id == reminder.id }`
+    Declara `index` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `current.indexOfFirst { it.id == reminder.id }`.
+L39: `if (index >= 0) current[index] = reminder else current += reminder`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `index >= 0`.
+L40: `save(current)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L41: `if (reminder.enabled) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `reminder.enabled`.
+L42: `ReminderAlarmScheduler.schedule(appContext, reminder)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L43: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L44: `ReminderAlarmScheduler.cancel(appContext, reminder.id)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L45: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L46: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L48: `fun delete(id: Long) {`
+    Declara una función. El bloque de `delete` se detalla después instrucción por instrucción.
+L49: `ReminderAlarmScheduler.cancel(appContext, id)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L50: `save(loadReminders().filterNot { it.id == id })`
+    Asigna/configura `save(loadReminders().filterNot { it.id` usando `= id })`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L51: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L53: `fun setEnabled(id: Long, enabled: Boolean) {`
+    Declara una función. El bloque de `setEnabled` se detalla después instrucción por instrucción.
+L54: `val reminder = getReminder(id) ?: return`
+    Declara `reminder` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `getReminder(id) ?: return`.
+L55: `upsert(reminder.copy(enabled = enabled))`
+    Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+L56: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L58: `/** Llamado después de disparar la notificación. */`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L59: `fun advanceAfterTrigger(id: Long) {`
+    Declara una función. El bloque de `advanceAfterTrigger` se detalla después instrucción por instrucción.
+L60: `val reminder = getReminder(id) ?: return`
+    Declara `reminder` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `getReminder(id) ?: return`.
+L61: `if (reminder.repeatMode == Reminder.REPEAT_NONE) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `reminder.repeatMode == Reminder.REPEAT_NONE`.
+L62: `upsert(reminder.copy(enabled = false))`
+    Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+L63: `return`
+    Finaliza inmediatamente la función actual sin devolver un valor adicional (`Unit`).
+L64: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L65: `val next = nextTrigger(reminder.triggerAtMillis, reminder.repeatMode, System.currentTimeMillis())`
+    Declara `next` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `nextTrigger(reminder.triggerAtMillis, reminder.repeatMode, System.currentTimeMillis())`.
+L66: `upsert(reminder.copy(triggerAtMillis = next, enabled = true))`
+    Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+L67: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L69: `fun rescheduleAll() {`
+    Declara una función. El bloque de `rescheduleAll` se detalla después instrucción por instrucción.
+L70: `loadReminders().filter { it.enabled }.forEach { reminder ->`
+    Conserva únicamente los elementos que cumplen la condición indicada.
+L71: `val normalized = if (reminder.triggerAtMillis <= System.currentTimeMillis()) {`
+    Declara `normalized` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (reminder.triggerAtMillis <= System.currentTimeMillis()) {`.
+L72: `if (reminder.repeatMode == Reminder.REPEAT_NONE) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `reminder.repeatMode == Reminder.REPEAT_NONE`.
+L73: `reminder.copy(enabled = false)`
+    Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+L74: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L75: `reminder.copy(triggerAtMillis = nextTrigger(reminder.triggerAtMillis, reminder.repeatMode, System.currentTimeMillis()))`
+    Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+L76: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L77: `} else reminder`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `} else reminder`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L78: `if (normalized != reminder) upsert(normalized)`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `normalized != reminder) upsert(normalized`.
+L79: `if (normalized.enabled) ReminderAlarmScheduler.schedule(appContext, normalized)`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `normalized.enabled) ReminderAlarmScheduler.schedule(appContext, normalized`.
+L80: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L81: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L83: `private fun save(items: List<Reminder>) {`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `save` se detalla después instrucción por instrucción.
+L84: `val sorted = items.sortedWith(compareByDescending<Reminder> { it.enabled }.thenBy { it.triggerAtMillis })`
+    Declara `sorted` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `items.sortedWith(compareByDescending<Reminder> { it.enabled }.thenBy { it.triggerAtMillis })`.
+L85: `val array = JSONArray()`
+    Lee o construye JSON. Las claves extraídas/insertadas representan datos intercambiados o respaldados por MyNotes.
+L86: `sorted.forEach { reminder ->`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `sorted.forEach { reminder ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L87: `array.put(JSONObject().apply {`
+    Lee o construye JSON. Las claves extraídas/insertadas representan datos intercambiados o respaldados por MyNotes.
+L88: `put("id", reminder.id)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L89: `put("title", reminder.title)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L90: `put("description", reminder.description)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L91: `put("triggerAtMillis", reminder.triggerAtMillis)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L92: `put("repeatMode", reminder.repeatMode)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L93: `put("priority", reminder.priority)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L94: `put("colorKey", reminder.colorKey)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L95: `put("enabled", reminder.enabled)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L96: `put("createdAt", reminder.createdAt)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L97: `})`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L98: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L99: `preferences.edit().putString(KEY_REMINDERS, array.toString()).apply()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L100: `_reminders.value = sorted`
+    Asigna/configura `_reminders.value` usando `sorted`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L101: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L103: `private fun loadReminders(): List<Reminder> {`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `loadReminders` se detalla después instrucción por instrucción.
+L104: `val raw = preferences.getString(KEY_REMINDERS, null) ?: return emptyList()`
+    Declara `raw` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `preferences.getString(KEY_REMINDERS, null) ?: return emptyList()`.
+L105: `return runCatching {`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L106: `val array = JSONArray(raw)`
+    Lee o construye JSON. Las claves extraídas/insertadas representan datos intercambiados o respaldados por MyNotes.
+L107: `buildList {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L108: `for (index in 0 until array.length()) {`
+    Inicia un bucle `for`; ejecuta el bloque una vez por cada elemento del iterable/rango indicado.
+L109: `val item = array.getJSONObject(index)`
+    Lee o construye JSON. Las claves extraídas/insertadas representan datos intercambiados o respaldados por MyNotes.
+L110: `add(`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `add(`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L111: `Reminder(`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `Reminder(`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L112: `id = item.optLong("id", System.currentTimeMillis() + index),`
+    Asigna/configura `id` usando `item.optLong("id", System.currentTimeMillis() + index),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L113: `title = item.optString("title"),`
+    Asigna/configura `title` usando `item.optString("title"),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L114: `description = item.optString("description"),`
+    Asigna/configura `description` usando `item.optString("description"),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L115: `triggerAtMillis = item.optLong("triggerAtMillis"),`
+    Asigna/configura `triggerAtMillis` usando `item.optLong("triggerAtMillis"),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L116: `repeatMode = item.optString("repeatMode", Reminder.REPEAT_NONE),`
+    Asigna/configura `repeatMode` usando `item.optString("repeatMode", Reminder.REPEAT_NONE),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L117: `priority = item.optString("priority", Reminder.PRIORITY_NORMAL),`
+    Asigna/configura `priority` usando `item.optString("priority", Reminder.PRIORITY_NORMAL),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L118: `colorKey = item.optString("colorKey", "palette"),`
+    Asigna/configura `colorKey` usando `item.optString("colorKey", "palette"),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L119: `enabled = item.optBoolean("enabled", true),`
+    Asigna/configura `enabled` usando `item.optBoolean("enabled", true),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L120: `createdAt = item.optLong("createdAt", System.currentTimeMillis())`
+    Asigna/configura `createdAt` usando `item.optLong("createdAt", System.currentTimeMillis())`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L121: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L122: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L123: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L124: `}.sortedWith(compareByDescending<Reminder> { it.enabled }.thenBy { it.triggerAtMillis })`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L125: `}.getOrDefault(emptyList())`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L126: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L128: `companion object {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L129: `private const val PREFS_NAME = "reminder_prefs"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L130: `private const val KEY_REMINDERS = "reminders_json"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L132: `fun nextTrigger(previous: Long, repeatMode: String, now: Long): Long {`
+    Declara una función. El bloque de `nextTrigger` se detalla después instrucción por instrucción.
+L133: `var candidate = previous`
+    Declara `candidate` como variable mutable: el código puede reasignarla para representar estado cambiante. Parte con `previous`.
+L134: `do {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L135: `val calendar = Calendar.getInstance().apply { timeInMillis = candidate }`
+    Declara `calendar` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `Calendar.getInstance().apply { timeInMillis = candidate }`.
+L136: `when (repeatMode) {`
+    Abre una decisión `when`: selecciona una rama según el valor/condición, equivalente a un switch más expresivo de Kotlin.
+L137: `Reminder.REPEAT_DAILY -> calendar.add(Calendar.DAY_OF_YEAR, 1)`
+    Define una rama/lambda. Cuando coincide `Reminder.REPEAT_DAILY`, se ejecuta la expresión o bloque situado después de `->`.
+L138: `Reminder.REPEAT_WEEKLY -> calendar.add(Calendar.WEEK_OF_YEAR, 1)`
+    Define una rama/lambda. Cuando coincide `Reminder.REPEAT_WEEKLY`, se ejecuta la expresión o bloque situado después de `->`.
+L139: `Reminder.REPEAT_MONTHLY -> calendar.add(Calendar.MONTH, 1)`
+    Define una rama/lambda. Cuando coincide `Reminder.REPEAT_MONTHLY`, se ejecuta la expresión o bloque situado después de `->`.
+L140: `Reminder.REPEAT_WEEKDAYS -> {`
+    Define una rama/lambda. Cuando coincide `Reminder.REPEAT_WEEKDAYS`, se ejecuta la expresión o bloque situado después de `->`.
+L141: `do {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L142: `calendar.add(Calendar.DAY_OF_YEAR, 1)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L143: `} while (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY ||`
+    Asigna/configura `} while (calendar.get(Calendar.DAY_OF_WEEK)` usando `= Calendar.SATURDAY ||`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L144: `calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY)`
+    Asigna/configura `calendar.get(Calendar.DAY_OF_WEEK)` usando `= Calendar.SUNDAY)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L145: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L146: `else -> return previous`
+    Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+L147: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L148: `candidate = calendar.timeInMillis`
+    Asigna/configura `candidate` usando `calendar.timeInMillis`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L149: `} while (candidate <= now)`
+    Asigna/configura `} while (candidate <` usando `now)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L150: `return candidate`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L151: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L152: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L153: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+7. RECURSOS ANDROID REFERENCIADOS
+----------------------------------------------------------------------
+- No hay referencias directas `R.*` en este archivo.
+
+8. QUIÉN USA ESTE COMPONENTE
+----------------------------------------------------------------------
+- `ReminderRepository` aparece también en 3 archivo(s):
+    - app/src/main/java/com/example/mynotes/MainActivity.kt
+    - app/src/main/java/com/example/mynotes/reminders/ReminderReceiver.kt
+    - app/src/main/java/com/example/mynotes/ui/theme/ReminderScreen.kt
+
+9. QUÉ PUEDE ROMPERSE SI LO MODIFICAS
+----------------------------------------------------------------------
+- Los recordatorios combinan persistencia + AlarmManager + BroadcastReceiver + notificación. Cambiar solo la UI sin sincronizar scheduler/receiver puede crear alarmas huérfanas o avisos que no reflejen el estado guardado.
+
+10. CHECKLIST DE PRUEBA DESPUÉS DE MODIFICAR ESTE ARCHIVO
+----------------------------------------------------------------------
+- Compilar `assembleDebug` y resolver primero errores de Kotlin/AAPT.
+- Abrir la pantalla/flujo relacionado y comprobar ida y vuelta (back) sin estado duplicado.
+- Cambiar tema/paleta y verificar contraste si este archivo dibuja UI.
+- Crear un recordatorio a +5 minutos, editarlo, desactivarlo y confirmar que solo aparece la notificación esperada.
+- Reiniciar el dispositivo/emulador y verificar reprogramación de recordatorios activos.
+
+==============================================================================================================
+FIN DEL ARCHIVO
+==============================================================================================================

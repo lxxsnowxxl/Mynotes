@@ -1,0 +1,451 @@
+MYNOTES — EXPLICACIÓN ULTRA DETALLADA
+==============================================================================================================
+Archivo 61/72: app/src/main/java/com/example/mynotes/widget/FocusNoteWidgetProvider.kt
+SHA-256: c245da786b39799731847ab11b371c235110cb117d795793735a6c73a5d94dbd
+Líneas del fuente: 93
+Package: com.example.mynotes.widget
+
+1. RESPONSABILIDAD EXACTA DEL ARCHIVO
+----------------------------------------------------------------------
+AppWidgetProvider de Nota destacada; selecciona una nota y la representa en un widget individual.
+
+2. DÓNDE ENCAJA EN LA ARQUITECTURA
+----------------------------------------------------------------------
+Este archivo pertenece principalmente a la **integración App Widgets/launcher**. No debe analizarse aislado: las referencias cruzadas y callbacks se detallan más abajo.
+
+3. IMPORTACIONES, UNA POR UNA
+----------------------------------------------------------------------
+- `android.appwidget.AppWidgetManager`: Importa `android.appwidget.AppWidgetManager` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `android.appwidget.AppWidgetProvider`: Importa `android.appwidget.AppWidgetProvider` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `android.content.Context`: Importa `android.content.Context` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `android.view.View`: Importa `android.view.View` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `android.widget.RemoteViews`: Importa `android.widget.RemoteViews` para usar interfaz de App Widgets/notificaciones personalizadas fuera de Compose.
+- `com.example.mynotes.R`: Importa `com.example.mynotes.R`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.data.AppDatabase`: Importa `com.example.mynotes.data.AppDatabase`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `kotlinx.coroutines.CoroutineScope`: Importa `kotlinx.coroutines.CoroutineScope` para usar coroutines, Flow y ejecución asíncrona.
+- `kotlinx.coroutines.Dispatchers`: Importa `kotlinx.coroutines.Dispatchers` para usar coroutines, Flow y ejecución asíncrona.
+- `kotlinx.coroutines.SupervisorJob`: Importa `kotlinx.coroutines.SupervisorJob` para usar coroutines, Flow y ejecución asíncrona.
+- `kotlinx.coroutines.launch`: Importa `kotlinx.coroutines.launch` para usar coroutines, Flow y ejecución asíncrona.
+
+4. DECLARACIONES Y ESTADO IMPORTANTES
+----------------------------------------------------------------------
+L15: `class FocusNoteWidgetProvider : AppWidgetProvider() {`
+    Declara class `FocusNoteWidgetProvider`. A partir de aquí las propiedades y funciones hasta su llave de cierre pertenecen a este tipo.
+L17: `val pendingResult = goAsync()`
+    Declara `pendingResult` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `goAsync()`.
+L20: `val db = AppDatabase.getDatabase(context.applicationContext)`
+    Declara `db` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `AppDatabase.getDatabase(context.applicationContext)`.
+L21: `val note = db.noteDao().getFocusNoteForWidget()`
+    Declara `note` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `db.noteDao().getFocusNoteForWidget()`.
+L22: `val theme = WidgetPresentation.theme(context)`
+    Declara `theme` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `WidgetPresentation.theme(context)`.
+L23: `val textContext = WidgetLocale.localizedContext(context)`
+    Declara `textContext` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `WidgetLocale.localizedContext(context)`.
+L24: `val visualMap = WidgetMediaPreview.firstVisualByNote(db.attachmentDao().getAllAttachmentsOnce())`
+    Declara `visualMap` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `WidgetMediaPreview.firstVisualByNote(db.attachmentDao().getAllAttachmentsOnce())`.
+L26: `val views = RemoteViews(context.packageName, R.layout.widget_focus_note)`
+    Crea un árbol `RemoteViews`, la UI serializable que Android permite mostrar fuera del proceso normal de Compose (widgets/notificaciones personalizadas).
+L65: `val bitmap = runCatching { WidgetMediaPreview.loadBestPreviewBitmap(context, note, visualMap[note.id], 260, 260) }.getOrNull()`
+    Declara `bitmap` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `runCatching { WidgetMediaPreview.loadBestPreviewBitmap(context, note, visualMap[note.id], 260, 260) }.getOrNull()`.
+L76: `val open = WidgetIntents.openNote(context, note.id, appWidgetId + 503)`
+    Declara `open` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `WidgetIntents.openNote(context, note.id, appWidgetId + 503)`.
+
+5. FUNCIONES — EXPLICACIÓN DE CADA UNA
+----------------------------------------------------------------------
+
+5.1 `onUpdate` — líneas 16–92
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
+
+Propósito:
+    Android llama este método para actualizar instancias de un App Widget. Debe reconstruir RemoteViews con datos/configuración actuales.
+
+Parámetros/entradas:
+  - `context: Context`: el llamador proporciona este valor/callback a `onUpdate`. Dentro del cuerpo, las líneas donde aparece `context` muestran exactamente cómo afecta al resultado.
+  - `appWidgetManager: AppWidgetManager`: el llamador proporciona este valor/callback a `onUpdate`. Dentro del cuerpo, las líneas donde aparece `appWidgetManager` muestran exactamente cómo afecta al resultado.
+  - `appWidgetIds: IntArray`: el llamador proporciona este valor/callback a `onUpdate`. Dentro del cuerpo, las líneas donde aparece `appWidgetIds` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L16 [4 espacios] `override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {`
+      → Sobrescribe un método definido por una clase/interfaz base. El bloque de `onUpdate` se detalla después instrucción por instrucción.
+  L17 [8 espacios] `val pendingResult = goAsync()`
+      → Declara `pendingResult` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `goAsync()`.
+  L18 [8 espacios] `CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {`
+      → Lanza una coroutine hija para ejecutar este bloque de forma asíncrona respecto al código llamador.
+  L19 [12 espacios] `try {`
+      → Abre un bloque protegido: si una operación lanza una excepción, el control puede pasar al `catch` correspondiente sin terminar abruptamente el flujo.
+  L20 [16 espacios] `val db = AppDatabase.getDatabase(context.applicationContext)`
+      → Declara `db` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `AppDatabase.getDatabase(context.applicationContext)`.
+  L21 [16 espacios] `val note = db.noteDao().getFocusNoteForWidget()`
+      → Declara `note` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `db.noteDao().getFocusNoteForWidget()`.
+  L22 [16 espacios] `val theme = WidgetPresentation.theme(context)`
+      → Declara `theme` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `WidgetPresentation.theme(context)`.
+  L23 [16 espacios] `val textContext = WidgetLocale.localizedContext(context)`
+      → Declara `textContext` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `WidgetLocale.localizedContext(context)`.
+  L24 [16 espacios] `val visualMap = WidgetMediaPreview.firstVisualByNote(db.attachmentDao().getAllAttachmentsOnce())`
+      → Declara `visualMap` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `WidgetMediaPreview.firstVisualByNote(db.attachmentDao().getAllAttachmentsOnce())`.
+  L25 [16 espacios] `appWidgetIds.forEach { appWidgetId ->`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `appWidgetIds.forEach { appWidgetId ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L26 [20 espacios] `val views = RemoteViews(context.packageName, R.layout.widget_focus_note)`
+      → Crea un árbol `RemoteViews`, la UI serializable que Android permite mostrar fuera del proceso normal de Compose (widgets/notificaciones personalizadas).
+  L27 [20 espacios] `views.setInt(R.id.widget_focus_root, "setBackgroundResource", theme.rootBackgroundRes)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L28 [20 espacios] `views.setTextViewText(R.id.widget_focus_title_label, textContext.getString(R.string.widget_focus_note))`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L29 [20 espacios] `views.setTextViewText(R.id.widget_focus_subtitle, textContext.getString(R.string.widget_focus_note_hint))`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L30 [20 espacios] `views.setTextViewText(R.id.widget_focus_open, textContext.getString(R.string.widget_open_note))`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L31 [20 espacios] `views.setTextViewText(R.id.widget_focus_empty, textContext.getString(R.string.widget_empty_notes))`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L32 [20 espacios] `views.setTextColor(R.id.widget_focus_title_label, theme.textPrimary)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L33 [20 espacios] `views.setTextColor(R.id.widget_focus_subtitle, theme.textSecondary)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L34 [20 espacios] `views.setTextColor(R.id.widget_focus_empty, theme.textSecondary)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L35 [20 espacios] `views.setInt(R.id.widget_focus_add, "setBackgroundResource", theme.primaryActionBackgroundRes)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L36 [20 espacios] `views.setInt(R.id.widget_focus_add, "setColorFilter", theme.onPrimaryAction)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L37 [20 espacios] `views.setCharSequence(R.id.widget_focus_add, "setContentDescription", textContext.getString(R.string.widget_new_note))`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L38 [20 espacios] `views.setCharSequence(R.id.widget_focus_favorite, "setContentDescription", textContext.getString(R.string.widget_toggle_favorite))`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L39 [20 espacios] `views.setCharSequence(R.id.widget_focus_pin, "setContentDescription", textContext.getString(R.string.widget_toggle_pin))`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L40 [20 espacios] `views.setOnClickPendingIntent(R.id.widget_focus_header, WidgetIntents.openApp(context, appWidgetId))`
+      → Crea o configura un `PendingIntent`: una autorización empaquetada que Android puede ejecutar más tarde en nombre de MyNotes.
+  L41 [20 espacios] `views.setOnClickPendingIntent(R.id.widget_focus_add, WidgetIntents.newNote(context, appWidgetId + 501))`
+      → Crea o configura un `PendingIntent`: una autorización empaquetada que Android puede ejecutar más tarde en nombre de MyNotes.
+  L43 [20 espacios] `if (note == null) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `note == null`.
+  L44 [24 espacios] `views.setViewVisibility(R.id.widget_focus_card, View.GONE)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L45 [24 espacios] `views.setViewVisibility(R.id.widget_focus_empty, View.VISIBLE)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L46 [24 espacios] `views.setOnClickPendingIntent(R.id.widget_focus_empty, WidgetIntents.newNote(context, appWidgetId + 502))`
+      → Crea o configura un `PendingIntent`: una autorización empaquetada que Android puede ejecutar más tarde en nombre de MyNotes.
+  L47 [20 espacios] `} else {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L48 [24 espacios] `views.setViewVisibility(R.id.widget_focus_card, View.VISIBLE)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L49 [24 espacios] `views.setViewVisibility(R.id.widget_focus_empty, View.GONE)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L50 [24 espacios] `views.setInt(R.id.widget_focus_card, "setBackgroundResource", theme.detailCardBackgroundRes)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L51 [24 espacios] `views.setTextViewText(R.id.widget_focus_title, WidgetPresentation.title(textContext, note))`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L52 [24 espacios] `views.setTextViewText(R.id.widget_focus_preview, WidgetPresentation.contentPreview(note, 78).ifBlank { WidgetPresentation.preview(textContext, note) })`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L53 [24 espacios] `views.setTextViewText(R.id.widget_focus_meta, WidgetPresentation.metadata(textContext, note))`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L54 [24 espacios] `views.setTextViewText(R.id.widget_focus_badge, WidgetPresentation.badge(textContext, note))`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L55 [24 espacios] `views.setTextColor(R.id.widget_focus_title, theme.textPrimary)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L56 [24 espacios] `views.setTextColor(R.id.widget_focus_preview, theme.textSecondary)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L57 [24 espacios] `views.setTextColor(R.id.widget_focus_meta, theme.textMuted)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L58 [24 espacios] `views.setInt(R.id.widget_focus_open, "setBackgroundResource", theme.chipBackgroundRes)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L59 [24 espacios] `views.setTextColor(R.id.widget_focus_open, theme.textPrimary)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L60 [24 espacios] `views.setInt(R.id.widget_focus_badge, "setBackgroundResource", theme.actionBackgroundRes)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L61 [24 espacios] `views.setTextColor(R.id.widget_focus_badge, theme.textMuted)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L62 [24 espacios] `views.setInt(R.id.widget_focus_favorite, "setBackgroundResource", theme.actionBackgroundRes)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L63 [24 espacios] `views.setInt(R.id.widget_focus_pin, "setBackgroundResource", theme.actionBackgroundRes)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L65 [24 espacios] `val bitmap = runCatching { WidgetMediaPreview.loadBestPreviewBitmap(context, note, visualMap[note.id], 260, 260) }.getOrNull()`
+      → Declara `bitmap` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `runCatching { WidgetMediaPreview.loadBestPreviewBitmap(context, note, visualMap[note.id], 260, 260) }.getOrNull()`.
+  L66 [24 espacios] `views.setInt(R.id.widget_focus_thumb, "setBackgroundResource", theme.thumbnailBackgroundRes)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L67 [24 espacios] `if (bitmap != null) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `bitmap != null`.
+  L68 [28 espacios] `views.setImageViewBitmap(R.id.widget_focus_thumb, bitmap)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L69 [28 espacios] `views.setViewPadding(R.id.widget_focus_thumb, 0, 0, 0, 0)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L70 [24 espacios] `} else {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L71 [28 espacios] `views.setImageViewResource(R.id.widget_focus_thumb, R.drawable.widget_thumb_placeholder)`
+      → Referencia un drawable empaquetado en recursos (widget_thumb_placeholder) para usarlo como icono/fondo/imagen.
+  L72 [28 espacios] `views.setViewPadding(R.id.widget_focus_thumb, 18, 18, 18, 18)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L73 [28 espacios] `views.setInt(R.id.widget_focus_thumb, "setColorFilter", theme.textMuted)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L74 [24 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L76 [24 espacios] `val open = WidgetIntents.openNote(context, note.id, appWidgetId + 503)`
+      → Declara `open` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `WidgetIntents.openNote(context, note.id, appWidgetId + 503)`.
+  L77 [24 espacios] `views.setOnClickPendingIntent(R.id.widget_focus_card, open)`
+      → Crea o configura un `PendingIntent`: una autorización empaquetada que Android puede ejecutar más tarde en nombre de MyNotes.
+  L78 [24 espacios] `views.setOnClickPendingIntent(R.id.widget_focus_open, open)`
+      → Crea o configura un `PendingIntent`: una autorización empaquetada que Android puede ejecutar más tarde en nombre de MyNotes.
+  L79 [24 espacios] `views.setOnClickPendingIntent(R.id.widget_focus_favorite, WidgetIntents.toggleFavorite(context, note.id, appWidgetId + 504))`
+      → Crea o configura un `PendingIntent`: una autorización empaquetada que Android puede ejecutar más tarde en nombre de MyNotes.
+  L80 [24 espacios] `views.setOnClickPendingIntent(R.id.widget_focus_pin, WidgetIntents.togglePin(context, note.id, appWidgetId + 505))`
+      → Crea o configura un `PendingIntent`: una autorización empaquetada que Android puede ejecutar más tarde en nombre de MyNotes.
+  L81 [24 espacios] `views.setImageViewResource(R.id.widget_focus_favorite, if (note.isFavorite) R.drawable.widget_ic_star else R.drawable.widget_ic_star_outline)`
+      → Referencia un drawable empaquetado en recursos (widget_ic_star, widget_ic_star_outline) para usarlo como icono/fondo/imagen.
+  L82 [24 espacios] `views.setImageViewResource(R.id.widget_focus_pin, if (note.isPinned) R.drawable.widget_ic_pin else R.drawable.widget_ic_pin_outline)`
+      → Referencia un drawable empaquetado en recursos (widget_ic_pin, widget_ic_pin_outline) para usarlo como icono/fondo/imagen.
+  L83 [24 espacios] `views.setInt(R.id.widget_focus_favorite, "setColorFilter", if (note.isFavorite) 0xFFE0AA2D.toInt() else theme.onAction)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L84 [24 espacios] `views.setInt(R.id.widget_focus_pin, "setColorFilter", theme.onAction)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L85 [20 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L86 [20 espacios] `appWidgetManager.updateAppWidget(appWidgetId, views)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L87 [16 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L88 [12 espacios] `} finally {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L89 [16 espacios] `pendingResult.finish()`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L90 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L91 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L92 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+6. EXPLICACIÓN COMPLETA LÍNEA POR LÍNEA
+----------------------------------------------------------------------
+Esta sección no omite líneas ejecutables. Repite incluso partes ya explicadas en funciones para poder leer el archivo de arriba abajo sin saltar entre secciones.
+L1: `package com.example.mynotes.widget`
+    Declara que este archivo pertenece al package `com.example.mynotes.widget`; esto determina su namespace Kotlin y cómo lo importan otros archivos.
+L3: `import android.appwidget.AppWidgetManager`
+    Importa `android.appwidget.AppWidgetManager` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L4: `import android.appwidget.AppWidgetProvider`
+    Importa `android.appwidget.AppWidgetProvider` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L5: `import android.content.Context`
+    Importa `android.content.Context` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L6: `import android.view.View`
+    Importa `android.view.View` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L7: `import android.widget.RemoteViews`
+    Importa `android.widget.RemoteViews` para usar interfaz de App Widgets/notificaciones personalizadas fuera de Compose.
+L8: `import com.example.mynotes.R`
+    Importa `com.example.mynotes.R`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L9: `import com.example.mynotes.data.AppDatabase`
+    Importa `com.example.mynotes.data.AppDatabase`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L10: `import kotlinx.coroutines.CoroutineScope`
+    Importa `kotlinx.coroutines.CoroutineScope` para usar coroutines, Flow y ejecución asíncrona.
+L11: `import kotlinx.coroutines.Dispatchers`
+    Importa `kotlinx.coroutines.Dispatchers` para usar coroutines, Flow y ejecución asíncrona.
+L12: `import kotlinx.coroutines.SupervisorJob`
+    Importa `kotlinx.coroutines.SupervisorJob` para usar coroutines, Flow y ejecución asíncrona.
+L13: `import kotlinx.coroutines.launch`
+    Importa `kotlinx.coroutines.launch` para usar coroutines, Flow y ejecución asíncrona.
+L15: `class FocusNoteWidgetProvider : AppWidgetProvider() {`
+    Declara class `FocusNoteWidgetProvider`. A partir de aquí las propiedades y funciones hasta su llave de cierre pertenecen a este tipo.
+L16: `override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {`
+    Sobrescribe un método definido por una clase/interfaz base. El bloque de `onUpdate` se detalla después instrucción por instrucción.
+L17: `val pendingResult = goAsync()`
+    Declara `pendingResult` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `goAsync()`.
+L18: `CoroutineScope(SupervisorJob() + Dispatchers.IO).launch {`
+    Lanza una coroutine hija para ejecutar este bloque de forma asíncrona respecto al código llamador.
+L19: `try {`
+    Abre un bloque protegido: si una operación lanza una excepción, el control puede pasar al `catch` correspondiente sin terminar abruptamente el flujo.
+L20: `val db = AppDatabase.getDatabase(context.applicationContext)`
+    Declara `db` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `AppDatabase.getDatabase(context.applicationContext)`.
+L21: `val note = db.noteDao().getFocusNoteForWidget()`
+    Declara `note` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `db.noteDao().getFocusNoteForWidget()`.
+L22: `val theme = WidgetPresentation.theme(context)`
+    Declara `theme` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `WidgetPresentation.theme(context)`.
+L23: `val textContext = WidgetLocale.localizedContext(context)`
+    Declara `textContext` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `WidgetLocale.localizedContext(context)`.
+L24: `val visualMap = WidgetMediaPreview.firstVisualByNote(db.attachmentDao().getAllAttachmentsOnce())`
+    Declara `visualMap` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `WidgetMediaPreview.firstVisualByNote(db.attachmentDao().getAllAttachmentsOnce())`.
+L25: `appWidgetIds.forEach { appWidgetId ->`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `appWidgetIds.forEach { appWidgetId ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L26: `val views = RemoteViews(context.packageName, R.layout.widget_focus_note)`
+    Crea un árbol `RemoteViews`, la UI serializable que Android permite mostrar fuera del proceso normal de Compose (widgets/notificaciones personalizadas).
+L27: `views.setInt(R.id.widget_focus_root, "setBackgroundResource", theme.rootBackgroundRes)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L28: `views.setTextViewText(R.id.widget_focus_title_label, textContext.getString(R.string.widget_focus_note))`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L29: `views.setTextViewText(R.id.widget_focus_subtitle, textContext.getString(R.string.widget_focus_note_hint))`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L30: `views.setTextViewText(R.id.widget_focus_open, textContext.getString(R.string.widget_open_note))`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L31: `views.setTextViewText(R.id.widget_focus_empty, textContext.getString(R.string.widget_empty_notes))`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L32: `views.setTextColor(R.id.widget_focus_title_label, theme.textPrimary)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L33: `views.setTextColor(R.id.widget_focus_subtitle, theme.textSecondary)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L34: `views.setTextColor(R.id.widget_focus_empty, theme.textSecondary)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L35: `views.setInt(R.id.widget_focus_add, "setBackgroundResource", theme.primaryActionBackgroundRes)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L36: `views.setInt(R.id.widget_focus_add, "setColorFilter", theme.onPrimaryAction)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L37: `views.setCharSequence(R.id.widget_focus_add, "setContentDescription", textContext.getString(R.string.widget_new_note))`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L38: `views.setCharSequence(R.id.widget_focus_favorite, "setContentDescription", textContext.getString(R.string.widget_toggle_favorite))`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L39: `views.setCharSequence(R.id.widget_focus_pin, "setContentDescription", textContext.getString(R.string.widget_toggle_pin))`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L40: `views.setOnClickPendingIntent(R.id.widget_focus_header, WidgetIntents.openApp(context, appWidgetId))`
+    Crea o configura un `PendingIntent`: una autorización empaquetada que Android puede ejecutar más tarde en nombre de MyNotes.
+L41: `views.setOnClickPendingIntent(R.id.widget_focus_add, WidgetIntents.newNote(context, appWidgetId + 501))`
+    Crea o configura un `PendingIntent`: una autorización empaquetada que Android puede ejecutar más tarde en nombre de MyNotes.
+L43: `if (note == null) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `note == null`.
+L44: `views.setViewVisibility(R.id.widget_focus_card, View.GONE)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L45: `views.setViewVisibility(R.id.widget_focus_empty, View.VISIBLE)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L46: `views.setOnClickPendingIntent(R.id.widget_focus_empty, WidgetIntents.newNote(context, appWidgetId + 502))`
+    Crea o configura un `PendingIntent`: una autorización empaquetada que Android puede ejecutar más tarde en nombre de MyNotes.
+L47: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L48: `views.setViewVisibility(R.id.widget_focus_card, View.VISIBLE)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L49: `views.setViewVisibility(R.id.widget_focus_empty, View.GONE)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L50: `views.setInt(R.id.widget_focus_card, "setBackgroundResource", theme.detailCardBackgroundRes)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L51: `views.setTextViewText(R.id.widget_focus_title, WidgetPresentation.title(textContext, note))`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L52: `views.setTextViewText(R.id.widget_focus_preview, WidgetPresentation.contentPreview(note, 78).ifBlank { WidgetPresentation.preview(textContext, note) })`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L53: `views.setTextViewText(R.id.widget_focus_meta, WidgetPresentation.metadata(textContext, note))`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L54: `views.setTextViewText(R.id.widget_focus_badge, WidgetPresentation.badge(textContext, note))`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L55: `views.setTextColor(R.id.widget_focus_title, theme.textPrimary)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L56: `views.setTextColor(R.id.widget_focus_preview, theme.textSecondary)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L57: `views.setTextColor(R.id.widget_focus_meta, theme.textMuted)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L58: `views.setInt(R.id.widget_focus_open, "setBackgroundResource", theme.chipBackgroundRes)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L59: `views.setTextColor(R.id.widget_focus_open, theme.textPrimary)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L60: `views.setInt(R.id.widget_focus_badge, "setBackgroundResource", theme.actionBackgroundRes)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L61: `views.setTextColor(R.id.widget_focus_badge, theme.textMuted)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L62: `views.setInt(R.id.widget_focus_favorite, "setBackgroundResource", theme.actionBackgroundRes)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L63: `views.setInt(R.id.widget_focus_pin, "setBackgroundResource", theme.actionBackgroundRes)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L65: `val bitmap = runCatching { WidgetMediaPreview.loadBestPreviewBitmap(context, note, visualMap[note.id], 260, 260) }.getOrNull()`
+    Declara `bitmap` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `runCatching { WidgetMediaPreview.loadBestPreviewBitmap(context, note, visualMap[note.id], 260, 260) }.getOrNull()`.
+L66: `views.setInt(R.id.widget_focus_thumb, "setBackgroundResource", theme.thumbnailBackgroundRes)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L67: `if (bitmap != null) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `bitmap != null`.
+L68: `views.setImageViewBitmap(R.id.widget_focus_thumb, bitmap)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L69: `views.setViewPadding(R.id.widget_focus_thumb, 0, 0, 0, 0)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L70: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L71: `views.setImageViewResource(R.id.widget_focus_thumb, R.drawable.widget_thumb_placeholder)`
+    Referencia un drawable empaquetado en recursos (widget_thumb_placeholder) para usarlo como icono/fondo/imagen.
+L72: `views.setViewPadding(R.id.widget_focus_thumb, 18, 18, 18, 18)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L73: `views.setInt(R.id.widget_focus_thumb, "setColorFilter", theme.textMuted)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L74: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L76: `val open = WidgetIntents.openNote(context, note.id, appWidgetId + 503)`
+    Declara `open` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `WidgetIntents.openNote(context, note.id, appWidgetId + 503)`.
+L77: `views.setOnClickPendingIntent(R.id.widget_focus_card, open)`
+    Crea o configura un `PendingIntent`: una autorización empaquetada que Android puede ejecutar más tarde en nombre de MyNotes.
+L78: `views.setOnClickPendingIntent(R.id.widget_focus_open, open)`
+    Crea o configura un `PendingIntent`: una autorización empaquetada que Android puede ejecutar más tarde en nombre de MyNotes.
+L79: `views.setOnClickPendingIntent(R.id.widget_focus_favorite, WidgetIntents.toggleFavorite(context, note.id, appWidgetId + 504))`
+    Crea o configura un `PendingIntent`: una autorización empaquetada que Android puede ejecutar más tarde en nombre de MyNotes.
+L80: `views.setOnClickPendingIntent(R.id.widget_focus_pin, WidgetIntents.togglePin(context, note.id, appWidgetId + 505))`
+    Crea o configura un `PendingIntent`: una autorización empaquetada que Android puede ejecutar más tarde en nombre de MyNotes.
+L81: `views.setImageViewResource(R.id.widget_focus_favorite, if (note.isFavorite) R.drawable.widget_ic_star else R.drawable.widget_ic_star_outline)`
+    Referencia un drawable empaquetado en recursos (widget_ic_star, widget_ic_star_outline) para usarlo como icono/fondo/imagen.
+L82: `views.setImageViewResource(R.id.widget_focus_pin, if (note.isPinned) R.drawable.widget_ic_pin else R.drawable.widget_ic_pin_outline)`
+    Referencia un drawable empaquetado en recursos (widget_ic_pin, widget_ic_pin_outline) para usarlo como icono/fondo/imagen.
+L83: `views.setInt(R.id.widget_focus_favorite, "setColorFilter", if (note.isFavorite) 0xFFE0AA2D.toInt() else theme.onAction)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L84: `views.setInt(R.id.widget_focus_pin, "setColorFilter", theme.onAction)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L85: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L86: `appWidgetManager.updateAppWidget(appWidgetId, views)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L87: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L88: `} finally {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L89: `pendingResult.finish()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L90: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L91: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L92: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L93: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+7. RECURSOS ANDROID REFERENCIADOS
+----------------------------------------------------------------------
+- `R.drawable.widget_ic_pin`: referencia a un recurso `drawable` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.drawable.widget_ic_pin_outline`: referencia a un recurso `drawable` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.drawable.widget_ic_star`: referencia a un recurso `drawable` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.drawable.widget_ic_star_outline`: referencia a un recurso `drawable` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.drawable.widget_thumb_placeholder`: referencia a un recurso `drawable` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.id.widget_focus_add`: referencia a un recurso `id` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.id.widget_focus_badge`: referencia a un recurso `id` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.id.widget_focus_card`: referencia a un recurso `id` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.id.widget_focus_empty`: referencia a un recurso `id` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.id.widget_focus_favorite`: referencia a un recurso `id` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.id.widget_focus_header`: referencia a un recurso `id` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.id.widget_focus_meta`: referencia a un recurso `id` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.id.widget_focus_open`: referencia a un recurso `id` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.id.widget_focus_pin`: referencia a un recurso `id` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.id.widget_focus_preview`: referencia a un recurso `id` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.id.widget_focus_root`: referencia a un recurso `id` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.id.widget_focus_subtitle`: referencia a un recurso `id` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.id.widget_focus_thumb`: referencia a un recurso `id` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.id.widget_focus_title`: referencia a un recurso `id` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.id.widget_focus_title_label`: referencia a un recurso `id` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.layout.widget_focus_note`: referencia a un recurso `layout` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.widget_empty_notes`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.widget_focus_note`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.widget_focus_note_hint`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.widget_new_note`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.widget_open_note`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.widget_toggle_favorite`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.widget_toggle_pin`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+
+8. QUIÉN USA ESTE COMPONENTE
+----------------------------------------------------------------------
+- `FocusNoteWidgetProvider` aparece también en 1 archivo(s):
+    - app/src/main/java/com/example/mynotes/widget/MyNotesWidgetUpdater.kt
+
+9. QUÉ PUEDE ROMPERSE SI LO MODIFICAS
+----------------------------------------------------------------------
+- Los widgets usan RemoteViews, no Compose. API 28/Samsung limita propiedades y tintes; no asumir que cualquier API visual de Compose/Views funciona dentro del launcher.
+
+10. CHECKLIST DE PRUEBA DESPUÉS DE MODIFICAR ESTE ARCHIVO
+----------------------------------------------------------------------
+- Compilar `assembleDebug` y resolver primero errores de Kotlin/AAPT.
+- Abrir la pantalla/flujo relacionado y comprobar ida y vuelta (back) sin estado duplicado.
+- Cambiar tema/paleta y verificar contraste si este archivo dibuja UI.
+- Añadir el widget desde el launcher en API 28/Samsung, cambiar idioma/paleta y forzar actualización.
+
+==============================================================================================================
+FIN DEL ARCHIVO
+==============================================================================================================

@@ -1,0 +1,11 @@
+MYNOTES — FLUJO COMPLETO DE NOTAS
+
+CREACIÓN: NotesScreen -> callback de Nueva nota -> MainActivity cambia destino -> NoteEditorScreen mantiene texto/color/adjuntos temporales -> Guardar llama NoteViewModel -> NoteDao inserta Note -> adjuntos pendientes se asocian al id -> widgets se refrescan.
+
+LECTURA: NoteDao emite Flow -> NoteViewModel transforma/expone -> NotesScreen filtra/busca -> Lazy list/grid crea NoteCard -> cada tarjeta calcula color/contorno/texto y renderiza metadatos.
+
+EDICIÓN: tocar Edit conserva id de Note -> editor carga valores existentes y Flow de adjuntos -> al guardar se usa update en vez de insert.
+
+ELIMINACIÓN: UI solicita confirmación/acción -> ViewModel elimina nota y datos relacionados -> Flow emite nueva lista -> Compose recompone y widget updater refleja cambio.
+
+FAVORITO/FIJADO/PRIORIDAD: son propiedades de Note que cambian mediante copia/actualización; los filtros y widgets dependen de esos campos.

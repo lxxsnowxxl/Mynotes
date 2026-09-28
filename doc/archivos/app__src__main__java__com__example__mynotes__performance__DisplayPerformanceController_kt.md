@@ -1,48 +1,170 @@
-# DisplayPerformanceController.kt — documentación del código actual
-**Ruta real:** `app/src/main/java/com/example/mynotes/performance/DisplayPerformanceController.kt`  **SHA-256:** `ce8d178a143a85f44c75e50dfc920c55ea073110dbf6e1bcebb58eab30c0f1fe`  **Líneas:** 129 · **Bytes:** 5920 · **Imports:** 5 · **Declaraciones detectadas:** 8
-> Documento generado fuera de `app/` a partir de lectura del código. El fuente es la única fuente de verdad; no se modificó para generar esta documentación.
-## 1. Responsabilidad
+# DisplayPerformanceController.kt — explicación completa del código
 
-Aplicación de perfiles de rendimiento y comportamiento de display/frame pacing.
-## 2. Package e imports
+**Ruta:** `app/src/main/java/com/example/mynotes/performance/DisplayPerformanceController.kt`  
+**SHA-256:** `ce8d178a143a85f44c75e50dfc920c55ea073110dbf6e1bcebb58eab30c0f1fe`  
+**Líneas:** 130  
+**Package:** `com.example.mynotes.performance`
 
-Package declarado: `com.example.mynotes.performance`.
+## 1. Para qué existe este archivo
 
-### Android / Jetpack / Compose
+Controla la frecuencia de actualización solicitada a la ventana según el perfil de rendimiento.
 
-`android.os.Build`, `android.view.Display`, `android.view.Window`
+## 2. Tipos/clases declarados
 
-### Kotlin / Coroutines / Java
+- Línea **25** — `object DisplayPerformanceController`.
 
-`java.util.WeakHashMap`, `kotlin.math.abs`
+## 3. Estado, constantes y valores importantes
 
-## 3. Declaraciones detectadas
+- **`lastRequestedMode`** (línea 31) inicia con `WeakHashMap<Window`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`normalizedMode`** (línea 33) inicia con `normalizePerformanceMode(performanceMode`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`mode`** (línea 52) inicia con `lastRequestedMode[window]?: return`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`attributes`** (línea 73) inicia con `window.attributes`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`display`** (línea 81) inicia con `window.decorView.display`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`currentMode`** (línea 82) inicia con `display?.mode`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`supportedModes`** (línea 83) inicia con `display?.supportedModes?.toList(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`sameResolutionModes`** (línea 89) inicia con `if (currentMode != null`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`resolutionCandidates`** (línea 96) inicia con `sameResolutionModes.ifEmpty {`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`candidates`** (línea 104) inicia con `resolutionCandidates.filter { mode -> mode.refreshRate <= targetRefreshRate + REFRESH_RATE_TOLERANCE`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`bestMode`** (línea 108) inicia con `chooseClosestMode(modes = candidates`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`MODE_PERFORMANCE`** (línea 123) inicia con `"performance"`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`MODE_BALANCED`** (línea 124) inicia con `"balanced"`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`MODE_QUALITY`** (línea 125) inicia con `"quality"`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`STANDARD_REFRESH_RATE`** (línea 126) inicia con `60f`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`QUALITY_REFRESH_RATE`** (línea 127) inicia con `120f`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`REFRESH_RATE_TOLERANCE`** (línea 128) inicia con `0.5f`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
 
-| Línea | Tipo | Nombre | Firma/inicio |
-|---:|---|---|---|
-| 25 | `object` | `DisplayPerformanceController` | `object DisplayPerformanceController {` |
-| 32 | `fun` | `requestForPerformanceMode` | `fun requestForPerformanceMode(window: Window, performanceMode: String) {` |
-| 51 | `fun` | `reapplyLastRequest` | `fun reapplyLastRequest(window: Window) {` |
-| 59 | `fun` | `release` | `fun release(window: Window) {` |
-| 62 | `fun` | `refreshRateFor` | `private fun refreshRateFor(performanceMode: String): Float = when (performanceMode) {` |
-| 67 | `fun` | `normalizePerformanceMode` | `private fun normalizePerformanceMode(value: String): String = when (value.trim().lowercase()) {` |
-| 72 | `fun` | `requestRefreshRate` | `private fun requestRefreshRate(window: Window, targetRefreshRate: Float) {` |
-| 117 | `fun` | `chooseClosestMode` | `private fun chooseClosestMode(modes: List<Display.Mode>, targetRefreshRate: Float): Display.Mode? = modes.minWithOrNull(` |
+## 4. Funciones y flujo, una por una
 
-## 4. Estado, efectos y límites observables
+### `requestForPerformanceMode` — líneas 32–46
 
-- **safe calls:** 3 aparición/apariciones.
+**Firma:** `fun requestForPerformanceMode(window: Window, performanceMode: String)`
 
-Estas cifras son indicadores de superficie de cambio, no diagnósticos de error. Cualquier modificación debe preservar contratos de persistencia, lifecycle, límites numéricos y nulabilidad visibles en el fuente.
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
 
-## 5. Dependencias internas directas
+**Entradas:**
+- `window: Window`
+- `performanceMode: String`
 
-No importa directamente otros símbolos `com.example.mynotes.*`.
+**Salida:** Unit o inferido por Kotlin.
 
-## 6. Recursos Android referenciados
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
 
-No se detectaron referencias `R.*` directas.
+**Operaciones/funciones que coordina:** `normalizePerformanceMode`, `requestRefreshRate`, `refreshRateFor`.
 
-## 7. Puntos de revisión al modificarlo
+### `reapplyLastRequest` — líneas 51–54
 
-- Conservar rangos `coerce*`, claves DataStore y compatibilidad con backups existentes.
+**Firma:** `fun reapplyLastRequest(window: Window)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `window: Window`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Decisiones y protecciones visibles:**
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+
+**Operaciones/funciones que coordina:** `requestRefreshRate`, `refreshRateFor`.
+
+### `release` — líneas 59–61
+
+**Firma:** `fun release(window: Window)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `window: Window`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Operaciones/funciones que coordina:** `remove`.
+
+### `refreshRateFor` — líneas 62–62
+
+**Firma:** `private fun refreshRateFor(performanceMode: String): Float`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `performanceMode: String`
+
+**Salida:** Float.
+
+**Decisiones y protecciones visibles:**
+- Usa `when` para mapear estados/tipos/opciones.
+
+### `normalizePerformanceMode` — líneas 67–67
+
+**Firma:** `private fun normalizePerformanceMode(value: String): String`
+
+Normaliza una cadena/valor externo al conjunto de opciones admitidas por MyNotes y devuelve un fallback estable si el valor no es reconocido.
+
+**Entradas:**
+- `value: String`
+
+**Salida:** String.
+
+**Decisiones y protecciones visibles:**
+- Usa `when` para mapear estados/tipos/opciones.
+
+**Operaciones/funciones que coordina:** `trim`, `lowercase`.
+
+### `requestRefreshRate` — líneas 72–116
+
+**Firma:** `private fun requestRefreshRate(window: Window, targetRefreshRate: Float)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `window: Window`
+- `targetRefreshRate: Float`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `toList`, `orEmpty`, `isNotEmpty`, `emptyList`, `chooseClosestMode`.
+
+### `chooseClosestMode` — líneas 117–117
+
+**Firma:** `private fun chooseClosestMode(modes: List<Display.Mode>, targetRefreshRate: Float): Display.Mode?`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `modes: List<Display.Mode>`
+- `targetRefreshRate: Float`
+
+**Salida:** Display.Mode?.
+
+**Operaciones/funciones que coordina:** `minWithOrNull`.
+
+## 5. Cómo se conecta con el resto de MyNotes
+
+- No importa directamente otro componente `com.example.mynotes`; funciona como modelo/utilidad base o mediante APIs Android/Jetpack.
+
+## 6. Recursos Android que utiliza
+
+- No se detectaron referencias directas `R.*` en este archivo.
+
+## 7. Tecnologías y efectos relevantes
+
+- Principalmente lógica Kotlin/Compose sin I/O especial detectado por estas reglas.
+
+## 8. Lectura práctica del flujo
+
+Una forma útil de seguir este archivo en el depurador es recorrer estas operaciones en este orden aproximado:
+1. `requestForPerformanceMode` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+2. `reapplyLastRequest` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+3. `release` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+## 9. Qué no debe romperse al modificarlo
+
+- No renombrar claves persistentes sin migración; ajustes ya guardados dependen de ellas.
+
+## 10. Resumen en lenguaje sencillo
+
+En términos simples: Controla la frecuencia de actualización solicitada a la ventana según el perfil de rendimiento. La sección función por función anterior describe qué entra, qué devuelve y qué efectos produce cada operación detectada en el fuente actual.

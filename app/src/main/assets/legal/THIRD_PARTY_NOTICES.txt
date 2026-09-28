@@ -72,8 +72,8 @@ Before a public release, generate the resolved Gradle dependency graph and
 compare it with this notice so newly introduced transitive libraries and their
 NOTICE requirements are not missed.
 
-## Google Sans Flex
+## Google Sans
 
-When the hidden developer font is unlocked and selected, MyNotes requests **Google Sans Flex** from the official Google Fonts provider at runtime. The legacy closed Google Sans binaries are not bundled. Google Sans Flex is licensed under the **SIL Open Font License 1.1**. A copy is included in `OFL-Google-Sans-Flex.txt` and `app/src/main/assets/legal/OFL-Google-Sans-Flex.txt`.
+When the hidden developer font is unlocked and selected, MyNotes requests **Google Sans** from the official Google Fonts provider at runtime and uses the **Bold (700)** weight. No Google Sans font binary is bundled in the APK. Google Sans is licensed under the **SIL Open Font License 1.1**. A copy is included in `OFL-Google-Sans.txt` and `app/src/main/assets/legal/OFL-Google-Sans.txt`.
 
-Copyright 2022 The Google Sans Flex Project Authors (github.com/googlefonts/googlesans-flex).
+The upstream project is maintained at `github.com/googlefonts/googlesans`.

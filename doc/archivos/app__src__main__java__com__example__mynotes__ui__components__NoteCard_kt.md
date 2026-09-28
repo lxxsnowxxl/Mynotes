@@ -1,76 +1,342 @@
-# NoteCard.kt — documentación del código actual
-**Ruta real:** `app/src/main/java/com/example/mynotes/ui/components/NoteCard.kt`  **SHA-256:** `6388b10cdc88379f74e39a8e94f57e722b8d93b08290cf512d7dbedd1382115d`  **Líneas:** 883 · **Bytes:** 48809 · **Imports:** 96 · **Declaraciones detectadas:** 12
-> Documento generado fuera de `app/` a partir de lectura del código. El fuente es la única fuente de verdad; no se modificó para generar esta documentación.
-## 1. Responsabilidad
+# NoteCard.kt — explicación completa del código
 
-Tarjeta principal de nota: contenido, menús, categoría, adjuntos, enlaces, borde y acciones.
-## 2. Package e imports
+**Ruta:** `app/src/main/java/com/example/mynotes/ui/components/NoteCard.kt`  
+**SHA-256:** `6388b10cdc88379f74e39a8e94f57e722b8d93b08290cf512d7dbedd1382115d`  
+**Líneas:** 884  
+**Package:** `com.example.mynotes.ui.components`
 
-Package declarado: `com.example.mynotes.ui.components`.
+## 1. Para qué existe este archivo
 
-### Android / Jetpack / Compose
+Tarjeta principal de nota. Renderiza texto, adjuntos, link previews, categoría/fecha, contorno adaptativo y menús de acciones.
 
-`android.net.Uri`, `androidx.compose.animation.AnimatedVisibility`, `androidx.compose.animation.Crossfade`, `androidx.compose.animation.fadeIn`, `androidx.compose.animation.fadeOut`, `androidx.compose.animation.scaleIn`, `androidx.compose.animation.scaleOut`, `androidx.compose.animation.animateColorAsState`, `androidx.compose.animation.core.tween`, `androidx.compose.animation.animateContentSize`, `androidx.compose.foundation.BorderStroke`, `androidx.compose.foundation.background`, `androidx.compose.foundation.Image`, `androidx.compose.foundation.clickable`, `androidx.compose.foundation.interaction.MutableInteractionSource`, `androidx.compose.foundation.layout.Arrangement`, `androidx.compose.foundation.layout.Box`, `androidx.compose.foundation.layout.PaddingValues`, `androidx.compose.foundation.layout.Column`, `androidx.compose.foundation.layout.Row`, `androidx.compose.foundation.layout.Spacer`, `androidx.compose.foundation.layout.fillMaxWidth`, `androidx.compose.foundation.layout.fillMaxHeight`, `androidx.compose.foundation.layout.fillMaxSize`, `androidx.compose.foundation.layout.defaultMinSize`, `androidx.compose.foundation.layout.height`, `androidx.compose.foundation.layout.heightIn`, `androidx.compose.foundation.layout.padding`, `androidx.compose.foundation.layout.size`, `androidx.compose.foundation.layout.width`, `androidx.compose.foundation.layout.widthIn`, `androidx.compose.foundation.shape.CircleShape`, `androidx.compose.foundation.shape.RoundedCornerShape`, `androidx.compose.material.icons.Icons`, `androidx.compose.material.icons.filled.Delete`, `androidx.compose.material.icons.filled.Description`, `androidx.compose.material.icons.filled.Edit`, `androidx.compose.material.icons.filled.Mic`, `androidx.compose.material.icons.filled.MusicNote`, `androidx.compose.material.icons.filled.PlayArrow`, `androidx.compose.material.icons.filled.MoreVert`, `androidx.compose.material.icons.filled.Palette`, `androidx.compose.material.icons.filled.PriorityHigh`, `androidx.compose.material.icons.filled.PushPin`, `androidx.compose.material.icons.filled.Star`, `androidx.compose.material.icons.filled.StarBorder`, `androidx.compose.material.icons.filled.Work`, `androidx.compose.material.icons.filled.Person`, `androidx.compose.material3.Card`, `androidx.compose.material3.CardDefaults`, `androidx.compose.material3.DropdownMenuItem`, `androidx.compose.material3.HorizontalDivider`, `androidx.compose.material3.Icon`, `androidx.compose.material3.IconButton`, `androidx.compose.material3.MaterialTheme`, `androidx.compose.material3.Surface`, `androidx.compose.material3.Text`, `androidx.compose.runtime.Composable`, `androidx.compose.runtime.LaunchedEffect`, `androidx.compose.runtime.getValue`, `androidx.compose.runtime.mutableStateOf`, `androidx.compose.runtime.remember`, `androidx.compose.runtime.setValue`, `androidx.compose.ui.Alignment`, `androidx.compose.ui.Modifier`, `androidx.compose.ui.draw.clip`, `androidx.compose.ui.graphics.Color`, `androidx.compose.ui.graphics.vector.ImageVector`, `androidx.compose.ui.graphics.asImageBitmap`, `androidx.compose.ui.layout.ContentScale`, `androidx.compose.ui.platform.LocalContext`, `androidx.compose.ui.res.stringResource`, `androidx.compose.ui.text.font.FontFamily`, `androidx.compose.ui.text.font.FontWeight`, `androidx.compose.ui.text.style.TextOverflow`, `androidx.compose.ui.unit.dp`, `androidx.compose.ui.unit.sp`, `androidx.compose.ui.window.PopupProperties`
+## 2. Tipos/clases declarados
 
-### Proyecto MyNotes
+- No declara una clase/objeto propio; contiene funciones/valores de soporte o es un archivo marcador.
 
-`com.example.mynotes.R`, `com.example.mynotes.ui.components.AppDropdownMenu`, `com.example.mynotes.data.Attachment`, `com.example.mynotes.data.Note`, `com.example.mynotes.performance.AttachmentPreviewCache`, `com.example.mynotes.ui.theme.automaticUiTextColor`, `com.example.mynotes.ui.theme.resolveUiTextColor`, `com.example.mynotes.ui.theme.resolveSecondaryUiTextColor`, `com.example.mynotes.ui.theme.resolveUiGraphicColor`, `com.example.mynotes.ui.theme.compositeUiColor`, `com.example.mynotes.ui.theme.ensureUiContrast`, `com.example.mynotes.ui.theme.noteBackgroundColor`, `com.example.mynotes.ui.theme.paletteMatchedOutlineColor`, `com.example.mynotes.ui.motion.AppMotion`, `com.example.mynotes.ui.sound.UiActionSound`, `com.example.mynotes.ui.sound.UiSoundPlayer`
+## 3. Estado, constantes y valores importantes
 
-### Kotlin / Coroutines / Java
+- **`FavoriteGold`** (línea 99) inicia con `Color(0xFFF5A623`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`MainOptionMenuKeys`** (línea 101) inicia con `listOf("edit"`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`PriorityOptionKeys`** (línea 103) inicia con `listOf("none"`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`ColorOptionKeys`** (línea 105) inicia con `listOf("default"`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`context`** (línea 128) inicia con `LocalContext.current`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`cardColor`** (línea 129) inicia con `noteBackgroundColor(note.color`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`textColor`** (línea 130) inicia con `resolveUiTextColor(value = noteUiTextColor`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`secondaryTextColor`** (línea 131) inicia con `resolveSecondaryUiTextColor(value = noteUiTextColor`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`graphicColor`** (línea 132) inicia con `resolveUiGraphicColor(value = noteUiTextColor`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`favoriteIconColor`** (línea 133) inicia con `ensureUiContrast(preferred = FavoriteGold`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`motionDuration`** (línea 140) inicia con `if (isScrolling`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`previewAttachments`** (línea 143) inicia con `remember(attachments`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`noteLinks`** (línea 146) inicia con `remember(note.content`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`displayContent`** (línea 149) inicia con `remember(note.content`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`popupBaseColor`** (línea 168) inicia con `when (optionMenuTextColor`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`popupAlpha`** (línea 172) inicia con `(optionMenuOpacity / 100f`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`popupColor`** (línea 173) inicia con `popupBaseColor.copy(alpha = popupAlpha`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`popupVisualBackground`** (línea 174) inicia con `compositeUiColor(foreground = popupColor`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`noteOutlineColor`** (línea 180) inicia con `paletteMatchedOutlineColor(animatedCardColor`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`menuTextColor`** (línea 181) inicia con `resolveUiTextColor(value = optionMenuTextColor`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`mainMenuOrder`** (línea 182) inicia con `remember(optionMenuOrder`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`hiddenMainMenuItems`** (línea 185) inicia con `remember(optionMenuHiddenItems`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`visibleMainMenuItems`** (línea 188) inicia con `remember(mainMenuOrder`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`hiddenPriorityItems`** (línea 196) inicia con `remember(priorityMenuHiddenItems`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`visiblePriorityItems`** (línea 199) inicia con `remember(hiddenPriorityItems`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`hiddenColorItems`** (línea 207) inicia con `remember(colorMenuHiddenItems`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`visibleColorItems`** (línea 210) inicia con `remember(hiddenColorItems`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`cardInteractionSource`** (línea 218) inicia con `remember {`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`cardContentModifier`** (línea 228) inicia con `if (isScrolling`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`outlineContentInset`** (línea 241) inicia con `if (style.outlineEnabled`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`priority`** (línea 421) inicia con `when (key`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`label`** (línea 427) inicia con `stringResource(when (key`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`optionColor`** (línea 465) inicia con `when (key`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`cardTitleFontSize`** (línea 518) inicia con `(fontSize + 1f`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`cardBodyFontSize`** (línea 519) inicia con `(fontSize - 2f`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
 
-`java.text.DateFormat`, `java.util.Date`
+## 4. Funciones y flujo, una por una
 
-## 3. Declaraciones detectadas
+### `ModernNoteCard` — líneas 122–570
 
-| Línea | Tipo | Nombre | Firma/inicio |
-|---:|---|---|---|
-| 121 | `fun` | `ModernNoteCard` | `@Composable` |
-| 571 | `fun` | `CategoryPill` | `` |
-| 599 | `fun` | `NoteCardAttachmentsPreview` | `` |
-| 634 | `fun` | `NoteCardAttachmentTile` | `` |
-| 777 | `fun` | `FileLikeFallbackTile` | `` |
-| 789 | `fun` | `SmallDurationBadge` | `` |
-| 797 | `fun` | `formatSmallDuration` | `` |
-| 804 | `fun` | `ConfigurableDropdownMenuItem` | `` |
-| 819 | `fun` | `PriorityMenuItem` | `` |
-| 845 | `fun` | `ColorMenuItem` | `` |
-| 862 | `fun` | `normalizedMenuOrder` | `` |
-| 875 | `fun` | `parseMenuKeys` | `` |
+**Firma:** `fun ModernNoteCard(note: Note, attachments: List<Attachment>, fontFamily: FontFamily, fontSize: Float, noteUiTextColor: String, style: NoteCardStyle, optionMenuOrder: String, optionMenuHiddenItems: String, optionMenuShowIcons: Boolean, optionMenuTextColor: String, optionMenuOpacity: Float, priorityMenuHiddenItems: String, colorMenuHiddenItems: String, performanceMode: String, isScrolling: Boolean = false, onOpen: () -> Unit, onEdit: () -> Unit, onToggleFavorite: () -> Unit, onTogglePinned: () -> Unit, onPriorityChange: (Int) -> Unit, onColorChange: (String) -> Unit, onCategoryChange: (String) -> Unit, onDelete: () -> Unit)`
 
-## 4. Estado, efectos y límites observables
+Renderiza una tarjeta completa. Resuelve fondo/contraste/borde de paleta, aplica padding dependiente del grosor, muestra previews de adjuntos/enlaces, título/contenido, controles y menú ⋮ configurable.
 
-- **Compose state:** 30 aparición/apariciones.
-- **LaunchedEffect/DisposableEffect:** 4 aparición/apariciones.
-- **Room:** 2 aparición/apariciones.
-- **I/O/red:** 1 aparición/apariciones.
-- **coerce*:** 6 aparición/apariciones.
-- **safe calls:** 8 aparición/apariciones.
+**Entradas:**
+- `note: Note`
+- `attachments: List<Attachment>`
+- `fontFamily: FontFamily`
+- `fontSize: Float`
+- `noteUiTextColor: String`
+- `style: NoteCardStyle`
+- `optionMenuOrder: String`
+- `optionMenuHiddenItems: String`
+- `optionMenuShowIcons: Boolean`
+- `optionMenuTextColor: String`
+- `optionMenuOpacity: Float`
+- `priorityMenuHiddenItems: String`
+- `colorMenuHiddenItems: String`
+- `performanceMode: String`
+- `isScrolling: Boolean = false`
+- `onOpen: () -> Unit`
+- `onEdit: () -> Unit`
+- `onToggleFavorite: () -> Unit`
+- `onTogglePinned: () -> Unit`
+- `onPriorityChange: (Int) -> Unit`
 
-Estas cifras son indicadores de superficie de cambio, no diagnósticos de error. Cualquier modificación debe preservar contratos de persistencia, lifecycle, límites numéricos y nulabilidad visibles en el fuente.
+**Salida:** Unit o inferido por Kotlin.
 
-## 5. Dependencias internas directas
+**Efectos/APIs observados en el cuerpo:**
+- Accede al sistema de archivos interno/cache.
+- Participa en estado/efectos de Compose.
 
-- `com.example.mynotes.R`
-- `com.example.mynotes.data.Attachment`
-- `com.example.mynotes.data.Note`
-- `com.example.mynotes.performance.AttachmentPreviewCache`
-- `com.example.mynotes.ui.components.AppDropdownMenu`
-- `com.example.mynotes.ui.motion.AppMotion`
-- `com.example.mynotes.ui.sound.UiActionSound`
-- `com.example.mynotes.ui.sound.UiSoundPlayer`
-- `com.example.mynotes.ui.theme.automaticUiTextColor`
-- `com.example.mynotes.ui.theme.compositeUiColor`
-- `com.example.mynotes.ui.theme.ensureUiContrast`
-- `com.example.mynotes.ui.theme.noteBackgroundColor`
-- `com.example.mynotes.ui.theme.paletteMatchedOutlineColor`
-- `com.example.mynotes.ui.theme.resolveSecondaryUiTextColor`
-- `com.example.mynotes.ui.theme.resolveUiGraphicColor`
-- `com.example.mynotes.ui.theme.resolveUiTextColor`
+**Decisiones y protecciones visibles:**
+- Limita valores con `coerce*` para evitar estados fuera de rango.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+- Usa `when` para mapear estados/tipos/opciones.
 
-## 6. Recursos Android referenciados
+**Operaciones/funciones que coordina:** `noteBackgroundColor`, `resolveUiTextColor`, `resolveSecondaryUiTextColor`, `resolveUiGraphicColor`, `ensureUiContrast`, `duration`, `animateColorAsState`, `tween`, `take`, `extractLinkUrls`, `noteTextForDisplay`, `coerceIn`, `copy`, `compositeUiColor`, `paletteMatchedOutlineColor`, `normalizedMenuOrder`, `parseMenuKeys`, `MutableInteractionSource`.
 
-- **R.string:** `audio`, `file`, `image`, `mock_add_favorite`, `mock_color`, `mock_color_blue`, `mock_color_brown`, `mock_color_cyan`, `mock_color_default`, `mock_color_gray`, `mock_color_green`, `mock_color_lime`, `mock_color_mint`, `mock_color_orange`, `mock_color_pink`, `mock_color_purple`, `mock_color_red`, `mock_color_teal`, `mock_color_yellow`, `mock_delete`, `mock_edit`, `mock_favorites`, `mock_move`, `mock_personal` ×2, `mock_pin`, `mock_priority`, `mock_priority_high`, `mock_priority_low`, `mock_priority_medium`, `mock_priority_none`, `mock_remove_favorite`, `mock_unpin`, `mock_untitled`, `mock_work` ×2, `video`, `voice_note`
+### `CategoryPill` — líneas 573–598
 
-## 7. Puntos de revisión al modificarlo
+**Firma:** `fun CategoryPill(category: String, fontFamily: FontFamily = FontFamily.Default)`
 
-- Validar sus llamadores y el comportamiento visible asociado antes de alterar firmas o valores por defecto.
+Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+**Entradas:**
+- `category: String`
+- `fontFamily: FontFamily = FontFamily.Default`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `RoundedCornerShape`, `padding`.
+
+### `NoteCardAttachmentsPreview` — líneas 601–633
+
+**Firma:** `private fun NoteCardAttachmentsPreview(attachments: List<Attachment>, previewHeight: androidx.compose.ui.unit.Dp, cornerRadius: androidx.compose.ui.unit.Dp, fontFamily: FontFamily, performanceMode: String, deferHeavyLoads: Boolean, isScrolling: Boolean)`
+
+Organiza la zona visual de adjuntos respetando la altura configurada y el número/tipo de archivos.
+
+**Entradas:**
+- `attachments: List<Attachment>`
+- `previewHeight: androidx.compose.ui.unit.Dp`
+- `cornerRadius: androidx.compose.ui.unit.Dp`
+- `fontFamily: FontFamily`
+- `performanceMode: String`
+- `deferHeavyLoads: Boolean`
+- `isScrolling: Boolean`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `RoundedCornerShape`, `fillMaxWidth`, `height`, `clip`, `NoteCardAttachmentTile`, `first`, `fillMaxSize`, `spacedBy`, `take`, `chunked`, `weight`, `fillMaxHeight`.
+
+### `NoteCardAttachmentTile` — líneas 636–776
+
+**Firma:** `private fun NoteCardAttachmentTile(attachment: Attachment, modifier: Modifier, compact: Boolean, fontFamily: FontFamily, performanceMode: String, deferHeavyLoads: Boolean, isScrolling: Boolean)`
+
+Escoge la representación adecuada para cada adjunto (imagen, video, audio, PDF/archivo), reutilizando el caché de previews y evitando cargar de más durante scroll.
+
+**Entradas:**
+- `attachment: Attachment`
+- `modifier: Modifier`
+- `compact: Boolean`
+- `fontFamily: FontFamily`
+- `performanceMode: String`
+- `deferHeavyLoads: Boolean`
+- `isScrolling: Boolean`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Procesa imágenes/bitmaps.
+- Participa en estado/efectos de Compose.
+
+**Decisiones y protecciones visibles:**
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+- Usa `when` para mapear estados/tipos/opciones.
+
+**Operaciones/funciones que coordina:** `parse`, `substringAfterLast`, `lowercase`, `orEmpty`, `peekImagePreview`, `LaunchedEffect`, `loadImagePreview`, `Image`, `asImageBitmap`, `fillMaxSize`, `FileLikeFallbackTile`, `peekVideoPreview`, `loadVideoPreview`, `align`, `copy`, `padding`, `size`, `SmallDurationBadge`.
+
+### `FileLikeFallbackTile` — líneas 779–788
+
+**Firma:** `private fun FileLikeFallbackTile(icon: ImageVector, label: String, compact: Boolean, fontFamily: FontFamily)`
+
+Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+**Entradas:**
+- `icon: ImageVector`
+- `label: String`
+- `compact: Boolean`
+- `fontFamily: FontFamily`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `fillMaxSize`, `background`, `size`, `height`.
+
+### `SmallDurationBadge` — líneas 791–796
+
+**Firma:** `private fun SmallDurationBadge(duration: Long, modifier: Modifier = Modifier)`
+
+Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+**Entradas:**
+- `duration: Long`
+- `modifier: Modifier = Modifier`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Operaciones/funciones que coordina:** `padding`, `copy`, `RoundedCornerShape`, `formatSmallDuration`.
+
+### `formatSmallDuration` — líneas 798–803
+
+**Firma:** `private fun formatSmallDuration(durationMillis: Long): String`
+
+Convierte un valor interno a texto breve de presentación para la interfaz.
+
+**Entradas:**
+- `durationMillis: Long`
+
+**Salida:** String.
+
+**Operaciones/funciones que coordina:** `format`.
+
+### `ConfigurableDropdownMenuItem` — líneas 806–818
+
+**Firma:** `private fun ConfigurableDropdownMenuItem(label: String, icon: ImageVector, showIcon: Boolean, textColor: Color, onClick: () -> Unit)`
+
+Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+**Entradas:**
+- `label: String`
+- `icon: ImageVector`
+- `showIcon: Boolean`
+- `textColor: Color`
+- `onClick: () -> Unit`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `DropdownMenuItem`, `defaultMinSize`, `PaddingValues`.
+
+### `PriorityMenuItem` — líneas 821–844
+
+**Firma:** `private fun PriorityMenuItem(label: String, selected: Boolean, textColor: Color, showIndicator: Boolean, onClick: () -> Unit)`
+
+Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+**Entradas:**
+- `label: String`
+- `selected: Boolean`
+- `textColor: Color`
+- `showIndicator: Boolean`
+- `onClick: () -> Unit`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `DropdownMenuItem`, `defaultMinSize`, `PaddingValues`, `size`, `clip`, `background`.
+
+### `ColorMenuItem` — líneas 847–861
+
+**Firma:** `private fun ColorMenuItem(label: String, color: Color, textColor: Color, showSwatch: Boolean, onClick: () -> Unit)`
+
+Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+**Entradas:**
+- `label: String`
+- `color: Color`
+- `textColor: Color`
+- `showSwatch: Boolean`
+- `onClick: () -> Unit`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `DropdownMenuItem`, `defaultMinSize`, `PaddingValues`, `size`, `clip`, `background`.
+
+### `normalizedMenuOrder` — líneas 863–874
+
+**Firma:** `private fun normalizedMenuOrder(raw: String, validKeys: List<String>): List<String>`
+
+Normaliza una cadena/valor externo al conjunto de opciones admitidas por MyNotes y devuelve un fallback estable si el valor no es reconocido.
+
+**Entradas:**
+- `raw: String`
+- `validKeys: List<String>`
+
+**Salida:** List<String>.
+
+**Operaciones/funciones que coordina:** `split`, `trim`, `distinct`.
+
+### `parseMenuKeys` — líneas 876–883
+
+**Firma:** `private fun parseMenuKeys(raw: String, validKeys: List<String>): Set<String>`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `raw: String`
+- `validKeys: List<String>`
+
+**Salida:** Set<String>.
+
+**Operaciones/funciones que coordina:** `split`, `trim`, `toSet`.
+
+## 5. Cómo se conecta con el resto de MyNotes
+
+- Usa `com.example.mynotes.R`.
+- Usa `com.example.mynotes.ui.components.AppDropdownMenu`.
+- Usa `com.example.mynotes.data.Attachment`.
+- Usa `com.example.mynotes.data.Note`.
+- Usa `com.example.mynotes.performance.AttachmentPreviewCache`.
+- Usa `com.example.mynotes.ui.theme.automaticUiTextColor`.
+- Usa `com.example.mynotes.ui.theme.resolveUiTextColor`.
+- Usa `com.example.mynotes.ui.theme.resolveSecondaryUiTextColor`.
+- Usa `com.example.mynotes.ui.theme.resolveUiGraphicColor`.
+- Usa `com.example.mynotes.ui.theme.compositeUiColor`.
+- Usa `com.example.mynotes.ui.theme.ensureUiContrast`.
+- Usa `com.example.mynotes.ui.theme.noteBackgroundColor`.
+- Usa `com.example.mynotes.ui.theme.paletteMatchedOutlineColor`.
+- Usa `com.example.mynotes.ui.motion.AppMotion`.
+- Usa `com.example.mynotes.ui.sound.UiActionSound`.
+- Usa `com.example.mynotes.ui.sound.UiSoundPlayer`.
+
+## 6. Recursos Android que utiliza
+
+- `R.string`: `audio`, `file`, `image`, `mock_add_favorite`, `mock_color`, `mock_color_blue`, `mock_color_brown`, `mock_color_cyan`, `mock_color_default`, `mock_color_gray`, `mock_color_green`, `mock_color_lime`, `mock_color_mint`, `mock_color_orange`, `mock_color_pink`, `mock_color_purple`, `mock_color_red`, `mock_color_teal`, `mock_color_yellow`, `mock_delete`, `mock_edit`, `mock_favorites`, `mock_move`, `mock_personal`, `mock_pin`, `mock_priority`, `mock_priority_high`, `mock_priority_low`, `mock_priority_medium`, `mock_priority_none`, `mock_remove_favorite`, `mock_unpin`, `mock_untitled`, `mock_work`, `video`, `voice_note`
+
+## 7. Tecnologías y efectos relevantes
+
+- Procesa imágenes/bitmaps.
+- Accede al sistema de archivos interno/cache.
+- Participa en estado/efectos de Compose.
+
+## 8. Lectura práctica del flujo
+
+Una forma útil de seguir este archivo en el depurador es recorrer estas operaciones en este orden aproximado:
+1. `ModernNoteCard` — Renderiza una tarjeta completa. Resuelve fondo/contraste/borde de paleta, aplica padding dependiente del grosor, muestra previews de adjuntos/enlaces, título/contenido, controles y menú ⋮ configurable.
+2. `CategoryPill` — Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+## 9. Qué no debe romperse al modificarlo
+
+- Evitar aumentar resoluciones/cargas sin considerar memoria y scroll; preservar caché y liberación de recursos.
+- Conservar validaciones de Uri/ruta y no confiar en nombres externos sin sanitizar.
+- Evitar trabajo bloqueante durante composición y mantener estado estable para limitar recomposiciones.
+- Este archivo toca previews/adjuntos; cualquier cambio debe probar visualización y miniaturas en los perfiles de rendimiento.
+
+## 10. Resumen en lenguaje sencillo
+
+En términos simples: Tarjeta principal de nota. Renderiza texto, adjuntos, link previews, categoría/fecha, contorno adaptativo y menús de acciones. La sección función por función anterior describe qué entra, qué devuelve y qué efectos produce cada operación detectada en el fuente actual.

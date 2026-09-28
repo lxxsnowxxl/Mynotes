@@ -1,0 +1,1637 @@
+MYNOTES — EXPLICACIÓN ULTRA DETALLADA
+==============================================================================================================
+Archivo 32/72: app/src/main/java/com/example/mynotes/ui/components/OptionsMenuCustomizationSection.kt
+SHA-256: e90945c9af4c2025c57fda46b1d4e1a99927ab3a05733504369eb3fa0848e6de
+Líneas del fuente: 368
+Package: com.example.mynotes.ui.components
+
+1. RESPONSABILIDAD EXACTA DEL ARCHIVO
+----------------------------------------------------------------------
+Configuración avanzada para ordenar, ocultar y personalizar las opciones de menús de las notas.
+
+2. DÓNDE ENCAJA EN LA ARQUITECTURA
+----------------------------------------------------------------------
+Este archivo pertenece principalmente a la **capa de interfaz Compose/Activities**. No debe analizarse aislado: las referencias cruzadas y callbacks se detallan más abajo.
+
+3. IMPORTACIONES, UNA POR UNA
+----------------------------------------------------------------------
+- `androidx.compose.foundation.layout.Arrangement`: Importa `androidx.compose.foundation.layout.Arrangement` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.layout.Column`: Importa `androidx.compose.foundation.layout.Column` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.layout.PaddingValues`: Importa `androidx.compose.foundation.layout.PaddingValues` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.layout.Row`: Importa `androidx.compose.foundation.layout.Row` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.layout.Spacer`: Importa `androidx.compose.foundation.layout.Spacer` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.layout.fillMaxWidth`: Importa `androidx.compose.foundation.layout.fillMaxWidth` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.layout.height`: Importa `androidx.compose.foundation.layout.height` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.layout.padding`: Importa `androidx.compose.foundation.layout.padding` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.layout.size`: Importa `androidx.compose.foundation.layout.size` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.layout.width`: Importa `androidx.compose.foundation.layout.width` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.material.icons.Icons`: Importa `androidx.compose.material.icons.Icons` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.material.icons.filled.ExpandMore`: Importa `androidx.compose.material.icons.filled.ExpandMore` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.material.icons.filled.KeyboardArrowDown`: Importa `androidx.compose.material.icons.filled.KeyboardArrowDown` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.material.icons.filled.KeyboardArrowUp`: Importa `androidx.compose.material.icons.filled.KeyboardArrowUp` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.material.icons.filled.Refresh`: Importa `androidx.compose.material.icons.filled.Refresh` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.material3.DropdownMenuItem`: Importa `androidx.compose.material3.DropdownMenuItem` para usar componentes y tema Material 3.
+- `androidx.compose.material3.Icon`: Importa `androidx.compose.material3.Icon` para usar componentes y tema Material 3.
+- `androidx.compose.material3.IconButton`: Importa `androidx.compose.material3.IconButton` para usar componentes y tema Material 3.
+- `androidx.compose.material3.MaterialTheme`: Importa `androidx.compose.material3.MaterialTheme` para usar componentes y tema Material 3.
+- `androidx.compose.material3.Slider`: Importa `androidx.compose.material3.Slider` para usar componentes y tema Material 3.
+- `androidx.compose.material3.Switch`: Importa `androidx.compose.material3.Switch` para usar componentes y tema Material 3.
+- `androidx.compose.material3.Text`: Importa `androidx.compose.material3.Text` para usar componentes y tema Material 3.
+- `androidx.compose.material3.TextButton`: Importa `androidx.compose.material3.TextButton` para usar componentes y tema Material 3.
+- `androidx.compose.runtime.Composable`: Importa `androidx.compose.runtime.Composable` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+- `androidx.compose.runtime.LaunchedEffect`: Importa `androidx.compose.runtime.LaunchedEffect` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+- `androidx.compose.runtime.getValue`: Importa `androidx.compose.runtime.getValue` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+- `androidx.compose.runtime.mutableFloatStateOf`: Importa `androidx.compose.runtime.mutableFloatStateOf` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+- `androidx.compose.runtime.mutableStateOf`: Importa `androidx.compose.runtime.mutableStateOf` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+- `androidx.compose.runtime.remember`: Importa `androidx.compose.runtime.remember` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+- `androidx.compose.runtime.setValue`: Importa `androidx.compose.runtime.setValue` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+- `androidx.compose.ui.Alignment`: Importa `androidx.compose.ui.Alignment` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.Modifier`: Importa `androidx.compose.ui.Modifier` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.graphics.Color`: Importa `androidx.compose.ui.graphics.Color` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.platform.LocalContext`: Importa `androidx.compose.ui.platform.LocalContext` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.res.stringResource`: Importa `androidx.compose.ui.res.stringResource` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.text.font.FontFamily`: Importa `androidx.compose.ui.text.font.FontFamily` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.text.font.FontWeight`: Importa `androidx.compose.ui.text.font.FontWeight` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.text.style.TextAlign`: Importa `androidx.compose.ui.text.style.TextAlign` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.unit.dp`: Importa `androidx.compose.ui.unit.dp` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.unit.sp`: Importa `androidx.compose.ui.unit.sp` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.window.PopupProperties`: Importa `androidx.compose.ui.window.PopupProperties` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `com.example.mynotes.R`: Importa `com.example.mynotes.R`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.ui.components.AppDropdownMenu`: Importa `com.example.mynotes.ui.components.AppDropdownMenu`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.settings.AppSettings`: Importa `com.example.mynotes.settings.AppSettings`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.ui.sound.UiActionSound`: Importa `com.example.mynotes.ui.sound.UiActionSound`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.ui.sound.UiSound`: Importa `com.example.mynotes.ui.sound.UiSound`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.ui.sound.UiSoundPlayer`: Importa `com.example.mynotes.ui.sound.UiSoundPlayer`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `kotlin.math.roundToInt`: Importa `kotlin.math.roundToInt` de la biblioteca estándar/JVM para operaciones de lenguaje, fechas, colecciones, I/O o utilidades.
+
+4. DECLARACIONES Y ESTADO IMPORTANTES
+----------------------------------------------------------------------
+L52: `private data class MenuOptionDescriptor(val key: String, val labelRes: Int)`
+    Declara `MenuOptionDescriptor` como `data class`: Kotlin genera automáticamente igualdad, hash, copia y representación textual a partir de sus propiedades del constructor.
+L54: `private val MainMenuOptions = listOf(MenuOptionDescriptor("edit", R.string.mock_edit), MenuOptionDescriptor("favorite",`
+    Declara `MainMenuOptions` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `listOf(MenuOptionDescriptor("edit", R.string.mock_edit), MenuOptionDescriptor("favorite",`.
+L58: `private val PriorityOptions = listOf(MenuOptionDescriptor("none", R.string.mock_priority_none), MenuOptionDescriptor("low",`
+    Declara `PriorityOptions` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `listOf(MenuOptionDescriptor("none", R.string.mock_priority_none), MenuOptionDescriptor("low",`.
+L61: `private val ColorOptions = listOf(MenuOptionDescriptor("default", R.string.mock_color_default),`
+    Declara `ColorOptions` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `listOf(MenuOptionDescriptor("default", R.string.mock_color_default),`.
+L69: `private val DefaultMainOrder = MainMenuOptions.map {`
+    Transforma cada valor/elemento de la fuente en otro valor sin mutar la colección/Flow original.
+L77: `val context = LocalContext.current`
+    Declara `context` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `LocalContext.current`.
+L78: `val orderedKeys = remember(settings.optionMenuOrder) {`
+    Memoriza el resultado durante recomposiciones de Compose. Solo se recalcula cuando cambian las claves de `remember`, reduciendo trabajo y preservando identidad/estado local.
+L81: `val hiddenMain = remember(settings.optionMenuHiddenItems) {`
+    Memoriza el resultado durante recomposiciones de Compose. Solo se recalcula cuando cambian las claves de `remember`, reduciendo trabajo y preservando identidad/estado local.
+L84: `val hiddenPriorities = remember(settings.priorityMenuHiddenItems) {`
+    Memoriza el resultado durante recomposiciones de Compose. Solo se recalcula cuando cambian las claves de `remember`, reduciendo trabajo y preservando identidad/estado local.
+L89: `val hiddenColors = remember(settings.colorMenuHiddenItems) {`
+    Memoriza el resultado durante recomposiciones de Compose. Solo se recalcula cuando cambian las claves de `remember`, reduciendo trabajo y preservando identidad/estado local.
+L94: `var opacity by`
+    Declara `opacity` como variable mutable: el código puede reasignarla para representar estado cambiante. La inicialización continúa en líneas siguientes.
+L101: `var textColorMenuExpanded by`
+    Declara `textColorMenuExpanded` como variable mutable: el código puede reasignarla para representar estado cambiante. La inicialización continúa en líneas siguientes.
+L170: `val enabledCount = orderedKeys.count {`
+    Declara `enabledCount` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `orderedKeys.count {`.
+L175: `val descriptor = MainMenuOptions.first {`
+    Declara `descriptor` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `MainMenuOptions.first {`.
+L178: `val isVisible = key !in`
+    Declara `isVisible` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `key !in`.
+L185: `val next = hiddenMain.toMutableSet()`
+    Declara `next` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `hiddenMain.toMutableSet()`.
+L193: `val next = orderedKeys.toMutableList()`
+    Declara `next` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `orderedKeys.toMutableList()`.
+L194: `val previous = index - 1`
+    Declara `previous` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `index - 1`.
+L195: `val temp = next[previous]`
+    Declara `temp` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `next[previous]`.
+L200: `val next = orderedKeys.toMutableList()`
+    Declara `next` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `orderedKeys.toMutableList()`.
+L201: `val following = index + 1`
+    Declara `following` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `index + 1`.
+L202: `val temp = next[following]`
+    Declara `temp` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `next[following]`.
+L213: `val visiblePriorityCount = PriorityOptions.count {`
+    Declara `visiblePriorityCount` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `PriorityOptions.count {`.
+L224: `val visibleColorCount = ColorOptions.count {`
+    Declara `visibleColorCount` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `ColorOptions.count {`.
+L249: `val context = LocalContext.current`
+    Declara `context` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `LocalContext.current`.
+L289: `val visible = option.key !in`
+    Declara `visible` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `option.key !in`.
+L293: `val next = hiddenItems.toMutableSet()`
+    Declara `next` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `hiddenItems.toMutableSet()`.
+L314: `val context = LocalContext.current`
+    Declara `context` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `LocalContext.current`.
+L349: `val requested = raw.split(",").map {`
+    Transforma cada valor/elemento de la fuente en otro valor sin mutar la colección/Flow original.
+
+5. FUNCIONES — EXPLICACIÓN DE CADA UNA
+----------------------------------------------------------------------
+
+5.1 `OptionsMenuCustomizationSection` — líneas 73–244
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    fun OptionsMenuCustomizationSection(settings: AppSettings, fontFamily: FontFamily, textColor: Color, secondaryTextColor: Color,
+        graphicColor: Color, onOrderChange: (String) -> Unit, onHiddenItemsChange: (String) -> Unit, onShowIconsChange: (Boolean) -> Unit,
+        onTextColorChange: (String) -> Unit, onOpacityChange: (Float) -> Unit, onPriorityHiddenItemsChange: (String) -> Unit,
+        onColorHiddenItemsChange: (String) -> Unit, onReset: () -> Unit) {
+
+Propósito:
+    Implementa `OptionsMenuCustomizationSection`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `settings: AppSettings`: el llamador proporciona este valor/callback a `OptionsMenuCustomizationSection`. Dentro del cuerpo, las líneas donde aparece `settings` muestran exactamente cómo afecta al resultado.
+  - `fontFamily: FontFamily`: el llamador proporciona este valor/callback a `OptionsMenuCustomizationSection`. Dentro del cuerpo, las líneas donde aparece `fontFamily` muestran exactamente cómo afecta al resultado.
+  - `textColor: Color`: el llamador proporciona este valor/callback a `OptionsMenuCustomizationSection`. Dentro del cuerpo, las líneas donde aparece `textColor` muestran exactamente cómo afecta al resultado.
+  - `secondaryTextColor: Color`: el llamador proporciona este valor/callback a `OptionsMenuCustomizationSection`. Dentro del cuerpo, las líneas donde aparece `secondaryTextColor` muestran exactamente cómo afecta al resultado.
+  - `graphicColor: Color`: el llamador proporciona este valor/callback a `OptionsMenuCustomizationSection`. Dentro del cuerpo, las líneas donde aparece `graphicColor` muestran exactamente cómo afecta al resultado.
+  - `onOrderChange: (String) -> Unit`: el llamador proporciona este valor/callback a `OptionsMenuCustomizationSection`. Dentro del cuerpo, las líneas donde aparece `onOrderChange` muestran exactamente cómo afecta al resultado.
+  - `onHiddenItemsChange: (String) -> Unit`: el llamador proporciona este valor/callback a `OptionsMenuCustomizationSection`. Dentro del cuerpo, las líneas donde aparece `onHiddenItemsChange` muestran exactamente cómo afecta al resultado.
+  - `onShowIconsChange: (Boolean) -> Unit`: el llamador proporciona este valor/callback a `OptionsMenuCustomizationSection`. Dentro del cuerpo, las líneas donde aparece `onShowIconsChange` muestran exactamente cómo afecta al resultado.
+  - `onTextColorChange: (String) -> Unit`: el llamador proporciona este valor/callback a `OptionsMenuCustomizationSection`. Dentro del cuerpo, las líneas donde aparece `onTextColorChange` muestran exactamente cómo afecta al resultado.
+  - `onOpacityChange: (Float) -> Unit`: el llamador proporciona este valor/callback a `OptionsMenuCustomizationSection`. Dentro del cuerpo, las líneas donde aparece `onOpacityChange` muestran exactamente cómo afecta al resultado.
+  - `onPriorityHiddenItemsChange: (String) -> Unit`: el llamador proporciona este valor/callback a `OptionsMenuCustomizationSection`. Dentro del cuerpo, las líneas donde aparece `onPriorityHiddenItemsChange` muestran exactamente cómo afecta al resultado.
+  - `onColorHiddenItemsChange: (String) -> Unit`: el llamador proporciona este valor/callback a `OptionsMenuCustomizationSection`. Dentro del cuerpo, las líneas donde aparece `onColorHiddenItemsChange` muestran exactamente cómo afecta al resultado.
+  - `onReset: () -> Unit`: el llamador proporciona este valor/callback a `OptionsMenuCustomizationSection`. Dentro del cuerpo, las líneas donde aparece `onReset` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L73 [0 espacios] `fun OptionsMenuCustomizationSection(settings: AppSettings, fontFamily: FontFamily, textColor: Color, secondaryTextColor: Color,`
+      → Declara una función. El bloque de `OptionsMenuCustomizationSection` se detalla después instrucción por instrucción.
+  L74 [4 espacios] `graphicColor: Color, onOrderChange: (String) -> Unit, onHiddenItemsChange: (String) -> Unit, onShowIconsChange: (Boolean) -> Unit,`
+      → Define una rama/lambda. Cuando coincide `graphicColor: Color, onOrderChange: (String)`, se ejecuta la expresión o bloque situado después de `->`.
+  L75 [4 espacios] `onTextColorChange: (String) -> Unit, onOpacityChange: (Float) -> Unit, onPriorityHiddenItemsChange: (String) -> Unit,`
+      → Define una rama/lambda. Cuando coincide `onTextColorChange: (String)`, se ejecuta la expresión o bloque situado después de `->`.
+  L76 [4 espacios] `onColorHiddenItemsChange: (String) -> Unit, onReset: () -> Unit) {`
+      → Define una rama/lambda. Cuando coincide `onColorHiddenItemsChange: (String)`, se ejecuta la expresión o bloque situado después de `->`.
+  L77 [4 espacios] `val context = LocalContext.current`
+      → Declara `context` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `LocalContext.current`.
+  L78 [4 espacios] `val orderedKeys = remember(settings.optionMenuOrder) {`
+      → Memoriza el resultado durante recomposiciones de Compose. Solo se recalcula cuando cambian las claves de `remember`, reduciendo trabajo y preservando identidad/estado local.
+  L79 [12 espacios] `normalizedOrder(settings.optionMenuOrder)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L80 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L81 [4 espacios] `val hiddenMain = remember(settings.optionMenuHiddenItems) {`
+      → Memoriza el resultado durante recomposiciones de Compose. Solo se recalcula cuando cambian las claves de `remember`, reduciendo trabajo y preservando identidad/estado local.
+  L82 [12 espacios] `parseKeys(settings.optionMenuHiddenItems, DefaultMainOrder)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L83 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L84 [4 espacios] `val hiddenPriorities = remember(settings.priorityMenuHiddenItems) {`
+      → Memoriza el resultado durante recomposiciones de Compose. Solo se recalcula cuando cambian las claves de `remember`, reduciendo trabajo y preservando identidad/estado local.
+  L85 [12 espacios] `parseKeys(settings.priorityMenuHiddenItems, PriorityOptions.map {`
+      → Transforma cada valor/elemento de la fuente en otro valor sin mutar la colección/Flow original.
+  L86 [20 espacios] `it.key`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `it.key`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L87 [16 espacios] `})`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L88 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L89 [4 espacios] `val hiddenColors = remember(settings.colorMenuHiddenItems) {`
+      → Memoriza el resultado durante recomposiciones de Compose. Solo se recalcula cuando cambian las claves de `remember`, reduciendo trabajo y preservando identidad/estado local.
+  L90 [12 espacios] `parseKeys(settings.colorMenuHiddenItems, ColorOptions.map {`
+      → Transforma cada valor/elemento de la fuente en otro valor sin mutar la colección/Flow original.
+  L91 [20 espacios] `it.key`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `it.key`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L92 [16 espacios] `})`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L93 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L94 [4 espacios] `var opacity by`
+      → Declara `opacity` como variable mutable: el código puede reasignarla para representar estado cambiante. La inicialización continúa en líneas siguientes.
+  L95 [8 espacios] `remember {`
+      → Memoriza el resultado durante recomposiciones de Compose. Solo se recalcula cuando cambian las claves de `remember`, reduciendo trabajo y preservando identidad/estado local.
+  L96 [12 espacios] `mutableFloatStateOf(settings.optionMenuOpacity)`
+      → Crea estado observable por Compose. Cuando este valor cambia, los Composables que lo leyeron pueden recomponerse automáticamente.
+  L97 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L98 [4 espacios] `LaunchedEffect(settings.optionMenuOpacity) {`
+      → Inicia una coroutine ligada al ciclo de vida de esta composición. Se cancela/reinicia cuando cambian sus claves, por eso se usa para efectos asíncronos dependientes de estado.
+  L99 [8 espacios] `opacity = settings.optionMenuOpacity`
+      → Asigna/configura `opacity` usando `settings.optionMenuOpacity`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L100 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L101 [4 espacios] `var textColorMenuExpanded by`
+      → Declara `textColorMenuExpanded` como variable mutable: el código puede reasignarla para representar estado cambiante. La inicialización continúa en líneas siguientes.
+  L102 [8 espacios] `remember {`
+      → Memoriza el resultado durante recomposiciones de Compose. Solo se recalcula cuando cambian las claves de `remember`, reduciendo trabajo y preservando identidad/estado local.
+  L103 [12 espacios] `mutableStateOf(false)`
+      → Crea estado observable por Compose. Cuando este valor cambia, los Composables que lo leyeron pueden recomponerse automáticamente.
+  L104 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L105 [4 espacios] `Spacer(modifier = Modifier.height(8.dp))`
+      → Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+  L106 [4 espacios] `Text(text = stringResource(R.string.option_menu_customization_title), color = textColor, fontFamily = fontFamily, fontWeight =`
+      → Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+  L107 [12 espacios] `FontWeight.Bold, fontSize = 20.sp)`
+      → Asigna/configura `FontWeight.Bold, fontSize` usando `20.sp)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L108 [4 espacios] `Text(text = stringResource(R.string.option_menu_customization_description), modifier = Modifier.padding(top = 2.dp), color =`
+      → Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+  L109 [12 espacios] `secondaryTextColor, fontFamily = fontFamily, fontSize = 12.sp)`
+      → Asigna/configura `secondaryTextColor, fontFamily` usando `fontFamily, fontSize = 12.sp)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L110 [4 espacios] `Spacer(modifier = Modifier.height(10.dp))`
+      → Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+  L111 [4 espacios] `SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(12.dp)) { panelColors ->`
+      → Asigna/configura `SettingsSectionPanel(textColorMode` usando `settings.textColor, contentPadding = PaddingValues(12.dp)) { panelColors ->`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L112 [8 espacios] `ToggleRow(title = stringResource(R.string.option_menu_show_icons), checked = settings.optionMenuShowIcons, onCheckedChange =`
+      → Obtiene una cadena localizada desde `res/values*` (`option_menu_show_icons`), de modo que la UI siga el idioma activo.
+  L113 [16 espacios] `onShowIconsChange, fontFamily = fontFamily, textColor = panelColors.text)`
+      → Asigna/configura `onShowIconsChange, fontFamily` usando `fontFamily, textColor = panelColors.text)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L114 [8 espacios] `Spacer(modifier = Modifier.height(8.dp))`
+      → Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+  L115 [8 espacios] `Text(text = stringResource(R.string.option_menu_text_color), color = panelColors.text, fontFamily = fontFamily, fontWeight =`
+      → Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+  L116 [16 espacios] `FontWeight.SemiBold, fontSize = 14.sp)`
+      → Asigna/configura `FontWeight.SemiBold, fontSize` usando `14.sp)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L117 [8 espacios] `Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {`
+      → Crea un `Row` de Compose que organiza hijos horizontalmente. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+  L118 [12 espacios] `Text(text = optionMenuTextColorLabel(settings.optionMenuTextColor), modifier = Modifier.weight(1f), color =`
+      → Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+  L119 [20 espacios] `panelColors.secondaryText, fontFamily = fontFamily, fontSize = 13.sp)`
+      → Asigna/configura `panelColors.secondaryText, fontFamily` usando `fontFamily, fontSize = 13.sp)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L120 [12 espacios] `androidx.compose.foundation.layout.Box {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L121 [16 espacios] `TextButton(onClick = {`
+      → Crea un control pulsable Material. Su callback `onClick` ejecuta la acción del usuario y sus colores/forma se derivan de la configuración.
+  L122 [24 espacios] `UiSoundPlayer.playAction(context = context, action = UiActionSound.Menu)`
+      → Asigna/configura `UiSoundPlayer.playAction(context` usando `context, action = UiActionSound.Menu)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L123 [24 espacios] `textColorMenuExpanded = true`
+      → Asigna/configura `textColorMenuExpanded` usando `true`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L124 [20 espacios] `}) {`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L125 [20 espacios] `Text(text = stringResource(R.string.option_menu_change), color = panelColors.text, fontFamily = fontFamily)`
+      → Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+  L126 [20 espacios] `Icon(imageVector = Icons.Default.ExpandMore, contentDescription = null, tint = panelColors.text, modifier =`
+      → Renderiza un recurso visual. El modelo/painter y los modifiers siguientes determinan qué se muestra, tamaño, recorte y accesibilidad.
+  L127 [28 espacios] `Modifier.size(18.dp))`
+      → Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+  L128 [16 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L129 [16 espacios] `AppDropdownMenu(modifier = Modifier.width(164.dp), expanded = textColorMenuExpanded, onDismissRequest = {`
+      → Abre un menú emergente Compose cuya visibilidad depende de estado; los items internos modifican una opción y normalmente cierran el menú.
+  L130 [24 espacios] `textColorMenuExpanded = false`
+      → Asigna/configura `textColorMenuExpanded` usando `false`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L131 [20 espacios] `}, properties = PopupProperties(focusable = false, dismissOnBackPress = true, dismissOnClickOutside = true)) {`
+      → Asigna/configura `}, properties` usando `PopupProperties(focusable = false, dismissOnBackPress = true, dismissOnClickOutside = true)) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L132 [20 espacios] `listOf("note" to`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `listOf("note" to`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L133 [28 espacios] `R.string.option_menu_text_follow_note, "black" to`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `R.string.option_menu_text_follow_note, "black" to`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L134 [28 espacios] `R.string.option_menu_text_black, "white" to`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `R.string.option_menu_text_black, "white" to`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L135 [28 espacios] `R.string.option_menu_text_white).forEach {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L136 [32 espacios] `option ->`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `option ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L137 [28 espacios] `DropdownMenuItem(modifier = Modifier.height(32.dp), contentPadding = PaddingValues(horizontal = 4.dp,`
+      → Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+  L138 [40 espacios] `vertical = 0.dp), text = {`
+      → Asigna/configura `vertical` usando `0.dp), text = {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L139 [36 espacios] `Text(text = stringResource(option.second), modifier = Modifier.fillMaxWidth(), color = panelColors.text,`
+      → Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+  L140 [40 espacios] `fontFamily = fontFamily, fontSize = 12.sp, maxLines = 1, textAlign = TextAlign.Center)`
+      → Asigna/configura `fontFamily` usando `fontFamily, fontSize = 12.sp, maxLines = 1, textAlign = TextAlign.Center)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L141 [32 espacios] `}, onClick = {`
+      → Asigna/configura `}, onClick` usando `{`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L142 [36 espacios] `UiSoundPlayer.playAction(context = context, action = UiActionSound.Select)`
+      → Asigna/configura `UiSoundPlayer.playAction(context` usando `context, action = UiActionSound.Select)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L143 [36 espacios] `textColorMenuExpanded = false`
+      → Asigna/configura `textColorMenuExpanded` usando `false`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L144 [36 espacios] `onTextColorChange(option.first)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L145 [32 espacios] `})`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L146 [24 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L147 [16 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L148 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L149 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L150 [8 espacios] `Spacer(modifier = Modifier.height(8.dp))`
+      → Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+  L151 [8 espacios] `Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement =`
+      → Crea un `Row` de Compose que organiza hijos horizontalmente. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+  L152 [16 espacios] `Arrangement.SpaceBetween) {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L153 [12 espacios] `Text(text = stringResource(R.string.option_menu_opacity), color = panelColors.text, fontFamily = fontFamily, fontWeight =`
+      → Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+  L154 [20 espacios] `FontWeight.SemiBold, fontSize = 14.sp)`
+      → Asigna/configura `FontWeight.SemiBold, fontSize` usando `14.sp)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L155 [12 espacios] `Text(text = "${opacity.roundToInt()}%", color = panelColors.secondaryText, fontFamily = fontFamily, fontSize = 12.sp)`
+      → Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+  L156 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L157 [8 espacios] `Slider(value = opacity, onValueChange = {`
+      → Crea un control de ajuste. El valor visible viene del estado y el callback persiste/previsualiza la nueva selección.
+  L158 [16 espacios] `opacity = it`
+      → Asigna/configura `opacity` usando `it`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L159 [16 espacios] `UiSoundPlayer.playThrottled(context = context, sound = UiSound.SliderTick, minimumIntervalMs = 48L)`
+      → Asigna/configura `UiSoundPlayer.playThrottled(context` usando `context, sound = UiSound.SliderTick, minimumIntervalMs = 48L)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L160 [12 espacios] `}, onValueChangeFinished = {`
+      → Asigna/configura `}, onValueChangeFinished` usando `{`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L161 [16 espacios] `onOpacityChange(opacity)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L162 [12 espacios] `}, valueRange = 35f..100f)`
+      → Asigna/configura `}, valueRange` usando `35f..100f)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L163 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L164 [4 espacios] `Spacer(modifier = Modifier.height(12.dp))`
+      → Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+  L165 [4 espacios] `SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(12.dp)) { panelColors ->`
+      → Asigna/configura `SettingsSectionPanel(textColorMode` usando `settings.textColor, contentPadding = PaddingValues(12.dp)) { panelColors ->`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L166 [8 espacios] `Text(text = stringResource(R.string.option_menu_main_actions), color = panelColors.text, fontFamily = fontFamily, fontWeight =`
+      → Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+  L167 [16 espacios] `FontWeight.Bold)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L168 [8 espacios] `Text(text = stringResource(R.string.option_menu_main_actions_hint), modifier = Modifier.padding(top = 2.dp, bottom = 4.dp), color =`
+      → Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+  L169 [16 espacios] `panelColors.secondaryText, fontFamily = fontFamily, fontSize = 12.sp)`
+      → Asigna/configura `panelColors.secondaryText, fontFamily` usando `fontFamily, fontSize = 12.sp)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L170 [8 espacios] `val enabledCount = orderedKeys.count {`
+      → Declara `enabledCount` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `orderedKeys.count {`.
+  L171 [20 espacios] `it !in hiddenMain`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `it !in hiddenMain`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L172 [16 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L173 [8 espacios] `orderedKeys.forEachIndexed {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L174 [20 espacios] `index, key ->`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `index, key ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L175 [16 espacios] `val descriptor = MainMenuOptions.first {`
+      → Declara `descriptor` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `MainMenuOptions.first {`.
+  L176 [28 espacios] `it.key == key`
+      → Asigna/configura `it.key` usando `= key`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L177 [24 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L178 [16 espacios] `val isVisible = key !in`
+      → Declara `isVisible` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `key !in`.
+  L179 [24 espacios] `hiddenMain`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `hiddenMain`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L180 [16 espacios] `MenuOrderRow(label = stringResource(descriptor.labelRes), visible = isVisible, canHide = !isVisible || enabledCount >`
+      → Obtiene una cadena localizada desde `res/values*`, de modo que la UI siga el idioma activo.
+  L181 [32 espacios] `1, canMoveUp = index >`
+      → Asigna/configura `1, canMoveUp` usando `index >`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L182 [28 espacios] `0, canMoveDown = index <`
+      → Asigna/configura `0, canMoveDown` usando `index <`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L183 [28 espacios] `orderedKeys.lastIndex, onVisibleChange = {`
+      → Asigna/configura `orderedKeys.lastIndex, onVisibleChange` usando `{`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L184 [28 espacios] `visible ->`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `visible ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L185 [24 espacios] `val next = hiddenMain.toMutableSet()`
+      → Declara `next` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `hiddenMain.toMutableSet()`.
+  L186 [24 espacios] `if (visible) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `visible`.
+  L187 [28 espacios] `next.remove(key)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L188 [24 espacios] `} else {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L189 [28 espacios] `next.add(key)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L190 [24 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L191 [24 espacios] `onHiddenItemsChange(next.joinToString(","))`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L192 [20 espacios] `}, onMoveUp = {`
+      → Asigna/configura `}, onMoveUp` usando `{`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L193 [24 espacios] `val next = orderedKeys.toMutableList()`
+      → Declara `next` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `orderedKeys.toMutableList()`.
+  L194 [24 espacios] `val previous = index - 1`
+      → Declara `previous` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `index - 1`.
+  L195 [24 espacios] `val temp = next[previous]`
+      → Declara `temp` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `next[previous]`.
+  L196 [24 espacios] `next[previous] = next[index]`
+      → Asigna/configura `next[previous]` usando `next[index]`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L197 [24 espacios] `next[index] = temp`
+      → Asigna/configura `next[index]` usando `temp`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L198 [24 espacios] `onOrderChange(next.joinToString(","))`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L199 [20 espacios] `}, onMoveDown = {`
+      → Asigna/configura `}, onMoveDown` usando `{`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L200 [24 espacios] `val next = orderedKeys.toMutableList()`
+      → Declara `next` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `orderedKeys.toMutableList()`.
+  L201 [24 espacios] `val following = index + 1`
+      → Declara `following` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `index + 1`.
+  L202 [24 espacios] `val temp = next[following]`
+      → Declara `temp` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `next[following]`.
+  L203 [24 espacios] `next[following] = next[index]`
+      → Asigna/configura `next[following]` usando `next[index]`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L204 [24 espacios] `next[index] = temp`
+      → Asigna/configura `next[index]` usando `temp`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L205 [24 espacios] `onOrderChange(next.joinToString(","))`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L206 [20 espacios] `}, fontFamily = fontFamily, textColor = panelColors.text)`
+      → Asigna/configura `}, fontFamily` usando `fontFamily, textColor = panelColors.text)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L207 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L208 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L209 [4 espacios] `Spacer(modifier = Modifier.height(8.dp))`
+      → Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+  L210 [4 espacios] `SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(12.dp)) { panelColors ->`
+      → Asigna/configura `SettingsSectionPanel(textColorMode` usando `settings.textColor, contentPadding = PaddingValues(12.dp)) { panelColors ->`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L211 [8 espacios] `Text(text = stringResource(R.string.option_menu_priority_submenu), color = panelColors.text, fontFamily = fontFamily, fontWeight =`
+      → Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+  L212 [16 espacios] `FontWeight.Bold)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L213 [8 espacios] `val visiblePriorityCount = PriorityOptions.count {`
+      → Declara `visiblePriorityCount` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `PriorityOptions.count {`.
+  L214 [20 espacios] `it.key !in`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `it.key !in`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L215 [24 espacios] `hiddenPriorities`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `hiddenPriorities`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L216 [16 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L217 [8 espacios] `CompactToggleGrid(options = PriorityOptions, hiddenItems = hiddenPriorities, visibleCount = visiblePriorityCount,`
+      → Asigna/configura `CompactToggleGrid(options` usando `PriorityOptions, hiddenItems = hiddenPriorities, visibleCount = visiblePriorityCount,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L218 [12 espacios] `onHiddenItemsChange = onPriorityHiddenItemsChange, fontFamily = fontFamily, textColor = panelColors.text)`
+      → Asigna/configura `onHiddenItemsChange` usando `onPriorityHiddenItemsChange, fontFamily = fontFamily, textColor = panelColors.text)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L219 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L220 [4 espacios] `Spacer(modifier = Modifier.height(8.dp))`
+      → Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+  L221 [4 espacios] `SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(12.dp)) { panelColors ->`
+      → Asigna/configura `SettingsSectionPanel(textColorMode` usando `settings.textColor, contentPadding = PaddingValues(12.dp)) { panelColors ->`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L222 [8 espacios] `Text(text = stringResource(R.string.option_menu_color_submenu), color = panelColors.text, fontFamily = fontFamily, fontWeight =`
+      → Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+  L223 [16 espacios] `FontWeight.Bold)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L224 [8 espacios] `val visibleColorCount = ColorOptions.count {`
+      → Declara `visibleColorCount` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `ColorOptions.count {`.
+  L225 [20 espacios] `it.key !in`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `it.key !in`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L226 [24 espacios] `hiddenColors`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `hiddenColors`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L227 [16 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L228 [8 espacios] `CompactToggleGrid(options = ColorOptions, hiddenItems = hiddenColors, visibleCount = visibleColorCount, onHiddenItemsChange =`
+      → Asigna/configura `CompactToggleGrid(options` usando `ColorOptions, hiddenItems = hiddenColors, visibleCount = visibleColorCount, onHiddenItemsChange =`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L229 [16 espacios] `onColorHiddenItemsChange, fontFamily = fontFamily, textColor = panelColors.text)`
+      → Asigna/configura `onColorHiddenItemsChange, fontFamily` usando `fontFamily, textColor = panelColors.text)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L230 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L231 [4 espacios] `Spacer(modifier = Modifier.height(8.dp))`
+      → Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+  L232 [4 espacios] `// El restablecimiento queda como una acción limpia, sin el panel/sombreado`
+      → Comentario del autor. No se ejecuta; documenta la intención o una restricción del bloque siguiente.
+  L233 [4 espacios] `// oscuro que antes envolvía al botón. Se conserva la misma alineación.`
+      → Comentario del autor. No se ejecuta; documenta la intención o una restricción del bloque siguiente.
+  L234 [4 espacios] `Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {`
+      → Crea un `Row` de Compose que organiza hijos horizontalmente. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+  L235 [8 espacios] `TextButton(onClick = {`
+      → Crea un control pulsable Material. Su callback `onClick` ejecuta la acción del usuario y sus colores/forma se derivan de la configuración.
+  L236 [16 espacios] `UiSoundPlayer.playAction(context = context, action = UiActionSound.Restore)`
+      → Asigna/configura `UiSoundPlayer.playAction(context` usando `context, action = UiActionSound.Restore)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L237 [16 espacios] `onReset()`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L238 [12 espacios] `}) {`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L239 [12 espacios] `Icon(imageVector = Icons.Default.Refresh, contentDescription = null, tint = textColor)`
+      → Renderiza un recurso visual. El modelo/painter y los modifiers siguientes determinan qué se muestra, tamaño, recorte y accesibilidad.
+  L240 [12 espacios] `Text(text = stringResource(R.string.option_menu_reset), modifier = Modifier.padding(start = 6.dp), color =`
+      → Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+  L241 [20 espacios] `textColor, fontFamily = fontFamily, fontWeight = FontWeight.SemiBold)`
+      → Asigna/configura `textColor, fontFamily` usando `fontFamily, fontWeight = FontWeight.SemiBold)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L242 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L243 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L244 [0 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.2 `MenuOrderRow` — líneas 247–278
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    private fun MenuOrderRow(label: String, visible: Boolean, canHide: Boolean, canMoveUp: Boolean, canMoveDown: Boolean,
+        onVisibleChange: (Boolean) -> Unit, onMoveUp: () -> Unit, onMoveDown: () -> Unit, fontFamily: FontFamily, textColor: Color) {
+
+Propósito:
+    Implementa `MenuOrderRow`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `label: String`: el llamador proporciona este valor/callback a `MenuOrderRow`. Dentro del cuerpo, las líneas donde aparece `label` muestran exactamente cómo afecta al resultado.
+  - `visible: Boolean`: el llamador proporciona este valor/callback a `MenuOrderRow`. Dentro del cuerpo, las líneas donde aparece `visible` muestran exactamente cómo afecta al resultado.
+  - `canHide: Boolean`: el llamador proporciona este valor/callback a `MenuOrderRow`. Dentro del cuerpo, las líneas donde aparece `canHide` muestran exactamente cómo afecta al resultado.
+  - `canMoveUp: Boolean`: el llamador proporciona este valor/callback a `MenuOrderRow`. Dentro del cuerpo, las líneas donde aparece `canMoveUp` muestran exactamente cómo afecta al resultado.
+  - `canMoveDown: Boolean`: el llamador proporciona este valor/callback a `MenuOrderRow`. Dentro del cuerpo, las líneas donde aparece `canMoveDown` muestran exactamente cómo afecta al resultado.
+  - `onVisibleChange: (Boolean) -> Unit`: el llamador proporciona este valor/callback a `MenuOrderRow`. Dentro del cuerpo, las líneas donde aparece `onVisibleChange` muestran exactamente cómo afecta al resultado.
+  - `onMoveUp: () -> Unit`: el llamador proporciona este valor/callback a `MenuOrderRow`. Dentro del cuerpo, las líneas donde aparece `onMoveUp` muestran exactamente cómo afecta al resultado.
+  - `onMoveDown: () -> Unit`: el llamador proporciona este valor/callback a `MenuOrderRow`. Dentro del cuerpo, las líneas donde aparece `onMoveDown` muestran exactamente cómo afecta al resultado.
+  - `fontFamily: FontFamily`: el llamador proporciona este valor/callback a `MenuOrderRow`. Dentro del cuerpo, las líneas donde aparece `fontFamily` muestran exactamente cómo afecta al resultado.
+  - `textColor: Color`: el llamador proporciona este valor/callback a `MenuOrderRow`. Dentro del cuerpo, las líneas donde aparece `textColor` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L247 [0 espacios] `private fun MenuOrderRow(label: String, visible: Boolean, canHide: Boolean, canMoveUp: Boolean, canMoveDown: Boolean,`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `MenuOrderRow` se detalla después instrucción por instrucción.
+  L248 [4 espacios] `onVisibleChange: (Boolean) -> Unit, onMoveUp: () -> Unit, onMoveDown: () -> Unit, fontFamily: FontFamily, textColor: Color) {`
+      → Define una rama/lambda. Cuando coincide `onVisibleChange: (Boolean)`, se ejecuta la expresión o bloque situado después de `->`.
+  L249 [4 espacios] `val context = LocalContext.current`
+      → Declara `context` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `LocalContext.current`.
+  L250 [4 espacios] `Row(modifier = Modifier.fillMaxWidth().padding(vertical = 0.dp), verticalAlignment = Alignment.CenterVertically) {`
+      → Crea un `Row` de Compose que organiza hijos horizontalmente. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+  L251 [8 espacios] `Text(text = label, modifier = Modifier.weight(1f), color = textColor, fontFamily = fontFamily, fontSize = 14.sp)`
+      → Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+  L252 [8 espacios] `IconButton(onClick = {`
+      → Crea un control pulsable Material. Su callback `onClick` ejecuta la acción del usuario y sus colores/forma se derivan de la configuración.
+  L253 [16 espacios] `UiSoundPlayer.playAction(context = context, action = UiActionSound.Move)`
+      → Asigna/configura `UiSoundPlayer.playAction(context` usando `context, action = UiActionSound.Move)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L254 [16 espacios] `onMoveUp()`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L255 [12 espacios] `}, enabled = canMoveUp, modifier = Modifier.size(32.dp)) {`
+      → Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+  L256 [12 espacios] `Icon(imageVector = Icons.Default.KeyboardArrowUp, contentDescription = stringResource(R.string.option_menu_move_up), tint =`
+      → Renderiza un recurso visual. El modelo/painter y los modifiers siguientes determinan qué se muestra, tamaño, recorte y accesibilidad.
+  L257 [20 espacios] `textColor.copy(alpha = if (canMoveUp) {`
+      → Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+  L258 [32 espacios] `1f`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `1f`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L259 [28 espacios] `} else {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L260 [32 espacios] `0.28f`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `0.28f`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L261 [28 espacios] `}))`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L262 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L263 [8 espacios] `IconButton(onClick = {`
+      → Crea un control pulsable Material. Su callback `onClick` ejecuta la acción del usuario y sus colores/forma se derivan de la configuración.
+  L264 [16 espacios] `UiSoundPlayer.playAction(context = context, action = UiActionSound.Move)`
+      → Asigna/configura `UiSoundPlayer.playAction(context` usando `context, action = UiActionSound.Move)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L265 [16 espacios] `onMoveDown()`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L266 [12 espacios] `}, enabled = canMoveDown, modifier = Modifier.size(32.dp)) {`
+      → Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+  L267 [12 espacios] `Icon(imageVector = Icons.Default.KeyboardArrowDown, contentDescription = stringResource(R.string.option_menu_move_down), tint =`
+      → Renderiza un recurso visual. El modelo/painter y los modifiers siguientes determinan qué se muestra, tamaño, recorte y accesibilidad.
+  L268 [20 espacios] `textColor.copy(alpha = if (canMoveDown) {`
+      → Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+  L269 [32 espacios] `1f`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `1f`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L270 [28 espacios] `} else {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L271 [32 espacios] `0.28f`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `0.28f`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L272 [28 espacios] `}))`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L273 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L274 [8 espacios] `Switch(checked = visible, onCheckedChange = { newChecked -> UiSoundPlayer.playToggle(context = context, checked = newChecked)`
+      → Define una rama/lambda. Cuando coincide `Switch(checked = visible, onCheckedChange = { newChecked`, se ejecuta la expresión o bloque situado después de `->`.
+  L275 [16 espacios] `onVisibleChange(newChecked)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L276 [12 espacios] `}, enabled = canHide)`
+      → Asigna/configura `}, enabled` usando `canHide)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L277 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L278 [0 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.3 `CompactToggleGrid` — líneas 281–309
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    private fun CompactToggleGrid(options: List<MenuOptionDescriptor>, hiddenItems: Set<String>, visibleCount: Int,
+        onHiddenItemsChange: (String) -> Unit, fontFamily: FontFamily, textColor: Color) {
+
+Propósito:
+    Implementa `CompactToggleGrid`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `options: List<MenuOptionDescriptor>`: el llamador proporciona este valor/callback a `CompactToggleGrid`. Dentro del cuerpo, las líneas donde aparece `options` muestran exactamente cómo afecta al resultado.
+  - `hiddenItems: Set<String>`: el llamador proporciona este valor/callback a `CompactToggleGrid`. Dentro del cuerpo, las líneas donde aparece `hiddenItems` muestran exactamente cómo afecta al resultado.
+  - `visibleCount: Int`: el llamador proporciona este valor/callback a `CompactToggleGrid`. Dentro del cuerpo, las líneas donde aparece `visibleCount` muestran exactamente cómo afecta al resultado.
+  - `onHiddenItemsChange: (String) -> Unit`: el llamador proporciona este valor/callback a `CompactToggleGrid`. Dentro del cuerpo, las líneas donde aparece `onHiddenItemsChange` muestran exactamente cómo afecta al resultado.
+  - `fontFamily: FontFamily`: el llamador proporciona este valor/callback a `CompactToggleGrid`. Dentro del cuerpo, las líneas donde aparece `fontFamily` muestran exactamente cómo afecta al resultado.
+  - `textColor: Color`: el llamador proporciona este valor/callback a `CompactToggleGrid`. Dentro del cuerpo, las líneas donde aparece `textColor` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L281 [0 espacios] `private fun CompactToggleGrid(options: List<MenuOptionDescriptor>, hiddenItems: Set<String>, visibleCount: Int,`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `CompactToggleGrid` se detalla después instrucción por instrucción.
+  L282 [4 espacios] `onHiddenItemsChange: (String) -> Unit, fontFamily: FontFamily, textColor: Color) {`
+      → Define una rama/lambda. Cuando coincide `onHiddenItemsChange: (String)`, se ejecuta la expresión o bloque situado después de `->`.
+  L283 [4 espacios] `options.chunked(2).forEach {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L284 [16 espacios] `rowOptions ->`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `rowOptions ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L285 [12 espacios] `Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment =`
+      → Crea un `Row` de Compose que organiza hijos horizontalmente. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+  L286 [20 espacios] `Alignment.CenterVertically) {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L287 [16 espacios] `rowOptions.forEach {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L288 [28 espacios] `option ->`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `option ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L289 [24 espacios] `val visible = option.key !in`
+      → Declara `visible` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `option.key !in`.
+  L290 [32 espacios] `hiddenItems`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `hiddenItems`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L291 [24 espacios] `ToggleRow(title = stringResource(option.labelRes), checked = visible, onCheckedChange = {`
+      → Obtiene una cadena localizada desde `res/values*`, de modo que la UI siga el idioma activo.
+  L292 [32 espacios] `checked ->`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `checked ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L293 [32 espacios] `val next = hiddenItems.toMutableSet()`
+      → Declara `next` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `hiddenItems.toMutableSet()`.
+  L294 [32 espacios] `if (checked) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `checked`.
+  L295 [36 espacios] `next.remove(option.key)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L296 [32 espacios] `} else if (visibleCount >`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `} else if (visibleCount >`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L297 [36 espacios] `1) {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L298 [36 espacios] `next.add(option.key)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L299 [32 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L300 [32 espacios] `onHiddenItemsChange(next.joinToString(","))`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L301 [28 espacios] `}, enabled = !visible || visibleCount >`
+      → Asigna/configura `}, enabled` usando `!visible || visibleCount >`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L302 [40 espacios] `1, fontFamily = fontFamily, textColor = textColor, modifier = Modifier.weight(1f), compact = true)`
+      → Asigna/configura `1, fontFamily` usando `fontFamily, textColor = textColor, modifier = Modifier.weight(1f), compact = true)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L303 [20 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L304 [16 espacios] `if (rowOptions.size == 1) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `rowOptions.size == 1`.
+  L305 [20 espacios] `Spacer(modifier = Modifier.weight(1f))`
+      → Asigna/configura `Spacer(modifier` usando `Modifier.weight(1f))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L306 [16 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L307 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L308 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L309 [0 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.4 `ToggleRow` — líneas 312–337
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    private fun ToggleRow(title: String, checked: Boolean, onCheckedChange: (Boolean) -> Unit, fontFamily: FontFamily, textColor: Color,
+        enabled: Boolean = true, modifier: Modifier = Modifier, compact: Boolean = false) {
+
+Propósito:
+    Implementa `ToggleRow`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `title: String`: el llamador proporciona este valor/callback a `ToggleRow`. Dentro del cuerpo, las líneas donde aparece `title` muestran exactamente cómo afecta al resultado.
+  - `checked: Boolean`: el llamador proporciona este valor/callback a `ToggleRow`. Dentro del cuerpo, las líneas donde aparece `checked` muestran exactamente cómo afecta al resultado.
+  - `onCheckedChange: (Boolean) -> Unit`: el llamador proporciona este valor/callback a `ToggleRow`. Dentro del cuerpo, las líneas donde aparece `onCheckedChange` muestran exactamente cómo afecta al resultado.
+  - `fontFamily: FontFamily`: el llamador proporciona este valor/callback a `ToggleRow`. Dentro del cuerpo, las líneas donde aparece `fontFamily` muestran exactamente cómo afecta al resultado.
+  - `textColor: Color`: el llamador proporciona este valor/callback a `ToggleRow`. Dentro del cuerpo, las líneas donde aparece `textColor` muestran exactamente cómo afecta al resultado.
+  - `enabled: Boolean = true`: el llamador proporciona este valor/callback a `ToggleRow`. Dentro del cuerpo, las líneas donde aparece `enabled` muestran exactamente cómo afecta al resultado.
+  - `modifier: Modifier = Modifier`: el llamador proporciona este valor/callback a `ToggleRow`. Dentro del cuerpo, las líneas donde aparece `modifier` muestran exactamente cómo afecta al resultado.
+  - `compact: Boolean = false`: el llamador proporciona este valor/callback a `ToggleRow`. Dentro del cuerpo, las líneas donde aparece `compact` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L312 [0 espacios] `private fun ToggleRow(title: String, checked: Boolean, onCheckedChange: (Boolean) -> Unit, fontFamily: FontFamily, textColor: Color,`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `ToggleRow` se detalla después instrucción por instrucción.
+  L313 [4 espacios] `enabled: Boolean = true, modifier: Modifier = Modifier, compact: Boolean = false) {`
+      → Asigna/configura `enabled: Boolean` usando `true, modifier: Modifier = Modifier, compact: Boolean = false) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L314 [4 espacios] `val context = LocalContext.current`
+      → Declara `context` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `LocalContext.current`.
+  L315 [4 espacios] `Row(modifier = modifier.then(if (compact) {`
+      → Crea un `Row` de Compose que organiza hijos horizontalmente. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+  L316 [24 espacios] `Modifier`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `Modifier`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L317 [20 espacios] `} else {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L318 [24 espacios] `Modifier.fillMaxWidth()`
+      → Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+  L319 [20 espacios] `}).padding(vertical = 0.dp), verticalAlignment = Alignment.CenterVertically) {`
+      → Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+  L320 [8 espacios] `Text(text = title, modifier = Modifier.weight(1f), color = textColor.copy(alpha = if (enabled) {`
+      → Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+  L321 [28 espacios] `1f`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `1f`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L322 [24 espacios] `} else {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L323 [28 espacios] `0.42f`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `0.42f`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L324 [24 espacios] `}), fontFamily = fontFamily, fontSize = if (compact) {`
+      → Asigna/configura `}), fontFamily` usando `fontFamily, fontSize = if (compact) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L325 [20 espacios] `13.sp`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `13.sp`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L326 [16 espacios] `} else {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L327 [20 espacios] `14.sp`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `14.sp`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L328 [16 espacios] `}, maxLines = if (compact) {`
+      → Asigna/configura `}, maxLines` usando `if (compact) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L329 [20 espacios] `2`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `2`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L330 [16 espacios] `} else {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L331 [20 espacios] `Int.MAX_VALUE`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `Int.MAX_VALUE`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L332 [16 espacios] `})`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L333 [8 espacios] `Switch(checked = checked, onCheckedChange = { newChecked -> UiSoundPlayer.playToggle(context = context, checked = newChecked)`
+      → Define una rama/lambda. Cuando coincide `Switch(checked = checked, onCheckedChange = { newChecked`, se ejecuta la expresión o bloque situado después de `->`.
+  L334 [16 espacios] `onCheckedChange(newChecked)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L335 [12 espacios] `}, enabled = enabled)`
+      → Asigna/configura `}, enabled` usando `enabled)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L336 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L337 [0 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.5 `optionMenuTextColorLabel` — líneas 340–346
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    private fun optionMenuTextColorLabel(value: String): String {
+
+Propósito:
+    Implementa `optionMenuTextColorLabel`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `value: String`: el llamador proporciona este valor/callback a `optionMenuTextColorLabel`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `String`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L340 [0 espacios] `private fun optionMenuTextColorLabel(value: String): String {`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `optionMenuTextColorLabel` se detalla después instrucción por instrucción.
+  L341 [4 espacios] `return stringResource(when (value) {`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L342 [12 espacios] `"black" -> R.string.option_menu_text_black`
+      → Define una rama/lambda. Cuando coincide `"black"`, se ejecuta la expresión o bloque situado después de `->`.
+  L343 [12 espacios] `"white" -> R.string.option_menu_text_white`
+      → Define una rama/lambda. Cuando coincide `"white"`, se ejecuta la expresión o bloque situado después de `->`.
+  L344 [12 espacios] `else -> R.string.option_menu_text_follow_note`
+      → Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+  L345 [8 espacios] `})`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L346 [0 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.6 `normalizedOrder` — líneas 348–359
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    private fun normalizedOrder(raw: String): List<String> {
+
+Propósito:
+    Implementa `normalizedOrder`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `raw: String`: el llamador proporciona este valor/callback a `normalizedOrder`. Dentro del cuerpo, las líneas donde aparece `raw` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `List<String>`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L348 [0 espacios] `private fun normalizedOrder(raw: String): List<String> {`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `normalizedOrder` se detalla después instrucción por instrucción.
+  L349 [4 espacios] `val requested = raw.split(",").map {`
+      → Transforma cada valor/elemento de la fuente en otro valor sin mutar la colección/Flow original.
+  L350 [16 espacios] `it.trim()`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L351 [12 espacios] `}.filter {`
+      → Conserva únicamente los elementos que cumplen la condición indicada.
+  L352 [16 espacios] `it in`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `it in`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L353 [20 espacios] `DefaultMainOrder`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `DefaultMainOrder`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L354 [12 espacios] `}.distinct()`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L355 [4 espacios] `return requested + DefaultMainOrder.filterNot {`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L356 [16 espacios] `it in`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `it in`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L357 [20 espacios] `requested`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `requested`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L358 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L359 [0 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.7 `parseKeys` — líneas 361–368
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    private fun parseKeys(raw: String, valid: List<String>): Set<String> {
+
+Propósito:
+    Implementa `parseKeys`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `raw: String`: el llamador proporciona este valor/callback a `parseKeys`. Dentro del cuerpo, las líneas donde aparece `raw` muestran exactamente cómo afecta al resultado.
+  - `valid: List<String>`: el llamador proporciona este valor/callback a `parseKeys`. Dentro del cuerpo, las líneas donde aparece `valid` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Set<String>`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L361 [0 espacios] `private fun parseKeys(raw: String, valid: List<String>): Set<String> {`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `parseKeys` se detalla después instrucción por instrucción.
+  L362 [4 espacios] `return raw.split(",").map {`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L363 [12 espacios] `it.trim()`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L364 [8 espacios] `}.filter {`
+      → Conserva únicamente los elementos que cumplen la condición indicada.
+  L365 [12 espacios] `it in`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `it in`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L366 [16 espacios] `valid`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `valid`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L367 [8 espacios] `}.toSet()`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L368 [0 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+6. EXPLICACIÓN COMPLETA LÍNEA POR LÍNEA
+----------------------------------------------------------------------
+Esta sección no omite líneas ejecutables. Repite incluso partes ya explicadas en funciones para poder leer el archivo de arriba abajo sin saltar entre secciones.
+L1: `package com.example.mynotes.ui.components`
+    Declara que este archivo pertenece al package `com.example.mynotes.ui.components`; esto determina su namespace Kotlin y cómo lo importan otros archivos.
+L3: `import androidx.compose.foundation.layout.Arrangement`
+    Importa `androidx.compose.foundation.layout.Arrangement` para usar layouts, gestos y primitivas visuales de Compose.
+L4: `import androidx.compose.foundation.layout.Column`
+    Importa `androidx.compose.foundation.layout.Column` para usar layouts, gestos y primitivas visuales de Compose.
+L5: `import androidx.compose.foundation.layout.PaddingValues`
+    Importa `androidx.compose.foundation.layout.PaddingValues` para usar layouts, gestos y primitivas visuales de Compose.
+L6: `import androidx.compose.foundation.layout.Row`
+    Importa `androidx.compose.foundation.layout.Row` para usar layouts, gestos y primitivas visuales de Compose.
+L7: `import androidx.compose.foundation.layout.Spacer`
+    Importa `androidx.compose.foundation.layout.Spacer` para usar layouts, gestos y primitivas visuales de Compose.
+L8: `import androidx.compose.foundation.layout.fillMaxWidth`
+    Importa `androidx.compose.foundation.layout.fillMaxWidth` para usar layouts, gestos y primitivas visuales de Compose.
+L9: `import androidx.compose.foundation.layout.height`
+    Importa `androidx.compose.foundation.layout.height` para usar layouts, gestos y primitivas visuales de Compose.
+L10: `import androidx.compose.foundation.layout.padding`
+    Importa `androidx.compose.foundation.layout.padding` para usar layouts, gestos y primitivas visuales de Compose.
+L11: `import androidx.compose.foundation.layout.size`
+    Importa `androidx.compose.foundation.layout.size` para usar layouts, gestos y primitivas visuales de Compose.
+L12: `import androidx.compose.foundation.layout.width`
+    Importa `androidx.compose.foundation.layout.width` para usar layouts, gestos y primitivas visuales de Compose.
+L13: `import androidx.compose.material.icons.Icons`
+    Importa `androidx.compose.material.icons.Icons` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L14: `import androidx.compose.material.icons.filled.ExpandMore`
+    Importa `androidx.compose.material.icons.filled.ExpandMore` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L15: `import androidx.compose.material.icons.filled.KeyboardArrowDown`
+    Importa `androidx.compose.material.icons.filled.KeyboardArrowDown` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L16: `import androidx.compose.material.icons.filled.KeyboardArrowUp`
+    Importa `androidx.compose.material.icons.filled.KeyboardArrowUp` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L17: `import androidx.compose.material.icons.filled.Refresh`
+    Importa `androidx.compose.material.icons.filled.Refresh` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L18: `import androidx.compose.material3.DropdownMenuItem`
+    Importa `androidx.compose.material3.DropdownMenuItem` para usar componentes y tema Material 3.
+L19: `import androidx.compose.material3.Icon`
+    Importa `androidx.compose.material3.Icon` para usar componentes y tema Material 3.
+L20: `import androidx.compose.material3.IconButton`
+    Importa `androidx.compose.material3.IconButton` para usar componentes y tema Material 3.
+L21: `import androidx.compose.material3.MaterialTheme`
+    Importa `androidx.compose.material3.MaterialTheme` para usar componentes y tema Material 3.
+L22: `import androidx.compose.material3.Slider`
+    Importa `androidx.compose.material3.Slider` para usar componentes y tema Material 3.
+L23: `import androidx.compose.material3.Switch`
+    Importa `androidx.compose.material3.Switch` para usar componentes y tema Material 3.
+L24: `import androidx.compose.material3.Text`
+    Importa `androidx.compose.material3.Text` para usar componentes y tema Material 3.
+L25: `import androidx.compose.material3.TextButton`
+    Importa `androidx.compose.material3.TextButton` para usar componentes y tema Material 3.
+L26: `import androidx.compose.runtime.Composable`
+    Importa `androidx.compose.runtime.Composable` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+L27: `import androidx.compose.runtime.LaunchedEffect`
+    Importa `androidx.compose.runtime.LaunchedEffect` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+L28: `import androidx.compose.runtime.getValue`
+    Importa `androidx.compose.runtime.getValue` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+L29: `import androidx.compose.runtime.mutableFloatStateOf`
+    Importa `androidx.compose.runtime.mutableFloatStateOf` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+L30: `import androidx.compose.runtime.mutableStateOf`
+    Importa `androidx.compose.runtime.mutableStateOf` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+L31: `import androidx.compose.runtime.remember`
+    Importa `androidx.compose.runtime.remember` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+L32: `import androidx.compose.runtime.setValue`
+    Importa `androidx.compose.runtime.setValue` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+L33: `import androidx.compose.ui.Alignment`
+    Importa `androidx.compose.ui.Alignment` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L34: `import androidx.compose.ui.Modifier`
+    Importa `androidx.compose.ui.Modifier` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L35: `import androidx.compose.ui.graphics.Color`
+    Importa `androidx.compose.ui.graphics.Color` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L36: `import androidx.compose.ui.platform.LocalContext`
+    Importa `androidx.compose.ui.platform.LocalContext` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L37: `import androidx.compose.ui.res.stringResource`
+    Importa `androidx.compose.ui.res.stringResource` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L38: `import androidx.compose.ui.text.font.FontFamily`
+    Importa `androidx.compose.ui.text.font.FontFamily` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L39: `import androidx.compose.ui.text.font.FontWeight`
+    Importa `androidx.compose.ui.text.font.FontWeight` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L40: `import androidx.compose.ui.text.style.TextAlign`
+    Importa `androidx.compose.ui.text.style.TextAlign` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L41: `import androidx.compose.ui.unit.dp`
+    Importa `androidx.compose.ui.unit.dp` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L42: `import androidx.compose.ui.unit.sp`
+    Importa `androidx.compose.ui.unit.sp` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L43: `import androidx.compose.ui.window.PopupProperties`
+    Importa `androidx.compose.ui.window.PopupProperties` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L44: `import com.example.mynotes.R`
+    Importa `com.example.mynotes.R`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L45: `import com.example.mynotes.ui.components.AppDropdownMenu`
+    Importa `com.example.mynotes.ui.components.AppDropdownMenu`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L46: `import com.example.mynotes.settings.AppSettings`
+    Importa `com.example.mynotes.settings.AppSettings`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L47: `import com.example.mynotes.ui.sound.UiActionSound`
+    Importa `com.example.mynotes.ui.sound.UiActionSound`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L48: `import com.example.mynotes.ui.sound.UiSound`
+    Importa `com.example.mynotes.ui.sound.UiSound`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L49: `import com.example.mynotes.ui.sound.UiSoundPlayer`
+    Importa `com.example.mynotes.ui.sound.UiSoundPlayer`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L50: `import kotlin.math.roundToInt`
+    Importa `kotlin.math.roundToInt` de la biblioteca estándar/JVM para operaciones de lenguaje, fechas, colecciones, I/O o utilidades.
+L52: `private data class MenuOptionDescriptor(val key: String, val labelRes: Int)`
+    Declara `MenuOptionDescriptor` como `data class`: Kotlin genera automáticamente igualdad, hash, copia y representación textual a partir de sus propiedades del constructor.
+L54: `private val MainMenuOptions = listOf(MenuOptionDescriptor("edit", R.string.mock_edit), MenuOptionDescriptor("favorite",`
+    Declara `MainMenuOptions` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `listOf(MenuOptionDescriptor("edit", R.string.mock_edit), MenuOptionDescriptor("favorite",`.
+L55: `R.string.mock_favorites), MenuOptionDescriptor("pin", R.string.mock_pin), MenuOptionDescriptor("priority",`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `R.string.mock_favorites), MenuOptionDescriptor("pin", R.string.mock_pin), MenuOptionDescriptor("priority",`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L56: `R.string.mock_priority), MenuOptionDescriptor("color", R.string.mock_color), MenuOptionDescriptor("move", R.string.mock_move),`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L57: `MenuOptionDescriptor("delete", R.string.mock_delete))`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L58: `private val PriorityOptions = listOf(MenuOptionDescriptor("none", R.string.mock_priority_none), MenuOptionDescriptor("low",`
+    Declara `PriorityOptions` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `listOf(MenuOptionDescriptor("none", R.string.mock_priority_none), MenuOptionDescriptor("low",`.
+L59: `R.string.mock_priority_low), MenuOptionDescriptor("medium", R.string.mock_priority_medium), MenuOptionDescriptor("high",`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `R.string.mock_priority_low), MenuOptionDescriptor("medium", R.string.mock_priority_medium), MenuOptionDescriptor("high",`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L60: `R.string.mock_priority_high))`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L61: `private val ColorOptions = listOf(MenuOptionDescriptor("default", R.string.mock_color_default),`
+    Declara `ColorOptions` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `listOf(MenuOptionDescriptor("default", R.string.mock_color_default),`.
+L62: `MenuOptionDescriptor("yellow", R.string.mock_color_yellow), MenuOptionDescriptor("orange", R.string.mock_color_orange),`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L63: `MenuOptionDescriptor("red", R.string.mock_color_red), MenuOptionDescriptor("pink", R.string.mock_color_pink),`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L64: `MenuOptionDescriptor("purple", R.string.mock_color_purple), MenuOptionDescriptor("blue", R.string.mock_color_blue),`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L65: `MenuOptionDescriptor("cyan", R.string.mock_color_cyan), MenuOptionDescriptor("teal", R.string.mock_color_teal),`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L66: `MenuOptionDescriptor("green", R.string.mock_color_green), MenuOptionDescriptor("mint", R.string.mock_color_mint),`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L67: `MenuOptionDescriptor("lime", R.string.mock_color_lime), MenuOptionDescriptor("brown", R.string.mock_color_brown),`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L68: `MenuOptionDescriptor("gray", R.string.mock_color_gray))`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L69: `private val DefaultMainOrder = MainMenuOptions.map {`
+    Transforma cada valor/elemento de la fuente en otro valor sin mutar la colección/Flow original.
+L70: `it.key`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `it.key`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L71: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L72: `@Composable`
+    Marca la función siguiente como Composable: Compose puede ejecutarla durante composición/recomposición para describir UI a partir de estado.
+L73: `fun OptionsMenuCustomizationSection(settings: AppSettings, fontFamily: FontFamily, textColor: Color, secondaryTextColor: Color,`
+    Declara una función. El bloque de `OptionsMenuCustomizationSection` se detalla después instrucción por instrucción.
+L74: `graphicColor: Color, onOrderChange: (String) -> Unit, onHiddenItemsChange: (String) -> Unit, onShowIconsChange: (Boolean) -> Unit,`
+    Define una rama/lambda. Cuando coincide `graphicColor: Color, onOrderChange: (String)`, se ejecuta la expresión o bloque situado después de `->`.
+L75: `onTextColorChange: (String) -> Unit, onOpacityChange: (Float) -> Unit, onPriorityHiddenItemsChange: (String) -> Unit,`
+    Define una rama/lambda. Cuando coincide `onTextColorChange: (String)`, se ejecuta la expresión o bloque situado después de `->`.
+L76: `onColorHiddenItemsChange: (String) -> Unit, onReset: () -> Unit) {`
+    Define una rama/lambda. Cuando coincide `onColorHiddenItemsChange: (String)`, se ejecuta la expresión o bloque situado después de `->`.
+L77: `val context = LocalContext.current`
+    Declara `context` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `LocalContext.current`.
+L78: `val orderedKeys = remember(settings.optionMenuOrder) {`
+    Memoriza el resultado durante recomposiciones de Compose. Solo se recalcula cuando cambian las claves de `remember`, reduciendo trabajo y preservando identidad/estado local.
+L79: `normalizedOrder(settings.optionMenuOrder)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L80: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L81: `val hiddenMain = remember(settings.optionMenuHiddenItems) {`
+    Memoriza el resultado durante recomposiciones de Compose. Solo se recalcula cuando cambian las claves de `remember`, reduciendo trabajo y preservando identidad/estado local.
+L82: `parseKeys(settings.optionMenuHiddenItems, DefaultMainOrder)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L83: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L84: `val hiddenPriorities = remember(settings.priorityMenuHiddenItems) {`
+    Memoriza el resultado durante recomposiciones de Compose. Solo se recalcula cuando cambian las claves de `remember`, reduciendo trabajo y preservando identidad/estado local.
+L85: `parseKeys(settings.priorityMenuHiddenItems, PriorityOptions.map {`
+    Transforma cada valor/elemento de la fuente en otro valor sin mutar la colección/Flow original.
+L86: `it.key`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `it.key`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L87: `})`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L88: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L89: `val hiddenColors = remember(settings.colorMenuHiddenItems) {`
+    Memoriza el resultado durante recomposiciones de Compose. Solo se recalcula cuando cambian las claves de `remember`, reduciendo trabajo y preservando identidad/estado local.
+L90: `parseKeys(settings.colorMenuHiddenItems, ColorOptions.map {`
+    Transforma cada valor/elemento de la fuente en otro valor sin mutar la colección/Flow original.
+L91: `it.key`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `it.key`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L92: `})`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L93: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L94: `var opacity by`
+    Declara `opacity` como variable mutable: el código puede reasignarla para representar estado cambiante. La inicialización continúa en líneas siguientes.
+L95: `remember {`
+    Memoriza el resultado durante recomposiciones de Compose. Solo se recalcula cuando cambian las claves de `remember`, reduciendo trabajo y preservando identidad/estado local.
+L96: `mutableFloatStateOf(settings.optionMenuOpacity)`
+    Crea estado observable por Compose. Cuando este valor cambia, los Composables que lo leyeron pueden recomponerse automáticamente.
+L97: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L98: `LaunchedEffect(settings.optionMenuOpacity) {`
+    Inicia una coroutine ligada al ciclo de vida de esta composición. Se cancela/reinicia cuando cambian sus claves, por eso se usa para efectos asíncronos dependientes de estado.
+L99: `opacity = settings.optionMenuOpacity`
+    Asigna/configura `opacity` usando `settings.optionMenuOpacity`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L100: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L101: `var textColorMenuExpanded by`
+    Declara `textColorMenuExpanded` como variable mutable: el código puede reasignarla para representar estado cambiante. La inicialización continúa en líneas siguientes.
+L102: `remember {`
+    Memoriza el resultado durante recomposiciones de Compose. Solo se recalcula cuando cambian las claves de `remember`, reduciendo trabajo y preservando identidad/estado local.
+L103: `mutableStateOf(false)`
+    Crea estado observable por Compose. Cuando este valor cambia, los Composables que lo leyeron pueden recomponerse automáticamente.
+L104: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L105: `Spacer(modifier = Modifier.height(8.dp))`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L106: `Text(text = stringResource(R.string.option_menu_customization_title), color = textColor, fontFamily = fontFamily, fontWeight =`
+    Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+L107: `FontWeight.Bold, fontSize = 20.sp)`
+    Asigna/configura `FontWeight.Bold, fontSize` usando `20.sp)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L108: `Text(text = stringResource(R.string.option_menu_customization_description), modifier = Modifier.padding(top = 2.dp), color =`
+    Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+L109: `secondaryTextColor, fontFamily = fontFamily, fontSize = 12.sp)`
+    Asigna/configura `secondaryTextColor, fontFamily` usando `fontFamily, fontSize = 12.sp)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L110: `Spacer(modifier = Modifier.height(10.dp))`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L111: `SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(12.dp)) { panelColors ->`
+    Asigna/configura `SettingsSectionPanel(textColorMode` usando `settings.textColor, contentPadding = PaddingValues(12.dp)) { panelColors ->`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L112: `ToggleRow(title = stringResource(R.string.option_menu_show_icons), checked = settings.optionMenuShowIcons, onCheckedChange =`
+    Obtiene una cadena localizada desde `res/values*` (`option_menu_show_icons`), de modo que la UI siga el idioma activo.
+L113: `onShowIconsChange, fontFamily = fontFamily, textColor = panelColors.text)`
+    Asigna/configura `onShowIconsChange, fontFamily` usando `fontFamily, textColor = panelColors.text)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L114: `Spacer(modifier = Modifier.height(8.dp))`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L115: `Text(text = stringResource(R.string.option_menu_text_color), color = panelColors.text, fontFamily = fontFamily, fontWeight =`
+    Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+L116: `FontWeight.SemiBold, fontSize = 14.sp)`
+    Asigna/configura `FontWeight.SemiBold, fontSize` usando `14.sp)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L117: `Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {`
+    Crea un `Row` de Compose que organiza hijos horizontalmente. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+L118: `Text(text = optionMenuTextColorLabel(settings.optionMenuTextColor), modifier = Modifier.weight(1f), color =`
+    Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+L119: `panelColors.secondaryText, fontFamily = fontFamily, fontSize = 13.sp)`
+    Asigna/configura `panelColors.secondaryText, fontFamily` usando `fontFamily, fontSize = 13.sp)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L120: `androidx.compose.foundation.layout.Box {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L121: `TextButton(onClick = {`
+    Crea un control pulsable Material. Su callback `onClick` ejecuta la acción del usuario y sus colores/forma se derivan de la configuración.
+L122: `UiSoundPlayer.playAction(context = context, action = UiActionSound.Menu)`
+    Asigna/configura `UiSoundPlayer.playAction(context` usando `context, action = UiActionSound.Menu)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L123: `textColorMenuExpanded = true`
+    Asigna/configura `textColorMenuExpanded` usando `true`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L124: `}) {`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L125: `Text(text = stringResource(R.string.option_menu_change), color = panelColors.text, fontFamily = fontFamily)`
+    Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+L126: `Icon(imageVector = Icons.Default.ExpandMore, contentDescription = null, tint = panelColors.text, modifier =`
+    Renderiza un recurso visual. El modelo/painter y los modifiers siguientes determinan qué se muestra, tamaño, recorte y accesibilidad.
+L127: `Modifier.size(18.dp))`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L128: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L129: `AppDropdownMenu(modifier = Modifier.width(164.dp), expanded = textColorMenuExpanded, onDismissRequest = {`
+    Abre un menú emergente Compose cuya visibilidad depende de estado; los items internos modifican una opción y normalmente cierran el menú.
+L130: `textColorMenuExpanded = false`
+    Asigna/configura `textColorMenuExpanded` usando `false`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L131: `}, properties = PopupProperties(focusable = false, dismissOnBackPress = true, dismissOnClickOutside = true)) {`
+    Asigna/configura `}, properties` usando `PopupProperties(focusable = false, dismissOnBackPress = true, dismissOnClickOutside = true)) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L132: `listOf("note" to`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `listOf("note" to`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L133: `R.string.option_menu_text_follow_note, "black" to`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `R.string.option_menu_text_follow_note, "black" to`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L134: `R.string.option_menu_text_black, "white" to`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `R.string.option_menu_text_black, "white" to`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L135: `R.string.option_menu_text_white).forEach {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L136: `option ->`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `option ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L137: `DropdownMenuItem(modifier = Modifier.height(32.dp), contentPadding = PaddingValues(horizontal = 4.dp,`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L138: `vertical = 0.dp), text = {`
+    Asigna/configura `vertical` usando `0.dp), text = {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L139: `Text(text = stringResource(option.second), modifier = Modifier.fillMaxWidth(), color = panelColors.text,`
+    Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+L140: `fontFamily = fontFamily, fontSize = 12.sp, maxLines = 1, textAlign = TextAlign.Center)`
+    Asigna/configura `fontFamily` usando `fontFamily, fontSize = 12.sp, maxLines = 1, textAlign = TextAlign.Center)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L141: `}, onClick = {`
+    Asigna/configura `}, onClick` usando `{`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L142: `UiSoundPlayer.playAction(context = context, action = UiActionSound.Select)`
+    Asigna/configura `UiSoundPlayer.playAction(context` usando `context, action = UiActionSound.Select)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L143: `textColorMenuExpanded = false`
+    Asigna/configura `textColorMenuExpanded` usando `false`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L144: `onTextColorChange(option.first)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L145: `})`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L146: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L147: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L148: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L149: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L150: `Spacer(modifier = Modifier.height(8.dp))`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L151: `Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically, horizontalArrangement =`
+    Crea un `Row` de Compose que organiza hijos horizontalmente. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+L152: `Arrangement.SpaceBetween) {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L153: `Text(text = stringResource(R.string.option_menu_opacity), color = panelColors.text, fontFamily = fontFamily, fontWeight =`
+    Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+L154: `FontWeight.SemiBold, fontSize = 14.sp)`
+    Asigna/configura `FontWeight.SemiBold, fontSize` usando `14.sp)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L155: `Text(text = "${opacity.roundToInt()}%", color = panelColors.secondaryText, fontFamily = fontFamily, fontSize = 12.sp)`
+    Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+L156: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L157: `Slider(value = opacity, onValueChange = {`
+    Crea un control de ajuste. El valor visible viene del estado y el callback persiste/previsualiza la nueva selección.
+L158: `opacity = it`
+    Asigna/configura `opacity` usando `it`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L159: `UiSoundPlayer.playThrottled(context = context, sound = UiSound.SliderTick, minimumIntervalMs = 48L)`
+    Asigna/configura `UiSoundPlayer.playThrottled(context` usando `context, sound = UiSound.SliderTick, minimumIntervalMs = 48L)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L160: `}, onValueChangeFinished = {`
+    Asigna/configura `}, onValueChangeFinished` usando `{`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L161: `onOpacityChange(opacity)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L162: `}, valueRange = 35f..100f)`
+    Asigna/configura `}, valueRange` usando `35f..100f)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L163: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L164: `Spacer(modifier = Modifier.height(12.dp))`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L165: `SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(12.dp)) { panelColors ->`
+    Asigna/configura `SettingsSectionPanel(textColorMode` usando `settings.textColor, contentPadding = PaddingValues(12.dp)) { panelColors ->`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L166: `Text(text = stringResource(R.string.option_menu_main_actions), color = panelColors.text, fontFamily = fontFamily, fontWeight =`
+    Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+L167: `FontWeight.Bold)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L168: `Text(text = stringResource(R.string.option_menu_main_actions_hint), modifier = Modifier.padding(top = 2.dp, bottom = 4.dp), color =`
+    Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+L169: `panelColors.secondaryText, fontFamily = fontFamily, fontSize = 12.sp)`
+    Asigna/configura `panelColors.secondaryText, fontFamily` usando `fontFamily, fontSize = 12.sp)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L170: `val enabledCount = orderedKeys.count {`
+    Declara `enabledCount` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `orderedKeys.count {`.
+L171: `it !in hiddenMain`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `it !in hiddenMain`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L172: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L173: `orderedKeys.forEachIndexed {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L174: `index, key ->`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `index, key ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L175: `val descriptor = MainMenuOptions.first {`
+    Declara `descriptor` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `MainMenuOptions.first {`.
+L176: `it.key == key`
+    Asigna/configura `it.key` usando `= key`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L177: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L178: `val isVisible = key !in`
+    Declara `isVisible` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `key !in`.
+L179: `hiddenMain`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `hiddenMain`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L180: `MenuOrderRow(label = stringResource(descriptor.labelRes), visible = isVisible, canHide = !isVisible || enabledCount >`
+    Obtiene una cadena localizada desde `res/values*`, de modo que la UI siga el idioma activo.
+L181: `1, canMoveUp = index >`
+    Asigna/configura `1, canMoveUp` usando `index >`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L182: `0, canMoveDown = index <`
+    Asigna/configura `0, canMoveDown` usando `index <`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L183: `orderedKeys.lastIndex, onVisibleChange = {`
+    Asigna/configura `orderedKeys.lastIndex, onVisibleChange` usando `{`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L184: `visible ->`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `visible ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L185: `val next = hiddenMain.toMutableSet()`
+    Declara `next` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `hiddenMain.toMutableSet()`.
+L186: `if (visible) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `visible`.
+L187: `next.remove(key)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L188: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L189: `next.add(key)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L190: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L191: `onHiddenItemsChange(next.joinToString(","))`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L192: `}, onMoveUp = {`
+    Asigna/configura `}, onMoveUp` usando `{`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L193: `val next = orderedKeys.toMutableList()`
+    Declara `next` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `orderedKeys.toMutableList()`.
+L194: `val previous = index - 1`
+    Declara `previous` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `index - 1`.
+L195: `val temp = next[previous]`
+    Declara `temp` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `next[previous]`.
+L196: `next[previous] = next[index]`
+    Asigna/configura `next[previous]` usando `next[index]`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L197: `next[index] = temp`
+    Asigna/configura `next[index]` usando `temp`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L198: `onOrderChange(next.joinToString(","))`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L199: `}, onMoveDown = {`
+    Asigna/configura `}, onMoveDown` usando `{`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L200: `val next = orderedKeys.toMutableList()`
+    Declara `next` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `orderedKeys.toMutableList()`.
+L201: `val following = index + 1`
+    Declara `following` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `index + 1`.
+L202: `val temp = next[following]`
+    Declara `temp` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `next[following]`.
+L203: `next[following] = next[index]`
+    Asigna/configura `next[following]` usando `next[index]`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L204: `next[index] = temp`
+    Asigna/configura `next[index]` usando `temp`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L205: `onOrderChange(next.joinToString(","))`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L206: `}, fontFamily = fontFamily, textColor = panelColors.text)`
+    Asigna/configura `}, fontFamily` usando `fontFamily, textColor = panelColors.text)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L207: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L208: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L209: `Spacer(modifier = Modifier.height(8.dp))`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L210: `SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(12.dp)) { panelColors ->`
+    Asigna/configura `SettingsSectionPanel(textColorMode` usando `settings.textColor, contentPadding = PaddingValues(12.dp)) { panelColors ->`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L211: `Text(text = stringResource(R.string.option_menu_priority_submenu), color = panelColors.text, fontFamily = fontFamily, fontWeight =`
+    Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+L212: `FontWeight.Bold)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L213: `val visiblePriorityCount = PriorityOptions.count {`
+    Declara `visiblePriorityCount` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `PriorityOptions.count {`.
+L214: `it.key !in`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `it.key !in`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L215: `hiddenPriorities`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `hiddenPriorities`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L216: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L217: `CompactToggleGrid(options = PriorityOptions, hiddenItems = hiddenPriorities, visibleCount = visiblePriorityCount,`
+    Asigna/configura `CompactToggleGrid(options` usando `PriorityOptions, hiddenItems = hiddenPriorities, visibleCount = visiblePriorityCount,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L218: `onHiddenItemsChange = onPriorityHiddenItemsChange, fontFamily = fontFamily, textColor = panelColors.text)`
+    Asigna/configura `onHiddenItemsChange` usando `onPriorityHiddenItemsChange, fontFamily = fontFamily, textColor = panelColors.text)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L219: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L220: `Spacer(modifier = Modifier.height(8.dp))`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L221: `SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(12.dp)) { panelColors ->`
+    Asigna/configura `SettingsSectionPanel(textColorMode` usando `settings.textColor, contentPadding = PaddingValues(12.dp)) { panelColors ->`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L222: `Text(text = stringResource(R.string.option_menu_color_submenu), color = panelColors.text, fontFamily = fontFamily, fontWeight =`
+    Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+L223: `FontWeight.Bold)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L224: `val visibleColorCount = ColorOptions.count {`
+    Declara `visibleColorCount` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `ColorOptions.count {`.
+L225: `it.key !in`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `it.key !in`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L226: `hiddenColors`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `hiddenColors`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L227: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L228: `CompactToggleGrid(options = ColorOptions, hiddenItems = hiddenColors, visibleCount = visibleColorCount, onHiddenItemsChange =`
+    Asigna/configura `CompactToggleGrid(options` usando `ColorOptions, hiddenItems = hiddenColors, visibleCount = visibleColorCount, onHiddenItemsChange =`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L229: `onColorHiddenItemsChange, fontFamily = fontFamily, textColor = panelColors.text)`
+    Asigna/configura `onColorHiddenItemsChange, fontFamily` usando `fontFamily, textColor = panelColors.text)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L230: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L231: `Spacer(modifier = Modifier.height(8.dp))`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L232: `// El restablecimiento queda como una acción limpia, sin el panel/sombreado`
+    Comentario del autor. No se ejecuta; documenta la intención o una restricción del bloque siguiente.
+L233: `// oscuro que antes envolvía al botón. Se conserva la misma alineación.`
+    Comentario del autor. No se ejecuta; documenta la intención o una restricción del bloque siguiente.
+L234: `Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {`
+    Crea un `Row` de Compose que organiza hijos horizontalmente. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+L235: `TextButton(onClick = {`
+    Crea un control pulsable Material. Su callback `onClick` ejecuta la acción del usuario y sus colores/forma se derivan de la configuración.
+L236: `UiSoundPlayer.playAction(context = context, action = UiActionSound.Restore)`
+    Asigna/configura `UiSoundPlayer.playAction(context` usando `context, action = UiActionSound.Restore)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L237: `onReset()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L238: `}) {`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L239: `Icon(imageVector = Icons.Default.Refresh, contentDescription = null, tint = textColor)`
+    Renderiza un recurso visual. El modelo/painter y los modifiers siguientes determinan qué se muestra, tamaño, recorte y accesibilidad.
+L240: `Text(text = stringResource(R.string.option_menu_reset), modifier = Modifier.padding(start = 6.dp), color =`
+    Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+L241: `textColor, fontFamily = fontFamily, fontWeight = FontWeight.SemiBold)`
+    Asigna/configura `textColor, fontFamily` usando `fontFamily, fontWeight = FontWeight.SemiBold)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L242: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L243: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L244: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L246: `@Composable`
+    Marca la función siguiente como Composable: Compose puede ejecutarla durante composición/recomposición para describir UI a partir de estado.
+L247: `private fun MenuOrderRow(label: String, visible: Boolean, canHide: Boolean, canMoveUp: Boolean, canMoveDown: Boolean,`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `MenuOrderRow` se detalla después instrucción por instrucción.
+L248: `onVisibleChange: (Boolean) -> Unit, onMoveUp: () -> Unit, onMoveDown: () -> Unit, fontFamily: FontFamily, textColor: Color) {`
+    Define una rama/lambda. Cuando coincide `onVisibleChange: (Boolean)`, se ejecuta la expresión o bloque situado después de `->`.
+L249: `val context = LocalContext.current`
+    Declara `context` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `LocalContext.current`.
+L250: `Row(modifier = Modifier.fillMaxWidth().padding(vertical = 0.dp), verticalAlignment = Alignment.CenterVertically) {`
+    Crea un `Row` de Compose que organiza hijos horizontalmente. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+L251: `Text(text = label, modifier = Modifier.weight(1f), color = textColor, fontFamily = fontFamily, fontSize = 14.sp)`
+    Renderiza texto en Compose. Sus argumentos determinan contenido, color, tipografía, tamaño, líneas máximas y overflow.
+L252: `IconButton(onClick = {`
+    Crea un control pulsable Material. Su callback `onClick` ejecuta la acción del usuario y sus colores/forma se derivan de la configuración.
+L253: `UiSoundPlayer.playAction(context = context, action = UiActionSound.Move)`
+    Asigna/configura `UiSoundPlayer.playAction(context` usando `context, action = UiActionSound.Move)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L254: `onMoveUp()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L255: `}, enabled = canMoveUp, modifier = Modifier.size(32.dp)) {`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L256: `Icon(imageVector = Icons.Default.KeyboardArrowUp, contentDescription = stringResource(R.string.option_menu_move_up), tint =`
+    Renderiza un recurso visual. El modelo/painter y los modifiers siguientes determinan qué se muestra, tamaño, recorte y accesibilidad.
+L257: `textColor.copy(alpha = if (canMoveUp) {`
+    Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+L258: `1f`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `1f`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L259: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L260: `0.28f`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `0.28f`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L261: `}))`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L262: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L263: `IconButton(onClick = {`
+    Crea un control pulsable Material. Su callback `onClick` ejecuta la acción del usuario y sus colores/forma se derivan de la configuración.
+L264: `UiSoundPlayer.playAction(context = context, action = UiActionSound.Move)`
+    Asigna/configura `UiSoundPlayer.playAction(context` usando `context, action = UiActionSound.Move)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L265: `onMoveDown()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L266: `}, enabled = canMoveDown, modifier = Modifier.size(32.dp)) {`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L267: `Icon(imageVector = Icons.Default.KeyboardArrowDown, contentDescription = stringResource(R.string.option_menu_move_down), tint =`
+    Renderiza un recurso visual. El modelo/painter y los modifiers siguientes determinan qué se muestra, tamaño, recorte y accesibilidad.
+L268: `textColor.copy(alpha = if (canMoveDown) {`
+    Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+L269: `1f`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `1f`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L270: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L271: `0.28f`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `0.28f`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L272: `}))`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L273: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L274: `Switch(checked = visible, onCheckedChange = { newChecked -> UiSoundPlayer.playToggle(context = context, checked = newChecked)`
+    Define una rama/lambda. Cuando coincide `Switch(checked = visible, onCheckedChange = { newChecked`, se ejecuta la expresión o bloque situado después de `->`.
+L275: `onVisibleChange(newChecked)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L276: `}, enabled = canHide)`
+    Asigna/configura `}, enabled` usando `canHide)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L277: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L278: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L280: `@Composable`
+    Marca la función siguiente como Composable: Compose puede ejecutarla durante composición/recomposición para describir UI a partir de estado.
+L281: `private fun CompactToggleGrid(options: List<MenuOptionDescriptor>, hiddenItems: Set<String>, visibleCount: Int,`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `CompactToggleGrid` se detalla después instrucción por instrucción.
+L282: `onHiddenItemsChange: (String) -> Unit, fontFamily: FontFamily, textColor: Color) {`
+    Define una rama/lambda. Cuando coincide `onHiddenItemsChange: (String)`, se ejecuta la expresión o bloque situado después de `->`.
+L283: `options.chunked(2).forEach {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L284: `rowOptions ->`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `rowOptions ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L285: `Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment =`
+    Crea un `Row` de Compose que organiza hijos horizontalmente. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+L286: `Alignment.CenterVertically) {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L287: `rowOptions.forEach {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L288: `option ->`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `option ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L289: `val visible = option.key !in`
+    Declara `visible` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `option.key !in`.
+L290: `hiddenItems`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `hiddenItems`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L291: `ToggleRow(title = stringResource(option.labelRes), checked = visible, onCheckedChange = {`
+    Obtiene una cadena localizada desde `res/values*`, de modo que la UI siga el idioma activo.
+L292: `checked ->`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `checked ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L293: `val next = hiddenItems.toMutableSet()`
+    Declara `next` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `hiddenItems.toMutableSet()`.
+L294: `if (checked) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `checked`.
+L295: `next.remove(option.key)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L296: `} else if (visibleCount >`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `} else if (visibleCount >`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L297: `1) {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L298: `next.add(option.key)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L299: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L300: `onHiddenItemsChange(next.joinToString(","))`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L301: `}, enabled = !visible || visibleCount >`
+    Asigna/configura `}, enabled` usando `!visible || visibleCount >`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L302: `1, fontFamily = fontFamily, textColor = textColor, modifier = Modifier.weight(1f), compact = true)`
+    Asigna/configura `1, fontFamily` usando `fontFamily, textColor = textColor, modifier = Modifier.weight(1f), compact = true)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L303: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L304: `if (rowOptions.size == 1) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `rowOptions.size == 1`.
+L305: `Spacer(modifier = Modifier.weight(1f))`
+    Asigna/configura `Spacer(modifier` usando `Modifier.weight(1f))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L306: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L307: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L308: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L309: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L311: `@Composable`
+    Marca la función siguiente como Composable: Compose puede ejecutarla durante composición/recomposición para describir UI a partir de estado.
+L312: `private fun ToggleRow(title: String, checked: Boolean, onCheckedChange: (Boolean) -> Unit, fontFamily: FontFamily, textColor: Color,`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `ToggleRow` se detalla después instrucción por instrucción.
+L313: `enabled: Boolean = true, modifier: Modifier = Modifier, compact: Boolean = false) {`
+    Asigna/configura `enabled: Boolean` usando `true, modifier: Modifier = Modifier, compact: Boolean = false) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L314: `val context = LocalContext.current`
+    Declara `context` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `LocalContext.current`.
+L315: `Row(modifier = modifier.then(if (compact) {`
+    Crea un `Row` de Compose que organiza hijos horizontalmente. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+L316: `Modifier`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `Modifier`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L317: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L318: `Modifier.fillMaxWidth()`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L319: `}).padding(vertical = 0.dp), verticalAlignment = Alignment.CenterVertically) {`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L320: `Text(text = title, modifier = Modifier.weight(1f), color = textColor.copy(alpha = if (enabled) {`
+    Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+L321: `1f`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `1f`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L322: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L323: `0.42f`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `0.42f`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L324: `}), fontFamily = fontFamily, fontSize = if (compact) {`
+    Asigna/configura `}), fontFamily` usando `fontFamily, fontSize = if (compact) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L325: `13.sp`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `13.sp`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L326: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L327: `14.sp`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `14.sp`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L328: `}, maxLines = if (compact) {`
+    Asigna/configura `}, maxLines` usando `if (compact) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L329: `2`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `2`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L330: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L331: `Int.MAX_VALUE`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `Int.MAX_VALUE`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L332: `})`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L333: `Switch(checked = checked, onCheckedChange = { newChecked -> UiSoundPlayer.playToggle(context = context, checked = newChecked)`
+    Define una rama/lambda. Cuando coincide `Switch(checked = checked, onCheckedChange = { newChecked`, se ejecuta la expresión o bloque situado después de `->`.
+L334: `onCheckedChange(newChecked)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L335: `}, enabled = enabled)`
+    Asigna/configura `}, enabled` usando `enabled)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L336: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L337: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L339: `@Composable`
+    Marca la función siguiente como Composable: Compose puede ejecutarla durante composición/recomposición para describir UI a partir de estado.
+L340: `private fun optionMenuTextColorLabel(value: String): String {`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `optionMenuTextColorLabel` se detalla después instrucción por instrucción.
+L341: `return stringResource(when (value) {`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L342: `"black" -> R.string.option_menu_text_black`
+    Define una rama/lambda. Cuando coincide `"black"`, se ejecuta la expresión o bloque situado después de `->`.
+L343: `"white" -> R.string.option_menu_text_white`
+    Define una rama/lambda. Cuando coincide `"white"`, se ejecuta la expresión o bloque situado después de `->`.
+L344: `else -> R.string.option_menu_text_follow_note`
+    Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+L345: `})`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L346: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L348: `private fun normalizedOrder(raw: String): List<String> {`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `normalizedOrder` se detalla después instrucción por instrucción.
+L349: `val requested = raw.split(",").map {`
+    Transforma cada valor/elemento de la fuente en otro valor sin mutar la colección/Flow original.
+L350: `it.trim()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L351: `}.filter {`
+    Conserva únicamente los elementos que cumplen la condición indicada.
+L352: `it in`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `it in`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L353: `DefaultMainOrder`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `DefaultMainOrder`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L354: `}.distinct()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L355: `return requested + DefaultMainOrder.filterNot {`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L356: `it in`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `it in`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L357: `requested`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `requested`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L358: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L359: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L361: `private fun parseKeys(raw: String, valid: List<String>): Set<String> {`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `parseKeys` se detalla después instrucción por instrucción.
+L362: `return raw.split(",").map {`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L363: `it.trim()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L364: `}.filter {`
+    Conserva únicamente los elementos que cumplen la condición indicada.
+L365: `it in`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `it in`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L366: `valid`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `valid`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L367: `}.toSet()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L368: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+7. RECURSOS ANDROID REFERENCIADOS
+----------------------------------------------------------------------
+- `R.string.mock_color`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.mock_color_blue`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.mock_color_brown`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.mock_color_cyan`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.mock_color_default`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.mock_color_gray`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.mock_color_green`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.mock_color_lime`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.mock_color_mint`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.mock_color_orange`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.mock_color_pink`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.mock_color_purple`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.mock_color_red`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.mock_color_teal`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.mock_color_yellow`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.mock_delete`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.mock_edit`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.mock_favorites`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.mock_move`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.mock_pin`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.mock_priority`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.mock_priority_high`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.mock_priority_low`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.mock_priority_medium`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.mock_priority_none`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.option_menu_change`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.option_menu_color_submenu`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.option_menu_customization_description`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.option_menu_customization_title`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.option_menu_main_actions`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.option_menu_main_actions_hint`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.option_menu_move_down`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.option_menu_move_up`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.option_menu_opacity`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.option_menu_priority_submenu`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.option_menu_reset`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.option_menu_show_icons`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.option_menu_text_black`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.option_menu_text_color`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.option_menu_text_follow_note`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+- `R.string.option_menu_text_white`: referencia a un recurso `string` empaquetado. Si se elimina o renombra, este archivo dejará de compilar hasta actualizar la referencia.
+
+8. QUIÉN USA ESTE COMPONENTE
+----------------------------------------------------------------------
+- No se detectaron referencias externas por nombre a los tipos principales; puede ser punto de entrada Android, recurso invocado por Manifest o archivo de prueba.
+
+9. QUÉ PUEDE ROMPERSE SI LO MODIFICAS
+----------------------------------------------------------------------
+- Conservar firmas públicas/callbacks y comprobar los archivos que aparecen en “quién usa este componente” antes de renombrar o cambiar tipos.
+
+10. CHECKLIST DE PRUEBA DESPUÉS DE MODIFICAR ESTE ARCHIVO
+----------------------------------------------------------------------
+- Compilar `assembleDebug` y resolver primero errores de Kotlin/AAPT.
+- Abrir la pantalla/flujo relacionado y comprobar ida y vuelta (back) sin estado duplicado.
+- Cambiar tema/paleta y verificar contraste si este archivo dibuja UI.
+
+==============================================================================================================
+FIN DEL ARCHIVO
+==============================================================================================================

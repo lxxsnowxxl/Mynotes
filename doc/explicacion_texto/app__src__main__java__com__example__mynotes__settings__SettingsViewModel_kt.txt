@@ -1,0 +1,47 @@
+# SettingsViewModel.kt — explicación completa del código
+
+Ruta: app/src/main/java/com/example/mynotes/settings/SettingsViewModel.kt  
+SHA-256: addc44b9b2a1d1c1072a28a5219cdcaca9737411da8e7e1797498a97491a6d50  
+Líneas: 7  
+Package: com.example.mynotes.settings
+
+## 1. Para qué existe este archivo
+
+Archivo marcador intencional. No declara otro SettingsViewModel; documenta que la implementación real vive en com.example.mynotes.viewmodel para evitar redeclaraciones.
+
+## 2. Tipos/clases declarados
+
+- No declara una clase/objeto propio; contiene funciones/valores de soporte o es un archivo marcador.
+
+## 3. Estado, constantes y valores importantes
+
+- No se detectaron propiedades inicializadas a nivel visible que necesiten explicación separada.
+
+## 4. Funciones y flujo, una por una
+
+* SettingsViewModel vive en com.example.mynotes.viewmodel.
+ * Este archivo no declara clase para evitar redeclaraciones.
+
+## 5. Cómo se conecta con el resto de MyNotes
+
+- No importa directamente otro componente com.example.mynotes; funciona como modelo/utilidad base o mediante APIs Android/Jetpack.
+
+## 6. Recursos Android que utiliza
+
+- No se detectaron referencias directas R.* en este archivo.
+
+## 7. Tecnologías y efectos relevantes
+
+- Principalmente lógica Kotlin/Compose sin I/O especial detectado por estas reglas.
+
+## 8. Lectura práctica del flujo
+
+No hay flujo ejecutable propio; su contenido sirve de declaración/configuración para otros archivos.
+
+## 9. Qué no debe romperse al modificarlo
+
+- Mantener las firmas públicas/callbacks que usan los archivos listados en la sección de integración.
+
+## 10. Resumen en lenguaje sencillo
+
+En términos simples: Archivo marcador intencional. No declara otro SettingsViewModel; documenta que la implementación real vive en com.example.mynotes.viewmodel para evitar redeclaraciones. La sección función por función anterior describe qué entra, qué devuelve y qué efectos produce cada operación detectada en el fuente actual.

@@ -1,42 +1,55 @@
-# ExampleInstrumentedTest.kt — documentación del código actual
-**Ruta real:** `app/src/androidTest/java/com/example/mynotes/ExampleInstrumentedTest.kt`  **SHA-256:** `5211c2be48ea2b206bc768c25b964211cb44728b4ee8e405cc73d93ed8376c17`  **Líneas:** 24 · **Bytes:** 666 · **Imports:** 5 · **Declaraciones detectadas:** 2
-> Documento generado fuera de `app/` a partir de lectura del código. El fuente es la única fuente de verdad; no se modificó para generar esta documentación.
-## 1. Responsabilidad
+# ExampleInstrumentedTest.kt — explicación completa del código
 
-Prueba instrumentada de plantilla/verificación básica del paquete.
-## 2. Package e imports
+**Ruta:** `app/src/androidTest/java/com/example/mynotes/ExampleInstrumentedTest.kt`  
+**SHA-256:** `5211c2be48ea2b206bc768c25b964211cb44728b4ee8e405cc73d93ed8376c17`  
+**Líneas:** 25  
+**Package:** `com.example.mynotes`
 
-Package declarado: `com.example.mynotes`.
+## 1. Para qué existe este archivo
 
-### Android / Jetpack / Compose
+Prueba instrumental mínima que verifica el package de la aplicación en un dispositivo/emulador.
 
-`androidx.test.platform.app.InstrumentationRegistry`, `androidx.test.ext.junit.runners.AndroidJUnit4`
+## 2. Tipos/clases declarados
 
-### Terceros / otros
+- Línea **17** — `class ExampleInstrumentedTest`.
 
-`org.junit.Test`, `org.junit.runner.RunWith`, `org.junit.Assert.*`
+## 3. Estado, constantes y valores importantes
 
-## 3. Declaraciones detectadas
+- **`appContext`** (línea 21) inicia con `InstrumentationRegistry.getInstrumentation(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
 
-| Línea | Tipo | Nombre | Firma/inicio |
-|---:|---|---|---|
-| 17 | `class` | `ExampleInstrumentedTest` | `class ExampleInstrumentedTest {` |
-| 18 | `fun` | `useAppContext` | `@Test` |
+## 4. Funciones y flujo, una por una
 
-## 4. Estado, efectos y límites observables
+### `useAppContext` — líneas 19–23
 
-- No aparecen marcadores relevantes de estado/efectos de la lista auditada.
+**Firma:** `fun useAppContext()`
 
-Estas cifras son indicadores de superficie de cambio, no diagnósticos de error. Cualquier modificación debe preservar contratos de persistencia, lifecycle, límites numéricos y nulabilidad visibles en el fuente.
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
 
-## 5. Dependencias internas directas
+**Salida:** Unit o inferido por Kotlin.
 
-No importa directamente otros símbolos `com.example.mynotes.*`.
+**Operaciones/funciones que coordina:** `getInstrumentation`, `assertEquals`.
 
-## 6. Recursos Android referenciados
+## 5. Cómo se conecta con el resto de MyNotes
 
-No se detectaron referencias `R.*` directas.
+- No importa directamente otro componente `com.example.mynotes`; funciona como modelo/utilidad base o mediante APIs Android/Jetpack.
 
-## 7. Puntos de revisión al modificarlo
+## 6. Recursos Android que utiliza
 
-- Validar sus llamadores y el comportamiento visible asociado antes de alterar firmas o valores por defecto.
+- No se detectaron referencias directas `R.*` en este archivo.
+
+## 7. Tecnologías y efectos relevantes
+
+- Principalmente lógica Kotlin/Compose sin I/O especial detectado por estas reglas.
+
+## 8. Lectura práctica del flujo
+
+Una forma útil de seguir este archivo en el depurador es recorrer estas operaciones en este orden aproximado:
+1. `useAppContext` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+## 9. Qué no debe romperse al modificarlo
+
+- Mantener las firmas públicas/callbacks que usan los archivos listados en la sección de integración.
+
+## 10. Resumen en lenguaje sencillo
+
+En términos simples: Prueba instrumental mínima que verifica el package de la aplicación en un dispositivo/emulador. La sección función por función anterior describe qué entra, qué devuelve y qué efectos produce cada operación detectada en el fuente actual.

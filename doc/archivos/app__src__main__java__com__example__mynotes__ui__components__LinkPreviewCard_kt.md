@@ -1,142 +1,1464 @@
-# LinkPreviewCard.kt — documentación del código actual
-**Ruta real:** `app/src/main/java/com/example/mynotes/ui/components/LinkPreviewCard.kt`  **SHA-256:** `64f3f5dee465d1145cb6bbfb068fcea49b55e020235c7962813e0a0d25caa0c3`  **Líneas:** 1781 · **Bytes:** 87209 · **Imports:** 68 · **Declaraciones detectadas:** 82
-> Documento generado fuera de `app/` a partir de lectura del código. El fuente es la única fuente de verdad; no se modificó para generar esta documentación.
-## 1. Responsabilidad
+# LinkPreviewCard.kt — explicación completa del código
 
-Tarjeta de vista previa de URLs con metadatos y miniaturas.
-## 2. Package e imports
+**Ruta:** `app/src/main/java/com/example/mynotes/ui/components/LinkPreviewCard.kt`  
+**SHA-256:** `64f3f5dee465d1145cb6bbfb068fcea49b55e020235c7962813e0a0d25caa0c3`  
+**Líneas:** 1782  
+**Package:** `com.example.mynotes.ui.components`
 
-Package declarado: `com.example.mynotes.ui.components`.
+## 1. Para qué existe este archivo
 
-### Android / Jetpack / Compose
+Subsistema UI de previews de enlaces usado en notas; extrae URLs, persiste metadatos ocultos, resuelve proveedores sociales y dibuja la tarjeta.
 
-`android.content.Context`, `android.content.Intent`, `android.net.Uri`, `android.os.Build`, `android.text.Html`, `android.util.LruCache`, `androidx.compose.foundation.layout.Arrangement`, `androidx.compose.foundation.layout.BoxWithConstraints`, `androidx.compose.foundation.layout.Box`, `androidx.compose.foundation.layout.Column`, `androidx.compose.foundation.layout.Row`, `androidx.compose.foundation.layout.Spacer`, `androidx.compose.foundation.layout.fillMaxSize`, `androidx.compose.foundation.layout.fillMaxWidth`, `androidx.compose.foundation.layout.aspectRatio`, `androidx.compose.foundation.layout.height`, `androidx.compose.foundation.layout.padding`, `androidx.compose.foundation.layout.size`, `androidx.compose.foundation.layout.width`, `androidx.compose.material.icons.Icons`, `androidx.compose.material.icons.filled.OpenInNew`, `androidx.compose.material3.Icon`, `androidx.compose.material3.MaterialTheme`, `androidx.compose.material3.Surface`, `androidx.compose.material3.Text`, `androidx.compose.runtime.Composable`, `androidx.compose.runtime.LaunchedEffect`, `androidx.compose.runtime.getValue`, `androidx.compose.runtime.mutableStateOf`, `androidx.compose.runtime.remember`, `androidx.compose.runtime.setValue`, `androidx.compose.ui.Alignment`, `androidx.compose.ui.graphics.Color`, `androidx.compose.ui.Modifier`, `androidx.compose.ui.layout.ContentScale`, `androidx.compose.ui.platform.LocalContext`, `androidx.compose.ui.text.font.FontWeight`, `androidx.compose.ui.text.style.TextOverflow`, `androidx.compose.ui.unit.dp`
+## 2. Tipos/clases declarados
 
-### Proyecto MyNotes
+- Línea **135** — `private data  class LinkPreviewData`.
+- Línea **146** — `private  object LinkPreviewRepository`.
+- Línea **578** — `private data  class ResolvedDouyinLink`.
 
-`com.example.mynotes.ui.theme.resolveUiTextColor`, `com.example.mynotes.ui.theme.resolveSecondaryUiTextColor`, `com.example.mynotes.ui.theme.resolveUiGraphicColor`, `com.example.mynotes.ui.sound.UiActionSound`, `com.example.mynotes.ui.sound.UiSoundPlayer`
+## 3. Estado, constantes y valores importantes
 
-### Kotlin / Coroutines / Java
+- **`MAX_HTML_CHARS`** (línea 71) inicia con `1_800_000`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`PREVIEW_CACHE_VERSION`** (línea 73) inicia con `6`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`PREVIEW_CACHE_MAX_AGE_MS`** (línea 74) inicia con `14L * 24L * 60L * 60L * 1000L`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`THUMBNAIL_MAX_BYTES`** (línea 75) inicia con `6L * 1024L * 1024L`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`THUMBNAIL_CACHE_MAX_BYTES`** (línea 76) inicia con `80L * 1024L * 1024L`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`THUMBNAIL_CACHE_MAX_FILES`** (línea 77) inicia con `120`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`UrlRegex`** (línea 78) inicia con `Regex(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`EmbeddedLinkMarkerRegex`** (línea 95) inicia con `Regex(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`cleanText`** (línea 111) inicia con `stripEmbeddedLinkMetadata(visibleContent`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`markers`** (línea 112) inicia con `embeddedLinks.asSequence(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`visible`** (línea 127) inicia con `stripEmbeddedLinkMetadata(content`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`siteName`** (línea 136) inicia con `emptyList(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`host`** (línea 139) inicia con `safeHost(url`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`cache`** (línea 147) inicia con `LruCache<String`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`locks`** (línea 148) inicia con `mutableMapOf<String`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`legacyLoadGate`** (línea 149) inicia con `Semaphore(permits = 1`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`loadGate`** (línea 150) inicia con `Semaphore(permits = 2`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`gate`** (línea 173) inicia con `if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`persisted`** (línea 183) inicia con `readPersistedPreview(context = context`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`ready`** (línea 185) inicia con `ensureThumbnailCached(context = context`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`fetched`** (línea 190) inicia con `fetch(url`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`basic`** (línea 199) inicia con `LinkPreviewData.basic(url`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`socialProviderPreview`** (línea 206) inicia con `when {`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`connection`** (línea 232) inicia con `null`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`responseCode`** (línea 248) inicia con `connection.responseCode`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`finalUrl`** (línea 252) inicia con `connection.url?.toString(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`contentType`** (línea 270) inicia con `connection.contentType?.lowercase(Locale.ROOT`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`charset`** (línea 278) inicia con `charsetFromContentType(connection.contentType`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`html`** (línea 279) inicia con `connection.inputStream.use { input -> readLimitedHtml(reader = InputStreamReader(input`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`parsed`** (línea 281) inicia con `parseHtml(pageUrl = finalUrl`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`enriched`** (línea 283) inicia con `enrichSocialHtmlPreview(originalUrl = url`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`spotifyEntityUrl`** (línea 290) inicia con `findSpotifyEntityUrl(url`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`appContext`** (línea 314) inicia con `context.applicationContext`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`maxUrls`** (línea 315) inicia con `when (performanceMode`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`parallelism`** (línea 320) inicia con `if (performanceMode == "quality"`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
 
-`kotlinx.coroutines.Dispatchers`, `kotlinx.coroutines.async`, `kotlinx.coroutines.awaitAll`, `kotlinx.coroutines.coroutineScope`, `kotlinx.coroutines.delay`, `kotlinx.coroutines.withContext`, `kotlinx.coroutines.sync.Mutex`, `kotlinx.coroutines.sync.Semaphore`, `kotlinx.coroutines.sync.withLock`, `kotlinx.coroutines.sync.withPermit`, `java.io.File`, `java.io.FileOutputStream`, `java.io.InputStreamReader`, `java.net.HttpURLConnection`, `java.net.URI`, `java.net.URL`, `java.net.URLDecoder`, `java.net.URLEncoder`, `java.nio.charset.Charset`, `java.security.MessageDigest`, `java.util.Locale`
+## 4. Funciones y flujo, una por una
 
-### Terceros / otros
+### `extractLinkUrls` — líneas 85–85
 
-`coil3.compose.AsyncImage`, `org.json.JSONArray`, `org.json.JSONObject`
+**Firma:** `fun extractLinkUrls(text: String): List<String>`
 
-## 3. Declaraciones detectadas
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
 
-| Línea | Tipo | Nombre | Firma/inicio |
-|---:|---|---|---|
-| 85 | `fun` | `extractLinkUrls` | `fun extractLinkUrls(text: String): List<String> = UrlRegex.findAll(text).map { match -> match.value.trimEnd('.', ',', ';', '!', ')', ']',` |
-| 99 | `fun` | `extractEmbeddedLinkUrls` | `` |
-| 104 | `fun` | `stripEmbeddedLinkMetadata` | `` |
-| 109 | `fun` | `noteContentForStorage` | `` |
-| 126 | `fun` | `noteTextForDisplay` | `fun noteTextForDisplay(content: String, links: List<String>): String {` |
-| 134 | `class` | `LinkPreviewData` | `` |
-| 138 | `fun` | `basic` | `fun basic(url: String): LinkPreviewData {` |
-| 145 | `object` | `LinkPreviewRepository` | `` |
-| 157 | `fun` | `peekMemory` | `fun peekMemory(url: String): LinkPreviewData? = cache.get(url)` |
-| 158 | `fun` | `lockFor` | `private fun lockFor(url: String): Mutex = synchronized(locks) {` |
-| 161 | `fun` | `peek` | `fun peek(context: Context, url: String): LinkPreviewData? {` |
-| 198 | `fun` | `fetch` | `private fun fetch(url: String): LinkPreviewData {` |
-| 336 | `fun` | `previewUserAgent` | `` |
-| 343 | `fun` | `douyinUserAgent` | `private fun douyinUserAgent(): String = "Mozilla/5.0 (iPhone; CPU iPhone OS 17_5 like Mac OS X) " +` |
-| 345 | `fun` | `previewCachePreferences` | `private fun previewCachePreferences(context: Context) = context.getSharedPreferences("link_preview_cache_v$PREVIEW_CACHE_VERSION",` |
-| 347 | `fun` | `previewCacheKey` | `private fun previewCacheKey(url: String): String = "preview_" + sha256(url)` |
-| 348 | `fun` | `persistPreview` | `` |
-| 357 | `fun` | `readPersistedPreview` | `` |
-| 383 | `fun` | `JSONObject` | `` |
-| 388 | `fun` | `ensureThumbnailCached` | `` |
-| 418 | `fun` | `downloadThumbnail` | `` |
-| 479 | `fun` | `looksLikeImageFile` | `` |
-| 497 | `fun` | `providerReferer` | `` |
-| 510 | `fun` | `pruneThumbnailCache` | `` |
-| 521 | `fun` | `sha256` | `` |
-| 527 | `fun` | `parseHtml` | `` |
-| 569 | `fun` | `isDouyinRelatedUrl` | `private fun isDouyinRelatedUrl(url: String): Boolean {` |
-| 577 | `class` | `ResolvedDouyinLink` | `` |
-| 585 | `fun` | `resolveDouyinLink` | `private fun resolveDouyinLink(url: String): ResolvedDouyinLink? {` |
-| 646 | `fun` | `fetchDouyinDirectPreview` | `` |
-| 657 | `fun` | `enrichDouyinPreview` | `` |
-| 679 | `fun` | `extractDouyinAwemeId` | `` |
-| 695 | `fun` | `fetchDouyinSharePagePreview` | `` |
-| 731 | `fun` | `extractDouyinRouterData` | `` |
-| 758 | `fun` | `scanBalancedJsonObject` | `` |
-| 787 | `fun` | `scanJsonStringLiteral` | `` |
-| 801 | `fun` | `findDouyinItem` | `` |
-| 830 | `fun` | `allJsonUrls` | `` |
-| 844 | `fun` | `douyinPreviewFromItem` | `` |
-| 871 | `fun` | `fetchDouyinItemInfo` | `` |
-| 922 | `fun` | `firstJsonUrl` | `` |
-| 934 | `fun` | `extractDouyinCoverUrl` | `` |
-| 937 | `fun` | `addCandidate` | `fun addCandidate(value: String?, path: String, bonus: Int = 0) {` |
-| 948 | `fun` | `walkJson` | `fun walkJson(node: Any?, path: String = "root", depth: Int = 0) {` |
-| 1016 | `fun` | `decodeDouyinEmbeddedJson` | `` |
-| 1032 | `fun` | `extractUrlsFromDouyinValue` | `` |
-| 1047 | `fun` | `douyinCoverScore` | `` |
-| 1081 | `fun` | `isInstagramRelatedUrl` | `` |
-| 1086 | `fun` | `isThreadsRelatedUrl` | `` |
-| 1091 | `fun` | `isFacebookRelatedUrl` | `` |
-| 1097 | `fun` | `isMetaSocialUrl` | `` |
-| 1099 | `fun` | `isRedditRelatedUrl` | `` |
-| 1110 | `fun` | `fetchMetaOEmbedPreview` | `private fun fetchMetaOEmbedPreview(url: String): LinkPreviewData? {` |
-| 1172 | `fun` | `fetchRedditJsonPreview` | `private fun fetchRedditJsonPreview(entityUrl: String, clickUrl: String): LinkPreviewData? {` |
-| 1197 | `fun` | `addCandidate` | `fun addCandidate(value: String?) {` |
-| 1244 | `fun` | `resolveSimpleRedirect` | `` |
-| 1266 | `fun` | `enrichSocialHtmlPreview` | `` |
-| 1289 | `fun` | `extractSocialImageCandidates` | `private fun extractSocialImageCandidates(pageUrl: String, html: String): List<String> {` |
-| 1312 | `fun` | `looksLikeRemoteImageUrl` | `` |
-| 1316 | `fun` | `scoreSocialImageCandidate` | `private fun scoreSocialImageCandidate(url: String): Int {` |
-| 1339 | `fun` | `isTikTokRelatedUrl` | `` |
-| 1355 | `fun` | `fetchTikTokOEmbed` | `private fun fetchTikTokOEmbed(entityUrl: String, clickUrl: String): LinkPreviewData? {` |
-| 1400 | `fun` | `isSpotifyRelatedUrl` | `private fun isSpotifyRelatedUrl(url: String): Boolean {` |
-| 1408 | `fun` | `findSpotifyEntityUrl` | `` |
-| 1426 | `fun` | `findSpotifyEntityUrlInText` | `` |
-| 1450 | `fun` | `normalizeSpotifyEntityUrl` | `` |
-| 1481 | `fun` | `decodeUrlRepeatedly` | `` |
-| 1497 | `fun` | `fetchSpotifyOEmbed` | `` |
-| 1533 | `fun` | `LinkPreviewData` | `` |
-| 1552 | `fun` | `LinkPreviewCard` | `` |
-| 1655 | `fun` | `LinkPreviewText` | `` |
-| 1687 | `fun` | `openExternalLink` | `` |
-| 1698 | `fun` | `readLimitedHtml` | `` |
-| 1714 | `fun` | `charsetFromContentType` | `` |
-| 1728 | `fun` | `decodeHtml` | `` |
-| 1731 | `fun` | `String` | `private fun String.cleanText(): String = decodeHtml(this).take(500)` |
-| 1732 | `fun` | `firstNonBlank` | `` |
-| 1736 | `fun` | `resolveUrl` | `private fun resolveUrl(baseUrl: String, candidate: String): String? = try {` |
-| 1741 | `fun` | `safeHost` | `private fun safeHost(url: String): String = try {` |
-| 1746 | `fun` | `directImageUrl` | `private fun directImageUrl(url: String): String? {` |
-| 1754 | `fun` | `fileNameFromUrl` | `` |
-| 1760 | `fun` | `youtubeVideoId` | `private fun youtubeVideoId(url: String): String? = try {` |
+**Entradas:**
+- `text: String`
 
-## 4. Estado, efectos y límites observables
+**Salida:** List<String>.
 
-- **Compose state:** 4 aparición/apariciones.
-- **LaunchedEffect/DisposableEffect:** 2 aparición/apariciones.
-- **Coroutines:** 6 aparición/apariciones.
-- **Room:** 1 aparición/apariciones.
-- **I/O/red:** 45 aparición/apariciones.
-- **try/catch:** 56 aparición/apariciones.
-- **coerce*:** 2 aparición/apariciones.
-- **safe calls:** 176 aparición/apariciones.
+**Operaciones/funciones que coordina:** `findAll`, `trimEnd`.
 
-Estas cifras son indicadores de superficie de cambio, no diagnósticos de error. Cualquier modificación debe preservar contratos de persistencia, lifecycle, límites numéricos y nulabilidad visibles en el fuente.
+### `extractEmbeddedLinkUrls` — líneas 100–100
 
-## 5. Dependencias internas directas
+**Firma:** `fun extractEmbeddedLinkUrls(text: String): List<String>`
 
-- `com.example.mynotes.ui.sound.UiActionSound`
-- `com.example.mynotes.ui.sound.UiSoundPlayer`
-- `com.example.mynotes.ui.theme.resolveSecondaryUiTextColor`
-- `com.example.mynotes.ui.theme.resolveUiGraphicColor`
-- `com.example.mynotes.ui.theme.resolveUiTextColor`
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
 
-## 6. Recursos Android referenciados
+**Entradas:**
+- `text: String`
 
-No se detectaron referencias `R.*` directas.
+**Salida:** List<String>.
 
-## 7. Puntos de revisión al modificarlo
+**Operaciones/funciones que coordina:** `findAll`.
 
-- No degradar calidad, rutas persistentes ni cachés de adjuntos/miniaturas sin una prueba explícita.
-- Evitar trabajo de red/decodificación en el frame de scroll y conservar caché/placeholder.
+### `stripEmbeddedLinkMetadata` — líneas 105–105
+
+**Firma:** `fun stripEmbeddedLinkMetadata(text: String): String`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `text: String`
+
+**Salida:** String.
+
+### `noteContentForStorage` — líneas 110–119
+
+**Firma:** `fun noteContentForStorage(visibleContent: String, embeddedLinks: List<String>): String`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `visibleContent: String`
+- `embeddedLinks: List<String>`
+
+**Salida:** String.
+
+**Decisiones y protecciones visibles:**
+- Usa `when` para mapear estados/tipos/opciones.
+
+**Operaciones/funciones que coordina:** `stripEmbeddedLinkMetadata`, `trimEnd`, `asSequence`, `startsWith`, `distinct`, `take`, `joinToString`, `isBlank`.
+
+### `noteTextForDisplay` — líneas 126–133
+
+**Firma:** `fun noteTextForDisplay(content: String, links: List<String>): String`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `content: String`
+- `links: List<String>`
+
+**Salida:** String.
+
+**Operaciones/funciones que coordina:** `stripEmbeddedLinkMetadata`, `replace`, `Regex`, `trim`.
+
+### `basic` — líneas 138–142
+
+**Firma:** `fun basic(url: String): LinkPreviewData`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `url: String`
+
+**Salida:** LinkPreviewData.
+
+**Operaciones/funciones que coordina:** `safeHost`, `LinkPreviewData`, `directImageUrl`.
+
+### `peekMemory` — líneas 157–157
+
+**Firma:** `fun peekMemory(url: String): LinkPreviewData?`
+
+Consulta una representación ya disponible (normalmente caché) sin obligar a realizar el trabajo completo de carga.
+
+**Entradas:**
+- `url: String`
+
+**Salida:** LinkPreviewData?.
+
+**Operaciones/funciones que coordina:** `get`.
+
+### `lockFor` — líneas 158–158
+
+**Firma:** `private fun lockFor(url: String): Mutex`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `url: String`
+
+**Salida:** Mutex.
+
+**Operaciones/funciones que coordina:** `synchronized`.
+
+### `peek` — líneas 161–165
+
+**Firma:** `fun peek(context: Context, url: String): LinkPreviewData?`
+
+Consulta una representación ya disponible (normalmente caché) sin obligar a realizar el trabajo completo de carga.
+
+**Entradas:**
+- `context: Context`
+- `url: String`
+
+**Salida:** LinkPreviewData?.
+
+**Operaciones/funciones que coordina:** `get`, `readPersistedPreview`, `put`.
+
+### `load` — líneas 166–166
+
+**Firma:** `suspend fun load(context: Context, url: String): LinkPreviewData`
+
+Carga la información solicitada. El cuerpo intenta reutilizar datos disponibles y realiza I/O/decodificación sólo cuando es necesario.
+
+**Entradas:**
+- `context: Context`
+- `url: String`
+
+**Salida:** LinkPreviewData.
+
+**Efectos/APIs observados en el cuerpo:**
+- Ejecuta trabajo de I/O fuera del hilo principal.
+
+**Operaciones/funciones que coordina:** `withContext`.
+
+### `fetch` — líneas 198–306
+
+**Firma:** `private fun fetch(url: String): LinkPreviewData`
+
+Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+**Entradas:**
+- `url: String`
+
+**Salida:** LinkPreviewData.
+
+**Efectos/APIs observados en el cuerpo:**
+- Realiza acceso de red HTTP.
+
+**Decisiones y protecciones visibles:**
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+- Usa `when` para mapear estados/tipos/opciones.
+
+**Operaciones/funciones que coordina:** `basic`, `isMetaSocialUrl`, `fetchMetaOEmbedPreview`, `isRedditRelatedUrl`, `fetchRedditJsonPreview`, `isNotEmpty`, `isSpotifyRelatedUrl`, `findSpotifyEntityUrl`, `fetchSpotifyOEmbed`, `isDouyinRelatedUrl`, `fetchDouyinDirectPreview`, `isTikTokRelatedUrl`, `fetchTikTokOEmbed`, `directImageUrl`, `copy`, `fileNameFromUrl`, `isNotBlank`, `URL`.
+
+### `preloadLinkPreviews` — líneas 313–335
+
+**Firma:** `suspend fun preloadLinkPreviews(context: Context, urls: List<String>, performanceMode: String = "balanced")`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `context: Context`
+- `urls: List<String>`
+- `performanceMode: String = "balanced"`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Ejecuta trabajo de I/O fuera del hilo principal.
+
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+- Usa `when` para mapear estados/tipos/opciones.
+
+**Operaciones/funciones que coordina:** `asSequence`, `startsWith`, `distinct`, `take`, `chunked`, `async`, `load`, `awaitAll`, `delay`.
+
+### `previewUserAgent` — líneas 337–337
+
+**Firma:** `private fun previewUserAgent(): String`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Salida:** String.
+
+### `douyinUserAgent` — líneas 343–343
+
+**Firma:** `private fun douyinUserAgent(): String`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Salida:** String.
+
+### `previewCachePreferences` — líneas 345–345
+
+**Firma:** `private fun previewCachePreferences(context: Context)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `context: Context`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lee o escribe SharedPreferences.
+
+**Operaciones/funciones que coordina:** `getSharedPreferences`.
+
+### `previewCacheKey` — líneas 347–347
+
+**Firma:** `private fun previewCacheKey(url: String): String`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `url: String`
+
+**Salida:** String.
+
+**Operaciones/funciones que coordina:** `sha256`.
+
+### `persistPreview` — líneas 349–356
+
+**Firma:** `private fun persistPreview(context: Context, originalUrl: String, preview: LinkPreviewData)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `context: Context`
+- `originalUrl: String`
+- `preview: LinkPreviewData`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Decisiones y protecciones visibles:**
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+
+**Operaciones/funciones que coordina:** `JSONObject`, `put`, `currentTimeMillis`, `JSONArray`, `previewCachePreferences`, `edit`, `putString`, `previewCacheKey`, `toString`.
+
+### `readPersistedPreview` — líneas 358–382
+
+**Firma:** `private fun readPersistedPreview(context: Context, url: String): LinkPreviewData?`
+
+Lee y transforma datos desde la fuente indicada, devolviendo una representación segura o fallback cuando la lectura no puede completarse.
+
+**Entradas:**
+- `context: Context`
+- `url: String`
+
+**Salida:** LinkPreviewData?.
+
+**Efectos/APIs observados en el cuerpo:**
+- Accede al sistema de archivos interno/cache.
+
+**Decisiones y protecciones visibles:**
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `previewCacheKey`, `previewCachePreferences`, `getString`, `JSONObject`, `optLong`, `currentTimeMillis`, `edit`, `remove`, `optString`, `isNotBlank`, `File`, `optJSONArray`, `length`, `startsWith`, `orEmpty`, `LinkPreviewData`, `optNullableString`, `safeHost`.
+
+### `optNullableString` — líneas 384–387
+
+**Firma:** `private fun JSONObject.optNullableString(key: String): String?`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `key: String`
+
+**Salida:** String?.
+
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `isNull`, `optString`, `isNotBlank`.
+
+### `ensureThumbnailCached` — líneas 389–417
+
+**Firma:** `private fun ensureThumbnailCached(context: Context, preview: LinkPreviewData): LinkPreviewData`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `context: Context`
+- `preview: LinkPreviewData`
+
+**Salida:** LinkPreviewData.
+
+**Efectos/APIs observados en el cuerpo:**
+- Accede al sistema de archivos interno/cache.
+
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `length`, `looksLikeImageFile`, `setLastModified`, `currentTimeMillis`, `addAll`, `asSequence`, `trim`, `startsWith`, `distinct`, `take`, `toList`, `isEmpty`, `copy`, `File`, `mkdirs`, `sha256`, `exists`, `delete`.
+
+### `downloadThumbnail` — líneas 419–478
+
+**Firma:** `private fun downloadThumbnail(imageUrl: String, refererUrl: String, destination: File): Boolean`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `imageUrl: String`
+- `refererUrl: String`
+- `destination: File`
+
+**Salida:** Boolean.
+
+**Efectos/APIs observados en el cuerpo:**
+- Realiza acceso de red HTTP.
+- Accede al sistema de archivos interno/cache.
+
+**Decisiones y protecciones visibles:**
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `File`, `URL`, `openConnection`, `setRequestProperty`, `isDouyinRelatedUrl`, `douyinUserAgent`, `previewUserAgent`, `providerReferer`, `connect`, `FileOutputStream`, `ByteArray`, `read`, `write`, `looksLikeImageFile`, `exists`, `delete`, `renameTo`, `copyTo`.
+
+### `looksLikeImageFile` — líneas 480–496
+
+**Firma:** `private fun looksLikeImageFile(file: File): Boolean`
+
+Evalúa una condición y devuelve un booleano utilizado para decidir una ruta posterior del flujo.
+
+**Entradas:**
+- `file: File`
+
+**Salida:** Boolean.
+
+**Decisiones y protecciones visibles:**
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `length`, `ByteArray`, `inputStream`, `read`, `toInt`, `copyOfRange`, `contentEquals`, `byteArrayOf`, `toByte`, `String`, `contains`.
+
+### `providerReferer` — líneas 498–509
+
+**Firma:** `private fun providerReferer(url: String): String`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `url: String`
+
+**Salida:** String.
+
+**Decisiones y protecciones visibles:**
+- Usa `when` para mapear estados/tipos/opciones.
+
+**Operaciones/funciones que coordina:** `safeHost`, `lowercase`, `contains`.
+
+### `pruneThumbnailCache` — líneas 511–520
+
+**Firma:** `private fun pruneThumbnailCache(directory: File)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `directory: File`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `listFiles`, `endsWith`, `lastModified`, `orEmpty`, `length`, `delete`.
+
+### `sha256` — líneas 522–526
+
+**Firma:** `private fun sha256(value: String): String`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: String`
+
+**Salida:** String.
+
+**Operaciones/funciones que coordina:** `getInstance`, `digest`, `toByteArray`, `joinToString`, `format`.
+
+### `parseHtml` — líneas 528–560
+
+**Firma:** `private fun parseHtml(pageUrl: String, html: String): LinkPreviewData`
+
+Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+**Entradas:**
+- `pageUrl: String`
+- `html: String`
+
+**Salida:** LinkPreviewData.
+
+**Decisiones y protecciones visibles:**
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `Regex`, `findAll`, `lowercase`, `drop`, `isNotEmpty`, `orEmpty`, `isNullOrBlank`, `putIfAbsent`, `decodeHtml`, `find`, `getOrNull`, `isNotBlank`, `safeHost`, `firstNonBlank`, `resolveUrl`, `cleanText`, `LinkPreviewData`.
+
+### `isDouyinRelatedUrl` — líneas 569–576
+
+**Firma:** `private fun isDouyinRelatedUrl(url: String): Boolean`
+
+Evalúa una condición y devuelve un booleano utilizado para decidir una ruta posterior del flujo.
+
+**Entradas:**
+- `url: String`
+
+**Salida:** Boolean.
+
+**Decisiones y protecciones visibles:**
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+
+**Operaciones/funciones que coordina:** `parse`, `lowercase`, `orEmpty`, `endsWith`.
+
+### `resolveDouyinLink` — líneas 585–645
+
+**Firma:** `private fun resolveDouyinLink(url: String): ResolvedDouyinLink?`
+
+Resuelve un valor configurable a su representación efectiva usada por la UI, aplicando reglas de fallback/contraste cuando corresponde.
+
+**Entradas:**
+- `url: String`
+
+**Salida:** ResolvedDouyinLink?.
+
+**Efectos/APIs observados en el cuerpo:**
+- Realiza acceso de red HTTP.
+
+**Decisiones y protecciones visibles:**
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `repeat`, `URL`, `openConnection`, `setRequestProperty`, `douyinUserAgent`, `isNotEmpty`, `joinToString`, `connect`, `equals`, `flatten`, `substringBefore`, `trim`, `substringAfter`, `isNotBlank`, `getHeaderField`, `toString`, `extractDouyinAwemeId`, `ResolvedDouyinLink`.
+
+### `fetchDouyinDirectPreview` — líneas 647–656
+
+**Firma:** `private fun fetchDouyinDirectPreview(url: String): LinkPreviewData?`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `url: String`
+
+**Salida:** LinkPreviewData?.
+
+**Decisiones y protecciones visibles:**
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `resolveDouyinLink`, `fetchDouyinSharePagePreview`, `isNotEmpty`, `fetchDouyinItemInfo`.
+
+### `enrichDouyinPreview` — líneas 658–678
+
+**Firma:** `private fun enrichDouyinPreview(originalUrl: String, pageUrl: String, html: String, base: LinkPreviewData): LinkPreviewData`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `originalUrl: String`
+- `pageUrl: String`
+- `html: String`
+- `base: LinkPreviewData`
+
+**Salida:** LinkPreviewData.
+
+**Decisiones y protecciones visibles:**
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `extractDouyinAwemeId`, `fetchDouyinSharePagePreview`, `isEmpty`, `fetchDouyinItemInfo`, `isNotBlank`, `extractDouyinCoverUrl`, `addAll`, `orEmpty`, `startsWith`, `distinct`, `copy`, `withKnownProviderFallback`.
+
+### `extractDouyinAwemeId` — líneas 680–694
+
+**Firma:** `private fun extractDouyinAwemeId(pageUrl: String, html: String): String?`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `pageUrl: String`
+- `html: String`
+
+**Salida:** String?.
+
+**Decisiones y protecciones visibles:**
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+
+**Operaciones/funciones que coordina:** `decodeDouyinEmbeddedJson`, `Regex`, `find`, `getOrNull`, `isNotBlank`.
+
+### `fetchDouyinSharePagePreview` — líneas 696–730
+
+**Firma:** `private fun fetchDouyinSharePagePreview(awemeId: String, clickUrl: String, cookieHeader: String? = null): LinkPreviewData?`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `awemeId: String`
+- `clickUrl: String`
+- `cookieHeader: String? = null`
+
+**Salida:** LinkPreviewData?.
+
+**Efectos/APIs observados en el cuerpo:**
+- Realiza acceso de red HTTP.
+
+**Decisiones y protecciones visibles:**
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `URL`, `openConnection`, `setRequestProperty`, `douyinUserAgent`, `isNotBlank`, `connect`, `charsetFromContentType`, `readLimitedHtml`, `InputStreamReader`, `extractDouyinRouterData`, `findDouyinItem`, `douyinPreviewFromItem`, `isNotEmpty`, `isNullOrBlank`, `disconnect`.
+
+### `extractDouyinRouterData` — líneas 732–757
+
+**Firma:** `private fun extractDouyinRouterData(html: String): JSONObject?`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `html: String`
+
+**Salida:** JSONObject?.
+
+**Decisiones y protecciones visibles:**
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+- Usa `when` para mapear estados/tipos/opciones.
+
+**Operaciones/funciones que coordina:** `indexOf`, `isWhitespace`, `scanBalancedJsonObject`, `JSONObject`, `scanJsonStringLiteral`, `getString`, `decodeDouyinEmbeddedJson`.
+
+### `scanBalancedJsonObject` — líneas 759–786
+
+**Firma:** `private fun scanBalancedJsonObject(text: String, start: Int): String?`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `text: String`
+- `start: Int`
+
+**Salida:** String?.
+
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+- Usa `when` para mapear estados/tipos/opciones.
+
+**Operaciones/funciones que coordina:** `substring`.
+
+### `scanJsonStringLiteral` — líneas 788–800
+
+**Firma:** `private fun scanJsonStringLiteral(text: String, start: Int): String?`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `text: String`
+- `start: Int`
+
+**Salida:** String?.
+
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+- Usa `when` para mapear estados/tipos/opciones.
+
+**Operaciones/funciones que coordina:** `substring`.
+
+### `findDouyinItem` — líneas 802–829
+
+**Firma:** `private fun findDouyinItem(node: Any?, depth: Int = 0): JSONObject?`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `node: Any?`
+- `depth: Int = 0`
+
+**Salida:** JSONObject?.
+
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+- Usa `when` para mapear estados/tipos/opciones.
+
+**Operaciones/funciones que coordina:** `has`, `findDouyinItem`, `opt`, `keys`, `hasNext`, `next`, `length`.
+
+### `allJsonUrls` — líneas 831–843
+
+**Firma:** `private fun allJsonUrls(node: JSONObject?): List<String>`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `node: JSONObject?`
+
+**Salida:** List<String>.
+
+**Decisiones y protecciones visibles:**
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `emptyList`, `optJSONArray`, `length`, `decodeHtml`, `optString`, `replace`, `startsWith`, `toList`.
+
+### `douyinPreviewFromItem` — líneas 845–870
+
+**Firma:** `private fun douyinPreviewFromItem(item: JSONObject, clickUrl: String): LinkPreviewData`
+
+Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+**Entradas:**
+- `item: JSONObject`
+- `clickUrl: String`
+
+**Salida:** LinkPreviewData.
+
+**Decisiones y protecciones visibles:**
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `optJSONObject`, `addAll`, `allJsonUrls`, `optJSONArray`, `length`, `startsWith`, `distinct`, `optString`, `cleanText`, `isNotBlank`, `LinkPreviewData`, `safeHost`.
+
+### `fetchDouyinItemInfo` — líneas 872–921
+
+**Firma:** `private fun fetchDouyinItemInfo(awemeId: String, clickUrl: String, cookieHeader: String? = null): LinkPreviewData?`
+
+Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+**Entradas:**
+- `awemeId: String`
+- `clickUrl: String`
+- `cookieHeader: String? = null`
+
+**Salida:** LinkPreviewData?.
+
+**Efectos/APIs observados en el cuerpo:**
+- Realiza acceso de red HTTP.
+
+**Decisiones y protecciones visibles:**
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `URL`, `openConnection`, `setRequestProperty`, `douyinUserAgent`, `isNotBlank`, `connect`, `bufferedReader`, `readText`, `JSONObject`, `optJSONArray`, `optJSONObject`, `addAll`, `allJsonUrls`, `distinct`, `optString`, `cleanText`, `LinkPreviewData`, `safeHost`.
+
+### `firstJsonUrl` — líneas 923–933
+
+**Firma:** `private fun firstJsonUrl(node: JSONObject?): String?`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `node: JSONObject?`
+
+**Salida:** String?.
+
+**Decisiones y protecciones visibles:**
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `optJSONArray`, `length`, `optString`, `startsWith`.
+
+### `extractDouyinCoverUrl` — líneas 935–1015
+
+**Firma:** `private fun extractDouyinCoverUrl(pageUrl: String, html: String): String?`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `pageUrl: String`
+- `html: String`
+
+**Salida:** String?.
+
+**Decisiones y protecciones visibles:**
+- Limita valores con `coerce*` para evitar estados fuera de rango.
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+- Usa `when` para mapear estados/tipos/opciones.
+
+**Operaciones/funciones que coordina:** `addCandidate`, `isNullOrBlank`, `extractUrlsFromDouyinValue`, `resolveUrl`, `douyinCoverScore`, `walkJson`, `keys`, `hasNext`, `next`, `opt`, `length`, `Regex`, `find`, `getOrNull`, `decodeDouyinEmbeddedJson`, `JSONObject`, `replace`, `findAll`.
+
+### `addCandidate` — líneas 937–947
+
+**Firma:** `fun addCandidate(value: String?, path: String, bonus: Int = 0)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: String?`
+- `path: String`
+- `bonus: Int = 0`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Decisiones y protecciones visibles:**
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `isNullOrBlank`, `extractUrlsFromDouyinValue`, `resolveUrl`, `douyinCoverScore`.
+
+### `walkJson` — líneas 948–973
+
+**Firma:** `fun walkJson(node: Any?, path: String = "root", depth: Int = 0)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `node: Any?`
+- `path: String = "root"`
+- `depth: Int = 0`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+- Usa `when` para mapear estados/tipos/opciones.
+
+**Operaciones/funciones que coordina:** `keys`, `hasNext`, `next`, `opt`, `addCandidate`, `walkJson`, `length`.
+
+### `decodeDouyinEmbeddedJson` — líneas 1017–1031
+
+**Firma:** `private fun decodeDouyinEmbeddedJson(value: String): String`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: String`
+
+**Salida:** String.
+
+**Decisiones y protecciones visibles:**
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `decodeHtml`, `trim`, `repeat`, `decode`, `replace`, `name`.
+
+### `extractUrlsFromDouyinValue` — líneas 1033–1046
+
+**Firma:** `private fun extractUrlsFromDouyinValue(value: String): List<String>`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: String`
+
+**Salida:** List<String>.
+
+**Decisiones y protecciones visibles:**
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `decodeHtml`, `replace`, `trim`, `startsWith`, `Regex`, `findAll`, `forEach`, `toList`.
+
+### `douyinCoverScore` — líneas 1048–1080
+
+**Firma:** `private fun douyinCoverScore(path: String, url: String): Int`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `path: String`
+- `url: String`
+
+**Salida:** Int.
+
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+- Usa `when` para mapear estados/tipos/opciones.
+
+**Operaciones/funciones que coordina:** `lowercase`, `replace`, `contains`.
+
+### `isInstagramRelatedUrl` — líneas 1082–1085
+
+**Firma:** `private fun isInstagramRelatedUrl(url: String): Boolean`
+
+Evalúa una condición y devuelve un booleano utilizado para decidir una ruta posterior del flujo.
+
+**Entradas:**
+- `url: String`
+
+**Salida:** Boolean.
+
+**Operaciones/funciones que coordina:** `safeHost`, `lowercase`, `endsWith`.
+
+### `isThreadsRelatedUrl` — líneas 1087–1090
+
+**Firma:** `private fun isThreadsRelatedUrl(url: String): Boolean`
+
+Evalúa una condición y devuelve un booleano utilizado para decidir una ruta posterior del flujo.
+
+**Entradas:**
+- `url: String`
+
+**Salida:** Boolean.
+
+**Operaciones/funciones que coordina:** `safeHost`, `lowercase`, `endsWith`.
+
+### `isFacebookRelatedUrl` — líneas 1092–1096
+
+**Firma:** `private fun isFacebookRelatedUrl(url: String): Boolean`
+
+Evalúa una condición y devuelve un booleano utilizado para decidir una ruta posterior del flujo.
+
+**Entradas:**
+- `url: String`
+
+**Salida:** Boolean.
+
+**Operaciones/funciones que coordina:** `safeHost`, `lowercase`, `endsWith`.
+
+### `isMetaSocialUrl` — líneas 1098–1098
+
+**Firma:** `private fun isMetaSocialUrl(url: String): Boolean`
+
+Evalúa una condición y devuelve un booleano utilizado para decidir una ruta posterior del flujo.
+
+**Entradas:**
+- `url: String`
+
+**Salida:** Boolean.
+
+**Operaciones/funciones que coordina:** `isInstagramRelatedUrl`, `isThreadsRelatedUrl`, `isFacebookRelatedUrl`.
+
+### `isRedditRelatedUrl` — líneas 1100–1103
+
+**Firma:** `private fun isRedditRelatedUrl(url: String): Boolean`
+
+Evalúa una condición y devuelve un booleano utilizado para decidir una ruta posterior del flujo.
+
+**Entradas:**
+- `url: String`
+
+**Salida:** Boolean.
+
+**Operaciones/funciones que coordina:** `safeHost`, `lowercase`, `endsWith`.
+
+### `fetchMetaOEmbedPreview` — líneas 1110–1166
+
+**Firma:** `private fun fetchMetaOEmbedPreview(url: String): LinkPreviewData?`
+
+Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+**Entradas:**
+- `url: String`
+
+**Salida:** LinkPreviewData?.
+
+**Efectos/APIs observados en el cuerpo:**
+- Realiza acceso de red HTTP.
+
+**Decisiones y protecciones visibles:**
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+- Usa `when` para mapear estados/tipos/opciones.
+
+**Operaciones/funciones que coordina:** `encode`, `name`, `isInstagramRelatedUrl`, `isThreadsRelatedUrl`, `isFacebookRelatedUrl`, `contains`, `safeHost`, `equals`, `URL`, `openConnection`, `setRequestProperty`, `previewUserAgent`, `connect`, `bufferedReader`, `readText`, `JSONObject`, `optString`, `firstNonBlank`.
+
+### `fetchRedditJsonPreview` — líneas 1172–1243
+
+**Firma:** `private fun fetchRedditJsonPreview(entityUrl: String, clickUrl: String): LinkPreviewData?`
+
+Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+**Entradas:**
+- `entityUrl: String`
+- `clickUrl: String`
+
+**Salida:** LinkPreviewData?.
+
+**Efectos/APIs observados en el cuerpo:**
+- Realiza acceso de red HTTP.
+
+**Decisiones y protecciones visibles:**
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `resolveSimpleRedirect`, `substringBefore`, `trimEnd`, `isRedditRelatedUrl`, `URL`, `openConnection`, `setRequestProperty`, `connect`, `bufferedReader`, `readText`, `JSONArray`, `optJSONObject`, `optJSONArray`, `addCandidate`, `startsWith`, `length`, `optString`, `directImageUrl`.
+
+### `addCandidate` — líneas 1197–1199
+
+**Firma:** `fun addCandidate(value: String?)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: String?`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Operaciones/funciones que coordina:** `startsWith`.
+
+### `resolveSimpleRedirect` — líneas 1245–1265
+
+**Firma:** `private fun resolveSimpleRedirect(url: String): String?`
+
+Resuelve un valor configurable a su representación efectiva usada por la UI, aplicando reglas de fallback/contraste cuando corresponde.
+
+**Entradas:**
+- `url: String`
+
+**Salida:** String?.
+
+**Efectos/APIs observados en el cuerpo:**
+- Realiza acceso de red HTTP.
+
+**Decisiones y protecciones visibles:**
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `safeHost`, `equals`, `endsWith`, `URL`, `openConnection`, `setRequestProperty`, `previewUserAgent`, `connect`, `toString`, `disconnect`.
+
+### `enrichSocialHtmlPreview` — líneas 1267–1286
+
+**Firma:** `private fun enrichSocialHtmlPreview(originalUrl: String, pageUrl: String, html: String, base: LinkPreviewData, providerPreview: LinkPreviewData?): LinkPreviewData`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `originalUrl: String`
+- `pageUrl: String`
+- `html: String`
+- `base: LinkPreviewData`
+- `providerPreview: LinkPreviewData?`
+
+**Salida:** LinkPreviewData.
+
+**Decisiones y protecciones visibles:**
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Usa `when` para mapear estados/tipos/opciones.
+
+**Operaciones/funciones que coordina:** `addAll`, `orEmpty`, `extractSocialImageCandidates`, `startsWith`, `distinct`, `isInstagramRelatedUrl`, `isThreadsRelatedUrl`, `isFacebookRelatedUrl`, `isRedditRelatedUrl`, `copy`, `isNotBlank`.
+
+### `extractSocialImageCandidates` — líneas 1289–1311
+
+**Firma:** `private fun extractSocialImageCandidates(pageUrl: String, html: String): List<String>`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `pageUrl: String`
+- `html: String`
+
+**Salida:** List<String>.
+
+**Decisiones y protecciones visibles:**
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `isBlank`, `emptyList`, `replace`, `Regex`, `findAll`, `getOrNull`, `resolveUrl`, `trimEnd`, `lowercase`, `contains`, `looksLikeRemoteImageUrl`, `toList`, `asSequence`, `startsWith`, `distinct`, `sortedByDescending`, `take`.
+
+### `looksLikeRemoteImageUrl` — líneas 1313–1313
+
+**Firma:** `private fun looksLikeRemoteImageUrl(url: String): Boolean`
+
+Evalúa una condición y devuelve un booleano utilizado para decidir una ruta posterior del flujo.
+
+**Entradas:**
+- `url: String`
+
+**Salida:** Boolean.
+
+**Operaciones/funciones que coordina:** `contains`.
+
+### `scoreSocialImageCandidate` — líneas 1316–1338
+
+**Firma:** `private fun scoreSocialImageCandidate(url: String): Int`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `url: String`
+
+**Salida:** Int.
+
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `lowercase`, `contains`.
+
+### `isTikTokRelatedUrl` — líneas 1340–1347
+
+**Firma:** `private fun isTikTokRelatedUrl(url: String): Boolean`
+
+Evalúa una condición y devuelve un booleano utilizado para decidir una ruta posterior del flujo.
+
+**Entradas:**
+- `url: String`
+
+**Salida:** Boolean.
+
+**Decisiones y protecciones visibles:**
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+
+**Operaciones/funciones que coordina:** `parse`, `lowercase`, `orEmpty`, `endsWith`.
+
+### `fetchTikTokOEmbed` — líneas 1355–1387
+
+**Firma:** `private fun fetchTikTokOEmbed(entityUrl: String, clickUrl: String): LinkPreviewData?`
+
+Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+**Entradas:**
+- `entityUrl: String`
+- `clickUrl: String`
+
+**Salida:** LinkPreviewData?.
+
+**Efectos/APIs observados en el cuerpo:**
+- Realiza acceso de red HTTP.
+
+**Decisiones y protecciones visibles:**
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `URL`, `openConnection`, `setRequestProperty`, `previewUserAgent`, `connect`, `bufferedReader`, `readText`, `JSONObject`, `optString`, `isNotBlank`, `cleanText`, `LinkPreviewData`, `safeHost`, `disconnect`.
+
+### `isSpotifyRelatedUrl` — líneas 1400–1407
+
+**Firma:** `private fun isSpotifyRelatedUrl(url: String): Boolean`
+
+Evalúa una condición y devuelve un booleano utilizado para decidir una ruta posterior del flujo.
+
+**Entradas:**
+- `url: String`
+
+**Salida:** Boolean.
+
+**Decisiones y protecciones visibles:**
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+
+**Operaciones/funciones que coordina:** `parse`, `lowercase`, `orEmpty`, `endsWith`.
+
+### `findSpotifyEntityUrl` — líneas 1409–1425
+
+**Firma:** `private fun findSpotifyEntityUrl(url: String): String?`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `url: String`
+
+**Salida:** String?.
+
+**Decisiones y protecciones visibles:**
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+
+**Operaciones/funciones que coordina:** `normalizeSpotifyEntityUrl`, `decodeUrlRepeatedly`, `parse`, `getQueryParameter`.
+
+### `findSpotifyEntityUrlInText` — líneas 1427–1449
+
+**Firma:** `private fun findSpotifyEntityUrlInText(text: String): String?`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `text: String`
+
+**Salida:** String?.
+
+**Decisiones y protecciones visibles:**
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `linkedSetOf`, `decodeHtml`, `replace`, `decodeUrlRepeatedly`, `Regex`, `find`, `trimEnd`, `normalizeSpotifyEntityUrl`, `lowercase`.
+
+### `normalizeSpotifyEntityUrl` — líneas 1451–1480
+
+**Firma:** `private fun normalizeSpotifyEntityUrl(candidate: String): String?`
+
+Normaliza una cadena/valor externo al conjunto de opciones admitidas por MyNotes y devuelve un fallback estable si el valor no es reconocido.
+
+**Entradas:**
+- `candidate: String`
+
+**Salida:** String?.
+
+**Decisiones y protecciones visibles:**
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `trim`, `replace`, `startsWith`, `Regex`, `find`, `parse`, `lowercase`, `orEmpty`, `substringBefore`, `isNotBlank`, `isLetterOrDigit`.
+
+### `decodeUrlRepeatedly` — líneas 1482–1496
+
+**Firma:** `private fun decodeUrlRepeatedly(value: String): String`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: String`
+
+**Salida:** String.
+
+**Decisiones y protecciones visibles:**
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `repeat`, `decode`, `name`.
+
+### `fetchSpotifyOEmbed` — líneas 1498–1532
+
+**Firma:** `private fun fetchSpotifyOEmbed(entityUrl: String, clickUrl: String): LinkPreviewData?`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `entityUrl: String`
+- `clickUrl: String`
+
+**Salida:** LinkPreviewData?.
+
+**Efectos/APIs observados en el cuerpo:**
+- Realiza acceso de red HTTP.
+
+**Decisiones y protecciones visibles:**
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `URL`, `openConnection`, `setRequestProperty`, `connect`, `readLimitedHtml`, `InputStreamReader`, `JSONObject`, `optString`, `isNotBlank`, `LinkPreviewData`, `disconnect`.
+
+### `withKnownProviderFallback` — líneas 1534–1551
+
+**Firma:** `private fun LinkPreviewData.withKnownProviderFallback(): LinkPreviewData`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Salida:** LinkPreviewData.
+
+**Decisiones y protecciones visibles:**
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+- Usa `when` para mapear estados/tipos/opciones.
+
+**Operaciones/funciones que coordina:** `isNullOrBlank`, `youtubeVideoId`, `copy`, `isNotBlank`, `isSpotifyRelatedUrl`, `isTikTokRelatedUrl`, `isDouyinRelatedUrl`, `isInstagramRelatedUrl`, `isThreadsRelatedUrl`, `isFacebookRelatedUrl`, `isRedditRelatedUrl`.
+
+### `LinkPreviewCard` — líneas 1554–1654
+
+**Firma:** `fun LinkPreviewCard(url: String, modifier: Modifier = Modifier, compact: Boolean = false, textColorMode: String = "auto", deferLoad: Boolean = false, onPreviewReady: ((String) -> Unit)? = null)`
+
+Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+**Entradas:**
+- `url: String`
+- `modifier: Modifier = Modifier`
+- `compact: Boolean = false`
+- `textColorMode: String = "auto"`
+- `deferLoad: Boolean = false`
+- `onPreviewReady: ((String) -> Unit)? = null`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Participa en estado/efectos de Compose.
+
+**Decisiones y protecciones visibles:**
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+- Usa `when` para mapear estados/tipos/opciones.
+
+**Operaciones/funciones que coordina:** `peekMemory`, `basic`, `LaunchedEffect`, `load`, `isNullOrBlank`, `invoke`, `isNotBlank`, `length`, `resolveUiTextColor`, `resolveSecondaryUiTextColor`, `resolveUiGraphicColor`, `BoxWithConstraints`, `fillMaxWidth`, `playAction`, `openExternalLink`, `aspectRatio`, `fillMaxSize`, `AsyncImage`.
+
+### `LinkPreviewText` — líneas 1657–1686
+
+**Firma:** `private fun LinkPreviewText(title: String, subtitle: String?, siteName: String, compact: Boolean, veryCompact: Boolean = false, showSubtitle: Boolean = true, primaryTextColor: Color, secondaryTextColor: Color, graphicColor: Color, modifier: Modifier = Modifier)`
+
+Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+**Entradas:**
+- `title: String`
+- `subtitle: String?`
+- `siteName: String`
+- `compact: Boolean`
+- `veryCompact: Boolean = false`
+- `showSubtitle: Boolean = true`
+- `primaryTextColor: Color`
+- `secondaryTextColor: Color`
+- `graphicColor: Color`
+- `modifier: Modifier = Modifier`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+- Usa `when` para mapear estados/tipos/opciones.
+
+**Operaciones/funciones que coordina:** `weight`, `width`, `size`, `height`, `isNullOrBlank`.
+
+### `openExternalLink` — líneas 1688–1697
+
+**Firma:** `private fun openExternalLink(context: Context, url: String)`
+
+Construye/ejecuta la operación necesaria para abrir el destino indicado, aplicando las validaciones visibles en el cuerpo.
+
+**Entradas:**
+- `context: Context`
+- `url: String`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Inicia o prepara navegación/acción mediante Intent.
+
+**Decisiones y protecciones visibles:**
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+
+**Operaciones/funciones que coordina:** `Intent`, `parse`, `addFlags`, `startActivity`.
+
+### `readLimitedHtml` — líneas 1699–1713
+
+**Firma:** `private fun readLimitedHtml(reader: InputStreamReader): String`
+
+Lee y transforma datos desde la fuente indicada, devolviendo una representación segura o fallback cuando la lectura no puede completarse.
+
+**Entradas:**
+- `reader: InputStreamReader`
+
+**Salida:** String.
+
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `CharArray`, `StringBuilder`, `read`, `minOf`, `append`, `toString`.
+
+### `charsetFromContentType` — líneas 1715–1727
+
+**Firma:** `private fun charsetFromContentType(contentType: String?): Charset`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `contentType: String?`
+
+**Salida:** Charset.
+
+**Decisiones y protecciones visibles:**
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `substringAfter`, `substringBefore`, `trim`, `orEmpty`, `isNotBlank`, `forName`.
+
+### `decodeHtml` — líneas 1729–1729
+
+**Firma:** `private fun decodeHtml(value: String): String`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: String`
+
+**Salida:** String.
+
+**Operaciones/funciones que coordina:** `fromHtml`, `toString`, `replace`, `Regex`.
+
+### `cleanText` — líneas 1731–1731
+
+**Firma:** `private fun String.cleanText(): String`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Salida:** String.
+
+**Operaciones/funciones que coordina:** `decodeHtml`, `take`.
+
+### `firstNonBlank` — líneas 1733–1733
+
+**Firma:** `private fun firstNonBlank(vararg values: String?): String?`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `vararg values: String?`
+
+**Salida:** String?.
+
+### `resolveUrl` — líneas 1736–1736
+
+**Firma:** `private fun resolveUrl(baseUrl: String, candidate: String): String?`
+
+Resuelve un valor configurable a su representación efectiva usada por la UI, aplicando reglas de fallback/contraste cuando corresponde.
+
+**Entradas:**
+- `baseUrl: String`
+- `candidate: String`
+
+**Salida:** String?.
+
+**Decisiones y protecciones visibles:**
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+
+### `safeHost` — líneas 1741–1741
+
+**Firma:** `private fun safeHost(url: String): String`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `url: String`
+
+**Salida:** String.
+
+**Decisiones y protecciones visibles:**
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+
+### `directImageUrl` — líneas 1746–1753
+
+**Firma:** `private fun directImageUrl(url: String): String?`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `url: String`
+
+**Salida:** String?.
+
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `substringBefore`, `lowercase`, `any`.
+
+### `fileNameFromUrl` — líneas 1755–1755
+
+**Firma:** `private fun fileNameFromUrl(url: String): String`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `url: String`
+
+**Salida:** String.
+
+**Decisiones y protecciones visibles:**
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+
+### `youtubeVideoId` — líneas 1760–1760
+
+**Firma:** `private fun youtubeVideoId(url: String): String?`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `url: String`
+
+**Salida:** String?.
+
+**Decisiones y protecciones visibles:**
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+
+## 5. Cómo se conecta con el resto de MyNotes
+
+- Usa `com.example.mynotes.ui.theme.resolveUiTextColor`.
+- Usa `com.example.mynotes.ui.theme.resolveSecondaryUiTextColor`.
+- Usa `com.example.mynotes.ui.theme.resolveUiGraphicColor`.
+- Usa `com.example.mynotes.ui.sound.UiActionSound`.
+- Usa `com.example.mynotes.ui.sound.UiSoundPlayer`.
+
+## 6. Recursos Android que utiliza
+
+- No se detectaron referencias directas `R.*` en este archivo.
+
+## 7. Tecnologías y efectos relevantes
+
+- Ejecuta trabajo de I/O fuera del hilo principal.
+- Lee o escribe SharedPreferences.
+- Accede a la base Room/DAO.
+- Realiza acceso de red HTTP.
+- Accede al sistema de archivos interno/cache.
+- Participa en estado/efectos de Compose.
+- Inicia o prepara navegación/acción mediante Intent.
+
+## 8. Lectura práctica del flujo
+
+Una forma útil de seguir este archivo en el depurador es recorrer estas operaciones en este orden aproximado:
+1. `extractLinkUrls` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+2. `extractEmbeddedLinkUrls` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+3. `stripEmbeddedLinkMetadata` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+4. `noteContentForStorage` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+5. `noteTextForDisplay` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+6. `basic` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+7. `peekMemory` — Consulta una representación ya disponible (normalmente caché) sin obligar a realizar el trabajo completo de carga.
+8. `peek` — Consulta una representación ya disponible (normalmente caché) sin obligar a realizar el trabajo completo de carga.
+9. `load` — Carga la información solicitada. El cuerpo intenta reutilizar datos disponibles y realiza I/O/decodificación sólo cuando es necesario.
+10. `preloadLinkPreviews` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+11. `addCandidate` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+12. `walkJson` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+## 9. Qué no debe romperse al modificarlo
+
+- Mantener timeouts, límites de descarga, cierre de conexiones y fallback ante sitios que bloqueen scraping.
+- Conservar validaciones de Uri/ruta y no confiar en nombres externos sin sanitizar.
+- Evitar trabajo bloqueante durante composición y mantener estado estable para limitar recomposiciones.
+
+## 10. Resumen en lenguaje sencillo
+
+En términos simples: Subsistema UI de previews de enlaces usado en notas; extrae URLs, persiste metadatos ocultos, resuelve proveedores sociales y dibuja la tarjeta. La sección función por función anterior describe qué entra, qué devuelve y qué efectos produce cada operación detectada en el fuente actual.

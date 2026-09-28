@@ -1,44 +1,122 @@
-# StyledSettingsSlider.kt — documentación del código actual
-**Ruta real:** `app/src/main/java/com/example/mynotes/ui/components/StyledSettingsSlider.kt`  **SHA-256:** `5f322821526286538d40d528b5805436e71f7a231291b1a72c24c505914067e3`  **Líneas:** 281 · **Bytes:** 14273 · **Imports:** 23 · **Declaraciones detectadas:** 2
-> Documento generado fuera de `app/` a partir de lectura del código. El fuente es la única fuente de verdad; no se modificó para generar esta documentación.
-## 1. Responsabilidad
+# StyledSettingsSlider.kt — explicación completa del código
 
-Slider de Configuración que respeta estilo, colores, sonido y hápticos.
-## 2. Package e imports
+**Ruta:** `app/src/main/java/com/example/mynotes/ui/components/StyledSettingsSlider.kt`  
+**SHA-256:** `5f322821526286538d40d528b5805436e71f7a231291b1a72c24c505914067e3`  
+**Líneas:** 282  
+**Package:** `com.example.mynotes.ui.components`
 
-Package declarado: `com.example.mynotes.ui.components`.
+## 1. Para qué existe este archivo
 
-### Android / Jetpack / Compose
+Slider de Configuración que aplica estilo, sonido, háptica y colores definidos por AppSettings.
 
-`android.graphics.Paint`, `android.graphics.Typeface`, `androidx.compose.foundation.Canvas`, `androidx.compose.foundation.layout.Box`, `androidx.compose.foundation.layout.fillMaxSize`, `androidx.compose.foundation.layout.fillMaxWidth`, `androidx.compose.foundation.layout.height`, `androidx.compose.material3.Slider`, `androidx.compose.material3.SliderDefaults`, `androidx.compose.runtime.Composable`, `androidx.compose.runtime.remember`, `androidx.compose.ui.Modifier`, `androidx.compose.ui.geometry.CornerRadius`, `androidx.compose.ui.geometry.Offset`, `androidx.compose.ui.geometry.Size`, `androidx.compose.ui.graphics.Brush`, `androidx.compose.ui.graphics.Color`, `androidx.compose.ui.graphics.nativeCanvas`, `androidx.compose.ui.graphics.toArgb`, `androidx.compose.ui.platform.LocalContext`, `androidx.compose.ui.unit.dp`
+## 2. Tipos/clases declarados
 
-### Proyecto MyNotes
+- No declara una clase/objeto propio; contiene funciones/valores de soporte o es un archivo marcador.
 
-`com.example.mynotes.ui.sound.UiSound`, `com.example.mynotes.ui.sound.UiSoundPlayer`
+## 3. Estado, constantes y valores importantes
 
-## 3. Declaraciones detectadas
+- **`context`** (línea 38) inicia con `LocalContext.current`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`min`** (línea 39) inicia con `valueRange.start`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`max`** (línea 40) inicia con `valueRange.endInclusive`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`floatingTextPaint`** (línea 46) inicia con `remember {`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`fraction`** (línea 53) inicia con `if (max >`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`inset`** (línea 65) inicia con `14.dp.toPx(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`topExtra`** (línea 66) inicia con `if (style == "floating"`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`centerY`** (línea 71) inicia con `(size.height + topExtra`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`trackWidth`** (línea 72) inicia con `(size.width - inset * 2f`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`startX`** (línea 73) inicia con `inset`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`activeWidth`** (línea 74) inicia con `trackWidth * fraction`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`thumbX`** (línea 75) inicia con `startX + activeWidth`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`h`** (línea 108) inicia con `15.dp.toPx(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`count`** (línea 123) inicia con `if (steps >`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`gap`** (línea 129) inicia con `4.dp.toPx(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`segmentWidth`** (línea 130) inicia con `(trackWidth - gap * (count - 1`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`segmentFraction`** (línea 133) inicia con `if (count <= 1`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`selected`** (línea 138) inicia con `segmentFraction <= fraction + 0.0001f`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`dotFraction`** (línea 160) inicia con `if (count <= 1`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`x`** (línea 165) inicia con `startX + trackWidth * dotFraction`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`bubbleWidth`** (línea 228) inicia con `56.dp.toPx(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`bubbleHeight`** (línea 229) inicia con `24.dp.toPx(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`bubbleX`** (línea 230) inicia con `(thumbX - bubbleWidth / 2f`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`bubbleY`** (línea 231) inicia con `2.dp.toPx(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
 
-| Línea | Tipo | Nombre | Firma/inicio |
-|---:|---|---|---|
-| 34 | `fun` | `StyledSettingsSlider` | `@Composable` |
-| 267 | `fun` | `androidx` | `` |
+## 4. Funciones y flujo, una por una
 
-## 4. Estado, efectos y límites observables
+### `StyledSettingsSlider` — líneas 35–266
 
-- **Compose state:** 2 aparición/apariciones.
-- **coerce*:** 3 aparición/apariciones.
+**Firma:** `fun StyledSettingsSlider(value: Float, onValueChange: (Float) -> Unit, onValueChangeFinished: (() -> Unit)? = null, valueRange: ClosedFloatingPointRange<Float>, steps: Int = 0, activeColor: Color, inactiveColor: Color, style: String, valueLabel: String? = null)`
 
-Estas cifras son indicadores de superficie de cambio, no diagnósticos de error. Cualquier modificación debe preservar contratos de persistencia, lifecycle, límites numéricos y nulabilidad visibles en el fuente.
+Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
 
-## 5. Dependencias internas directas
+**Entradas:**
+- `value: Float`
+- `onValueChange: (Float) -> Unit`
+- `onValueChangeFinished: (() -> Unit)? = null`
+- `valueRange: ClosedFloatingPointRange<Float>`
+- `steps: Int = 0`
+- `activeColor: Color`
+- `inactiveColor: Color`
+- `style: String`
+- `valueLabel: String? = null`
 
-- `com.example.mynotes.ui.sound.UiSound`
-- `com.example.mynotes.ui.sound.UiSoundPlayer`
+**Salida:** Unit o inferido por Kotlin.
 
-## 6. Recursos Android referenciados
+**Efectos/APIs observados en el cuerpo:**
+- Procesa imágenes/bitmaps.
+- Participa en estado/efectos de Compose.
 
-No se detectaron referencias `R.*` directas.
+**Decisiones y protecciones visibles:**
+- Limita valores con `coerce*` para evitar estados fuera de rango.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+- Usa `when` para mapear estados/tipos/opciones.
 
-## 7. Puntos de revisión al modificarlo
+**Operaciones/funciones que coordina:** `Paint`, `toArgb`, `create`, `coerceIn`, `fillMaxWidth`, `height`, `Canvas`, `fillMaxSize`, `toPx`, `coerceAtLeast`, `drawTrack`, `drawCircle`, `Offset`, `copy`, `drawRoundRect`, `Size`, `CornerRadius`, `repeat`.
 
-- Conservar rangos `coerce*`, claves DataStore y compatibilidad con backups existentes.
+### `drawTrack` — líneas 268–281
+
+**Firma:** `private fun androidx.compose.ui.graphics.drawscope.DrawScope.drawTrack(startX: Float, centerY: Float, trackWidth: Float, activeWidth: Float, height: Float, activeColor: Color, inactiveColor: Color)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `startX: Float`
+- `centerY: Float`
+- `trackWidth: Float`
+- `activeWidth: Float`
+- `height: Float`
+- `activeColor: Color`
+- `inactiveColor: Color`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `drawRoundRect`, `copy`, `Offset`, `Size`, `CornerRadius`.
+
+## 5. Cómo se conecta con el resto de MyNotes
+
+- Usa `com.example.mynotes.ui.sound.UiSound`.
+- Usa `com.example.mynotes.ui.sound.UiSoundPlayer`.
+
+## 6. Recursos Android que utiliza
+
+- No se detectaron referencias directas `R.*` en este archivo.
+
+## 7. Tecnologías y efectos relevantes
+
+- Procesa imágenes/bitmaps.
+- Participa en estado/efectos de Compose.
+
+## 8. Lectura práctica del flujo
+
+Una forma útil de seguir este archivo en el depurador es recorrer estas operaciones en este orden aproximado:
+1. `StyledSettingsSlider` — Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+## 9. Qué no debe romperse al modificarlo
+
+- Evitar trabajo bloqueante durante composición y mantener estado estable para limitar recomposiciones.
+
+## 10. Resumen en lenguaje sencillo
+
+En términos simples: Slider de Configuración que aplica estilo, sonido, háptica y colores definidos por AppSettings. La sección función por función anterior describe qué entra, qué devuelve y qué efectos produce cada operación detectada en el fuente actual.

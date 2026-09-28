@@ -1,80 +1,187 @@
-# NotesScreen.kt — documentación del código actual
-**Ruta real:** `app/src/main/java/com/example/mynotes/ui/theme/NotesScreen.kt`  **SHA-256:** `e25669614fa7fee1f0df28f1f45e2a8a474370916e3ad07a5b6280c44a7eab0a`  **Líneas:** 854 · **Bytes:** 42499 · **Imports:** 101 · **Declaraciones detectadas:** 7
-> Documento generado fuera de `app/` a partir de lectura del código. El fuente es la única fuente de verdad; no se modificó para generar esta documentación.
-## 1. Responsabilidad
+# NotesScreen.kt — explicación completa del código
 
-Pantalla principal: búsqueda, filtros, grid de notas y speed dial New note/Draw/Reminders.
-## 2. Package e imports
+**Ruta:** `app/src/main/java/com/example/mynotes/ui/theme/NotesScreen.kt`  
+**SHA-256:** `e25669614fa7fee1f0df28f1f45e2a8a474370916e3ad07a5b6280c44a7eab0a`  
+**Líneas:** 855  
+**Package:** `com.example.mynotes.ui`
 
-Package declarado: `com.example.mynotes.ui`.
+## 1. Para qué existe este archivo
 
-### Android / Jetpack / Compose
+Pantalla principal: búsqueda, filtros, grid escalonado, precarga de previews y speed dial Recordatorios/Nueva nota/Dibujar.
 
-`android.content.res.Configuration`, `androidx.activity.compose.BackHandler`, `androidx.compose.foundation.clickable`, `android.net.Uri`, `androidx.compose.animation.AnimatedVisibility`, `androidx.compose.animation.expandVertically`, `androidx.compose.animation.fadeIn`, `androidx.compose.animation.fadeOut`, `androidx.compose.animation.shrinkVertically`, `androidx.compose.animation.core.animateDpAsState`, `androidx.compose.animation.core.tween`, `androidx.compose.foundation.layout.Arrangement`, `androidx.compose.foundation.layout.Box`, `androidx.compose.foundation.layout.BoxWithConstraints`, `androidx.compose.foundation.layout.Column`, `androidx.compose.foundation.layout.PaddingValues`, `androidx.compose.foundation.layout.Row`, `androidx.compose.foundation.layout.Spacer`, `androidx.compose.foundation.layout.fillMaxSize`, `androidx.compose.foundation.layout.fillMaxWidth`, `androidx.compose.foundation.layout.height`, `androidx.compose.foundation.layout.offset`, `androidx.compose.foundation.layout.padding`, `androidx.compose.foundation.layout.size`, `androidx.compose.foundation.layout.width`, `androidx.compose.foundation.layout.widthIn`, `androidx.compose.foundation.lazy.LazyRow`, `androidx.compose.foundation.lazy.items`, `androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid`, `androidx.compose.foundation.lazy.staggeredgrid.StaggeredGridCells`, `androidx.compose.foundation.lazy.staggeredgrid.items`, `androidx.compose.foundation.lazy.staggeredgrid.rememberLazyStaggeredGridState`, `androidx.compose.foundation.shape.CircleShape`, `androidx.compose.foundation.shape.RoundedCornerShape`, `androidx.compose.material.icons.Icons`, `androidx.compose.material.icons.filled.Add`, `androidx.compose.material.icons.filled.Brush`, `androidx.compose.material.icons.filled.Close`, `androidx.compose.material.icons.filled.NoteAdd`, `androidx.compose.material.icons.filled.NotificationsActive`, `androidx.compose.material.icons.filled.Person`, `androidx.compose.material.icons.filled.Search`, `androidx.compose.material.icons.filled.Settings`, `androidx.compose.material3.FilterChip`, `androidx.compose.material3.FilterChipDefaults`, `androidx.compose.material3.FloatingActionButton`, `androidx.compose.material3.Icon`, `androidx.compose.material3.IconButton`, `androidx.compose.material3.MaterialTheme`, `androidx.compose.material3.OutlinedTextField`, `androidx.compose.material3.OutlinedTextFieldDefaults`, `androidx.compose.material3.Scaffold`, `androidx.compose.material3.Surface`, `androidx.compose.material3.Text`, `androidx.compose.runtime.Composable`, `androidx.compose.runtime.Immutable`, `androidx.compose.runtime.LaunchedEffect`, `androidx.compose.runtime.derivedStateOf`, `androidx.compose.runtime.getValue`, `androidx.compose.runtime.mutableIntStateOf`, `androidx.compose.runtime.mutableStateOf`, `androidx.compose.runtime.remember`, `androidx.compose.runtime.setValue`, `androidx.compose.runtime.saveable.rememberSaveable`, `androidx.compose.runtime.withFrameNanos`, `androidx.compose.ui.Alignment`, `androidx.compose.ui.Modifier`, `androidx.compose.ui.draw.clip`, `androidx.compose.ui.focus.FocusRequester`, `androidx.compose.ui.focus.focusRequester`, `androidx.compose.ui.layout.ContentScale`, `androidx.compose.ui.platform.LocalConfiguration`, `androidx.compose.ui.platform.LocalContext`, `androidx.compose.ui.platform.LocalFocusManager`, `androidx.compose.ui.res.stringResource`, `androidx.compose.ui.text.font.FontWeight`, `androidx.compose.ui.unit.dp`, `androidx.compose.ui.unit.sp`, `androidx.lifecycle.compose.collectAsStateWithLifecycle`
+## 2. Tipos/clases declarados
 
-### Proyecto MyNotes
+- Línea **105** — `private enum  class NoteFilter`.
+- Línea **110** — `private data  class NoteFilterOption`.
+- Línea **113** — `private data  class AttachmentIndex`.
 
-`com.example.mynotes.R`, `com.example.mynotes.data.Attachment`, `com.example.mynotes.data.Note`, `com.example.mynotes.performance.AttachmentPreviewCache`, `com.example.mynotes.settings.AppSettings`, `com.example.mynotes.ui.components.ModernNoteCard`, `com.example.mynotes.ui.components.ScrollPositionCapsule`, `com.example.mynotes.ui.components.extractLinkUrls`, `com.example.mynotes.ui.components.preloadLinkPreviews`, `com.example.mynotes.ui.components.toNoteCardStyle`, `com.example.mynotes.ui.motion.AnimatedScreenEntry`, `com.example.mynotes.ui.motion.AppMotion`, `com.example.mynotes.ui.sound.UiActionSound`, `com.example.mynotes.ui.sound.UiSound`, `com.example.mynotes.ui.sound.UiSoundPlayer`, `com.example.mynotes.ui.theme.appFontFamily`, `com.example.mynotes.ui.theme.resolveSecondaryUiTextColor`, `com.example.mynotes.ui.theme.resolveUiTextColor`, `com.example.mynotes.ui.theme.resolveUiGraphicColor`, `com.example.mynotes.viewmodel.NoteViewModel`
+## 3. Estado, constantes y valores importantes
 
-### Kotlin / Coroutines / Java
+- **`FilterOptions`** (línea 114) inicia con `listOf(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`attachmentIndex`** (línea 159) inicia con `remember(allAttachments`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`byNote`** (línea 160) inicia con `allAttachments.groupBy {`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`kindsByNote`** (línea 163) inicia con `buildMap<Int`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`attachmentsByNote`** (línea 169) inicia con `attachmentIndex.byNote`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`fontFamily`** (línea 170) inicia con `remember(settings.font`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`screenPrimaryTextColor`** (línea 173) inicia con `resolveUiTextColor(value = settings.textColor`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`screenSecondaryTextColor`** (línea 174) inicia con `resolveSecondaryUiTextColor(value = settings.textColor`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`quickCreateSurfaceColor`** (línea 175) inicia con `MaterialTheme.colorScheme.surfaceContainerHigh`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`quickCreateTextColor`** (línea 176) inicia con `resolveUiTextColor(value = settings.textColor`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`controlSurfaceColor`** (línea 177) inicia con `MaterialTheme.colorScheme.surfaceContainerLow`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`controlTextColor`** (línea 178) inicia con `resolveUiTextColor(value = settings.textColor`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`controlSecondaryTextColor`** (línea 179) inicia con `resolveSecondaryUiTextColor(value = settings.textColor`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`controlGraphicColor`** (línea 180) inicia con `resolveUiGraphicColor(value = settings.textColor`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`selectedControlTextColor`** (línea 181) inicia con `resolveUiTextColor(value = settings.textColor`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`fabContainerColor`** (línea 185) inicia con `MaterialTheme.colorScheme.inverseSurface`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`fabContentColor`** (línea 186) inicia con `resolveUiTextColor(value = settings.textColor`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`noteCardStyle`** (línea 187) inicia con `remember(settings.noteCardCornerRadius`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`searchIsActive`** (línea 226) inicia con `effectiveQuery.isNotBlank(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`searchableTextByNote`** (línea 227) inicia con `remember(notes`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`focusManager`** (línea 240) inicia con `LocalFocusManager.current`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`searchFocusRequester`** (línea 241) inicia con `remember { FocusRequester(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`context`** (línea 242) inicia con `LocalContext.current`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`gridState`** (línea 250) inicia con `rememberLazyStaggeredGridState(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`linkPreviewUrls`** (línea 261) inicia con `remember(notes`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`idleDelayMs`** (línea 267) inicia con `when (settings.performanceMode`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`configuration`** (línea 278) inicia con `LocalConfiguration.current`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`currentOrientation`** (línea 279) inicia con `configuration.orientation`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`isLandscape`** (línea 280) inicia con `currentOrientation == Configuration.ORIENTATION_LANDSCAPE`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`normalizedQuery`** (línea 320) inicia con `effectiveQuery`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`matchesText`** (línea 331) inicia con `normalizedQuery.isBlank(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`qualityScrollPreviewAttachments`** (línea 379) inicia con `remember(visibleNotes`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`motionDuration`** (línea 447) inicia con `AppMotion.duration(AppMotion.NORMAL`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`selected`** (línea 632) inicia con `option.filter == selectedFilter`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`maximumColumnsForWidth`** (línea 678) inicia con `(maxWidth.value / 145f`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
 
-`kotlinx.coroutines.delay`
+## 4. Funciones y flujo, una por una
 
-### Terceros / otros
+### `noteFilterFromWidgetKey` — líneas 126–126
 
-`coil3.compose.AsyncImage`
+**Firma:** `private fun noteFilterFromWidgetKey(key: String?): NoteFilter`
 
-## 3. Declaraciones detectadas
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
 
-| Línea | Tipo | Nombre | Firma/inicio |
-|---:|---|---|---|
-| 104 | `class` | `NoteFilter` | `` |
-| 108 | `class` | `NoteFilterOption` | `` |
-| 111 | `class` | `AttachmentIndex` | `` |
-| 125 | `fun` | `noteFilterFromWidgetKey` | `` |
-| 136 | `fun` | `NotesScreen` | `` |
-| 778 | `fun` | `QuickCreateActionButton` | `` |
-| 821 | `fun` | `EmptyNotesState` | `` |
+**Entradas:**
+- `key: String?`
 
-## 4. Estado, efectos y límites observables
+**Salida:** NoteFilter.
 
-- **Compose state:** 23 aparición/apariciones.
-- **LaunchedEffect/DisposableEffect:** 8 aparición/apariciones.
-- **Coroutines:** 3 aparición/apariciones.
-- **Room:** 5 aparición/apariciones.
-- **I/O/red:** 1 aparición/apariciones.
-- **coerce*:** 5 aparición/apariciones.
-- **safe calls:** 2 aparición/apariciones.
+**Decisiones y protecciones visibles:**
+- Usa `when` para mapear estados/tipos/opciones.
 
-Estas cifras son indicadores de superficie de cambio, no diagnósticos de error. Cualquier modificación debe preservar contratos de persistencia, lifecycle, límites numéricos y nulabilidad visibles en el fuente.
+### `NotesScreen` — líneas 138–777
 
-## 5. Dependencias internas directas
+**Firma:** `fun NotesScreen( notes: List<Note>, noteViewModel: NoteViewModel, settings: AppSettings, initialFilterKey: String? = null, requestSearchFocus: Boolean = false, widgetRequestToken: Int = 0, onAddNote: () -> Unit, onDrawNote: () -> Unit, onOpenReminders: () -> Unit, onOpenSettings: () -> Unit, onOpenNote: (Note) -> Unit, onEditNote: (Note) -> Unit )`
 
-- `com.example.mynotes.R`
-- `com.example.mynotes.data.Attachment`
-- `com.example.mynotes.data.Note`
-- `com.example.mynotes.performance.AttachmentPreviewCache`
-- `com.example.mynotes.settings.AppSettings`
-- `com.example.mynotes.ui.components.ModernNoteCard`
-- `com.example.mynotes.ui.components.ScrollPositionCapsule`
-- `com.example.mynotes.ui.components.extractLinkUrls`
-- `com.example.mynotes.ui.components.preloadLinkPreviews`
-- `com.example.mynotes.ui.components.toNoteCardStyle`
-- `com.example.mynotes.ui.motion.AnimatedScreenEntry`
-- `com.example.mynotes.ui.motion.AppMotion`
-- `com.example.mynotes.ui.sound.UiActionSound`
-- `com.example.mynotes.ui.sound.UiSound`
-- `com.example.mynotes.ui.sound.UiSoundPlayer`
-- `com.example.mynotes.ui.theme.appFontFamily`
-- `com.example.mynotes.ui.theme.resolveSecondaryUiTextColor`
-- `com.example.mynotes.ui.theme.resolveUiGraphicColor`
-- `com.example.mynotes.ui.theme.resolveUiTextColor`
-- `com.example.mynotes.viewmodel.NoteViewModel`
+Compone la pantalla principal. Observa notas/adjuntos, calcula filtros y búsqueda, configura el LazyVerticalStaggeredGrid, coordina precarga de previews y muestra el speed dial en orden Recordatorios → Nueva nota → Dibujar.
 
-## 6. Recursos Android referenciados
+**Entradas:**
+- `notes: List<Note>`
+- `noteViewModel: NoteViewModel`
+- `settings: AppSettings`
+- `initialFilterKey: String? = null`
+- `requestSearchFocus: Boolean = false`
+- `widgetRequestToken: Int = 0`
+- `onAddNote: () -> Unit`
+- `onDrawNote: () -> Unit`
+- `onOpenReminders: () -> Unit`
+- `onOpenSettings: () -> Unit`
+- `onOpenNote: (Note) -> Unit`
+- `onEditNote: (Note) -> Unit`
 
-- **R.string:** `add_action_menu`, `create_drawing`, `mock_create_first_note`, `mock_favorites`, `mock_files`, `mock_filter_all`, `mock_images`, `mock_my_notes`, `mock_new_note`, `mock_no_notes`, `mock_no_results`, `mock_notes_subtitle`, `mock_personal`, `mock_search_notes`, `mock_settings` ×3, `mock_try_other_search`, `mock_work`, `reminders`, `widget_high_priority`, `widget_pinned_collection`
+**Salida:** Unit o inferido por Kotlin.
 
-## 7. Puntos de revisión al modificarlo
+**Efectos/APIs observados en el cuerpo:**
+- Accede a la base Room/DAO.
+- Accede al sistema de archivos interno/cache.
+- Participa en estado/efectos de Compose.
 
-- Conservar rangos `coerce*`, claves DataStore y compatibilidad con backups existentes.
+**Decisiones y protecciones visibles:**
+- Limita valores con `coerce*` para evitar estados fuera de rango.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+- Usa `when` para mapear estados/tipos/opciones.
+
+**Operaciones/funciones que coordina:** `collectAsStateWithLifecycle`, `put`, `asSequence`, `toSet`, `AttachmentIndex`, `appFontFamily`, `resolveUiTextColor`, `resolveSecondaryUiTextColor`, `resolveUiGraphicColor`, `toNoteCardStyle`, `LaunchedEffect`, `delay`, `trim`, `lowercase`, `isNotBlank`, `emptyMap`, `buildString`, `append`.
+
+### `QuickCreateActionButton` — líneas 780–820
+
+**Firma:** `private fun QuickCreateActionButton( text: String, icon: androidx.compose.ui.graphics.vector.ImageVector, fontFamily: androidx.compose.ui.text.font.FontFamily, containerColor: androidx.compose.ui.graphics.Color, contentColor: androidx.compose.ui.graphics.Color, onClick: () -> Unit )`
+
+Botón tipo pill reutilizado por las tres acciones del speed dial; adapta ancho al contenido y mantiene icono/texto alineados.
+
+**Entradas:**
+- `text: String`
+- `icon: androidx.compose.ui.graphics.vector.ImageVector`
+- `fontFamily: androidx.compose.ui.text.font.FontFamily`
+- `containerColor: androidx.compose.ui.graphics.Color`
+- `contentColor: androidx.compose.ui.graphics.Color`
+- `onClick: () -> Unit`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Operaciones/funciones que coordina:** `height`, `clickable`, `RoundedCornerShape`, `padding`, `size`, `width`.
+
+### `EmptyNotesState` — líneas 823–854
+
+**Firma:** `private fun EmptyNotesState(modifier: Modifier, hasSearch: Boolean, fontFamily: androidx.compose.ui.text.font.FontFamily)`
+
+Estado vacío contextual: diferencia entre no tener notas y no obtener resultados de búsqueda.
+
+**Entradas:**
+- `modifier: Modifier`
+- `hasSearch: Boolean`
+- `fontFamily: androidx.compose.ui.text.font.FontFamily`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `height`, `padding`, `resolveSecondaryUiTextColor`.
+
+## 5. Cómo se conecta con el resto de MyNotes
+
+- Usa `com.example.mynotes.R`.
+- Usa `com.example.mynotes.data.Attachment`.
+- Usa `com.example.mynotes.data.Note`.
+- Usa `com.example.mynotes.performance.AttachmentPreviewCache`.
+- Usa `com.example.mynotes.settings.AppSettings`.
+- Usa `com.example.mynotes.ui.components.ModernNoteCard`.
+- Usa `com.example.mynotes.ui.components.ScrollPositionCapsule`.
+- Usa `com.example.mynotes.ui.components.extractLinkUrls`.
+- Usa `com.example.mynotes.ui.components.preloadLinkPreviews`.
+- Usa `com.example.mynotes.ui.components.toNoteCardStyle`.
+- Usa `com.example.mynotes.ui.motion.AnimatedScreenEntry`.
+- Usa `com.example.mynotes.ui.motion.AppMotion`.
+- Usa `com.example.mynotes.ui.sound.UiActionSound`.
+- Usa `com.example.mynotes.ui.sound.UiSound`.
+- Usa `com.example.mynotes.ui.sound.UiSoundPlayer`.
+- Usa `com.example.mynotes.ui.theme.appFontFamily`.
+- Usa `com.example.mynotes.ui.theme.resolveSecondaryUiTextColor`.
+- Usa `com.example.mynotes.ui.theme.resolveUiTextColor`.
+- Usa `com.example.mynotes.ui.theme.resolveUiGraphicColor`.
+- Usa `com.example.mynotes.viewmodel.NoteViewModel`.
+
+## 6. Recursos Android que utiliza
+
+- `R.string`: `add_action_menu`, `create_drawing`, `mock_create_first_note`, `mock_favorites`, `mock_files`, `mock_filter_all`, `mock_images`, `mock_my_notes`, `mock_new_note`, `mock_no_notes`, `mock_no_results`, `mock_notes_subtitle`, `mock_personal`, `mock_search_notes`, `mock_settings`, `mock_try_other_search`, `mock_work`, `reminders`, `widget_high_priority`, `widget_pinned_collection`
+
+## 7. Tecnologías y efectos relevantes
+
+- Accede a la base Room/DAO.
+- Accede al sistema de archivos interno/cache.
+- Participa en estado/efectos de Compose.
+
+## 8. Lectura práctica del flujo
+
+Una forma útil de seguir este archivo en el depurador es recorrer estas operaciones en este orden aproximado:
+1. `NotesScreen` — Compone la pantalla principal. Observa notas/adjuntos, calcula filtros y búsqueda, configura el LazyVerticalStaggeredGrid, coordina precarga de previews y muestra el speed dial en orden Recordatorios → Nueva nota → Dibujar.
+
+## 9. Qué no debe romperse al modificarlo
+
+- Conservar validaciones de Uri/ruta y no confiar en nombres externos sin sanitizar.
+- Evitar trabajo bloqueante durante composición y mantener estado estable para limitar recomposiciones.
+
+## 10. Resumen en lenguaje sencillo
+
+En términos simples: Pantalla principal: búsqueda, filtros, grid escalonado, precarga de previews y speed dial Recordatorios/Nueva nota/Dibujar. La sección función por función anterior describe qué entra, qué devuelve y qué efectos produce cada operación detectada en el fuente actual.

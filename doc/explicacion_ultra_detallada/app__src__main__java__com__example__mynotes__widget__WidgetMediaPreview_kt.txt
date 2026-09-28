@@ -1,0 +1,750 @@
+MYNOTES — EXPLICACIÓN ULTRA DETALLADA
+==============================================================================================================
+Archivo 69/72: app/src/main/java/com/example/mynotes/widget/WidgetMediaPreview.kt
+SHA-256: ce79e30686a95596cddb2bdc10100bba9e11a44cee318ba5349ca99a35cde675
+Líneas del fuente: 142
+Package: com.example.mynotes.widget
+
+1. RESPONSABILIDAD EXACTA DEL ARCHIVO
+----------------------------------------------------------------------
+Obtiene/convierte previews de medios para widgets sin cambiar la lógica principal de miniaturas de la app.
+
+2. DÓNDE ENCAJA EN LA ARQUITECTURA
+----------------------------------------------------------------------
+Este archivo pertenece principalmente a la **integración App Widgets/launcher**. No debe analizarse aislado: las referencias cruzadas y callbacks se detallan más abajo.
+
+3. IMPORTACIONES, UNA POR UNA
+----------------------------------------------------------------------
+- `android.content.ContentResolver`: Importa `android.content.ContentResolver` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `android.content.Context`: Importa `android.content.Context` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `android.graphics.Bitmap`: Importa `android.graphics.Bitmap` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `android.graphics.BitmapFactory`: Importa `android.graphics.BitmapFactory` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `android.graphics.Canvas`: Importa `android.graphics.Canvas` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `android.media.MediaMetadataRetriever`: Importa `android.media.MediaMetadataRetriever` para usar reproducción/control de audio del sistema.
+- `android.net.Uri`: Importa `android.net.Uri` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `com.example.mynotes.data.Attachment`: Importa `com.example.mynotes.data.Attachment`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.data.Note`: Importa `com.example.mynotes.data.Note`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.links.LinkPreviewRepository`: Importa `com.example.mynotes.links.LinkPreviewRepository`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `java.io.File`: Importa `java.io.File` de la biblioteca estándar/JVM para operaciones de lenguaje, fechas, colecciones, I/O o utilidades.
+- `java.io.InputStream`: Importa `java.io.InputStream` de la biblioteca estándar/JVM para operaciones de lenguaje, fechas, colecciones, I/O o utilidades.
+- `java.security.MessageDigest`: Importa `java.security.MessageDigest` de la biblioteca estándar/JVM para operaciones de lenguaje, fechas, colecciones, I/O o utilidades.
+
+4. DECLARACIONES Y ESTADO IMPORTANTES
+----------------------------------------------------------------------
+L17: `object WidgetMediaPreview {`
+    Declara object `WidgetMediaPreview`. A partir de aquí las propiedades y funciones hasta su llave de cierre pertenecen a este tipo.
+L36: `val normalizedUrl = LinkPreviewRepository.normalizeUrl(note.content)`
+    Declara `normalizedUrl` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `LinkPreviewRepository.normalizeUrl(note.content)`.
+L40: `val cachedFile = cachedLinkPreviewFile(context.applicationContext, normalizedUrl) ?: return null`
+    Realiza una operación de archivo/stream. Debe mantenerse fuera del hilo principal cuando pueda bloquear y respetar el almacenamiento permitido por Android.
+L47: `val key = sha256(normalizedUrl)`
+    Declara `key` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `sha256(normalizedUrl)`.
+L48: `val imageFile = File(File(context.filesDir, "link_previews"), "$key.img")`
+    Realiza una operación de archivo/stream. Debe mantenerse fuera del hilo principal cuando pueda bloquear y respetar el almacenamiento permitido por Android.
+L53: `val digest = MessageDigest.getInstance("SHA-256").digest(text.toByteArray(Charsets.UTF_8))`
+    Declara `digest` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `MessageDigest.getInstance("SHA-256").digest(text.toByteArray(Charsets.UTF_8))`.
+L70: `val retriever = MediaMetadataRetriever()`
+    Declara `retriever` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `MediaMetadataRetriever()`.
+L76: `val raw = retriever.getFrameAtTime(0, MediaMetadataRetriever.OPTION_CLOSEST_SYNC) ?: return null`
+    Declara `raw` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `retriever.getFrameAtTime(0, MediaMetadataRetriever.OPTION_CLOSEST_SYNC) ?: return null`.
+L90: `val path = uri.path ?: return null`
+    Declara `path` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `uri.path ?: return null`.
+L91: `val file = File(path)`
+    Realiza una operación de archivo/stream. Debe mantenerse fuera del hilo principal cuando pueda bloquear y respetar el almacenamiento permitido por Android.
+L93: `val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }`
+    Declara `bounds` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `BitmapFactory.Options().apply { inJustDecodeBounds = true }`.
+L95: `val options = BitmapFactory.Options().apply {`
+    Declara `options` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `BitmapFactory.Options().apply {`.
+L102: `val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }`
+    Declara `bounds` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `BitmapFactory.Options().apply { inJustDecodeBounds = true }`.
+L104: `val options = BitmapFactory.Options().apply {`
+    Declara `options` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `BitmapFactory.Options().apply {`.
+L116: `val scale = minOf(reqWidth.toFloat() / source.width, reqHeight.toFloat() / source.height)`
+    Declara `scale` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `minOf(reqWidth.toFloat() / source.width, reqHeight.toFloat() / source.height)`.
+L117: `val scaledWidth = (source.width * scale).toInt().coerceAtLeast(1)`
+    Declara `scaledWidth` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `(source.width * scale).toInt().coerceAtLeast(1)`.
+L118: `val scaledHeight = (source.height * scale).toInt().coerceAtLeast(1)`
+    Declara `scaledHeight` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `(source.height * scale).toInt().coerceAtLeast(1)`.
+L119: `val scaled = Bitmap.createScaledBitmap(source, scaledWidth, scaledHeight, true)`
+    Declara `scaled` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `Bitmap.createScaledBitmap(source, scaledWidth, scaledHeight, true)`.
+L120: `val output = Bitmap.createBitmap(reqWidth, reqHeight, Bitmap.Config.ARGB_8888)`
+    Declara `output` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `Bitmap.createBitmap(reqWidth, reqHeight, Bitmap.Config.ARGB_8888)`.
+L121: `val canvas = Canvas(output)`
+    Crea un lienzo de dibujo Compose. Dentro del bloque se emiten operaciones gráficas directamente sobre el `DrawScope`.
+L122: `val left = ((reqWidth - scaledWidth) / 2f)`
+    Declara `left` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `((reqWidth - scaledWidth) / 2f)`.
+L123: `val top = ((reqHeight - scaledHeight) / 2f)`
+    Declara `top` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `((reqHeight - scaledHeight) / 2f)`.
+L130: `val height = options.outHeight`
+    Declara `height` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `options.outHeight`.
+L131: `val width = options.outWidth`
+    Declara `width` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `options.outWidth`.
+L132: `var inSampleSize = 1`
+    Declara `inSampleSize` como variable mutable: el código puede reasignarla para representar estado cambiante. Parte con `1`.
+L134: `val halfHeight = height / 2`
+    Declara `halfHeight` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `height / 2`.
+L135: `val halfWidth = width / 2`
+    Declara `halfWidth` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `width / 2`.
+
+5. FUNCIONES — EXPLICACIÓN DE CADA UNA
+----------------------------------------------------------------------
+
+5.1 `firstVisualByNote` — líneas 19–25
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun firstVisualByNote(attachments: List<Attachment>): Map<Int, Attachment> {
+
+Propósito:
+    Implementa `firstVisualByNote`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `attachments: List<Attachment>`: el llamador proporciona este valor/callback a `firstVisualByNote`. Dentro del cuerpo, las líneas donde aparece `attachments` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Map<Int, Attachment>`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L19 [4 espacios] `fun firstVisualByNote(attachments: List<Attachment>): Map<Int, Attachment> {`
+      → Declara una función. El bloque de `firstVisualByNote` se detalla después instrucción por instrucción.
+  L20 [8 espacios] `return attachments`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L21 [12 espacios] `.asSequence()`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L22 [12 espacios] `.filter { (it.type == "image" || it.type == "video") && it.uri.isNotBlank() }`
+      → Conserva únicamente los elementos que cumplen la condición indicada.
+  L23 [12 espacios] `.groupBy { it.noteId }`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `.groupBy { it.noteId }`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L24 [12 espacios] `.mapValues { (_, list) -> list.first() }`
+      → Define una rama/lambda. Cuando coincide `.mapValues { (_, list)`, se ejecuta la expresión o bloque situado después de `->`.
+  L25 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.2 `loadBestPreviewBitmap` — líneas 27–31
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun loadBestPreviewBitmap(
+            context: Context,
+            note: Note,
+            attachment: Attachment?,
+            reqWidth: Int = 160,
+
+Propósito:
+    Obtiene/carga el dato indicado por el nombre de la función, aplicando los fallbacks y transformaciones visibles en su cuerpo.
+
+Parámetros/entradas:
+  - `context: Context`: el llamador proporciona este valor/callback a `loadBestPreviewBitmap`. Dentro del cuerpo, las líneas donde aparece `context` muestran exactamente cómo afecta al resultado.
+  - `note: Note`: el llamador proporciona este valor/callback a `loadBestPreviewBitmap`. Dentro del cuerpo, las líneas donde aparece `note` muestran exactamente cómo afecta al resultado.
+  - `attachment: Attachment?`: el llamador proporciona este valor/callback a `loadBestPreviewBitmap`. Dentro del cuerpo, las líneas donde aparece `attachment` muestran exactamente cómo afecta al resultado.
+  - `reqWidth: Int = 160`: el llamador proporciona este valor/callback a `loadBestPreviewBitmap`. Dentro del cuerpo, las líneas donde aparece `reqWidth` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L27 [4 espacios] `fun loadBestPreviewBitmap(`
+      → Declara una función. El bloque de `loadBestPreviewBitmap` se detalla después instrucción por instrucción.
+  L28 [8 espacios] `context: Context,`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `context: Context,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L29 [8 espacios] `note: Note,`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `note: Note,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L30 [8 espacios] `attachment: Attachment?,`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `attachment: Attachment?,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L31 [8 espacios] `reqWidth: Int = 160,`
+      → Asigna/configura `reqWidth: Int` usando `160,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+
+5.3 `cachedLinkPreviewFile` — líneas 46–50
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        private fun cachedLinkPreviewFile(context: Context, normalizedUrl: String): File? {
+
+Propósito:
+    Implementa `cachedLinkPreviewFile`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `context: Context`: el llamador proporciona este valor/callback a `cachedLinkPreviewFile`. Dentro del cuerpo, las líneas donde aparece `context` muestran exactamente cómo afecta al resultado.
+  - `normalizedUrl: String`: el llamador proporciona este valor/callback a `cachedLinkPreviewFile`. Dentro del cuerpo, las líneas donde aparece `normalizedUrl` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `File?`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L46 [4 espacios] `private fun cachedLinkPreviewFile(context: Context, normalizedUrl: String): File? {`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `cachedLinkPreviewFile` se detalla después instrucción por instrucción.
+  L47 [8 espacios] `val key = sha256(normalizedUrl)`
+      → Declara `key` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `sha256(normalizedUrl)`.
+  L48 [8 espacios] `val imageFile = File(File(context.filesDir, "link_previews"), "$key.img")`
+      → Realiza una operación de archivo/stream. Debe mantenerse fuera del hilo principal cuando pueda bloquear y respetar el almacenamiento permitido por Android.
+  L49 [8 espacios] `return imageFile.takeIf { it.isFile && it.length() > 0L }`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L50 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.4 `sha256` — líneas 52–57
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        private fun sha256(text: String): String {
+
+Propósito:
+    Implementa `sha256`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `text: String`: el llamador proporciona este valor/callback a `sha256`. Dentro del cuerpo, las líneas donde aparece `text` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `String`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L52 [4 espacios] `private fun sha256(text: String): String {`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `sha256` se detalla después instrucción por instrucción.
+  L53 [8 espacios] `val digest = MessageDigest.getInstance("SHA-256").digest(text.toByteArray(Charsets.UTF_8))`
+      → Declara `digest` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `MessageDigest.getInstance("SHA-256").digest(text.toByteArray(Charsets.UTF_8))`.
+  L54 [8 espacios] `return buildString(digest.size * 2) {`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L55 [12 espacios] `digest.forEach { append("%02x".format(it)) }`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `digest.forEach { append("%02x".format(it)) }`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L56 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L57 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.5 `loadPreviewBitmap` — líneas 59–67
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun loadPreviewBitmap(context: Context, attachment: Attachment?, reqWidth: Int = 160, reqHeight: Int = 120): Bitmap? {
+
+Propósito:
+    Obtiene/carga el dato indicado por el nombre de la función, aplicando los fallbacks y transformaciones visibles en su cuerpo.
+
+Parámetros/entradas:
+  - `context: Context`: el llamador proporciona este valor/callback a `loadPreviewBitmap`. Dentro del cuerpo, las líneas donde aparece `context` muestran exactamente cómo afecta al resultado.
+  - `attachment: Attachment?`: el llamador proporciona este valor/callback a `loadPreviewBitmap`. Dentro del cuerpo, las líneas donde aparece `attachment` muestran exactamente cómo afecta al resultado.
+  - `reqWidth: Int = 160`: el llamador proporciona este valor/callback a `loadPreviewBitmap`. Dentro del cuerpo, las líneas donde aparece `reqWidth` muestran exactamente cómo afecta al resultado.
+  - `reqHeight: Int = 120`: el llamador proporciona este valor/callback a `loadPreviewBitmap`. Dentro del cuerpo, las líneas donde aparece `reqHeight` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Bitmap?`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L59 [4 espacios] `fun loadPreviewBitmap(context: Context, attachment: Attachment?, reqWidth: Int = 160, reqHeight: Int = 120): Bitmap? {`
+      → Declara una función. El bloque de `loadPreviewBitmap` se detalla después instrucción por instrucción.
+  L60 [8 espacios] `attachment ?: return null`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `attachment ?: return null`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L61 [8 espacios] `return runCatching {`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L62 [12 espacios] `when (attachment.type) {`
+      → Abre una decisión `when`: selecciona una rama según el valor/condición, equivalente a un switch más expresivo de Kotlin.
+  L63 [16 espacios] `"video" -> loadVideoFrame(context, Uri.parse(attachment.uri), reqWidth, reqHeight)`
+      → Define una rama/lambda. Cuando coincide `"video"`, se ejecuta la expresión o bloque situado después de `->`.
+  L64 [16 espacios] `else -> decodeSampledBitmap(context.contentResolver, Uri.parse(attachment.uri), reqWidth, reqHeight)`
+      → Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+  L65 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L66 [8 espacios] `}.getOrNull()`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L67 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.6 `loadVideoFrame` — líneas 69–81
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        private fun loadVideoFrame(context: Context, uri: Uri, reqWidth: Int, reqHeight: Int): Bitmap? {
+
+Propósito:
+    Obtiene/carga el dato indicado por el nombre de la función, aplicando los fallbacks y transformaciones visibles en su cuerpo.
+
+Parámetros/entradas:
+  - `context: Context`: el llamador proporciona este valor/callback a `loadVideoFrame`. Dentro del cuerpo, las líneas donde aparece `context` muestran exactamente cómo afecta al resultado.
+  - `uri: Uri`: el llamador proporciona este valor/callback a `loadVideoFrame`. Dentro del cuerpo, las líneas donde aparece `uri` muestran exactamente cómo afecta al resultado.
+  - `reqWidth: Int`: el llamador proporciona este valor/callback a `loadVideoFrame`. Dentro del cuerpo, las líneas donde aparece `reqWidth` muestran exactamente cómo afecta al resultado.
+  - `reqHeight: Int`: el llamador proporciona este valor/callback a `loadVideoFrame`. Dentro del cuerpo, las líneas donde aparece `reqHeight` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Bitmap?`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L69 [4 espacios] `private fun loadVideoFrame(context: Context, uri: Uri, reqWidth: Int, reqHeight: Int): Bitmap? {`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `loadVideoFrame` se detalla después instrucción por instrucción.
+  L70 [8 espacios] `val retriever = MediaMetadataRetriever()`
+      → Declara `retriever` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `MediaMetadataRetriever()`.
+  L71 [8 espacios] `return try {`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L72 [12 espacios] `when (uri.scheme) {`
+      → Abre una decisión `when`: selecciona una rama según el valor/condición, equivalente a un switch más expresivo de Kotlin.
+  L73 [16 espacios] `"file" -> retriever.setDataSource(uri.path)`
+      → Define una rama/lambda. Cuando coincide `"file"`, se ejecuta la expresión o bloque situado después de `->`.
+  L74 [16 espacios] `else -> retriever.setDataSource(context, uri)`
+      → Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+  L75 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L76 [12 espacios] `val raw = retriever.getFrameAtTime(0, MediaMetadataRetriever.OPTION_CLOSEST_SYNC) ?: return null`
+      → Declara `raw` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `retriever.getFrameAtTime(0, MediaMetadataRetriever.OPTION_CLOSEST_SYNC) ?: return null`.
+  L77 [12 espacios] `scaleFitInside(raw, reqWidth, reqHeight)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L78 [8 espacios] `} finally {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L79 [12 espacios] `runCatching { retriever.release() }`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `runCatching { retriever.release() }`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L80 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L81 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.7 `decodeSampledBitmap` — líneas 83–112
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        private fun decodeSampledBitmap(
+            resolver: ContentResolver,
+            uri: Uri,
+            reqWidth: Int,
+            reqHeight: Int
+        ): Bitmap? {
+
+Propósito:
+    Implementa `decodeSampledBitmap`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `resolver: ContentResolver`: el llamador proporciona este valor/callback a `decodeSampledBitmap`. Dentro del cuerpo, las líneas donde aparece `resolver` muestran exactamente cómo afecta al resultado.
+  - `uri: Uri`: el llamador proporciona este valor/callback a `decodeSampledBitmap`. Dentro del cuerpo, las líneas donde aparece `uri` muestran exactamente cómo afecta al resultado.
+  - `reqWidth: Int`: el llamador proporciona este valor/callback a `decodeSampledBitmap`. Dentro del cuerpo, las líneas donde aparece `reqWidth` muestran exactamente cómo afecta al resultado.
+  - `reqHeight: Int`: el llamador proporciona este valor/callback a `decodeSampledBitmap`. Dentro del cuerpo, las líneas donde aparece `reqHeight` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Bitmap?`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L83 [4 espacios] `private fun decodeSampledBitmap(`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `decodeSampledBitmap` se detalla después instrucción por instrucción.
+  L84 [8 espacios] `resolver: ContentResolver,`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `resolver: ContentResolver,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L85 [8 espacios] `uri: Uri,`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `uri: Uri,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L86 [8 espacios] `reqWidth: Int,`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `reqWidth: Int,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L87 [8 espacios] `reqHeight: Int`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `reqHeight: Int`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L88 [4 espacios] `): Bitmap? {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L89 [8 espacios] `if (uri.scheme == "file") {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `uri.scheme == "file"`.
+  L90 [12 espacios] `val path = uri.path ?: return null`
+      → Declara `path` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `uri.path ?: return null`.
+  L91 [12 espacios] `val file = File(path)`
+      → Realiza una operación de archivo/stream. Debe mantenerse fuera del hilo principal cuando pueda bloquear y respetar el almacenamiento permitido por Android.
+  L92 [12 espacios] `if (!file.exists()) return null`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `!file.exists()`.
+  L93 [12 espacios] `val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }`
+      → Declara `bounds` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `BitmapFactory.Options().apply { inJustDecodeBounds = true }`.
+  L94 [12 espacios] `BitmapFactory.decodeFile(path, bounds)`
+      → Realiza una operación de archivo/stream. Debe mantenerse fuera del hilo principal cuando pueda bloquear y respetar el almacenamiento permitido por Android.
+  L95 [12 espacios] `val options = BitmapFactory.Options().apply {`
+      → Declara `options` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `BitmapFactory.Options().apply {`.
+  L96 [16 espacios] `inSampleSize = calculateInSampleSize(bounds, reqWidth, reqHeight)`
+      → Asigna/configura `inSampleSize` usando `calculateInSampleSize(bounds, reqWidth, reqHeight)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L97 [16 espacios] `inPreferredConfig = Bitmap.Config.RGB_565`
+      → Asigna/configura `inPreferredConfig` usando `Bitmap.Config.RGB_565`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L98 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L99 [12 espacios] `return BitmapFactory.decodeFile(path, options)?.let { scaleFitInside(it, reqWidth, reqHeight) }`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L100 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L102 [8 espacios] `val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }`
+      → Declara `bounds` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `BitmapFactory.Options().apply { inJustDecodeBounds = true }`.
+  L103 [8 espacios] `resolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it, null, bounds) }`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `resolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it, null, bounds) }`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L104 [8 espacios] `val options = BitmapFactory.Options().apply {`
+      → Declara `options` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `BitmapFactory.Options().apply {`.
+  L105 [12 espacios] `inSampleSize = calculateInSampleSize(bounds, reqWidth, reqHeight)`
+      → Asigna/configura `inSampleSize` usando `calculateInSampleSize(bounds, reqWidth, reqHeight)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L106 [12 espacios] `inPreferredConfig = Bitmap.Config.RGB_565`
+      → Asigna/configura `inPreferredConfig` usando `Bitmap.Config.RGB_565`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L107 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L108 [8 espacios] `resolver.openInputStream(uri)?.use { stream: InputStream ->`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `resolver.openInputStream(uri)?.use { stream: InputStream ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L109 [12 espacios] `return BitmapFactory.decodeStream(stream, null, options)?.let { scaleFitInside(it, reqWidth, reqHeight) }`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L110 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L111 [8 espacios] `return null`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L112 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.8 `scaleFitInside` — líneas 114–127
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        private fun scaleFitInside(source: Bitmap, reqWidth: Int, reqHeight: Int): Bitmap {
+
+Propósito:
+    Implementa `scaleFitInside`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `source: Bitmap`: el llamador proporciona este valor/callback a `scaleFitInside`. Dentro del cuerpo, las líneas donde aparece `source` muestran exactamente cómo afecta al resultado.
+  - `reqWidth: Int`: el llamador proporciona este valor/callback a `scaleFitInside`. Dentro del cuerpo, las líneas donde aparece `reqWidth` muestran exactamente cómo afecta al resultado.
+  - `reqHeight: Int`: el llamador proporciona este valor/callback a `scaleFitInside`. Dentro del cuerpo, las líneas donde aparece `reqHeight` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Bitmap`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L114 [4 espacios] `private fun scaleFitInside(source: Bitmap, reqWidth: Int, reqHeight: Int): Bitmap {`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `scaleFitInside` se detalla después instrucción por instrucción.
+  L115 [8 espacios] `if (source.width <= 0 || source.height <= 0 || reqWidth <= 0 || reqHeight <= 0) return source`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `source.width <= 0 || source.height <= 0 || reqWidth <= 0 || reqHeight <= 0`.
+  L116 [8 espacios] `val scale = minOf(reqWidth.toFloat() / source.width, reqHeight.toFloat() / source.height)`
+      → Declara `scale` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `minOf(reqWidth.toFloat() / source.width, reqHeight.toFloat() / source.height)`.
+  L117 [8 espacios] `val scaledWidth = (source.width * scale).toInt().coerceAtLeast(1)`
+      → Declara `scaledWidth` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `(source.width * scale).toInt().coerceAtLeast(1)`.
+  L118 [8 espacios] `val scaledHeight = (source.height * scale).toInt().coerceAtLeast(1)`
+      → Declara `scaledHeight` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `(source.height * scale).toInt().coerceAtLeast(1)`.
+  L119 [8 espacios] `val scaled = Bitmap.createScaledBitmap(source, scaledWidth, scaledHeight, true)`
+      → Declara `scaled` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `Bitmap.createScaledBitmap(source, scaledWidth, scaledHeight, true)`.
+  L120 [8 espacios] `val output = Bitmap.createBitmap(reqWidth, reqHeight, Bitmap.Config.ARGB_8888)`
+      → Declara `output` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `Bitmap.createBitmap(reqWidth, reqHeight, Bitmap.Config.ARGB_8888)`.
+  L121 [8 espacios] `val canvas = Canvas(output)`
+      → Crea un lienzo de dibujo Compose. Dentro del bloque se emiten operaciones gráficas directamente sobre el `DrawScope`.
+  L122 [8 espacios] `val left = ((reqWidth - scaledWidth) / 2f)`
+      → Declara `left` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `((reqWidth - scaledWidth) / 2f)`.
+  L123 [8 espacios] `val top = ((reqHeight - scaledHeight) / 2f)`
+      → Declara `top` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `((reqHeight - scaledHeight) / 2f)`.
+  L124 [8 espacios] `canvas.drawBitmap(scaled, left, top, null)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L125 [8 espacios] `if (scaled !== source) runCatching { scaled.recycle() }`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `scaled !== source) runCatching { scaled.recycle(`.
+  L126 [8 espacios] `return output`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L127 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.9 `calculateInSampleSize` — líneas 129–141
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        private fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {
+
+Propósito:
+    Calcula un valor derivado sin que el llamador tenga que conocer la regla interna; revisa cada rama del cuerpo para ver el criterio exacto.
+
+Parámetros/entradas:
+  - `options: BitmapFactory.Options`: el llamador proporciona este valor/callback a `calculateInSampleSize`. Dentro del cuerpo, las líneas donde aparece `options` muestran exactamente cómo afecta al resultado.
+  - `reqWidth: Int`: el llamador proporciona este valor/callback a `calculateInSampleSize`. Dentro del cuerpo, las líneas donde aparece `reqWidth` muestran exactamente cómo afecta al resultado.
+  - `reqHeight: Int`: el llamador proporciona este valor/callback a `calculateInSampleSize`. Dentro del cuerpo, las líneas donde aparece `reqHeight` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Int`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L129 [4 espacios] `private fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `calculateInSampleSize` se detalla después instrucción por instrucción.
+  L130 [8 espacios] `val height = options.outHeight`
+      → Declara `height` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `options.outHeight`.
+  L131 [8 espacios] `val width = options.outWidth`
+      → Declara `width` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `options.outWidth`.
+  L132 [8 espacios] `var inSampleSize = 1`
+      → Declara `inSampleSize` como variable mutable: el código puede reasignarla para representar estado cambiante. Parte con `1`.
+  L133 [8 espacios] `if (height > reqHeight || width > reqWidth) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `height > reqHeight || width > reqWidth`.
+  L134 [12 espacios] `val halfHeight = height / 2`
+      → Declara `halfHeight` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `height / 2`.
+  L135 [12 espacios] `val halfWidth = width / 2`
+      → Declara `halfWidth` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `width / 2`.
+  L136 [12 espacios] `while ((halfHeight / inSampleSize) >= reqHeight && (halfWidth / inSampleSize) >= reqWidth) {`
+      → Inicia un bucle `while`; repite el bloque mientras la condición siga siendo verdadera.
+  L137 [16 espacios] `inSampleSize *= 2`
+      → Asigna/configura `inSampleSize *` usando `2`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L138 [12 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L139 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L140 [8 espacios] `return inSampleSize.coerceAtLeast(1)`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L141 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+6. EXPLICACIÓN COMPLETA LÍNEA POR LÍNEA
+----------------------------------------------------------------------
+Esta sección no omite líneas ejecutables. Repite incluso partes ya explicadas en funciones para poder leer el archivo de arriba abajo sin saltar entre secciones.
+L1: `package com.example.mynotes.widget`
+    Declara que este archivo pertenece al package `com.example.mynotes.widget`; esto determina su namespace Kotlin y cómo lo importan otros archivos.
+L3: `import android.content.ContentResolver`
+    Importa `android.content.ContentResolver` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L4: `import android.content.Context`
+    Importa `android.content.Context` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L5: `import android.graphics.Bitmap`
+    Importa `android.graphics.Bitmap` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L6: `import android.graphics.BitmapFactory`
+    Importa `android.graphics.BitmapFactory` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L7: `import android.graphics.Canvas`
+    Importa `android.graphics.Canvas` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L8: `import android.media.MediaMetadataRetriever`
+    Importa `android.media.MediaMetadataRetriever` para usar reproducción/control de audio del sistema.
+L9: `import android.net.Uri`
+    Importa `android.net.Uri` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L10: `import com.example.mynotes.data.Attachment`
+    Importa `com.example.mynotes.data.Attachment`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L11: `import com.example.mynotes.data.Note`
+    Importa `com.example.mynotes.data.Note`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L12: `import com.example.mynotes.links.LinkPreviewRepository`
+    Importa `com.example.mynotes.links.LinkPreviewRepository`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L13: `import java.io.File`
+    Importa `java.io.File` de la biblioteca estándar/JVM para operaciones de lenguaje, fechas, colecciones, I/O o utilidades.
+L14: `import java.io.InputStream`
+    Importa `java.io.InputStream` de la biblioteca estándar/JVM para operaciones de lenguaje, fechas, colecciones, I/O o utilidades.
+L15: `import java.security.MessageDigest`
+    Importa `java.security.MessageDigest` de la biblioteca estándar/JVM para operaciones de lenguaje, fechas, colecciones, I/O o utilidades.
+L17: `object WidgetMediaPreview {`
+    Declara object `WidgetMediaPreview`. A partir de aquí las propiedades y funciones hasta su llave de cierre pertenecen a este tipo.
+L19: `fun firstVisualByNote(attachments: List<Attachment>): Map<Int, Attachment> {`
+    Declara una función. El bloque de `firstVisualByNote` se detalla después instrucción por instrucción.
+L20: `return attachments`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L21: `.asSequence()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L22: `.filter { (it.type == "image" || it.type == "video") && it.uri.isNotBlank() }`
+    Conserva únicamente los elementos que cumplen la condición indicada.
+L23: `.groupBy { it.noteId }`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `.groupBy { it.noteId }`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L24: `.mapValues { (_, list) -> list.first() }`
+    Define una rama/lambda. Cuando coincide `.mapValues { (_, list)`, se ejecuta la expresión o bloque situado después de `->`.
+L25: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L27: `fun loadBestPreviewBitmap(`
+    Declara una función. El bloque de `loadBestPreviewBitmap` se detalla después instrucción por instrucción.
+L28: `context: Context,`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `context: Context,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L29: `note: Note,`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `note: Note,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L30: `attachment: Attachment?,`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `attachment: Attachment?,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L31: `reqWidth: Int = 160,`
+    Asigna/configura `reqWidth: Int` usando `160,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L32: `reqHeight: Int = 120`
+    Asigna/configura `reqHeight: Int` usando `120`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L33: `): Bitmap? {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L34: `loadPreviewBitmap(context, attachment, reqWidth, reqHeight)?.let { return it }`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `loadPreviewBitmap(context, attachment, reqWidth, reqHeight)?.let { return it }`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L36: `val normalizedUrl = LinkPreviewRepository.normalizeUrl(note.content)`
+    Declara `normalizedUrl` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `LinkPreviewRepository.normalizeUrl(note.content)`.
+L37: `?: LinkPreviewRepository.normalizeUrl(note.title)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L38: `?: return null`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `?: return null`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L40: `val cachedFile = cachedLinkPreviewFile(context.applicationContext, normalizedUrl) ?: return null`
+    Realiza una operación de archivo/stream. Debe mantenerse fuera del hilo principal cuando pueda bloquear y respetar el almacenamiento permitido por Android.
+L41: `return runCatching {`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L42: `decodeSampledBitmap(context.contentResolver, Uri.fromFile(cachedFile), reqWidth, reqHeight)`
+    Opera con URI/ContentResolver de Android para acceder a contenido compartido sin asumir una ruta de archivo directa.
+L43: `}.getOrNull()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L44: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L46: `private fun cachedLinkPreviewFile(context: Context, normalizedUrl: String): File? {`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `cachedLinkPreviewFile` se detalla después instrucción por instrucción.
+L47: `val key = sha256(normalizedUrl)`
+    Declara `key` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `sha256(normalizedUrl)`.
+L48: `val imageFile = File(File(context.filesDir, "link_previews"), "$key.img")`
+    Realiza una operación de archivo/stream. Debe mantenerse fuera del hilo principal cuando pueda bloquear y respetar el almacenamiento permitido por Android.
+L49: `return imageFile.takeIf { it.isFile && it.length() > 0L }`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L50: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L52: `private fun sha256(text: String): String {`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `sha256` se detalla después instrucción por instrucción.
+L53: `val digest = MessageDigest.getInstance("SHA-256").digest(text.toByteArray(Charsets.UTF_8))`
+    Declara `digest` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `MessageDigest.getInstance("SHA-256").digest(text.toByteArray(Charsets.UTF_8))`.
+L54: `return buildString(digest.size * 2) {`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L55: `digest.forEach { append("%02x".format(it)) }`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `digest.forEach { append("%02x".format(it)) }`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L56: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L57: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L59: `fun loadPreviewBitmap(context: Context, attachment: Attachment?, reqWidth: Int = 160, reqHeight: Int = 120): Bitmap? {`
+    Declara una función. El bloque de `loadPreviewBitmap` se detalla después instrucción por instrucción.
+L60: `attachment ?: return null`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `attachment ?: return null`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L61: `return runCatching {`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L62: `when (attachment.type) {`
+    Abre una decisión `when`: selecciona una rama según el valor/condición, equivalente a un switch más expresivo de Kotlin.
+L63: `"video" -> loadVideoFrame(context, Uri.parse(attachment.uri), reqWidth, reqHeight)`
+    Define una rama/lambda. Cuando coincide `"video"`, se ejecuta la expresión o bloque situado después de `->`.
+L64: `else -> decodeSampledBitmap(context.contentResolver, Uri.parse(attachment.uri), reqWidth, reqHeight)`
+    Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+L65: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L66: `}.getOrNull()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L67: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L69: `private fun loadVideoFrame(context: Context, uri: Uri, reqWidth: Int, reqHeight: Int): Bitmap? {`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `loadVideoFrame` se detalla después instrucción por instrucción.
+L70: `val retriever = MediaMetadataRetriever()`
+    Declara `retriever` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `MediaMetadataRetriever()`.
+L71: `return try {`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L72: `when (uri.scheme) {`
+    Abre una decisión `when`: selecciona una rama según el valor/condición, equivalente a un switch más expresivo de Kotlin.
+L73: `"file" -> retriever.setDataSource(uri.path)`
+    Define una rama/lambda. Cuando coincide `"file"`, se ejecuta la expresión o bloque situado después de `->`.
+L74: `else -> retriever.setDataSource(context, uri)`
+    Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+L75: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L76: `val raw = retriever.getFrameAtTime(0, MediaMetadataRetriever.OPTION_CLOSEST_SYNC) ?: return null`
+    Declara `raw` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `retriever.getFrameAtTime(0, MediaMetadataRetriever.OPTION_CLOSEST_SYNC) ?: return null`.
+L77: `scaleFitInside(raw, reqWidth, reqHeight)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L78: `} finally {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L79: `runCatching { retriever.release() }`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `runCatching { retriever.release() }`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L80: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L81: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L83: `private fun decodeSampledBitmap(`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `decodeSampledBitmap` se detalla después instrucción por instrucción.
+L84: `resolver: ContentResolver,`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `resolver: ContentResolver,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L85: `uri: Uri,`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `uri: Uri,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L86: `reqWidth: Int,`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `reqWidth: Int,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L87: `reqHeight: Int`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `reqHeight: Int`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L88: `): Bitmap? {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L89: `if (uri.scheme == "file") {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `uri.scheme == "file"`.
+L90: `val path = uri.path ?: return null`
+    Declara `path` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `uri.path ?: return null`.
+L91: `val file = File(path)`
+    Realiza una operación de archivo/stream. Debe mantenerse fuera del hilo principal cuando pueda bloquear y respetar el almacenamiento permitido por Android.
+L92: `if (!file.exists()) return null`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `!file.exists()`.
+L93: `val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }`
+    Declara `bounds` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `BitmapFactory.Options().apply { inJustDecodeBounds = true }`.
+L94: `BitmapFactory.decodeFile(path, bounds)`
+    Realiza una operación de archivo/stream. Debe mantenerse fuera del hilo principal cuando pueda bloquear y respetar el almacenamiento permitido por Android.
+L95: `val options = BitmapFactory.Options().apply {`
+    Declara `options` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `BitmapFactory.Options().apply {`.
+L96: `inSampleSize = calculateInSampleSize(bounds, reqWidth, reqHeight)`
+    Asigna/configura `inSampleSize` usando `calculateInSampleSize(bounds, reqWidth, reqHeight)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L97: `inPreferredConfig = Bitmap.Config.RGB_565`
+    Asigna/configura `inPreferredConfig` usando `Bitmap.Config.RGB_565`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L98: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L99: `return BitmapFactory.decodeFile(path, options)?.let { scaleFitInside(it, reqWidth, reqHeight) }`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L100: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L102: `val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }`
+    Declara `bounds` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `BitmapFactory.Options().apply { inJustDecodeBounds = true }`.
+L103: `resolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it, null, bounds) }`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `resolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it, null, bounds) }`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L104: `val options = BitmapFactory.Options().apply {`
+    Declara `options` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `BitmapFactory.Options().apply {`.
+L105: `inSampleSize = calculateInSampleSize(bounds, reqWidth, reqHeight)`
+    Asigna/configura `inSampleSize` usando `calculateInSampleSize(bounds, reqWidth, reqHeight)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L106: `inPreferredConfig = Bitmap.Config.RGB_565`
+    Asigna/configura `inPreferredConfig` usando `Bitmap.Config.RGB_565`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L107: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L108: `resolver.openInputStream(uri)?.use { stream: InputStream ->`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `resolver.openInputStream(uri)?.use { stream: InputStream ->`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L109: `return BitmapFactory.decodeStream(stream, null, options)?.let { scaleFitInside(it, reqWidth, reqHeight) }`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L110: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L111: `return null`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L112: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L114: `private fun scaleFitInside(source: Bitmap, reqWidth: Int, reqHeight: Int): Bitmap {`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `scaleFitInside` se detalla después instrucción por instrucción.
+L115: `if (source.width <= 0 || source.height <= 0 || reqWidth <= 0 || reqHeight <= 0) return source`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `source.width <= 0 || source.height <= 0 || reqWidth <= 0 || reqHeight <= 0`.
+L116: `val scale = minOf(reqWidth.toFloat() / source.width, reqHeight.toFloat() / source.height)`
+    Declara `scale` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `minOf(reqWidth.toFloat() / source.width, reqHeight.toFloat() / source.height)`.
+L117: `val scaledWidth = (source.width * scale).toInt().coerceAtLeast(1)`
+    Declara `scaledWidth` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `(source.width * scale).toInt().coerceAtLeast(1)`.
+L118: `val scaledHeight = (source.height * scale).toInt().coerceAtLeast(1)`
+    Declara `scaledHeight` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `(source.height * scale).toInt().coerceAtLeast(1)`.
+L119: `val scaled = Bitmap.createScaledBitmap(source, scaledWidth, scaledHeight, true)`
+    Declara `scaled` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `Bitmap.createScaledBitmap(source, scaledWidth, scaledHeight, true)`.
+L120: `val output = Bitmap.createBitmap(reqWidth, reqHeight, Bitmap.Config.ARGB_8888)`
+    Declara `output` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `Bitmap.createBitmap(reqWidth, reqHeight, Bitmap.Config.ARGB_8888)`.
+L121: `val canvas = Canvas(output)`
+    Crea un lienzo de dibujo Compose. Dentro del bloque se emiten operaciones gráficas directamente sobre el `DrawScope`.
+L122: `val left = ((reqWidth - scaledWidth) / 2f)`
+    Declara `left` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `((reqWidth - scaledWidth) / 2f)`.
+L123: `val top = ((reqHeight - scaledHeight) / 2f)`
+    Declara `top` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `((reqHeight - scaledHeight) / 2f)`.
+L124: `canvas.drawBitmap(scaled, left, top, null)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L125: `if (scaled !== source) runCatching { scaled.recycle() }`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `scaled !== source) runCatching { scaled.recycle(`.
+L126: `return output`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L127: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L129: `private fun calculateInSampleSize(options: BitmapFactory.Options, reqWidth: Int, reqHeight: Int): Int {`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `calculateInSampleSize` se detalla después instrucción por instrucción.
+L130: `val height = options.outHeight`
+    Declara `height` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `options.outHeight`.
+L131: `val width = options.outWidth`
+    Declara `width` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `options.outWidth`.
+L132: `var inSampleSize = 1`
+    Declara `inSampleSize` como variable mutable: el código puede reasignarla para representar estado cambiante. Parte con `1`.
+L133: `if (height > reqHeight || width > reqWidth) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `height > reqHeight || width > reqWidth`.
+L134: `val halfHeight = height / 2`
+    Declara `halfHeight` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `height / 2`.
+L135: `val halfWidth = width / 2`
+    Declara `halfWidth` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `width / 2`.
+L136: `while ((halfHeight / inSampleSize) >= reqHeight && (halfWidth / inSampleSize) >= reqWidth) {`
+    Inicia un bucle `while`; repite el bloque mientras la condición siga siendo verdadera.
+L137: `inSampleSize *= 2`
+    Asigna/configura `inSampleSize *` usando `2`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L138: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L139: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L140: `return inSampleSize.coerceAtLeast(1)`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L141: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L142: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+7. RECURSOS ANDROID REFERENCIADOS
+----------------------------------------------------------------------
+- No hay referencias directas `R.*` en este archivo.
+
+8. QUIÉN USA ESTE COMPONENTE
+----------------------------------------------------------------------
+- `WidgetMediaPreview` aparece también en 3 archivo(s):
+    - app/src/main/java/com/example/mynotes/widget/FavoritesWidgetProvider.kt
+    - app/src/main/java/com/example/mynotes/widget/FocusNoteWidgetProvider.kt
+    - app/src/main/java/com/example/mynotes/widget/RecentNotesWidgetProvider.kt
+
+9. QUÉ PUEDE ROMPERSE SI LO MODIFICAS
+----------------------------------------------------------------------
+- Adjuntos/previews son una ruta protegida del proyecto: cambios en decodificación, caché, tamaño, precarga o URI pueden alterar visualización o rendimiento. Modificar solo con una prueba explícita de imagen/vídeo/audio/enlace.
+- Los widgets usan RemoteViews, no Compose. API 28/Samsung limita propiedades y tintes; no asumir que cualquier API visual de Compose/Views funciona dentro del launcher.
+
+10. CHECKLIST DE PRUEBA DESPUÉS DE MODIFICAR ESTE ARCHIVO
+----------------------------------------------------------------------
+- Compilar `assembleDebug` y resolver primero errores de Kotlin/AAPT.
+- Abrir la pantalla/flujo relacionado y comprobar ida y vuelta (back) sin estado duplicado.
+- Cambiar tema/paleta y verificar contraste si este archivo dibuja UI.
+- Añadir el widget desde el launcher en API 28/Samsung, cambiar idioma/paleta y forzar actualización.
+- Probar imagen, vídeo, audio y URL; hacer scroll rápido y confirmar que previews/miniaturas no parpadean ni cambian calidad.
+
+==============================================================================================================
+FIN DEL ARCHIVO
+==============================================================================================================

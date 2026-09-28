@@ -2,9 +2,7 @@ package com.example.mynotes
 
 import android.content.Context
 import android.content.Intent
-import android.content.res.Configuration
 import android.media.AudioManager
-import android.os.Build
 import android.os.Bundle
 import android.net.Uri
 import androidx.activity.ComponentActivity
@@ -22,9 +20,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.core.view.ViewCompat
-import androidx.core.view.WindowCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.mynotes.data.AppDatabase
@@ -47,16 +43,15 @@ import com.example.mynotes.ui.components.ConfigurationModeDialog
 import com.example.mynotes.ui.motion.AnimatedScreenEntry
 import com.example.mynotes.ui.motion.ConfigurableAnimatedContent
 import com.example.mynotes.ui.SettingsScreen
-import com.example.mynotes.ui.sound.UiSoundPlayer
 import com.example.mynotes.ui.theme.MyNotesTheme
 import com.example.mynotes.ui.theme.appFontFamily
+import com.example.mynotes.ui.theme.effectiveDarkTheme
 import com.example.mynotes.viewmodel.NoteViewModel
 import com.example.mynotes.viewmodel.SettingsViewModel
 import com.example.mynotes.widget.WidgetActions
 import com.example.mynotes.widget.MyNotesWidgetUpdater
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.util.Locale
 
 private enum class AppDestination {
     NOTES, SETTINGS, DEVELOPMENT_INFO, SOURCE_CODE_INFO, EDITOR, DRAWING, REMINDERS, DETAIL
@@ -88,11 +83,6 @@ class MainActivity : ComponentActivity() {
     private var systemStreamMutedByMyNotes = false
     private var systemStreamWasMutedBeforeIme = false
     private var activityIsResumed = false
-    companion object {
-        private const val LOCALE_PREFS = "locale_prefs"
-        private const val LANGUAGE_KEY = "language"
-        private const val DEFAULT_LANGUAGE = "system"
-    }
     /*
      * Texto recibido mediante Compartir desde otras aplicaciones
      * (navegador, YouTube, Spotify, noticias, etc.).
@@ -121,42 +111,34 @@ class MainActivity : ComponentActivity() {
         }
     }
 
+    private fun prepareWidgetNavigation(
+        newNote: Boolean = false,
+        noteId: Int? = null,
+        collection: String? = null,
+        search: Boolean = false
+    ) {
+        clearPendingShare()
+        pendingWidgetNewNote = newNote
+        pendingWidgetNoteId = noteId
+        pendingWidgetCollection = collection
+        pendingWidgetSearch = search
+        widgetNavigationToken++
+    }
+
     private fun handleWidgetIntent(incomingIntent: Intent?) {
         when (incomingIntent?.action) {
-            WidgetActions.ACTION_NEW_NOTE -> {
-                clearPendingShare()
-                pendingWidgetCollection = null
-                pendingWidgetSearch = false
-                pendingWidgetNoteId = null
-                pendingWidgetNewNote = true
-                widgetNavigationToken++
-            }
-            WidgetActions.ACTION_OPEN_NOTE -> {
-                clearPendingShare()
-                pendingWidgetCollection = null
-                pendingWidgetSearch = false
-                pendingWidgetNewNote = false
-                pendingWidgetNoteId = incomingIntent.getIntExtra(WidgetActions.EXTRA_NOTE_ID, -1)
-                    .takeIf { it > 0 }
-                widgetNavigationToken++
-            }
-            WidgetActions.ACTION_OPEN_COLLECTION -> {
-                clearPendingShare()
-                pendingWidgetNewNote = false
-                pendingWidgetNoteId = null
-                pendingWidgetSearch = false
-                pendingWidgetCollection = incomingIntent.getStringExtra(WidgetActions.EXTRA_COLLECTION)
+            WidgetActions.ACTION_NEW_NOTE -> prepareWidgetNavigation(newNote = true)
+            WidgetActions.ACTION_OPEN_NOTE -> prepareWidgetNavigation(
+                noteId = incomingIntent.getIntExtra(WidgetActions.EXTRA_NOTE_ID, -1).takeIf { it > 0 }
+            )
+            WidgetActions.ACTION_OPEN_COLLECTION -> prepareWidgetNavigation(
+                collection = incomingIntent.getStringExtra(WidgetActions.EXTRA_COLLECTION)
                     ?: WidgetActions.COLLECTION_ALL
-                widgetNavigationToken++
-            }
-            WidgetActions.ACTION_SEARCH -> {
-                clearPendingShare()
-                pendingWidgetNewNote = false
-                pendingWidgetNoteId = null
-                pendingWidgetCollection = WidgetActions.COLLECTION_ALL
-                pendingWidgetSearch = true
-                widgetNavigationToken++
-            }
+            )
+            WidgetActions.ACTION_SEARCH -> prepareWidgetNavigation(
+                collection = WidgetActions.COLLECTION_ALL,
+                search = true
+            )
         }
     }
     private fun handleIncomingShare(incomingIntent: Intent?) {
@@ -185,21 +167,7 @@ class MainActivity : ComponentActivity() {
      * usando ComponentActivity.
      */
     override fun attachBaseContext(newBase: Context) {
-        val preferences = newBase.getSharedPreferences(LOCALE_PREFS, Context.MODE_PRIVATE)
-        val language = preferences.getString(LANGUAGE_KEY, DEFAULT_LANGUAGE) ?: DEFAULT_LANGUAGE
-        if (language == "system") {
-            // En una instalación nueva MyNotes respeta directamente el idioma
-            // configurado en Android. Al no forzar Locale, el sistema elige el
-            // recurso values-* compatible y usa el fallback normal de Android.
-            super.attachBaseContext(newBase)
-            return
-        }
-        val locale = Locale.forLanguageTag(language)
-        Locale.setDefault(locale)
-        val configuration = Configuration(newBase.resources.configuration)
-        configuration.setLocale(locale)
-        val localizedContext = newBase.createConfigurationContext(configuration)
-        super.attachBaseContext(localizedContext)
+        super.attachBaseContext(newBase.withSavedAppLocale())
     }
     private fun changeAppLanguage(language: String) {
         /*
@@ -210,7 +178,7 @@ class MainActivity : ComponentActivity() {
          * commit() es intencional: necesitamos que el idioma
          * ya esté guardado antes de recreate().
          */
-        getSharedPreferences(LOCALE_PREFS, Context.MODE_PRIVATE).edit().putString(LANGUAGE_KEY, language).commit()
+        saveAppLanguage(language)
         MyNotesWidgetUpdater.requestUpdate(this)
         recreate()
     }
@@ -320,39 +288,6 @@ class MainActivity : ComponentActivity() {
         }
         ViewCompat.requestApplyInsets(window.decorView)
     }
-    private fun applyAndroidNavigationBarPolicy() {
-        val controller = WindowCompat.getInsetsController(window, window.decorView)
-        /*
-         * En pantalla completa conservamos el modo inmersivo. En modo
-         * multiventana (disponible desde Android 7) dejamos visible la barra
-         * del sistema: ocultarla dentro de split-screen/desktop windowing
-         * produce saltos de tamaño y controles inaccesibles en algunos OEM.
-         */
-        val isMultiWindow = Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && isInMultiWindowMode
-        if (isMultiWindow) {
-            controller.show(WindowInsetsCompat.Type.navigationBars())
-        } else {
-            controller.hide(WindowInsetsCompat.Type.navigationBars())
-            controller.systemBarsBehavior = WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-        }
-        /*
-         * En Android 7.0/7.1 no existe el modo de iconos oscuros para la
-         * barra de navegación. Cuando el sistema la muestra usamos negro
-         * para garantizar contraste con los botones blancos.
-         */
-        if (Build.VERSION.SDK_INT <
-            Build.VERSION_CODES.O) {
-            @Suppress("DEPRECATION")
-            window.navigationBarColor = android.graphics.Color.BLACK
-        }
-    }
-    private fun applySystemBarAppearance(darkMode: Boolean) {
-        val controller = WindowCompat.getInsetsController(window, window.decorView)
-        controller.isAppearanceLightStatusBars = !darkMode
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            controller.isAppearanceLightNavigationBars = !darkMode
-        }
-    }
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
         if (hasFocus) {
@@ -435,24 +370,7 @@ class MainActivity : ComponentActivity() {
              * tamaño de fuente o tema podía volver a ejecutar también la ruta
              * de SoundPool aunque el audio no hubiera cambiado.
              */
-            LaunchedEffect(
-                settings.soundEffectsEnabled,
-                settings.soundEffectsVolume,
-                settings.soundEffectsTheme,
-                settings.hapticEffectsEnabled,
-                settings.hapticEffectsIntensity,
-                settings.hapticEffectsStyle
-            ) {
-                UiSoundPlayer.configure(
-                    context = this@MainActivity,
-                    enabled = settings.soundEffectsEnabled,
-                    volumePercent = settings.soundEffectsVolume,
-                    theme = settings.soundEffectsTheme,
-                    hapticEnabled = settings.hapticEffectsEnabled,
-                    hapticIntensityPercent = settings.hapticEffectsIntensity,
-                    hapticStyle = settings.hapticEffectsStyle
-                )
-            }
+            SyncUiFeedback(context = this@MainActivity, settings = settings)
 
             /*
              * El mute temporal del clic del teclado solo depende del switch
@@ -505,11 +423,7 @@ class MainActivity : ComponentActivity() {
              * teléfono configurado en oscuro.
              */
             
-            val effectiveDarkTheme = if (settings.configurationMode == "advanced") {
-                settings.darkMode
-            } else {
-                systemDarkTheme
-            }
+            val effectiveDarkTheme = settings.effectiveDarkTheme(systemDarkTheme)
             LaunchedEffect(effectiveDarkTheme) {
                 applySystemBarAppearance(effectiveDarkTheme)
             }
@@ -518,40 +432,22 @@ class MainActivity : ComponentActivity() {
              * adecuada y escoge el modo compatible sin cambiar
              * voluntariamente la resolución física.
              */
-            LaunchedEffect(settings.performanceMode) {
-                DisplayPerformanceController.requestForPerformanceMode(window = window, performanceMode = settings.performanceMode)
-            }
+            SyncDisplayPerformance(window = window, performanceMode = settings.performanceMode)
             /*
              * ==========================================
              * NAVEGACIÓN
              * ==========================================
              */
-            var showEditor by remember {
-                mutableStateOf(false)
-            }
-            var showDrawing by remember {
-                mutableStateOf(false)
-            }
-            var showReminders by remember {
-                mutableStateOf(false)
-            }
-            var createReminderOnOpen by remember {
-                mutableStateOf(false)
-            }
-            var showSettings by remember {
-                mutableStateOf(false)
-            }
+            var showEditor by remember { mutableStateOf(false) }
+            var showDrawing by remember { mutableStateOf(false) }
+            var showReminders by remember { mutableStateOf(false) }
+            var createReminderOnOpen by remember { mutableStateOf(false) }
+            var showSettings by remember { mutableStateOf(false) }
             /* Pantalla técnica secundaria abierta desde Configuración. */
-            var showDevelopmentInfo by remember {
-                mutableStateOf(false)
-            }
+            var showDevelopmentInfo by remember { mutableStateOf(false) }
             /* Subpantalla informativa con el mapa del código fuente del proyecto. */
-            var showSourceCodeInfo by remember {
-                mutableStateOf(false)
-            }
-            var selectedNote by remember {
-                mutableStateOf<Note?>(null)
-            }
+            var showSourceCodeInfo by remember { mutableStateOf(false) }
+            var selectedNote by remember { mutableStateOf<Note?>(null) }
             /*
              * null:
              * crear nota.
@@ -559,21 +455,30 @@ class MainActivity : ComponentActivity() {
              * Note:
              * editar nota existente.
              */
-            var editingNote by remember {
-                mutableStateOf<Note?>(null)
+            var editingNote by remember { mutableStateOf<Note?>(null) }
+            fun resetNavigation() {
+                showSourceCodeInfo = false
+                showDevelopmentInfo = false
+                showSettings = false
+                showEditor = false
+                showDrawing = false
+                showReminders = false
+                selectedNote = null
+                editingNote = null
             }
+            fun openExclusive(clearShare: Boolean = true, action: () -> Unit) {
+                if (clearShare) clearPendingShare()
+                resetNavigation()
+                action()
+            }
+            fun openEditor(note: Note? = null) = openExclusive { editingNote = note; showEditor = true }
+            fun openDrawing() = openExclusive { showDrawing = true }
+            fun openReminders() = openExclusive { createReminderOnOpen = false; showReminders = true }
+            fun openNote(note: Note) = openExclusive(clearShare = false) { selectedNote = note }
+            fun closeEditor() { editingNote = null; clearPendingShare(); showEditor = false }
             LaunchedEffect(pendingOpenReminders) {
                 if (pendingOpenReminders) {
-                    clearPendingShare()
-                    showSourceCodeInfo = false
-                    showDevelopmentInfo = false
-                    showSettings = false
-                    showEditor = false
-                    showDrawing = false
-                    selectedNote = null
-                    editingNote = null
-                    createReminderOnOpen = false
-                    showReminders = true
+                    openReminders()
                     pendingOpenReminders = false
                 }
             }
@@ -584,15 +489,7 @@ class MainActivity : ComponentActivity() {
              */
             LaunchedEffect(pendingWidgetNewNote) {
                 if (pendingWidgetNewNote) {
-                    clearPendingShare()
-                    showSourceCodeInfo = false
-                    showDevelopmentInfo = false
-                    showSettings = false
-                    showDrawing = false
-                    showReminders = false
-                    selectedNote = null
-                    editingNote = null
-                    showEditor = true
+                    openEditor()
                     pendingWidgetNewNote = false
                 }
             }
@@ -608,14 +505,7 @@ class MainActivity : ComponentActivity() {
 
                 if (note != null) {
                     clearPendingShare()
-                    showSourceCodeInfo = false
-                    showDevelopmentInfo = false
-                    showSettings = false
-                    showDrawing = false
-                    showReminders = false
-                    editingNote = null
-                    showEditor = false
-                    selectedNote = note
+                    openNote(note)
                 }
             }
 
@@ -624,14 +514,7 @@ class MainActivity : ComponentActivity() {
                     (pendingWidgetCollection != null || pendingWidgetSearch)
                 ) {
                     clearPendingShare()
-                    showSourceCodeInfo = false
-                    showDevelopmentInfo = false
-                    showSettings = false
-                    showDrawing = false
-                    showReminders = false
-                    editingNote = null
-                    showEditor = false
-                    selectedNote = null
+                    resetNavigation()
                 }
             }
 
@@ -642,13 +525,7 @@ class MainActivity : ComponentActivity() {
              */
             LaunchedEffect(pendingSharedText, pendingSharedTitle) {
                 if (!pendingSharedText.isNullOrBlank()) {
-                    showSourceCodeInfo = false
-                    showDevelopmentInfo = false
-                    showSettings = false
-                    showDrawing = false
-                    showReminders = false
-                    selectedNote = null
-                    editingNote = null
+                    resetNavigation()
                     showEditor = true
                 }
             }
@@ -675,9 +552,7 @@ class MainActivity : ComponentActivity() {
                         showSettings = false
                     }
                     showEditor -> {
-                        editingNote = null
-                        clearPendingShare()
-                        showEditor = false
+                        closeEditor()
                     }
                     showDrawing -> {
                         showDrawing = false
@@ -715,20 +590,8 @@ class MainActivity : ComponentActivity() {
                     else -> NavigationSnapshot(AppDestination.NOTES)
                 }
             }
-            MyNotesTheme(darkTheme = effectiveDarkTheme,
-                backgroundColor = settings.backgroundColor,
-                backgroundToneIndex = settings.backgroundToneIndex,
-                backgroundIntensity = settings.backgroundIntensity,
-                surfacePanelIntensity = settings.surfacePanelIntensity,
-                headerIntensity = settings.headerIntensity,
-                /*
-                 * auto adapta el texto al contraste del fondo; negro/blanco
-                 * siguen siendo anulaciones manuales persistentes.
-                 */
-                textColor = settings.textColor,
-                textOutlineEnabled = settings.textOutlineEnabled,
-                accentColor = settings.accentColor,
-                fontFamily = appFontFamily(settings.font)) {
+            // El overload conserva exactamente la misma paleta, contraste y tipografía.
+            MyNotesTheme(settings = settings, darkTheme = effectiveDarkTheme, fontFamily = appFontFamily(settings.font)) {
                 Box(modifier = Modifier.fillMaxSize()) {
                 ConfigurableAnimatedContent(targetState = currentScreen,
                     animationsEnabled = settings.animationsEnabled,
@@ -746,178 +609,14 @@ class MainActivity : ComponentActivity() {
                     AppDestination.SETTINGS -> {
                         SettingsScreen(
                             settings = settings,
-                            onConfigurationModeChange = {
-                                settingsViewModel.setConfigurationMode(it)
-                            },
-                            onDarkModeChange = {
-                                settingsViewModel.setDarkMode(it)
-                            },
-                            onBackgroundColorChange = {
-                                settingsViewModel.setBackgroundColor(it)
-                            },
-                            onBackgroundToneIndexChange = {
-                                settingsViewModel.setBackgroundToneIndex(it)
-                            },
-                            onBackgroundIntensityChange = {
-                                settingsViewModel.setBackgroundIntensity(it)
-                            },
-                            onSettingsPanelToneChange = {
-                                settingsViewModel.setSettingsPanelTone(it)
-                            },
-                            onSurfacePanelIntensityChange = {
-                                settingsViewModel.setSurfacePanelIntensity(it)
-                            },
-                            onHeaderIntensityChange = {
-                                settingsViewModel.setHeaderIntensity(it)
-                            },
-                            onTextColorChange = {
-                                settingsViewModel.setTextColor(it)
-                            },
-                            onTextOutlineEnabledChange = {
-                                settingsViewModel.setTextOutlineEnabled(it)
-                            },
-                            onSliderStyleChange = {
-                                settingsViewModel.setSliderStyle(it)
-                            },
-                            onFontChange = {
-                                settingsViewModel.setFont(it)
-                            },
-                            onFontSizeChange = {
-                                settingsViewModel.setFontSize(it)
-                            },
-                            onSoundEffectsEnabledChange = {
-                                settingsViewModel.setSoundEffectsEnabled(it)
-                            },
-                            onSoundEffectsVolumeChange = {
-                                settingsViewModel.setSoundEffectsVolume(it)
-                            },
-                            onSoundEffectsThemeChange = {
-                                settingsViewModel.setSoundEffectsTheme(it)
-                            },
-                            onReminderSoundEnabledChange = {
-                                settingsViewModel.setReminderSoundEnabled(it)
-                            },
-                            onReminderSoundVolumeChange = {
-                                settingsViewModel.setReminderSoundVolume(it)
-                            },
-                            onReminderRingtoneChange = {
-                                settingsViewModel.setReminderRingtone(it)
-                            },
-                            onHapticEffectsEnabledChange = {
-                                settingsViewModel.setHapticEffectsEnabled(it)
-                            },
-                            onHapticEffectsIntensityChange = {
-                                settingsViewModel.setHapticEffectsIntensity(it)
-                            },
-                            onHapticEffectsStyleChange = {
-                                settingsViewModel.setHapticEffectsStyle(it)
-                            },
+                            viewModel = settingsViewModel,
                             onLanguageChange = { language ->
                                 settingsViewModel.setLanguage(language)
                                 changeAppLanguage(language)
                             },
-                            onGridColumnsChange = {
-                                settingsViewModel.setGridColumns(it)
-                            },
-                            onProfileImageUriChange = {
-                                settingsViewModel.setProfileImageUri(it)
-                            },
-                            onProfileImageSizeChange = {
-                                settingsViewModel.setProfileImageSize(it)
-                            },
-                            onIconStyleChange = {
-                                settingsViewModel.setIconStyle(it)
-                            },
-                            onIconSizeChange = {
-                                settingsViewModel.setIconSize(it)
-                            },
-                            onAccentColorChange = {
-                                settingsViewModel.setAccentColor(it)
-                            },
-                            onNoteCardCornerRadiusChange = {
-                                settingsViewModel.setNoteCardCornerRadius(it)
-                            },
-                            onNoteCardElevationChange = {
-                                settingsViewModel.setNoteCardElevation(it)
-                            },
-                            onNoteCardPaddingChange = {
-                                settingsViewModel.setNoteCardPadding(it)
-                            },
-                            onNoteCardImageHeightChange = {
-                                settingsViewModel.setNoteCardImageHeight(it)
-                            },
-                            onNoteCardOutlineWidthChange = {
-                                settingsViewModel.setNoteCardOutlineWidth(it)
-                            },
-                            onNoteTitleMaxLinesChange = {
-                                settingsViewModel.setNoteTitleMaxLines(it)
-                            },
-                            onNoteContentMaxLinesChange = {
-                                settingsViewModel.setNoteContentMaxLines(it)
-                            },
-                            onNoteLineSpacingChange = {
-                                settingsViewModel.setNoteLineSpacing(it)
-                            },
-                            onShowNoteDateChange = {
-                                settingsViewModel.setShowNoteDate(it)
-                            },
-                            onShowCategoryChipChange = {
-                                settingsViewModel.setShowCategoryChip(it)
-                            },
-                            onShowFavoriteIconChange = {
-                                settingsViewModel.setShowFavoriteIcon(it)
-                            },
-                            onFabSizeChange = {
-                                settingsViewModel.setFabSize(it)
-                            },
-                            onOptionMenuOrderChange = {
-                                settingsViewModel.setOptionMenuOrder(it)
-                            },
-                            onOptionMenuHiddenItemsChange = {
-                                settingsViewModel.setOptionMenuHiddenItems(it)
-                            },
-                            onOptionMenuShowIconsChange = {
-                                settingsViewModel.setOptionMenuShowIcons(it)
-                            },
-                            onOptionMenuTextColorChange = {
-                                settingsViewModel.setOptionMenuTextColor(it)
-                            },
-                            onOptionMenuOpacityChange = {
-                                settingsViewModel.setOptionMenuOpacity(it)
-                            },
-                            onPriorityMenuHiddenItemsChange = {
-                                settingsViewModel.setPriorityMenuHiddenItems(it)
-                            },
-                            onColorMenuHiddenItemsChange = {
-                                settingsViewModel.setColorMenuHiddenItems(it)
-                            },
-                            onResetOptionMenu = {
-                                settingsViewModel.resetOptionMenuSettings()
-                            },
-                            onPerformanceModeChange = {
-                                settingsViewModel.setPerformanceMode(it)
-                            },
-                            onAnimationsEnabledChange = {
-                                settingsViewModel.setAnimationsEnabled(it)
-                            },
-                            onAnimationStyleChange = {
-                                settingsViewModel.setAnimationStyle(it)
-                            },
-                            onAnimationEasingChange = {
-                                settingsViewModel.setAnimationEasing(it)
-                            },
-                            onAnimationSpeedChange = {
-                                settingsViewModel.setAnimationSpeed(it)
-                            },
-                            onAnimationIntensityChange = {
-                                settingsViewModel.setAnimationIntensity(it)
-                            },
-                            onOpenDevelopmentInfo = {
-                                showDevelopmentInfo = true
-                            },
-                            onBack = {
-                                showSettings = false
-                            })
+                            onOpenDevelopmentInfo = { showDevelopmentInfo = true },
+                            onBack = { showSettings = false }
+                        )
                     }
                     /*
                      * ==========================================
@@ -1026,14 +725,10 @@ class MainActivity : ComponentActivity() {
                                             noteViewModel.deleteAttachment(attachment)
                                         }
                                 }
-                                editingNote = null
-                                clearPendingShare()
-                                showEditor = false
+                                closeEditor()
                             },
                             onCancel = {
-                                editingNote = null
-                                clearPendingShare()
-                                showEditor = false
+                                closeEditor()
                             })
                         }
                     }
@@ -1110,13 +805,7 @@ class MainActivity : ComponentActivity() {
                             onBack = {
                                 selectedNote = null
                             },
-                            onEdit = {
-                                    note ->
-                                clearPendingShare()
-                                editingNote = note
-                                selectedNote = null
-                                showEditor = true
-                            })
+                            onEdit = ::openEditor)
                     }
                     /*
                      * ==========================================
@@ -1140,33 +829,9 @@ class MainActivity : ComponentActivity() {
                             /*
                              * Nueva nota.
                              */
-                            onAddNote = {
-                                clearPendingShare()
-                                editingNote = null
-                                showDrawing = false
-                                showReminders = false
-                                showEditor = true
-                            },
-                            onDrawNote = {
-                                clearPendingShare()
-                                editingNote = null
-                                selectedNote = null
-                                showEditor = false
-                                showReminders = false
-                                showDrawing = true
-                            },
-                            onOpenReminders = {
-                                clearPendingShare()
-                                editingNote = null
-                                selectedNote = null
-                                showEditor = false
-                                showDrawing = false
-                                showSettings = false
-                                // El botón Recordatorios abre la lista completa.
-                                // La creación ya no se fuerza al entrar desde el speed dial.
-                                createReminderOnOpen = false
-                                showReminders = true
-                            },
+                            onAddNote = { openEditor() },
+                            onDrawNote = ::openDrawing,
+                            onOpenReminders = ::openReminders,
                             onAddPdf = {
                                 clearPendingShare()
                                 startActivity(Intent(this@MainActivity, PdfLibraryActivity::class.java))
@@ -1183,21 +848,11 @@ class MainActivity : ComponentActivity() {
                             /*
                              * Abrir nota.
                              */
-                            onOpenNote = { note ->
-                                showDrawing = false
-                                showReminders = false
-                                selectedNote = note
-                            },
+                            onOpenNote = ::openNote,
                             /*
                              * Editar desde ⋮.
                              */
-                            onEditNote = { note ->
-                                clearPendingShare()
-                                showDrawing = false
-                                showReminders = false
-                                editingNote = note
-                                showEditor = true
-                            })
+                            onEditNote = ::openEditor)
                     }
                 }
                 }

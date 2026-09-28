@@ -1,93 +1,931 @@
-# AttachmentViewerActivity.kt — documentación del código actual
-**Ruta real:** `app/src/main/java/com/example/mynotes/ui/AttachmentViewerActivity.kt`  **SHA-256:** `101848b08850039e7856855274f6c36b7abd876fb83250f0359e935e0bdc4276`  **Líneas:** 1288 · **Bytes:** 57143 · **Imports:** 118 · **Declaraciones detectadas:** 33
-> Documento generado fuera de `app/` a partir de lectura del código. El fuente es la única fuente de verdad; no se modificó para generar esta documentación.
-## 1. Responsabilidad
+# AttachmentViewerActivity.kt — explicación completa del código
 
-Visor multimedia de adjuntos con imagen, vídeo y audio.
-## 2. Package e imports
+**Ruta:** `app/src/main/java/com/example/mynotes/ui/AttachmentViewerActivity.kt`  
+**SHA-256:** `101848b08850039e7856855274f6c36b7abd876fb83250f0359e935e0bdc4276`  
+**Líneas:** 1289  
+**Package:** `com.example.mynotes.ui`
 
-Package declarado: `com.example.mynotes.ui`.
+## 1. Para qué existe este archivo
 
-### Android / Jetpack / Compose
+Visor Android para abrir adjuntos a pantalla completa manteniendo políticas de barras del sistema.
 
-`android.app.Activity`, `android.app.ActivityManager`, `android.content.ActivityNotFoundException`, `android.content.Context`, `android.content.Intent`, `android.graphics.Bitmap`, `android.graphics.Canvas`, `android.graphics.Color as AndroidColor`, `android.graphics.pdf.PdfRenderer`, `android.net.Uri`, `android.os.Build`, `android.os.Bundle`, `android.os.ParcelFileDescriptor`, `android.text.Html`, `android.webkit.MimeTypeMap`, `android.widget.Toast`, `androidx.activity.ComponentActivity`, `androidx.activity.compose.setContent`, `androidx.activity.enableEdgeToEdge`, `androidx.compose.foundation.Image`, `androidx.compose.foundation.isSystemInDarkTheme`, `androidx.compose.foundation.background`, `androidx.compose.foundation.layout.Arrangement`, `androidx.compose.foundation.layout.Box`, `androidx.compose.foundation.layout.BoxWithConstraints`, `androidx.compose.foundation.layout.Column`, `androidx.compose.foundation.layout.Row`, `androidx.compose.foundation.layout.Spacer`, `androidx.compose.foundation.layout.fillMaxSize`, `androidx.compose.foundation.layout.fillMaxWidth`, `androidx.compose.foundation.layout.height`, `androidx.compose.foundation.layout.padding`, `androidx.compose.foundation.layout.size`, `androidx.compose.foundation.lazy.LazyColumn`, `androidx.compose.foundation.lazy.items`, `androidx.compose.foundation.lazy.rememberLazyListState`, `androidx.compose.foundation.rememberScrollState`, `androidx.compose.foundation.shape.RoundedCornerShape`, `androidx.compose.foundation.verticalScroll`, `androidx.compose.material.icons.Icons`, `androidx.compose.material.icons.automirrored.filled.ArrowBack`, `androidx.compose.material.icons.filled.Description`, `androidx.compose.material.icons.filled.OpenInNew`, `androidx.compose.material.icons.filled.Pause`, `androidx.compose.material.icons.filled.PictureAsPdf`, `androidx.compose.material.icons.filled.PlayArrow`, `androidx.compose.material3.Button`, `androidx.compose.material3.CircularProgressIndicator`, `androidx.compose.material3.ExperimentalMaterial3Api`, `androidx.compose.material3.Icon`, `androidx.compose.material3.IconButton`, `androidx.compose.material3.MaterialTheme`, `androidx.compose.material3.Scaffold`, `androidx.compose.material3.Slider`, `androidx.compose.material3.Surface`, `androidx.compose.material3.Text`, `androidx.compose.material3.TopAppBar`, `androidx.compose.material3.TopAppBarDefaults`, `androidx.compose.runtime.Composable`, `androidx.compose.runtime.DisposableEffect`, `androidx.compose.runtime.LaunchedEffect`, `androidx.compose.runtime.getValue`, `androidx.compose.runtime.mutableIntStateOf`, `androidx.compose.runtime.mutableStateOf`, `androidx.compose.runtime.produceState`, `androidx.compose.runtime.remember`, `androidx.compose.runtime.rememberCoroutineScope`, `androidx.compose.runtime.setValue`, `androidx.compose.ui.Alignment`, `androidx.compose.ui.Modifier`, `androidx.compose.ui.graphics.Color`, `androidx.compose.ui.graphics.asImageBitmap`, `androidx.compose.ui.layout.ContentScale`, `androidx.compose.ui.platform.LocalContext`, `androidx.compose.ui.platform.LocalDensity`, `androidx.compose.ui.text.font.FontFamily`, `androidx.compose.ui.text.font.FontWeight`, `androidx.compose.ui.text.style.TextOverflow`, `androidx.compose.ui.unit.dp`, `androidx.compose.ui.unit.sp`, `androidx.compose.ui.viewinterop.AndroidView`, `androidx.core.content.FileProvider`, `androidx.core.view.WindowCompat`, `androidx.core.view.WindowInsetsCompat`, `androidx.core.view.WindowInsetsControllerCompat`, `androidx.lifecycle.compose.collectAsStateWithLifecycle`, `androidx.lifecycle.viewmodel.compose.viewModel`, `androidx.media3.common.MediaItem`, `androidx.media3.common.PlaybackException`, `androidx.media3.common.Player`, `androidx.media3.exoplayer.ExoPlayer`, `androidx.media3.ui.AspectRatioFrameLayout`, `androidx.media3.ui.PlayerView`
+## 2. Tipos/clases declarados
 
-### Proyecto MyNotes
+- Línea **141** — `class AttachmentViewerActivity`.
+- Línea **846** — `private  class PdfHandle`.
 
-`com.example.mynotes.R`, `com.example.mynotes.ui.components.ScrollPositionCapsule`, `com.example.mynotes.performance.DisplayPerformanceController`, `com.example.mynotes.ui.sound.UiActionSound`, `com.example.mynotes.ui.sound.UiSoundPlayer`, `com.example.mynotes.ui.theme.MyNotesTheme`, `com.example.mynotes.viewmodel.SettingsViewModel`
+## 3. Estado, constantes y valores importantes
 
-### Kotlin / Coroutines / Java
+- **`EXTRA_URI`** (línea 121) inicia con `"attachment_uri"`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`EXTRA_TYPE`** (línea 123) inicia con `"attachment_type"`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`EXTRA_NAME`** (línea 124) inicia con `"attachment_name"`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`EXTRA_MIME`** (línea 125) inicia con `"attachment_mime"`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`MAX_TEXT_BYTES`** (línea 126) inicia con `2 * 1024 * 1024`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`intent`** (línea 133) inicia con `Intent(context`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`controller`** (línea 143) inicia con `WindowCompat.getInsetsController(window`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`isMultiWindow`** (línea 144) inicia con `Build.VERSION.SDK_INT >= Build.VERSION_CODES.N && isInMultiWindowMode`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`uriString`** (línea 197) inicia con `intent.getStringExtra(EXTRA_URI`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`type`** (línea 198) inicia con `intent.getStringExtra(EXTRA_TYPE`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`name`** (línea 199) inicia con `intent.getStringExtra(EXTRA_NAME`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`mimeType`** (línea 200) inicia con `intent.getStringExtra(EXTRA_MIME`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`settingsViewModel`** (línea 206) inicia con `viewModel(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`systemDarkTheme`** (línea 213) inicia con `isSystemInDarkTheme(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`effectiveDarkTheme`** (línea 214) inicia con `if (settings.configurationMode == "advanced"`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`context`** (línea 235) inicia con `LocalContext.current`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`uri`** (línea 236) inicia con `remember(uriString`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`extension`** (línea 240) inicia con `remember(name`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`title`** (línea 243) inicia con `name?.takeIf { it.isNotBlank(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`bitmapLimit`** (línea 304) inicia con `remember(context`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`activityManager`** (línea 305) inicia con `context.getSystemService(Context.ACTIVITY_SERVICE`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`request`** (línea 312) inicia con `remember(context`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`scope`** (línea 343) inicia con `rememberCoroutineScope(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`player`** (línea 344) inicia con `remember(uri`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`listener`** (línea 376) inicia con `object :`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`fallbackFile`** (línea 418) inicia con `withContext(Dispatchers.IO`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`currentDuration`** (línea 467) inicia con `player.duration.coerceAtLeast(0L`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`target`** (línea 513) inicia con `newPosition.roundToInt(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`density`** (línea 772) inicia con `LocalDensity.current`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`pdfScrollState`** (línea 773) inicia con `rememberLazyListState(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`handle`** (línea 774) inicia con `remember(uri`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`widthPx`** (línea 795) inicia con `with(density`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`pages`** (línea 798) inicia con `remember(handle.pageCount`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`bitmap`** (línea 812) inicia con `withContext(Dispatchers.IO`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`completed`** (línea 821) inicia con `renderResult.first`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
 
-`kotlinx.coroutines.Dispatchers`, `kotlinx.coroutines.delay`, `kotlinx.coroutines.launch`, `kotlinx.coroutines.withContext`, `java.io.Closeable`, `java.io.File`, `java.io.InputStream`, `java.util.Locale`, `java.util.zip.ZipInputStream`, `kotlin.math.roundToInt`
+## 4. Funciones y flujo, una por una
 
-### Terceros / otros
+### `openAttachmentViewer` — líneas 132–139
 
-`coil3.compose.AsyncImage`, `coil3.request.CachePolicy`, `coil3.request.ImageRequest`, `coil3.request.allowHardware`, `coil3.request.maxBitmapSize`, `coil3.size.Precision`, `coil3.size.Scale`, `coil3.size.Size`
+**Firma:** `fun openAttachmentViewer(context: Context, uri: String, type: String, name: String? = null, mimeType: String? = null)`
 
-## 3. Declaraciones detectadas
+Construye/ejecuta la operación necesaria para abrir el destino indicado, aplicando las validaciones visibles en el cuerpo.
 
-| Línea | Tipo | Nombre | Firma/inicio |
-|---:|---|---|---|
-| 132 | `fun` | `openAttachmentViewer` | `fun openAttachmentViewer(context: Context, uri: String, type: String, name: String? = null, mimeType: String? = null) {` |
-| 140 | `class` | `AttachmentViewerActivity` | `` |
-| 142 | `fun` | `applyAndroidNavigationBarPolicy` | `private fun applyAndroidNavigationBarPolicy() {` |
-| 161 | `fun` | `applySystemBarAppearance` | `private fun applySystemBarAppearance(darkMode: Boolean) {` |
-| 233 | `fun` | `AttachmentViewerScreen` | `@Composable` |
-| 300 | `fun` | `ImageViewer` | `` |
-| 339 | `fun` | `VideoViewer` | `` |
-| 554 | `fun` | `AudioFileViewer` | `` |
-| 768 | `fun` | `PdfViewer` | `` |
-| 808 | `fun` | `PdfPage` | `` |
-| 845 | `class` | `PdfHandle` | `` |
-| 849 | `fun` | `renderPage` | `@Synchronized` |
-| 865 | `fun` | `openPdfHandle` | `` |
-| 867 | `fun` | `createHandle` | `fun createHandle(descriptor: ParcelFileDescriptor): PdfHandle {` |
-| 901 | `fun` | `TextFileViewer` | `` |
-| 930 | `fun` | `OfficeTextViewer` | `` |
-| 960 | `fun` | `GenericFileViewer` | `` |
-| 1012 | `fun` | `copyDocumentToViewerCache` | `` |
-| 1034 | `fun` | `copyVideoToPlaybackCache` | `` |
-| 1058 | `fun` | `copyAudioToPlaybackCache` | `` |
-| 1090 | `fun` | `readTextPreview` | `` |
-| 1110 | `fun` | `extractOfficeText` | `` |
-| 1179 | `fun` | `decodeXml` | `` |
-| 1188 | `fun` | `InputStream` | `` |
-| 1201 | `fun` | `openInputStream` | `` |
-| 1213 | `fun` | `openExternally` | `` |
-| 1226 | `fun` | `toShareableUri` | `` |
-| 1234 | `fun` | `resolveMimeType` | `` |
-| 1240 | `fun` | `fileExtension` | `` |
-| 1248 | `fun` | `isTextExtension` | `` |
-| 1253 | `fun` | `resolveFileSize` | `` |
-| 1267 | `fun` | `formatFileSize` | `` |
-| 1277 | `fun` | `formatTime` | `` |
+**Entradas:**
+- `context: Context`
+- `uri: String`
+- `type: String`
+- `name: String? = null`
+- `mimeType: String? = null`
 
-## 4. Estado, efectos y límites observables
+**Salida:** Unit o inferido por Kotlin.
 
-- **Compose state:** 42 aparición/apariciones.
-- **LaunchedEffect/DisposableEffect:** 9 aparición/apariciones.
-- **Coroutines:** 13 aparición/apariciones.
-- **I/O/red:** 16 aparición/apariciones.
-- **try/catch:** 51 aparición/apariciones.
-- **coerce*:** 23 aparición/apariciones.
-- **safe calls:** 21 aparición/apariciones.
+**Efectos/APIs observados en el cuerpo:**
+- Inicia o prepara navegación/acción mediante Intent.
 
-Estas cifras son indicadores de superficie de cambio, no diagnósticos de error. Cualquier modificación debe preservar contratos de persistencia, lifecycle, límites numéricos y nulabilidad visibles en el fuente.
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
 
-## 5. Dependencias internas directas
+**Operaciones/funciones que coordina:** `Intent`, `putExtra`, `addFlags`, `startActivity`.
 
-- `com.example.mynotes.R`
-- `com.example.mynotes.performance.DisplayPerformanceController`
-- `com.example.mynotes.ui.components.ScrollPositionCapsule`
-- `com.example.mynotes.ui.sound.UiActionSound`
-- `com.example.mynotes.ui.sound.UiSoundPlayer`
-- `com.example.mynotes.ui.theme.MyNotesTheme`
-- `com.example.mynotes.viewmodel.SettingsViewModel`
+### `applyAndroidNavigationBarPolicy` — líneas 142–160
 
-## 6. Recursos Android referenciados
+**Firma:** `private fun applyAndroidNavigationBarPolicy()`
 
-- **R.string:** `audio` ×2, `audio_playback_failed_inside`, `back`, `file`, `image`, `image_format_not_supported`, `no_compatible_app`, `open_file_failed`, `open_with`, `open_with_other_app` ×4, `pause` ×3, `pdf_document`, `pdf_page_description`, `pdf_page_load_failed`, `play` ×3, `video`, `video_playback_failed_inside`
+Aplica una transformación/configuración al valor o componente recibido y devuelve/deja el resultado listo para ser usado por la UI.
 
-## 7. Puntos de revisión al modificarlo
+**Salida:** Unit o inferido por Kotlin.
 
-- No degradar calidad, rutas persistentes ni cachés de adjuntos/miniaturas sin una prueba explícita.
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `getInsetsController`, `show`, `navigationBars`, `hide`, `Suppress`.
+
+### `applySystemBarAppearance` — líneas 161–167
+
+**Firma:** `private fun applySystemBarAppearance(darkMode: Boolean)`
+
+Aplica una transformación/configuración al valor o componente recibido y devuelve/deja el resultado listo para ser usado por la UI.
+
+**Entradas:**
+- `darkMode: Boolean`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `getInsetsController`.
+
+### `onWindowFocusChanged` — líneas 168–173
+
+**Firma:** `override fun onWindowFocusChanged(hasFocus: Boolean)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `hasFocus: Boolean`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `onWindowFocusChanged`, `applyAndroidNavigationBarPolicy`.
+
+### `onResume` — líneas 174–178
+
+**Firma:** `override fun onResume()`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Operaciones/funciones que coordina:** `onResume`, `reapplyLastRequest`, `applyAndroidNavigationBarPolicy`.
+
+### `onMultiWindowModeChanged` — líneas 179–182
+
+**Firma:** `override fun onMultiWindowModeChanged(isInMultiWindowMode: Boolean)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `isInMultiWindowMode: Boolean`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Operaciones/funciones que coordina:** `onMultiWindowModeChanged`, `applyAndroidNavigationBarPolicy`.
+
+### `onDestroy` — líneas 183–186
+
+**Firma:** `override fun onDestroy()`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Operaciones/funciones que coordina:** `release`, `onDestroy`.
+
+### `onCreate` — líneas 187–229
+
+**Firma:** `override fun onCreate(savedInstanceState: Bundle?)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `savedInstanceState: Bundle?`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Participa en estado/efectos de Compose.
+
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `setTheme`, `onCreate`, `enableEdgeToEdge`, `applyAndroidNavigationBarPolicy`, `getStringExtra`, `orEmpty`, `isBlank`, `finish`, `viewModel`, `collectAsStateWithLifecycle`, `LaunchedEffect`, `requestForPerformanceMode`, `isSystemInDarkTheme`, `applySystemBarAppearance`, `MyNotesTheme`, `AttachmentViewerScreen`.
+
+### `AttachmentViewerScreen` — líneas 234–299
+
+**Firma:** `private fun AttachmentViewerScreen(uriString: String, type: String, name: String?, explicitMimeType: String?, onBack: () -> Unit)`
+
+Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+**Entradas:**
+- `uriString: String`
+- `type: String`
+- `name: String?`
+- `explicitMimeType: String?`
+- `onBack: () -> Unit`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Participa en estado/efectos de Compose.
+
+**Decisiones y protecciones visibles:**
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Usa `when` para mapear estados/tipos/opciones.
+
+**Operaciones/funciones que coordina:** `parse`, `resolveMimeType`, `fileExtension`, `isNotBlank`, `startsWith`, `Scaffold`, `fillMaxSize`, `TopAppBar`, `IconButton`, `playAction`, `onBack`, `openExternally`, `topAppBarColors`, `padding`, `ImageViewer`, `VideoViewer`, `AudioFileViewer`, `PdfViewer`.
+
+### `ImageViewer` — líneas 302–338
+
+**Firma:** `private fun ImageViewer(uri: Uri, name: String?)`
+
+Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+**Entradas:**
+- `uri: Uri`
+- `name: String?`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Procesa imágenes/bitmaps.
+- Participa en estado/efectos de Compose.
+
+**Decisiones y protecciones visibles:**
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+- Usa `when` para mapear estados/tipos/opciones.
+
+**Operaciones/funciones que coordina:** `getSystemService`, `Size`, `Builder`, `data`, `size`, `maxBitmapSize`, `precision`, `scale`, `allowHardware`, `memoryCachePolicy`, `build`, `fillMaxSize`, `AsyncImage`, `padding`, `height`.
+
+### `VideoViewer` — líneas 341–553
+
+**Firma:** `private fun VideoViewer(uri: Uri, name: String, mimeType: String)`
+
+Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+**Entradas:**
+- `uri: Uri`
+- `name: String`
+- `mimeType: String`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Ejecuta trabajo de I/O fuera del hilo principal.
+- Lanza trabajo asíncrono mediante coroutines.
+- Accede al sistema de archivos interno/cache.
+- Participa en estado/efectos de Compose.
+
+**Decisiones y protecciones visibles:**
+- Limita valores con `coerce*` para evitar estados fuera de rango.
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+- Usa `when` para mapear estados/tipos/opciones.
+
+**Operaciones/funciones que coordina:** `rememberCoroutineScope`, `Builder`, `build`, `mutableIntStateOf`, `DisposableEffect`, `onPlaybackStateChanged`, `coerceAtLeast`, `coerceAtMost`, `toLong`, `toInt`, `onIsPlayingChanged`, `onPlayerError`, `withContext`, `copyVideoToPlaybackCache`, `stop`, `clearMediaItems`, `setMediaItem`, `fromUri`.
+
+### `onPlaybackStateChanged` — líneas 378–401
+
+**Firma:** `override fun onPlaybackStateChanged(playbackState: Int)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `playbackState: Int`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Decisiones y protecciones visibles:**
+- Limita valores con `coerce*` para evitar estados fuera de rango.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+- Usa `when` para mapear estados/tipos/opciones.
+
+**Operaciones/funciones que coordina:** `coerceAtLeast`, `coerceAtMost`, `toLong`, `toInt`.
+
+### `onIsPlayingChanged` — líneas 402–404
+
+**Firma:** `override fun onIsPlayingChanged(isPlaying: Boolean)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `isPlaying: Boolean`
+
+**Salida:** Unit o inferido por Kotlin.
+
+### `onPlayerError` — líneas 405–441
+
+**Firma:** `override fun onPlayerError(playbackException: PlaybackException)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `playbackException: PlaybackException`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Ejecuta trabajo de I/O fuera del hilo principal.
+- Lanza trabajo asíncrono mediante coroutines.
+- Accede al sistema de archivos interno/cache.
+
+**Decisiones y protecciones visibles:**
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `withContext`, `copyVideoToPlaybackCache`, `stop`, `clearMediaItems`, `setMediaItem`, `fromUri`, `fromFile`, `prepare`, `play`.
+
+### `AudioFileViewer` — líneas 556–767
+
+**Firma:** `private fun AudioFileViewer(uri: Uri, name: String, mimeType: String)`
+
+Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+**Entradas:**
+- `uri: Uri`
+- `name: String`
+- `mimeType: String`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Ejecuta trabajo de I/O fuera del hilo principal.
+- Lanza trabajo asíncrono mediante coroutines.
+- Accede al sistema de archivos interno/cache.
+- Participa en estado/efectos de Compose.
+
+**Decisiones y protecciones visibles:**
+- Limita valores con `coerce*` para evitar estados fuera de rango.
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+- Usa `when` para mapear estados/tipos/opciones.
+
+**Operaciones/funciones que coordina:** `rememberCoroutineScope`, `Builder`, `build`, `mutableIntStateOf`, `DisposableEffect`, `onPlaybackStateChanged`, `coerceAtLeast`, `coerceAtMost`, `toLong`, `toInt`, `onIsPlayingChanged`, `onPlayerError`, `withContext`, `copyAudioToPlaybackCache`, `stop`, `clearMediaItems`, `setMediaItem`, `fromUri`.
+
+### `onPlaybackStateChanged` — líneas 593–616
+
+**Firma:** `override fun onPlaybackStateChanged(playbackState: Int)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `playbackState: Int`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Decisiones y protecciones visibles:**
+- Limita valores con `coerce*` para evitar estados fuera de rango.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+- Usa `when` para mapear estados/tipos/opciones.
+
+**Operaciones/funciones que coordina:** `coerceAtLeast`, `coerceAtMost`, `toLong`, `toInt`.
+
+### `onIsPlayingChanged` — líneas 617–619
+
+**Firma:** `override fun onIsPlayingChanged(isPlaying: Boolean)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `isPlaying: Boolean`
+
+**Salida:** Unit o inferido por Kotlin.
+
+### `onPlayerError` — líneas 620–651
+
+**Firma:** `override fun onPlayerError(playbackException: PlaybackException)`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `playbackException: PlaybackException`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Ejecuta trabajo de I/O fuera del hilo principal.
+- Lanza trabajo asíncrono mediante coroutines.
+- Accede al sistema de archivos interno/cache.
+
+**Decisiones y protecciones visibles:**
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `withContext`, `copyAudioToPlaybackCache`, `stop`, `clearMediaItems`, `setMediaItem`, `fromUri`, `fromFile`, `prepare`, `play`.
+
+### `PdfViewer` — líneas 770–807
+
+**Firma:** `private fun PdfViewer(uri: Uri)`
+
+Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+**Entradas:**
+- `uri: Uri`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Participa en estado/efectos de Compose.
+
+**Decisiones y protecciones visibles:**
+- Limita valores con `coerce*` para evitar estados fuera de rango.
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `rememberLazyListState`, `openPdfHandle`, `DisposableEffect`, `close`, `GenericFileViewer`, `BoxWithConstraints`, `fillMaxSize`, `roundToPx`, `coerceAtLeast`, `coerceAtMost`, `toList`, `LazyColumn`, `spacedBy`, `items`, `PdfPage`, `ScrollPositionCapsule`, `align`.
+
+### `PdfPage` — líneas 810–844
+
+**Firma:** `private fun PdfPage(handle: PdfHandle, pageIndex: Int, targetWidth: Int)`
+
+Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+**Entradas:**
+- `handle: PdfHandle`
+- `pageIndex: Int`
+- `targetWidth: Int`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Ejecuta trabajo de I/O fuera del hilo principal.
+- Procesa imágenes/bitmaps.
+
+**Decisiones y protecciones visibles:**
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Usa `when` para mapear estados/tipos/opciones.
+
+**Operaciones/funciones que coordina:** `produceState`, `Pair`, `withContext`, `renderPage`, `fillMaxWidth`, `padding`, `RoundedCornerShape`, `height`, `CircularProgressIndicator`, `Image`, `asImageBitmap`.
+
+### `renderPage` — líneas 850–859
+
+**Firma:** `fun renderPage(pageIndex: Int, targetWidth: Int): Bitmap`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `pageIndex: Int`
+- `targetWidth: Int`
+
+**Salida:** Bitmap.
+
+**Efectos/APIs observados en el cuerpo:**
+- Procesa imágenes/bitmaps.
+- Renderiza contenido PDF.
+
+**Decisiones y protecciones visibles:**
+- Limita valores con `coerce*` para evitar estados fuera de rango.
+
+**Operaciones/funciones que coordina:** `openPage`, `coerceAtLeast`, `toFloat`, `roundToInt`, `createBitmap`, `Canvas`, `drawColor`, `render`.
+
+### `close` — líneas 860–863
+
+**Firma:** `override fun close()`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Operaciones/funciones que coordina:** `close`.
+
+### `openPdfHandle` — líneas 866–900
+
+**Firma:** `private fun openPdfHandle(context: Context, uri: Uri): PdfHandle`
+
+Construye/ejecuta la operación necesaria para abrir el destino indicado, aplicando las validaciones visibles en el cuerpo.
+
+**Entradas:**
+- `context: Context`
+- `uri: Uri`
+
+**Salida:** PdfHandle.
+
+**Efectos/APIs observados en el cuerpo:**
+- Renderiza contenido PDF.
+- Accede al sistema de archivos interno/cache.
+- Lee/escribe Uris mediante ContentResolver.
+
+**Decisiones y protecciones visibles:**
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `createHandle`, `PdfHandle`, `PdfRenderer`, `close`, `IllegalArgumentException`, `open`, `File`, `openFileDescriptor`, `copyDocumentToViewerCache`.
+
+### `createHandle` — líneas 867–877
+
+**Firma:** `fun createHandle(descriptor: ParcelFileDescriptor): PdfHandle`
+
+Construye un objeto/representación a partir de los parámetros recibidos, centralizando la configuración para que los llamadores no la dupliquen.
+
+**Entradas:**
+- `descriptor: ParcelFileDescriptor`
+
+**Salida:** PdfHandle.
+
+**Efectos/APIs observados en el cuerpo:**
+- Renderiza contenido PDF.
+
+**Decisiones y protecciones visibles:**
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+
+**Operaciones/funciones que coordina:** `PdfHandle`, `PdfRenderer`, `close`.
+
+### `TextFileViewer` — líneas 903–929
+
+**Firma:** `private fun TextFileViewer(uri: Uri, extension: String)`
+
+Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+**Entradas:**
+- `uri: Uri`
+- `extension: String`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Ejecuta trabajo de I/O fuera del hilo principal.
+- Participa en estado/efectos de Compose.
+
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `withContext`, `readTextPreview`, `fillMaxSize`, `CircularProgressIndicator`, `rememberScrollState`, `verticalScroll`, `padding`, `ScrollPositionCapsule`, `align`.
+
+### `OfficeTextViewer` — líneas 932–959
+
+**Firma:** `private fun OfficeTextViewer(uri: Uri, extension: String, name: String, mimeType: String)`
+
+Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+**Entradas:**
+- `uri: Uri`
+- `extension: String`
+- `name: String`
+- `mimeType: String`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Ejecuta trabajo de I/O fuera del hilo principal.
+- Participa en estado/efectos de Compose.
+
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `withContext`, `extractOfficeText`, `fillMaxSize`, `CircularProgressIndicator`, `isBlank`, `GenericFileViewer`, `rememberScrollState`, `verticalScroll`, `padding`, `height`, `ScrollPositionCapsule`, `align`.
+
+### `GenericFileViewer` — líneas 962–1011
+
+**Firma:** `private fun GenericFileViewer(uri: Uri, name: String, extension: String, mimeType: String)`
+
+Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+**Entradas:**
+- `uri: Uri`
+- `name: String`
+- `extension: String`
+- `mimeType: String`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Ejecuta trabajo de I/O fuera del hilo principal.
+
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `withContext`, `resolveFileSize`, `fillMaxSize`, `padding`, `size`, `RoundedCornerShape`, `height`, `isNotBlank`, `append`, `uppercase`, `isNotEmpty`, `formatFileSize`, `Button`, `playAction`, `openExternally`.
+
+### `copyDocumentToViewerCache` — líneas 1013–1033
+
+**Firma:** `private fun copyDocumentToViewerCache(context: Context, uri: Uri, extension: String, prefix: String): File?`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `context: Context`
+- `uri: Uri`
+- `extension: String`
+- `prefix: String`
+
+**Salida:** File?.
+
+**Efectos/APIs observados en el cuerpo:**
+- Accede al sistema de archivos interno/cache.
+- Lee/escribe Uris mediante ContentResolver.
+
+**Decisiones y protecciones visibles:**
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `File`, `exists`, `mkdirs`, `trim`, `trimStart`, `toString`, `hashCode`, `toUInt`, `length`, `openInputStream`, `outputStream`, `buffered`, `copyTo`.
+
+### `copyVideoToPlaybackCache` — líneas 1035–1057
+
+**Firma:** `private fun copyVideoToPlaybackCache(context: Context, uri: Uri): File?`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `context: Context`
+- `uri: Uri`
+
+**Salida:** File?.
+
+**Efectos/APIs observados en el cuerpo:**
+- Accede al sistema de archivos interno/cache.
+- Lee/escribe Uris mediante ContentResolver.
+
+**Decisiones y protecciones visibles:**
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `File`, `exists`, `mkdirs`, `resolveMimeType`, `getSingleton`, `getExtensionFromMimeType`, `isNotBlank`, `fileExtension`, `toString`, `hashCode`, `toUInt`, `length`, `openInputStream`, `outputStream`, `buffered`, `copyTo`.
+
+### `copyAudioToPlaybackCache` — líneas 1059–1089
+
+**Firma:** `private fun copyAudioToPlaybackCache(context: Context, uri: Uri): File?`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `context: Context`
+- `uri: Uri`
+
+**Salida:** File?.
+
+**Efectos/APIs observados en el cuerpo:**
+- Accede al sistema de archivos interno/cache.
+- Lee/escribe Uris mediante ContentResolver.
+
+**Decisiones y protecciones visibles:**
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `File`, `exists`, `mkdirs`, `resolveMimeType`, `getSingleton`, `getExtensionFromMimeType`, `isNotBlank`, `fileExtension`, `toString`, `hashCode`, `toUInt`, `length`, `openInputStream`, `outputStream`, `buffered`, `copyTo`.
+
+### `readTextPreview` — líneas 1091–1109
+
+**Firma:** `private fun readTextPreview(context: Context, uri: Uri): String`
+
+Lee y transforma datos desde la fuente indicada, devolviendo una representación segura o fallback cuando la lectura no puede completarse.
+
+**Entradas:**
+- `context: Context`
+- `uri: Uri`
+
+**Salida:** String.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lee/escribe Uris mediante ContentResolver.
+
+**Decisiones y protecciones visibles:**
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `openInputStream`, `readUpTo`, `toString`, `indexOf`, `append`, `orEmpty`.
+
+### `extractOfficeText` — líneas 1111–1178
+
+**Firma:** `private fun extractOfficeText(context: Context, uri: Uri, extension: String): String`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `context: Context`
+- `uri: Uri`
+- `extension: String`
+
+**Salida:** String.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lee o escribe archivos ZIP.
+- Lee/escribe Uris mediante ContentResolver.
+
+**Decisiones y protecciones visibles:**
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+- Usa `when` para mapear estados/tipos/opciones.
+
+**Operaciones/funciones que coordina:** `ZipInputStream`, `openInputStream`, `buffered`, `startsWith`, `endsWith`, `readBytes`, `toString`, `Regex`, `t`, `findAll`, `decodeXml`, `closeEntry`, `c`, `find`, `getOrNull`, `orEmpty`, `contains`, `toIntOrNull`.
+
+### `decodeXml` — líneas 1180–1187
+
+**Firma:** `private fun decodeXml(value: String): String`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: String`
+
+**Salida:** String.
+
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `fromHtml`, `toString`, `Suppress`.
+
+### `readUpTo` — líneas 1189–1200
+
+**Firma:** `private fun InputStream.readUpTo(maxBytes: Int): ByteArray`
+
+Lee y transforma datos desde la fuente indicada, devolviendo una representación segura o fallback cuando la lectura no puede completarse.
+
+**Entradas:**
+- `maxBytes: Int`
+
+**Salida:** ByteArray.
+
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `ByteArrayOutputStream`, `ByteArray`, `read`, `minOf`, `write`, `toByteArray`.
+
+### `openInputStream` — líneas 1202–1212
+
+**Firma:** `private fun openInputStream(context: Context, uri: Uri): InputStream`
+
+Construye/ejecuta la operación necesaria para abrir el destino indicado, aplicando las validaciones visibles en el cuerpo.
+
+**Entradas:**
+- `context: Context`
+- `uri: Uri`
+
+**Salida:** InputStream.
+
+**Efectos/APIs observados en el cuerpo:**
+- Accede al sistema de archivos interno/cache.
+- Lee/escribe Uris mediante ContentResolver.
+
+**Decisiones y protecciones visibles:**
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Usa `when` para mapear estados/tipos/opciones.
+
+**Operaciones/funciones que coordina:** `IllegalArgumentException`, `File`, `inputStream`, `openInputStream`.
+
+### `openExternally` — líneas 1214–1225
+
+**Firma:** `private fun openExternally(context: Context, uri: Uri, name: String?, mimeType: String)`
+
+Construye/ejecuta la operación necesaria para abrir el destino indicado, aplicando las validaciones visibles en el cuerpo.
+
+**Entradas:**
+- `context: Context`
+- `uri: Uri`
+- `name: String?`
+- `mimeType: String`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Inicia o prepara navegación/acción mediante Intent.
+
+**Decisiones y protecciones visibles:**
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+
+**Operaciones/funciones que coordina:** `toShareableUri`, `Intent`, `setDataAndType`, `resolveMimeType`, `addFlags`, `startActivity`, `createChooser`, `getString`, `makeText`, `show`.
+
+### `toShareableUri` — líneas 1227–1233
+
+**Firma:** `private fun toShareableUri(context: Context, uri: Uri): Uri`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `context: Context`
+- `uri: Uri`
+
+**Salida:** Uri.
+
+**Efectos/APIs observados en el cuerpo:**
+- Accede al sistema de archivos interno/cache.
+
+**Decisiones y protecciones visibles:**
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `getUriForFile`, `File`.
+
+### `resolveMimeType` — líneas 1235–1239
+
+**Firma:** `private fun resolveMimeType(context: Context, uri: Uri, name: String?): String`
+
+Resuelve un valor configurable a su representación efectiva usada por la UI, aplicando reglas de fallback/contraste cuando corresponde.
+
+**Entradas:**
+- `context: Context`
+- `uri: Uri`
+- `name: String?`
+
+**Salida:** String.
+
+**Efectos/APIs observados en el cuerpo:**
+- Lee/escribe Uris mediante ContentResolver.
+
+**Decisiones y protecciones visibles:**
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+
+**Operaciones/funciones que coordina:** `getType`, `fileExtension`, `getSingleton`, `getMimeTypeFromExtension`.
+
+### `fileExtension` — líneas 1241–1247
+
+**Firma:** `private fun fileExtension(name: String?, uri: Uri): String`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `name: String?`
+- `uri: Uri`
+
+**Salida:** String.
+
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `substringAfterLast`, `lowercase`, `orEmpty`, `isNotBlank`.
+
+### `isTextExtension` — líneas 1249–1252
+
+**Firma:** `private fun isTextExtension(extension: String): Boolean`
+
+Evalúa una condición y devuelve un booleano utilizado para decidir una ruta posterior del flujo.
+
+**Entradas:**
+- `extension: String`
+
+**Salida:** Boolean.
+
+### `resolveFileSize` — líneas 1254–1266
+
+**Firma:** `private fun resolveFileSize(context: Context, uri: Uri): Long?`
+
+Resuelve un valor configurable a su representación efectiva usada por la UI, aplicando reglas de fallback/contraste cuando corresponde.
+
+**Entradas:**
+- `context: Context`
+- `uri: Uri`
+
+**Salida:** Long?.
+
+**Efectos/APIs observados en el cuerpo:**
+- Accede al sistema de archivos interno/cache.
+- Lee/escribe Uris mediante ContentResolver.
+
+**Decisiones y protecciones visibles:**
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Usa `when` para mapear estados/tipos/opciones.
+
+**Operaciones/funciones que coordina:** `File`, `exists`, `length`, `openAssetFileDescriptor`.
+
+### `formatFileSize` — líneas 1268–1276
+
+**Firma:** `private fun formatFileSize(bytes: Long): String`
+
+Convierte un valor interno a texto breve de presentación para la interfaz.
+
+**Entradas:**
+- `bytes: Long`
+
+**Salida:** String.
+
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `format`.
+
+### `formatTime` — líneas 1278–1288
+
+**Firma:** `private fun formatTime(milliseconds: Int): String`
+
+Convierte un valor interno a texto breve de presentación para la interfaz.
+
+**Entradas:**
+- `milliseconds: Int`
+
+**Salida:** String.
+
+**Decisiones y protecciones visibles:**
+- Limita valores con `coerce*` para evitar estados fuera de rango.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `coerceAtLeast`, `format`.
+
+## 5. Cómo se conecta con el resto de MyNotes
+
+- Usa `com.example.mynotes.R`.
+- Usa `com.example.mynotes.ui.components.ScrollPositionCapsule`.
+- Usa `com.example.mynotes.performance.DisplayPerformanceController`.
+- Usa `com.example.mynotes.ui.sound.UiActionSound`.
+- Usa `com.example.mynotes.ui.sound.UiSoundPlayer`.
+- Usa `com.example.mynotes.ui.theme.MyNotesTheme`.
+- Usa `com.example.mynotes.viewmodel.SettingsViewModel`.
+
+## 6. Recursos Android que utiliza
+
+- `R.string`: `audio`, `audio_playback_failed_inside`, `back`, `file`, `image`, `image_format_not_supported`, `no_compatible_app`, `open_file_failed`, `open_with`, `open_with_other_app`, `pause`, `pdf_document`, `pdf_page_description`, `pdf_page_load_failed`, `play`, `video`, `video_playback_failed_inside`
+
+## 7. Tecnologías y efectos relevantes
+
+- Ejecuta trabajo de I/O fuera del hilo principal.
+- Lanza trabajo asíncrono mediante coroutines.
+- Lee o escribe archivos ZIP.
+- Procesa imágenes/bitmaps.
+- Renderiza contenido PDF.
+- Accede al sistema de archivos interno/cache.
+- Lee/escribe Uris mediante ContentResolver.
+- Participa en estado/efectos de Compose.
+- Inicia o prepara navegación/acción mediante Intent.
+
+## 8. Lectura práctica del flujo
+
+Una forma útil de seguir este archivo en el depurador es recorrer estas operaciones en este orden aproximado:
+1. `openAttachmentViewer` — Construye/ejecuta la operación necesaria para abrir el destino indicado, aplicando las validaciones visibles en el cuerpo.
+2. `onWindowFocusChanged` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+3. `onResume` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+4. `onMultiWindowModeChanged` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+5. `onDestroy` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+6. `onCreate` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+7. `onPlaybackStateChanged` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+8. `onIsPlayingChanged` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+9. `onPlayerError` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+10. `onPlaybackStateChanged` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+11. `onIsPlayingChanged` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+12. `onPlayerError` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+## 9. Qué no debe romperse al modificarlo
+
+- Evitar aumentar resoluciones/cargas sin considerar memoria y scroll; preservar caché y liberación de recursos.
+- Conservar validaciones de Uri/ruta y no confiar en nombres externos sin sanitizar.
+- Evitar trabajo bloqueante durante composición y mantener estado estable para limitar recomposiciones.
+
+## 10. Resumen en lenguaje sencillo
+
+En términos simples: Visor Android para abrir adjuntos a pantalla completa manteniendo políticas de barras del sistema. La sección función por función anterior describe qué entra, qué devuelve y qué efectos produce cada operación detectada en el fuente actual.

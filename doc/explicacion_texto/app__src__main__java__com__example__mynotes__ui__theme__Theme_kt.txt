@@ -1,0 +1,307 @@
+# Theme.kt — explicación completa del código
+
+Ruta: app/src/main/java/com/example/mynotes/ui/theme/Theme.kt  
+SHA-256: 130e512bbdbf3177078209c182ce549511fb038baaee6e644db86015f22c07b1  
+Líneas: 270  
+Package: com.example.mynotes.ui.theme
+
+## 1. Para qué existe este archivo
+
+Construye MaterialTheme claro/oscuro desde la paleta y AppSettings; aplica intensidad, tipografía, contraste y acento.
+
+## 2. Tipos/clases declarados
+
+- No declara una clase/objeto propio; contiene funciones/valores de soporte o es un archivo marcador.
+
+## 3. Estado, constantes y valores importantes
+
+- MAX_DARKEN_AMOUNT (línea 17) inicia con 0.30f. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- value (línea 21) inicia con amount.coerceIn(0f. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- preferred (línea 49) inicia con if (toneIndex.coerceIn(0. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- primary (línea 53) inicia con resolvedPaletteTextColor(textColor. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- BlackTextOutlineShadow (línea 85) inicia con Shadow(color = Color.Black. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- baseTone (línea 113) inicia con palette.tones[toneIndex.coerceIn(0. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- body (línea 114) inicia con applySectionIntensity(baseTone. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- header (línea 115) inicia con applySectionIntensity(baseTone. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- panelMix (línea 120) inicia con (surfacePanelIntensity.coerceIn(0f. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- accent (línea 121) inicia con resolveAccentColor(accentColor. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- automaticDarkTone (línea 122) inicia con textColor == "auto" && toneIndex.coerceIn(0. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- panelTarget (línea 128) inicia con if (automaticDarkTone. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- surfaceVariantColor (línea 129) inicia con mixColor(body. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- surfaceContainerColor (línea 130) inicia con mixColor(body. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- bodyContent (línea 131) inicia con resolvedPaletteTextColor(textColor = textColor. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- surfaceContent (línea 132) inicia con resolvedPaletteTextColor(textColor = textColor. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- variantContent (línea 133) inicia con resolvedPaletteSecondaryTextColor(textColor = textColor. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- selected (línea 158) inicia con palette.tones[toneIndex.coerceIn(0. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- automaticPaletteMode (línea 159) inicia con textColor != "black" && textColor != "white". Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- base (línea 166) inicia con if (automaticPaletteMode. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- panelScale (línea 178) inicia con (surfacePanelIntensity.coerceIn(0f. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- rawAccent (línea 179) inicia con resolveAccentColor(accentColor. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- palette (línea 220) inicia con remember(backgroundColor. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- scheme (línea 228) inicia con remember(darkTheme. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- resolvedTypography (línea 248) inicia con remember(textOutlineEnabled. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- inheritedTextStyle (línea 259) inicia con if (textOutlineEnabled. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+
+## 4. Funciones y flujo, una por una
+
+### mixColor — líneas 20–26
+
+Firma: private fun mixColor(first: Color, second: Color, amount: Float): Color
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+Entradas:
+- first: Color
+- second: Color
+- amount: Float
+
+Salida: Color.
+
+Decisiones y protecciones visibles:
+- Limita valores con coerce* para evitar estados fuera de rango.
+
+Operaciones/funciones que coordina: coerceIn.
+
+### intensityAmount — líneas 28–30
+
+Firma: private fun intensityAmount(intensity: Float): Float
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+Entradas:
+- intensity: Float
+
+Salida: Float.
+
+Decisiones y protecciones visibles:
+- Limita valores con coerce* para evitar estados fuera de rango.
+
+Operaciones/funciones que coordina: coerceIn.
+
+### applySectionIntensity — líneas 32–34
+
+Firma: fun applySectionIntensity(color: Color, intensity: Float): Color
+
+Aplica una transformación/configuración al valor o componente recibido y devuelve/deja el resultado listo para ser usado por la UI.
+
+Entradas:
+- color: Color
+- intensity: Float
+
+Salida: Color.
+
+Operaciones/funciones que coordina: mixColor, intensityAmount.
+
+### readableContentColor — líneas 36–36
+
+Firma: private fun readableContentColor(background: Color): Color
+
+Lee y transforma datos desde la fuente indicada, devolviendo una representación segura o fallback cuando la lectura no puede completarse.
+
+Entradas:
+- background: Color
+
+Salida: Color.
+
+Operaciones/funciones que coordina: automaticUiTextColor.
+
+### resolvedTextColor — líneas 38–38
+
+Firma: private fun resolvedTextColor(textColor: String, background: Color): Color
+
+Resuelve un valor configurable a su representación efectiva usada por la UI, aplicando reglas de fallback/contraste cuando corresponde.
+
+Entradas:
+- textColor: String
+- background: Color
+
+Salida: Color.
+
+Operaciones/funciones que coordina: resolveUiTextColor.
+
+### resolvedPaletteTextColor — líneas 45–51
+
+Firma: private fun resolvedPaletteTextColor(textColor: String, toneIndex: Int, background: Color): Color
+
+Resuelve un valor configurable a su representación efectiva usada por la UI, aplicando reglas de fallback/contraste cuando corresponde.
+
+Entradas:
+- textColor: String
+- toneIndex: Int
+- background: Color
+
+Salida: Color.
+
+Decisiones y protecciones visibles:
+- Limita valores con coerce* para evitar estados fuera de rango.
+- Contiene decisiones condicionales (if) para seleccionar comportamiento.
+
+Operaciones/funciones que coordina: resolveUiTextColor, coerceIn, uiContrastRatio, automaticUiTextColor.
+
+### resolvedPaletteSecondaryTextColor — líneas 52–59
+
+Firma: private fun resolvedPaletteSecondaryTextColor(textColor: String, toneIndex: Int, background: Color): Color
+
+Resuelve un valor configurable a su representación efectiva usada por la UI, aplicando reglas de fallback/contraste cuando corresponde.
+
+Entradas:
+- textColor: String
+- toneIndex: Int
+- background: Color
+
+Salida: Color.
+
+Decisiones y protecciones visibles:
+- Contiene decisiones condicionales (if) para seleccionar comportamiento.
+
+Operaciones/funciones que coordina: resolvedPaletteTextColor, softenUiColorToContrast.
+
+### resolveAccentColor — líneas 61–84
+
+Firma: private fun resolveAccentColor(value: String, palette: MyNotesPalette): Color
+
+Resuelve un valor configurable a su representación efectiva usada por la UI, aplicando reglas de fallback/contraste cuando corresponde.
+
+Entradas:
+- value: String
+- palette: MyNotesPalette
+
+Salida: Color.
+
+Decisiones y protecciones visibles:
+- Usa when para mapear estados/tipos/opciones.
+
+### withBlackOutline — líneas 88–94
+
+Firma: private fun TextStyle.withBlackOutline(enabled: Boolean): TextStyle
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+Entradas:
+- enabled: Boolean
+
+Salida: TextStyle.
+
+Decisiones y protecciones visibles:
+- Contiene decisiones condicionales (if) para seleccionar comportamiento.
+
+Operaciones/funciones que coordina: copy.
+
+### typographyWithBlackOutline — líneas 96–108
+
+Firma: private fun typographyWithBlackOutline(base: MaterialTypography, enabled: Boolean): MaterialTypography
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+Entradas:
+- base: MaterialTypography
+- enabled: Boolean
+
+Salida: MaterialTypography.
+
+Decisiones y protecciones visibles:
+- Contiene decisiones condicionales (if) para seleccionar comportamiento.
+
+Operaciones/funciones que coordina: copy, withBlackOutline.
+
+### lightScheme — líneas 110–153
+
+Firma: internal fun lightScheme(palette: MyNotesPalette, toneIndex: Int, backgroundIntensity: Float, surfacePanelIntensity: Float, headerIntensity: Float, textColor: String, accentColor: String): ColorScheme
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+Entradas:
+- palette: MyNotesPalette
+- toneIndex: Int
+- backgroundIntensity: Float
+- surfacePanelIntensity: Float
+- headerIntensity: Float
+- textColor: String
+- accentColor: String
+
+Salida: ColorScheme.
+
+Decisiones y protecciones visibles:
+- Limita valores con coerce* para evitar estados fuera de rango.
+- Contiene decisiones condicionales (if) para seleccionar comportamiento.
+
+Operaciones/funciones que coordina: coerceIn, applySectionIntensity, resolveAccentColor, mixColor, resolvedPaletteTextColor, resolvedPaletteSecondaryTextColor, lightColorScheme, readableContentColor, ensureUiContrast.
+
+### darkScheme — líneas 155–206
+
+Firma: internal fun darkScheme(palette: MyNotesPalette, toneIndex: Int, backgroundIntensity: Float, surfacePanelIntensity: Float, headerIntensity: Float, textColor: String, accentColor: String): ColorScheme
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+Entradas:
+- palette: MyNotesPalette
+- toneIndex: Int
+- backgroundIntensity: Float
+- surfacePanelIntensity: Float
+- headerIntensity: Float
+- textColor: String
+- accentColor: String
+
+Salida: ColorScheme.
+
+Decisiones y protecciones visibles:
+- Limita valores con coerce* para evitar estados fuera de rango.
+- Contiene decisiones condicionales (if) para seleccionar comportamiento.
+
+Operaciones/funciones que coordina: coerceIn, mixColor, applySectionIntensity, resolveAccentColor, resolvedPaletteTextColor, resolvedPaletteSecondaryTextColor, darkColorScheme, readableContentColor, ensureUiContrast.
+
+### MyNotesTheme — líneas 209–269
+
+Firma: fun MyNotesTheme(darkTheme: Boolean = isSystemInDarkTheme(), backgroundColor: String = "neutral", backgroundToneIndex: Int = 0, backgroundIntensity: Float = 0f, surfacePanelIntensity: Float = 72f, headerIntensity: Float = 18f, textColor: String = "auto", textOutlineEnabled: Boolean = false, accentColor: String = "palette", content: @Composable () -> Unit)
+
+Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+Entradas:
+- darkTheme: Boolean = isSystemInDarkTheme()
+- backgroundColor: String = "neutral"
+- backgroundToneIndex: Int = 0
+- backgroundIntensity: Float = 0f
+- surfacePanelIntensity: Float = 72f
+- headerIntensity: Float = 18f
+- textColor: String = "auto"
+- textOutlineEnabled: Boolean = false
+- accentColor: String = "palette"
+- content: @Composable () -> Unit
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Participa en estado/efectos de Compose.
+
+Decisiones y protecciones visibles:
+- Contiene decisiones condicionales (if) para seleccionar comportamiento.
+
+Operaciones/funciones que coordina: find, darkScheme, lightScheme, typographyWithBlackOutline, MaterialTheme, copy, CompositionLocalProvider, content.
+
+## 5. Cómo se conecta con el resto de MyNotes
+
+- No importa directamente otro componente com.example.mynotes; funciona como modelo/utilidad base o mediante APIs Android/Jetpack.
+
+## 6. Recursos Android que utiliza
+
+- No se detectaron referencias directas R.* en este archivo.
+
+## 7. Tecnologías y efectos relevantes
+
+- Participa en estado/efectos de Compose.
+
+## 8. Lectura práctica del flujo
+
+Una forma útil de seguir este archivo en el depurador es recorrer estas operaciones en este orden aproximado:
+1. applySectionIntensity — Aplica una transformación/configuración al valor o componente recibido y devuelve/deja el resultado listo para ser usado por la UI.
+2. lightScheme — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+3. darkScheme — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+4. MyNotesTheme — Componente de interfaz Compose. Construye esta parte del layout a partir de sus parámetros y estado; los callbacks recibidos trasladan las acciones hacia la capa propietaria del dato.
+
+## 9. Qué no debe romperse al modificarlo
+
+- Evitar trabajo bloqueante durante composición y mantener estado estable para limitar recomposiciones.
+
+## 10. Resumen en lenguaje sencillo
+
+En términos simples: Construye MaterialTheme claro/oscuro desde la paleta y AppSettings; aplica intensidad, tipografía, contraste y acento. La sección función por función anterior describe qué entra, qué devuelve y qué efectos produce cada operación detectada en el fuente actual.

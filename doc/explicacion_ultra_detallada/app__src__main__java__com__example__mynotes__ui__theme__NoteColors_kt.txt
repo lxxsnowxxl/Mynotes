@@ -1,0 +1,1351 @@
+MYNOTES — EXPLICACIÓN ULTRA DETALLADA
+==============================================================================================================
+Archivo 45/72: app/src/main/java/com/example/mynotes/ui/theme/NoteColors.kt
+SHA-256: cf9df405cc74513f684ec07b1ce73c4d15079ac16ba53969e34bfc2e651a4b17
+Líneas del fuente: 328
+Package: com.example.mynotes.ui.theme
+
+1. RESPONSABILIDAD EXACTA DEL ARCHIVO
+----------------------------------------------------------------------
+Funciones matemáticas de color y contraste. Decide texto negro/blanco, secundarios, botones, superficies y contornos adaptados a la paleta.
+
+2. DÓNDE ENCAJA EN LA ARQUITECTURA
+----------------------------------------------------------------------
+Este archivo pertenece principalmente a la **capa de interfaz Compose/Activities**. No debe analizarse aislado: las referencias cruzadas y callbacks se detallan más abajo.
+
+3. IMPORTACIONES, UNA POR UNA
+----------------------------------------------------------------------
+- `androidx.compose.material3.MaterialTheme`: Importa `androidx.compose.material3.MaterialTheme` para usar componentes y tema Material 3.
+- `androidx.compose.runtime.Composable`: Importa `androidx.compose.runtime.Composable` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+- `androidx.compose.ui.graphics.Color`: Importa `androidx.compose.ui.graphics.Color` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.graphics.luminance`: Importa `androidx.compose.ui.graphics.luminance` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+
+4. DECLARACIONES Y ESTADO IMPORTANTES
+----------------------------------------------------------------------
+L8: `private val AccessibleBlack = Color.Black`
+    Declara `AccessibleBlack` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `Color.Black`.
+L9: `private val AccessibleWhite = Color.White`
+    Declara `AccessibleWhite` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `Color.White`.
+L44: `val a = foreground.alpha.coerceIn(0f, 1f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L45: `val inverse = 1f - a`
+    Declara `inverse` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `1f - a`.
+L52: `val resolvedForeground = compositeUiColor(foreground, background)`
+    Declara `resolvedForeground` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `compositeUiColor(foreground, background)`.
+L53: `val l1 = resolvedForeground.luminance()`
+    Declara `l1` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolvedForeground.luminance()`.
+L54: `val l2 = background.copy(alpha = 1f).luminance()`
+    Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+L55: `val lighter = maxOf(l1, l2)`
+    Declara `lighter` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `maxOf(l1, l2)`.
+L56: `val darker = minOf(l1, l2)`
+    Declara `darker` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `minOf(l1, l2)`.
+L65: `val blackContrast = uiContrastRatio(AccessibleBlack, background)`
+    Declara `blackContrast` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `uiContrastRatio(AccessibleBlack, background)`.
+L66: `val whiteContrast = uiContrastRatio(AccessibleWhite, background)`
+    Declara `whiteContrast` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `uiContrastRatio(AccessibleWhite, background)`.
+L84: `val preferred = when (value) {`
+    Declara `preferred` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `when (value) {`.
+L97: `val t = amount.coerceIn(0f, 1f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L109: `val base = foreground.copy(alpha = 1f)`
+    Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+L113: `var low = 0f`
+    Declara `low` como variable mutable: el código puede reasignarla para representar estado cambiante. Parte con `0f`.
+L114: `var high = maximumSoftening.coerceIn(0f, 0.92f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L115: `var best = base`
+    Declara `best` como variable mutable: el código puede reasignarla para representar estado cambiante. Parte con `base`.
+L117: `val middle = (low + high) / 2f`
+    Declara `middle` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `(low + high) / 2f`.
+L118: `val candidate = mixOpaqueUiColor(base, background, middle)`
+    Declara `candidate` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `mixOpaqueUiColor(base, background, middle)`.
+L134: `val primary = resolveUiTextColor(value, background)`
+    Declara `primary` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolveUiTextColor(value, background)`.
+L147: `val primary = resolveUiTextColor(value, background)`
+    Declara `primary` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolveUiTextColor(value, background)`.
+L161: `val opaque = preferred.copy(alpha = 1f)`
+    Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+L177: `val backgroundOpaque = background.copy(alpha = 1f)`
+    Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+L178: `val target = if (backgroundOpaque.luminance() > 0.5f) AccessibleBlack else AccessibleWhite`
+    Declara `target` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (backgroundOpaque.luminance() > 0.5f) AccessibleBlack else AccessibleWhite`.
+L179: `var low = 0f`
+    Declara `low` como variable mutable: el código puede reasignarla para representar estado cambiante. Parte con `0f`.
+L180: `var high = 1f`
+    Declara `high` como variable mutable: el código puede reasignarla para representar estado cambiante. Parte con `1f`.
+L181: `var best: Color? = null`
+    Declara `best` como variable mutable: el código puede reasignarla para representar estado cambiante. Parte con `null`.
+L183: `val amount = (low + high) / 2f`
+    Declara `amount` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `(low + high) / 2f`.
+L184: `val candidate = mixOpaqueUiColor(backgroundOpaque, target, amount)`
+    Declara `candidate` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `mixOpaqueUiColor(backgroundOpaque, target, amount)`.
+L212: `val preferredOpaque = preferred.copy(alpha = 1f)`
+    Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+L213: `val backgroundOpaque = background.copy(alpha = 1f)`
+    Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+L214: `val contentOpaque = contentColor.copy(alpha = 1f)`
+    Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+L217: `val dr = first.red - second.red`
+    Declara `dr` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `first.red - second.red`.
+L218: `val dg = first.green - second.green`
+    Declara `dg` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `first.green - second.green`.
+L219: `val db = first.blue - second.blue`
+    Declara `db` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `first.blue - second.blue`.
+L223: `val candidates = ArrayList<Color>(220)`
+    Declara `candidates` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `ArrayList<Color>(220)`.
+L242: `val value = index.toFloat() / 48f`
+    Declara `value` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `index.toFloat() / 48f`.
+L246: `val valid = candidates.filter { candidate ->`
+    Conserva únicamente los elementos que cumplen la condición indicada.
+L259: `val fallbackTarget = if (uiContrastRatio(AccessibleBlack, contentOpaque) >`
+    Declara `fallbackTarget` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (uiContrastRatio(AccessibleBlack, contentOpaque) >`.
+L267: `data class AdaptiveUiButtonColors(`
+    Declara `AdaptiveUiButtonColors` como `data class`: Kotlin genera automáticamente igualdad, hash, copia y representación textual a partir de sus propiedades del constructor.
+L268: `val container: Color,`
+    Declara `container` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L269: `val content: Color`
+    Declara `content` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L290: `val content = resolveUiTextColor(textColorMode, background)`
+    Declara `content` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolveUiTextColor(textColorMode, background)`.
+L291: `val container = adaptiveUiButtonContainer(`
+    Declara `container` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `adaptiveUiButtonContainer(`.
+L302: `var content = automaticUiTextColor(preferred.copy(alpha = 1f))`
+    Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+L303: `var container = adaptiveUiButtonContainer(`
+    Declara `container` como variable mutable: el código puede reasignarla para representar estado cambiante. Parte con `adaptiveUiButtonContainer(`.
+
+5. FUNCIONES — EXPLICACIÓN DE CADA UNA
+----------------------------------------------------------------------
+
+5.1 `noteBackgroundColor` — líneas 12–37
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    fun noteBackgroundColor(color: String): Color {
+
+Propósito:
+    Implementa `noteBackgroundColor`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `color: String`: el llamador proporciona este valor/callback a `noteBackgroundColor`. Dentro del cuerpo, las líneas donde aparece `color` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Color`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L12 [0 espacios] `fun noteBackgroundColor(color: String): Color {`
+      → Declara una función. El bloque de `noteBackgroundColor` se detalla después instrucción por instrucción.
+  L13 [4 espacios] `return when (color) {`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L14 [8 espacios] `"purple" -> Color(0xFFF0E7FA)`
+      → Define una rama/lambda. Cuando coincide `"purple"`, se ejecuta la expresión o bloque situado después de `->`.
+  L15 [8 espacios] `"yellow" -> Color(0xFFFFF4C7)`
+      → Define una rama/lambda. Cuando coincide `"yellow"`, se ejecuta la expresión o bloque situado después de `->`.
+  L16 [8 espacios] `"pink" -> Color(0xFFFFE5EC)`
+      → Define una rama/lambda. Cuando coincide `"pink"`, se ejecuta la expresión o bloque situado después de `->`.
+  L17 [8 espacios] `"green" -> Color(0xFFE4F2E8)`
+      → Define una rama/lambda. Cuando coincide `"green"`, se ejecuta la expresión o bloque situado después de `->`.
+  L18 [8 espacios] `"blue" -> Color(0xFFE5F1FB)`
+      → Define una rama/lambda. Cuando coincide `"blue"`, se ejecuta la expresión o bloque situado después de `->`.
+  L19 [8 espacios] `"orange" -> Color(0xFFFFE7D1)`
+      → Define una rama/lambda. Cuando coincide `"orange"`, se ejecuta la expresión o bloque situado después de `->`.
+  L20 [8 espacios] `"red" -> Color(0xFFFFE0E0)`
+      → Define una rama/lambda. Cuando coincide `"red"`, se ejecuta la expresión o bloque situado después de `->`.
+  L21 [8 espacios] `"cyan" -> Color(0xFFE0F7FA)`
+      → Define una rama/lambda. Cuando coincide `"cyan"`, se ejecuta la expresión o bloque situado después de `->`.
+  L22 [8 espacios] `"teal" -> Color(0xFFDDF4F0)`
+      → Define una rama/lambda. Cuando coincide `"teal"`, se ejecuta la expresión o bloque situado después de `->`.
+  L23 [8 espacios] `"mint" -> Color(0xFFDFF7EA)`
+      → Define una rama/lambda. Cuando coincide `"mint"`, se ejecuta la expresión o bloque situado después de `->`.
+  L24 [8 espacios] `"lime" -> Color(0xFFF1F8D7)`
+      → Define una rama/lambda. Cuando coincide `"lime"`, se ejecuta la expresión o bloque situado después de `->`.
+  L25 [8 espacios] `"brown" -> Color(0xFFEDE2D9)`
+      → Define una rama/lambda. Cuando coincide `"brown"`, se ejecuta la expresión o bloque situado después de `->`.
+  L26 [8 espacios] `"gray" -> Color(0xFFE9ECEF)`
+      → Define una rama/lambda. Cuando coincide `"gray"`, se ejecuta la expresión o bloque situado después de `->`.
+  L27 [8 espacios] `/*`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L28 [9 espacios] `* "default" significa que la nota sigue el fondo global elegido`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L29 [9 espacios] `* en Configuración → Paleta de colores. Antes se usaba`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L30 [9 espacios] `* surfaceContainerLow, que en temas oscuros puede ser casi negro`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L31 [9 espacios] `* aunque el usuario haya elegido una paleta clara o de otro color.`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L32 [9 espacios] `*/`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L33 [8 espacios] `"default" -> MaterialTheme.colorScheme.background`
+      → Define una rama/lambda. Cuando coincide `"default"`, se ejecuta la expresión o bloque situado después de `->`.
+  L34 [8 espacios] `// Fallback seguro para colores antiguos o desconocidos.`
+      → Comentario del autor. No se ejecuta; documenta la intención o una restricción del bloque siguiente.
+  L35 [8 espacios] `else -> MaterialTheme.colorScheme.background`
+      → Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+  L36 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L37 [0 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.2 `compositeUiColor` — líneas 43–48
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    fun compositeUiColor(foreground: Color, background: Color): Color {
+
+Propósito:
+    Implementa `compositeUiColor`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `foreground: Color`: el llamador proporciona este valor/callback a `compositeUiColor`. Dentro del cuerpo, las líneas donde aparece `foreground` muestran exactamente cómo afecta al resultado.
+  - `background: Color`: el llamador proporciona este valor/callback a `compositeUiColor`. Dentro del cuerpo, las líneas donde aparece `background` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Color`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L43 [0 espacios] `fun compositeUiColor(foreground: Color, background: Color): Color {`
+      → Declara una función. El bloque de `compositeUiColor` se detalla después instrucción por instrucción.
+  L44 [4 espacios] `val a = foreground.alpha.coerceIn(0f, 1f)`
+      → Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+  L45 [4 espacios] `val inverse = 1f - a`
+      → Declara `inverse` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `1f - a`.
+  L46 [4 espacios] `return Color(red = foreground.red * a + background.red * inverse, green = foreground.green * a + background.green * inverse,`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L47 [8 espacios] `blue = foreground.blue * a + background.blue * inverse, alpha = 1f)`
+      → Asigna/configura `blue` usando `foreground.blue * a + background.blue * inverse, alpha = 1f)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L48 [0 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.3 `uiContrastRatio` — líneas 51–58
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    fun uiContrastRatio(foreground: Color, background: Color): Float {
+
+Propósito:
+    Implementa `uiContrastRatio`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `foreground: Color`: el llamador proporciona este valor/callback a `uiContrastRatio`. Dentro del cuerpo, las líneas donde aparece `foreground` muestran exactamente cómo afecta al resultado.
+  - `background: Color`: el llamador proporciona este valor/callback a `uiContrastRatio`. Dentro del cuerpo, las líneas donde aparece `background` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Float`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L51 [0 espacios] `fun uiContrastRatio(foreground: Color, background: Color): Float {`
+      → Declara una función. El bloque de `uiContrastRatio` se detalla después instrucción por instrucción.
+  L52 [4 espacios] `val resolvedForeground = compositeUiColor(foreground, background)`
+      → Declara `resolvedForeground` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `compositeUiColor(foreground, background)`.
+  L53 [4 espacios] `val l1 = resolvedForeground.luminance()`
+      → Declara `l1` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolvedForeground.luminance()`.
+  L54 [4 espacios] `val l2 = background.copy(alpha = 1f).luminance()`
+      → Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+  L55 [4 espacios] `val lighter = maxOf(l1, l2)`
+      → Declara `lighter` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `maxOf(l1, l2)`.
+  L56 [4 espacios] `val darker = minOf(l1, l2)`
+      → Declara `darker` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `minOf(l1, l2)`.
+  L57 [4 espacios] `return (lighter + 0.05f) / (darker + 0.05f)`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L58 [0 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.4 `automaticUiTextColor` — líneas 64–72
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    fun automaticUiTextColor(background: Color): Color {
+
+Propósito:
+    Implementa `automaticUiTextColor`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `background: Color`: el llamador proporciona este valor/callback a `automaticUiTextColor`. Dentro del cuerpo, las líneas donde aparece `background` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Color`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L64 [0 espacios] `fun automaticUiTextColor(background: Color): Color {`
+      → Declara una función. El bloque de `automaticUiTextColor` se detalla después instrucción por instrucción.
+  L65 [4 espacios] `val blackContrast = uiContrastRatio(AccessibleBlack, background)`
+      → Declara `blackContrast` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `uiContrastRatio(AccessibleBlack, background)`.
+  L66 [4 espacios] `val whiteContrast = uiContrastRatio(AccessibleWhite, background)`
+      → Declara `whiteContrast` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `uiContrastRatio(AccessibleWhite, background)`.
+  L67 [4 espacios] `return if (blackContrast >= whiteContrast) {`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L68 [8 espacios] `AccessibleBlack`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `AccessibleBlack`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L69 [4 espacios] `} else {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L70 [8 espacios] `AccessibleWhite`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `AccessibleWhite`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L71 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L72 [0 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.5 `resolveUiTextColor` — líneas 83–94
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    fun resolveUiTextColor(value: String, background: Color): Color {
+
+Propósito:
+    Calcula un valor derivado sin que el llamador tenga que conocer la regla interna; revisa cada rama del cuerpo para ver el criterio exacto.
+
+Parámetros/entradas:
+  - `value: String`: el llamador proporciona este valor/callback a `resolveUiTextColor`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+  - `background: Color`: el llamador proporciona este valor/callback a `resolveUiTextColor`. Dentro del cuerpo, las líneas donde aparece `background` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Color`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L83 [0 espacios] `fun resolveUiTextColor(value: String, background: Color): Color {`
+      → Declara una función. El bloque de `resolveUiTextColor` se detalla después instrucción por instrucción.
+  L84 [4 espacios] `val preferred = when (value) {`
+      → Declara `preferred` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `when (value) {`.
+  L85 [8 espacios] `"black" -> Color.Black`
+      → Define una rama/lambda. Cuando coincide `"black"`, se ejecuta la expresión o bloque situado después de `->`.
+  L86 [8 espacios] `"white" -> Color.White`
+      → Define una rama/lambda. Cuando coincide `"white"`, se ejecuta la expresión o bloque situado después de `->`.
+  L87 [8 espacios] `else -> return automaticUiTextColor(background)`
+      → Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+  L88 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L89 [4 espacios] `return if (uiContrastRatio(preferred, background) >= 4.5f) {`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L90 [8 espacios] `preferred`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `preferred`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L91 [4 espacios] `} else {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L92 [8 espacios] `automaticUiTextColor(background)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L93 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L94 [0 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.6 `mixOpaqueUiColor` — líneas 96–101
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    private fun mixOpaqueUiColor(foreground: Color, background: Color, amount: Float): Color {
+
+Propósito:
+    Implementa `mixOpaqueUiColor`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `foreground: Color`: el llamador proporciona este valor/callback a `mixOpaqueUiColor`. Dentro del cuerpo, las líneas donde aparece `foreground` muestran exactamente cómo afecta al resultado.
+  - `background: Color`: el llamador proporciona este valor/callback a `mixOpaqueUiColor`. Dentro del cuerpo, las líneas donde aparece `background` muestran exactamente cómo afecta al resultado.
+  - `amount: Float`: el llamador proporciona este valor/callback a `mixOpaqueUiColor`. Dentro del cuerpo, las líneas donde aparece `amount` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Color`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L96 [0 espacios] `private fun mixOpaqueUiColor(foreground: Color, background: Color, amount: Float): Color {`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `mixOpaqueUiColor` se detalla después instrucción por instrucción.
+  L97 [4 espacios] `val t = amount.coerceIn(0f, 1f)`
+      → Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+  L98 [4 espacios] `return Color(red = foreground.red + (background.red - foreground.red) * t,`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L99 [8 espacios] `green = foreground.green + (background.green - foreground.green) * t,`
+      → Asigna/configura `green` usando `foreground.green + (background.green - foreground.green) * t,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L100 [8 espacios] `blue = foreground.blue + (background.blue - foreground.blue) * t, alpha = 1f)`
+      → Asigna/configura `blue` usando `foreground.blue + (background.blue - foreground.blue) * t, alpha = 1f)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L101 [0 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.7 `softenUiColorToContrast` — líneas 108–127
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    fun softenUiColorToContrast(foreground: Color, background: Color, minimumContrast: Float, maximumSoftening: Float = 0.62f): Color {
+
+Propósito:
+    Implementa `softenUiColorToContrast`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `foreground: Color`: el llamador proporciona este valor/callback a `softenUiColorToContrast`. Dentro del cuerpo, las líneas donde aparece `foreground` muestran exactamente cómo afecta al resultado.
+  - `background: Color`: el llamador proporciona este valor/callback a `softenUiColorToContrast`. Dentro del cuerpo, las líneas donde aparece `background` muestran exactamente cómo afecta al resultado.
+  - `minimumContrast: Float`: el llamador proporciona este valor/callback a `softenUiColorToContrast`. Dentro del cuerpo, las líneas donde aparece `minimumContrast` muestran exactamente cómo afecta al resultado.
+  - `maximumSoftening: Float = 0.62f`: el llamador proporciona este valor/callback a `softenUiColorToContrast`. Dentro del cuerpo, las líneas donde aparece `maximumSoftening` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Color`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L108 [0 espacios] `fun softenUiColorToContrast(foreground: Color, background: Color, minimumContrast: Float, maximumSoftening: Float = 0.62f): Color {`
+      → Declara una función. El bloque de `softenUiColorToContrast` se detalla después instrucción por instrucción.
+  L109 [4 espacios] `val base = foreground.copy(alpha = 1f)`
+      → Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+  L110 [4 espacios] `if (uiContrastRatio(base, background) < minimumContrast) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `uiContrastRatio(base, background) < minimumContrast`.
+  L111 [8 espacios] `return automaticUiTextColor(background)`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L112 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L113 [4 espacios] `var low = 0f`
+      → Declara `low` como variable mutable: el código puede reasignarla para representar estado cambiante. Parte con `0f`.
+  L114 [4 espacios] `var high = maximumSoftening.coerceIn(0f, 0.92f)`
+      → Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+  L115 [4 espacios] `var best = base`
+      → Declara `best` como variable mutable: el código puede reasignarla para representar estado cambiante. Parte con `base`.
+  L116 [4 espacios] `repeat(18) {`
+      → Ejecuta el bloque un número fijo de veces; suele usarse aquí para iteraciones de aproximación/cálculo.
+  L117 [8 espacios] `val middle = (low + high) / 2f`
+      → Declara `middle` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `(low + high) / 2f`.
+  L118 [8 espacios] `val candidate = mixOpaqueUiColor(base, background, middle)`
+      → Declara `candidate` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `mixOpaqueUiColor(base, background, middle)`.
+  L119 [8 espacios] `if (uiContrastRatio(candidate, background) >= minimumContrast) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `uiContrastRatio(candidate, background) >= minimumContrast`.
+  L120 [12 espacios] `best = candidate`
+      → Asigna/configura `best` usando `candidate`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L121 [12 espacios] `low = middle`
+      → Asigna/configura `low` usando `middle`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L122 [8 espacios] `} else {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L123 [12 espacios] `high = middle`
+      → Asigna/configura `high` usando `middle`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L124 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L125 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L126 [4 espacios] `return best`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L127 [0 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.8 `resolveSecondaryUiTextColor` — líneas 133–140
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    fun resolveSecondaryUiTextColor(value: String, background: Color): Color {
+
+Propósito:
+    Calcula un valor derivado sin que el llamador tenga que conocer la regla interna; revisa cada rama del cuerpo para ver el criterio exacto.
+
+Parámetros/entradas:
+  - `value: String`: el llamador proporciona este valor/callback a `resolveSecondaryUiTextColor`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+  - `background: Color`: el llamador proporciona este valor/callback a `resolveSecondaryUiTextColor`. Dentro del cuerpo, las líneas donde aparece `background` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Color`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L133 [0 espacios] `fun resolveSecondaryUiTextColor(value: String, background: Color): Color {`
+      → Declara una función. El bloque de `resolveSecondaryUiTextColor` se detalla después instrucción por instrucción.
+  L134 [4 espacios] `val primary = resolveUiTextColor(value, background)`
+      → Declara `primary` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolveUiTextColor(value, background)`.
+  L135 [4 espacios] `return if (value == "black" || value == "white") {`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L136 [8 espacios] `primary`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `primary`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L137 [4 espacios] `} else {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L138 [8 espacios] `softenUiColorToContrast(foreground = primary, background = background, minimumContrast = 4.5f, maximumSoftening = 0.58f)`
+      → Asigna/configura `softenUiColorToContrast(foreground` usando `primary, background = background, minimumContrast = 4.5f, maximumSoftening = 0.58f)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L139 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L140 [0 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.9 `resolveUiGraphicColor` — líneas 146–153
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    fun resolveUiGraphicColor(value: String, background: Color): Color {
+
+Propósito:
+    Calcula un valor derivado sin que el llamador tenga que conocer la regla interna; revisa cada rama del cuerpo para ver el criterio exacto.
+
+Parámetros/entradas:
+  - `value: String`: el llamador proporciona este valor/callback a `resolveUiGraphicColor`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+  - `background: Color`: el llamador proporciona este valor/callback a `resolveUiGraphicColor`. Dentro del cuerpo, las líneas donde aparece `background` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Color`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L146 [0 espacios] `fun resolveUiGraphicColor(value: String, background: Color): Color {`
+      → Declara una función. El bloque de `resolveUiGraphicColor` se detalla después instrucción por instrucción.
+  L147 [4 espacios] `val primary = resolveUiTextColor(value, background)`
+      → Declara `primary` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolveUiTextColor(value, background)`.
+  L148 [4 espacios] `return if (value == "black" || value == "white") {`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L149 [8 espacios] `primary`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `primary`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L150 [4 espacios] `} else {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L151 [8 espacios] `softenUiColorToContrast(foreground = primary, background = background, minimumContrast = 3f, maximumSoftening = 0.72f)`
+      → Asigna/configura `softenUiColorToContrast(foreground` usando `primary, background = background, minimumContrast = 3f, maximumSoftening = 0.72f)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L152 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L153 [0 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.10 `ensureUiContrast` — líneas 160–167
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    fun ensureUiContrast(preferred: Color, background: Color, minimumContrast: Float = 3f): Color {
+
+Propósito:
+    Implementa `ensureUiContrast`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `preferred: Color`: el llamador proporciona este valor/callback a `ensureUiContrast`. Dentro del cuerpo, las líneas donde aparece `preferred` muestran exactamente cómo afecta al resultado.
+  - `background: Color`: el llamador proporciona este valor/callback a `ensureUiContrast`. Dentro del cuerpo, las líneas donde aparece `background` muestran exactamente cómo afecta al resultado.
+  - `minimumContrast: Float = 3f`: el llamador proporciona este valor/callback a `ensureUiContrast`. Dentro del cuerpo, las líneas donde aparece `minimumContrast` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Color`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L160 [0 espacios] `fun ensureUiContrast(preferred: Color, background: Color, minimumContrast: Float = 3f): Color {`
+      → Declara una función. El bloque de `ensureUiContrast` se detalla después instrucción por instrucción.
+  L161 [4 espacios] `val opaque = preferred.copy(alpha = 1f)`
+      → Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+  L162 [4 espacios] `return if (uiContrastRatio(opaque, background) >= minimumContrast) {`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L163 [8 espacios] `opaque`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `opaque`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L164 [4 espacios] `} else {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L165 [8 espacios] `automaticUiTextColor(background)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L166 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L167 [0 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.11 `paletteMatchedOutlineColor` — líneas 176–193
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    fun paletteMatchedOutlineColor(background: Color, minimumContrast: Float = 3f): Color {
+
+Propósito:
+    Implementa `paletteMatchedOutlineColor`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `background: Color`: el llamador proporciona este valor/callback a `paletteMatchedOutlineColor`. Dentro del cuerpo, las líneas donde aparece `background` muestran exactamente cómo afecta al resultado.
+  - `minimumContrast: Float = 3f`: el llamador proporciona este valor/callback a `paletteMatchedOutlineColor`. Dentro del cuerpo, las líneas donde aparece `minimumContrast` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Color`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L176 [0 espacios] `fun paletteMatchedOutlineColor(background: Color, minimumContrast: Float = 3f): Color {`
+      → Declara una función. El bloque de `paletteMatchedOutlineColor` se detalla después instrucción por instrucción.
+  L177 [4 espacios] `val backgroundOpaque = background.copy(alpha = 1f)`
+      → Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+  L178 [4 espacios] `val target = if (backgroundOpaque.luminance() > 0.5f) AccessibleBlack else AccessibleWhite`
+      → Declara `target` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (backgroundOpaque.luminance() > 0.5f) AccessibleBlack else AccessibleWhite`.
+  L179 [4 espacios] `var low = 0f`
+      → Declara `low` como variable mutable: el código puede reasignarla para representar estado cambiante. Parte con `0f`.
+  L180 [4 espacios] `var high = 1f`
+      → Declara `high` como variable mutable: el código puede reasignarla para representar estado cambiante. Parte con `1f`.
+  L181 [4 espacios] `var best: Color? = null`
+      → Declara `best` como variable mutable: el código puede reasignarla para representar estado cambiante. Parte con `null`.
+  L182 [4 espacios] `repeat(20) {`
+      → Ejecuta el bloque un número fijo de veces; suele usarse aquí para iteraciones de aproximación/cálculo.
+  L183 [8 espacios] `val amount = (low + high) / 2f`
+      → Declara `amount` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `(low + high) / 2f`.
+  L184 [8 espacios] `val candidate = mixOpaqueUiColor(backgroundOpaque, target, amount)`
+      → Declara `candidate` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `mixOpaqueUiColor(backgroundOpaque, target, amount)`.
+  L185 [8 espacios] `if (uiContrastRatio(candidate, backgroundOpaque) >= minimumContrast) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `uiContrastRatio(candidate, backgroundOpaque) >= minimumContrast`.
+  L186 [12 espacios] `best = candidate`
+      → Asigna/configura `best` usando `candidate`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L187 [12 espacios] `high = amount`
+      → Asigna/configura `high` usando `amount`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L188 [8 espacios] `} else {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L189 [12 espacios] `low = amount`
+      → Asigna/configura `low` usando `amount`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L190 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L191 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L192 [4 espacios] `return best ?: automaticUiTextColor(backgroundOpaque)`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L193 [0 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.12 `adaptiveUiButtonContainer` — líneas 205–209
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    fun adaptiveUiButtonContainer(
+        preferred: Color,
+        background: Color,
+        contentColor: Color,
+        minimumContentContrast: Float = 4.5f,
+
+Propósito:
+    Implementa `adaptiveUiButtonContainer`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `preferred: Color`: el llamador proporciona este valor/callback a `adaptiveUiButtonContainer`. Dentro del cuerpo, las líneas donde aparece `preferred` muestran exactamente cómo afecta al resultado.
+  - `background: Color`: el llamador proporciona este valor/callback a `adaptiveUiButtonContainer`. Dentro del cuerpo, las líneas donde aparece `background` muestran exactamente cómo afecta al resultado.
+  - `contentColor: Color`: el llamador proporciona este valor/callback a `adaptiveUiButtonContainer`. Dentro del cuerpo, las líneas donde aparece `contentColor` muestran exactamente cómo afecta al resultado.
+  - `minimumContentContrast: Float = 4.5f`: el llamador proporciona este valor/callback a `adaptiveUiButtonContainer`. Dentro del cuerpo, las líneas donde aparece `minimumContentContrast` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L205 [0 espacios] `fun adaptiveUiButtonContainer(`
+      → Declara una función. El bloque de `adaptiveUiButtonContainer` se detalla después instrucción por instrucción.
+  L206 [4 espacios] `preferred: Color,`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `preferred: Color,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L207 [4 espacios] `background: Color,`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `background: Color,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L208 [4 espacios] `contentColor: Color,`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `contentColor: Color,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L209 [4 espacios] `minimumContentContrast: Float = 4.5f,`
+      → Asigna/configura `minimumContentContrast: Float` usando `4.5f,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+
+5.13 `distanceSquared` — líneas 216–221
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun distanceSquared(first: Color, second: Color): Float {
+
+Propósito:
+    Implementa `distanceSquared`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `first: Color`: el llamador proporciona este valor/callback a `distanceSquared`. Dentro del cuerpo, las líneas donde aparece `first` muestran exactamente cómo afecta al resultado.
+  - `second: Color`: el llamador proporciona este valor/callback a `distanceSquared`. Dentro del cuerpo, las líneas donde aparece `second` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Float`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L216 [4 espacios] `fun distanceSquared(first: Color, second: Color): Float {`
+      → Declara una función. El bloque de `distanceSquared` se detalla después instrucción por instrucción.
+  L217 [8 espacios] `val dr = first.red - second.red`
+      → Declara `dr` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `first.red - second.red`.
+  L218 [8 espacios] `val dg = first.green - second.green`
+      → Declara `dg` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `first.green - second.green`.
+  L219 [8 espacios] `val db = first.blue - second.blue`
+      → Declara `db` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `first.blue - second.blue`.
+  L220 [8 espacios] `return dr * dr + dg * dg + db * db`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L221 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.14 `add` — líneas 224–226
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun add(candidate: Color) {
+
+Propósito:
+    Implementa `add`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `candidate: Color`: el llamador proporciona este valor/callback a `add`. Dentro del cuerpo, las líneas donde aparece `candidate` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L224 [4 espacios] `fun add(candidate: Color) {`
+      → Declara una función. El bloque de `add` se detalla después instrucción por instrucción.
+  L225 [8 espacios] `candidates += candidate.copy(alpha = 1f)`
+      → Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+  L226 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.15 `addBlendSeries` — líneas 227–231
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun addBlendSeries(from: Color, to: Color, steps: Int = 48) {
+
+Propósito:
+    Implementa `addBlendSeries`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `from: Color`: el llamador proporciona este valor/callback a `addBlendSeries`. Dentro del cuerpo, las líneas donde aparece `from` muestran exactamente cómo afecta al resultado.
+  - `to: Color`: el llamador proporciona este valor/callback a `addBlendSeries`. Dentro del cuerpo, las líneas donde aparece `to` muestran exactamente cómo afecta al resultado.
+  - `steps: Int = 48`: el llamador proporciona este valor/callback a `addBlendSeries`. Dentro del cuerpo, las líneas donde aparece `steps` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L227 [4 espacios] `fun addBlendSeries(from: Color, to: Color, steps: Int = 48) {`
+      → Declara una función. El bloque de `addBlendSeries` se detalla después instrucción por instrucción.
+  L228 [8 espacios] `for (index in 0..steps) {`
+      → Inicia un bucle `for`; ejecuta el bloque una vez por cada elemento del iterable/rango indicado.
+  L229 [12 espacios] `add(mixOpaqueUiColor(from, to, index.toFloat() / steps.toFloat()))`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L230 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L231 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.16 `resolveAdaptiveUiButtonColors` — líneas 282–286
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    fun resolveAdaptiveUiButtonColors(
+        preferred: Color,
+        background: Color,
+        textColorMode: String,
+        minimumContentContrast: Float = 4.5f,
+
+Propósito:
+    Calcula un valor derivado sin que el llamador tenga que conocer la regla interna; revisa cada rama del cuerpo para ver el criterio exacto.
+
+Parámetros/entradas:
+  - `preferred: Color`: el llamador proporciona este valor/callback a `resolveAdaptiveUiButtonColors`. Dentro del cuerpo, las líneas donde aparece `preferred` muestran exactamente cómo afecta al resultado.
+  - `background: Color`: el llamador proporciona este valor/callback a `resolveAdaptiveUiButtonColors`. Dentro del cuerpo, las líneas donde aparece `background` muestran exactamente cómo afecta al resultado.
+  - `textColorMode: String`: el llamador proporciona este valor/callback a `resolveAdaptiveUiButtonColors`. Dentro del cuerpo, las líneas donde aparece `textColorMode` muestran exactamente cómo afecta al resultado.
+  - `minimumContentContrast: Float = 4.5f`: el llamador proporciona este valor/callback a `resolveAdaptiveUiButtonColors`. Dentro del cuerpo, las líneas donde aparece `minimumContentContrast` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L282 [0 espacios] `fun resolveAdaptiveUiButtonColors(`
+      → Declara una función. El bloque de `resolveAdaptiveUiButtonColors` se detalla después instrucción por instrucción.
+  L283 [4 espacios] `preferred: Color,`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `preferred: Color,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L284 [4 espacios] `background: Color,`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `background: Color,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L285 [4 espacios] `textColorMode: String,`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `textColorMode: String,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L286 [4 espacios] `minimumContentContrast: Float = 4.5f,`
+      → Asigna/configura `minimumContentContrast: Float` usando `4.5f,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+
+5.17 `manualUiTextColor` — líneas 328–328
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    fun manualUiTextColor(value: String): Color = resolveUiTextColor(value = value, background = Color.White)
+
+Propósito:
+    Implementa `manualUiTextColor`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `value: String): Color = resolveUiTextColor(value = value, background = Color.White`: el llamador proporciona este valor/callback a `manualUiTextColor`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Color`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L328 [0 espacios] `fun manualUiTextColor(value: String): Color = resolveUiTextColor(value = value, background = Color.White)`
+      → Declara una función. El bloque de `manualUiTextColor` se detalla después instrucción por instrucción.
+
+6. EXPLICACIÓN COMPLETA LÍNEA POR LÍNEA
+----------------------------------------------------------------------
+Esta sección no omite líneas ejecutables. Repite incluso partes ya explicadas en funciones para poder leer el archivo de arriba abajo sin saltar entre secciones.
+L1: `package com.example.mynotes.ui.theme`
+    Declara que este archivo pertenece al package `com.example.mynotes.ui.theme`; esto determina su namespace Kotlin y cómo lo importan otros archivos.
+L3: `import androidx.compose.material3.MaterialTheme`
+    Importa `androidx.compose.material3.MaterialTheme` para usar componentes y tema Material 3.
+L4: `import androidx.compose.runtime.Composable`
+    Importa `androidx.compose.runtime.Composable` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+L5: `import androidx.compose.ui.graphics.Color`
+    Importa `androidx.compose.ui.graphics.Color` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L6: `import androidx.compose.ui.graphics.luminance`
+    Importa `androidx.compose.ui.graphics.luminance` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L8: `private val AccessibleBlack = Color.Black`
+    Declara `AccessibleBlack` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `Color.Black`.
+L9: `private val AccessibleWhite = Color.White`
+    Declara `AccessibleWhite` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `Color.White`.
+L11: `@Composable`
+    Marca la función siguiente como Composable: Compose puede ejecutarla durante composición/recomposición para describir UI a partir de estado.
+L12: `fun noteBackgroundColor(color: String): Color {`
+    Declara una función. El bloque de `noteBackgroundColor` se detalla después instrucción por instrucción.
+L13: `return when (color) {`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L14: `"purple" -> Color(0xFFF0E7FA)`
+    Define una rama/lambda. Cuando coincide `"purple"`, se ejecuta la expresión o bloque situado después de `->`.
+L15: `"yellow" -> Color(0xFFFFF4C7)`
+    Define una rama/lambda. Cuando coincide `"yellow"`, se ejecuta la expresión o bloque situado después de `->`.
+L16: `"pink" -> Color(0xFFFFE5EC)`
+    Define una rama/lambda. Cuando coincide `"pink"`, se ejecuta la expresión o bloque situado después de `->`.
+L17: `"green" -> Color(0xFFE4F2E8)`
+    Define una rama/lambda. Cuando coincide `"green"`, se ejecuta la expresión o bloque situado después de `->`.
+L18: `"blue" -> Color(0xFFE5F1FB)`
+    Define una rama/lambda. Cuando coincide `"blue"`, se ejecuta la expresión o bloque situado después de `->`.
+L19: `"orange" -> Color(0xFFFFE7D1)`
+    Define una rama/lambda. Cuando coincide `"orange"`, se ejecuta la expresión o bloque situado después de `->`.
+L20: `"red" -> Color(0xFFFFE0E0)`
+    Define una rama/lambda. Cuando coincide `"red"`, se ejecuta la expresión o bloque situado después de `->`.
+L21: `"cyan" -> Color(0xFFE0F7FA)`
+    Define una rama/lambda. Cuando coincide `"cyan"`, se ejecuta la expresión o bloque situado después de `->`.
+L22: `"teal" -> Color(0xFFDDF4F0)`
+    Define una rama/lambda. Cuando coincide `"teal"`, se ejecuta la expresión o bloque situado después de `->`.
+L23: `"mint" -> Color(0xFFDFF7EA)`
+    Define una rama/lambda. Cuando coincide `"mint"`, se ejecuta la expresión o bloque situado después de `->`.
+L24: `"lime" -> Color(0xFFF1F8D7)`
+    Define una rama/lambda. Cuando coincide `"lime"`, se ejecuta la expresión o bloque situado después de `->`.
+L25: `"brown" -> Color(0xFFEDE2D9)`
+    Define una rama/lambda. Cuando coincide `"brown"`, se ejecuta la expresión o bloque situado después de `->`.
+L26: `"gray" -> Color(0xFFE9ECEF)`
+    Define una rama/lambda. Cuando coincide `"gray"`, se ejecuta la expresión o bloque situado después de `->`.
+L27: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L28: `* "default" significa que la nota sigue el fondo global elegido`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L29: `* en Configuración → Paleta de colores. Antes se usaba`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L30: `* surfaceContainerLow, que en temas oscuros puede ser casi negro`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L31: `* aunque el usuario haya elegido una paleta clara o de otro color.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L32: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L33: `"default" -> MaterialTheme.colorScheme.background`
+    Define una rama/lambda. Cuando coincide `"default"`, se ejecuta la expresión o bloque situado después de `->`.
+L34: `// Fallback seguro para colores antiguos o desconocidos.`
+    Comentario del autor. No se ejecuta; documenta la intención o una restricción del bloque siguiente.
+L35: `else -> MaterialTheme.colorScheme.background`
+    Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+L36: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L37: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L39: `/**`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L40: `* Compone [foreground] sobre [background] y devuelve un color opaco.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L41: `* Se usa para medir contraste real cuando una superficie o un icono tiene alpha.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L42: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L43: `fun compositeUiColor(foreground: Color, background: Color): Color {`
+    Declara una función. El bloque de `compositeUiColor` se detalla después instrucción por instrucción.
+L44: `val a = foreground.alpha.coerceIn(0f, 1f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L45: `val inverse = 1f - a`
+    Declara `inverse` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `1f - a`.
+L46: `return Color(red = foreground.red * a + background.red * inverse, green = foreground.green * a + background.green * inverse,`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L47: `blue = foreground.blue * a + background.blue * inverse, alpha = 1f)`
+    Asigna/configura `blue` usando `foreground.blue * a + background.blue * inverse, alpha = 1f)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L48: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L50: `/** Relación de contraste WCAG entre dos colores. */`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L51: `fun uiContrastRatio(foreground: Color, background: Color): Float {`
+    Declara una función. El bloque de `uiContrastRatio` se detalla después instrucción por instrucción.
+L52: `val resolvedForeground = compositeUiColor(foreground, background)`
+    Declara `resolvedForeground` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `compositeUiColor(foreground, background)`.
+L53: `val l1 = resolvedForeground.luminance()`
+    Declara `l1` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolvedForeground.luminance()`.
+L54: `val l2 = background.copy(alpha = 1f).luminance()`
+    Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+L55: `val lighter = maxOf(l1, l2)`
+    Declara `lighter` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `maxOf(l1, l2)`.
+L56: `val darker = minOf(l1, l2)`
+    Declara `darker` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `minOf(l1, l2)`.
+L57: `return (lighter + 0.05f) / (darker + 0.05f)`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L58: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L60: `/**`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L61: `* Elige negro o blanco usando el contraste WCAG contra el fondo REAL.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L62: `* Para texto normal el resultado siempre será la alternativa de mayor contraste.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L63: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L64: `fun automaticUiTextColor(background: Color): Color {`
+    Declara una función. El bloque de `automaticUiTextColor` se detalla después instrucción por instrucción.
+L65: `val blackContrast = uiContrastRatio(AccessibleBlack, background)`
+    Declara `blackContrast` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `uiContrastRatio(AccessibleBlack, background)`.
+L66: `val whiteContrast = uiContrastRatio(AccessibleWhite, background)`
+    Declara `whiteContrast` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `uiContrastRatio(AccessibleWhite, background)`.
+L67: `return if (blackContrast >= whiteContrast) {`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L68: `AccessibleBlack`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `AccessibleBlack`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L69: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L70: `AccessibleWhite`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `AccessibleWhite`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L71: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L72: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L74: `/**`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L75: `* Resolución segura del color principal.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L76: `*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L77: `* auto  -> contraste calculado.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L78: `* black / white -> respeta la elección mientras conserve al menos 4.5:1.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L79: `* Si el color manual se vuelve ilegible sobre la superficie real, usa de`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L80: `* forma automática negro o blanco. Esto evita texto blanco sobre tarjetas`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L81: `* claras y texto negro sobre fondos oscuros.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L82: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L83: `fun resolveUiTextColor(value: String, background: Color): Color {`
+    Declara una función. El bloque de `resolveUiTextColor` se detalla después instrucción por instrucción.
+L84: `val preferred = when (value) {`
+    Declara `preferred` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `when (value) {`.
+L85: `"black" -> Color.Black`
+    Define una rama/lambda. Cuando coincide `"black"`, se ejecuta la expresión o bloque situado después de `->`.
+L86: `"white" -> Color.White`
+    Define una rama/lambda. Cuando coincide `"white"`, se ejecuta la expresión o bloque situado después de `->`.
+L87: `else -> return automaticUiTextColor(background)`
+    Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+L88: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L89: `return if (uiContrastRatio(preferred, background) >= 4.5f) {`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L90: `preferred`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `preferred`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L91: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L92: `automaticUiTextColor(background)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L93: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L94: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L96: `private fun mixOpaqueUiColor(foreground: Color, background: Color, amount: Float): Color {`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `mixOpaqueUiColor` se detalla después instrucción por instrucción.
+L97: `val t = amount.coerceIn(0f, 1f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L98: `return Color(red = foreground.red + (background.red - foreground.red) * t,`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L99: `green = foreground.green + (background.green - foreground.green) * t,`
+    Asigna/configura `green` usando `foreground.green + (background.green - foreground.green) * t,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L100: `blue = foreground.blue + (background.blue - foreground.blue) * t, alpha = 1f)`
+    Asigna/configura `blue` usando `foreground.blue + (background.blue - foreground.blue) * t, alpha = 1f)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L101: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L103: `/**`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L104: `* Atenúa un color hacia el fondo tanto como sea posible sin bajar del`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L105: `* contraste solicitado. Devuelve un color OPACO: evita que un alpha fijo se`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L106: `* vuelva ilegible al cambiar de paleta.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L107: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L108: `fun softenUiColorToContrast(foreground: Color, background: Color, minimumContrast: Float, maximumSoftening: Float = 0.62f): Color {`
+    Declara una función. El bloque de `softenUiColorToContrast` se detalla después instrucción por instrucción.
+L109: `val base = foreground.copy(alpha = 1f)`
+    Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+L110: `if (uiContrastRatio(base, background) < minimumContrast) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `uiContrastRatio(base, background) < minimumContrast`.
+L111: `return automaticUiTextColor(background)`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L112: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L113: `var low = 0f`
+    Declara `low` como variable mutable: el código puede reasignarla para representar estado cambiante. Parte con `0f`.
+L114: `var high = maximumSoftening.coerceIn(0f, 0.92f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L115: `var best = base`
+    Declara `best` como variable mutable: el código puede reasignarla para representar estado cambiante. Parte con `base`.
+L116: `repeat(18) {`
+    Ejecuta el bloque un número fijo de veces; suele usarse aquí para iteraciones de aproximación/cálculo.
+L117: `val middle = (low + high) / 2f`
+    Declara `middle` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `(low + high) / 2f`.
+L118: `val candidate = mixOpaqueUiColor(base, background, middle)`
+    Declara `candidate` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `mixOpaqueUiColor(base, background, middle)`.
+L119: `if (uiContrastRatio(candidate, background) >= minimumContrast) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `uiContrastRatio(candidate, background) >= minimumContrast`.
+L120: `best = candidate`
+    Asigna/configura `best` usando `candidate`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L121: `low = middle`
+    Asigna/configura `low` usando `middle`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L122: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L123: `high = middle`
+    Asigna/configura `high` usando `middle`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L124: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L125: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L126: `return best`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L127: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L129: `/**`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L130: `* Texto secundario automático: visualmente más suave pero >= 4.5:1.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L131: `* En modo manual NO altera negro/blanco: la elección del usuario prevalece.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L132: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L133: `fun resolveSecondaryUiTextColor(value: String, background: Color): Color {`
+    Declara una función. El bloque de `resolveSecondaryUiTextColor` se detalla después instrucción por instrucción.
+L134: `val primary = resolveUiTextColor(value, background)`
+    Declara `primary` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolveUiTextColor(value, background)`.
+L135: `return if (value == "black" || value == "white") {`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L136: `primary`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `primary`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L137: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L138: `softenUiColorToContrast(foreground = primary, background = background, minimumContrast = 4.5f, maximumSoftening = 0.58f)`
+    Asigna/configura `softenUiColorToContrast(foreground` usando `primary, background = background, minimumContrast = 4.5f, maximumSoftening = 0.58f)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L139: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L140: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L142: `/**`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L143: `* Iconos/contornos automáticos: mantiene al menos 3:1, criterio WCAG para`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L144: `* elementos gráficos. Los modos manuales siguen siendo absolutos.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L145: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L146: `fun resolveUiGraphicColor(value: String, background: Color): Color {`
+    Declara una función. El bloque de `resolveUiGraphicColor` se detalla después instrucción por instrucción.
+L147: `val primary = resolveUiTextColor(value, background)`
+    Declara `primary` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolveUiTextColor(value, background)`.
+L148: `return if (value == "black" || value == "white") {`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L149: `primary`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `primary`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L150: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L151: `softenUiColorToContrast(foreground = primary, background = background, minimumContrast = 3f, maximumSoftening = 0.72f)`
+    Asigna/configura `softenUiColorToContrast(foreground` usando `primary, background = background, minimumContrast = 3f, maximumSoftening = 0.72f)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L152: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L153: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L155: `/**`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L156: `* Conserva un color decorativo cuando ya tiene contraste suficiente; si no,`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L157: `* usa el negro/blanco automático. Útil para bordes y acentos sobre cualquier`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L158: `* tono de las 38 paletas.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L159: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L160: `fun ensureUiContrast(preferred: Color, background: Color, minimumContrast: Float = 3f): Color {`
+    Declara una función. El bloque de `ensureUiContrast` se detalla después instrucción por instrucción.
+L161: `val opaque = preferred.copy(alpha = 1f)`
+    Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+L162: `return if (uiContrastRatio(opaque, background) >= minimumContrast) {`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L163: `opaque`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `opaque`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L164: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L165: `automaticUiTextColor(background)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L166: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L167: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L170: `/**`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L171: `* Contorno adaptado a la paleta: conserva la familia cromática del fondo`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L172: `* y sólo lo desplaza hacia blanco o negro lo necesario para alcanzar`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L173: `* contraste visible. Si una combinación extrema no puede mantener el tono`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L174: `* con suficiente contraste, usa el monocromo automático como respaldo.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L175: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L176: `fun paletteMatchedOutlineColor(background: Color, minimumContrast: Float = 3f): Color {`
+    Declara una función. El bloque de `paletteMatchedOutlineColor` se detalla después instrucción por instrucción.
+L177: `val backgroundOpaque = background.copy(alpha = 1f)`
+    Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+L178: `val target = if (backgroundOpaque.luminance() > 0.5f) AccessibleBlack else AccessibleWhite`
+    Declara `target` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (backgroundOpaque.luminance() > 0.5f) AccessibleBlack else AccessibleWhite`.
+L179: `var low = 0f`
+    Declara `low` como variable mutable: el código puede reasignarla para representar estado cambiante. Parte con `0f`.
+L180: `var high = 1f`
+    Declara `high` como variable mutable: el código puede reasignarla para representar estado cambiante. Parte con `1f`.
+L181: `var best: Color? = null`
+    Declara `best` como variable mutable: el código puede reasignarla para representar estado cambiante. Parte con `null`.
+L182: `repeat(20) {`
+    Ejecuta el bloque un número fijo de veces; suele usarse aquí para iteraciones de aproximación/cálculo.
+L183: `val amount = (low + high) / 2f`
+    Declara `amount` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `(low + high) / 2f`.
+L184: `val candidate = mixOpaqueUiColor(backgroundOpaque, target, amount)`
+    Declara `candidate` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `mixOpaqueUiColor(backgroundOpaque, target, amount)`.
+L185: `if (uiContrastRatio(candidate, backgroundOpaque) >= minimumContrast) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `uiContrastRatio(candidate, backgroundOpaque) >= minimumContrast`.
+L186: `best = candidate`
+    Asigna/configura `best` usando `candidate`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L187: `high = amount`
+    Asigna/configura `high` usando `amount`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L188: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L189: `low = amount`
+    Asigna/configura `low` usando `amount`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L190: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L191: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L192: `return best ?: automaticUiTextColor(backgroundOpaque)`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L193: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L196: `/**`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L197: `* Construye un color de botón que conserve el color de texto ya resuelto para`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L198: `* la interfaz (por ejemplo blanco en fondos oscuros o negro en fondos claros),`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L199: `* pero también se diferencie visualmente del panel que lo contiene.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L200: `*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L201: `* A diferencia de resolver el texto a partir del botón, esta función mantiene`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L202: `* coherencia con el modo de texto Automático/Negro/Blanco seleccionado por el`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L203: `* usuario y adapta el FONDO del botón hasta alcanzar los dos contrastes.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L204: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L205: `fun adaptiveUiButtonContainer(`
+    Declara una función. El bloque de `adaptiveUiButtonContainer` se detalla después instrucción por instrucción.
+L206: `preferred: Color,`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `preferred: Color,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L207: `background: Color,`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `background: Color,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L208: `contentColor: Color,`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `contentColor: Color,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L209: `minimumContentContrast: Float = 4.5f,`
+    Asigna/configura `minimumContentContrast: Float` usando `4.5f,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L210: `minimumSurfaceContrast: Float = 1.55f`
+    Asigna/configura `minimumSurfaceContrast: Float` usando `1.55f`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L211: `): Color {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L212: `val preferredOpaque = preferred.copy(alpha = 1f)`
+    Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+L213: `val backgroundOpaque = background.copy(alpha = 1f)`
+    Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+L214: `val contentOpaque = contentColor.copy(alpha = 1f)`
+    Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+L216: `fun distanceSquared(first: Color, second: Color): Float {`
+    Declara una función. El bloque de `distanceSquared` se detalla después instrucción por instrucción.
+L217: `val dr = first.red - second.red`
+    Declara `dr` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `first.red - second.red`.
+L218: `val dg = first.green - second.green`
+    Declara `dg` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `first.green - second.green`.
+L219: `val db = first.blue - second.blue`
+    Declara `db` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `first.blue - second.blue`.
+L220: `return dr * dr + dg * dg + db * db`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L221: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L223: `val candidates = ArrayList<Color>(220)`
+    Declara `candidates` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `ArrayList<Color>(220)`.
+L224: `fun add(candidate: Color) {`
+    Declara una función. El bloque de `add` se detalla después instrucción por instrucción.
+L225: `candidates += candidate.copy(alpha = 1f)`
+    Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+L226: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L227: `fun addBlendSeries(from: Color, to: Color, steps: Int = 48) {`
+    Declara una función. El bloque de `addBlendSeries` se detalla después instrucción por instrucción.
+L228: `for (index in 0..steps) {`
+    Inicia un bucle `for`; ejecuta el bloque una vez por cada elemento del iterable/rango indicado.
+L229: `add(mixOpaqueUiColor(from, to, index.toFloat() / steps.toFloat()))`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L230: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L231: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L233: `add(preferredOpaque)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L234: `addBlendSeries(preferredOpaque, AccessibleBlack)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L235: `addBlendSeries(preferredOpaque, AccessibleWhite)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L236: `addBlendSeries(backgroundOpaque, AccessibleBlack)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L237: `addBlendSeries(backgroundOpaque, AccessibleWhite)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L239: `// Serie neutra de respaldo. Evita que una combinación extrema de paleta,`
+    Comentario del autor. No se ejecuta; documenta la intención o una restricción del bloque siguiente.
+L240: `// acento y texto manual quede sin un candidato utilizable.`
+    Comentario del autor. No se ejecuta; documenta la intención o una restricción del bloque siguiente.
+L241: `for (index in 0..48) {`
+    Inicia un bucle `for`; ejecuta el bloque una vez por cada elemento del iterable/rango indicado.
+L242: `val value = index.toFloat() / 48f`
+    Declara `value` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `index.toFloat() / 48f`.
+L243: `add(Color(value, value, value, 1f))`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L244: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L246: `val valid = candidates.filter { candidate ->`
+    Conserva únicamente los elementos que cumplen la condición indicada.
+L247: `uiContrastRatio(contentOpaque, candidate) >= minimumContentContrast &&`
+    Asigna/configura `uiContrastRatio(contentOpaque, candidate) >` usando `minimumContentContrast &&`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L248: `uiContrastRatio(candidate, backgroundOpaque) >= minimumSurfaceContrast`
+    Asigna/configura `uiContrastRatio(candidate, backgroundOpaque) >` usando `minimumSurfaceContrast`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L249: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L251: `return valid.minByOrNull { candidate ->`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L252: `distanceSquared(candidate, preferredOpaque)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L253: `} ?: run {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L254: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L255: `* En la práctica siempre existe un gris que satisface ambos límites.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L256: `* Este fallback conserva una salida segura incluso ante parámetros de`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L257: `* contraste imposibles introducidos en futuras modificaciones.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L258: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L259: `val fallbackTarget = if (uiContrastRatio(AccessibleBlack, contentOpaque) >`
+    Declara `fallbackTarget` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (uiContrastRatio(AccessibleBlack, contentOpaque) >`.
+L260: `uiContrastRatio(AccessibleWhite, contentOpaque)) AccessibleBlack else AccessibleWhite`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `uiContrastRatio(AccessibleWhite, contentOpaque)) AccessibleBlack else AccessibleWhite`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L261: `mixOpaqueUiColor(backgroundOpaque, fallbackTarget, 0.55f)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L262: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L263: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L267: `data class AdaptiveUiButtonColors(`
+    Declara `AdaptiveUiButtonColors` como `data class`: Kotlin genera automáticamente igualdad, hash, copia y representación textual a partir de sus propiedades del constructor.
+L268: `val container: Color,`
+    Declara `container` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L269: `val content: Color`
+    Declara `content` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L270: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L272: `/**`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L273: `* Resuelve de forma conjunta el fondo y el texto de un botón.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L274: `*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L275: `* En modo Automático el texto se calcula CONTRA el fondo final del botón,`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L276: `* no contra el panel padre. Así un cambio de Accent color puede cambiar de`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L277: `* forma segura entre texto negro/blanco sin perder legibilidad.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L278: `*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L279: `* En modos manuales (black/white) el color solicitado por el usuario se`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L280: `* mantiene y se adapta únicamente el fondo del botón.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L281: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L282: `fun resolveAdaptiveUiButtonColors(`
+    Declara una función. El bloque de `resolveAdaptiveUiButtonColors` se detalla después instrucción por instrucción.
+L283: `preferred: Color,`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `preferred: Color,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L284: `background: Color,`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `background: Color,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L285: `textColorMode: String,`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `textColorMode: String,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L286: `minimumContentContrast: Float = 4.5f,`
+    Asigna/configura `minimumContentContrast: Float` usando `4.5f,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L287: `minimumSurfaceContrast: Float = 1.55f`
+    Asigna/configura `minimumSurfaceContrast: Float` usando `1.55f`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L288: `): AdaptiveUiButtonColors {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L289: `if (textColorMode == "black" || textColorMode == "white") {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `textColorMode == "black" || textColorMode == "white"`.
+L290: `val content = resolveUiTextColor(textColorMode, background)`
+    Declara `content` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolveUiTextColor(textColorMode, background)`.
+L291: `val container = adaptiveUiButtonContainer(`
+    Declara `container` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `adaptiveUiButtonContainer(`.
+L292: `preferred = preferred,`
+    Asigna/configura `preferred` usando `preferred,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L293: `background = background,`
+    Asigna/configura `background` usando `background,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L294: `contentColor = content,`
+    Asigna/configura `contentColor` usando `content,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L295: `minimumContentContrast = minimumContentContrast,`
+    Asigna/configura `minimumContentContrast` usando `minimumContentContrast,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L296: `minimumSurfaceContrast = minimumSurfaceContrast`
+    Asigna/configura `minimumSurfaceContrast` usando `minimumSurfaceContrast`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L297: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L298: `return AdaptiveUiButtonColors(container = container, content = content)`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L299: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L301: `// Primera pasada usando el color preferido (normalmente el accent actual).`
+    Comentario del autor. No se ejecuta; documenta la intención o una restricción del bloque siguiente.
+L302: `var content = automaticUiTextColor(preferred.copy(alpha = 1f))`
+    Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+L303: `var container = adaptiveUiButtonContainer(`
+    Declara `container` como variable mutable: el código puede reasignarla para representar estado cambiante. Parte con `adaptiveUiButtonContainer(`.
+L304: `preferred = preferred,`
+    Asigna/configura `preferred` usando `preferred,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L305: `background = background,`
+    Asigna/configura `background` usando `background,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L306: `contentColor = content,`
+    Asigna/configura `contentColor` usando `content,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L307: `minimumContentContrast = minimumContentContrast,`
+    Asigna/configura `minimumContentContrast` usando `minimumContentContrast,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L308: `minimumSurfaceContrast = minimumSurfaceContrast`
+    Asigna/configura `minimumSurfaceContrast` usando `minimumSurfaceContrast`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L309: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L311: `// Recalcula el texto contra el fondo REAL resultante y estabiliza una vez`
+    Comentario del autor. No se ejecuta; documenta la intención o una restricción del bloque siguiente.
+L312: `// más el contenedor. Esto evita combinaciones grises con poco contraste`
+    Comentario del autor. No se ejecuta; documenta la intención o una restricción del bloque siguiente.
+L313: `// cuando el usuario cambia Accent color o la paleta de fondo.`
+    Comentario del autor. No se ejecuta; documenta la intención o una restricción del bloque siguiente.
+L314: `content = automaticUiTextColor(container)`
+    Asigna/configura `content` usando `automaticUiTextColor(container)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L315: `container = adaptiveUiButtonContainer(`
+    Asigna/configura `container` usando `adaptiveUiButtonContainer(`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L316: `preferred = preferred,`
+    Asigna/configura `preferred` usando `preferred,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L317: `background = background,`
+    Asigna/configura `background` usando `background,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L318: `contentColor = content,`
+    Asigna/configura `contentColor` usando `content,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L319: `minimumContentContrast = minimumContentContrast,`
+    Asigna/configura `minimumContentContrast` usando `minimumContentContrast,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L320: `minimumSurfaceContrast = minimumSurfaceContrast`
+    Asigna/configura `minimumSurfaceContrast` usando `minimumSurfaceContrast`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L321: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L322: `content = automaticUiTextColor(container)`
+    Asigna/configura `content` usando `automaticUiTextColor(container)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L324: `return AdaptiveUiButtonColors(container = container, content = content)`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L325: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L327: `/** Compatibilidad con llamadas antiguas. */`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L328: `fun manualUiTextColor(value: String): Color = resolveUiTextColor(value = value, background = Color.White)`
+    Declara una función. El bloque de `manualUiTextColor` se detalla después instrucción por instrucción.
+
+7. RECURSOS ANDROID REFERENCIADOS
+----------------------------------------------------------------------
+- No hay referencias directas `R.*` en este archivo.
+
+8. QUIÉN USA ESTE COMPONENTE
+----------------------------------------------------------------------
+- No se detectaron referencias externas por nombre a los tipos principales; puede ser punto de entrada Android, recurso invocado por Manifest o archivo de prueba.
+
+9. QUÉ PUEDE ROMPERSE SI LO MODIFICAS
+----------------------------------------------------------------------
+- Conservar firmas públicas/callbacks y comprobar los archivos que aparecen en “quién usa este componente” antes de renombrar o cambiar tipos.
+
+10. CHECKLIST DE PRUEBA DESPUÉS DE MODIFICAR ESTE ARCHIVO
+----------------------------------------------------------------------
+- Compilar `assembleDebug` y resolver primero errores de Kotlin/AAPT.
+- Abrir la pantalla/flujo relacionado y comprobar ida y vuelta (back) sin estado duplicado.
+- Cambiar tema/paleta y verificar contraste si este archivo dibuja UI.
+
+==============================================================================================================
+FIN DEL ARCHIVO
+==============================================================================================================

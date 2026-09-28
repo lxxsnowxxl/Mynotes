@@ -1,0 +1,678 @@
+# AttachmentPreviewCache.kt — explicación completa del código
+
+Ruta: app/src/main/java/com/example/mynotes/performance/AttachmentPreviewCache.kt  
+SHA-256: b5e0d23958e75f3e88b21ab5ff8a6b70f66f3b4c7e470a5a1d98d4801a10b65d  
+Líneas: 820  
+Package: com.example.mynotes.performance
+
+## 1. Para qué existe este archivo
+
+Pipeline de miniaturas multimedia. Mantiene caché RAM/disco, perfiles de calidad, decodificación escalada y precalentamiento para scroll.
+
+## 2. Tipos/clases declarados
+
+- Línea 46 — object AttachmentPreviewCache.
+- Línea 65 — data  class MediaPreview.
+- Línea 84 — private data  class PreviewProfile.
+
+## 3. Estado, constantes y valores importantes
+
+- legacyPreviewLoadGate (línea 52) inicia con Semaphore(permits = 1. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- previewLoadGate (línea 53) inicia con Semaphore(permits = 2. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- gate (línea 62) inicia con if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- DOCX_CACHE_CHARACTERS (línea 73) inicia con 4_000. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- memoryCacheKb (línea 119) inicia con (Runtime.getRuntime(. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- bitmapMemoryCache (línea 120) inicia con object : LruCache<String. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- instantMemoryCache (línea 132) inicia con object : LruCache<String. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- key (línea 152) inicia con cacheKey(uri. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- memoryKey (línea 154) inicia con "image:$key-$tag". Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- bitmap (línea 161) inicia con preferredTags(performanceMode. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- directory (línea 189) inicia con cacheDirectory(context. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- profile (línea 191) inicia con previewProfile(performanceMode. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- profileKey (línea 192) inicia con "$key-${profile.cacheTag}". Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- cacheFile (línea 194) inicia con File(directory. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- imageFile (línea 221) inicia con File(directory. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- metadataFile (línea 222) inicia con File(directory. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- cachedMetadata (línea 224) inicia con readMediaMetadata(metadataFile. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- memoryBitmap (línea 225) inicia con memoryBitmap(memoryKey. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- cachedBitmap (línea 229) inicia con decodeCachedBitmap(imageFile. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- retriever (línea 234) inicia con MediaMetadataRetriever(. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- duration (línea 237) inicia con retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- rawWidth (línea 238) inicia con retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_WIDTH. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- rawHeight (línea 239) inicia con retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_HEIGHT. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- rotation (línea 240) inicia con retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_VIDEO_ROTATION. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- width (línea 241) inicia con if (rotation == 90 || rotation == 270. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- height (línea 246) inicia con if (rotation == 90 || rotation == 270. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- result (línea 259) inicia con MediaPreview(bitmap = bitmap. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- embeddedPicture (línea 308) inicia con retriever.embeddedPicture. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- cached (línea 351) inicia con try {. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- preview (línea 360) inicia con readDocxPreviewStreaming(context = context. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- descriptor (línea 390) inicia con null. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- renderer (línea 392) inicia con null. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- page (línea 394) inicia con null. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- path (línea 398) inicia con uri.path?: return@withContext null. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- safeDescriptor (línea 403) inicia con descriptor?: return@withContext null. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+
+## 4. Funciones y flujo, una por una
+
+### previewProfile — líneas 87–87
+
+Firma: private fun previewProfile(performanceMode: String): PreviewProfile
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+Entradas:
+- performanceMode: String
+
+Salida: PreviewProfile.
+
+Decisiones y protecciones visibles:
+- Usa when para mapear estados/tipos/opciones.
+
+### sizeOf — líneas 121–123
+
+Firma: override fun sizeOf(key: String, value: Bitmap): Int
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+Entradas:
+- key: String
+- value: Bitmap
+
+Salida: Int.
+
+Decisiones y protecciones visibles:
+- Limita valores con coerce* para evitar estados fuera de rango.
+
+Operaciones/funciones que coordina: coerceAtLeast.
+
+### sizeOf — líneas 133–133
+
+Firma: override fun sizeOf(key: String, value: Bitmap): Int
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+Entradas:
+- key: String
+- value: Bitmap
+
+Salida: Int.
+
+Decisiones y protecciones visibles:
+- Limita valores con coerce* para evitar estados fuera de rango.
+
+Operaciones/funciones que coordina: coerceAtLeast.
+
+### memoryBitmap — líneas 135–135
+
+Firma: private fun memoryBitmap(memoryKey: String, cacheTag: String): Bitmap?
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+Entradas:
+- memoryKey: String
+- cacheTag: String
+
+Salida: Bitmap?.
+
+### rememberBitmap — líneas 138–140
+
+Firma: private fun rememberBitmap(memoryKey: String, cacheTag: String, bitmap: Bitmap)
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+Entradas:
+- memoryKey: String
+- cacheTag: String
+- bitmap: Bitmap
+
+Salida: Unit o inferido por Kotlin.
+
+Decisiones y protecciones visibles:
+- Contiene decisiones condicionales (if) para seleccionar comportamiento.
+
+Operaciones/funciones que coordina: put.
+
+### preferredTags — líneas 141–141
+
+Firma: private fun preferredTags(performanceMode: String): List<String>
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+Entradas:
+- performanceMode: String
+
+Salida: List<String>.
+
+Decisiones y protecciones visibles:
+- Usa when para mapear estados/tipos/opciones.
+
+### peekImagePreview — líneas 151–158
+
+Firma: fun peekImagePreview(uri: Uri, performanceMode: String): Bitmap?
+
+Consulta una representación ya disponible (normalmente caché) sin obligar a realizar el trabajo completo de carga.
+
+Entradas:
+- uri: Uri
+- performanceMode: String
+
+Salida: Bitmap?.
+
+Decisiones y protecciones visibles:
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (if) para seleccionar comportamiento.
+
+Operaciones/funciones que coordina: cacheKey, preferredTags, get.
+
+### peekVideoPreview — líneas 159–167
+
+Firma: fun peekVideoPreview(uri: Uri, performanceMode: String): MediaPreview?
+
+Consulta una representación ya disponible (normalmente caché) sin obligar a realizar el trabajo completo de carga.
+
+Entradas:
+- uri: Uri
+- performanceMode: String
+
+Salida: MediaPreview?.
+
+Decisiones y protecciones visibles:
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (if) para seleccionar comportamiento.
+
+Operaciones/funciones que coordina: cacheKey, preferredTags, get, MediaPreview.
+
+### peekPdfPreview — líneas 168–175
+
+Firma: fun peekPdfPreview(uri: Uri, performanceMode: String): Bitmap?
+
+Consulta una representación ya disponible (normalmente caché) sin obligar a realizar el trabajo completo de carga.
+
+Entradas:
+- uri: Uri
+- performanceMode: String
+
+Salida: Bitmap?.
+
+Decisiones y protecciones visibles:
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (if) para seleccionar comportamiento.
+
+Operaciones/funciones que coordina: cacheKey, preferredTags, get.
+
+### loadImagePreview — líneas 188–188
+
+Firma: suspend fun loadImagePreview(context: Context, uri: Uri, performanceMode: String = "balanced"): Bitmap?
+
+Busca primero memoria/disco por perfil; si falta, decodifica la imagen a tamaño objetivo, corrige orientación EXIF, guarda JPEG de caché y memoriza el Bitmap.
+
+Entradas:
+- context: Context
+- uri: Uri
+- performanceMode: String = "balanced"
+
+Salida: Bitmap?.
+
+Efectos/APIs observados en el cuerpo:
+- Ejecuta trabajo de I/O fuera del hilo principal.
+
+Operaciones/funciones que coordina: withContext.
+
+### loadVideoPreview — líneas 215–215
+
+Firma: suspend fun loadVideoPreview(context: Context, uri: Uri, performanceMode: String = "balanced"): MediaPreview
+
+Usa MediaMetadataRetriever para duración/dimensiones/frame, escala el frame y persiste bitmap+metadata por perfil.
+
+Entradas:
+- context: Context
+- uri: Uri
+- performanceMode: String = "balanced"
+
+Salida: MediaPreview.
+
+Operaciones/funciones que coordina: withContext.
+
+### loadAudioPreview — líneas 280–280
+
+Firma: suspend fun loadAudioPreview(context: Context, uri: Uri, loadAlbumArt: Boolean, performanceMode: String = "balanced"): MediaPreview
+
+Obtiene duración y opcionalmente carátula embebida; limita la calidad de la imagen según el perfil.
+
+Entradas:
+- context: Context
+- uri: Uri
+- loadAlbumArt: Boolean
+- performanceMode: String = "balanced"
+
+Salida: MediaPreview.
+
+### loadDocxPreview — líneas 347–347
+
+Firma: suspend fun loadDocxPreview(context: Context, uri: Uri, maxCharacters: Int): String?
+
+Carga la información solicitada. El cuerpo intenta reutilizar datos disponibles y realiza I/O/decodificación sólo cuando es necesario.
+
+Entradas:
+- context: Context
+- uri: Uri
+- maxCharacters: Int
+
+Salida: String?.
+
+Efectos/APIs observados en el cuerpo:
+- Ejecuta trabajo de I/O fuera del hilo principal.
+
+Operaciones/funciones que coordina: withContext.
+
+### loadPdfFirstPage — líneas 376–376
+
+Firma: suspend fun loadPdfFirstPage(context: Context, uri: Uri, performanceMode: String = "balanced"): Bitmap?
+
+Renderiza únicamente la primera página de PDF a un bitmap escalado y cacheable.
+
+Entradas:
+- context: Context
+- uri: Uri
+- performanceMode: String = "balanced"
+
+Salida: Bitmap?.
+
+Efectos/APIs observados en el cuerpo:
+- Ejecuta trabajo de I/O fuera del hilo principal.
+
+Operaciones/funciones que coordina: withContext.
+
+### prewarm — líneas 443–467
+
+Firma: suspend fun prewarm(context: Context, uri: Uri, type: String, name: String?, performanceMode: String = "balanced")
+
+Despacha al cargador apropiado por tipo para dejar una preview lista antes de que la UI la necesite.
+
+Entradas:
+- context: Context
+- uri: Uri
+- type: String
+- name: String?
+- performanceMode: String = "balanced"
+
+Salida: Unit o inferido por Kotlin.
+
+Decisiones y protecciones visibles:
+- Usa when para mapear estados/tipos/opciones.
+
+Operaciones/funciones que coordina: loadImagePreview, loadVideoPreview, loadAudioPreview, substringAfterLast, lowercase, orEmpty, loadDocxPreview, loadPdfFirstPage.
+
+### invalidate — líneas 473–473
+
+Firma: suspend fun invalidate(context: Context, uri: Uri)
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+Entradas:
+- context: Context
+- uri: Uri
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Ejecuta trabajo de I/O fuera del hilo principal.
+
+Operaciones/funciones que coordina: withContext.
+
+### cacheDirectory — líneas 519–525
+
+Firma: private fun cacheDirectory(context: Context, name: String): File
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+Entradas:
+- context: Context
+- name: String
+
+Salida: File.
+
+Efectos/APIs observados en el cuerpo:
+- Accede al sistema de archivos interno/cache.
+
+Decisiones y protecciones visibles:
+- Contiene decisiones condicionales (if) para seleccionar comportamiento.
+
+Operaciones/funciones que coordina: File, exists, mkdirs.
+
+### cacheKey — líneas 526–531
+
+Firma: private fun cacheKey(uri: Uri): String
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+Entradas:
+- uri: Uri
+
+Salida: String.
+
+Operaciones/funciones que coordina: getInstance, digest, toString, toByteArray, joinToString, format.
+
+### setRetrieverDataSource — líneas 532–539
+
+Firma: private fun setRetrieverDataSource(context: Context, retriever: MediaMetadataRetriever, uri: Uri)
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+Entradas:
+- context: Context
+- retriever: MediaMetadataRetriever
+- uri: Uri
+
+Salida: Unit o inferido por Kotlin.
+
+Decisiones y protecciones visibles:
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (if) para seleccionar comportamiento.
+
+Operaciones/funciones que coordina: IllegalArgumentException, setDataSource.
+
+### createVideoFrame — líneas 540–588
+
+Firma: private fun createVideoFrame(context: Context, uri: Uri, retriever: MediaMetadataRetriever, sourceWidth: Int, sourceHeight: Int, maxWidth: Int, maxHeight: Int): Bitmap?
+
+Construye un objeto/representación a partir de los parámetros recibidos, centralizando la configuración para que los llamadores no la dupliquen.
+
+Entradas:
+- context: Context
+- uri: Uri
+- retriever: MediaMetadataRetriever
+- sourceWidth: Int
+- sourceHeight: Int
+- maxWidth: Int
+- maxHeight: Int
+
+Salida: Bitmap?.
+
+Efectos/APIs observados en el cuerpo:
+- Procesa imágenes/bitmaps.
+- Extrae metadata o frames multimedia.
+
+Decisiones y protecciones visibles:
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (if) para seleccionar comportamiento.
+
+Operaciones/funciones que coordina: max, minOf, toFloat, toInt, isNullOrBlank, Suppress, createVideoThumbnail, scalePreviewBitmap, getScaledFrameAtTime, getFrameAtTime.
+
+### decodeImageThumbnail — líneas 589–620
+
+Firma: private fun decodeImageThumbnail(context: Context, uri: Uri, maxWidth: Int, maxHeight: Int): Bitmap?
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+Entradas:
+- context: Context
+- uri: Uri
+- maxWidth: Int
+- maxHeight: Int
+
+Salida: Bitmap?.
+
+Efectos/APIs observados en el cuerpo:
+- Procesa imágenes/bitmaps.
+
+Decisiones y protecciones visibles:
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (if) para seleccionar comportamiento.
+
+Operaciones/funciones que coordina: Options, openUriInputStream, decodeStream, applyExifOrientation, scalePreviewBitmap.
+
+### openUriInputStream — líneas 621–628
+
+Firma: private fun openUriInputStream(context: Context, uri: Uri): InputStream?
+
+Construye/ejecuta la operación necesaria para abrir el destino indicado, aplicando las validaciones visibles en el cuerpo.
+
+Entradas:
+- context: Context
+- uri: Uri
+
+Salida: InputStream?.
+
+Efectos/APIs observados en el cuerpo:
+- Accede al sistema de archivos interno/cache.
+- Lee/escribe Uris mediante ContentResolver.
+
+Decisiones y protecciones visibles:
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (if) para seleccionar comportamiento.
+
+Operaciones/funciones que coordina: FileInputStream, File, openInputStream.
+
+### applyExifOrientation — líneas 629–674
+
+Firma: private fun applyExifOrientation(context: Context, uri: Uri, bitmap: Bitmap): Bitmap
+
+Aplica una transformación/configuración al valor o componente recibido y devuelve/deja el resultado listo para ser usado por la UI.
+
+Entradas:
+- context: Context
+- uri: Uri
+- bitmap: Bitmap
+
+Salida: Bitmap.
+
+Efectos/APIs observados en el cuerpo:
+- Procesa imágenes/bitmaps.
+- Corrige/consulta orientación EXIF.
+
+Decisiones y protecciones visibles:
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (if) para seleccionar comportamiento.
+- Usa when para mapear estados/tipos/opciones.
+
+Operaciones/funciones que coordina: ExifInterface, getAttributeInt, openUriInputStream, Matrix, setScale, setRotate, postScale, createBitmap, recycle.
+
+### scalePreviewBitmap — líneas 675–688
+
+Firma: private fun scalePreviewBitmap(bitmap: Bitmap, maxWidth: Int, maxHeight: Int): Bitmap
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+Entradas:
+- bitmap: Bitmap
+- maxWidth: Int
+- maxHeight: Int
+
+Salida: Bitmap.
+
+Efectos/APIs observados en el cuerpo:
+- Procesa imágenes/bitmaps.
+
+Decisiones y protecciones visibles:
+- Limita valores con coerce* para evitar estados fuera de rango.
+- Contiene decisiones condicionales (if) para seleccionar comportamiento.
+
+Operaciones/funciones que coordina: minOf, toFloat, coerceAtLeast, max, toInt, createScaledBitmap, recycle.
+
+### saveJpeg — líneas 689–701
+
+Firma: private fun saveJpeg(bitmap: Bitmap, destination: File, quality: Int)
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+Entradas:
+- bitmap: Bitmap
+- destination: File
+- quality: Int
+
+Salida: Unit o inferido por Kotlin.
+
+Efectos/APIs observados en el cuerpo:
+- Procesa imágenes/bitmaps.
+
+Decisiones y protecciones visibles:
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+
+Operaciones/funciones que coordina: outputStream, buffered, compress, delete.
+
+### decodeCachedBitmap — líneas 702–714
+
+Firma: private fun decodeCachedBitmap(file: File): Bitmap?
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+Entradas:
+- file: File
+
+Salida: Bitmap?.
+
+Efectos/APIs observados en el cuerpo:
+- Procesa imágenes/bitmaps.
+- Accede al sistema de archivos interno/cache.
+
+Decisiones y protecciones visibles:
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Contiene decisiones condicionales (if) para seleccionar comportamiento.
+
+Operaciones/funciones que coordina: exists, length, Options, decodeFile.
+
+### decodeSampledBitmap — líneas 715–731
+
+Firma: private fun decodeSampledBitmap(bytes: ByteArray, requestedSize: Int): Bitmap?
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+Entradas:
+- bytes: ByteArray
+- requestedSize: Int
+
+Salida: Bitmap?.
+
+Efectos/APIs observados en el cuerpo:
+- Procesa imágenes/bitmaps.
+
+Operaciones/funciones que coordina: Options, decodeByteArray.
+
+### readMediaMetadata — líneas 732–744
+
+Firma: private fun readMediaMetadata(file: File): MediaPreview?
+
+Lee y transforma datos desde la fuente indicada, devolviendo una representación segura o fallback cuando la lectura no puede completarse.
+
+Entradas:
+- file: File
+
+Salida: MediaPreview?.
+
+Decisiones y protecciones visibles:
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (if) para seleccionar comportamiento.
+
+Operaciones/funciones que coordina: exists, length, readText, split, MediaPreview, getOrNull, toLongOrNull, toIntOrNull.
+
+### writeMediaMetadata — líneas 745–750
+
+Firma: private fun writeMediaMetadata(file: File, preview: MediaPreview)
+
+Serializa/escribe los datos indicados en su destino y controla los errores/recursos definidos en el cuerpo.
+
+Entradas:
+- file: File
+- preview: MediaPreview
+
+Salida: Unit o inferido por Kotlin.
+
+Decisiones y protecciones visibles:
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+
+Operaciones/funciones que coordina: writeText.
+
+### readDocxPreviewStreaming — líneas 751–809
+
+Firma: private fun readDocxPreviewStreaming(context: Context, uri: Uri, maxCharacters: Int): String?
+
+Lee y transforma datos desde la fuente indicada, devolviendo una representación segura o fallback cuando la lectura no puede completarse.
+
+Entradas:
+- context: Context
+- uri: Uri
+- maxCharacters: Int
+
+Salida: String?.
+
+Efectos/APIs observados en el cuerpo:
+- Lee o escribe archivos ZIP.
+- Accede al sistema de archivos interno/cache.
+- Lee/escribe Uris mediante ContentResolver.
+
+Decisiones y protecciones visibles:
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (if) para seleccionar comportamiento.
+- Usa when para mapear estados/tipos/opciones.
+
+Operaciones/funciones que coordina: FileInputStream, openInputStream, ZipInputStream, BufferedInputStream, newPullParser, setInput, StringBuilder, nextText, isNotBlank, isNotEmpty, endsWith, append, next, toString, replace, Regex, trim, isBlank.
+
+### trimPreview — líneas 810–818
+
+Firma: private fun trimPreview(text: String?, maxCharacters: Int): String?
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+Entradas:
+- text: String?
+- maxCharacters: Int
+
+Salida: String?.
+
+Decisiones y protecciones visibles:
+- Contiene decisiones condicionales (if) para seleccionar comportamiento.
+
+Operaciones/funciones que coordina: isNullOrBlank, take.
+
+## 5. Cómo se conecta con el resto de MyNotes
+
+- No importa directamente otro componente com.example.mynotes; funciona como modelo/utilidad base o mediante APIs Android/Jetpack.
+
+## 6. Recursos Android que utiliza
+
+- No se detectaron referencias directas R.* en este archivo.
+
+## 7. Tecnologías y efectos relevantes
+
+- Ejecuta trabajo de I/O fuera del hilo principal.
+- Lee o escribe archivos ZIP.
+- Procesa imágenes/bitmaps.
+- Extrae metadata o frames multimedia.
+- Renderiza contenido PDF.
+- Corrige/consulta orientación EXIF.
+- Accede al sistema de archivos interno/cache.
+- Lee/escribe Uris mediante ContentResolver.
+- Participa en estado/efectos de Compose.
+
+## 8. Lectura práctica del flujo
+
+Una forma útil de seguir este archivo en el depurador es recorrer estas operaciones en este orden aproximado:
+1. sizeOf — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+2. sizeOf — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+3. peekImagePreview — Consulta una representación ya disponible (normalmente caché) sin obligar a realizar el trabajo completo de carga.
+4. peekVideoPreview — Consulta una representación ya disponible (normalmente caché) sin obligar a realizar el trabajo completo de carga.
+5. peekPdfPreview — Consulta una representación ya disponible (normalmente caché) sin obligar a realizar el trabajo completo de carga.
+6. loadImagePreview — Busca primero memoria/disco por perfil; si falta, decodifica la imagen a tamaño objetivo, corrige orientación EXIF, guarda JPEG de caché y memoriza el Bitmap.
+7. loadVideoPreview — Usa MediaMetadataRetriever para duración/dimensiones/frame, escala el frame y persiste bitmap+metadata por perfil.
+8. loadAudioPreview — Obtiene duración y opcionalmente carátula embebida; limita la calidad de la imagen según el perfil.
+9. loadDocxPreview — Carga la información solicitada. El cuerpo intenta reutilizar datos disponibles y realiza I/O/decodificación sólo cuando es necesario.
+10. loadPdfFirstPage — Renderiza únicamente la primera página de PDF a un bitmap escalado y cacheable.
+11. prewarm — Despacha al cargador apropiado por tipo para dejar una preview lista antes de que la UI la necesite.
+12. invalidate — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+## 9. Qué no debe romperse al modificarlo
+
+- Evitar aumentar resoluciones/cargas sin considerar memoria y scroll; preservar caché y liberación de recursos.
+- Conservar validaciones de Uri/ruta y no confiar en nombres externos sin sanitizar.
+- Este archivo toca previews/adjuntos; cualquier cambio debe probar visualización y miniaturas en los perfiles de rendimiento.
+
+## 10. Resumen en lenguaje sencillo
+
+En términos simples: Pipeline de miniaturas multimedia. Mantiene caché RAM/disco, perfiles de calidad, decodificación escalada y precalentamiento para scroll. La sección función por función anterior describe qué entra, qué devuelve y qué efectos produce cada operación detectada en el fuente actual.

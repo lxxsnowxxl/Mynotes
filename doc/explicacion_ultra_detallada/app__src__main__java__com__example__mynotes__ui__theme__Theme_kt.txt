@@ -1,0 +1,1191 @@
+MYNOTES — EXPLICACIÓN ULTRA DETALLADA
+==============================================================================================================
+Archivo 55/72: app/src/main/java/com/example/mynotes/ui/theme/Theme.kt
+SHA-256: 130e512bbdbf3177078209c182ce549511fb038baaee6e644db86015f22c07b1
+Líneas del fuente: 269
+Package: com.example.mynotes.ui.theme
+
+1. RESPONSABILIDAD EXACTA DEL ARCHIVO
+----------------------------------------------------------------------
+Aplica el tema Material3 efectivo de MyNotes a partir de AppSettings, modo oscuro, paleta y colores derivados.
+
+2. DÓNDE ENCAJA EN LA ARQUITECTURA
+----------------------------------------------------------------------
+Este archivo pertenece principalmente a la **capa de interfaz Compose/Activities**. No debe analizarse aislado: las referencias cruzadas y callbacks se detallan más abajo.
+
+3. IMPORTACIONES, UNA POR UNA
+----------------------------------------------------------------------
+- `androidx.compose.foundation.isSystemInDarkTheme`: Importa `androidx.compose.foundation.isSystemInDarkTheme` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.material3.ColorScheme`: Importa `androidx.compose.material3.ColorScheme` para usar componentes y tema Material 3.
+- `androidx.compose.material3.LocalTextStyle`: Importa `androidx.compose.material3.LocalTextStyle` para usar componentes y tema Material 3.
+- `androidx.compose.material3.MaterialTheme`: Importa `androidx.compose.material3.MaterialTheme` para usar componentes y tema Material 3.
+- `androidx.compose.material3.Typography as MaterialTypography`: Importa `androidx.compose.material3.Typography as MaterialTypography` para usar componentes y tema Material 3.
+- `androidx.compose.material3.darkColorScheme`: Importa `androidx.compose.material3.darkColorScheme` para usar componentes y tema Material 3.
+- `androidx.compose.material3.lightColorScheme`: Importa `androidx.compose.material3.lightColorScheme` para usar componentes y tema Material 3.
+- `androidx.compose.runtime.Composable`: Importa `androidx.compose.runtime.Composable` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+- `androidx.compose.runtime.CompositionLocalProvider`: Importa `androidx.compose.runtime.CompositionLocalProvider` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+- `androidx.compose.runtime.remember`: Importa `androidx.compose.runtime.remember` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+- `androidx.compose.ui.geometry.Offset`: Importa `androidx.compose.ui.geometry.Offset` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.graphics.Color`: Importa `androidx.compose.ui.graphics.Color` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.graphics.Shadow`: Importa `androidx.compose.ui.graphics.Shadow` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.text.TextStyle`: Importa `androidx.compose.ui.text.TextStyle` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+
+4. DECLARACIONES Y ESTADO IMPORTANTES
+----------------------------------------------------------------------
+L21: `val value = amount.coerceIn(0f, 1f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L49: `val preferred = if (toneIndex.coerceIn(0, 3) <= 1) Color.Black else Color.White`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L53: `val primary = resolvedPaletteTextColor(textColor, toneIndex, background)`
+    Declara `primary` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolvedPaletteTextColor(textColor, toneIndex, background)`.
+L86: `private val BlackTextOutlineShadow = Shadow(color = Color.Black, offset = Offset.Zero, blurRadius = 1.6f)`
+    Declara `BlackTextOutlineShadow` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `Shadow(color = Color.Black, offset = Offset.Zero, blurRadius = 1.6f)`.
+L113: `val baseTone = palette.tones[toneIndex.coerceIn(0, 3)]`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L114: `val body = applySectionIntensity(baseTone, backgroundIntensity)`
+    Declara `body` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `applySectionIntensity(baseTone, backgroundIntensity)`.
+L115: `val header = applySectionIntensity(baseTone, headerIntensity)`
+    Declara `header` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `applySectionIntensity(baseTone, headerIntensity)`.
+L120: `val panelMix = (surfacePanelIntensity.coerceIn(0f, 100f) / 100f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L121: `val accent = resolveAccentColor(accentColor, palette)`
+    Declara `accent` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolveAccentColor(accentColor, palette)`.
+L122: `val automaticDarkTone = textColor == "auto" && toneIndex.coerceIn(0, 3) >= 2`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L128: `val panelTarget = if (automaticDarkTone) Color.Black else Color.White`
+    Declara `panelTarget` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (automaticDarkTone) Color.Black else Color.White`.
+L129: `val surfaceVariantColor = mixColor(body, panelTarget, (panelMix * 0.625f).coerceIn(0f, 1f))`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L130: `val surfaceContainerColor = mixColor(body, panelTarget, (panelMix * 0.8055556f).coerceIn(0f, 1f))`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L131: `val bodyContent = resolvedPaletteTextColor(textColor = textColor, toneIndex = toneIndex, background = body)`
+    Declara `bodyContent` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolvedPaletteTextColor(textColor = textColor, toneIndex = toneIndex, background = body)`.
+L132: `val surfaceContent = resolvedPaletteTextColor(textColor = textColor, toneIndex = toneIndex, background = header)`
+    Declara `surfaceContent` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolvedPaletteTextColor(textColor = textColor, toneIndex = toneIndex, background = header)`.
+L133: `val variantContent = resolvedPaletteSecondaryTextColor(textColor = textColor, toneIndex = toneIndex, background = surfaceVariantColor)`
+    Declara `variantContent` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolvedPaletteSecondaryTextColor(textColor = textColor, toneIndex = toneIndex, background = surfaceVariantColor)`.
+L158: `val selected = palette.tones[toneIndex.coerceIn(0, 3)]`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L159: `val automaticPaletteMode = textColor != "black" && textColor != "white"`
+    Declara `automaticPaletteMode` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `textColor != "black" && textColor != "white"`.
+L160: `val automaticDarkTone = automaticPaletteMode && toneIndex.coerceIn(0, 3) >= 2`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L166: `val base = if (automaticPaletteMode) {`
+    Declara `base` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (automaticPaletteMode) {`.
+L171: `val body = applySectionIntensity(base, backgroundIntensity)`
+    Declara `body` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `applySectionIntensity(base, backgroundIntensity)`.
+L172: `val header = applySectionIntensity(base, headerIntensity)`
+    Declara `header` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `applySectionIntensity(base, headerIntensity)`.
+L178: `val panelScale = (surfacePanelIntensity.coerceIn(0f, 100f) / 72f).coerceIn(0f, 1.3888889f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L179: `val rawAccent = resolveAccentColor(accentColor, palette)`
+    Declara `rawAccent` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolveAccentColor(accentColor, palette)`.
+L180: `val accent = mixColor(rawAccent, Color.White, 0.14f)`
+    Declara `accent` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `mixColor(rawAccent, Color.White, 0.14f)`.
+L181: `val panelTarget = if (automaticDarkTone) Color.Black else Color.White`
+    Declara `panelTarget` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (automaticDarkTone) Color.Black else Color.White`.
+L182: `val surfaceVariantColor = mixColor(body, panelTarget, (0.08f * panelScale).coerceIn(0f, 1f))`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L183: `val surfaceContainerColor = mixColor(body, panelTarget, (0.08f * panelScale).coerceIn(0f, 1f))`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L184: `val bodyContent = resolvedPaletteTextColor(textColor = textColor, toneIndex = toneIndex, background = body)`
+    Declara `bodyContent` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolvedPaletteTextColor(textColor = textColor, toneIndex = toneIndex, background = body)`.
+L185: `val surfaceContent = resolvedPaletteTextColor(textColor = textColor, toneIndex = toneIndex, background = header)`
+    Declara `surfaceContent` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolvedPaletteTextColor(textColor = textColor, toneIndex = toneIndex, background = header)`.
+L186: `val variantContent = resolvedPaletteSecondaryTextColor(textColor = textColor, toneIndex = toneIndex, background = surfaceVariantColor)`
+    Declara `variantContent` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolvedPaletteSecondaryTextColor(textColor = textColor, toneIndex = toneIndex, background = surfaceVariantColor)`.
+L220: `val palette = remember(backgroundColor) {`
+    Memoriza el resultado durante recomposiciones de Compose. Solo se recalcula cuando cambian las claves de `remember`, reduciendo trabajo y preservando identidad/estado local.
+L228: `val scheme = remember(darkTheme, palette.key, backgroundToneIndex, backgroundIntensity, surfacePanelIntensity, headerIntensity,`
+    Memoriza el resultado durante recomposiciones de Compose. Solo se recalcula cuando cambian las claves de `remember`, reduciendo trabajo y preservando identidad/estado local.
+L248: `val resolvedTypography = remember(textOutlineEnabled) {`
+    Memoriza el resultado durante recomposiciones de Compose. Solo se recalcula cuando cambian las claves de `remember`, reduciendo trabajo y preservando identidad/estado local.
+L259: `val inheritedTextStyle = if (textOutlineEnabled) {`
+    Declara `inheritedTextStyle` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (textOutlineEnabled) {`.
+
+5. FUNCIONES — EXPLICACIÓN DE CADA UNA
+----------------------------------------------------------------------
+
+5.1 `mixColor` — líneas 20–26
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    private fun mixColor(first: Color, second: Color, amount: Float): Color {
+
+Propósito:
+    Implementa `mixColor`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `first: Color`: el llamador proporciona este valor/callback a `mixColor`. Dentro del cuerpo, las líneas donde aparece `first` muestran exactamente cómo afecta al resultado.
+  - `second: Color`: el llamador proporciona este valor/callback a `mixColor`. Dentro del cuerpo, las líneas donde aparece `second` muestran exactamente cómo afecta al resultado.
+  - `amount: Float`: el llamador proporciona este valor/callback a `mixColor`. Dentro del cuerpo, las líneas donde aparece `amount` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Color`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L20 [0 espacios] `private fun mixColor(first: Color, second: Color, amount: Float): Color {`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `mixColor` se detalla después instrucción por instrucción.
+  L21 [4 espacios] `val value = amount.coerceIn(0f, 1f)`
+      → Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+  L22 [4 espacios] `return Color(red = first.red + (second.red - first.red) * value,`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L23 [8 espacios] `green = first.green + (second.green - first.green) * value,`
+      → Asigna/configura `green` usando `first.green + (second.green - first.green) * value,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L24 [8 espacios] `blue = first.blue + (second.blue - first.blue) * value,`
+      → Asigna/configura `blue` usando `first.blue + (second.blue - first.blue) * value,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L25 [8 espacios] `alpha = 1f)`
+      → Asigna/configura `alpha` usando `1f)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L26 [0 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.2 `intensityAmount` — líneas 28–30
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    private fun intensityAmount(intensity: Float): Float {
+
+Propósito:
+    Implementa `intensityAmount`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `intensity: Float`: el llamador proporciona este valor/callback a `intensityAmount`. Dentro del cuerpo, las líneas donde aparece `intensity` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Float`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L28 [0 espacios] `private fun intensityAmount(intensity: Float): Float {`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `intensityAmount` se detalla después instrucción por instrucción.
+  L29 [4 espacios] `return (intensity.coerceIn(0f, 100f) / 100f) * MAX_DARKEN_AMOUNT`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L30 [0 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.3 `applySectionIntensity` — líneas 32–34
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    fun applySectionIntensity(color: Color, intensity: Float): Color {
+
+Propósito:
+    Implementa `applySectionIntensity`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `color: Color`: el llamador proporciona este valor/callback a `applySectionIntensity`. Dentro del cuerpo, las líneas donde aparece `color` muestran exactamente cómo afecta al resultado.
+  - `intensity: Float`: el llamador proporciona este valor/callback a `applySectionIntensity`. Dentro del cuerpo, las líneas donde aparece `intensity` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Color`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L32 [0 espacios] `fun applySectionIntensity(color: Color, intensity: Float): Color {`
+      → Declara una función. El bloque de `applySectionIntensity` se detalla después instrucción por instrucción.
+  L33 [4 espacios] `return mixColor(color, Color.Black, intensityAmount(intensity))`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L34 [0 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.4 `readableContentColor` — líneas 36–36
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    private fun readableContentColor(background: Color): Color = automaticUiTextColor(background)
+
+Propósito:
+    Implementa `readableContentColor`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `background: Color): Color = automaticUiTextColor(background`: el llamador proporciona este valor/callback a `readableContentColor`. Dentro del cuerpo, las líneas donde aparece `background` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Color`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L36 [0 espacios] `private fun readableContentColor(background: Color): Color = automaticUiTextColor(background)`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `readableContentColor` se detalla después instrucción por instrucción.
+
+5.5 `resolvedTextColor` — líneas 38–38
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    private fun resolvedTextColor(textColor: String, background: Color): Color = resolveUiTextColor(value = textColor, background = background)
+
+Propósito:
+    Calcula un valor derivado sin que el llamador tenga que conocer la regla interna; revisa cada rama del cuerpo para ver el criterio exacto.
+
+Parámetros/entradas:
+  - `textColor: String`: el llamador proporciona este valor/callback a `resolvedTextColor`. Dentro del cuerpo, las líneas donde aparece `textColor` muestran exactamente cómo afecta al resultado.
+  - `background: Color): Color = resolveUiTextColor(value = textColor, background = background`: el llamador proporciona este valor/callback a `resolvedTextColor`. Dentro del cuerpo, las líneas donde aparece `background` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Color`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L38 [0 espacios] `private fun resolvedTextColor(textColor: String, background: Color): Color = resolveUiTextColor(value = textColor, background = background)`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `resolvedTextColor` se detalla después instrucción por instrucción.
+
+5.6 `resolvedPaletteTextColor` — líneas 45–51
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    private fun resolvedPaletteTextColor(textColor: String, toneIndex: Int, background: Color): Color {
+
+Propósito:
+    Calcula un valor derivado sin que el llamador tenga que conocer la regla interna; revisa cada rama del cuerpo para ver el criterio exacto.
+
+Parámetros/entradas:
+  - `textColor: String`: el llamador proporciona este valor/callback a `resolvedPaletteTextColor`. Dentro del cuerpo, las líneas donde aparece `textColor` muestran exactamente cómo afecta al resultado.
+  - `toneIndex: Int`: el llamador proporciona este valor/callback a `resolvedPaletteTextColor`. Dentro del cuerpo, las líneas donde aparece `toneIndex` muestran exactamente cómo afecta al resultado.
+  - `background: Color`: el llamador proporciona este valor/callback a `resolvedPaletteTextColor`. Dentro del cuerpo, las líneas donde aparece `background` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Color`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L45 [0 espacios] `private fun resolvedPaletteTextColor(textColor: String, toneIndex: Int, background: Color): Color {`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `resolvedPaletteTextColor` se detalla después instrucción por instrucción.
+  L46 [4 espacios] `if (textColor == "black" || textColor == "white") {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `textColor == "black" || textColor == "white"`.
+  L47 [8 espacios] `return resolveUiTextColor(value = textColor, background = background)`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L48 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L49 [4 espacios] `val preferred = if (toneIndex.coerceIn(0, 3) <= 1) Color.Black else Color.White`
+      → Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+  L50 [4 espacios] `return if (uiContrastRatio(preferred, background) >= 4.5f) preferred else automaticUiTextColor(background)`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L51 [0 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.7 `resolvedPaletteSecondaryTextColor` — líneas 52–59
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    private fun resolvedPaletteSecondaryTextColor(textColor: String, toneIndex: Int, background: Color): Color {
+
+Propósito:
+    Calcula un valor derivado sin que el llamador tenga que conocer la regla interna; revisa cada rama del cuerpo para ver el criterio exacto.
+
+Parámetros/entradas:
+  - `textColor: String`: el llamador proporciona este valor/callback a `resolvedPaletteSecondaryTextColor`. Dentro del cuerpo, las líneas donde aparece `textColor` muestran exactamente cómo afecta al resultado.
+  - `toneIndex: Int`: el llamador proporciona este valor/callback a `resolvedPaletteSecondaryTextColor`. Dentro del cuerpo, las líneas donde aparece `toneIndex` muestran exactamente cómo afecta al resultado.
+  - `background: Color`: el llamador proporciona este valor/callback a `resolvedPaletteSecondaryTextColor`. Dentro del cuerpo, las líneas donde aparece `background` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Color`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L52 [0 espacios] `private fun resolvedPaletteSecondaryTextColor(textColor: String, toneIndex: Int, background: Color): Color {`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `resolvedPaletteSecondaryTextColor` se detalla después instrucción por instrucción.
+  L53 [4 espacios] `val primary = resolvedPaletteTextColor(textColor, toneIndex, background)`
+      → Declara `primary` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolvedPaletteTextColor(textColor, toneIndex, background)`.
+  L54 [4 espacios] `return if (textColor == "black" || textColor == "white") {`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L55 [8 espacios] `primary`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `primary`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L56 [4 espacios] `} else {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L57 [8 espacios] `softenUiColorToContrast(foreground = primary, background = background, minimumContrast = 4.5f, maximumSoftening = 0.42f)`
+      → Asigna/configura `softenUiColorToContrast(foreground` usando `primary, background = background, minimumContrast = 4.5f, maximumSoftening = 0.42f)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L58 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L59 [0 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.8 `resolveAccentColor` — líneas 61–84
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    private fun resolveAccentColor(value: String, palette: MyNotesPalette): Color {
+
+Propósito:
+    Calcula un valor derivado sin que el llamador tenga que conocer la regla interna; revisa cada rama del cuerpo para ver el criterio exacto.
+
+Parámetros/entradas:
+  - `value: String`: el llamador proporciona este valor/callback a `resolveAccentColor`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+  - `palette: MyNotesPalette`: el llamador proporciona este valor/callback a `resolveAccentColor`. Dentro del cuerpo, las líneas donde aparece `palette` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Color`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L61 [0 espacios] `private fun resolveAccentColor(value: String, palette: MyNotesPalette): Color {`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `resolveAccentColor` se detalla después instrucción por instrucción.
+  L62 [4 espacios] `return when (value) {`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L63 [8 espacios] `"red" -> Color(0xFFE55757)`
+      → Define una rama/lambda. Cuando coincide `"red"`, se ejecuta la expresión o bloque situado después de `->`.
+  L64 [8 espacios] `"coral" -> Color(0xFFF27663)`
+      → Define una rama/lambda. Cuando coincide `"coral"`, se ejecuta la expresión o bloque situado después de `->`.
+  L65 [8 espacios] `"orange" -> Color(0xFFEF8A39)`
+      → Define una rama/lambda. Cuando coincide `"orange"`, se ejecuta la expresión o bloque situado después de `->`.
+  L66 [8 espacios] `"amber" -> Color(0xFFE8B632)`
+      → Define una rama/lambda. Cuando coincide `"amber"`, se ejecuta la expresión o bloque situado después de `->`.
+  L67 [8 espacios] `"yellow" -> Color(0xFFF2CF45)`
+      → Define una rama/lambda. Cuando coincide `"yellow"`, se ejecuta la expresión o bloque situado después de `->`.
+  L68 [8 espacios] `"lime" -> Color(0xFF9BCB4B)`
+      → Define una rama/lambda. Cuando coincide `"lime"`, se ejecuta la expresión o bloque situado después de `->`.
+  L69 [8 espacios] `"green" -> Color(0xFF63A85C)`
+      → Define una rama/lambda. Cuando coincide `"green"`, se ejecuta la expresión o bloque situado después de `->`.
+  L70 [8 espacios] `"mint" -> Color(0xFF58B98E)`
+      → Define una rama/lambda. Cuando coincide `"mint"`, se ejecuta la expresión o bloque situado después de `->`.
+  L71 [8 espacios] `"teal" -> Color(0xFF3FA4A0)`
+      → Define una rama/lambda. Cuando coincide `"teal"`, se ejecuta la expresión o bloque situado después de `->`.
+  L72 [8 espacios] `"cyan" -> Color(0xFF45B9C8)`
+      → Define una rama/lambda. Cuando coincide `"cyan"`, se ejecuta la expresión o bloque situado después de `->`.
+  L73 [8 espacios] `"sky" -> Color(0xFF4FA9E2)`
+      → Define una rama/lambda. Cuando coincide `"sky"`, se ejecuta la expresión o bloque situado después de `->`.
+  L74 [8 espacios] `"blue" -> Color(0xFF4B8EDB)`
+      → Define una rama/lambda. Cuando coincide `"blue"`, se ejecuta la expresión o bloque situado después de `->`.
+  L75 [8 espacios] `"indigo" -> Color(0xFF6275CF)`
+      → Define una rama/lambda. Cuando coincide `"indigo"`, se ejecuta la expresión o bloque situado después de `->`.
+  L76 [8 espacios] `"violet" -> Color(0xFF8B6BC5)`
+      → Define una rama/lambda. Cuando coincide `"violet"`, se ejecuta la expresión o bloque situado después de `->`.
+  L77 [8 espacios] `"purple" -> Color(0xFFA05BC1)`
+      → Define una rama/lambda. Cuando coincide `"purple"`, se ejecuta la expresión o bloque situado después de `->`.
+  L78 [8 espacios] `"pink" -> Color(0xFFD96787)`
+      → Define una rama/lambda. Cuando coincide `"pink"`, se ejecuta la expresión o bloque situado después de `->`.
+  L79 [8 espacios] `"rose" -> Color(0xFFE16F9A)`
+      → Define una rama/lambda. Cuando coincide `"rose"`, se ejecuta la expresión o bloque situado después de `->`.
+  L80 [8 espacios] `"brown" -> Color(0xFF9A7157)`
+      → Define una rama/lambda. Cuando coincide `"brown"`, se ejecuta la expresión o bloque situado después de `->`.
+  L81 [8 espacios] `"graphite" -> Color(0xFF59636A)`
+      → Define una rama/lambda. Cuando coincide `"graphite"`, se ejecuta la expresión o bloque situado después de `->`.
+  L82 [8 espacios] `else -> palette.accent`
+      → Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+  L83 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L84 [0 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.9 `typographyWithBlackOutline` — líneas 96–108
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    private fun typographyWithBlackOutline(base: MaterialTypography, enabled: Boolean): MaterialTypography {
+
+Propósito:
+    Implementa `typographyWithBlackOutline`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `base: MaterialTypography`: el llamador proporciona este valor/callback a `typographyWithBlackOutline`. Dentro del cuerpo, las líneas donde aparece `base` muestran exactamente cómo afecta al resultado.
+  - `enabled: Boolean`: el llamador proporciona este valor/callback a `typographyWithBlackOutline`. Dentro del cuerpo, las líneas donde aparece `enabled` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `MaterialTypography`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L96 [0 espacios] `private fun typographyWithBlackOutline(base: MaterialTypography, enabled: Boolean): MaterialTypography {`
+      → Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `typographyWithBlackOutline` se detalla después instrucción por instrucción.
+  L97 [4 espacios] `if (!enabled) {`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `!enabled`.
+  L98 [8 espacios] `return base`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L99 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L100 [4 espacios] `return base.copy(displayLarge = base.displayLarge.withBlackOutline(true), displayMedium = base.displayMedium.withBlackOutline(true),`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L101 [8 espacios] `displaySmall = base.displaySmall.withBlackOutline(true), headlineLarge = base.headlineLarge.withBlackOutline(true), headlineMedium =`
+      → Asigna/configura `displaySmall` usando `base.displaySmall.withBlackOutline(true), headlineLarge = base.headlineLarge.withBlackOutline(true), headlineMedium =`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L102 [12 espacios] `base.headlineMedium.withBlackOutline(true), headlineSmall = base.headlineSmall.withBlackOutline(true), titleLarge =`
+      → Asigna/configura `base.headlineMedium.withBlackOutline(true), headlineSmall` usando `base.headlineSmall.withBlackOutline(true), titleLarge =`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L103 [12 espacios] `base.titleLarge.withBlackOutline(true), titleMedium = base.titleMedium.withBlackOutline(true), titleSmall =`
+      → Asigna/configura `base.titleLarge.withBlackOutline(true), titleMedium` usando `base.titleMedium.withBlackOutline(true), titleSmall =`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L104 [12 espacios] `base.titleSmall.withBlackOutline(true), bodyLarge = base.bodyLarge.withBlackOutline(true), bodyMedium =`
+      → Asigna/configura `base.titleSmall.withBlackOutline(true), bodyLarge` usando `base.bodyLarge.withBlackOutline(true), bodyMedium =`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L105 [12 espacios] `base.bodyMedium.withBlackOutline(true), bodySmall = base.bodySmall.withBlackOutline(true), labelLarge =`
+      → Asigna/configura `base.bodyMedium.withBlackOutline(true), bodySmall` usando `base.bodySmall.withBlackOutline(true), labelLarge =`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L106 [12 espacios] `base.labelLarge.withBlackOutline(true), labelMedium = base.labelMedium.withBlackOutline(true), labelSmall =`
+      → Asigna/configura `base.labelLarge.withBlackOutline(true), labelMedium` usando `base.labelMedium.withBlackOutline(true), labelSmall =`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L107 [12 espacios] `base.labelSmall.withBlackOutline(true))`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L108 [0 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.10 `lightScheme` — líneas 110–153
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    internal fun lightScheme(palette:
+            MyNotesPalette, toneIndex: Int, backgroundIntensity: Float, surfacePanelIntensity: Float, headerIntensity: Float, textColor: String,
+        accentColor: String): ColorScheme {
+
+Propósito:
+    Implementa `lightScheme`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `palette:
+        MyNotesPalette`: el llamador proporciona este valor/callback a `lightScheme`. Dentro del cuerpo, las líneas donde aparece `palette` muestran exactamente cómo afecta al resultado.
+  - `toneIndex: Int`: el llamador proporciona este valor/callback a `lightScheme`. Dentro del cuerpo, las líneas donde aparece `toneIndex` muestran exactamente cómo afecta al resultado.
+  - `backgroundIntensity: Float`: el llamador proporciona este valor/callback a `lightScheme`. Dentro del cuerpo, las líneas donde aparece `backgroundIntensity` muestran exactamente cómo afecta al resultado.
+  - `surfacePanelIntensity: Float`: el llamador proporciona este valor/callback a `lightScheme`. Dentro del cuerpo, las líneas donde aparece `surfacePanelIntensity` muestran exactamente cómo afecta al resultado.
+  - `headerIntensity: Float`: el llamador proporciona este valor/callback a `lightScheme`. Dentro del cuerpo, las líneas donde aparece `headerIntensity` muestran exactamente cómo afecta al resultado.
+  - `textColor: String`: el llamador proporciona este valor/callback a `lightScheme`. Dentro del cuerpo, las líneas donde aparece `textColor` muestran exactamente cómo afecta al resultado.
+  - `accentColor: String`: el llamador proporciona este valor/callback a `lightScheme`. Dentro del cuerpo, las líneas donde aparece `accentColor` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `ColorScheme`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L110 [0 espacios] `internal fun lightScheme(palette:`
+      → Declara una función. El bloque de `lightScheme` se detalla después instrucción por instrucción.
+  L111 [8 espacios] `MyNotesPalette, toneIndex: Int, backgroundIntensity: Float, surfacePanelIntensity: Float, headerIntensity: Float, textColor: String,`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `MyNotesPalette, toneIndex: Int, backgroundIntensity: Float, surfacePanelIntensity: Float, headerIntensity: Float, textColor: String,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L112 [4 espacios] `accentColor: String): ColorScheme {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L113 [4 espacios] `val baseTone = palette.tones[toneIndex.coerceIn(0, 3)]`
+      → Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+  L114 [4 espacios] `val body = applySectionIntensity(baseTone, backgroundIntensity)`
+      → Declara `body` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `applySectionIntensity(baseTone, backgroundIntensity)`.
+  L115 [4 espacios] `val header = applySectionIntensity(baseTone, headerIntensity)`
+      → Declara `header` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `applySectionIntensity(baseTone, headerIntensity)`.
+  L116 [4 espacios] `/*`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L117 [5 espacios] `* 72% reproduce exactamente las mezclas que tenía la app:`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L118 [5 espacios] `* low 0.72, normal 0.58, high 0.42 y variant 0.45.`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L119 [5 espacios] `*/`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L120 [4 espacios] `val panelMix = (surfacePanelIntensity.coerceIn(0f, 100f) / 100f)`
+      → Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+  L121 [4 espacios] `val accent = resolveAccentColor(accentColor, palette)`
+      → Declara `accent` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolveAccentColor(accentColor, palette)`.
+  L122 [4 espacios] `val automaticDarkTone = textColor == "auto" && toneIndex.coerceIn(0, 3) >= 2`
+      → Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+  L123 [4 espacios] `/*`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L124 [5 espacios] `* Los tonos 1-2 se mantienen en una familia clara para texto negro.`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L125 [5 espacios] `* Los tonos 3-4 se mezclan hacia negro para que el texto blanco no`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L126 [5 espacios] `* pierda contraste aunque el usuario aumente la intensidad del panel.`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L127 [5 espacios] `*/`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L128 [4 espacios] `val panelTarget = if (automaticDarkTone) Color.Black else Color.White`
+      → Declara `panelTarget` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (automaticDarkTone) Color.Black else Color.White`.
+  L129 [4 espacios] `val surfaceVariantColor = mixColor(body, panelTarget, (panelMix * 0.625f).coerceIn(0f, 1f))`
+      → Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+  L130 [4 espacios] `val surfaceContainerColor = mixColor(body, panelTarget, (panelMix * 0.8055556f).coerceIn(0f, 1f))`
+      → Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+  L131 [4 espacios] `val bodyContent = resolvedPaletteTextColor(textColor = textColor, toneIndex = toneIndex, background = body)`
+      → Declara `bodyContent` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolvedPaletteTextColor(textColor = textColor, toneIndex = toneIndex, background = body)`.
+  L132 [4 espacios] `val surfaceContent = resolvedPaletteTextColor(textColor = textColor, toneIndex = toneIndex, background = header)`
+      → Declara `surfaceContent` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolvedPaletteTextColor(textColor = textColor, toneIndex = toneIndex, background = header)`.
+  L133 [4 espacios] `val variantContent = resolvedPaletteSecondaryTextColor(textColor = textColor, toneIndex = toneIndex, background = surfaceVariantColor)`
+      → Declara `variantContent` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolvedPaletteSecondaryTextColor(textColor = textColor, toneIndex = toneIndex, background = surfaceVariantColor)`.
+  L134 [4 espacios] `return lightColorScheme(`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L135 [8 espacios] `primary = accent,`
+      → Asigna/configura `primary` usando `accent,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L136 [8 espacios] `onPrimary = readableContentColor(accent),`
+      → Asigna/configura `onPrimary` usando `readableContentColor(accent),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L137 [8 espacios] `primaryContainer = mixColor(accent, Color.White, 0.80f),`
+      → Asigna/configura `primaryContainer` usando `mixColor(accent, Color.White, 0.80f),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L138 [8 espacios] `onPrimaryContainer = readableContentColor(mixColor(accent, Color.White, 0.80f)),`
+      → Asigna/configura `onPrimaryContainer` usando `readableContentColor(mixColor(accent, Color.White, 0.80f)),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L139 [8 espacios] `secondary = accent,`
+      → Asigna/configura `secondary` usando `accent,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L140 [8 espacios] `onSecondary = readableContentColor(accent),`
+      → Asigna/configura `onSecondary` usando `readableContentColor(accent),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L141 [8 espacios] `secondaryContainer = mixColor(accent, Color.White, 0.88f),`
+      → Asigna/configura `secondaryContainer` usando `mixColor(accent, Color.White, 0.88f),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L142 [8 espacios] `onSecondaryContainer = readableContentColor(mixColor(accent, Color.White, 0.88f)),`
+      → Asigna/configura `onSecondaryContainer` usando `readableContentColor(mixColor(accent, Color.White, 0.88f)),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L143 [8 espacios] `background = body,`
+      → Asigna/configura `background` usando `body,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L144 [8 espacios] `onBackground = bodyContent,`
+      → Asigna/configura `onBackground` usando `bodyContent,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L145 [8 espacios] `surface = header,`
+      → Asigna/configura `surface` usando `header,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L146 [8 espacios] `onSurface = surfaceContent,`
+      → Asigna/configura `onSurface` usando `surfaceContent,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L147 [8 espacios] `surfaceVariant = surfaceVariantColor,`
+      → Asigna/configura `surfaceVariant` usando `surfaceVariantColor,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L148 [8 espacios] `onSurfaceVariant = variantContent,`
+      → Asigna/configura `onSurfaceVariant` usando `variantContent,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L149 [8 espacios] `surfaceContainerLow = mixColor(body, panelTarget, panelMix),`
+      → Asigna/configura `surfaceContainerLow` usando `mixColor(body, panelTarget, panelMix),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L150 [8 espacios] `surfaceContainer = surfaceContainerColor,`
+      → Asigna/configura `surfaceContainer` usando `surfaceContainerColor,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L151 [8 espacios] `surfaceContainerHigh = mixColor(body, panelTarget, (panelMix * 0.5833333f).coerceIn(0f, 1f)),`
+      → Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+  L152 [8 espacios] `outline = ensureUiContrast(preferred = mixColor(accent, Color.Black, 0.22f), background = body, minimumContrast = 3f))`
+      → Asigna/configura `outline` usando `ensureUiContrast(preferred = mixColor(accent, Color.Black, 0.22f), background = body, minimumContrast = 3f))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L153 [0 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.11 `darkScheme` — líneas 155–206
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    internal fun darkScheme(palette:
+            MyNotesPalette, toneIndex: Int, backgroundIntensity: Float, surfacePanelIntensity: Float, headerIntensity: Float, textColor: String,
+        accentColor: String): ColorScheme {
+
+Propósito:
+    Implementa `darkScheme`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `palette:
+        MyNotesPalette`: el llamador proporciona este valor/callback a `darkScheme`. Dentro del cuerpo, las líneas donde aparece `palette` muestran exactamente cómo afecta al resultado.
+  - `toneIndex: Int`: el llamador proporciona este valor/callback a `darkScheme`. Dentro del cuerpo, las líneas donde aparece `toneIndex` muestran exactamente cómo afecta al resultado.
+  - `backgroundIntensity: Float`: el llamador proporciona este valor/callback a `darkScheme`. Dentro del cuerpo, las líneas donde aparece `backgroundIntensity` muestran exactamente cómo afecta al resultado.
+  - `surfacePanelIntensity: Float`: el llamador proporciona este valor/callback a `darkScheme`. Dentro del cuerpo, las líneas donde aparece `surfacePanelIntensity` muestran exactamente cómo afecta al resultado.
+  - `headerIntensity: Float`: el llamador proporciona este valor/callback a `darkScheme`. Dentro del cuerpo, las líneas donde aparece `headerIntensity` muestran exactamente cómo afecta al resultado.
+  - `textColor: String`: el llamador proporciona este valor/callback a `darkScheme`. Dentro del cuerpo, las líneas donde aparece `textColor` muestran exactamente cómo afecta al resultado.
+  - `accentColor: String`: el llamador proporciona este valor/callback a `darkScheme`. Dentro del cuerpo, las líneas donde aparece `accentColor` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `ColorScheme`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L155 [0 espacios] `internal fun darkScheme(palette:`
+      → Declara una función. El bloque de `darkScheme` se detalla después instrucción por instrucción.
+  L156 [8 espacios] `MyNotesPalette, toneIndex: Int, backgroundIntensity: Float, surfacePanelIntensity: Float, headerIntensity: Float, textColor: String,`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `MyNotesPalette, toneIndex: Int, backgroundIntensity: Float, surfacePanelIntensity: Float, headerIntensity: Float, textColor: String,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L157 [4 espacios] `accentColor: String): ColorScheme {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L158 [4 espacios] `val selected = palette.tones[toneIndex.coerceIn(0, 3)]`
+      → Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+  L159 [4 espacios] `val automaticPaletteMode = textColor != "black" && textColor != "white"`
+      → Declara `automaticPaletteMode` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `textColor != "black" && textColor != "white"`.
+  L160 [4 espacios] `val automaticDarkTone = automaticPaletteMode && toneIndex.coerceIn(0, 3) >= 2`
+      → Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+  L161 [4 espacios] `/*`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L162 [5 espacios] `* En Automático la tonalidad elegida manda sobre el modo del sistema:`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L163 [5 espacios] `* 1-2 permanecen claras (texto negro) y 3-4 oscuras (texto blanco).`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L164 [5 espacios] `* En Negro/Blanco manual se conserva el comportamiento oscuro anterior.`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L165 [5 espacios] `*/`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L166 [4 espacios] `val base = if (automaticPaletteMode) {`
+      → Declara `base` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (automaticPaletteMode) {`.
+  L167 [12 espacios] `selected`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `selected`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L168 [8 espacios] `} else {`
+      → Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+  L169 [12 espacios] `mixColor(selected, Color.Black, 0.84f)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L170 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L171 [4 espacios] `val body = applySectionIntensity(base, backgroundIntensity)`
+      → Declara `body` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `applySectionIntensity(base, backgroundIntensity)`.
+  L172 [4 espacios] `val header = applySectionIntensity(base, headerIntensity)`
+      → Declara `header` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `applySectionIntensity(base, headerIntensity)`.
+  L173 [4 espacios] `/*`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L174 [5 espacios] `* El modo oscuro usa mezclas mucho más pequeñas.`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L175 [5 espacios] `* 72% conserva la apariencia anterior y el resto escala`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L176 [5 espacios] `* proporcionalmente hasta el valor elegido por el usuario.`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L177 [5 espacios] `*/`
+      → Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+  L178 [4 espacios] `val panelScale = (surfacePanelIntensity.coerceIn(0f, 100f) / 72f).coerceIn(0f, 1.3888889f)`
+      → Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+  L179 [4 espacios] `val rawAccent = resolveAccentColor(accentColor, palette)`
+      → Declara `rawAccent` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolveAccentColor(accentColor, palette)`.
+  L180 [4 espacios] `val accent = mixColor(rawAccent, Color.White, 0.14f)`
+      → Declara `accent` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `mixColor(rawAccent, Color.White, 0.14f)`.
+  L181 [4 espacios] `val panelTarget = if (automaticDarkTone) Color.Black else Color.White`
+      → Declara `panelTarget` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (automaticDarkTone) Color.Black else Color.White`.
+  L182 [4 espacios] `val surfaceVariantColor = mixColor(body, panelTarget, (0.08f * panelScale).coerceIn(0f, 1f))`
+      → Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+  L183 [4 espacios] `val surfaceContainerColor = mixColor(body, panelTarget, (0.08f * panelScale).coerceIn(0f, 1f))`
+      → Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+  L184 [4 espacios] `val bodyContent = resolvedPaletteTextColor(textColor = textColor, toneIndex = toneIndex, background = body)`
+      → Declara `bodyContent` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolvedPaletteTextColor(textColor = textColor, toneIndex = toneIndex, background = body)`.
+  L185 [4 espacios] `val surfaceContent = resolvedPaletteTextColor(textColor = textColor, toneIndex = toneIndex, background = header)`
+      → Declara `surfaceContent` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolvedPaletteTextColor(textColor = textColor, toneIndex = toneIndex, background = header)`.
+  L186 [4 espacios] `val variantContent = resolvedPaletteSecondaryTextColor(textColor = textColor, toneIndex = toneIndex, background = surfaceVariantColor)`
+      → Declara `variantContent` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolvedPaletteSecondaryTextColor(textColor = textColor, toneIndex = toneIndex, background = surfaceVariantColor)`.
+  L187 [4 espacios] `return darkColorScheme(`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L188 [8 espacios] `primary = accent,`
+      → Asigna/configura `primary` usando `accent,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L189 [8 espacios] `onPrimary = readableContentColor(accent),`
+      → Asigna/configura `onPrimary` usando `readableContentColor(accent),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L190 [8 espacios] `primaryContainer = mixColor(rawAccent, Color.Black, 0.50f),`
+      → Asigna/configura `primaryContainer` usando `mixColor(rawAccent, Color.Black, 0.50f),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L191 [8 espacios] `onPrimaryContainer = readableContentColor(mixColor(rawAccent, Color.Black, 0.50f)),`
+      → Asigna/configura `onPrimaryContainer` usando `readableContentColor(mixColor(rawAccent, Color.Black, 0.50f)),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L192 [8 espacios] `secondary = accent,`
+      → Asigna/configura `secondary` usando `accent,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L193 [8 espacios] `onSecondary = readableContentColor(accent),`
+      → Asigna/configura `onSecondary` usando `readableContentColor(accent),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L194 [8 espacios] `secondaryContainer = mixColor(rawAccent, Color.Black, 0.60f),`
+      → Asigna/configura `secondaryContainer` usando `mixColor(rawAccent, Color.Black, 0.60f),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L195 [8 espacios] `onSecondaryContainer = readableContentColor(mixColor(rawAccent, Color.Black, 0.60f)),`
+      → Asigna/configura `onSecondaryContainer` usando `readableContentColor(mixColor(rawAccent, Color.Black, 0.60f)),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L196 [8 espacios] `background = body,`
+      → Asigna/configura `background` usando `body,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L197 [8 espacios] `onBackground = bodyContent,`
+      → Asigna/configura `onBackground` usando `bodyContent,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L198 [8 espacios] `surface = header,`
+      → Asigna/configura `surface` usando `header,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L199 [8 espacios] `onSurface = surfaceContent,`
+      → Asigna/configura `onSurface` usando `surfaceContent,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L200 [8 espacios] `surfaceVariant = surfaceVariantColor,`
+      → Asigna/configura `surfaceVariant` usando `surfaceVariantColor,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L201 [8 espacios] `onSurfaceVariant = variantContent,`
+      → Asigna/configura `onSurfaceVariant` usando `variantContent,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L202 [8 espacios] `surfaceContainerLow = mixColor(body, panelTarget, (0.05f * panelScale).coerceIn(0f, 1f)),`
+      → Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+  L203 [8 espacios] `surfaceContainer = surfaceContainerColor,`
+      → Asigna/configura `surfaceContainer` usando `surfaceContainerColor,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L204 [8 espacios] `surfaceContainerHigh = mixColor(body, panelTarget, (0.12f * panelScale).coerceIn(0f, 1f)),`
+      → Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+  L205 [8 espacios] `outline = ensureUiContrast(preferred = mixColor(accent, Color.White, 0.18f), background = body, minimumContrast = 3f))`
+      → Asigna/configura `outline` usando `ensureUiContrast(preferred = mixColor(accent, Color.White, 0.18f), background = body, minimumContrast = 3f))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+  L206 [0 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.12 `MyNotesTheme` — líneas 209–209
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    fun MyNotesTheme(darkTheme: Boolean = isSystemInDarkTheme(),
+
+Propósito:
+    Implementa `MyNotesTheme`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `darkTheme: Boolean = isSystemInDarkTheme(`: el llamador proporciona este valor/callback a `MyNotesTheme`. Dentro del cuerpo, las líneas donde aparece `darkTheme` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L209 [0 espacios] `fun MyNotesTheme(darkTheme: Boolean = isSystemInDarkTheme(),`
+      → Declara una función. El bloque de `MyNotesTheme` se detalla después instrucción por instrucción.
+
+6. EXPLICACIÓN COMPLETA LÍNEA POR LÍNEA
+----------------------------------------------------------------------
+Esta sección no omite líneas ejecutables. Repite incluso partes ya explicadas en funciones para poder leer el archivo de arriba abajo sin saltar entre secciones.
+L1: `package com.example.mynotes.ui.theme`
+    Declara que este archivo pertenece al package `com.example.mynotes.ui.theme`; esto determina su namespace Kotlin y cómo lo importan otros archivos.
+L3: `import androidx.compose.foundation.isSystemInDarkTheme`
+    Importa `androidx.compose.foundation.isSystemInDarkTheme` para usar layouts, gestos y primitivas visuales de Compose.
+L4: `import androidx.compose.material3.ColorScheme`
+    Importa `androidx.compose.material3.ColorScheme` para usar componentes y tema Material 3.
+L5: `import androidx.compose.material3.LocalTextStyle`
+    Importa `androidx.compose.material3.LocalTextStyle` para usar componentes y tema Material 3.
+L6: `import androidx.compose.material3.MaterialTheme`
+    Importa `androidx.compose.material3.MaterialTheme` para usar componentes y tema Material 3.
+L7: `import androidx.compose.material3.Typography as MaterialTypography`
+    Importa `androidx.compose.material3.Typography as MaterialTypography` para usar componentes y tema Material 3.
+L8: `import androidx.compose.material3.darkColorScheme`
+    Importa `androidx.compose.material3.darkColorScheme` para usar componentes y tema Material 3.
+L9: `import androidx.compose.material3.lightColorScheme`
+    Importa `androidx.compose.material3.lightColorScheme` para usar componentes y tema Material 3.
+L10: `import androidx.compose.runtime.Composable`
+    Importa `androidx.compose.runtime.Composable` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+L11: `import androidx.compose.runtime.CompositionLocalProvider`
+    Importa `androidx.compose.runtime.CompositionLocalProvider` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+L12: `import androidx.compose.runtime.remember`
+    Importa `androidx.compose.runtime.remember` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+L13: `import androidx.compose.ui.geometry.Offset`
+    Importa `androidx.compose.ui.geometry.Offset` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L14: `import androidx.compose.ui.graphics.Color`
+    Importa `androidx.compose.ui.graphics.Color` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L15: `import androidx.compose.ui.graphics.Shadow`
+    Importa `androidx.compose.ui.graphics.Shadow` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L16: `import androidx.compose.ui.text.TextStyle`
+    Importa `androidx.compose.ui.text.TextStyle` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L18: `private const val`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `private const val`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L19: `MAX_DARKEN_AMOUNT = 0.30f`
+    Asigna/configura `MAX_DARKEN_AMOUNT` usando `0.30f`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L20: `private fun mixColor(first: Color, second: Color, amount: Float): Color {`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `mixColor` se detalla después instrucción por instrucción.
+L21: `val value = amount.coerceIn(0f, 1f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L22: `return Color(red = first.red + (second.red - first.red) * value,`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L23: `green = first.green + (second.green - first.green) * value,`
+    Asigna/configura `green` usando `first.green + (second.green - first.green) * value,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L24: `blue = first.blue + (second.blue - first.blue) * value,`
+    Asigna/configura `blue` usando `first.blue + (second.blue - first.blue) * value,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L25: `alpha = 1f)`
+    Asigna/configura `alpha` usando `1f)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L26: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L28: `private fun intensityAmount(intensity: Float): Float {`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `intensityAmount` se detalla después instrucción por instrucción.
+L29: `return (intensity.coerceIn(0f, 100f) / 100f) * MAX_DARKEN_AMOUNT`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L30: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L32: `fun applySectionIntensity(color: Color, intensity: Float): Color {`
+    Declara una función. El bloque de `applySectionIntensity` se detalla después instrucción por instrucción.
+L33: `return mixColor(color, Color.Black, intensityAmount(intensity))`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L34: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L36: `private fun readableContentColor(background: Color): Color = automaticUiTextColor(background)`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `readableContentColor` se detalla después instrucción por instrucción.
+L38: `private fun resolvedTextColor(textColor: String, background: Color): Color = resolveUiTextColor(value = textColor, background = background)`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `resolvedTextColor` se detalla después instrucción por instrucción.
+L40: `/**`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L41: `* Regla de color solicitada para el modo Automático de la paleta global:`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L42: `* tonos 1-2 -> negro, tonos 3-4 -> blanco.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L43: `* Negro/Blanco manuales siguen teniendo prioridad absoluta.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L44: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L45: `private fun resolvedPaletteTextColor(textColor: String, toneIndex: Int, background: Color): Color {`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `resolvedPaletteTextColor` se detalla después instrucción por instrucción.
+L46: `if (textColor == "black" || textColor == "white") {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `textColor == "black" || textColor == "white"`.
+L47: `return resolveUiTextColor(value = textColor, background = background)`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L48: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L49: `val preferred = if (toneIndex.coerceIn(0, 3) <= 1) Color.Black else Color.White`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L50: `return if (uiContrastRatio(preferred, background) >= 4.5f) preferred else automaticUiTextColor(background)`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L51: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L52: `private fun resolvedPaletteSecondaryTextColor(textColor: String, toneIndex: Int, background: Color): Color {`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `resolvedPaletteSecondaryTextColor` se detalla después instrucción por instrucción.
+L53: `val primary = resolvedPaletteTextColor(textColor, toneIndex, background)`
+    Declara `primary` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolvedPaletteTextColor(textColor, toneIndex, background)`.
+L54: `return if (textColor == "black" || textColor == "white") {`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L55: `primary`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `primary`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L56: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L57: `softenUiColorToContrast(foreground = primary, background = background, minimumContrast = 4.5f, maximumSoftening = 0.42f)`
+    Asigna/configura `softenUiColorToContrast(foreground` usando `primary, background = background, minimumContrast = 4.5f, maximumSoftening = 0.42f)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L58: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L59: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L61: `private fun resolveAccentColor(value: String, palette: MyNotesPalette): Color {`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `resolveAccentColor` se detalla después instrucción por instrucción.
+L62: `return when (value) {`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L63: `"red" -> Color(0xFFE55757)`
+    Define una rama/lambda. Cuando coincide `"red"`, se ejecuta la expresión o bloque situado después de `->`.
+L64: `"coral" -> Color(0xFFF27663)`
+    Define una rama/lambda. Cuando coincide `"coral"`, se ejecuta la expresión o bloque situado después de `->`.
+L65: `"orange" -> Color(0xFFEF8A39)`
+    Define una rama/lambda. Cuando coincide `"orange"`, se ejecuta la expresión o bloque situado después de `->`.
+L66: `"amber" -> Color(0xFFE8B632)`
+    Define una rama/lambda. Cuando coincide `"amber"`, se ejecuta la expresión o bloque situado después de `->`.
+L67: `"yellow" -> Color(0xFFF2CF45)`
+    Define una rama/lambda. Cuando coincide `"yellow"`, se ejecuta la expresión o bloque situado después de `->`.
+L68: `"lime" -> Color(0xFF9BCB4B)`
+    Define una rama/lambda. Cuando coincide `"lime"`, se ejecuta la expresión o bloque situado después de `->`.
+L69: `"green" -> Color(0xFF63A85C)`
+    Define una rama/lambda. Cuando coincide `"green"`, se ejecuta la expresión o bloque situado después de `->`.
+L70: `"mint" -> Color(0xFF58B98E)`
+    Define una rama/lambda. Cuando coincide `"mint"`, se ejecuta la expresión o bloque situado después de `->`.
+L71: `"teal" -> Color(0xFF3FA4A0)`
+    Define una rama/lambda. Cuando coincide `"teal"`, se ejecuta la expresión o bloque situado después de `->`.
+L72: `"cyan" -> Color(0xFF45B9C8)`
+    Define una rama/lambda. Cuando coincide `"cyan"`, se ejecuta la expresión o bloque situado después de `->`.
+L73: `"sky" -> Color(0xFF4FA9E2)`
+    Define una rama/lambda. Cuando coincide `"sky"`, se ejecuta la expresión o bloque situado después de `->`.
+L74: `"blue" -> Color(0xFF4B8EDB)`
+    Define una rama/lambda. Cuando coincide `"blue"`, se ejecuta la expresión o bloque situado después de `->`.
+L75: `"indigo" -> Color(0xFF6275CF)`
+    Define una rama/lambda. Cuando coincide `"indigo"`, se ejecuta la expresión o bloque situado después de `->`.
+L76: `"violet" -> Color(0xFF8B6BC5)`
+    Define una rama/lambda. Cuando coincide `"violet"`, se ejecuta la expresión o bloque situado después de `->`.
+L77: `"purple" -> Color(0xFFA05BC1)`
+    Define una rama/lambda. Cuando coincide `"purple"`, se ejecuta la expresión o bloque situado después de `->`.
+L78: `"pink" -> Color(0xFFD96787)`
+    Define una rama/lambda. Cuando coincide `"pink"`, se ejecuta la expresión o bloque situado después de `->`.
+L79: `"rose" -> Color(0xFFE16F9A)`
+    Define una rama/lambda. Cuando coincide `"rose"`, se ejecuta la expresión o bloque situado después de `->`.
+L80: `"brown" -> Color(0xFF9A7157)`
+    Define una rama/lambda. Cuando coincide `"brown"`, se ejecuta la expresión o bloque situado después de `->`.
+L81: `"graphite" -> Color(0xFF59636A)`
+    Define una rama/lambda. Cuando coincide `"graphite"`, se ejecuta la expresión o bloque situado después de `->`.
+L82: `else -> palette.accent`
+    Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+L83: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L84: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L86: `private val BlackTextOutlineShadow = Shadow(color = Color.Black, offset = Offset.Zero, blurRadius = 1.6f)`
+    Declara `BlackTextOutlineShadow` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `Shadow(color = Color.Black, offset = Offset.Zero, blurRadius = 1.6f)`.
+L88: `private fun TextStyle.withBlackOutline(enabled: Boolean): TextStyle {`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `TextStyle` se detalla después instrucción por instrucción.
+L89: `return if (enabled) {`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L90: `copy(shadow = BlackTextOutlineShadow)`
+    Asigna/configura `copy(shadow` usando `BlackTextOutlineShadow)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L91: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L92: `this`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `this`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L93: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L94: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L96: `private fun typographyWithBlackOutline(base: MaterialTypography, enabled: Boolean): MaterialTypography {`
+    Declara una función privada, utilizable solo dentro de este archivo/clase. El bloque de `typographyWithBlackOutline` se detalla después instrucción por instrucción.
+L97: `if (!enabled) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `!enabled`.
+L98: `return base`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L99: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L100: `return base.copy(displayLarge = base.displayLarge.withBlackOutline(true), displayMedium = base.displayMedium.withBlackOutline(true),`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L101: `displaySmall = base.displaySmall.withBlackOutline(true), headlineLarge = base.headlineLarge.withBlackOutline(true), headlineMedium =`
+    Asigna/configura `displaySmall` usando `base.displaySmall.withBlackOutline(true), headlineLarge = base.headlineLarge.withBlackOutline(true), headlineMedium =`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L102: `base.headlineMedium.withBlackOutline(true), headlineSmall = base.headlineSmall.withBlackOutline(true), titleLarge =`
+    Asigna/configura `base.headlineMedium.withBlackOutline(true), headlineSmall` usando `base.headlineSmall.withBlackOutline(true), titleLarge =`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L103: `base.titleLarge.withBlackOutline(true), titleMedium = base.titleMedium.withBlackOutline(true), titleSmall =`
+    Asigna/configura `base.titleLarge.withBlackOutline(true), titleMedium` usando `base.titleMedium.withBlackOutline(true), titleSmall =`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L104: `base.titleSmall.withBlackOutline(true), bodyLarge = base.bodyLarge.withBlackOutline(true), bodyMedium =`
+    Asigna/configura `base.titleSmall.withBlackOutline(true), bodyLarge` usando `base.bodyLarge.withBlackOutline(true), bodyMedium =`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L105: `base.bodyMedium.withBlackOutline(true), bodySmall = base.bodySmall.withBlackOutline(true), labelLarge =`
+    Asigna/configura `base.bodyMedium.withBlackOutline(true), bodySmall` usando `base.bodySmall.withBlackOutline(true), labelLarge =`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L106: `base.labelLarge.withBlackOutline(true), labelMedium = base.labelMedium.withBlackOutline(true), labelSmall =`
+    Asigna/configura `base.labelLarge.withBlackOutline(true), labelMedium` usando `base.labelMedium.withBlackOutline(true), labelSmall =`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L107: `base.labelSmall.withBlackOutline(true))`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L108: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L110: `internal fun lightScheme(palette:`
+    Declara una función. El bloque de `lightScheme` se detalla después instrucción por instrucción.
+L111: `MyNotesPalette, toneIndex: Int, backgroundIntensity: Float, surfacePanelIntensity: Float, headerIntensity: Float, textColor: String,`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `MyNotesPalette, toneIndex: Int, backgroundIntensity: Float, surfacePanelIntensity: Float, headerIntensity: Float, textColor: String,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L112: `accentColor: String): ColorScheme {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L113: `val baseTone = palette.tones[toneIndex.coerceIn(0, 3)]`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L114: `val body = applySectionIntensity(baseTone, backgroundIntensity)`
+    Declara `body` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `applySectionIntensity(baseTone, backgroundIntensity)`.
+L115: `val header = applySectionIntensity(baseTone, headerIntensity)`
+    Declara `header` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `applySectionIntensity(baseTone, headerIntensity)`.
+L116: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L117: `* 72% reproduce exactamente las mezclas que tenía la app:`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L118: `* low 0.72, normal 0.58, high 0.42 y variant 0.45.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L119: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L120: `val panelMix = (surfacePanelIntensity.coerceIn(0f, 100f) / 100f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L121: `val accent = resolveAccentColor(accentColor, palette)`
+    Declara `accent` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolveAccentColor(accentColor, palette)`.
+L122: `val automaticDarkTone = textColor == "auto" && toneIndex.coerceIn(0, 3) >= 2`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L123: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L124: `* Los tonos 1-2 se mantienen en una familia clara para texto negro.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L125: `* Los tonos 3-4 se mezclan hacia negro para que el texto blanco no`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L126: `* pierda contraste aunque el usuario aumente la intensidad del panel.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L127: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L128: `val panelTarget = if (automaticDarkTone) Color.Black else Color.White`
+    Declara `panelTarget` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (automaticDarkTone) Color.Black else Color.White`.
+L129: `val surfaceVariantColor = mixColor(body, panelTarget, (panelMix * 0.625f).coerceIn(0f, 1f))`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L130: `val surfaceContainerColor = mixColor(body, panelTarget, (panelMix * 0.8055556f).coerceIn(0f, 1f))`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L131: `val bodyContent = resolvedPaletteTextColor(textColor = textColor, toneIndex = toneIndex, background = body)`
+    Declara `bodyContent` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolvedPaletteTextColor(textColor = textColor, toneIndex = toneIndex, background = body)`.
+L132: `val surfaceContent = resolvedPaletteTextColor(textColor = textColor, toneIndex = toneIndex, background = header)`
+    Declara `surfaceContent` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolvedPaletteTextColor(textColor = textColor, toneIndex = toneIndex, background = header)`.
+L133: `val variantContent = resolvedPaletteSecondaryTextColor(textColor = textColor, toneIndex = toneIndex, background = surfaceVariantColor)`
+    Declara `variantContent` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolvedPaletteSecondaryTextColor(textColor = textColor, toneIndex = toneIndex, background = surfaceVariantColor)`.
+L134: `return lightColorScheme(`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L135: `primary = accent,`
+    Asigna/configura `primary` usando `accent,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L136: `onPrimary = readableContentColor(accent),`
+    Asigna/configura `onPrimary` usando `readableContentColor(accent),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L137: `primaryContainer = mixColor(accent, Color.White, 0.80f),`
+    Asigna/configura `primaryContainer` usando `mixColor(accent, Color.White, 0.80f),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L138: `onPrimaryContainer = readableContentColor(mixColor(accent, Color.White, 0.80f)),`
+    Asigna/configura `onPrimaryContainer` usando `readableContentColor(mixColor(accent, Color.White, 0.80f)),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L139: `secondary = accent,`
+    Asigna/configura `secondary` usando `accent,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L140: `onSecondary = readableContentColor(accent),`
+    Asigna/configura `onSecondary` usando `readableContentColor(accent),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L141: `secondaryContainer = mixColor(accent, Color.White, 0.88f),`
+    Asigna/configura `secondaryContainer` usando `mixColor(accent, Color.White, 0.88f),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L142: `onSecondaryContainer = readableContentColor(mixColor(accent, Color.White, 0.88f)),`
+    Asigna/configura `onSecondaryContainer` usando `readableContentColor(mixColor(accent, Color.White, 0.88f)),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L143: `background = body,`
+    Asigna/configura `background` usando `body,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L144: `onBackground = bodyContent,`
+    Asigna/configura `onBackground` usando `bodyContent,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L145: `surface = header,`
+    Asigna/configura `surface` usando `header,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L146: `onSurface = surfaceContent,`
+    Asigna/configura `onSurface` usando `surfaceContent,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L147: `surfaceVariant = surfaceVariantColor,`
+    Asigna/configura `surfaceVariant` usando `surfaceVariantColor,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L148: `onSurfaceVariant = variantContent,`
+    Asigna/configura `onSurfaceVariant` usando `variantContent,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L149: `surfaceContainerLow = mixColor(body, panelTarget, panelMix),`
+    Asigna/configura `surfaceContainerLow` usando `mixColor(body, panelTarget, panelMix),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L150: `surfaceContainer = surfaceContainerColor,`
+    Asigna/configura `surfaceContainer` usando `surfaceContainerColor,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L151: `surfaceContainerHigh = mixColor(body, panelTarget, (panelMix * 0.5833333f).coerceIn(0f, 1f)),`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L152: `outline = ensureUiContrast(preferred = mixColor(accent, Color.Black, 0.22f), background = body, minimumContrast = 3f))`
+    Asigna/configura `outline` usando `ensureUiContrast(preferred = mixColor(accent, Color.Black, 0.22f), background = body, minimumContrast = 3f))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L153: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L155: `internal fun darkScheme(palette:`
+    Declara una función. El bloque de `darkScheme` se detalla después instrucción por instrucción.
+L156: `MyNotesPalette, toneIndex: Int, backgroundIntensity: Float, surfacePanelIntensity: Float, headerIntensity: Float, textColor: String,`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `MyNotesPalette, toneIndex: Int, backgroundIntensity: Float, surfacePanelIntensity: Float, headerIntensity: Float, textColor: String,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L157: `accentColor: String): ColorScheme {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L158: `val selected = palette.tones[toneIndex.coerceIn(0, 3)]`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L159: `val automaticPaletteMode = textColor != "black" && textColor != "white"`
+    Declara `automaticPaletteMode` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `textColor != "black" && textColor != "white"`.
+L160: `val automaticDarkTone = automaticPaletteMode && toneIndex.coerceIn(0, 3) >= 2`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L161: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L162: `* En Automático la tonalidad elegida manda sobre el modo del sistema:`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L163: `* 1-2 permanecen claras (texto negro) y 3-4 oscuras (texto blanco).`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L164: `* En Negro/Blanco manual se conserva el comportamiento oscuro anterior.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L165: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L166: `val base = if (automaticPaletteMode) {`
+    Declara `base` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (automaticPaletteMode) {`.
+L167: `selected`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `selected`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L168: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L169: `mixColor(selected, Color.Black, 0.84f)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L170: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L171: `val body = applySectionIntensity(base, backgroundIntensity)`
+    Declara `body` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `applySectionIntensity(base, backgroundIntensity)`.
+L172: `val header = applySectionIntensity(base, headerIntensity)`
+    Declara `header` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `applySectionIntensity(base, headerIntensity)`.
+L173: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L174: `* El modo oscuro usa mezclas mucho más pequeñas.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L175: `* 72% conserva la apariencia anterior y el resto escala`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L176: `* proporcionalmente hasta el valor elegido por el usuario.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L177: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L178: `val panelScale = (surfacePanelIntensity.coerceIn(0f, 100f) / 72f).coerceIn(0f, 1.3888889f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L179: `val rawAccent = resolveAccentColor(accentColor, palette)`
+    Declara `rawAccent` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolveAccentColor(accentColor, palette)`.
+L180: `val accent = mixColor(rawAccent, Color.White, 0.14f)`
+    Declara `accent` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `mixColor(rawAccent, Color.White, 0.14f)`.
+L181: `val panelTarget = if (automaticDarkTone) Color.Black else Color.White`
+    Declara `panelTarget` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (automaticDarkTone) Color.Black else Color.White`.
+L182: `val surfaceVariantColor = mixColor(body, panelTarget, (0.08f * panelScale).coerceIn(0f, 1f))`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L183: `val surfaceContainerColor = mixColor(body, panelTarget, (0.08f * panelScale).coerceIn(0f, 1f))`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L184: `val bodyContent = resolvedPaletteTextColor(textColor = textColor, toneIndex = toneIndex, background = body)`
+    Declara `bodyContent` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolvedPaletteTextColor(textColor = textColor, toneIndex = toneIndex, background = body)`.
+L185: `val surfaceContent = resolvedPaletteTextColor(textColor = textColor, toneIndex = toneIndex, background = header)`
+    Declara `surfaceContent` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolvedPaletteTextColor(textColor = textColor, toneIndex = toneIndex, background = header)`.
+L186: `val variantContent = resolvedPaletteSecondaryTextColor(textColor = textColor, toneIndex = toneIndex, background = surfaceVariantColor)`
+    Declara `variantContent` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `resolvedPaletteSecondaryTextColor(textColor = textColor, toneIndex = toneIndex, background = surfaceVariantColor)`.
+L187: `return darkColorScheme(`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L188: `primary = accent,`
+    Asigna/configura `primary` usando `accent,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L189: `onPrimary = readableContentColor(accent),`
+    Asigna/configura `onPrimary` usando `readableContentColor(accent),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L190: `primaryContainer = mixColor(rawAccent, Color.Black, 0.50f),`
+    Asigna/configura `primaryContainer` usando `mixColor(rawAccent, Color.Black, 0.50f),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L191: `onPrimaryContainer = readableContentColor(mixColor(rawAccent, Color.Black, 0.50f)),`
+    Asigna/configura `onPrimaryContainer` usando `readableContentColor(mixColor(rawAccent, Color.Black, 0.50f)),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L192: `secondary = accent,`
+    Asigna/configura `secondary` usando `accent,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L193: `onSecondary = readableContentColor(accent),`
+    Asigna/configura `onSecondary` usando `readableContentColor(accent),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L194: `secondaryContainer = mixColor(rawAccent, Color.Black, 0.60f),`
+    Asigna/configura `secondaryContainer` usando `mixColor(rawAccent, Color.Black, 0.60f),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L195: `onSecondaryContainer = readableContentColor(mixColor(rawAccent, Color.Black, 0.60f)),`
+    Asigna/configura `onSecondaryContainer` usando `readableContentColor(mixColor(rawAccent, Color.Black, 0.60f)),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L196: `background = body,`
+    Asigna/configura `background` usando `body,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L197: `onBackground = bodyContent,`
+    Asigna/configura `onBackground` usando `bodyContent,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L198: `surface = header,`
+    Asigna/configura `surface` usando `header,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L199: `onSurface = surfaceContent,`
+    Asigna/configura `onSurface` usando `surfaceContent,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L200: `surfaceVariant = surfaceVariantColor,`
+    Asigna/configura `surfaceVariant` usando `surfaceVariantColor,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L201: `onSurfaceVariant = variantContent,`
+    Asigna/configura `onSurfaceVariant` usando `variantContent,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L202: `surfaceContainerLow = mixColor(body, panelTarget, (0.05f * panelScale).coerceIn(0f, 1f)),`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L203: `surfaceContainer = surfaceContainerColor,`
+    Asigna/configura `surfaceContainer` usando `surfaceContainerColor,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L204: `surfaceContainerHigh = mixColor(body, panelTarget, (0.12f * panelScale).coerceIn(0f, 1f)),`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L205: `outline = ensureUiContrast(preferred = mixColor(accent, Color.White, 0.18f), background = body, minimumContrast = 3f))`
+    Asigna/configura `outline` usando `ensureUiContrast(preferred = mixColor(accent, Color.White, 0.18f), background = body, minimumContrast = 3f))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L206: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L208: `@Composable`
+    Marca la función siguiente como Composable: Compose puede ejecutarla durante composición/recomposición para describir UI a partir de estado.
+L209: `fun MyNotesTheme(darkTheme: Boolean = isSystemInDarkTheme(),`
+    Declara una función. El bloque de `MyNotesTheme` se detalla después instrucción por instrucción.
+L210: `backgroundColor: String = "neutral",`
+    Asigna/configura `backgroundColor: String` usando `"neutral",`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L211: `backgroundToneIndex: Int = 0,`
+    Asigna/configura `backgroundToneIndex: Int` usando `0,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L212: `backgroundIntensity: Float = 0f,`
+    Asigna/configura `backgroundIntensity: Float` usando `0f,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L213: `surfacePanelIntensity: Float = 72f,`
+    Asigna/configura `surfacePanelIntensity: Float` usando `72f,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L214: `headerIntensity: Float = 18f,`
+    Asigna/configura `headerIntensity: Float` usando `18f,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L215: `textColor: String = "auto",`
+    Asigna/configura `textColor: String` usando `"auto",`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L216: `textOutlineEnabled: Boolean = false,`
+    Asigna/configura `textOutlineEnabled: Boolean` usando `false,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L217: `accentColor: String = "palette",`
+    Asigna/configura `accentColor: String` usando `"palette",`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L218: `content:`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `content:`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L219: `@Composable () -> Unit) {`
+    Marca la función siguiente como Composable: Compose puede ejecutarla durante composición/recomposición para describir UI a partir de estado.
+L220: `val palette = remember(backgroundColor) {`
+    Memoriza el resultado durante recomposiciones de Compose. Solo se recalcula cuando cambian las claves de `remember`, reduciendo trabajo y preservando identidad/estado local.
+L221: `PaletteCatalog.find(backgroundColor)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L222: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L223: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L224: `* Crear un ColorScheme completo implica varias mezclas de Color.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L225: `* Lo memorizamos para que cambiar avatar, tamaño de tarjeta, iconos,`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L226: `* filtros, búsqueda, etc. no vuelva a calcular el tema.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L227: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L228: `val scheme = remember(darkTheme, palette.key, backgroundToneIndex, backgroundIntensity, surfacePanelIntensity, headerIntensity,`
+    Memoriza el resultado durante recomposiciones de Compose. Solo se recalcula cuando cambian las claves de `remember`, reduciendo trabajo y preservando identidad/estado local.
+L229: `textColor, textOutlineEnabled, accentColor) {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L230: `if (darkTheme) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `darkTheme`.
+L231: `darkScheme(palette = palette,`
+    Asigna/configura `darkScheme(palette` usando `palette,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L232: `toneIndex = backgroundToneIndex,`
+    Asigna/configura `toneIndex` usando `backgroundToneIndex,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L233: `backgroundIntensity = backgroundIntensity,`
+    Asigna/configura `backgroundIntensity` usando `backgroundIntensity,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L234: `surfacePanelIntensity = surfacePanelIntensity,`
+    Asigna/configura `surfacePanelIntensity` usando `surfacePanelIntensity,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L235: `headerIntensity = headerIntensity,`
+    Asigna/configura `headerIntensity` usando `headerIntensity,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L236: `textColor = textColor,`
+    Asigna/configura `textColor` usando `textColor,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L237: `accentColor = accentColor)`
+    Asigna/configura `accentColor` usando `accentColor)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L238: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L239: `lightScheme(palette = palette,`
+    Asigna/configura `lightScheme(palette` usando `palette,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L240: `toneIndex = backgroundToneIndex,`
+    Asigna/configura `toneIndex` usando `backgroundToneIndex,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L241: `backgroundIntensity = backgroundIntensity,`
+    Asigna/configura `backgroundIntensity` usando `backgroundIntensity,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L242: `surfacePanelIntensity = surfacePanelIntensity,`
+    Asigna/configura `surfacePanelIntensity` usando `surfacePanelIntensity,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L243: `headerIntensity = headerIntensity,`
+    Asigna/configura `headerIntensity` usando `headerIntensity,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L244: `textColor = textColor,`
+    Asigna/configura `textColor` usando `textColor,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L245: `accentColor = accentColor)`
+    Asigna/configura `accentColor` usando `accentColor)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L246: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L247: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L248: `val resolvedTypography = remember(textOutlineEnabled) {`
+    Memoriza el resultado durante recomposiciones de Compose. Solo se recalcula cuando cambian las claves de `remember`, reduciendo trabajo y preservando identidad/estado local.
+L249: `typographyWithBlackOutline(base = Typography,`
+    Asigna/configura `typographyWithBlackOutline(base` usando `Typography,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L250: `enabled = textOutlineEnabled)`
+    Asigna/configura `enabled` usando `textOutlineEnabled)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L251: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L252: `MaterialTheme(colorScheme = scheme,`
+    Asigna/configura `MaterialTheme(colorScheme` usando `scheme,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L253: `typography = resolvedTypography) {`
+    Asigna/configura `typography` usando `resolvedTypography) {`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L254: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L255: `* Los componentes Material toman el borde de Typography.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L256: `* Los Text() simples que usan LocalTextStyle también reciben`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L257: `* el mismo halo sin tener que modificar cada pantalla.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L258: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L259: `val inheritedTextStyle = if (textOutlineEnabled) {`
+    Declara `inheritedTextStyle` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (textOutlineEnabled) {`.
+L260: `LocalTextStyle.current.copy(shadow = BlackTextOutlineShadow)`
+    Crea una copia de un `data class`/Color cambiando solo los campos indicados, manteniendo el resto intacto.
+L261: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L262: `LocalTextStyle.current`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `LocalTextStyle.current`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L263: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L264: `CompositionLocalProvider(LocalTextStyle provides`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `CompositionLocalProvider(LocalTextStyle provides`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L265: `inheritedTextStyle) {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L266: `content()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L267: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L268: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L269: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+7. RECURSOS ANDROID REFERENCIADOS
+----------------------------------------------------------------------
+- No hay referencias directas `R.*` en este archivo.
+
+8. QUIÉN USA ESTE COMPONENTE
+----------------------------------------------------------------------
+- No se detectaron referencias externas por nombre a los tipos principales; puede ser punto de entrada Android, recurso invocado por Manifest o archivo de prueba.
+
+9. QUÉ PUEDE ROMPERSE SI LO MODIFICAS
+----------------------------------------------------------------------
+- Conservar firmas públicas/callbacks y comprobar los archivos que aparecen en “quién usa este componente” antes de renombrar o cambiar tipos.
+
+10. CHECKLIST DE PRUEBA DESPUÉS DE MODIFICAR ESTE ARCHIVO
+----------------------------------------------------------------------
+- Compilar `assembleDebug` y resolver primero errores de Kotlin/AAPT.
+- Abrir la pantalla/flujo relacionado y comprobar ida y vuelta (back) sin estado duplicado.
+- Cambiar tema/paleta y verificar contraste si este archivo dibuja UI.
+
+==============================================================================================================
+FIN DEL ARCHIVO
+==============================================================================================================

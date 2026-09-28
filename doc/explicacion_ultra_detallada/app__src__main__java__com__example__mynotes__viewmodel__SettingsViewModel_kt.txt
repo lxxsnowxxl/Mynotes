@@ -1,0 +1,2131 @@
+MYNOTES — EXPLICACIÓN ULTRA DETALLADA
+==============================================================================================================
+Archivo 59/72: app/src/main/java/com/example/mynotes/viewmodel/SettingsViewModel.kt
+SHA-256: 6890b79306855a674d337a92316af76de3986fc96f44651fe8e54041dfe910a9
+Líneas del fuente: 303
+Package: com.example.mynotes.viewmodel
+
+1. RESPONSABILIDAD EXACTA DEL ARCHIVO
+----------------------------------------------------------------------
+Adaptador ViewModel entre SettingsRepository y Compose. Expone el estado de configuración y métodos pequeños para cambiar cada preferencia desde la UI.
+
+2. DÓNDE ENCAJA EN LA ARQUITECTURA
+----------------------------------------------------------------------
+Este archivo pertenece principalmente a la **capa ViewModel/estado entre datos y Compose**. No debe analizarse aislado: las referencias cruzadas y callbacks se detallan más abajo.
+
+3. IMPORTACIONES, UNA POR UNA
+----------------------------------------------------------------------
+- `android.app.Application`: Importa `android.app.Application` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+- `androidx.lifecycle.AndroidViewModel`: Importa `androidx.lifecycle.AndroidViewModel` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.lifecycle.viewModelScope`: Importa `androidx.lifecycle.viewModelScope` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `com.example.mynotes.settings.AppSettings`: Importa `com.example.mynotes.settings.AppSettings`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.settings.SettingsRepository`: Importa `com.example.mynotes.settings.SettingsRepository`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `com.example.mynotes.widget.MyNotesWidgetUpdater`: Importa `com.example.mynotes.widget.MyNotesWidgetUpdater`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+- `kotlinx.coroutines.flow.SharingStarted`: Importa `kotlinx.coroutines.flow.SharingStarted` para usar coroutines, Flow y ejecución asíncrona.
+- `kotlinx.coroutines.flow.StateFlow`: Importa `kotlinx.coroutines.flow.StateFlow` para usar coroutines, Flow y ejecución asíncrona.
+- `kotlinx.coroutines.flow.stateIn`: Importa `kotlinx.coroutines.flow.stateIn` para usar coroutines, Flow y ejecución asíncrona.
+- `kotlinx.coroutines.launch`: Importa `kotlinx.coroutines.launch` para usar coroutines, Flow y ejecución asíncrona.
+
+4. DECLARACIONES Y ESTADO IMPORTANTES
+----------------------------------------------------------------------
+L14: `class SettingsViewModel(application: Application) : AndroidViewModel(application) {`
+    Declara class `SettingsViewModel`. A partir de aquí las propiedades y funciones hasta su llave de cierre pertenecen a este tipo.
+L15: `private val repository = SettingsRepository(application)`
+    Declara `repository` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `SettingsRepository(application)`.
+L16: `val settings:`
+    Declara `settings` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L47: `val normalized = value.coerceIn(0f, 100f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L55: `val normalized = value.coerceIn(0f, 100f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L60: `val normalized = value.coerceIn(0f, 100f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L68: `val normalized = value.coerceIn(0f, 100f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L98: `val normalized = value.coerceIn(12f, 28f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L108: `val normalized = value.coerceIn(0f, 100f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L123: `val normalized = value.coerceIn(0f, 100f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L154: `val normalized = value.coerceIn(36f, 84f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L164: `val normalized = value.coerceIn(16f, 36f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L174: `val normalized = value.coerceIn(0f, 36f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L179: `val normalized = value.coerceIn(0f, 12f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L184: `val normalized = value.coerceIn(6f, 24f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L189: `val normalized = value.coerceIn(72f, 220f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L194: `val normalized = value.coerceIn(0f, 6f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L209: `val normalized = value.coerceIn(1f, 1.8f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L229: `val normalized = value.coerceIn(48f, 82f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L284: `val normalized = value.coerceIn(0.5f, 2f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L299: `val normalized = value.coerceIn(0.5f, 1.5f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+
+5. FUNCIONES — EXPLICACIÓN DE CADA UNA
+----------------------------------------------------------------------
+
+5.1 `setConfigurationMode` — líneas 23–27
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun setConfigurationMode(value: String) {
+
+Propósito:
+    Cambia el valor asociado a `ConfigurationMode`. En repositorios suele persistirlo; en UI suele emitir el callback que termina persistiendo el ajuste.
+
+Parámetros/entradas:
+  - `value: String`: el llamador proporciona este valor/callback a `setConfigurationMode`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L23 [4 espacios] `fun setConfigurationMode(value: String) {`
+      → Declara una función. El bloque de `setConfigurationMode` se detalla después instrucción por instrucción.
+  L24 [8 espacios] `viewModelScope.launch {`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L25 [12 espacios] `repository.setConfigurationMode(value)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L26 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L27 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.2 `setDarkMode` — líneas 28–33
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun setDarkMode(value: Boolean) {
+
+Propósito:
+    Cambia el valor asociado a `DarkMode`. En repositorios suele persistirlo; en UI suele emitir el callback que termina persistiendo el ajuste.
+
+Parámetros/entradas:
+  - `value: Boolean`: el llamador proporciona este valor/callback a `setDarkMode`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L28 [4 espacios] `fun setDarkMode(value: Boolean) {`
+      → Declara una función. El bloque de `setDarkMode` se detalla después instrucción por instrucción.
+  L29 [8 espacios] `viewModelScope.launch {`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L30 [12 espacios] `repository.setDarkMode(value)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L31 [12 espacios] `MyNotesWidgetUpdater.requestUpdate(getApplication<Application>())`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L32 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L33 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.3 `setBackgroundColor` — líneas 34–39
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun setBackgroundColor(value: String) {
+
+Propósito:
+    Cambia el valor asociado a `BackgroundColor`. En repositorios suele persistirlo; en UI suele emitir el callback que termina persistiendo el ajuste.
+
+Parámetros/entradas:
+  - `value: String`: el llamador proporciona este valor/callback a `setBackgroundColor`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L34 [4 espacios] `fun setBackgroundColor(value: String) {`
+      → Declara una función. El bloque de `setBackgroundColor` se detalla después instrucción por instrucción.
+  L35 [8 espacios] `viewModelScope.launch {`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L36 [12 espacios] `repository.setBackgroundColor(value)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L37 [12 espacios] `MyNotesWidgetUpdater.requestUpdate(getApplication<Application>())`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L38 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L39 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.4 `setBackgroundToneIndex` — líneas 40–45
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun setBackgroundToneIndex(value: Int) {
+
+Propósito:
+    Cambia el valor asociado a `BackgroundToneIndex`. En repositorios suele persistirlo; en UI suele emitir el callback que termina persistiendo el ajuste.
+
+Parámetros/entradas:
+  - `value: Int`: el llamador proporciona este valor/callback a `setBackgroundToneIndex`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L40 [4 espacios] `fun setBackgroundToneIndex(value: Int) {`
+      → Declara una función. El bloque de `setBackgroundToneIndex` se detalla después instrucción por instrucción.
+  L41 [8 espacios] `viewModelScope.launch {`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L42 [12 espacios] `repository.setBackgroundToneIndex(value)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L43 [12 espacios] `MyNotesWidgetUpdater.requestUpdate(getApplication<Application>())`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L44 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L45 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.5 `setBackgroundIntensity` — líneas 46–53
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun setBackgroundIntensity(value: Float) {
+
+Propósito:
+    Cambia el valor asociado a `BackgroundIntensity`. En repositorios suele persistirlo; en UI suele emitir el callback que termina persistiendo el ajuste.
+
+Parámetros/entradas:
+  - `value: Float`: el llamador proporciona este valor/callback a `setBackgroundIntensity`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L46 [4 espacios] `fun setBackgroundIntensity(value: Float) {`
+      → Declara una función. El bloque de `setBackgroundIntensity` se detalla después instrucción por instrucción.
+  L47 [8 espacios] `val normalized = value.coerceIn(0f, 100f)`
+      → Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+  L48 [8 espacios] `if (settings.value.backgroundIntensity == normalized) return`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `settings.value.backgroundIntensity == normalized`.
+  L49 [8 espacios] `viewModelScope.launch {`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L50 [12 espacios] `repository.setBackgroundIntensity(normalized)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L51 [12 espacios] `MyNotesWidgetUpdater.requestUpdate(getApplication<Application>())`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L52 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L53 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.6 `setSettingsPanelTone` — líneas 54–58
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun setSettingsPanelTone(value: Float) {
+
+Propósito:
+    Cambia el valor asociado a `SettingsPanelTone`. En repositorios suele persistirlo; en UI suele emitir el callback que termina persistiendo el ajuste.
+
+Parámetros/entradas:
+  - `value: Float`: el llamador proporciona este valor/callback a `setSettingsPanelTone`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L54 [4 espacios] `fun setSettingsPanelTone(value: Float) {`
+      → Declara una función. El bloque de `setSettingsPanelTone` se detalla después instrucción por instrucción.
+  L55 [8 espacios] `val normalized = value.coerceIn(0f, 100f)`
+      → Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+  L56 [8 espacios] `if (settings.value.settingsPanelTone == normalized) return`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `settings.value.settingsPanelTone == normalized`.
+  L57 [8 espacios] `viewModelScope.launch { repository.setSettingsPanelTone(normalized) }`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L58 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.7 `setSurfacePanelIntensity` — líneas 59–66
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun setSurfacePanelIntensity(value: Float) {
+
+Propósito:
+    Cambia el valor asociado a `SurfacePanelIntensity`. En repositorios suele persistirlo; en UI suele emitir el callback que termina persistiendo el ajuste.
+
+Parámetros/entradas:
+  - `value: Float`: el llamador proporciona este valor/callback a `setSurfacePanelIntensity`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L59 [4 espacios] `fun setSurfacePanelIntensity(value: Float) {`
+      → Declara una función. El bloque de `setSurfacePanelIntensity` se detalla después instrucción por instrucción.
+  L60 [8 espacios] `val normalized = value.coerceIn(0f, 100f)`
+      → Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+  L61 [8 espacios] `if (settings.value.surfacePanelIntensity == normalized) return`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `settings.value.surfacePanelIntensity == normalized`.
+  L62 [8 espacios] `viewModelScope.launch {`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L63 [12 espacios] `repository.setSurfacePanelIntensity(normalized)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L64 [12 espacios] `MyNotesWidgetUpdater.requestUpdate(getApplication<Application>())`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L65 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L66 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.8 `setHeaderIntensity` — líneas 67–71
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun setHeaderIntensity(value: Float) {
+
+Propósito:
+    Cambia el valor asociado a `HeaderIntensity`. En repositorios suele persistirlo; en UI suele emitir el callback que termina persistiendo el ajuste.
+
+Parámetros/entradas:
+  - `value: Float`: el llamador proporciona este valor/callback a `setHeaderIntensity`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L67 [4 espacios] `fun setHeaderIntensity(value: Float) {`
+      → Declara una función. El bloque de `setHeaderIntensity` se detalla después instrucción por instrucción.
+  L68 [8 espacios] `val normalized = value.coerceIn(0f, 100f)`
+      → Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+  L69 [8 espacios] `if (settings.value.headerIntensity == normalized) return`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `settings.value.headerIntensity == normalized`.
+  L70 [8 espacios] `viewModelScope.launch { repository.setHeaderIntensity(normalized) }`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L71 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.9 `setTextColor` — líneas 72–76
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun setTextColor(value: String) {
+
+Propósito:
+    Cambia el valor asociado a `TextColor`. En repositorios suele persistirlo; en UI suele emitir el callback que termina persistiendo el ajuste.
+
+Parámetros/entradas:
+  - `value: String`: el llamador proporciona este valor/callback a `setTextColor`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L72 [4 espacios] `fun setTextColor(value: String) {`
+      → Declara una función. El bloque de `setTextColor` se detalla después instrucción por instrucción.
+  L73 [8 espacios] `viewModelScope.launch {`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L74 [12 espacios] `repository.setTextColor(value)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L75 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L76 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.10 `setTextOutlineEnabled` — líneas 77–81
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun setTextOutlineEnabled(value: Boolean) {
+
+Propósito:
+    Cambia el valor asociado a `TextOutlineEnabled`. En repositorios suele persistirlo; en UI suele emitir el callback que termina persistiendo el ajuste.
+
+Parámetros/entradas:
+  - `value: Boolean`: el llamador proporciona este valor/callback a `setTextOutlineEnabled`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L77 [4 espacios] `fun setTextOutlineEnabled(value: Boolean) {`
+      → Declara una función. El bloque de `setTextOutlineEnabled` se detalla después instrucción por instrucción.
+  L78 [8 espacios] `viewModelScope.launch {`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L79 [12 espacios] `repository.setTextOutlineEnabled(value)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L80 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L81 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.11 `setNoteUiTextColor` — líneas 82–86
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun setNoteUiTextColor(value: String) {
+
+Propósito:
+    Cambia el valor asociado a `NoteUiTextColor`. En repositorios suele persistirlo; en UI suele emitir el callback que termina persistiendo el ajuste.
+
+Parámetros/entradas:
+  - `value: String`: el llamador proporciona este valor/callback a `setNoteUiTextColor`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L82 [4 espacios] `fun setNoteUiTextColor(value: String) {`
+      → Declara una función. El bloque de `setNoteUiTextColor` se detalla después instrucción por instrucción.
+  L83 [8 espacios] `viewModelScope.launch {`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L84 [12 espacios] `repository.setNoteUiTextColor(value)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L85 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L86 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.12 `setSliderStyle` — líneas 87–91
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun setSliderStyle(value: String) {
+
+Propósito:
+    Cambia el valor asociado a `SliderStyle`. En repositorios suele persistirlo; en UI suele emitir el callback que termina persistiendo el ajuste.
+
+Parámetros/entradas:
+  - `value: String`: el llamador proporciona este valor/callback a `setSliderStyle`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L87 [4 espacios] `fun setSliderStyle(value: String) {`
+      → Declara una función. El bloque de `setSliderStyle` se detalla después instrucción por instrucción.
+  L88 [8 espacios] `viewModelScope.launch {`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L89 [12 espacios] `repository.setSliderStyle(value)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L90 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L91 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.13 `setFont` — líneas 92–96
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun setFont(value: String) {
+
+Propósito:
+    Cambia el valor asociado a `Font`. En repositorios suele persistirlo; en UI suele emitir el callback que termina persistiendo el ajuste.
+
+Parámetros/entradas:
+  - `value: String`: el llamador proporciona este valor/callback a `setFont`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L92 [4 espacios] `fun setFont(value: String) {`
+      → Declara una función. El bloque de `setFont` se detalla después instrucción por instrucción.
+  L93 [8 espacios] `viewModelScope.launch {`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L94 [12 espacios] `repository.setFont(value)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L95 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L96 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.14 `setFontSize` — líneas 97–101
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun setFontSize(value: Float) {
+
+Propósito:
+    Cambia el valor asociado a `FontSize`. En repositorios suele persistirlo; en UI suele emitir el callback que termina persistiendo el ajuste.
+
+Parámetros/entradas:
+  - `value: Float`: el llamador proporciona este valor/callback a `setFontSize`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L97 [4 espacios] `fun setFontSize(value: Float) {`
+      → Declara una función. El bloque de `setFontSize` se detalla después instrucción por instrucción.
+  L98 [8 espacios] `val normalized = value.coerceIn(12f, 28f)`
+      → Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+  L99 [8 espacios] `if (settings.value.fontSize == normalized) return`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `settings.value.fontSize == normalized`.
+  L100 [8 espacios] `viewModelScope.launch { repository.setFontSize(normalized) }`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L101 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.15 `setSoundEffectsEnabled` — líneas 102–106
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun setSoundEffectsEnabled(value: Boolean) {
+
+Propósito:
+    Cambia el valor asociado a `SoundEffectsEnabled`. En repositorios suele persistirlo; en UI suele emitir el callback que termina persistiendo el ajuste.
+
+Parámetros/entradas:
+  - `value: Boolean`: el llamador proporciona este valor/callback a `setSoundEffectsEnabled`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L102 [4 espacios] `fun setSoundEffectsEnabled(value: Boolean) {`
+      → Declara una función. El bloque de `setSoundEffectsEnabled` se detalla después instrucción por instrucción.
+  L103 [8 espacios] `viewModelScope.launch {`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L104 [12 espacios] `repository.setSoundEffectsEnabled(value)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L105 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L106 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.16 `setSoundEffectsVolume` — líneas 107–111
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun setSoundEffectsVolume(value: Float) {
+
+Propósito:
+    Cambia el valor asociado a `SoundEffectsVolume`. En repositorios suele persistirlo; en UI suele emitir el callback que termina persistiendo el ajuste.
+
+Parámetros/entradas:
+  - `value: Float`: el llamador proporciona este valor/callback a `setSoundEffectsVolume`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L107 [4 espacios] `fun setSoundEffectsVolume(value: Float) {`
+      → Declara una función. El bloque de `setSoundEffectsVolume` se detalla después instrucción por instrucción.
+  L108 [8 espacios] `val normalized = value.coerceIn(0f, 100f)`
+      → Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+  L109 [8 espacios] `if (settings.value.soundEffectsVolume == normalized) return`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `settings.value.soundEffectsVolume == normalized`.
+  L110 [8 espacios] `viewModelScope.launch { repository.setSoundEffectsVolume(normalized) }`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L111 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.17 `setSoundEffectsTheme` — líneas 112–116
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun setSoundEffectsTheme(value: String) {
+
+Propósito:
+    Cambia el valor asociado a `SoundEffectsTheme`. En repositorios suele persistirlo; en UI suele emitir el callback que termina persistiendo el ajuste.
+
+Parámetros/entradas:
+  - `value: String`: el llamador proporciona este valor/callback a `setSoundEffectsTheme`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L112 [4 espacios] `fun setSoundEffectsTheme(value: String) {`
+      → Declara una función. El bloque de `setSoundEffectsTheme` se detalla después instrucción por instrucción.
+  L113 [8 espacios] `viewModelScope.launch {`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L114 [12 espacios] `repository.setSoundEffectsTheme(value)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L115 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L116 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.18 `setHapticEffectsEnabled` — líneas 117–121
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun setHapticEffectsEnabled(value: Boolean) {
+
+Propósito:
+    Cambia el valor asociado a `HapticEffectsEnabled`. En repositorios suele persistirlo; en UI suele emitir el callback que termina persistiendo el ajuste.
+
+Parámetros/entradas:
+  - `value: Boolean`: el llamador proporciona este valor/callback a `setHapticEffectsEnabled`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L117 [4 espacios] `fun setHapticEffectsEnabled(value: Boolean) {`
+      → Declara una función. El bloque de `setHapticEffectsEnabled` se detalla después instrucción por instrucción.
+  L118 [8 espacios] `viewModelScope.launch {`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L119 [12 espacios] `repository.setHapticEffectsEnabled(value)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L120 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L121 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.19 `setHapticEffectsIntensity` — líneas 122–126
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun setHapticEffectsIntensity(value: Float) {
+
+Propósito:
+    Cambia el valor asociado a `HapticEffectsIntensity`. En repositorios suele persistirlo; en UI suele emitir el callback que termina persistiendo el ajuste.
+
+Parámetros/entradas:
+  - `value: Float`: el llamador proporciona este valor/callback a `setHapticEffectsIntensity`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L122 [4 espacios] `fun setHapticEffectsIntensity(value: Float) {`
+      → Declara una función. El bloque de `setHapticEffectsIntensity` se detalla después instrucción por instrucción.
+  L123 [8 espacios] `val normalized = value.coerceIn(0f, 100f)`
+      → Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+  L124 [8 espacios] `if (settings.value.hapticEffectsIntensity == normalized) return`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `settings.value.hapticEffectsIntensity == normalized`.
+  L125 [8 espacios] `viewModelScope.launch { repository.setHapticEffectsIntensity(normalized) }`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L126 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.20 `setHapticEffectsStyle` — líneas 127–131
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun setHapticEffectsStyle(value: String) {
+
+Propósito:
+    Cambia el valor asociado a `HapticEffectsStyle`. En repositorios suele persistirlo; en UI suele emitir el callback que termina persistiendo el ajuste.
+
+Parámetros/entradas:
+  - `value: String`: el llamador proporciona este valor/callback a `setHapticEffectsStyle`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L127 [4 espacios] `fun setHapticEffectsStyle(value: String) {`
+      → Declara una función. El bloque de `setHapticEffectsStyle` se detalla después instrucción por instrucción.
+  L128 [8 espacios] `viewModelScope.launch {`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L129 [12 espacios] `repository.setHapticEffectsStyle(value)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L130 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L131 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.21 `setLanguage` — líneas 132–137
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun setLanguage(value: String) {
+
+Propósito:
+    Persiste/aplica el idioma elegido y provoca los refrescos necesarios para UI/widgets.
+
+Parámetros/entradas:
+  - `value: String`: el llamador proporciona este valor/callback a `setLanguage`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L132 [4 espacios] `fun setLanguage(value: String) {`
+      → Declara una función. El bloque de `setLanguage` se detalla después instrucción por instrucción.
+  L133 [8 espacios] `viewModelScope.launch {`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L134 [12 espacios] `repository.setLanguage(value)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L135 [12 espacios] `MyNotesWidgetUpdater.requestUpdate(getApplication<Application>())`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L136 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L137 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.22 `setGridColumns` — líneas 138–142
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun setGridColumns(value: Int) {
+
+Propósito:
+    Cambia el valor asociado a `GridColumns`. En repositorios suele persistirlo; en UI suele emitir el callback que termina persistiendo el ajuste.
+
+Parámetros/entradas:
+  - `value: Int`: el llamador proporciona este valor/callback a `setGridColumns`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L138 [4 espacios] `fun setGridColumns(value: Int) {`
+      → Declara una función. El bloque de `setGridColumns` se detalla después instrucción por instrucción.
+  L139 [8 espacios] `viewModelScope.launch {`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L140 [12 espacios] `repository.setGridColumns(value)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L141 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L142 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.23 `setSortOrder` — líneas 143–147
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun setSortOrder(value: String) {
+
+Propósito:
+    Cambia el valor asociado a `SortOrder`. En repositorios suele persistirlo; en UI suele emitir el callback que termina persistiendo el ajuste.
+
+Parámetros/entradas:
+  - `value: String`: el llamador proporciona este valor/callback a `setSortOrder`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L143 [4 espacios] `fun setSortOrder(value: String) {`
+      → Declara una función. El bloque de `setSortOrder` se detalla después instrucción por instrucción.
+  L144 [8 espacios] `viewModelScope.launch {`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L145 [12 espacios] `repository.setSortOrder(value)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L146 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L147 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.24 `setProfileImageUri` — líneas 148–152
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun setProfileImageUri(value: String) {
+
+Propósito:
+    Cambia el valor asociado a `ProfileImageUri`. En repositorios suele persistirlo; en UI suele emitir el callback que termina persistiendo el ajuste.
+
+Parámetros/entradas:
+  - `value: String`: el llamador proporciona este valor/callback a `setProfileImageUri`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L148 [4 espacios] `fun setProfileImageUri(value: String) {`
+      → Declara una función. El bloque de `setProfileImageUri` se detalla después instrucción por instrucción.
+  L149 [8 espacios] `viewModelScope.launch {`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L150 [12 espacios] `repository.setProfileImageUri(value)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L151 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L152 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.25 `setProfileImageSize` — líneas 153–157
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun setProfileImageSize(value: Float) {
+
+Propósito:
+    Cambia el valor asociado a `ProfileImageSize`. En repositorios suele persistirlo; en UI suele emitir el callback que termina persistiendo el ajuste.
+
+Parámetros/entradas:
+  - `value: Float`: el llamador proporciona este valor/callback a `setProfileImageSize`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L153 [4 espacios] `fun setProfileImageSize(value: Float) {`
+      → Declara una función. El bloque de `setProfileImageSize` se detalla después instrucción por instrucción.
+  L154 [8 espacios] `val normalized = value.coerceIn(36f, 84f)`
+      → Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+  L155 [8 espacios] `if (settings.value.profileImageSize == normalized) return`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `settings.value.profileImageSize == normalized`.
+  L156 [8 espacios] `viewModelScope.launch { repository.setProfileImageSize(normalized) }`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L157 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.26 `setIconStyle` — líneas 158–162
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun setIconStyle(value: String) {
+
+Propósito:
+    Cambia el valor asociado a `IconStyle`. En repositorios suele persistirlo; en UI suele emitir el callback que termina persistiendo el ajuste.
+
+Parámetros/entradas:
+  - `value: String`: el llamador proporciona este valor/callback a `setIconStyle`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L158 [4 espacios] `fun setIconStyle(value: String) {`
+      → Declara una función. El bloque de `setIconStyle` se detalla después instrucción por instrucción.
+  L159 [8 espacios] `viewModelScope.launch {`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L160 [12 espacios] `repository.setIconStyle(value)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L161 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L162 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.27 `setIconSize` — líneas 163–167
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun setIconSize(value: Float) {
+
+Propósito:
+    Cambia el valor asociado a `IconSize`. En repositorios suele persistirlo; en UI suele emitir el callback que termina persistiendo el ajuste.
+
+Parámetros/entradas:
+  - `value: Float`: el llamador proporciona este valor/callback a `setIconSize`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L163 [4 espacios] `fun setIconSize(value: Float) {`
+      → Declara una función. El bloque de `setIconSize` se detalla después instrucción por instrucción.
+  L164 [8 espacios] `val normalized = value.coerceIn(16f, 36f)`
+      → Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+  L165 [8 espacios] `if (settings.value.iconSize == normalized) return`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `settings.value.iconSize == normalized`.
+  L166 [8 espacios] `viewModelScope.launch { repository.setIconSize(normalized) }`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L167 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.28 `setAccentColor` — líneas 168–172
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun setAccentColor(value: String) {
+
+Propósito:
+    Cambia el valor asociado a `AccentColor`. En repositorios suele persistirlo; en UI suele emitir el callback que termina persistiendo el ajuste.
+
+Parámetros/entradas:
+  - `value: String`: el llamador proporciona este valor/callback a `setAccentColor`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L168 [4 espacios] `fun setAccentColor(value: String) {`
+      → Declara una función. El bloque de `setAccentColor` se detalla después instrucción por instrucción.
+  L169 [8 espacios] `viewModelScope.launch {`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L170 [12 espacios] `repository.setAccentColor(value)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L171 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L172 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.29 `setNoteCardCornerRadius` — líneas 173–177
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun setNoteCardCornerRadius(value: Float) {
+
+Propósito:
+    Cambia el valor asociado a `NoteCardCornerRadius`. En repositorios suele persistirlo; en UI suele emitir el callback que termina persistiendo el ajuste.
+
+Parámetros/entradas:
+  - `value: Float`: el llamador proporciona este valor/callback a `setNoteCardCornerRadius`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L173 [4 espacios] `fun setNoteCardCornerRadius(value: Float) {`
+      → Declara una función. El bloque de `setNoteCardCornerRadius` se detalla después instrucción por instrucción.
+  L174 [8 espacios] `val normalized = value.coerceIn(0f, 36f)`
+      → Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+  L175 [8 espacios] `if (settings.value.noteCardCornerRadius == normalized) return`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `settings.value.noteCardCornerRadius == normalized`.
+  L176 [8 espacios] `viewModelScope.launch { repository.setNoteCardCornerRadius(normalized) }`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L177 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.30 `setNoteCardElevation` — líneas 178–182
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun setNoteCardElevation(value: Float) {
+
+Propósito:
+    Cambia el valor asociado a `NoteCardElevation`. En repositorios suele persistirlo; en UI suele emitir el callback que termina persistiendo el ajuste.
+
+Parámetros/entradas:
+  - `value: Float`: el llamador proporciona este valor/callback a `setNoteCardElevation`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L178 [4 espacios] `fun setNoteCardElevation(value: Float) {`
+      → Declara una función. El bloque de `setNoteCardElevation` se detalla después instrucción por instrucción.
+  L179 [8 espacios] `val normalized = value.coerceIn(0f, 12f)`
+      → Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+  L180 [8 espacios] `if (settings.value.noteCardElevation == normalized) return`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `settings.value.noteCardElevation == normalized`.
+  L181 [8 espacios] `viewModelScope.launch { repository.setNoteCardElevation(normalized) }`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L182 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.31 `setNoteCardPadding` — líneas 183–187
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun setNoteCardPadding(value: Float) {
+
+Propósito:
+    Cambia el valor asociado a `NoteCardPadding`. En repositorios suele persistirlo; en UI suele emitir el callback que termina persistiendo el ajuste.
+
+Parámetros/entradas:
+  - `value: Float`: el llamador proporciona este valor/callback a `setNoteCardPadding`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L183 [4 espacios] `fun setNoteCardPadding(value: Float) {`
+      → Declara una función. El bloque de `setNoteCardPadding` se detalla después instrucción por instrucción.
+  L184 [8 espacios] `val normalized = value.coerceIn(6f, 24f)`
+      → Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+  L185 [8 espacios] `if (settings.value.noteCardPadding == normalized) return`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `settings.value.noteCardPadding == normalized`.
+  L186 [8 espacios] `viewModelScope.launch { repository.setNoteCardPadding(normalized) }`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L187 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.32 `setNoteCardImageHeight` — líneas 188–192
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun setNoteCardImageHeight(value: Float) {
+
+Propósito:
+    Cambia el valor asociado a `NoteCardImageHeight`. En repositorios suele persistirlo; en UI suele emitir el callback que termina persistiendo el ajuste.
+
+Parámetros/entradas:
+  - `value: Float`: el llamador proporciona este valor/callback a `setNoteCardImageHeight`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L188 [4 espacios] `fun setNoteCardImageHeight(value: Float) {`
+      → Declara una función. El bloque de `setNoteCardImageHeight` se detalla después instrucción por instrucción.
+  L189 [8 espacios] `val normalized = value.coerceIn(72f, 220f)`
+      → Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+  L190 [8 espacios] `if (settings.value.noteCardImageHeight == normalized) return`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `settings.value.noteCardImageHeight == normalized`.
+  L191 [8 espacios] `viewModelScope.launch { repository.setNoteCardImageHeight(normalized) }`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L192 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.33 `setNoteCardOutlineWidth` — líneas 193–197
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun setNoteCardOutlineWidth(value: Float) {
+
+Propósito:
+    Cambia el valor asociado a `NoteCardOutlineWidth`. En repositorios suele persistirlo; en UI suele emitir el callback que termina persistiendo el ajuste.
+
+Parámetros/entradas:
+  - `value: Float`: el llamador proporciona este valor/callback a `setNoteCardOutlineWidth`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L193 [4 espacios] `fun setNoteCardOutlineWidth(value: Float) {`
+      → Declara una función. El bloque de `setNoteCardOutlineWidth` se detalla después instrucción por instrucción.
+  L194 [8 espacios] `val normalized = value.coerceIn(0f, 6f)`
+      → Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+  L195 [8 espacios] `if (settings.value.noteCardOutlineWidth == normalized) return`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `settings.value.noteCardOutlineWidth == normalized`.
+  L196 [8 espacios] `viewModelScope.launch { repository.setNoteCardOutlineWidth(normalized) }`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L197 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.34 `setNoteTitleMaxLines` — líneas 198–202
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun setNoteTitleMaxLines(value: Int) {
+
+Propósito:
+    Cambia el valor asociado a `NoteTitleMaxLines`. En repositorios suele persistirlo; en UI suele emitir el callback que termina persistiendo el ajuste.
+
+Parámetros/entradas:
+  - `value: Int`: el llamador proporciona este valor/callback a `setNoteTitleMaxLines`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L198 [4 espacios] `fun setNoteTitleMaxLines(value: Int) {`
+      → Declara una función. El bloque de `setNoteTitleMaxLines` se detalla después instrucción por instrucción.
+  L199 [8 espacios] `viewModelScope.launch {`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L200 [12 espacios] `repository.setNoteTitleMaxLines(value)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L201 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L202 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.35 `setNoteContentMaxLines` — líneas 203–207
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun setNoteContentMaxLines(value: Int) {
+
+Propósito:
+    Cambia el valor asociado a `NoteContentMaxLines`. En repositorios suele persistirlo; en UI suele emitir el callback que termina persistiendo el ajuste.
+
+Parámetros/entradas:
+  - `value: Int`: el llamador proporciona este valor/callback a `setNoteContentMaxLines`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L203 [4 espacios] `fun setNoteContentMaxLines(value: Int) {`
+      → Declara una función. El bloque de `setNoteContentMaxLines` se detalla después instrucción por instrucción.
+  L204 [8 espacios] `viewModelScope.launch {`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L205 [12 espacios] `repository.setNoteContentMaxLines(value)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L206 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L207 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.36 `setNoteLineSpacing` — líneas 208–212
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun setNoteLineSpacing(value: Float) {
+
+Propósito:
+    Cambia el valor asociado a `NoteLineSpacing`. En repositorios suele persistirlo; en UI suele emitir el callback que termina persistiendo el ajuste.
+
+Parámetros/entradas:
+  - `value: Float`: el llamador proporciona este valor/callback a `setNoteLineSpacing`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L208 [4 espacios] `fun setNoteLineSpacing(value: Float) {`
+      → Declara una función. El bloque de `setNoteLineSpacing` se detalla después instrucción por instrucción.
+  L209 [8 espacios] `val normalized = value.coerceIn(1f, 1.8f)`
+      → Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+  L210 [8 espacios] `if (settings.value.noteLineSpacing == normalized) return`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `settings.value.noteLineSpacing == normalized`.
+  L211 [8 espacios] `viewModelScope.launch { repository.setNoteLineSpacing(normalized) }`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L212 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.37 `setShowNoteDate` — líneas 213–217
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun setShowNoteDate(value: Boolean) {
+
+Propósito:
+    Cambia el valor asociado a `ShowNoteDate`. En repositorios suele persistirlo; en UI suele emitir el callback que termina persistiendo el ajuste.
+
+Parámetros/entradas:
+  - `value: Boolean`: el llamador proporciona este valor/callback a `setShowNoteDate`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L213 [4 espacios] `fun setShowNoteDate(value: Boolean) {`
+      → Declara una función. El bloque de `setShowNoteDate` se detalla después instrucción por instrucción.
+  L214 [8 espacios] `viewModelScope.launch {`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L215 [12 espacios] `repository.setShowNoteDate(value)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L216 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L217 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.38 `setShowCategoryChip` — líneas 218–222
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun setShowCategoryChip(value: Boolean) {
+
+Propósito:
+    Cambia el valor asociado a `ShowCategoryChip`. En repositorios suele persistirlo; en UI suele emitir el callback que termina persistiendo el ajuste.
+
+Parámetros/entradas:
+  - `value: Boolean`: el llamador proporciona este valor/callback a `setShowCategoryChip`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L218 [4 espacios] `fun setShowCategoryChip(value: Boolean) {`
+      → Declara una función. El bloque de `setShowCategoryChip` se detalla después instrucción por instrucción.
+  L219 [8 espacios] `viewModelScope.launch {`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L220 [12 espacios] `repository.setShowCategoryChip(value)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L221 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L222 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.39 `setShowFavoriteIcon` — líneas 223–227
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun setShowFavoriteIcon(value: Boolean) {
+
+Propósito:
+    Cambia el valor asociado a `ShowFavoriteIcon`. En repositorios suele persistirlo; en UI suele emitir el callback que termina persistiendo el ajuste.
+
+Parámetros/entradas:
+  - `value: Boolean`: el llamador proporciona este valor/callback a `setShowFavoriteIcon`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L223 [4 espacios] `fun setShowFavoriteIcon(value: Boolean) {`
+      → Declara una función. El bloque de `setShowFavoriteIcon` se detalla después instrucción por instrucción.
+  L224 [8 espacios] `viewModelScope.launch {`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L225 [12 espacios] `repository.setShowFavoriteIcon(value)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L226 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L227 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.40 `setFabSize` — líneas 228–232
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun setFabSize(value: Float) {
+
+Propósito:
+    Cambia el valor asociado a `FabSize`. En repositorios suele persistirlo; en UI suele emitir el callback que termina persistiendo el ajuste.
+
+Parámetros/entradas:
+  - `value: Float`: el llamador proporciona este valor/callback a `setFabSize`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L228 [4 espacios] `fun setFabSize(value: Float) {`
+      → Declara una función. El bloque de `setFabSize` se detalla después instrucción por instrucción.
+  L229 [8 espacios] `val normalized = value.coerceIn(48f, 82f)`
+      → Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+  L230 [8 espacios] `if (settings.value.fabSize == normalized) return`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `settings.value.fabSize == normalized`.
+  L231 [8 espacios] `viewModelScope.launch { repository.setFabSize(normalized) }`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L232 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.41 `setOptionMenuOrder` — líneas 233–237
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun setOptionMenuOrder(value: String) {
+
+Propósito:
+    Cambia el valor asociado a `OptionMenuOrder`. En repositorios suele persistirlo; en UI suele emitir el callback que termina persistiendo el ajuste.
+
+Parámetros/entradas:
+  - `value: String`: el llamador proporciona este valor/callback a `setOptionMenuOrder`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L233 [4 espacios] `fun setOptionMenuOrder(value: String) {`
+      → Declara una función. El bloque de `setOptionMenuOrder` se detalla después instrucción por instrucción.
+  L234 [8 espacios] `viewModelScope.launch {`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L235 [12 espacios] `repository.setOptionMenuOrder(value)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L236 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L237 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.42 `setOptionMenuHiddenItems` — líneas 238–242
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun setOptionMenuHiddenItems(value: String) {
+
+Propósito:
+    Cambia el valor asociado a `OptionMenuHiddenItems`. En repositorios suele persistirlo; en UI suele emitir el callback que termina persistiendo el ajuste.
+
+Parámetros/entradas:
+  - `value: String`: el llamador proporciona este valor/callback a `setOptionMenuHiddenItems`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L238 [4 espacios] `fun setOptionMenuHiddenItems(value: String) {`
+      → Declara una función. El bloque de `setOptionMenuHiddenItems` se detalla después instrucción por instrucción.
+  L239 [8 espacios] `viewModelScope.launch {`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L240 [12 espacios] `repository.setOptionMenuHiddenItems(value)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L241 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L242 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.43 `setOptionMenuShowIcons` — líneas 243–247
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun setOptionMenuShowIcons(value: Boolean) {
+
+Propósito:
+    Cambia el valor asociado a `OptionMenuShowIcons`. En repositorios suele persistirlo; en UI suele emitir el callback que termina persistiendo el ajuste.
+
+Parámetros/entradas:
+  - `value: Boolean`: el llamador proporciona este valor/callback a `setOptionMenuShowIcons`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L243 [4 espacios] `fun setOptionMenuShowIcons(value: Boolean) {`
+      → Declara una función. El bloque de `setOptionMenuShowIcons` se detalla después instrucción por instrucción.
+  L244 [8 espacios] `viewModelScope.launch {`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L245 [12 espacios] `repository.setOptionMenuShowIcons(value)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L246 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L247 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.44 `setOptionMenuTextColor` — líneas 248–252
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun setOptionMenuTextColor(value: String) {
+
+Propósito:
+    Cambia el valor asociado a `OptionMenuTextColor`. En repositorios suele persistirlo; en UI suele emitir el callback que termina persistiendo el ajuste.
+
+Parámetros/entradas:
+  - `value: String`: el llamador proporciona este valor/callback a `setOptionMenuTextColor`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L248 [4 espacios] `fun setOptionMenuTextColor(value: String) {`
+      → Declara una función. El bloque de `setOptionMenuTextColor` se detalla después instrucción por instrucción.
+  L249 [8 espacios] `viewModelScope.launch {`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L250 [12 espacios] `repository.setOptionMenuTextColor(value)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L251 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L252 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.45 `setOptionMenuOpacity` — líneas 253–257
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun setOptionMenuOpacity(value: Float) {
+
+Propósito:
+    Cambia el valor asociado a `OptionMenuOpacity`. En repositorios suele persistirlo; en UI suele emitir el callback que termina persistiendo el ajuste.
+
+Parámetros/entradas:
+  - `value: Float`: el llamador proporciona este valor/callback a `setOptionMenuOpacity`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L253 [4 espacios] `fun setOptionMenuOpacity(value: Float) {`
+      → Declara una función. El bloque de `setOptionMenuOpacity` se detalla después instrucción por instrucción.
+  L254 [8 espacios] `viewModelScope.launch {`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L255 [12 espacios] `repository.setOptionMenuOpacity(value)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L256 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L257 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.46 `setPriorityMenuHiddenItems` — líneas 258–262
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun setPriorityMenuHiddenItems(value: String) {
+
+Propósito:
+    Cambia el valor asociado a `PriorityMenuHiddenItems`. En repositorios suele persistirlo; en UI suele emitir el callback que termina persistiendo el ajuste.
+
+Parámetros/entradas:
+  - `value: String`: el llamador proporciona este valor/callback a `setPriorityMenuHiddenItems`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L258 [4 espacios] `fun setPriorityMenuHiddenItems(value: String) {`
+      → Declara una función. El bloque de `setPriorityMenuHiddenItems` se detalla después instrucción por instrucción.
+  L259 [8 espacios] `viewModelScope.launch {`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L260 [12 espacios] `repository.setPriorityMenuHiddenItems(value)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L261 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L262 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.47 `setColorMenuHiddenItems` — líneas 263–267
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun setColorMenuHiddenItems(value: String) {
+
+Propósito:
+    Cambia el valor asociado a `ColorMenuHiddenItems`. En repositorios suele persistirlo; en UI suele emitir el callback que termina persistiendo el ajuste.
+
+Parámetros/entradas:
+  - `value: String`: el llamador proporciona este valor/callback a `setColorMenuHiddenItems`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L263 [4 espacios] `fun setColorMenuHiddenItems(value: String) {`
+      → Declara una función. El bloque de `setColorMenuHiddenItems` se detalla después instrucción por instrucción.
+  L264 [8 espacios] `viewModelScope.launch {`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L265 [12 espacios] `repository.setColorMenuHiddenItems(value)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L266 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L267 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.48 `resetOptionMenuSettings` — líneas 268–272
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun resetOptionMenuSettings() {
+
+Propósito:
+    Implementa `resetOptionMenuSettings`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - No recibe parámetros explícitos.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L268 [4 espacios] `fun resetOptionMenuSettings() {`
+      → Declara una función. El bloque de `resetOptionMenuSettings` se detalla después instrucción por instrucción.
+  L269 [8 espacios] `viewModelScope.launch {`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L270 [12 espacios] `repository.resetOptionMenuSettings()`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L271 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L272 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.49 `setPerformanceMode` — líneas 273–277
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun setPerformanceMode(value: String) {
+
+Propósito:
+    Cambia el valor asociado a `PerformanceMode`. En repositorios suele persistirlo; en UI suele emitir el callback que termina persistiendo el ajuste.
+
+Parámetros/entradas:
+  - `value: String`: el llamador proporciona este valor/callback a `setPerformanceMode`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L273 [4 espacios] `fun setPerformanceMode(value: String) {`
+      → Declara una función. El bloque de `setPerformanceMode` se detalla después instrucción por instrucción.
+  L274 [8 espacios] `viewModelScope.launch {`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L275 [12 espacios] `repository.setPerformanceMode(value)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L276 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L277 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.50 `setAnimationsEnabled` — líneas 278–282
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun setAnimationsEnabled(value: Boolean) {
+
+Propósito:
+    Cambia el valor asociado a `AnimationsEnabled`. En repositorios suele persistirlo; en UI suele emitir el callback que termina persistiendo el ajuste.
+
+Parámetros/entradas:
+  - `value: Boolean`: el llamador proporciona este valor/callback a `setAnimationsEnabled`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L278 [4 espacios] `fun setAnimationsEnabled(value: Boolean) {`
+      → Declara una función. El bloque de `setAnimationsEnabled` se detalla después instrucción por instrucción.
+  L279 [8 espacios] `viewModelScope.launch {`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L280 [12 espacios] `repository.setAnimationsEnabled(value)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L281 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L282 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.51 `setAnimationSpeed` — líneas 283–287
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun setAnimationSpeed(value: Float) {
+
+Propósito:
+    Cambia el valor asociado a `AnimationSpeed`. En repositorios suele persistirlo; en UI suele emitir el callback que termina persistiendo el ajuste.
+
+Parámetros/entradas:
+  - `value: Float`: el llamador proporciona este valor/callback a `setAnimationSpeed`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L283 [4 espacios] `fun setAnimationSpeed(value: Float) {`
+      → Declara una función. El bloque de `setAnimationSpeed` se detalla después instrucción por instrucción.
+  L284 [8 espacios] `val normalized = value.coerceIn(0.5f, 2f)`
+      → Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+  L285 [8 espacios] `if (settings.value.animationSpeed == normalized) return`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `settings.value.animationSpeed == normalized`.
+  L286 [8 espacios] `viewModelScope.launch { repository.setAnimationSpeed(normalized) }`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L287 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.52 `setAnimationStyle` — líneas 288–292
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun setAnimationStyle(value: String) {
+
+Propósito:
+    Cambia el valor asociado a `AnimationStyle`. En repositorios suele persistirlo; en UI suele emitir el callback que termina persistiendo el ajuste.
+
+Parámetros/entradas:
+  - `value: String`: el llamador proporciona este valor/callback a `setAnimationStyle`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L288 [4 espacios] `fun setAnimationStyle(value: String) {`
+      → Declara una función. El bloque de `setAnimationStyle` se detalla después instrucción por instrucción.
+  L289 [8 espacios] `viewModelScope.launch {`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L290 [12 espacios] `repository.setAnimationStyle(value)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L291 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L292 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.53 `setAnimationEasing` — líneas 293–297
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun setAnimationEasing(value: String) {
+
+Propósito:
+    Cambia el valor asociado a `AnimationEasing`. En repositorios suele persistirlo; en UI suele emitir el callback que termina persistiendo el ajuste.
+
+Parámetros/entradas:
+  - `value: String`: el llamador proporciona este valor/callback a `setAnimationEasing`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L293 [4 espacios] `fun setAnimationEasing(value: String) {`
+      → Declara una función. El bloque de `setAnimationEasing` se detalla después instrucción por instrucción.
+  L294 [8 espacios] `viewModelScope.launch {`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L295 [12 espacios] `repository.setAnimationEasing(value)`
+      → Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+  L296 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+  L297 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.54 `setAnimationIntensity` — líneas 298–302
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun setAnimationIntensity(value: Float) {
+
+Propósito:
+    Cambia el valor asociado a `AnimationIntensity`. En repositorios suele persistirlo; en UI suele emitir el callback que termina persistiendo el ajuste.
+
+Parámetros/entradas:
+  - `value: Float`: el llamador proporciona este valor/callback a `setAnimationIntensity`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L298 [4 espacios] `fun setAnimationIntensity(value: Float) {`
+      → Declara una función. El bloque de `setAnimationIntensity` se detalla después instrucción por instrucción.
+  L299 [8 espacios] `val normalized = value.coerceIn(0.5f, 1.5f)`
+      → Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+  L300 [8 espacios] `if (settings.value.animationIntensity == normalized) return`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `settings.value.animationIntensity == normalized`.
+  L301 [8 espacios] `viewModelScope.launch { repository.setAnimationIntensity(normalized) }`
+      → Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+  L302 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+6. EXPLICACIÓN COMPLETA LÍNEA POR LÍNEA
+----------------------------------------------------------------------
+Esta sección no omite líneas ejecutables. Repite incluso partes ya explicadas en funciones para poder leer el archivo de arriba abajo sin saltar entre secciones.
+L1: `package com.example.mynotes.viewmodel`
+    Declara que este archivo pertenece al package `com.example.mynotes.viewmodel`; esto determina su namespace Kotlin y cómo lo importan otros archivos.
+L3: `import android.app.Application`
+    Importa `android.app.Application` de la API Android. Se usa para interactuar con servicios/componentes del sistema operativo.
+L4: `import androidx.lifecycle.AndroidViewModel`
+    Importa `androidx.lifecycle.AndroidViewModel` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L5: `import androidx.lifecycle.viewModelScope`
+    Importa `androidx.lifecycle.viewModelScope` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L6: `import com.example.mynotes.settings.AppSettings`
+    Importa `com.example.mynotes.settings.AppSettings`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L7: `import com.example.mynotes.settings.SettingsRepository`
+    Importa `com.example.mynotes.settings.SettingsRepository`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L8: `import com.example.mynotes.widget.MyNotesWidgetUpdater`
+    Importa `com.example.mynotes.widget.MyNotesWidgetUpdater`, una dependencia interna del propio proyecto MyNotes. Esto enlaza este archivo con ese componente sin duplicar su lógica.
+L9: `import kotlinx.coroutines.flow.SharingStarted`
+    Importa `kotlinx.coroutines.flow.SharingStarted` para usar coroutines, Flow y ejecución asíncrona.
+L10: `import kotlinx.coroutines.flow.StateFlow`
+    Importa `kotlinx.coroutines.flow.StateFlow` para usar coroutines, Flow y ejecución asíncrona.
+L11: `import kotlinx.coroutines.flow.stateIn`
+    Importa `kotlinx.coroutines.flow.stateIn` para usar coroutines, Flow y ejecución asíncrona.
+L12: `import kotlinx.coroutines.launch`
+    Importa `kotlinx.coroutines.launch` para usar coroutines, Flow y ejecución asíncrona.
+L14: `class SettingsViewModel(application: Application) : AndroidViewModel(application) {`
+    Declara class `SettingsViewModel`. A partir de aquí las propiedades y funciones hasta su llave de cierre pertenecen a este tipo.
+L15: `private val repository = SettingsRepository(application)`
+    Declara `repository` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `SettingsRepository(application)`.
+L16: `val settings:`
+    Declara `settings` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L17: `StateFlow<AppSettings> =`
+    Asigna/configura `StateFlow<AppSettings>` usando ``. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L18: `repository.settings.stateIn(scope = viewModelScope,`
+    Asigna/configura `repository.settings.stateIn(scope` usando `viewModelScope,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L19: `started = SharingStarted.WhileSubscribed(5_000),`
+    Asigna/configura `started` usando `SharingStarted.WhileSubscribed(5_000),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L20: `// "loading" evita que el diálogo de primer inicio parpadee`
+    Comentario del autor. No se ejecuta; documenta la intención o una restricción del bloque siguiente.
+L21: `// antes de que DataStore entregue el modo ya guardado.`
+    Comentario del autor. No se ejecuta; documenta la intención o una restricción del bloque siguiente.
+L22: `initialValue = AppSettings(configurationMode = "loading"))`
+    Asigna/configura `initialValue` usando `AppSettings(configurationMode = "loading"))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L23: `fun setConfigurationMode(value: String) {`
+    Declara una función. El bloque de `setConfigurationMode` se detalla después instrucción por instrucción.
+L24: `viewModelScope.launch {`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L25: `repository.setConfigurationMode(value)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L26: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L27: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L28: `fun setDarkMode(value: Boolean) {`
+    Declara una función. El bloque de `setDarkMode` se detalla después instrucción por instrucción.
+L29: `viewModelScope.launch {`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L30: `repository.setDarkMode(value)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L31: `MyNotesWidgetUpdater.requestUpdate(getApplication<Application>())`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L32: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L33: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L34: `fun setBackgroundColor(value: String) {`
+    Declara una función. El bloque de `setBackgroundColor` se detalla después instrucción por instrucción.
+L35: `viewModelScope.launch {`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L36: `repository.setBackgroundColor(value)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L37: `MyNotesWidgetUpdater.requestUpdate(getApplication<Application>())`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L38: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L39: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L40: `fun setBackgroundToneIndex(value: Int) {`
+    Declara una función. El bloque de `setBackgroundToneIndex` se detalla después instrucción por instrucción.
+L41: `viewModelScope.launch {`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L42: `repository.setBackgroundToneIndex(value)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L43: `MyNotesWidgetUpdater.requestUpdate(getApplication<Application>())`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L44: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L45: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L46: `fun setBackgroundIntensity(value: Float) {`
+    Declara una función. El bloque de `setBackgroundIntensity` se detalla después instrucción por instrucción.
+L47: `val normalized = value.coerceIn(0f, 100f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L48: `if (settings.value.backgroundIntensity == normalized) return`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `settings.value.backgroundIntensity == normalized`.
+L49: `viewModelScope.launch {`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L50: `repository.setBackgroundIntensity(normalized)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L51: `MyNotesWidgetUpdater.requestUpdate(getApplication<Application>())`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L52: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L53: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L54: `fun setSettingsPanelTone(value: Float) {`
+    Declara una función. El bloque de `setSettingsPanelTone` se detalla después instrucción por instrucción.
+L55: `val normalized = value.coerceIn(0f, 100f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L56: `if (settings.value.settingsPanelTone == normalized) return`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `settings.value.settingsPanelTone == normalized`.
+L57: `viewModelScope.launch { repository.setSettingsPanelTone(normalized) }`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L58: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L59: `fun setSurfacePanelIntensity(value: Float) {`
+    Declara una función. El bloque de `setSurfacePanelIntensity` se detalla después instrucción por instrucción.
+L60: `val normalized = value.coerceIn(0f, 100f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L61: `if (settings.value.surfacePanelIntensity == normalized) return`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `settings.value.surfacePanelIntensity == normalized`.
+L62: `viewModelScope.launch {`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L63: `repository.setSurfacePanelIntensity(normalized)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L64: `MyNotesWidgetUpdater.requestUpdate(getApplication<Application>())`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L65: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L66: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L67: `fun setHeaderIntensity(value: Float) {`
+    Declara una función. El bloque de `setHeaderIntensity` se detalla después instrucción por instrucción.
+L68: `val normalized = value.coerceIn(0f, 100f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L69: `if (settings.value.headerIntensity == normalized) return`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `settings.value.headerIntensity == normalized`.
+L70: `viewModelScope.launch { repository.setHeaderIntensity(normalized) }`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L71: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L72: `fun setTextColor(value: String) {`
+    Declara una función. El bloque de `setTextColor` se detalla después instrucción por instrucción.
+L73: `viewModelScope.launch {`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L74: `repository.setTextColor(value)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L75: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L76: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L77: `fun setTextOutlineEnabled(value: Boolean) {`
+    Declara una función. El bloque de `setTextOutlineEnabled` se detalla después instrucción por instrucción.
+L78: `viewModelScope.launch {`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L79: `repository.setTextOutlineEnabled(value)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L80: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L81: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L82: `fun setNoteUiTextColor(value: String) {`
+    Declara una función. El bloque de `setNoteUiTextColor` se detalla después instrucción por instrucción.
+L83: `viewModelScope.launch {`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L84: `repository.setNoteUiTextColor(value)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L85: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L86: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L87: `fun setSliderStyle(value: String) {`
+    Declara una función. El bloque de `setSliderStyle` se detalla después instrucción por instrucción.
+L88: `viewModelScope.launch {`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L89: `repository.setSliderStyle(value)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L90: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L91: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L92: `fun setFont(value: String) {`
+    Declara una función. El bloque de `setFont` se detalla después instrucción por instrucción.
+L93: `viewModelScope.launch {`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L94: `repository.setFont(value)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L95: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L96: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L97: `fun setFontSize(value: Float) {`
+    Declara una función. El bloque de `setFontSize` se detalla después instrucción por instrucción.
+L98: `val normalized = value.coerceIn(12f, 28f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L99: `if (settings.value.fontSize == normalized) return`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `settings.value.fontSize == normalized`.
+L100: `viewModelScope.launch { repository.setFontSize(normalized) }`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L101: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L102: `fun setSoundEffectsEnabled(value: Boolean) {`
+    Declara una función. El bloque de `setSoundEffectsEnabled` se detalla después instrucción por instrucción.
+L103: `viewModelScope.launch {`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L104: `repository.setSoundEffectsEnabled(value)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L105: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L106: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L107: `fun setSoundEffectsVolume(value: Float) {`
+    Declara una función. El bloque de `setSoundEffectsVolume` se detalla después instrucción por instrucción.
+L108: `val normalized = value.coerceIn(0f, 100f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L109: `if (settings.value.soundEffectsVolume == normalized) return`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `settings.value.soundEffectsVolume == normalized`.
+L110: `viewModelScope.launch { repository.setSoundEffectsVolume(normalized) }`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L111: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L112: `fun setSoundEffectsTheme(value: String) {`
+    Declara una función. El bloque de `setSoundEffectsTheme` se detalla después instrucción por instrucción.
+L113: `viewModelScope.launch {`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L114: `repository.setSoundEffectsTheme(value)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L115: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L116: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L117: `fun setHapticEffectsEnabled(value: Boolean) {`
+    Declara una función. El bloque de `setHapticEffectsEnabled` se detalla después instrucción por instrucción.
+L118: `viewModelScope.launch {`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L119: `repository.setHapticEffectsEnabled(value)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L120: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L121: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L122: `fun setHapticEffectsIntensity(value: Float) {`
+    Declara una función. El bloque de `setHapticEffectsIntensity` se detalla después instrucción por instrucción.
+L123: `val normalized = value.coerceIn(0f, 100f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L124: `if (settings.value.hapticEffectsIntensity == normalized) return`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `settings.value.hapticEffectsIntensity == normalized`.
+L125: `viewModelScope.launch { repository.setHapticEffectsIntensity(normalized) }`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L126: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L127: `fun setHapticEffectsStyle(value: String) {`
+    Declara una función. El bloque de `setHapticEffectsStyle` se detalla después instrucción por instrucción.
+L128: `viewModelScope.launch {`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L129: `repository.setHapticEffectsStyle(value)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L130: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L131: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L132: `fun setLanguage(value: String) {`
+    Declara una función. El bloque de `setLanguage` se detalla después instrucción por instrucción.
+L133: `viewModelScope.launch {`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L134: `repository.setLanguage(value)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L135: `MyNotesWidgetUpdater.requestUpdate(getApplication<Application>())`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L136: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L137: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L138: `fun setGridColumns(value: Int) {`
+    Declara una función. El bloque de `setGridColumns` se detalla después instrucción por instrucción.
+L139: `viewModelScope.launch {`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L140: `repository.setGridColumns(value)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L141: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L142: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L143: `fun setSortOrder(value: String) {`
+    Declara una función. El bloque de `setSortOrder` se detalla después instrucción por instrucción.
+L144: `viewModelScope.launch {`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L145: `repository.setSortOrder(value)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L146: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L147: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L148: `fun setProfileImageUri(value: String) {`
+    Declara una función. El bloque de `setProfileImageUri` se detalla después instrucción por instrucción.
+L149: `viewModelScope.launch {`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L150: `repository.setProfileImageUri(value)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L151: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L152: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L153: `fun setProfileImageSize(value: Float) {`
+    Declara una función. El bloque de `setProfileImageSize` se detalla después instrucción por instrucción.
+L154: `val normalized = value.coerceIn(36f, 84f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L155: `if (settings.value.profileImageSize == normalized) return`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `settings.value.profileImageSize == normalized`.
+L156: `viewModelScope.launch { repository.setProfileImageSize(normalized) }`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L157: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L158: `fun setIconStyle(value: String) {`
+    Declara una función. El bloque de `setIconStyle` se detalla después instrucción por instrucción.
+L159: `viewModelScope.launch {`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L160: `repository.setIconStyle(value)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L161: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L162: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L163: `fun setIconSize(value: Float) {`
+    Declara una función. El bloque de `setIconSize` se detalla después instrucción por instrucción.
+L164: `val normalized = value.coerceIn(16f, 36f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L165: `if (settings.value.iconSize == normalized) return`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `settings.value.iconSize == normalized`.
+L166: `viewModelScope.launch { repository.setIconSize(normalized) }`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L167: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L168: `fun setAccentColor(value: String) {`
+    Declara una función. El bloque de `setAccentColor` se detalla después instrucción por instrucción.
+L169: `viewModelScope.launch {`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L170: `repository.setAccentColor(value)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L171: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L172: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L173: `fun setNoteCardCornerRadius(value: Float) {`
+    Declara una función. El bloque de `setNoteCardCornerRadius` se detalla después instrucción por instrucción.
+L174: `val normalized = value.coerceIn(0f, 36f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L175: `if (settings.value.noteCardCornerRadius == normalized) return`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `settings.value.noteCardCornerRadius == normalized`.
+L176: `viewModelScope.launch { repository.setNoteCardCornerRadius(normalized) }`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L177: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L178: `fun setNoteCardElevation(value: Float) {`
+    Declara una función. El bloque de `setNoteCardElevation` se detalla después instrucción por instrucción.
+L179: `val normalized = value.coerceIn(0f, 12f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L180: `if (settings.value.noteCardElevation == normalized) return`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `settings.value.noteCardElevation == normalized`.
+L181: `viewModelScope.launch { repository.setNoteCardElevation(normalized) }`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L182: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L183: `fun setNoteCardPadding(value: Float) {`
+    Declara una función. El bloque de `setNoteCardPadding` se detalla después instrucción por instrucción.
+L184: `val normalized = value.coerceIn(6f, 24f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L185: `if (settings.value.noteCardPadding == normalized) return`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `settings.value.noteCardPadding == normalized`.
+L186: `viewModelScope.launch { repository.setNoteCardPadding(normalized) }`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L187: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L188: `fun setNoteCardImageHeight(value: Float) {`
+    Declara una función. El bloque de `setNoteCardImageHeight` se detalla después instrucción por instrucción.
+L189: `val normalized = value.coerceIn(72f, 220f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L190: `if (settings.value.noteCardImageHeight == normalized) return`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `settings.value.noteCardImageHeight == normalized`.
+L191: `viewModelScope.launch { repository.setNoteCardImageHeight(normalized) }`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L192: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L193: `fun setNoteCardOutlineWidth(value: Float) {`
+    Declara una función. El bloque de `setNoteCardOutlineWidth` se detalla después instrucción por instrucción.
+L194: `val normalized = value.coerceIn(0f, 6f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L195: `if (settings.value.noteCardOutlineWidth == normalized) return`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `settings.value.noteCardOutlineWidth == normalized`.
+L196: `viewModelScope.launch { repository.setNoteCardOutlineWidth(normalized) }`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L197: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L198: `fun setNoteTitleMaxLines(value: Int) {`
+    Declara una función. El bloque de `setNoteTitleMaxLines` se detalla después instrucción por instrucción.
+L199: `viewModelScope.launch {`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L200: `repository.setNoteTitleMaxLines(value)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L201: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L202: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L203: `fun setNoteContentMaxLines(value: Int) {`
+    Declara una función. El bloque de `setNoteContentMaxLines` se detalla después instrucción por instrucción.
+L204: `viewModelScope.launch {`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L205: `repository.setNoteContentMaxLines(value)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L206: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L207: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L208: `fun setNoteLineSpacing(value: Float) {`
+    Declara una función. El bloque de `setNoteLineSpacing` se detalla después instrucción por instrucción.
+L209: `val normalized = value.coerceIn(1f, 1.8f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L210: `if (settings.value.noteLineSpacing == normalized) return`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `settings.value.noteLineSpacing == normalized`.
+L211: `viewModelScope.launch { repository.setNoteLineSpacing(normalized) }`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L212: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L213: `fun setShowNoteDate(value: Boolean) {`
+    Declara una función. El bloque de `setShowNoteDate` se detalla después instrucción por instrucción.
+L214: `viewModelScope.launch {`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L215: `repository.setShowNoteDate(value)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L216: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L217: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L218: `fun setShowCategoryChip(value: Boolean) {`
+    Declara una función. El bloque de `setShowCategoryChip` se detalla después instrucción por instrucción.
+L219: `viewModelScope.launch {`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L220: `repository.setShowCategoryChip(value)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L221: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L222: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L223: `fun setShowFavoriteIcon(value: Boolean) {`
+    Declara una función. El bloque de `setShowFavoriteIcon` se detalla después instrucción por instrucción.
+L224: `viewModelScope.launch {`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L225: `repository.setShowFavoriteIcon(value)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L226: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L227: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L228: `fun setFabSize(value: Float) {`
+    Declara una función. El bloque de `setFabSize` se detalla después instrucción por instrucción.
+L229: `val normalized = value.coerceIn(48f, 82f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L230: `if (settings.value.fabSize == normalized) return`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `settings.value.fabSize == normalized`.
+L231: `viewModelScope.launch { repository.setFabSize(normalized) }`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L232: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L233: `fun setOptionMenuOrder(value: String) {`
+    Declara una función. El bloque de `setOptionMenuOrder` se detalla después instrucción por instrucción.
+L234: `viewModelScope.launch {`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L235: `repository.setOptionMenuOrder(value)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L236: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L237: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L238: `fun setOptionMenuHiddenItems(value: String) {`
+    Declara una función. El bloque de `setOptionMenuHiddenItems` se detalla después instrucción por instrucción.
+L239: `viewModelScope.launch {`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L240: `repository.setOptionMenuHiddenItems(value)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L241: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L242: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L243: `fun setOptionMenuShowIcons(value: Boolean) {`
+    Declara una función. El bloque de `setOptionMenuShowIcons` se detalla después instrucción por instrucción.
+L244: `viewModelScope.launch {`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L245: `repository.setOptionMenuShowIcons(value)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L246: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L247: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L248: `fun setOptionMenuTextColor(value: String) {`
+    Declara una función. El bloque de `setOptionMenuTextColor` se detalla después instrucción por instrucción.
+L249: `viewModelScope.launch {`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L250: `repository.setOptionMenuTextColor(value)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L251: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L252: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L253: `fun setOptionMenuOpacity(value: Float) {`
+    Declara una función. El bloque de `setOptionMenuOpacity` se detalla después instrucción por instrucción.
+L254: `viewModelScope.launch {`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L255: `repository.setOptionMenuOpacity(value)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L256: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L257: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L258: `fun setPriorityMenuHiddenItems(value: String) {`
+    Declara una función. El bloque de `setPriorityMenuHiddenItems` se detalla después instrucción por instrucción.
+L259: `viewModelScope.launch {`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L260: `repository.setPriorityMenuHiddenItems(value)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L261: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L262: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L263: `fun setColorMenuHiddenItems(value: String) {`
+    Declara una función. El bloque de `setColorMenuHiddenItems` se detalla después instrucción por instrucción.
+L264: `viewModelScope.launch {`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L265: `repository.setColorMenuHiddenItems(value)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L266: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L267: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L268: `fun resetOptionMenuSettings() {`
+    Declara una función. El bloque de `resetOptionMenuSettings` se detalla después instrucción por instrucción.
+L269: `viewModelScope.launch {`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L270: `repository.resetOptionMenuSettings()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L271: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L272: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L273: `fun setPerformanceMode(value: String) {`
+    Declara una función. El bloque de `setPerformanceMode` se detalla después instrucción por instrucción.
+L274: `viewModelScope.launch {`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L275: `repository.setPerformanceMode(value)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L276: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L277: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L278: `fun setAnimationsEnabled(value: Boolean) {`
+    Declara una función. El bloque de `setAnimationsEnabled` se detalla después instrucción por instrucción.
+L279: `viewModelScope.launch {`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L280: `repository.setAnimationsEnabled(value)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L281: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L282: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L283: `fun setAnimationSpeed(value: Float) {`
+    Declara una función. El bloque de `setAnimationSpeed` se detalla después instrucción por instrucción.
+L284: `val normalized = value.coerceIn(0.5f, 2f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L285: `if (settings.value.animationSpeed == normalized) return`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `settings.value.animationSpeed == normalized`.
+L286: `viewModelScope.launch { repository.setAnimationSpeed(normalized) }`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L287: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L288: `fun setAnimationStyle(value: String) {`
+    Declara una función. El bloque de `setAnimationStyle` se detalla después instrucción por instrucción.
+L289: `viewModelScope.launch {`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L290: `repository.setAnimationStyle(value)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L291: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L292: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L293: `fun setAnimationEasing(value: String) {`
+    Declara una función. El bloque de `setAnimationEasing` se detalla después instrucción por instrucción.
+L294: `viewModelScope.launch {`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L295: `repository.setAnimationEasing(value)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L296: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L297: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L298: `fun setAnimationIntensity(value: Float) {`
+    Declara una función. El bloque de `setAnimationIntensity` se detalla después instrucción por instrucción.
+L299: `val normalized = value.coerceIn(0.5f, 1.5f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L300: `if (settings.value.animationIntensity == normalized) return`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `settings.value.animationIntensity == normalized`.
+L301: `viewModelScope.launch { repository.setAnimationIntensity(normalized) }`
+    Lanza una coroutine dentro de `viewModelScope`; el trabajo se cancela automáticamente al destruirse el ViewModel y no bloquea la UI.
+L302: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L303: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+7. RECURSOS ANDROID REFERENCIADOS
+----------------------------------------------------------------------
+- No hay referencias directas `R.*` en este archivo.
+
+8. QUIÉN USA ESTE COMPONENTE
+----------------------------------------------------------------------
+- `SettingsViewModel` aparece también en 4 archivo(s):
+    - app/src/main/java/com/example/mynotes/MainActivity.kt
+    - app/src/main/java/com/example/mynotes/settings/SettingsViewModel.kt
+    - app/src/main/java/com/example/mynotes/ui/AttachmentViewerActivity.kt
+    - app/src/main/java/com/example/mynotes/ui/theme/SourceCodeInfoScreen.kt
+
+9. QUÉ PUEDE ROMPERSE SI LO MODIFICAS
+----------------------------------------------------------------------
+- Una preferencia nueva debe añadirse de forma coherente al modelo, clave DataStore, lectura, setter, backup/restore y UI. Si falta una etapa, el control puede verse pero no persistir.
+
+10. CHECKLIST DE PRUEBA DESPUÉS DE MODIFICAR ESTE ARCHIVO
+----------------------------------------------------------------------
+- Compilar `assembleDebug` y resolver primero errores de Kotlin/AAPT.
+- Abrir la pantalla/flujo relacionado y comprobar ida y vuelta (back) sin estado duplicado.
+- Cambiar tema/paleta y verificar contraste si este archivo dibuja UI.
+
+==============================================================================================================
+FIN DEL ARCHIVO
+==============================================================================================================

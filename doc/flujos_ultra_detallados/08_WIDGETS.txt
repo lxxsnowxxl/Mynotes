@@ -1,0 +1,5 @@
+MYNOTES — FLUJO COMPLETO DE WIDGETS
+
+Los widgets restantes son Quick Note, Recent Notes, Favorites y Focus Note. Cada AppWidgetProvider recibe onUpdate y construye RemoteViews. WidgetPresentation calcula paleta/contraste. WidgetLocale crea un Context con el idioma configurado dentro de MyNotes, evitando que el texto dependa exclusivamente del launcher. WidgetIntents crea PendingIntents que vuelven a MainActivity. MyNotesWidgetUpdater solicita refresco cuando cambian notas/configuración.
+
+Collage y Overview fueron eliminados como providers/manifest. Las cadenas legacy agregadas en v61 existen solo para tolerar XML residuales si el usuario extrae un ZIP encima de una carpeta vieja; una extracción limpia no registra esos widgets.

@@ -1,21 +1,14 @@
 package com.example.mynotes.ui.pdf
 
-import android.content.Context
-import android.content.res.Configuration
 import android.graphics.Color as AndroidColor
 import android.graphics.Paint
 import android.graphics.RectF
-import android.os.Build
 import android.os.Bundle
-import android.provider.OpenableColumns
 import android.net.Uri
-import android.view.View
+import android.util.Log
 import android.widget.Toast
-import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.compose.setContent
-import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.EnterTransition
@@ -41,6 +34,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -62,7 +56,6 @@ import androidx.compose.material.icons.filled.Brush
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.DeleteSweep
-import androidx.compose.material.icons.filled.Layers
 import androidx.compose.material.icons.filled.RadioButtonUnchecked
 import androidx.compose.material.icons.filled.HorizontalRule
 import androidx.compose.material.icons.filled.Highlight
@@ -110,6 +103,7 @@ import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.drawscope.drawIntoCanvas
 import androidx.compose.ui.graphics.nativeCanvas
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.PointerEventPass
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.platform.LocalContext
@@ -117,30 +111,28 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.core.view.WindowCompat
-import androidx.core.view.WindowInsetsCompat
-import androidx.core.view.WindowInsetsControllerCompat
 import com.example.mynotes.R
 import com.example.mynotes.settings.AppSettings
-import com.example.mynotes.settings.SettingsRepository
-import com.example.mynotes.performance.DisplayPerformanceController
 import com.example.mynotes.ui.motion.AppMotion
 import com.example.mynotes.ui.sound.UiActionSound
 import com.example.mynotes.ui.sound.UiSound
 import com.example.mynotes.ui.sound.UiSoundPlayer
-import com.example.mynotes.ui.theme.MyNotesTheme
 import com.example.mynotes.ui.theme.appFontFamily
 import com.example.mynotes.ui.theme.resolveSecondaryUiTextColor
-import com.example.mynotes.ui.theme.resolveAdaptiveUiButtonColors
+import com.example.mynotes.ui.theme.rememberAdaptiveUiButtonColors
 import com.example.mynotes.ui.theme.resolveUiTextColor
+import com.example.mynotes.util.uriDisplayName
+import com.google.mlkit.common.MlKitException
 import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -150,148 +142,29 @@ import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.roundToInt
 
-class PdfEditorActivity : ComponentActivity() {
-    /**
-     * Mantiene PDF Studio en modo inmersivo respecto a la barra de navegación.
-     * Se ocultan únicamente los botones inferiores de Android; la barra de
-     * estado (hora, batería y notificaciones) permanece visible.
-     *
-     * Se combina WindowInsetsControllerCompat con las flags legacy porque
-     * PDF Studio sigue soportando Android 7+ y, en dispositivos Samsung con
-     * navegación de tres botones (como API 28), el enfoque de la ventana o el
-     * regreso desde un picker puede hacer reaparecer temporalmente la barra.
-     */
-    private fun hideAndroidNavigationBar() {
-        val decorView = window.decorView
-        val controller = WindowCompat.getInsetsController(window, decorView)
-        controller.systemBarsBehavior =
-            WindowInsetsControllerCompat.BEHAVIOR_SHOW_TRANSIENT_BARS_BY_SWIPE
-        controller.hide(WindowInsetsCompat.Type.navigationBars())
+private val PdfEditorPalette = intArrayOf(
+    AndroidColor.BLACK, AndroidColor.WHITE, 0xFFE33D3D.toInt(), 0xFFFF7A2D.toInt(), 0xFFF4C438.toInt(),
+    0xFF47B071.toInt(), 0xFF35A8B5.toInt(), 0xFF3978D4.toInt(), 0xFF7651CA.toInt(), 0xFFD44B88.toInt()
+)
 
-        @Suppress("DEPRECATION")
-        decorView.systemUiVisibility =
-            decorView.systemUiVisibility or
-                View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY or
-                View.SYSTEM_UI_FLAG_HIDE_NAVIGATION or
-                View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION or
-                View.SYSTEM_UI_FLAG_LAYOUT_STABLE
-
-        // En Android 7.x, si el sistema muestra transitoriamente la barra,
-        // usar negro evita un destello claro antes de volver a ocultarla.
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.O) {
-            @Suppress("DEPRECATION")
-            window.navigationBarColor = AndroidColor.BLACK
-        }
-    }
-
+class PdfEditorActivity : ImmersivePdfActivity() {
     companion object {
         const val EXTRA_PROJECT_ID = "pdf_project_id"
-        private const val LOCALE_PREFS = "locale_prefs"
-        private const val LANGUAGE_KEY = "language"
-        private const val DEFAULT_LANGUAGE = "system"
-    }
-
-    override fun attachBaseContext(newBase: Context) {
-        val preferences = newBase.getSharedPreferences(LOCALE_PREFS, Context.MODE_PRIVATE)
-        val language = preferences.getString(LANGUAGE_KEY, DEFAULT_LANGUAGE) ?: DEFAULT_LANGUAGE
-        if (language == "system") {
-            super.attachBaseContext(newBase)
-            return
-        }
-        val locale = Locale.forLanguageTag(language)
-        Locale.setDefault(locale)
-        val configuration = Configuration(newBase.resources.configuration)
-        configuration.setLocale(locale)
-        super.attachBaseContext(newBase.createConfigurationContext(configuration))
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
-        setTheme(R.style.Theme_MyNotes)
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
-        hideAndroidNavigationBar()
-        // Ejecutarlo otra vez cuando el decor ya está adjunto evita el breve
-        // parpadeo de los tres botones al entrar en la Activity.
-        window.decorView.post { hideAndroidNavigationBar() }
         val initialProjectId = intent.getStringExtra(EXTRA_PROJECT_ID)
-        setContent {
-            val repository = remember { SettingsRepository(applicationContext) }
-            val settings by repository.settings.collectAsStateWithLifecycle(initialValue = AppSettings())
-            val systemDark = androidx.compose.foundation.isSystemInDarkTheme()
-            val effectiveDark = if (settings.configurationMode == "advanced") settings.darkMode else systemDark
-
-            /*
-             * Mantiene esta Window sincronizada con el mismo perfil de
-             * rendimiento que el resto de MyNotes. Compose renderiza con
-             * Choreographer/VSYNC; aquí solo solicitamos 60 o hasta 120 Hz
-             * según el modo guardado.
-             */
-            LaunchedEffect(settings.performanceMode) {
-                DisplayPerformanceController.requestForPerformanceMode(
-                    window = window,
-                    performanceMode = settings.performanceMode
-                )
-            }
-
-            LaunchedEffect(
-                settings.soundEffectsEnabled,
-                settings.soundEffectsVolume,
-                settings.soundEffectsTheme,
-                settings.hapticEffectsEnabled,
-                settings.hapticEffectsIntensity,
-                settings.hapticEffectsStyle
-            ) {
-                UiSoundPlayer.configure(
-                    context = this@PdfEditorActivity,
-                    enabled = settings.soundEffectsEnabled,
-                    volumePercent = settings.soundEffectsVolume,
-                    theme = settings.soundEffectsTheme,
-                    hapticEnabled = settings.hapticEffectsEnabled,
-                    hapticIntensityPercent = settings.hapticEffectsIntensity,
-                    hapticStyle = settings.hapticEffectsStyle
-                )
-            }
-
-            MyNotesTheme(
-                darkTheme = effectiveDark,
-                backgroundColor = settings.backgroundColor,
-                backgroundToneIndex = settings.backgroundToneIndex,
-                backgroundIntensity = settings.backgroundIntensity,
-                surfacePanelIntensity = settings.surfacePanelIntensity,
-                headerIntensity = settings.headerIntensity,
-                textColor = settings.textColor,
-                textOutlineEnabled = settings.textOutlineEnabled,
-                accentColor = settings.accentColor
-            ) {
-                PdfEditorScreen(
-                    settings = settings,
-                    initialProjectId = initialProjectId,
-                    onClose = { finish() }
-                )
-            }
+        setPdfContent { settings ->
+            PdfEditorScreen(
+                settings = settings,
+                initialProjectId = initialProjectId,
+                onClose = { finish() }
+            )
         }
     }
 
-    override fun onResume() {
-        super.onResume()
-        DisplayPerformanceController.reapplyLastRequest(window)
-        // Pickers de imágenes/PDF y otros componentes del sistema pueden
-        // restaurar la navegación. Al regresar, la ocultamos inmediatamente.
-        hideAndroidNavigationBar()
-        window.decorView.post { hideAndroidNavigationBar() }
-    }
 
-    override fun onDestroy() {
-        DisplayPerformanceController.release(window)
-        super.onDestroy()
-    }
-
-    override fun onWindowFocusChanged(hasFocus: Boolean) {
-        super.onWindowFocusChanged(hasFocus)
-        if (hasFocus) {
-            hideAndroidNavigationBar()
-        }
-    }
 }
 
 @Composable
@@ -330,6 +203,22 @@ private fun PdfEditorScreen(
     var goToPageInput by remember { mutableStateOf("") }
     var goToPageError by remember { mutableStateOf(false) }
 
+    fun setSelection(imageId: Long? = null, textId: Long? = null, strokeId: Long? = null) {
+        selectedImageId = imageId
+        selectedTextId = textId
+        selectedStrokeId = strokeId
+    }
+
+    fun clearSelection() = setSelection()
+
+    fun navigatePage(delta: Int) {
+        val target = currentPageIndex + delta
+        if (target !in pages.indices) return
+        currentPageIndex = target
+        clearSelection()
+        UiSoundPlayer.playAction(context, UiActionSound.Navigation)
+    }
+
     val projectId = remember(initialProjectId) { initialProjectId ?: PdfProjectRepository.newProjectId() }
     var projectName by remember(initialProjectId) { mutableStateOf(context.getString(R.string.pdf_library_untitled)) }
     var projectReady by remember(initialProjectId) { mutableStateOf(initialProjectId == null) }
@@ -346,9 +235,7 @@ private fun PdfEditorScreen(
                 currentPageIndex = 0
                 history = emptyList()
                 redoHistory = emptyList()
-                selectedImageId = null
-                selectedTextId = null
-                selectedStrokeId = null
+                clearSelection()
                 nextElementId = (
                     project.pages.flatMap { page ->
                         page.images.map { it.id } + page.texts.map { it.id } + page.strokes.map { it.id }
@@ -391,9 +278,7 @@ private fun PdfEditorScreen(
         history = history.dropLast(1)
         pages = previous
         currentPageIndex = currentPageIndex.coerceIn(0, pages.lastIndex)
-        selectedImageId = null
-        selectedTextId = null
-        selectedStrokeId = null
+        clearSelection()
         markDirty()
     }
 
@@ -403,23 +288,12 @@ private fun PdfEditorScreen(
         redoHistory = redoHistory.dropLast(1)
         pages = next
         currentPageIndex = currentPageIndex.coerceIn(0, pages.lastIndex)
-        selectedImageId = null
-        selectedTextId = null
-        selectedStrokeId = null
+        clearSelection()
         markDirty()
     }
 
 
-    fun displayNameForUri(uri: Uri): String? {
-        return runCatching {
-            context.contentResolver.query(uri, arrayOf(OpenableColumns.DISPLAY_NAME), null, null, null)
-                ?.use { cursor ->
-                    if (cursor.moveToFirst()) {
-                        cursor.getString(cursor.getColumnIndexOrThrow(OpenableColumns.DISPLAY_NAME))
-                    } else null
-                }
-        }.getOrNull()
-    }
+    fun displayNameForUri(uri: Uri): String? = context.uriDisplayName(uri)
 
     fun hasMeaningfulProject(): Boolean {
         return sourcePdfUri != null ||
@@ -505,9 +379,7 @@ private fun PdfEditorScreen(
                     projectName = displayName.substringBeforeLast('.', displayName)
                 }
                 currentPageIndex = 0
-                selectedImageId = null
-                selectedTextId = null
-                selectedStrokeId = null
+                clearSelection()
                 nextElementId = (
                     pages.flatMap { page ->
                         page.images.map { it.id } + page.texts.map { it.id } + page.strokes.map { it.id }
@@ -547,9 +419,7 @@ private fun PdfEditorScreen(
                         height = height
                     )
                     replaceCurrent(pages[currentPageIndex].copy(images = pages[currentPageIndex].images + element))
-                    selectedImageId = element.id
-                    selectedTextId = null
-                    selectedStrokeId = null
+                    setSelection(imageId = element.id)
                     tool = PdfEditorTool.SELECT
                     UiSoundPlayer.playAction(context, UiActionSound.Add)
                 }
@@ -586,35 +456,55 @@ private fun PdfEditorScreen(
 
     fun runAiCrop() {
         val id = selectedImageId ?: return
-        val image = pages[currentPageIndex].images.firstOrNull { it.id == id } ?: return
+        val pageIndex = currentPageIndex
+        val image = pages[pageIndex].images.firstOrNull { it.id == id } ?: return
         if (aiBusy) return
+        val editVersion = dirtyVersion
         aiBusy = true
         scope.launch {
-            runCatching { PdfSubjectCropper.isolateAndCrop(image.bitmap) }
-                .onSuccess { cropped ->
-                    val oldCenterX = image.x + image.width / 2f
-                    val oldCenterY = image.y + image.height / 2f
-                    val imageRatio = cropped.height.toFloat() / cropped.width.toFloat().coerceAtLeast(1f)
-                    val newHeight = (image.width * imageRatio * pages[currentPageIndex].widthPt / pages[currentPageIndex].heightPt)
-                        .coerceIn(0.05f, 0.85f)
-                    val updatedImage = image.copy(
-                        bitmap = cropped,
-                        height = newHeight,
-                        x = (oldCenterX - image.width / 2f).coerceIn(0f, 1f - image.width),
-                        y = (oldCenterY - newHeight / 2f).coerceIn(0f, 1f - newHeight)
-                    )
-                    replaceCurrent(
-                        pages[currentPageIndex].copy(
-                            images = pages[currentPageIndex].images.map { if (it.id == id) updatedImage else it }
-                        )
-                    )
-                    UiSoundPlayer.playAction(context, UiActionSound.Confirm)
-                    Toast.makeText(context, context.getString(R.string.pdf_ai_crop_done), Toast.LENGTH_SHORT).show()
+            try {
+                val cropped = withContext(Dispatchers.Default) {
+                    PdfSubjectCropper.isolateAndCrop(context.applicationContext, image.bitmap) {
+                        withContext(Dispatchers.Main.immediate) {
+                            Toast.makeText(context, context.getString(R.string.pdf_ai_crop_downloading), Toast.LENGTH_LONG).show()
+                        }
+                    }
                 }
-                .onFailure {
-                    Toast.makeText(context, context.getString(R.string.pdf_ai_crop_not_ready), Toast.LENGTH_LONG).show()
+                // La descarga puede tardar: no sobrescribir ediciones hechas durante la espera.
+                if (currentPageIndex != pageIndex || dirtyVersion != editVersion || selectedImageId != id) {
+                    Toast.makeText(context, context.getString(R.string.pdf_ai_crop_changed), Toast.LENGTH_LONG).show()
+                    return@launch
                 }
-            aiBusy = false
+                // AI cutout sólo sustituye los píxeles: posición, tamaño y rotación
+                // permanecen exactamente iguales a los que tenía el usuario.
+                val updatedImage = image.copy(bitmap = cropped)
+                replaceCurrent(
+                    pages[currentPageIndex].copy(
+                        images = pages[currentPageIndex].images.map { if (it.id == id) updatedImage else it }
+                    )
+                )
+                UiSoundPlayer.playAction(context, UiActionSound.Confirm)
+                Toast.makeText(context, context.getString(R.string.pdf_ai_crop_done), Toast.LENGTH_SHORT).show()
+            } catch (error: CancellationException) {
+                throw error
+            } catch (error: Throwable) {
+                Log.w(
+                    "PdfSubjectCropper",
+                    "AI cutout failed: ${error::class.java.name}: ${error.message}; " +
+                        "cause=${error.cause?.javaClass?.name}: ${error.cause?.message}",
+                    error
+                )
+                val message = when {
+                    error is PdfSubjectModel.PlayServicesUnavailableException -> R.string.pdf_ai_crop_play_services
+                    error is PdfSubjectModel.NoInternetConnectionException -> R.string.pdf_ai_crop_not_ready
+                    error is PdfSubjectModel.ModelUnavailableException ||
+                        (error is MlKitException && error.errorCode == MlKitException.UNAVAILABLE) -> R.string.pdf_ai_crop_not_ready
+                    else -> R.string.pdf_ai_crop_error
+                }
+                Toast.makeText(context, context.getString(message), Toast.LENGTH_LONG).show()
+            } finally {
+                aiBusy = false
+            }
         }
     }
 
@@ -701,9 +591,7 @@ private fun PdfEditorScreen(
                     val requested = goToPageInput.toIntOrNull()
                     if (requested != null && requested in 1..pages.size) {
                         currentPageIndex = requested - 1
-                        selectedImageId = null
-                        selectedTextId = null
-                        selectedStrokeId = null
+                        clearSelection()
                         showGoToPageDialog = false
                         goToPageError = false
                         UiSoundPlayer.playAction(context, UiActionSound.Navigation)
@@ -759,9 +647,7 @@ private fun PdfEditorScreen(
                             colorArgb = penColor
                         )
                         replaceCurrent(pages[currentPageIndex].copy(texts = pages[currentPageIndex].texts + element))
-                        selectedTextId = element.id
-                        selectedImageId = null
-                        selectedStrokeId = null
+                        setSelection(textId = element.id)
                         tool = PdfEditorTool.SELECT
                         UiSoundPlayer.playAction(context, UiActionSound.Add)
                     }
@@ -1012,18 +898,14 @@ private fun PdfEditorScreen(
                     UiSoundPlayer.playAction(context, UiActionSound.Add)
                     commit(pages + PdfPageModel.blank())
                     currentPageIndex = pages.lastIndex
-                    selectedImageId = null
-                    selectedTextId = null
-                    selectedStrokeId = null
+                    clearSelection()
                 },
                 onDuplicatePage = {
                     val copy = pages[currentPageIndex].copy()
                     val updated = pages.toMutableList().apply { add(currentPageIndex + 1, copy) }
                     commit(updated)
                     currentPageIndex = (currentPageIndex + 1).coerceAtMost(updated.lastIndex)
-                    selectedImageId = null
-                    selectedTextId = null
-                    selectedStrokeId = null
+                    clearSelection()
                     UiSoundPlayer.playAction(context, UiActionSound.Add)
                 },
                 onDeletePage = {
@@ -1034,37 +916,17 @@ private fun PdfEditorScreen(
                     } else {
                         replaceCurrent(PdfPageModel.blank())
                     }
-                    selectedImageId = null
-                    selectedTextId = null
-                    selectedStrokeId = null
+                    clearSelection()
                     UiSoundPlayer.play(context, UiSound.Delete)
                 },
                 onClearPageEdits = {
                     val current = pages[currentPageIndex]
                     replaceCurrent(current.copy(strokes = emptyList(), texts = emptyList(), images = emptyList()))
-                    selectedImageId = null
-                    selectedTextId = null
-                    selectedStrokeId = null
+                    clearSelection()
                     UiSoundPlayer.play(context, UiSound.Delete)
                 },
-                onPreviousPage = {
-                    if (currentPageIndex > 0) {
-                        currentPageIndex--
-                        selectedImageId = null
-                        selectedTextId = null
-                        selectedStrokeId = null
-                        UiSoundPlayer.playAction(context, UiActionSound.Navigation)
-                    }
-                },
-                onNextPage = {
-                    if (currentPageIndex < pages.lastIndex) {
-                        currentPageIndex++
-                        selectedImageId = null
-                        selectedTextId = null
-                        selectedStrokeId = null
-                        UiSoundPlayer.playAction(context, UiActionSound.Navigation)
-                    }
-                },
+                onPreviousPage = { navigatePage(-1) },
+                onNextPage = { navigatePage(1) },
                 onGoToPage = {
                     goToPageInput = (currentPageIndex + 1).toString()
                     goToPageError = false
@@ -1122,9 +984,7 @@ private fun PdfEditorScreen(
                                     y = (it.y + 0.035f).coerceIn(0f, 1f - it.height)
                                 )
                                 replaceCurrent(pages[currentPageIndex].copy(images = pages[currentPageIndex].images + duplicate))
-                                selectedImageId = duplicate.id
-                                selectedTextId = null
-                                selectedStrokeId = null
+                                setSelection(imageId = duplicate.id)
                             }
                         }
                         selectedStrokeId != null -> {
@@ -1143,9 +1003,7 @@ private fun PdfEditorScreen(
                                     }
                                 )
                                 replaceCurrent(pages[currentPageIndex].copy(strokes = pages[currentPageIndex].strokes + duplicate))
-                                selectedStrokeId = duplicate.id
-                                selectedImageId = null
-                                selectedTextId = null
+                                setSelection(strokeId = duplicate.id)
                             }
                         }
                         selectedTextId != null -> {
@@ -1157,9 +1015,7 @@ private fun PdfEditorScreen(
                                     y = (it.y + 0.03f).coerceIn(0.03f, 0.97f)
                                 )
                                 replaceCurrent(pages[currentPageIndex].copy(texts = pages[currentPageIndex].texts + duplicate))
-                                selectedTextId = duplicate.id
-                                selectedImageId = null
-                                selectedStrokeId = null
+                                setSelection(textId = duplicate.id)
                             }
                         }
                     }
@@ -1255,12 +1111,8 @@ private fun PdfCanvasOpenButton(
     modifier: Modifier = Modifier
 ) {
     val canvasBackground = MaterialTheme.colorScheme.surface
-    val colors = resolveAdaptiveUiButtonColors(
-        preferred = MaterialTheme.colorScheme.surfaceContainerHigh,
-        background = canvasBackground,
-        textColorMode = settings.textColor,
-        minimumContentContrast = 7.0f,
-        minimumSurfaceContrast = 1.35f
+    val colors = rememberAdaptiveUiButtonColors(
+        MaterialTheme.colorScheme.surfaceContainerHigh, canvasBackground, settings.textColor, 7.0f, 1.35f
     )
     val fontScale = (settings.fontSize / 16f).coerceIn(0.82f, 1.20f)
     val radius = settings.noteCardCornerRadius.coerceIn(18f, 30f).dp
@@ -1306,12 +1158,8 @@ private fun PdfTestModeNotice(
     val container = base.copy(alpha = alpha)
     val titleColor = resolveUiTextColor(settings.textColor, base)
     val bodyColor = resolveSecondaryUiTextColor(settings.textColor, base)
-    val closeColors = resolveAdaptiveUiButtonColors(
-        preferred = MaterialTheme.colorScheme.primary,
-        background = base,
-        textColorMode = settings.textColor,
-        minimumContentContrast = 7.0f,
-        minimumSurfaceContrast = 1.35f
+    val closeColors = rememberAdaptiveUiButtonColors(
+        MaterialTheme.colorScheme.primary, base, settings.textColor, 7.0f, 1.35f
     )
     val fontScale = (settings.fontSize / 16f).coerceIn(0.82f, 1.20f)
     val radius = settings.noteCardCornerRadius.coerceIn(18f, 30f).dp
@@ -1378,12 +1226,8 @@ private fun PdfTopBar(
     onBack: () -> Unit,
     onSave: () -> Unit
 ) {
-    val exportColors = resolveAdaptiveUiButtonColors(
-        preferred = MaterialTheme.colorScheme.primary,
-        background = MaterialTheme.colorScheme.background,
-        textColorMode = settings.textColor,
-        minimumContentContrast = 7.0f,
-        minimumSurfaceContrast = 1.35f
+    val exportColors = rememberAdaptiveUiButtonColors(
+        MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.background, settings.textColor, 7.0f, 1.35f
     )
     Row(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp),
@@ -1486,6 +1330,20 @@ private fun findStrokeAt(page: PdfPageModel, point: PdfPoint): PdfStroke? {
         }
     }
 }
+
+private fun selectionIdsAt(page: PdfPageModel, offset: Offset, size: IntSize): Triple<Long?, Long?, Long?> {
+    val nx = offset.x / size.width
+    val ny = offset.y / size.height
+    val image = page.images.asReversed().firstOrNull {
+        nx >= it.x && nx <= it.x + it.width && ny >= it.y && ny <= it.y + it.height
+    }
+    val text = if (image == null) page.texts.asReversed().firstOrNull {
+        nx >= it.x && nx <= it.x + 0.45f && ny >= it.y - 0.06f && ny <= it.y + 0.10f
+    } else null
+    val stroke = if (image == null && text == null) findStrokeAt(page, PdfPoint(nx, ny)) else null
+    return Triple(image?.id, text?.id, stroke?.id)
+}
+
 
 @Composable
 private fun PdfPageCanvas(
@@ -1606,18 +1464,8 @@ private fun PdfPageCanvas(
             .pointerInput(tool, pageKey, transformingCanvas) {
                 if (tool == PdfEditorTool.SELECT && !transformingCanvas) {
                     detectTapGestures { offset ->
-                        val livePage = latestPage
-                        val nx = offset.x / size.width
-                        val ny = offset.y / size.height
-                        val point = PdfPoint(nx, ny)
-                        val image = livePage.images.asReversed().firstOrNull {
-                            nx >= it.x && nx <= it.x + it.width && ny >= it.y && ny <= it.y + it.height
-                        }
-                        val text = if (image == null) livePage.texts.asReversed().firstOrNull {
-                            nx >= it.x && nx <= it.x + 0.45f && ny >= it.y - 0.06f && ny <= it.y + 0.10f
-                        } else null
-                        val stroke = if (image == null && text == null) findStrokeAt(livePage, point) else null
-                        onSelect(image?.id, text?.id, stroke?.id)
+                        val (imageId, textId, strokeId) = selectionIdsAt(latestPage, offset, size)
+                        onSelect(imageId, textId, strokeId)
                     }
                 }
             }
@@ -1679,22 +1527,13 @@ private fun PdfPageCanvas(
                                         onSelect(null, null, selectedStroke.id)
                                     }
                                     else -> {
-                                        val nx = offset.x / size.width
-                                        val ny = offset.y / size.height
-                                        val point = PdfPoint(nx, ny)
-                                        val image = livePage.images.asReversed().firstOrNull {
-                                            nx >= it.x && nx <= it.x + it.width && ny >= it.y && ny <= it.y + it.height
-                                        }
-                                        val text = if (image == null) livePage.texts.asReversed().firstOrNull {
-                                            nx >= it.x && nx <= it.x + 0.45f && ny >= it.y - 0.06f && ny <= it.y + 0.10f
-                                        } else null
-                                        val stroke = if (image == null && text == null) findStrokeAt(livePage, point) else null
-                                        activeImageId = image?.id
-                                        activeTextId = text?.id
-                                        activeStrokeId = stroke?.id
+                                        val (imageId, textId, strokeId) = selectionIdsAt(livePage, offset, size)
+                                        activeImageId = imageId
+                                        activeTextId = textId
+                                        activeStrokeId = strokeId
                                         resizingImageId = null
                                         resizingStrokeId = null
-                                        onSelect(image?.id, text?.id, stroke?.id)
+                                        onSelect(imageId, textId, strokeId)
                                     }
                                 }
                             },
@@ -1952,6 +1791,17 @@ private fun buildShapeStroke(
     return PdfStroke(points = points, colorArgb = colorArgb, widthPt = widthPt)
 }
 
+private data class PdfToolStyle(
+    val fontFamily: FontFamily,
+    val idleContainer: Color,
+    val idleContent: Color,
+    val selectedContainer: Color,
+    val selectedContent: Color,
+    val iconSize: Dp,
+    val labelSize: TextUnit,
+    val radius: Dp
+)
+
 @Composable
 private fun PdfFloatingToolbars(
     settings: AppSettings,
@@ -1997,19 +1847,11 @@ private fun PdfFloatingToolbars(
     val panelColor = panelBase.copy(alpha = panelAlpha)
     val primaryText = resolveUiTextColor(settings.textColor, panelBase)
     val secondaryText = resolveSecondaryUiTextColor(settings.textColor, panelBase)
-    val idleColors = resolveAdaptiveUiButtonColors(
-        preferred = MaterialTheme.colorScheme.surfaceContainerHigh,
-        background = panelBase,
-        textColorMode = settings.textColor,
-        minimumContentContrast = 7.0f,
-        minimumSurfaceContrast = 1.30f
+    val idleColors = rememberAdaptiveUiButtonColors(
+        MaterialTheme.colorScheme.surfaceContainerHigh, panelBase, settings.textColor, 7.0f, 1.30f
     )
-    val selectedColors = resolveAdaptiveUiButtonColors(
-        preferred = MaterialTheme.colorScheme.primary,
-        background = panelBase,
-        textColorMode = settings.textColor,
-        minimumContentContrast = 7.0f,
-        minimumSurfaceContrast = 1.40f
+    val selectedColors = rememberAdaptiveUiButtonColors(
+        MaterialTheme.colorScheme.primary, panelBase, settings.textColor, 7.0f, 1.40f
     )
     val fontScale = (settings.fontSize / 16f).coerceIn(0.82f, 1.24f)
     val labelSize = (10.5f * fontScale).coerceIn(9f, 13f).sp
@@ -2021,19 +1863,11 @@ private fun PdfFloatingToolbars(
         "outlined" -> 15.dp
         else -> 18.dp
     }
-    val barRadius = settings.noteCardCornerRadius.coerceIn(18f, 30f).dp
-    val palette = listOf(
-        AndroidColor.BLACK,
-        AndroidColor.WHITE,
-        0xFFE33D3D.toInt(),
-        0xFFFF7A2D.toInt(),
-        0xFFF4C438.toInt(),
-        0xFF47B071.toInt(),
-        0xFF35A8B5.toInt(),
-        0xFF3978D4.toInt(),
-        0xFF7651CA.toInt(),
-        0xFFD44B88.toInt()
+    val toolStyle = PdfToolStyle(
+        fontFamily, idleColors.container, idleColors.content, selectedColors.container, selectedColors.content,
+        iconSize, labelSize, chipRadius
     )
+    val barRadius = settings.noteCardCornerRadius.coerceIn(18f, 30f).dp
     val drawingTool = tool in setOf(
         PdfEditorTool.PEN,
         PdfEditorTool.HIGHLIGHTER,
@@ -2136,42 +1970,18 @@ private fun PdfFloatingToolbars(
                 .padding(bottom = 4.dp)
         ) {
             Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                Row(
-                    modifier = Modifier.horizontalScroll(rememberScrollState()),
-                    horizontalArrangement = Arrangement.spacedBy(6.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
+                PdfToolRow(6.dp) {
                     PdfToolChip(stringResource(R.string.pdf_select), Icons.Default.SelectAll,
-                        tool == PdfEditorTool.SELECT && !selectionTemporarilyDisabled, fontFamily,
-                        idleColors.container, idleColors.content, selectedColors.container, selectedColors.content, iconSize, labelSize,
-                        chipRadius) { if (!selectionTemporarilyDisabled) onTool(PdfEditorTool.SELECT) }
-                    PdfToolChip(stringResource(R.string.pdf_draw), Icons.Default.Brush, tool == PdfEditorTool.PEN, fontFamily,
-                        idleColors.container, idleColors.content, selectedColors.container, selectedColors.content, iconSize, labelSize,
-                        chipRadius) { onTool(PdfEditorTool.PEN) }
-                    PdfToolChip(stringResource(R.string.pdf_highlighter), Icons.Default.Highlight, tool == PdfEditorTool.HIGHLIGHTER, fontFamily,
-                        idleColors.container, idleColors.content, selectedColors.container, selectedColors.content, iconSize, labelSize,
-                        chipRadius) { onTool(PdfEditorTool.HIGHLIGHTER) }
-                    PdfToolChip(stringResource(R.string.pdf_line), Icons.Default.HorizontalRule, tool == PdfEditorTool.LINE, fontFamily,
-                        idleColors.container, idleColors.content, selectedColors.container, selectedColors.content, iconSize, labelSize,
-                        chipRadius) { onTool(PdfEditorTool.LINE) }
-                    PdfToolChip(stringResource(R.string.pdf_rectangle), Icons.Default.CropSquare, tool == PdfEditorTool.RECTANGLE, fontFamily,
-                        idleColors.container, idleColors.content, selectedColors.container, selectedColors.content, iconSize, labelSize,
-                        chipRadius) { onTool(PdfEditorTool.RECTANGLE) }
-                    PdfToolChip(stringResource(R.string.pdf_ellipse), Icons.Default.RadioButtonUnchecked, tool == PdfEditorTool.ELLIPSE, fontFamily,
-                        idleColors.container, idleColors.content, selectedColors.container, selectedColors.content, iconSize, labelSize,
-                        chipRadius) { onTool(PdfEditorTool.ELLIPSE) }
-                    PdfToolChip(stringResource(R.string.pdf_text), Icons.Default.TextFields, tool == PdfEditorTool.TEXT, fontFamily,
-                        idleColors.container, idleColors.content, selectedColors.container, selectedColors.content, iconSize, labelSize,
-                        chipRadius) { onTool(PdfEditorTool.TEXT) }
-                    PdfToolChip(stringResource(R.string.pdf_eraser), Icons.Default.Delete, tool == PdfEditorTool.ERASER, fontFamily,
-                        idleColors.container, idleColors.content, selectedColors.container, selectedColors.content, iconSize, labelSize,
-                        chipRadius) { onTool(PdfEditorTool.ERASER) }
-                    PdfToolChip(stringResource(R.string.pdf_add_image), Icons.Default.Image, false, fontFamily,
-                        idleColors.container, idleColors.content, selectedColors.container, selectedColors.content, iconSize, labelSize,
-                        chipRadius, onAddImage)
-                    PdfToolChip(stringResource(R.string.pdf_pages), Icons.Default.PictureAsPdf, tool == PdfEditorTool.PAGE, fontFamily,
-                        idleColors.container, idleColors.content, selectedColors.container, selectedColors.content, iconSize, labelSize,
-                        chipRadius) { onTool(PdfEditorTool.PAGE) }
+                        tool == PdfEditorTool.SELECT && !selectionTemporarilyDisabled, toolStyle) { if (!selectionTemporarilyDisabled) onTool(PdfEditorTool.SELECT) }
+                    PdfToolChip(stringResource(R.string.pdf_draw), Icons.Default.Brush, tool == PdfEditorTool.PEN, toolStyle) { onTool(PdfEditorTool.PEN) }
+                    PdfToolChip(stringResource(R.string.pdf_highlighter), Icons.Default.Highlight, tool == PdfEditorTool.HIGHLIGHTER, toolStyle) { onTool(PdfEditorTool.HIGHLIGHTER) }
+                    PdfToolChip(stringResource(R.string.pdf_line), Icons.Default.HorizontalRule, tool == PdfEditorTool.LINE, toolStyle) { onTool(PdfEditorTool.LINE) }
+                    PdfToolChip(stringResource(R.string.pdf_rectangle), Icons.Default.CropSquare, tool == PdfEditorTool.RECTANGLE, toolStyle) { onTool(PdfEditorTool.RECTANGLE) }
+                    PdfToolChip(stringResource(R.string.pdf_ellipse), Icons.Default.RadioButtonUnchecked, tool == PdfEditorTool.ELLIPSE, toolStyle) { onTool(PdfEditorTool.ELLIPSE) }
+                    PdfToolChip(stringResource(R.string.pdf_text), Icons.Default.TextFields, tool == PdfEditorTool.TEXT, toolStyle) { onTool(PdfEditorTool.TEXT) }
+                    PdfToolChip(stringResource(R.string.pdf_eraser), Icons.Default.Delete, tool == PdfEditorTool.ERASER, toolStyle) { onTool(PdfEditorTool.ERASER) }
+                    PdfToolChip(stringResource(R.string.pdf_add_image), Icons.Default.Image, false, toolStyle, onAddImage)
+                    PdfToolChip(stringResource(R.string.pdf_pages), Icons.Default.PictureAsPdf, tool == PdfEditorTool.PAGE, toolStyle) { onTool(PdfEditorTool.PAGE) }
                 }
 
                 AnimatedContent(
@@ -2208,136 +2018,50 @@ private fun PdfFloatingToolbars(
                 ) { mode ->
                     when (mode) {
                         "stroke", "text" -> {
-                            Row(
-                                modifier = Modifier.horizontalScroll(rememberScrollState()),
-                                horizontalArrangement = Arrangement.spacedBy(7.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                palette.forEach { color ->
-                                    Box(
-                                        modifier = Modifier
-                                            .size(24.dp)
-                                            .background(Color(color), CircleShape)
-                                            .border(
-                                                if (penColor == color) 3.dp else 1.dp,
-                                                if (penColor == color) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
-                                                CircleShape
-                                            )
-                                            .clickable { onColor(color) }
-                                    )
-                                }
+                            PdfToolRow(7.dp) {
+                                PdfPaletteChoices(penColor, onColor)
                                 if (mode == "stroke") {
-                                    ToolChoiceButton(stringResource(R.string.pdf_thin), penWidth == 2f, fontFamily,
-                                        idleColors.container, idleColors.content, selectedColors.container, selectedColors.content, labelSize,
-                                        chipRadius) { onPenWidth(2f) }
-                                    ToolChoiceButton(stringResource(R.string.pdf_medium), penWidth == 5f, fontFamily,
-                                        idleColors.container, idleColors.content, selectedColors.container, selectedColors.content, labelSize,
-                                        chipRadius) { onPenWidth(5f) }
-                                    ToolChoiceButton(stringResource(R.string.pdf_thick), penWidth == 10f, fontFamily,
-                                        idleColors.container, idleColors.content, selectedColors.container, selectedColors.content, labelSize,
-                                        chipRadius) { onPenWidth(10f) }
+                                    ToolChoiceButton(stringResource(R.string.pdf_thin), penWidth == 2f, toolStyle) { onPenWidth(2f) }
+                                    ToolChoiceButton(stringResource(R.string.pdf_medium), penWidth == 5f, toolStyle) { onPenWidth(5f) }
+                                    ToolChoiceButton(stringResource(R.string.pdf_thick), penWidth == 10f, toolStyle) { onPenWidth(10f) }
                                 }
                             }
                         }
                         "selected_stroke" -> {
-                            Row(
-                                modifier = Modifier.horizontalScroll(rememberScrollState()),
-                                horizontalArrangement = Arrangement.spacedBy(7.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                palette.forEach { color ->
-                                    Box(
-                                        modifier = Modifier
-                                            .size(24.dp)
-                                            .background(Color(color), CircleShape)
-                                            .border(
-                                                if (selectedStroke?.colorArgb == color) 3.dp else 1.dp,
-                                                if (selectedStroke?.colorArgb == color) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline,
-                                                CircleShape
-                                            )
-                                            .clickable { onApplyColorToSelectedStroke(color) }
-                                    )
-                                }
-                                ToolChoiceButton(stringResource(R.string.pdf_thin), (selectedStroke?.widthPt ?: 0f) <= 2.5f, fontFamily,
-                                    idleColors.container, idleColors.content, selectedColors.container, selectedColors.content, labelSize,
-                                    chipRadius) { onSetSelectedStrokeWidth(2f) }
-                                ToolChoiceButton(stringResource(R.string.pdf_medium), (selectedStroke?.widthPt ?: 0f) in 2.5f..7f, fontFamily,
-                                    idleColors.container, idleColors.content, selectedColors.container, selectedColors.content, labelSize,
-                                    chipRadius) { onSetSelectedStrokeWidth(5f) }
-                                ToolChoiceButton(stringResource(R.string.pdf_thick), (selectedStroke?.widthPt ?: 0f) > 7f, fontFamily,
-                                    idleColors.container, idleColors.content, selectedColors.container, selectedColors.content, labelSize,
-                                    chipRadius) { onSetSelectedStrokeWidth(10f) }
-                                PdfToolChip(stringResource(R.string.pdf_duplicate), Icons.Default.ContentCopy, false, fontFamily,
-                                    idleColors.container, idleColors.content, selectedColors.container, selectedColors.content, iconSize, labelSize,
-                                    chipRadius, onDuplicateSelected)
-                                PdfToolChip(stringResource(R.string.pdf_delete), Icons.Default.Delete, false, fontFamily,
-                                    idleColors.container, idleColors.content, selectedColors.container, selectedColors.content, iconSize, labelSize,
-                                    chipRadius, onDeleteSelected)
+                            PdfToolRow(7.dp) {
+                                PdfPaletteChoices(selectedStroke?.colorArgb, onApplyColorToSelectedStroke)
+                                ToolChoiceButton(stringResource(R.string.pdf_thin), (selectedStroke?.widthPt ?: 0f) <= 2.5f, toolStyle) { onSetSelectedStrokeWidth(2f) }
+                                ToolChoiceButton(stringResource(R.string.pdf_medium), (selectedStroke?.widthPt ?: 0f) in 2.5f..7f, toolStyle) { onSetSelectedStrokeWidth(5f) }
+                                ToolChoiceButton(stringResource(R.string.pdf_thick), (selectedStroke?.widthPt ?: 0f) > 7f, toolStyle) { onSetSelectedStrokeWidth(10f) }
+                                PdfToolChip(stringResource(R.string.pdf_duplicate), Icons.Default.ContentCopy, false, toolStyle, onDuplicateSelected)
+                                PdfToolChip(stringResource(R.string.pdf_delete), Icons.Default.Delete, false, toolStyle, onDeleteSelected)
                             }
                         }
                         "image" -> {
-                            Row(
-                                modifier = Modifier.horizontalScroll(rememberScrollState()),
-                                horizontalArrangement = Arrangement.spacedBy(6.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                ToolChoiceButton("−", false, fontFamily, idleColors.container, idleColors.content,
-                                    selectedColors.container, selectedColors.content, labelSize, chipRadius) { onScaleImage(0.88f) }
-                                ToolChoiceButton("+", false, fontFamily, idleColors.container, idleColors.content,
-                                    selectedColors.container, selectedColors.content, labelSize, chipRadius) { onScaleImage(1.14f) }
-                                PdfToolChip(stringResource(R.string.pdf_rotate), Icons.Default.RotateRight, false, fontFamily,
-                                    idleColors.container, idleColors.content, selectedColors.container, selectedColors.content, iconSize, labelSize,
-                                    chipRadius, onRotateImage)
-                                PdfToolChip(stringResource(R.string.pdf_ai_crop), Icons.Default.AutoFixHigh, false, fontFamily,
-                                    idleColors.container, idleColors.content, selectedColors.container, selectedColors.content, iconSize, labelSize,
-                                    chipRadius, onAiCrop)
-                                PdfToolChip(stringResource(R.string.pdf_duplicate), Icons.Default.ContentCopy, false, fontFamily,
-                                    idleColors.container, idleColors.content, selectedColors.container, selectedColors.content, iconSize, labelSize,
-                                    chipRadius, onDuplicateSelected)
-                                PdfToolChip(stringResource(R.string.pdf_delete), Icons.Default.Delete, false, fontFamily,
-                                    idleColors.container, idleColors.content, selectedColors.container, selectedColors.content, iconSize, labelSize,
-                                    chipRadius, onDeleteSelected)
+                            PdfToolRow(6.dp) {
+                                ToolChoiceButton("−", false, toolStyle) { onScaleImage(0.88f) }
+                                ToolChoiceButton("+", false, toolStyle) { onScaleImage(1.14f) }
+                                PdfToolChip(stringResource(R.string.pdf_rotate), Icons.Default.RotateRight, false, toolStyle, onRotateImage)
+                                PdfToolChip(stringResource(R.string.pdf_ai_crop), Icons.Default.AutoFixHigh, false, toolStyle, onAiCrop)
+                                PdfToolChip(stringResource(R.string.pdf_duplicate), Icons.Default.ContentCopy, false, toolStyle, onDuplicateSelected)
+                                PdfToolChip(stringResource(R.string.pdf_delete), Icons.Default.Delete, false, toolStyle, onDeleteSelected)
                             }
                         }
                         "selected_text" -> {
-                            Row(
-                                modifier = Modifier.horizontalScroll(rememberScrollState()),
-                                horizontalArrangement = Arrangement.spacedBy(6.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                ToolChoiceButton("A−", false, fontFamily, idleColors.container, idleColors.content,
-                                    selectedColors.container, selectedColors.content, labelSize, chipRadius) { onResizeSelectedText(0.90f) }
-                                ToolChoiceButton("A+", false, fontFamily, idleColors.container, idleColors.content,
-                                    selectedColors.container, selectedColors.content, labelSize, chipRadius) { onResizeSelectedText(1.10f) }
-                                PdfToolChip(stringResource(R.string.pdf_apply_color), Icons.Default.Highlight, false, fontFamily,
-                                    idleColors.container, idleColors.content, selectedColors.container, selectedColors.content, iconSize, labelSize,
-                                    chipRadius, onApplyColorToSelectedText)
-                                PdfToolChip(stringResource(R.string.pdf_duplicate), Icons.Default.ContentCopy, false, fontFamily,
-                                    idleColors.container, idleColors.content, selectedColors.container, selectedColors.content, iconSize, labelSize,
-                                    chipRadius, onDuplicateSelected)
-                                PdfToolChip(stringResource(R.string.pdf_delete_text), Icons.Default.Delete, false, fontFamily,
-                                    idleColors.container, idleColors.content, selectedColors.container, selectedColors.content, iconSize, labelSize,
-                                    chipRadius, onDeleteSelected)
+                            PdfToolRow(6.dp) {
+                                ToolChoiceButton("A−", false, toolStyle) { onResizeSelectedText(0.90f) }
+                                ToolChoiceButton("A+", false, toolStyle) { onResizeSelectedText(1.10f) }
+                                PdfToolChip(stringResource(R.string.pdf_apply_color), Icons.Default.Highlight, false, toolStyle, onApplyColorToSelectedText)
+                                PdfToolChip(stringResource(R.string.pdf_duplicate), Icons.Default.ContentCopy, false, toolStyle, onDuplicateSelected)
+                                PdfToolChip(stringResource(R.string.pdf_delete_text), Icons.Default.Delete, false, toolStyle, onDeleteSelected)
                             }
                         }
                         "page" -> {
-                            Row(
-                                modifier = Modifier.horizontalScroll(rememberScrollState()),
-                                horizontalArrangement = Arrangement.spacedBy(6.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                PdfToolChip(stringResource(R.string.pdf_add_page), Icons.Default.Add, false, fontFamily,
-                                    idleColors.container, idleColors.content, selectedColors.container, selectedColors.content, iconSize, labelSize,
-                                    chipRadius, onAddPage)
-                                PdfToolChip(stringResource(R.string.pdf_duplicate_page), Icons.Default.ContentCopy, false, fontFamily,
-                                    idleColors.container, idleColors.content, selectedColors.container, selectedColors.content, iconSize, labelSize,
-                                    chipRadius, onDuplicatePage)
-                                PdfToolChip(stringResource(R.string.pdf_clear_edits), Icons.Default.DeleteSweep, false, fontFamily,
-                                    idleColors.container, idleColors.content, selectedColors.container, selectedColors.content, iconSize, labelSize,
-                                    chipRadius, onClearPageEdits)
-                                PdfToolChip(stringResource(R.string.pdf_delete_page), Icons.Default.Delete, false, fontFamily,
-                                    idleColors.container, idleColors.content, selectedColors.container, selectedColors.content, iconSize, labelSize,
-                                    chipRadius, onDeletePage)
+                            PdfToolRow(6.dp) {
+                                PdfToolChip(stringResource(R.string.pdf_add_page), Icons.Default.Add, false, toolStyle, onAddPage)
+                                PdfToolChip(stringResource(R.string.pdf_duplicate_page), Icons.Default.ContentCopy, false, toolStyle, onDuplicatePage)
+                                PdfToolChip(stringResource(R.string.pdf_clear_edits), Icons.Default.DeleteSweep, false, toolStyle, onClearPageEdits)
+                                PdfToolChip(stringResource(R.string.pdf_delete_page), Icons.Default.Delete, false, toolStyle, onDeletePage)
                             }
                         }
                         else -> Spacer(Modifier.height(0.dp))
@@ -2346,6 +2070,16 @@ private fun PdfFloatingToolbars(
             }
         }
     }
+}
+
+@Composable
+private fun PdfToolRow(spacing: Dp, content: @Composable RowScope.() -> Unit) {
+    Row(
+        modifier = Modifier.horizontalScroll(rememberScrollState()),
+        horizontalArrangement = Arrangement.spacedBy(spacing),
+        verticalAlignment = Alignment.CenterVertically,
+        content = content
+    )
 }
 
 @Composable
@@ -2369,6 +2103,16 @@ private fun FloatingBar(
         Box(modifier = Modifier.padding(horizontal = 9.dp, vertical = verticalPadding)) {
             content()
         }
+    }
+}
+
+@Composable
+private fun PdfPaletteChoices(selectedColor: Int?, onColor: (Int) -> Unit) {
+    PdfEditorPalette.forEach { color ->
+        val selected = selectedColor == color
+        Box(Modifier.size(24.dp).background(Color(color), CircleShape)
+            .border(if (selected) 3.dp else 1.dp, if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline, CircleShape)
+            .clickable { onColor(color) })
     }
 }
 
@@ -2425,35 +2169,22 @@ private fun SmallIconCircle(
 }
 
 @Composable
-private fun PdfToolChip(
-    label: String,
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    selected: Boolean,
-    fontFamily: FontFamily,
-    idleContainer: Color,
-    idleContent: Color,
-    selectedContainer: Color,
-    selectedContent: Color,
-    iconSize: androidx.compose.ui.unit.Dp,
-    labelSize: androidx.compose.ui.unit.TextUnit,
-    radius: androidx.compose.ui.unit.Dp,
-    onClick: () -> Unit
-) {
-    val container = if (selected) selectedContainer else idleContainer
-    val content = if (selected) selectedContent else idleContent
+private fun PdfToolChip(label: String, icon: ImageVector, selected: Boolean, style: PdfToolStyle, onClick: () -> Unit) {
+    val container = if (selected) style.selectedContainer else style.idleContainer
+    val content = if (selected) style.selectedContent else style.idleContent
     Surface(
         modifier = Modifier.clickable(onClick = onClick),
         color = container,
         contentColor = content,
-        shape = RoundedCornerShape(radius)
+        shape = RoundedCornerShape(style.radius)
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 9.dp, vertical = 6.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Icon(icon, contentDescription = null, modifier = Modifier.size(iconSize.coerceIn(15.dp, 20.dp)))
+            Icon(icon, contentDescription = null, modifier = Modifier.size(style.iconSize.coerceIn(15.dp, 20.dp)))
             Spacer(Modifier.width(5.dp))
-            Text(label, fontFamily = fontFamily, fontSize = labelSize, fontWeight = FontWeight.SemiBold)
+            Text(label, fontFamily = style.fontFamily, fontSize = style.labelSize, fontWeight = FontWeight.SemiBold)
         }
     }
 }
@@ -2468,56 +2199,30 @@ private fun ToolChoiceButton(
     onClick: () -> Unit
 ) {
     val background = MaterialTheme.colorScheme.surface
-    val normal = resolveAdaptiveUiButtonColors(
-        preferred = MaterialTheme.colorScheme.surfaceContainerHigh,
-        background = background,
-        textColorMode = textColorMode,
-        minimumContentContrast = 7.0f,
-        minimumSurfaceContrast = 1.30f
+    val normal = rememberAdaptiveUiButtonColors(
+        MaterialTheme.colorScheme.surfaceContainerHigh, background, textColorMode, 7.0f, 1.30f
     )
-    val active = resolveAdaptiveUiButtonColors(
-        preferred = MaterialTheme.colorScheme.primary,
-        background = background,
-        textColorMode = textColorMode,
-        minimumContentContrast = 7.0f,
-        minimumSurfaceContrast = 1.30f
+    val active = rememberAdaptiveUiButtonColors(
+        MaterialTheme.colorScheme.primary, background, textColorMode, 7.0f, 1.30f
     )
     ToolChoiceButton(
-        label = label,
-        selected = selected,
-        fontFamily = fontFamily,
-        idleContainer = normal.container,
-        idleContent = normal.content,
-        selectedContainer = active.container,
-        selectedContent = active.content,
-        labelSize = 11.sp,
-        radius = 12.dp,
-        onClick = onClick
+        label, selected,
+        PdfToolStyle(fontFamily, normal.container, normal.content, active.container, active.content, 18.dp, 11.sp, 12.dp),
+        onClick
     )
 }
 
 @Composable
-private fun ToolChoiceButton(
-    label: String,
-    selected: Boolean,
-    fontFamily: FontFamily,
-    idleContainer: Color,
-    idleContent: Color,
-    selectedContainer: Color,
-    selectedContent: Color,
-    labelSize: androidx.compose.ui.unit.TextUnit,
-    radius: androidx.compose.ui.unit.Dp,
-    onClick: () -> Unit
-) {
+private fun ToolChoiceButton(label: String, selected: Boolean, style: PdfToolStyle, onClick: () -> Unit) {
     Button(
         onClick = onClick,
-        shape = RoundedCornerShape(radius),
+        shape = RoundedCornerShape(style.radius),
         colors = ButtonDefaults.buttonColors(
-            containerColor = if (selected) selectedContainer else idleContainer,
-            contentColor = if (selected) selectedContent else idleContent
+            containerColor = if (selected) style.selectedContainer else style.idleContainer,
+            contentColor = if (selected) style.selectedContent else style.idleContent
         ),
         contentPadding = androidx.compose.foundation.layout.PaddingValues(horizontal = 9.dp, vertical = 5.dp)
     ) {
-        Text(label, fontFamily = fontFamily, fontSize = labelSize, fontWeight = FontWeight.SemiBold)
+        Text(label, fontFamily = style.fontFamily, fontSize = style.labelSize, fontWeight = FontWeight.SemiBold)
     }
 }

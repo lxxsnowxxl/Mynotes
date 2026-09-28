@@ -89,5 +89,5 @@
     <string name="mock_voice_note">语音笔记</string>
     <string name="mock_audio">音频</string>
     <string name="mock_file">文件</string>
-    <string name="mock_font_google_sans_flex">Google Sans Flex</string>
+    <string name="mock_font_google_sans_flex">Google Sans Bold</string>
 </resources>

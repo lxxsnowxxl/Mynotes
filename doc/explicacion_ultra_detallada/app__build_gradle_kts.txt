@@ -1,0 +1,206 @@
+MYNOTES — EXPLICACIÓN ULTRA DETALLADA
+==============================================================================================================
+Archivo 1/72: app/build.gradle.kts
+SHA-256: 39f5bb80281605646df213c95938df1e8c06a76a912a8599a2ccd2a942c17a8e
+Líneas del fuente: 79
+Package: (script Gradle / sin package Kotlin)
+
+1. RESPONSABILIDAD EXACTA DEL ARCHIVO
+----------------------------------------------------------------------
+Script de build del módulo app: define SDK, plugins, dependencias, Compose, Room/KSP y opciones de empaquetado.
+
+2. DÓNDE ENCAJA EN LA ARQUITECTURA
+----------------------------------------------------------------------
+Este archivo pertenece principalmente a la **capa general**. No debe analizarse aislado: las referencias cruzadas y callbacks se detallan más abajo.
+
+3. IMPORTACIONES, UNA POR UNA
+----------------------------------------------------------------------
+- No declara imports explícitos.
+
+4. DECLARACIONES Y ESTADO IMPORTANTES
+----------------------------------------------------------------------
+No se detectaron propiedades/declaraciones de estado con las reglas de análisis; revisar la explicación línea por línea.
+
+5. FUNCIONES — EXPLICACIÓN DE CADA UNA
+----------------------------------------------------------------------
+Este archivo no declara funciones Kotlin detectables (puede ser un script Gradle, clase puramente declarativa o modelo).
+
+6. EXPLICACIÓN COMPLETA LÍNEA POR LÍNEA
+----------------------------------------------------------------------
+Esta sección no omite líneas ejecutables. Repite incluso partes ya explicadas en funciones para poder leer el archivo de arriba abajo sin saltar entre secciones.
+L1: `plugins {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L2: `alias(libs.plugins.android.application)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L3: `alias(libs.plugins.kotlin.compose)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L4: `alias(libs.plugins.ksp)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L5: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L7: `android {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L8: `namespace = "com.example.mynotes"`
+    Asigna/configura `namespace` usando `"com.example.mynotes"`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L9: `compileSdk = 37`
+    Asigna/configura `compileSdk` usando `37`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L10: `defaultConfig {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L11: `applicationId = "com.example.mynotes"`
+    Asigna/configura `applicationId` usando `"com.example.mynotes"`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L12: `minSdk = 24`
+    Asigna/configura `minSdk` usando `24`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L13: `targetSdk = 36`
+    Asigna/configura `targetSdk` usando `36`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L14: `versionCode = 1`
+    Asigna/configura `versionCode` usando `1`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L15: `versionName = "1.3.0"`
+    Asigna/configura `versionName` usando `"1.3.0"`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L16: `testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"`
+    Asigna/configura `testInstrumentationRunner` usando `"androidx.test.runner.AndroidJUnitRunner"`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L17: `// Compatibilidad consistente de recursos vectoriales en API 24/25.`
+    Comentario del autor. No se ejecuta; documenta la intención o una restricción del bloque siguiente.
+L18: `vectorDrawables {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L19: `useSupportLibrary = true`
+    Asigna/configura `useSupportLibrary` usando `true`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L20: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L21: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L22: `buildTypes {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L23: `release {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L24: `isMinifyEnabled = true`
+    Asigna/configura `isMinifyEnabled` usando `true`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L25: `isShrinkResources = true`
+    Asigna/configura `isShrinkResources` usando `true`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L26: `proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")`
+    Realiza una operación de archivo/stream. Debe mantenerse fuera del hilo principal cuando pueda bloquear y respetar el almacenamiento permitido por Android.
+L27: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L28: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L29: `compileOptions {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L30: `sourceCompatibility = JavaVersion.VERSION_11`
+    Asigna/configura `sourceCompatibility` usando `JavaVersion.VERSION_11`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L31: `targetCompatibility = JavaVersion.VERSION_11`
+    Asigna/configura `targetCompatibility` usando `JavaVersion.VERSION_11`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L32: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L33: `buildFeatures {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L34: `compose = true`
+    Asigna/configura `compose` usando `true`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L35: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L36: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L38: `dependencies {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L39: `implementation("androidx.datastore:datastore-preferences:1.1.7")`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L40: `implementation("androidx.appcompat:appcompat:1.7.1")`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L41: `implementation("io.coil-kt.coil3:coil-compose:3.3.0")`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L42: `// Coil 3 separa el cargador de imágenes por Internet del módulo Compose.`
+    Comentario del autor. No se ejecuta; documenta la intención o una restricción del bloque siguiente.
+L43: `// Sin este artefacto AsyncImage conoce la URL, pero no puede descargarla.`
+    Comentario del autor. No se ejecuta; documenta la intención o una restricción del bloque siguiente.
+L44: `implementation("io.coil-kt.coil3:coil-network-okhttp:3.3.0")`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L45: `// Decodificador GIF por software para Android 7/8 y animaciones en APIs nuevas.`
+    Comentario del autor. No se ejecuta; documenta la intención o una restricción del bloque siguiente.
+L46: `implementation("io.coil-kt.coil3:coil-gif:3.3.0")`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L47: `implementation("androidx.media3:media3-exoplayer:1.11.0")`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L48: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L49: `* PlayerView mantiene la relación de aspecto y la salida de vídeo de`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L50: `* forma consistente desde Android 7 hasta versiones actuales.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L51: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L52: `implementation("androidx.media3:media3-ui:1.11.0")`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L53: `implementation(libs.androidx.lifecycle.viewmodel.compose)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L54: `implementation(libs.androidx.lifecycle.runtime.ktx)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L55: `implementation("androidx.lifecycle:lifecycle-runtime-compose:2.11.0")`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L56: `implementation("androidx.room:room-runtime:2.7.2")`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L57: `implementation("androidx.room:room-ktx:2.7.2")`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L58: `ksp("androidx.room:room-compiler:2.7.2")`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L59: `implementation(platform(libs.androidx.compose.bom))`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L60: `implementation(libs.androidx.activity.compose)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L61: `implementation(libs.androidx.compose.material3)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L62: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L63: `* AnimatedVisibility, Crossfade y transiciones ligeras.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L64: `* La versión la administra el Compose BOM.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L65: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L66: `implementation("androidx.compose.animation:animation")`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L67: `implementation(libs.androidx.compose.ui)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L68: `implementation(libs.androidx.compose.ui.graphics)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L69: `implementation(libs.androidx.compose.ui.tooling.preview)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L70: `implementation("androidx.compose.material:material-icons-extended")`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L71: `implementation(libs.androidx.core.ktx)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L72: `testImplementation(libs.junit)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L73: `androidTestImplementation(platform(libs.androidx.compose.bom))`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L74: `androidTestImplementation(libs.androidx.compose.ui.test.junit4)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L75: `androidTestImplementation(libs.androidx.espresso.core)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L76: `androidTestImplementation(libs.androidx.junit)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L77: `debugImplementation(libs.androidx.compose.ui.test.manifest)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L78: `debugImplementation(libs.androidx.compose.ui.tooling)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L79: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+7. RECURSOS ANDROID REFERENCIADOS
+----------------------------------------------------------------------
+- No hay referencias directas `R.*` en este archivo.
+
+8. QUIÉN USA ESTE COMPONENTE
+----------------------------------------------------------------------
+- No se detectaron referencias externas por nombre a los tipos principales; puede ser punto de entrada Android, recurso invocado por Manifest o archivo de prueba.
+
+9. QUÉ PUEDE ROMPERSE SI LO MODIFICAS
+----------------------------------------------------------------------
+- Conservar firmas públicas/callbacks y comprobar los archivos que aparecen en “quién usa este componente” antes de renombrar o cambiar tipos.
+
+10. CHECKLIST DE PRUEBA DESPUÉS DE MODIFICAR ESTE ARCHIVO
+----------------------------------------------------------------------
+- Compilar `assembleDebug` y resolver primero errores de Kotlin/AAPT.
+- Abrir la pantalla/flujo relacionado y comprobar ida y vuelta (back) sin estado duplicado.
+- Cambiar tema/paleta y verificar contraste si este archivo dibuja UI.
+
+==============================================================================================================
+FIN DEL ARCHIVO
+==============================================================================================================

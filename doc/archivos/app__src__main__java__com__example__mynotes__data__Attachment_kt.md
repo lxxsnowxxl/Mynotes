@@ -1,37 +1,57 @@
-# Attachment.kt — documentación del código actual
-**Ruta real:** `app/src/main/java/com/example/mynotes/data/Attachment.kt`  **SHA-256:** `d84232af3101044da8e2db5fe8ca0039175d6ff21874589361b982eb0ceb42df`  **Líneas:** 24 · **Bytes:** 570 · **Imports:** 4 · **Declaraciones detectadas:** 1
-> Documento generado fuera de `app/` a partir de lectura del código. El fuente es la única fuente de verdad; no se modificó para generar esta documentación.
-## 1. Responsabilidad
+# Attachment.kt — explicación completa del código
 
-Entidad/modelo persistente de adjuntos asociados a una nota.
-## 2. Package e imports
+**Ruta:** `app/src/main/java/com/example/mynotes/data/Attachment.kt`  
+**SHA-256:** `d84232af3101044da8e2db5fe8ca0039175d6ff21874589361b982eb0ceb42df`  
+**Líneas:** 25  
+**Package:** `com.example.mynotes.data`
 
-Package declarado: `com.example.mynotes.data`.
+## 1. Para qué existe este archivo
 
-### Android / Jetpack / Compose
+Entidad Room que representa un adjunto ya persistido y asociado a una nota.
 
-`androidx.compose.runtime.Immutable`, `androidx.room.Entity`, `androidx.room.Index`, `androidx.room.PrimaryKey`
+### Contrato de datos
 
-## 3. Declaraciones detectadas
+uri apunta al contenido persistido/administrado; type permite elegir renderer; name conserva un nombre humano y createdAt mantiene orden estable.
 
-| Línea | Tipo | Nombre | Firma/inicio |
-|---:|---|---|---|
-| 10 | `class` | `Attachment` | `data class Attachment(` |
+## 2. Tipos/clases declarados
 
-## 4. Estado, efectos y límites observables
+- Línea **10** — `data  class Attachment`.
 
-- **Room:** 2 aparición/apariciones.
+## 3. Estado, constantes y valores importantes
 
-Estas cifras son indicadores de superficie de cambio, no diagnósticos de error. Cualquier modificación debe preservar contratos de persistencia, lifecycle, límites numéricos y nulabilidad visibles en el fuente.
+- **`id`** (línea 12) inicia con `0`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`name`** (línea 23) inicia con `null`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`createdAt`** (línea 24) inicia con `System.currentTimeMillis(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
 
-## 5. Dependencias internas directas
+## 4. Funciones y flujo, una por una
 
-No importa directamente otros símbolos `com.example.mynotes.*`.
+* image
+     * video
+     * audio
+     * voice
+     * file
 
-## 6. Recursos Android referenciados
+## 5. Cómo se conecta con el resto de MyNotes
 
-No se detectaron referencias `R.*` directas.
+- No importa directamente otro componente `com.example.mynotes`; funciona como modelo/utilidad base o mediante APIs Android/Jetpack.
 
-## 7. Puntos de revisión al modificarlo
+## 6. Recursos Android que utiliza
 
-- No degradar calidad, rutas persistentes ni cachés de adjuntos/miniaturas sin una prueba explícita.
+- No se detectaron referencias directas `R.*` en este archivo.
+
+## 7. Tecnologías y efectos relevantes
+
+- Principalmente lógica Kotlin/Compose sin I/O especial detectado por estas reglas.
+
+## 8. Lectura práctica del flujo
+
+No hay flujo ejecutable propio; su contenido sirve de declaración/configuración para otros archivos.
+
+## 9. Qué no debe romperse al modificarlo
+
+- Los cambios de esquema Room requieren revisar versión/migraciones y compatibilidad con datos existentes.
+- Evitar trabajo bloqueante durante composición y mantener estado estable para limitar recomposiciones.
+
+## 10. Resumen en lenguaje sencillo
+
+En términos simples: Entidad Room que representa un adjunto ya persistido y asociado a una nota. La sección función por función anterior describe qué entra, qué devuelve y qué efectos produce cada operación detectada en el fuente actual.

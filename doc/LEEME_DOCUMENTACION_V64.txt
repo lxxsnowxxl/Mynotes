@@ -1,0 +1,9 @@
+MYNOTES v64 — DOCUMENTACIÓN ULTRA DETALLADA
+
+Empieza por 00_INDICE_ULTRA_DETALLADO.txt.
+
+Si quieres estudiar TODO en un único archivo abre EXPLICACION_ULTRA_DETALLADA_DEL_CODIGO.txt.
+Si quieres estudiar un componente concreto abre explicacion_ultra_detallada/ y busca el nombre del archivo fuente.
+Si quieres entender un flujo funcional completo abre flujos_ultra_detallados/.
+
+Esta documentación explica el cuerpo real de cada función e incluye una lectura línea por línea. No sustituye el código fuente; está diseñada para poder seguirlo sin adivinar la intención de cada bloque.

@@ -1,47 +1,75 @@
-# WidgetActionReceiver.kt — documentación del código actual
-**Ruta real:** `app/src/main/java/com/example/mynotes/widget/WidgetActionReceiver.kt`  **SHA-256:** `f4119fe7bdf5b806c33aee9f043d020b0e4a39175debbca8ccf80d55ad057279`  **Líneas:** 37 · **Bytes:** 1366 · **Imports:** 8 · **Declaraciones detectadas:** 1
-> Documento generado fuera de `app/` a partir de lectura del código. El fuente es la única fuente de verdad; no se modificó para generar esta documentación.
-## 1. Responsabilidad
+# WidgetActionReceiver.kt — explicación completa del código
 
-Receiver interno de acciones ejecutadas desde widgets.
-## 2. Package e imports
+**Ruta:** `app/src/main/java/com/example/mynotes/widget/WidgetActionReceiver.kt`  
+**SHA-256:** `f4119fe7bdf5b806c33aee9f043d020b0e4a39175debbca8ccf80d55ad057279`  
+**Líneas:** 38  
+**Package:** `com.example.mynotes.widget`
 
-Package declarado: `com.example.mynotes.widget`.
+## 1. Para qué existe este archivo
 
-### Android / Jetpack / Compose
+Receiver de acciones de widget que modifican favorita/pin y solicita refresco.
 
-`android.content.BroadcastReceiver`, `android.content.Context`, `android.content.Intent`
+## 2. Tipos/clases declarados
 
-### Proyecto MyNotes
+- Línea **12** — `class WidgetActionReceiver`.
 
-`com.example.mynotes.data.AppDatabase`
+## 3. Estado, constantes y valores importantes
 
-### Kotlin / Coroutines / Java
+- **`noteId`** (línea 14) inicia con `intent.getIntExtra(WidgetActions.EXTRA_NOTE_ID`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`pendingResult`** (línea 16) inicia con `goAsync(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`dao`** (línea 20) inicia con `AppDatabase.getDatabase(context.applicationContext`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`note`** (línea 21) inicia con `dao.getNoteByIdOnce(noteId`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
 
-`kotlinx.coroutines.CoroutineScope`, `kotlinx.coroutines.Dispatchers`, `kotlinx.coroutines.SupervisorJob`, `kotlinx.coroutines.launch`
+## 4. Funciones y flujo, una por una
 
-## 3. Declaraciones detectadas
+### `onReceive` — líneas 13–36
 
-| Línea | Tipo | Nombre | Firma/inicio |
-|---:|---|---|---|
-| 11 | `class` | `WidgetActionReceiver` | `` |
+**Firma:** `override fun onReceive(context: Context, intent: Intent)`
 
-## 4. Estado, efectos y límites observables
+Recibe toggles de favorita/pin desde un widget, actualiza Room en coroutine y solicita refresco de widgets.
 
-- **Coroutines:** 3 aparición/apariciones.
-- **Alarm/notification:** 2 aparición/apariciones.
-- **try/catch:** 1 aparición/apariciones.
+**Entradas:**
+- `context: Context`
+- `intent: Intent`
 
-Estas cifras son indicadores de superficie de cambio, no diagnósticos de error. Cualquier modificación debe preservar contratos de persistencia, lifecycle, límites numéricos y nulabilidad visibles en el fuente.
+**Salida:** Unit o inferido por Kotlin.
 
-## 5. Dependencias internas directas
+**Efectos/APIs observados en el cuerpo:**
+- Ejecuta trabajo de I/O fuera del hilo principal.
+- Lanza trabajo asíncrono mediante coroutines.
+- Accede a la base Room/DAO.
 
-- `com.example.mynotes.data.AppDatabase`
+**Decisiones y protecciones visibles:**
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+- Usa `when` para mapear estados/tipos/opciones.
 
-## 6. Recursos Android referenciados
+**Operaciones/funciones que coordina:** `getIntExtra`, `goAsync`, `CoroutineScope`, `SupervisorJob`, `getDatabase`, `noteDao`, `getNoteByIdOnce`, `updateFavorite`, `updatePinned`, `requestUpdate`, `finish`.
 
-No se detectaron referencias `R.*` directas.
+## 5. Cómo se conecta con el resto de MyNotes
 
-## 7. Puntos de revisión al modificarlo
+- Usa `com.example.mynotes.data.AppDatabase`.
 
-- Validar sus llamadores y el comportamiento visible asociado antes de alterar firmas o valores por defecto.
+## 6. Recursos Android que utiliza
+
+- No se detectaron referencias directas `R.*` en este archivo.
+
+## 7. Tecnologías y efectos relevantes
+
+- Ejecuta trabajo de I/O fuera del hilo principal.
+- Lanza trabajo asíncrono mediante coroutines.
+- Accede a la base Room/DAO.
+
+## 8. Lectura práctica del flujo
+
+Una forma útil de seguir este archivo en el depurador es recorrer estas operaciones en este orden aproximado:
+1. `onReceive` — Recibe toggles de favorita/pin desde un widget, actualiza Room en coroutine y solicita refresco de widgets.
+
+## 9. Qué no debe romperse al modificarlo
+
+- Mantener las firmas públicas/callbacks que usan los archivos listados en la sección de integración.
+
+## 10. Resumen en lenguaje sencillo
+
+En términos simples: Receiver de acciones de widget que modifican favorita/pin y solicita refresco. La sección función por función anterior describe qué entra, qué devuelve y qué efectos produce cada operación detectada en el fuente actual.

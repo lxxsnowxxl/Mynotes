@@ -1,4 +1,6 @@
-SHA-256 de los archivos Kotlin/Kotlin DSL documentados. Generado desde app/ sin modificar los fuentes.
+# SHA-256 del código app/ usado por la documentación v63
+
+Archivos: 72
 
 39f5bb80281605646df213c95938df1e8c06a76a912a8599a2ccd2a942c17a8e  app/build.gradle.kts
 5211c2be48ea2b206bc768c25b964211cb44728b4ee8e405cc73d93ed8376c17  app/src/androidTest/java/com/example/mynotes/ExampleInstrumentedTest.kt

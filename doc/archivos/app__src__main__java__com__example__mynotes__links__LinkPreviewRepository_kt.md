@@ -1,71 +1,440 @@
-# LinkPreviewRepository.kt — documentación del código actual
-**Ruta real:** `app/src/main/java/com/example/mynotes/links/LinkPreviewRepository.kt`  **SHA-256:** `d4b2960786dec39421214e2588c2684994e39b4fce73d06dd941902fa9ee0cae`  **Líneas:** 606 · **Bytes:** 19825 · **Imports:** 19 · **Declaraciones detectadas:** 23
-> Documento generado fuera de `app/` a partir de lectura del código. El fuente es la única fuente de verdad; no se modificó para generar esta documentación.
-## 1. Responsabilidad
+# LinkPreviewRepository.kt — explicación completa del código
 
-Obtención, normalización y caché de metadatos para vistas previas de enlaces.
-## 2. Package e imports
+**Ruta:** `app/src/main/java/com/example/mynotes/links/LinkPreviewRepository.kt`  
+**SHA-256:** `d4b2960786dec39421214e2588c2684994e39b4fce73d06dd941902fa9ee0cae`  
+**Líneas:** 607  
+**Package:** `com.example.mynotes.links`
 
-Package declarado: `com.example.mynotes.links`.
+## 1. Para qué existe este archivo
 
-### Android / Jetpack / Compose
+Repositorio de previews de URL con normalización, HTTP, parsing HTML/Open Graph, descarga/caché de imagen y fallback.
 
-`android.content.Context`, `android.os.Build`, `android.text.Html`, `android.net.Uri`
+## 2. Tipos/clases declarados
 
-### Kotlin / Coroutines / Java
+- Línea **30** — `data  class LinkPreviewData`.
+- Línea **52** — `object LinkPreviewRepository`.
+- Línea **239** — `private data  class ParsedMetadata`.
 
-`kotlinx.coroutines.Dispatchers`, `kotlinx.coroutines.withContext`, `kotlinx.coroutines.sync.Semaphore`, `kotlinx.coroutines.sync.withPermit`, `java.io.BufferedInputStream`, `java.io.BufferedReader`, `java.io.File`, `java.io.InputStreamReader`, `java.net.HttpURLConnection`, `java.net.URL`, `java.nio.charset.Charset`, `java.security.MessageDigest`, `java.util.Locale`, `kotlin.math.min`
+## 3. Estado, constantes y valores importantes
 
-### Terceros / otros
+- **`description`** (línea 33) inicia con `""`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`siteName`** (línea 34) inicia con `""`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`imageUrl`** (línea 35) inicia con `""`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`localImageUri`** (línea 36) inicia con `""`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`mediaType`** (línea 37) inicia con `""`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`fetchedAt`** (línea 38) inicia con `0L`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`CACHE_DIR`** (línea 53) inicia con `"link_previews"`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`META_SUFFIX`** (línea 55) inicia con `".json"`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`IMAGE_SUFFIX`** (línea 56) inicia con `".img"`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`CACHE_MAX_AGE_MS`** (línea 57) inicia con `7L * 24L * 60L * 60L * 1000L`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`CONNECT_TIMEOUT_MS`** (línea 58) inicia con `6_000`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`READ_TIMEOUT_MS`** (línea 59) inicia con `8_000`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`MAX_HTML_BYTES`** (línea 60) inicia con `900 * 1024`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`MAX_IMAGE_BYTES`** (línea 61) inicia con `4 * 1024 * 1024`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`USER_AGENT`** (línea 62) inicia con `"Mozilla/5.0 (Linux; Android 10`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`networkGate`** (línea 66) inicia con `Semaphore(permits = 3`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`value`** (línea 70) inicia con `raw.trim(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`embedded`** (línea 75) inicia con `Regex("https?://[^\\s]+"`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`uri`** (línea 95) inicia con `runCatching { Uri.parse(value`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`scheme`** (línea 97) inicia con `uri.scheme?.lowercase(Locale.ROOT`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`normalized`** (línea 108) inicia con `normalizeUrl(rawUrl`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`directory`** (línea 109) inicia con `cacheDirectory(context.applicationContext`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`key`** (línea 110) inicia con `sha256(normalized`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`metaFile`** (línea 126) inicia con `File(directory`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`imageFile`** (línea 127) inicia con `File(directory`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`cached`** (línea 128) inicia con `readCache(metaFile`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`fetched`** (línea 135) inicia con `networkGate.withPermit {`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`youtubeImage`** (línea 156) inicia con `youtubeThumbnail(normalized`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`localImage`** (línea 158) inicia con `networkGate.withPermit {`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`fallback`** (línea 164) inicia con `fallback(normalized`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`connection`** (línea 179) inicia con `openConnection(normalized`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`finalUrl`** (línea 182) inicia con `connection.url.toString(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`contentType`** (línea 183) inicia con `connection.contentType.orEmpty(`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`html`** (línea 184) inicia con `if (`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`metadata`** (línea 192) inicia con `parseHtml(html`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
 
-`org.json.JSONObject`
+## 4. Funciones y flujo, una por una
 
-## 3. Declaraciones detectadas
+### `normalizeUrl` — líneas 69–102
 
-| Línea | Tipo | Nombre | Firma/inicio |
-|---:|---|---|---|
-| 30 | `class` | `LinkPreviewData` | `data class LinkPreviewData(` |
-| 51 | `object` | `LinkPreviewRepository` | `` |
-| 68 | `fun` | `normalizeUrl` | `` |
-| 103 | `fun` | `invalidate` | `` |
-| 174 | `fun` | `fetchPreview` | `` |
-| 238 | `class` | `ParsedMetadata` | `` |
-| 246 | `fun` | `parseHtml` | `` |
-| 334 | `fun` | `parseAttributes` | `` |
-| 354 | `fun` | `findPageIcon` | `` |
-| 373 | `fun` | `resolveUrl` | `` |
-| 380 | `fun` | `youtubeThumbnail` | `` |
-| 401 | `fun` | `openConnection` | `` |
-| 416 | `fun` | `readHtml` | `` |
-| 447 | `fun` | `charsetFromContentType` | `` |
-| 462 | `fun` | `downloadPreviewImage` | `` |
-| 519 | `fun` | `cacheDirectory` | `` |
-| 524 | `fun` | `readCache` | `` |
-| 551 | `fun` | `writeCache` | `` |
-| 569 | `fun` | `fallback` | `` |
-| 582 | `fun` | `decodeHtml` | `` |
-| 592 | `fun` | `stripTags` | `` |
-| 597 | `fun` | `firstNotBlank` | `` |
-| 600 | `fun` | `sha256` | `` |
+**Firma:** `fun normalizeUrl(raw: String): String?`
 
-## 4. Estado, efectos y límites observables
+Normaliza una cadena/valor externo al conjunto de opciones admitidas por MyNotes y devuelve un fallback estable si el valor no es reconocido.
 
-- **Coroutines:** 7 aparición/apariciones.
-- **I/O/red:** 15 aparición/apariciones.
-- **try/catch:** 3 aparición/apariciones.
-- **safe calls:** 27 aparición/apariciones.
+**Entradas:**
+- `raw: String`
 
-Estas cifras son indicadores de superficie de cambio, no diagnósticos de error. Cualquier modificación debe preservar contratos de persistencia, lifecycle, límites numéricos y nulabilidad visibles en el fuente.
+**Salida:** String?.
 
-## 5. Dependencias internas directas
+**Decisiones y protecciones visibles:**
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
 
-No importa directamente otros símbolos `com.example.mynotes.*`.
+**Operaciones/funciones que coordina:** `trim`, `isBlank`, `Regex`, `find`, `trimEnd`, `startsWith`, `matches`, `parse`, `getOrNull`, `lowercase`, `isNullOrBlank`.
 
-## 6. Recursos Android referenciados
+### `invalidate` — líneas 104–114
 
-No se detectaron referencias `R.*` directas.
+**Firma:** `fun invalidate( context: Context, rawUrl: String )`
 
-## 7. Puntos de revisión al modificarlo
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
 
-- No degradar calidad, rutas persistentes ni cachés de adjuntos/miniaturas sin una prueba explícita.
-- Evitar trabajo de red/decodificación en el frame de scroll y conservar caché/placeholder.
+**Entradas:**
+- `context: Context`
+- `rawUrl: String`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Efectos/APIs observados en el cuerpo:**
+- Accede al sistema de archivos interno/cache.
+
+**Decisiones y protecciones visibles:**
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+
+**Operaciones/funciones que coordina:** `normalizeUrl`, `cacheDirectory`, `sha256`, `File`, `delete`.
+
+### `load` — líneas 116–120
+
+**Firma:** `suspend fun load( context: Context, rawUrl: String, forceRefresh: Boolean = false ): LinkPreviewData`
+
+Normaliza la URL, busca caché reciente y, si hace falta, entra a una compuerta de red para descargar/parsing. Persiste metadata e imagen local y devuelve fallback ante fallo.
+
+**Entradas:**
+- `context: Context`
+- `rawUrl: String`
+- `forceRefresh: Boolean = false`
+
+**Salida:** LinkPreviewData.
+
+**Efectos/APIs observados en el cuerpo:**
+- Ejecuta trabajo de I/O fuera del hilo principal.
+
+**Operaciones/funciones que coordina:** `withContext`.
+
+### `fetchPreview` — líneas 175–237
+
+**Firma:** `private fun fetchPreview( normalized: String, imageFile: File ): LinkPreviewData`
+
+Realiza la petición HTTP, sigue URL final, lee HTML limitado, extrae metadata y descarga una imagen de preview/special thumbnail cuando corresponde.
+
+**Entradas:**
+- `normalized: String`
+- `imageFile: File`
+
+**Salida:** LinkPreviewData.
+
+**Decisiones y protecciones visibles:**
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `openConnection`, `toString`, `orEmpty`, `contains`, `isBlank`, `readHtml`, `parseHtml`, `startsWith`, `youtubeThumbnail`, `isNotBlank`, `downloadPreviewImage`, `delete`, `parse`, `removePrefix`, `LinkPreviewData`, `currentTimeMillis`, `disconnect`.
+
+### `parseHtml` — líneas 247–333
+
+**Firma:** `private fun parseHtml( html: String, baseUrl: String ): ParsedMetadata`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `html: String`
+- `baseUrl: String`
+
+**Salida:** ParsedMetadata.
+
+**Decisiones y protecciones visibles:**
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `isBlank`, `ParsedMetadata`, `Regex`, `findAll`, `parseAttributes`, `trim`, `lowercase`, `orEmpty`, `isNotBlank`, `find`, `getOrNull`, `firstNotBlank`, `resolveUrl`.
+
+### `parseAttributes` — líneas 335–353
+
+**Firma:** `private fun parseAttributes(tag: String): Map<String, String>`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `tag: String`
+
+**Salida:** Map<String, String>.
+
+**Decisiones y protecciones visibles:**
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `Regex`, `findAll`, `lowercase`, `firstNotBlank`, `getOrNull`, `isNotBlank`.
+
+### `findPageIcon` — líneas 355–372
+
+**Firma:** `private fun findPageIcon( html: String, baseUrl: String ): String?`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `html: String`
+- `baseUrl: String`
+
+**Salida:** String?.
+
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `Regex`, `findAll`, `parseAttributes`, `lowercase`, `orEmpty`, `isNotBlank`, `resolveUrl`, `decodeHtml`.
+
+### `resolveUrl` — líneas 374–379
+
+**Firma:** `private fun resolveUrl(base: String, value: String): String?`
+
+Resuelve un valor configurable a su representación efectiva usada por la UI, aplicando reglas de fallback/contraste cuando corresponde.
+
+**Entradas:**
+- `base: String`
+- `value: String`
+
+**Salida:** String?.
+
+**Efectos/APIs observados en el cuerpo:**
+- Realiza acceso de red HTTP.
+
+**Decisiones y protecciones visibles:**
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `isBlank`, `URL`, `toString`, `getOrNull`.
+
+### `youtubeThumbnail` — líneas 381–400
+
+**Firma:** `private fun youtubeThumbnail(url: String): String?`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `url: String`
+
+**Salida:** String?.
+
+**Decisiones y protecciones visibles:**
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Usa `when` para mapear estados/tipos/opciones.
+
+**Operaciones/funciones que coordina:** `parse`, `getOrNull`, `lowercase`, `orEmpty`, `endsWith`, `startsWith`, `getQueryParameter`, `matches`, `Regex`.
+
+### `openConnection` — líneas 402–415
+
+**Firma:** `private fun openConnection(url: String): HttpURLConnection`
+
+Construye/ejecuta la operación necesaria para abrir el destino indicado, aplicando las validaciones visibles en el cuerpo.
+
+**Entradas:**
+- `url: String`
+
+**Salida:** HttpURLConnection.
+
+**Efectos/APIs observados en el cuerpo:**
+- Realiza acceso de red HTTP.
+
+**Operaciones/funciones que coordina:** `URL`, `openConnection`, `setRequestProperty`, `connect`.
+
+### `readHtml` — líneas 417–446
+
+**Firma:** `private fun readHtml(connection: HttpURLConnection): String`
+
+Lee y transforma datos desde la fuente indicada, devolviendo una representación segura o fallback cuando la lectura no puede completarse.
+
+**Entradas:**
+- `connection: HttpURLConnection`
+
+**Salida:** String.
+
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `charsetFromContentType`, `BufferedReader`, `InputStreamReader`, `BufferedInputStream`, `StringBuilder`, `CharArray`, `read`, `min`, `append`, `toString`.
+
+### `charsetFromContentType` — líneas 448–461
+
+**Firma:** `private fun charsetFromContentType(contentType: String?): Charset`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `contentType: String?`
+
+**Salida:** Charset.
+
+**Decisiones y protecciones visibles:**
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `split`, `trim`, `startsWith`, `substringAfter`, `isNullOrBlank`, `forName`, `getOrDefault`.
+
+### `downloadPreviewImage` — líneas 463–518
+
+**Firma:** `private fun downloadPreviewImage( imageUrl: String, destination: File ): String`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `imageUrl: String`
+- `destination: File`
+
+**Salida:** String.
+
+**Efectos/APIs observados en el cuerpo:**
+- Accede al sistema de archivos interno/cache.
+
+**Decisiones y protecciones visibles:**
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `openConnection`, `getOrNull`, `orEmpty`, `startsWith`, `File`, `BufferedInputStream`, `outputStream`, `buffered`, `ByteArray`, `read`, `delete`, `write`, `exists`, `renameTo`, `copyTo`, `fromFile`, `toString`, `disconnect`.
+
+### `cacheDirectory` — líneas 520–520
+
+**Firma:** `private fun cacheDirectory(context: Context): File`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `context: Context`
+
+**Salida:** File.
+
+### `readCache` — líneas 525–550
+
+**Firma:** `private fun readCache( metaFile: File, imageFile: File ): LinkPreviewData?`
+
+Lee y transforma datos desde la fuente indicada, devolviendo una representación segura o fallback cuando la lectura no puede completarse.
+
+**Entradas:**
+- `metaFile: File`
+- `imageFile: File`
+
+**Salida:** LinkPreviewData?.
+
+**Efectos/APIs observados en el cuerpo:**
+- Accede al sistema de archivos interno/cache.
+
+**Decisiones y protecciones visibles:**
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `JSONObject`, `readText`, `length`, `fromFile`, `toString`, `LinkPreviewData`, `getString`, `optString`, `optLong`, `lastModified`, `getOrNull`.
+
+### `writeCache` — líneas 552–568
+
+**Firma:** `private fun writeCache( metaFile: File, preview: LinkPreviewData )`
+
+Serializa/escribe los datos indicados en su destino y controla los errores/recursos definidos en el cuerpo.
+
+**Entradas:**
+- `metaFile: File`
+- `preview: LinkPreviewData`
+
+**Salida:** Unit o inferido por Kotlin.
+
+**Decisiones y protecciones visibles:**
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+
+**Operaciones/funciones que coordina:** `JSONObject`, `put`, `writeText`, `toString`.
+
+### `fallback` — líneas 570–581
+
+**Firma:** `private fun fallback(url: String): LinkPreviewData`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `url: String`
+
+**Salida:** LinkPreviewData.
+
+**Decisiones y protecciones visibles:**
+- Contiene manejo de fallos/excepciones y una ruta de recuperación/fallback.
+- Usa operadores Elvis/fallback para datos nulos o ausentes.
+
+**Operaciones/funciones que coordina:** `normalizeUrl`, `trim`, `parse`, `removePrefix`, `orEmpty`, `getOrDefault`, `LinkPreviewData`, `currentTimeMillis`.
+
+### `decodeHtml` — líneas 583–591
+
+**Firma:** `private fun decodeHtml(value: String): String`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: String`
+
+**Salida:** String.
+
+**Decisiones y protecciones visibles:**
+- Contiene decisiones condicionales (`if`) para seleccionar comportamiento.
+
+**Operaciones/funciones que coordina:** `isBlank`, `fromHtml`, `toString`, `Suppress`.
+
+### `stripTags` — líneas 593–593
+
+**Firma:** `private fun stripTags(value: String): String`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: String`
+
+**Salida:** String.
+
+### `firstNotBlank` — líneas 598–598
+
+**Firma:** `private fun firstNotBlank(vararg values: String?): String`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `vararg values: String?`
+
+**Salida:** String.
+
+### `sha256` — líneas 601–605
+
+**Firma:** `private fun sha256(value: String): String`
+
+Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+
+**Entradas:**
+- `value: String`
+
+**Salida:** String.
+
+**Operaciones/funciones que coordina:** `getInstance`, `digest`, `toByteArray`, `joinToString`, `format`.
+
+## 5. Cómo se conecta con el resto de MyNotes
+
+- No importa directamente otro componente `com.example.mynotes`; funciona como modelo/utilidad base o mediante APIs Android/Jetpack.
+
+## 6. Recursos Android que utiliza
+
+- No se detectaron referencias directas `R.*` en este archivo.
+
+## 7. Tecnologías y efectos relevantes
+
+- Ejecuta trabajo de I/O fuera del hilo principal.
+- Realiza acceso de red HTTP.
+- Accede al sistema de archivos interno/cache.
+
+## 8. Lectura práctica del flujo
+
+Una forma útil de seguir este archivo en el depurador es recorrer estas operaciones en este orden aproximado:
+1. `normalizeUrl` — Normaliza una cadena/valor externo al conjunto de opciones admitidas por MyNotes y devuelve un fallback estable si el valor no es reconocido.
+2. `invalidate` — Implementa la operación indicada por su nombre dentro de la responsabilidad de este archivo. La explicación de efectos observables se detalla debajo a partir de las APIs y dependencias usadas en el cuerpo.
+3. `load` — Normaliza la URL, busca caché reciente y, si hace falta, entra a una compuerta de red para descargar/parsing. Persiste metadata e imagen local y devuelve fallback ante fallo.
+
+## 9. Qué no debe romperse al modificarlo
+
+- Mantener timeouts, límites de descarga, cierre de conexiones y fallback ante sitios que bloqueen scraping.
+- Conservar validaciones de Uri/ruta y no confiar en nombres externos sin sanitizar.
+
+## 10. Resumen en lenguaje sencillo
+
+En términos simples: Repositorio de previews de URL con normalización, HTTP, parsing HTML/Open Graph, descarga/caché de imagen y fallback. La sección función por función anterior describe qué entra, qué devuelve y qué efectos produce cada operación detectada en el fuente actual.

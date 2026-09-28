@@ -1,0 +1,1124 @@
+MYNOTES — EXPLICACIÓN ULTRA DETALLADA
+==============================================================================================================
+Archivo 38/72: app/src/main/java/com/example/mynotes/ui/motion/AppMotion.kt
+SHA-256: d00156b94c88b5c5e083997f1842d42a9a2063de69c90a9c000d9702025c02b7
+Líneas del fuente: 342
+Package: com.example.mynotes.ui.motion
+
+1. RESPONSABILIDAD EXACTA DEL ARCHIVO
+----------------------------------------------------------------------
+Define políticas de animación y transforma los ajustes del usuario en duraciones, easing y amplitudes reutilizables por Compose.
+
+2. DÓNDE ENCAJA EN LA ARQUITECTURA
+----------------------------------------------------------------------
+Este archivo pertenece principalmente a la **capa de interfaz Compose/Activities**. No debe analizarse aislado: las referencias cruzadas y callbacks se detallan más abajo.
+
+3. IMPORTACIONES, UNA POR UNA
+----------------------------------------------------------------------
+- `androidx.compose.animation.AnimatedContent`: Importa `androidx.compose.animation.AnimatedContent` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.animation.AnimatedContentTransitionScope`: Importa `androidx.compose.animation.AnimatedContentTransitionScope` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.animation.ContentTransform`: Importa `androidx.compose.animation.ContentTransform` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.animation.EnterTransition`: Importa `androidx.compose.animation.EnterTransition` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.animation.ExitTransition`: Importa `androidx.compose.animation.ExitTransition` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.animation.expandHorizontally`: Importa `androidx.compose.animation.expandHorizontally` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.animation.expandIn`: Importa `androidx.compose.animation.expandIn` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.animation.expandVertically`: Importa `androidx.compose.animation.expandVertically` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.animation.fadeIn`: Importa `androidx.compose.animation.fadeIn` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.animation.fadeOut`: Importa `androidx.compose.animation.fadeOut` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.animation.scaleIn`: Importa `androidx.compose.animation.scaleIn` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.animation.scaleOut`: Importa `androidx.compose.animation.scaleOut` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.animation.shrinkHorizontally`: Importa `androidx.compose.animation.shrinkHorizontally` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.animation.shrinkOut`: Importa `androidx.compose.animation.shrinkOut` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.animation.shrinkVertically`: Importa `androidx.compose.animation.shrinkVertically` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.animation.slideInHorizontally`: Importa `androidx.compose.animation.slideInHorizontally` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.animation.slideInVertically`: Importa `androidx.compose.animation.slideInVertically` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.animation.slideOutHorizontally`: Importa `androidx.compose.animation.slideOutHorizontally` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.animation.slideOutVertically`: Importa `androidx.compose.animation.slideOutVertically` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.animation.togetherWith`: Importa `androidx.compose.animation.togetherWith` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.animation.core.CubicBezierEasing`: Importa `androidx.compose.animation.core.CubicBezierEasing` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.animation.core.Easing`: Importa `androidx.compose.animation.core.Easing` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.animation.core.FastOutLinearInEasing`: Importa `androidx.compose.animation.core.FastOutLinearInEasing` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.animation.core.FiniteAnimationSpec`: Importa `androidx.compose.animation.core.FiniteAnimationSpec` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.animation.core.FastOutSlowInEasing`: Importa `androidx.compose.animation.core.FastOutSlowInEasing` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.animation.core.LinearEasing`: Importa `androidx.compose.animation.core.LinearEasing` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.animation.core.LinearOutSlowInEasing`: Importa `androidx.compose.animation.core.LinearOutSlowInEasing` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.animation.core.Spring`: Importa `androidx.compose.animation.core.Spring` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.animation.core.spring`: Importa `androidx.compose.animation.core.spring` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.animation.core.tween`: Importa `androidx.compose.animation.core.tween` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.foundation.background`: Importa `androidx.compose.foundation.background` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.layout.Box`: Importa `androidx.compose.foundation.layout.Box` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.foundation.layout.fillMaxSize`: Importa `androidx.compose.foundation.layout.fillMaxSize` para usar layouts, gestos y primitivas visuales de Compose.
+- `androidx.compose.material3.MaterialTheme`: Importa `androidx.compose.material3.MaterialTheme` para usar componentes y tema Material 3.
+- `androidx.compose.runtime.Composable`: Importa `androidx.compose.runtime.Composable` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+- `androidx.compose.runtime.remember`: Importa `androidx.compose.runtime.remember` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+- `androidx.compose.ui.Alignment`: Importa `androidx.compose.ui.Alignment` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.Modifier`: Importa `androidx.compose.ui.Modifier` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `androidx.compose.ui.unit.IntOffset`: Importa `androidx.compose.ui.unit.IntOffset` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+- `kotlin.math.roundToInt`: Importa `kotlin.math.roundToInt` de la biblioteca estándar/JVM para operaciones de lenguaje, fechas, colecciones, I/O o utilidades.
+
+4. DECLARACIONES Y ESTADO IMPORTANTES
+----------------------------------------------------------------------
+L44: `private val EmphasizedEasing = CubicBezierEasing(0.2f, 0f, 0f, 1f)`
+    Declara `EmphasizedEasing` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `CubicBezierEasing(0.2f, 0f, 0f, 1f)`.
+L45: `private val ExpressiveEasing = CubicBezierEasing(0.16f, 1f, 0.3f, 1f)`
+    Declara `ExpressiveEasing` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `CubicBezierEasing(0.16f, 1f, 0.3f, 1f)`.
+L46: `private val EmphasizedAccelerateEasing = CubicBezierEasing(0.3f, 0f, 0.8f, 0.15f)`
+    Declara `EmphasizedAccelerateEasing` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `CubicBezierEasing(0.3f, 0f, 0.8f, 0.15f)`.
+L47: `private val EmphasizedDecelerateEasing = CubicBezierEasing(0.05f, 0.7f, 0.1f, 1f)`
+    Declara `EmphasizedDecelerateEasing` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `CubicBezierEasing(0.05f, 0.7f, 0.1f, 1f)`.
+L55: `object AppMotion {`
+    Declara object `AppMotion`. A partir de aquí las propiedades y funciones hasta su llave de cierre pertenecen a este tipo.
+L56: `const val FAST = 140`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L57: `const val NORMAL = 220`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L58: `const val SLOW = 320`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L59: `val supportedStyles = setOf("zoom", "zoom_fade", "fade", "slide_left", "slide_right", "slide_up", "slide_down", "slide_zoom_left",`
+    Declara `supportedStyles` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `setOf("zoom", "zoom_fade", "fade", "slide_left", "slide_right", "slide_up", "slide_down", "slide_zoom_left",`.
+L62: `val supportedEasings = setOf("standard", "linear", "accelerate", "decelerate", "emphasized", "expressive", "emphasized_accel", "emphasized_decel")`
+    Declara `supportedEasings` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `setOf("standard", "linear", "accelerate", "decelerate", "emphasized", "expressive", "emphasized_accel", "emphasized_decel")`.
+L71: `val speed = animationSpeed.coerceIn(0.5f, 2f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L86: `private val randomStylePool = listOf("zoom", "zoom_fade", "fade", "slide_left", "slide_right", "slide_up", "slide_down", "slide_zoom_left",`
+    Declara `randomStylePool` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `listOf("zoom", "zoom_fade", "fade", "slide_left", "slide_right", "slide_up", "slide_down", "slide_zoom_left",`.
+L94: `val mode = AppMotion.normalizePerformanceMode(performanceMode)`
+    Declara `mode` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `AppMotion.normalizePerformanceMode(performanceMode)`.
+L95: `val requestedStyle = AppMotion.normalizeStyle(animationStyle)`
+    Declara `requestedStyle` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `AppMotion.normalizeStyle(animationStyle)`.
+L102: `val style = when (mode) {`
+    Declara `style` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `when (mode) {`.
+L118: `val speedBoost = when (mode) {`
+    Declara `speedBoost` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `when (mode) {`.
+L123: `val speed = (animationSpeed * speedBoost).coerceIn(0.5f, 2.4f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L124: `val intensityFactor = if (mode == "performance") {`
+    Declara `intensityFactor` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (mode == "performance") {`.
+L129: `val intensity = (animationIntensity * intensityFactor).coerceIn(0.45f, 1.5f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L130: `val easing = AppMotion.easing(animationEasing)`
+    Declara `easing` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `AppMotion.easing(animationEasing)`.
+L131: `val enterDuration = AppMotion.duration(AppMotion.NORMAL, true, speed)`
+    Declara `enterDuration` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `AppMotion.duration(AppMotion.NORMAL, true, speed)`.
+L136: `val exitDuration = if (mode == "performance") {`
+    Declara `exitDuration` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (mode == "performance") {`.
+L141: `val slowDuration = AppMotion.duration(AppMotion.SLOW, true, speed)`
+    Declara `slowDuration` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `AppMotion.duration(AppMotion.SLOW, true, speed)`.
+L145: `val zoomScale = (1f - 0.08f * intensity).coerceIn(0.78f, 0.98f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L146: `val deepZoomScale = (1f - 0.16f * intensity).coerceIn(0.68f, 0.95f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L147: `val subtleScale = (1f - 0.025f * intensity).coerceIn(0.94f, 0.99f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L148: `val slideFactor = intensity.coerceIn(0.5f, 1.5f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L203: `val bounceSpec = spring<Float>(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessMedium * speed)`
+    Declara `bounceSpec` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `spring<Float>(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessMedium * speed)`.
+L209: `val elasticSpec = spring<Float>(dampingRatio = Spring.DampingRatioLowBouncy, stiffness = Spring.StiffnessLow * speed)`
+    Declara `elasticSpec` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `spring<Float>(dampingRatio = Spring.DampingRatioLowBouncy, stiffness = Spring.StiffnessLow * speed)`.
+L224: `val springFloat = spring<Float>(`
+    Declara `springFloat` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `spring<Float>(`.
+L228: `val springInt = spring<IntOffset>(`
+    Declara `springInt` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `spring<IntOffset>(`.
+L238: `val containerSpringFloat = spring<Float>(`
+    Declara `containerSpringFloat` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `spring<Float>(`.
+L242: `val containerSpringInt = spring<IntOffset>(`
+    Declara `containerSpringInt` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `spring<IntOffset>(`.
+L256: `val elasticSlideFloat = spring<Float>(`
+    Declara `elasticSlideFloat` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `spring<Float>(`.
+L260: `val elasticSlideInt = spring<IntOffset>(`
+    Declara `elasticSlideInt` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `spring<IntOffset>(`.
+L276: `val tonalSpring = spring<Float>(`
+    Declara `tonalSpring` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `spring<Float>(`.
+L302: `val resolvedStyle = remember(targetState, animationStyle) {`
+    Memoriza el resultado durante recomposiciones de Compose. Solo se recalcula cuando cambian las claves de `remember`, reduciendo trabajo y preservando identidad/estado local.
+L303: `val normalized = AppMotion.normalizeStyle(animationStyle)`
+    Declara `normalized` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `AppMotion.normalizeStyle(animationStyle)`.
+
+5. FUNCIONES — EXPLICACIÓN DE CADA UNA
+----------------------------------------------------------------------
+
+5.1 `normalizeStyle` — líneas 63–63
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun normalizeStyle(value: String): String = if (value in supportedStyles) value else "zoom"
+
+Propósito:
+    Implementa `normalizeStyle`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `value: String): String = if (value in supportedStyles`: el llamador proporciona este valor/callback a `normalizeStyle`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `String`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L63 [4 espacios] `fun normalizeStyle(value: String): String = if (value in supportedStyles) value else "zoom"`
+      → Declara una función. El bloque de `normalizeStyle` se detalla después instrucción por instrucción.
+
+5.2 `normalizeEasing` — líneas 64–64
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun normalizeEasing(value: String): String = if (value in supportedEasings) value else "standard"
+
+Propósito:
+    Implementa `normalizeEasing`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `value: String): String = if (value in supportedEasings`: el llamador proporciona este valor/callback a `normalizeEasing`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `String`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L64 [4 espacios] `fun normalizeEasing(value: String): String = if (value in supportedEasings) value else "standard"`
+      → Declara una función. El bloque de `normalizeEasing` se detalla después instrucción por instrucción.
+
+5.3 `normalizePerformanceMode` — líneas 65–68
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun normalizePerformanceMode(value: String): String = when (value) {
+
+Propósito:
+    Implementa `normalizePerformanceMode`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `value: String): String = when (value`: el llamador proporciona este valor/callback a `normalizePerformanceMode`. Dentro del cuerpo, las líneas donde aparece `value` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `String`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L65 [4 espacios] `fun normalizePerformanceMode(value: String): String = when (value) {`
+      → Declara una función. El bloque de `normalizePerformanceMode` se detalla después instrucción por instrucción.
+  L66 [12 espacios] `"performance", "balanced", "quality" -> value`
+      → Define una rama/lambda. Cuando coincide `"performance", "balanced", "quality"`, se ejecuta la expresión o bloque situado después de `->`.
+  L67 [12 espacios] `else -> "balanced"`
+      → Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+  L68 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.4 `duration` — líneas 69–73
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun duration(baseMilliseconds: Int, animationsEnabled: Boolean, animationSpeed: Float): Int {
+
+Propósito:
+    Implementa `duration`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `baseMilliseconds: Int`: el llamador proporciona este valor/callback a `duration`. Dentro del cuerpo, las líneas donde aparece `baseMilliseconds` muestran exactamente cómo afecta al resultado.
+  - `animationsEnabled: Boolean`: el llamador proporciona este valor/callback a `duration`. Dentro del cuerpo, las líneas donde aparece `animationsEnabled` muestran exactamente cómo afecta al resultado.
+  - `animationSpeed: Float`: el llamador proporciona este valor/callback a `duration`. Dentro del cuerpo, las líneas donde aparece `animationSpeed` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Int`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L69 [4 espacios] `fun duration(baseMilliseconds: Int, animationsEnabled: Boolean, animationSpeed: Float): Int {`
+      → Declara una función. El bloque de `duration` se detalla después instrucción por instrucción.
+  L70 [8 espacios] `if (!animationsEnabled) return 0`
+      → Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `!animationsEnabled`.
+  L71 [8 espacios] `val speed = animationSpeed.coerceIn(0.5f, 2f)`
+      → Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+  L72 [8 espacios] `return (baseMilliseconds / speed).roundToInt().coerceAtLeast(1)`
+      → Finaliza la función actual y devuelve el valor indicado al llamador.
+  L73 [4 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.5 `easing` — líneas 74–83
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun easing(key: String): Easing = when (normalizeEasing(key)) {
+
+Propósito:
+    Implementa `easing`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `key: String): Easing = when (normalizeEasing(key)`: el llamador proporciona este valor/callback a `easing`. Dentro del cuerpo, las líneas donde aparece `key` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Easing`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L74 [4 espacios] `fun easing(key: String): Easing = when (normalizeEasing(key)) {`
+      → Declara una función. El bloque de `easing` se detalla después instrucción por instrucción.
+  L75 [12 espacios] `"linear" -> LinearEasing`
+      → Define una rama/lambda. Cuando coincide `"linear"`, se ejecuta la expresión o bloque situado después de `->`.
+  L76 [12 espacios] `"accelerate" -> FastOutLinearInEasing`
+      → Define una rama/lambda. Cuando coincide `"accelerate"`, se ejecuta la expresión o bloque situado después de `->`.
+  L77 [12 espacios] `"decelerate" -> LinearOutSlowInEasing`
+      → Define una rama/lambda. Cuando coincide `"decelerate"`, se ejecuta la expresión o bloque situado después de `->`.
+  L78 [12 espacios] `"emphasized" -> EmphasizedEasing`
+      → Define una rama/lambda. Cuando coincide `"emphasized"`, se ejecuta la expresión o bloque situado después de `->`.
+  L79 [12 espacios] `"expressive" -> ExpressiveEasing`
+      → Define una rama/lambda. Cuando coincide `"expressive"`, se ejecuta la expresión o bloque situado después de `->`.
+  L80 [12 espacios] `"emphasized_accel" -> EmphasizedAccelerateEasing`
+      → Define una rama/lambda. Cuando coincide `"emphasized_accel"`, se ejecuta la expresión o bloque situado después de `->`.
+  L81 [12 espacios] `"emphasized_decel" -> EmphasizedDecelerateEasing`
+      → Define una rama/lambda. Cuando coincide `"emphasized_decel"`, se ejecuta la expresión o bloque situado después de `->`.
+  L82 [12 espacios] `else -> FastOutSlowInEasing`
+      → Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+  L83 [8 espacios] `}`
+      → Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+5.6 `enterSpec` — líneas 142–142
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun <V> enterSpec(): FiniteAnimationSpec<V> = tween(durationMillis = enterDuration, easing = easing)
+
+Propósito:
+    Implementa `enterSpec`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `): FiniteAnimationSpec<V> = tween(durationMillis = enterDuration, easing = easing`: el llamador proporciona este valor/callback a `enterSpec`. Dentro del cuerpo, las líneas donde aparece `)` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `FiniteAnimationSpec<V>`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L142 [4 espacios] `fun <V> enterSpec(): FiniteAnimationSpec<V> = tween(durationMillis = enterDuration, easing = easing)`
+      → Asigna/configura `fun <V> enterSpec(): FiniteAnimationSpec<V>` usando `tween(durationMillis = enterDuration, easing = easing)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+
+5.7 `exitSpec` — líneas 143–143
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun <V> exitSpec(): FiniteAnimationSpec<V> = tween(durationMillis = exitDuration, easing = easing)
+
+Propósito:
+    Implementa `exitSpec`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `): FiniteAnimationSpec<V> = tween(durationMillis = exitDuration, easing = easing`: el llamador proporciona este valor/callback a `exitSpec`. Dentro del cuerpo, las líneas donde aparece `)` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `FiniteAnimationSpec<V>`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L143 [4 espacios] `fun <V> exitSpec(): FiniteAnimationSpec<V> = tween(durationMillis = exitDuration, easing = easing)`
+      → Asigna/configura `fun <V> exitSpec(): FiniteAnimationSpec<V>` usando `tween(durationMillis = exitDuration, easing = easing)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+
+5.8 `slowSpec` — líneas 144–144
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun <V> slowSpec(): FiniteAnimationSpec<V> = tween(durationMillis = slowDuration, easing = easing)
+
+Propósito:
+    Implementa `slowSpec`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `): FiniteAnimationSpec<V> = tween(durationMillis = slowDuration, easing = easing`: el llamador proporciona este valor/callback a `slowSpec`. Dentro del cuerpo, las líneas donde aparece `)` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `FiniteAnimationSpec<V>`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L144 [4 espacios] `fun <V> slowSpec(): FiniteAnimationSpec<V> = tween(durationMillis = slowDuration, easing = easing)`
+      → Asigna/configura `fun <V> slowSpec(): FiniteAnimationSpec<V>` usando `tween(durationMillis = slowDuration, easing = easing)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+
+5.9 `horizontalOffset` — líneas 149–149
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun horizontalOffset(fullWidth: Int): Int = (fullWidth * slideFactor).roundToInt()
+
+Propósito:
+    Implementa `horizontalOffset`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `fullWidth: Int): Int = (fullWidth * slideFactor).roundToInt(`: el llamador proporciona este valor/callback a `horizontalOffset`. Dentro del cuerpo, las líneas donde aparece `fullWidth` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Int`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L149 [4 espacios] `fun horizontalOffset(fullWidth: Int): Int = (fullWidth * slideFactor).roundToInt()`
+      → Declara una función. El bloque de `horizontalOffset` se detalla después instrucción por instrucción.
+
+5.10 `verticalOffset` — líneas 150–150
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+        fun verticalOffset(fullHeight: Int): Int = (fullHeight * slideFactor).roundToInt()
+
+Propósito:
+    Implementa `verticalOffset`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `fullHeight: Int): Int = (fullHeight * slideFactor).roundToInt(`: el llamador proporciona este valor/callback a `verticalOffset`. Dentro del cuerpo, las líneas donde aparece `fullHeight` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - Tipo declarado `Int`. Cada `return` del cuerpo se explica debajo.
+
+Recorrido interno, instrucción por instrucción:
+  L150 [4 espacios] `fun verticalOffset(fullHeight: Int): Int = (fullHeight * slideFactor).roundToInt()`
+      → Declara una función. El bloque de `verticalOffset` se detalla después instrucción por instrucción.
+
+5.11 `ConfigurableAnimatedContent` — líneas 299–300
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    fun <T> ConfigurableAnimatedContent(targetState: T, animationsEnabled: Boolean, animationSpeed: Float, animationStyle: String,
+        animationEasing: String, animationIntensity: Float, performanceMode: String = "balanced", modifier: Modifier = Modifier,
+
+Propósito:
+    Implementa `ConfigurableAnimatedContent`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `targetState: T`: el llamador proporciona este valor/callback a `ConfigurableAnimatedContent`. Dentro del cuerpo, las líneas donde aparece `targetState` muestran exactamente cómo afecta al resultado.
+  - `animationsEnabled: Boolean`: el llamador proporciona este valor/callback a `ConfigurableAnimatedContent`. Dentro del cuerpo, las líneas donde aparece `animationsEnabled` muestran exactamente cómo afecta al resultado.
+  - `animationSpeed: Float`: el llamador proporciona este valor/callback a `ConfigurableAnimatedContent`. Dentro del cuerpo, las líneas donde aparece `animationSpeed` muestran exactamente cómo afecta al resultado.
+  - `animationStyle: String`: el llamador proporciona este valor/callback a `ConfigurableAnimatedContent`. Dentro del cuerpo, las líneas donde aparece `animationStyle` muestran exactamente cómo afecta al resultado.
+  - `animationEasing: String`: el llamador proporciona este valor/callback a `ConfigurableAnimatedContent`. Dentro del cuerpo, las líneas donde aparece `animationEasing` muestran exactamente cómo afecta al resultado.
+  - `animationIntensity: Float`: el llamador proporciona este valor/callback a `ConfigurableAnimatedContent`. Dentro del cuerpo, las líneas donde aparece `animationIntensity` muestran exactamente cómo afecta al resultado.
+  - `performanceMode: String = "balanced"`: el llamador proporciona este valor/callback a `ConfigurableAnimatedContent`. Dentro del cuerpo, las líneas donde aparece `performanceMode` muestran exactamente cómo afecta al resultado.
+  - `modifier: Modifier = Modifier`: el llamador proporciona este valor/callback a `ConfigurableAnimatedContent`. Dentro del cuerpo, las líneas donde aparece `modifier` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L299 [0 espacios] `fun <T> ConfigurableAnimatedContent(targetState: T, animationsEnabled: Boolean, animationSpeed: Float, animationStyle: String,`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `fun <T> ConfigurableAnimatedContent(targetState: T, animationsEnabled: Boolean, animationSpeed: Float, animationStyle: String,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+  L300 [4 espacios] `animationEasing: String, animationIntensity: Float, performanceMode: String = "balanced", modifier: Modifier = Modifier,`
+      → Asigna/configura `animationEasing: String, animationIntensity: Float, performanceMode: String` usando `"balanced", modifier: Modifier = Modifier,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+
+5.12 `ZoomAnimatedContent` — líneas 325–325
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    fun <T> ZoomAnimatedContent(targetState: T, animationsEnabled: Boolean, animationSpeed: Float, modifier: Modifier = Modifier,
+
+Propósito:
+    Implementa `ZoomAnimatedContent`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `targetState: T`: el llamador proporciona este valor/callback a `ZoomAnimatedContent`. Dentro del cuerpo, las líneas donde aparece `targetState` muestran exactamente cómo afecta al resultado.
+  - `animationsEnabled: Boolean`: el llamador proporciona este valor/callback a `ZoomAnimatedContent`. Dentro del cuerpo, las líneas donde aparece `animationsEnabled` muestran exactamente cómo afecta al resultado.
+  - `animationSpeed: Float`: el llamador proporciona este valor/callback a `ZoomAnimatedContent`. Dentro del cuerpo, las líneas donde aparece `animationSpeed` muestran exactamente cómo afecta al resultado.
+  - `modifier: Modifier = Modifier`: el llamador proporciona este valor/callback a `ZoomAnimatedContent`. Dentro del cuerpo, las líneas donde aparece `modifier` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L325 [0 espacios] `fun <T> ZoomAnimatedContent(targetState: T, animationsEnabled: Boolean, animationSpeed: Float, modifier: Modifier = Modifier,`
+      → Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `fun <T> ZoomAnimatedContent(targetState: T, animationsEnabled: Boolean, animationSpeed: Float, modifier: Modifier = Modifier,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+
+5.13 `AnimatedScreenEntry` — líneas 337–337
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+Firma completa:
+    fun AnimatedScreenEntry(animationsEnabled: Boolean, animationSpeed: Float, modifier: Modifier = Modifier, content: @Composable () -> Unit
+
+Propósito:
+    Implementa `AnimatedScreenEntry`. La finalidad exacta se deduce del cuerpo real que se explica inmediatamente debajo, no de una descripción genérica.
+
+Parámetros/entradas:
+  - `animationsEnabled: Boolean`: el llamador proporciona este valor/callback a `AnimatedScreenEntry`. Dentro del cuerpo, las líneas donde aparece `animationsEnabled` muestran exactamente cómo afecta al resultado.
+  - `animationSpeed: Float`: el llamador proporciona este valor/callback a `AnimatedScreenEntry`. Dentro del cuerpo, las líneas donde aparece `animationSpeed` muestran exactamente cómo afecta al resultado.
+  - `modifier: Modifier = Modifier`: el llamador proporciona este valor/callback a `AnimatedScreenEntry`. Dentro del cuerpo, las líneas donde aparece `modifier` muestran exactamente cómo afecta al resultado.
+  - `content: @Composable (`: el llamador proporciona este valor/callback a `AnimatedScreenEntry`. Dentro del cuerpo, las líneas donde aparece `content` muestran exactamente cómo afecta al resultado.
+
+Salida:
+  - No se declara un tipo de retorno visible; Kotlin infiere el tipo o la función devuelve `Unit` si solo ejecuta efectos.
+
+Recorrido interno, instrucción por instrucción:
+  L337 [0 espacios] `fun AnimatedScreenEntry(animationsEnabled: Boolean, animationSpeed: Float, modifier: Modifier = Modifier, content: @Composable () -> Unit`
+      → Declara una función. El bloque de `AnimatedScreenEntry` se detalla después instrucción por instrucción.
+
+6. EXPLICACIÓN COMPLETA LÍNEA POR LÍNEA
+----------------------------------------------------------------------
+Esta sección no omite líneas ejecutables. Repite incluso partes ya explicadas en funciones para poder leer el archivo de arriba abajo sin saltar entre secciones.
+L1: `package com.example.mynotes.ui.motion`
+    Declara que este archivo pertenece al package `com.example.mynotes.ui.motion`; esto determina su namespace Kotlin y cómo lo importan otros archivos.
+L3: `import androidx.compose.animation.AnimatedContent`
+    Importa `androidx.compose.animation.AnimatedContent` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L4: `import androidx.compose.animation.AnimatedContentTransitionScope`
+    Importa `androidx.compose.animation.AnimatedContentTransitionScope` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L5: `import androidx.compose.animation.ContentTransform`
+    Importa `androidx.compose.animation.ContentTransform` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L6: `import androidx.compose.animation.EnterTransition`
+    Importa `androidx.compose.animation.EnterTransition` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L7: `import androidx.compose.animation.ExitTransition`
+    Importa `androidx.compose.animation.ExitTransition` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L8: `import androidx.compose.animation.expandHorizontally`
+    Importa `androidx.compose.animation.expandHorizontally` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L9: `import androidx.compose.animation.expandIn`
+    Importa `androidx.compose.animation.expandIn` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L10: `import androidx.compose.animation.expandVertically`
+    Importa `androidx.compose.animation.expandVertically` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L11: `import androidx.compose.animation.fadeIn`
+    Importa `androidx.compose.animation.fadeIn` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L12: `import androidx.compose.animation.fadeOut`
+    Importa `androidx.compose.animation.fadeOut` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L13: `import androidx.compose.animation.scaleIn`
+    Importa `androidx.compose.animation.scaleIn` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L14: `import androidx.compose.animation.scaleOut`
+    Importa `androidx.compose.animation.scaleOut` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L15: `import androidx.compose.animation.shrinkHorizontally`
+    Importa `androidx.compose.animation.shrinkHorizontally` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L16: `import androidx.compose.animation.shrinkOut`
+    Importa `androidx.compose.animation.shrinkOut` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L17: `import androidx.compose.animation.shrinkVertically`
+    Importa `androidx.compose.animation.shrinkVertically` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L18: `import androidx.compose.animation.slideInHorizontally`
+    Importa `androidx.compose.animation.slideInHorizontally` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L19: `import androidx.compose.animation.slideInVertically`
+    Importa `androidx.compose.animation.slideInVertically` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L20: `import androidx.compose.animation.slideOutHorizontally`
+    Importa `androidx.compose.animation.slideOutHorizontally` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L21: `import androidx.compose.animation.slideOutVertically`
+    Importa `androidx.compose.animation.slideOutVertically` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L22: `import androidx.compose.animation.togetherWith`
+    Importa `androidx.compose.animation.togetherWith` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L23: `import androidx.compose.animation.core.CubicBezierEasing`
+    Importa `androidx.compose.animation.core.CubicBezierEasing` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L24: `import androidx.compose.animation.core.Easing`
+    Importa `androidx.compose.animation.core.Easing` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L25: `import androidx.compose.animation.core.FastOutLinearInEasing`
+    Importa `androidx.compose.animation.core.FastOutLinearInEasing` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L26: `import androidx.compose.animation.core.FiniteAnimationSpec`
+    Importa `androidx.compose.animation.core.FiniteAnimationSpec` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L27: `import androidx.compose.animation.core.FastOutSlowInEasing`
+    Importa `androidx.compose.animation.core.FastOutSlowInEasing` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L28: `import androidx.compose.animation.core.LinearEasing`
+    Importa `androidx.compose.animation.core.LinearEasing` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L29: `import androidx.compose.animation.core.LinearOutSlowInEasing`
+    Importa `androidx.compose.animation.core.LinearOutSlowInEasing` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L30: `import androidx.compose.animation.core.Spring`
+    Importa `androidx.compose.animation.core.Spring` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L31: `import androidx.compose.animation.core.spring`
+    Importa `androidx.compose.animation.core.spring` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L32: `import androidx.compose.animation.core.tween`
+    Importa `androidx.compose.animation.core.tween` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L33: `import androidx.compose.foundation.background`
+    Importa `androidx.compose.foundation.background` para usar layouts, gestos y primitivas visuales de Compose.
+L34: `import androidx.compose.foundation.layout.Box`
+    Importa `androidx.compose.foundation.layout.Box` para usar layouts, gestos y primitivas visuales de Compose.
+L35: `import androidx.compose.foundation.layout.fillMaxSize`
+    Importa `androidx.compose.foundation.layout.fillMaxSize` para usar layouts, gestos y primitivas visuales de Compose.
+L36: `import androidx.compose.material3.MaterialTheme`
+    Importa `androidx.compose.material3.MaterialTheme` para usar componentes y tema Material 3.
+L37: `import androidx.compose.runtime.Composable`
+    Importa `androidx.compose.runtime.Composable` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+L38: `import androidx.compose.runtime.remember`
+    Importa `androidx.compose.runtime.remember` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+L39: `import androidx.compose.ui.Alignment`
+    Importa `androidx.compose.ui.Alignment` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L40: `import androidx.compose.ui.Modifier`
+    Importa `androidx.compose.ui.Modifier` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L41: `import androidx.compose.ui.unit.IntOffset`
+    Importa `androidx.compose.ui.unit.IntOffset` porque alguna declaración o llamada de este archivo necesita ese tipo/extensión.
+L42: `import kotlin.math.roundToInt`
+    Importa `kotlin.math.roundToInt` de la biblioteca estándar/JVM para operaciones de lenguaje, fechas, colecciones, I/O o utilidades.
+L44: `private val EmphasizedEasing = CubicBezierEasing(0.2f, 0f, 0f, 1f)`
+    Declara `EmphasizedEasing` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `CubicBezierEasing(0.2f, 0f, 0f, 1f)`.
+L45: `private val ExpressiveEasing = CubicBezierEasing(0.16f, 1f, 0.3f, 1f)`
+    Declara `ExpressiveEasing` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `CubicBezierEasing(0.16f, 1f, 0.3f, 1f)`.
+L46: `private val EmphasizedAccelerateEasing = CubicBezierEasing(0.3f, 0f, 0.8f, 0.15f)`
+    Declara `EmphasizedAccelerateEasing` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `CubicBezierEasing(0.3f, 0f, 0.8f, 0.15f)`.
+L47: `private val EmphasizedDecelerateEasing = CubicBezierEasing(0.05f, 0.7f, 0.1f, 1f)`
+    Declara `EmphasizedDecelerateEasing` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `CubicBezierEasing(0.05f, 0.7f, 0.1f, 1f)`.
+L49: `/**`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L50: `* Motor central de movimiento de la app.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L51: `*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L52: `* Todos los presets usan primitivas de Compose para evitar ventanas nuevas,`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L53: `* destellos negros y trabajo extra del sistema de navegación de Android.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L54: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L55: `object AppMotion {`
+    Declara object `AppMotion`. A partir de aquí las propiedades y funciones hasta su llave de cierre pertenecen a este tipo.
+L56: `const val FAST = 140`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L57: `const val NORMAL = 220`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L58: `const val SLOW = 320`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L59: `val supportedStyles = setOf("zoom", "zoom_fade", "fade", "slide_left", "slide_right", "slide_up", "slide_down", "slide_zoom_left",`
+    Declara `supportedStyles` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `setOf("zoom", "zoom_fade", "fade", "slide_left", "slide_right", "slide_up", "slide_down", "slide_zoom_left",`.
+L60: `"slide_zoom_up", "axis_x", "axis_y", "axis_z", "expand", "expand_horizontal", "expand_vertical", "bounce", "elastic", "pop",`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"slide_zoom_up", "axis_x", "axis_y", "axis_z", "expand", "expand_horizontal", "expand_vertical", "bounce", "elastic", "pop",`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L61: `"subtle", "expressive_spring", "container_transform", "soft_reveal", "elastic_slide", "predictive", "tonal_pop", "random")`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L62: `val supportedEasings = setOf("standard", "linear", "accelerate", "decelerate", "emphasized", "expressive", "emphasized_accel", "emphasized_decel")`
+    Declara `supportedEasings` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `setOf("standard", "linear", "accelerate", "decelerate", "emphasized", "expressive", "emphasized_accel", "emphasized_decel")`.
+L63: `fun normalizeStyle(value: String): String = if (value in supportedStyles) value else "zoom"`
+    Declara una función. El bloque de `normalizeStyle` se detalla después instrucción por instrucción.
+L64: `fun normalizeEasing(value: String): String = if (value in supportedEasings) value else "standard"`
+    Declara una función. El bloque de `normalizeEasing` se detalla después instrucción por instrucción.
+L65: `fun normalizePerformanceMode(value: String): String = when (value) {`
+    Declara una función. El bloque de `normalizePerformanceMode` se detalla después instrucción por instrucción.
+L66: `"performance", "balanced", "quality" -> value`
+    Define una rama/lambda. Cuando coincide `"performance", "balanced", "quality"`, se ejecuta la expresión o bloque situado después de `->`.
+L67: `else -> "balanced"`
+    Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+L68: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L69: `fun duration(baseMilliseconds: Int, animationsEnabled: Boolean, animationSpeed: Float): Int {`
+    Declara una función. El bloque de `duration` se detalla después instrucción por instrucción.
+L70: `if (!animationsEnabled) return 0`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `!animationsEnabled`.
+L71: `val speed = animationSpeed.coerceIn(0.5f, 2f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L72: `return (baseMilliseconds / speed).roundToInt().coerceAtLeast(1)`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L73: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L74: `fun easing(key: String): Easing = when (normalizeEasing(key)) {`
+    Declara una función. El bloque de `easing` se detalla después instrucción por instrucción.
+L75: `"linear" -> LinearEasing`
+    Define una rama/lambda. Cuando coincide `"linear"`, se ejecuta la expresión o bloque situado después de `->`.
+L76: `"accelerate" -> FastOutLinearInEasing`
+    Define una rama/lambda. Cuando coincide `"accelerate"`, se ejecuta la expresión o bloque situado después de `->`.
+L77: `"decelerate" -> LinearOutSlowInEasing`
+    Define una rama/lambda. Cuando coincide `"decelerate"`, se ejecuta la expresión o bloque situado después de `->`.
+L78: `"emphasized" -> EmphasizedEasing`
+    Define una rama/lambda. Cuando coincide `"emphasized"`, se ejecuta la expresión o bloque situado después de `->`.
+L79: `"expressive" -> ExpressiveEasing`
+    Define una rama/lambda. Cuando coincide `"expressive"`, se ejecuta la expresión o bloque situado después de `->`.
+L80: `"emphasized_accel" -> EmphasizedAccelerateEasing`
+    Define una rama/lambda. Cuando coincide `"emphasized_accel"`, se ejecuta la expresión o bloque situado después de `->`.
+L81: `"emphasized_decel" -> EmphasizedDecelerateEasing`
+    Define una rama/lambda. Cuando coincide `"emphasized_decel"`, se ejecuta la expresión o bloque situado después de `->`.
+L82: `else -> FastOutSlowInEasing`
+    Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+L83: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L84: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L86: `private val randomStylePool = listOf("zoom", "zoom_fade", "fade", "slide_left", "slide_right", "slide_up", "slide_down", "slide_zoom_left",`
+    Declara `randomStylePool` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `listOf("zoom", "zoom_fade", "fade", "slide_left", "slide_right", "slide_up", "slide_down", "slide_zoom_left",`.
+L87: `"slide_zoom_up", "axis_x", "axis_y", "axis_z", "expand", "expand_horizontal", "expand_vertical", "bounce", "elastic", "pop", "subtle",`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `"slide_zoom_up", "axis_x", "axis_y", "axis_z", "expand", "expand_horizontal", "expand_vertical", "bounce", "elastic", "pop", "subtle",`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L88: `"expressive_spring", "container_transform", "soft_reveal", "elastic_slide", "predictive", "tonal_pop")`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L89: `private fun <T> AnimatedContentTransitionScope<T>.motionTransform(animationsEnabled: Boolean, animationSpeed: Float, animationStyle: String,`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `private fun <T> AnimatedContentTransitionScope<T>.motionTransform(animationsEnabled: Boolean, animationSpeed: Float, animationStyle: String,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L90: `animationEasing: String, animationIntensity: Float, performanceMode: String): ContentTransform {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L91: `if (!animationsEnabled) {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `!animationsEnabled`.
+L92: `return EnterTransition.None togetherWith ExitTransition.None`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L93: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L94: `val mode = AppMotion.normalizePerformanceMode(performanceMode)`
+    Declara `mode` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `AppMotion.normalizePerformanceMode(performanceMode)`.
+L95: `val requestedStyle = AppMotion.normalizeStyle(animationStyle)`
+    Declara `requestedStyle` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `AppMotion.normalizeStyle(animationStyle)`.
+L96: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L97: `* Expand/shrink modifica el layout completo en cada frame.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L98: `* En los perfiles orientados a fluidez conservamos una apariencia`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L99: `* equivalente mediante transformaciones de capa (scale/slide/fade),`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L100: `* que son mucho más baratas en dispositivos antiguos.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L101: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L102: `val style = when (mode) {`
+    Declara `style` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `when (mode) {`.
+L103: `"performance" -> when (requestedStyle) {`
+    Define una rama/lambda. Cuando coincide `"performance"`, se ejecuta la expresión o bloque situado después de `->`.
+L104: `"expand", "axis_z", "bounce", "elastic", "expressive_spring", "container_transform", "tonal_pop" -> "zoom_fade"`
+    Define una rama/lambda. Cuando coincide `"expand", "axis_z", "bounce", "elastic", "expressive_spring", "container_transform", "tonal_pop"`, se ejecuta la expresión o bloque situado después de `->`.
+L105: `"expand_horizontal", "elastic_slide", "predictive" -> "slide_zoom_left"`
+    Define una rama/lambda. Cuando coincide `"expand_horizontal", "elastic_slide", "predictive"`, se ejecuta la expresión o bloque situado después de `->`.
+L106: `"expand_vertical" -> "slide_zoom_up"`
+    Define una rama/lambda. Cuando coincide `"expand_vertical"`, se ejecuta la expresión o bloque situado después de `->`.
+L107: `"soft_reveal" -> "subtle"`
+    Define una rama/lambda. Cuando coincide `"soft_reveal"`, se ejecuta la expresión o bloque situado después de `->`.
+L108: `else -> requestedStyle`
+    Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+L109: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L110: `"balanced" -> when (requestedStyle) {`
+    Define una rama/lambda. Cuando coincide `"balanced"`, se ejecuta la expresión o bloque situado después de `->`.
+L111: `"expand" -> "zoom_fade"`
+    Define una rama/lambda. Cuando coincide `"expand"`, se ejecuta la expresión o bloque situado después de `->`.
+L112: `"expand_horizontal" -> "slide_zoom_left"`
+    Define una rama/lambda. Cuando coincide `"expand_horizontal"`, se ejecuta la expresión o bloque situado después de `->`.
+L113: `"expand_vertical" -> "slide_zoom_up"`
+    Define una rama/lambda. Cuando coincide `"expand_vertical"`, se ejecuta la expresión o bloque situado después de `->`.
+L114: `else -> requestedStyle`
+    Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+L115: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L116: `else -> requestedStyle`
+    Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+L117: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L118: `val speedBoost = when (mode) {`
+    Declara `speedBoost` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `when (mode) {`.
+L119: `"performance" -> 1.28f`
+    Define una rama/lambda. Cuando coincide `"performance"`, se ejecuta la expresión o bloque situado después de `->`.
+L120: `"balanced" -> 1.10f`
+    Define una rama/lambda. Cuando coincide `"balanced"`, se ejecuta la expresión o bloque situado después de `->`.
+L121: `else -> 1f`
+    Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+L122: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L123: `val speed = (animationSpeed * speedBoost).coerceIn(0.5f, 2.4f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L124: `val intensityFactor = if (mode == "performance") {`
+    Declara `intensityFactor` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (mode == "performance") {`.
+L125: `0.82f`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `0.82f`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L126: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L127: `1f`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `1f`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L128: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L129: `val intensity = (animationIntensity * intensityFactor).coerceIn(0.45f, 1.5f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L130: `val easing = AppMotion.easing(animationEasing)`
+    Declara `easing` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `AppMotion.easing(animationEasing)`.
+L131: `val enterDuration = AppMotion.duration(AppMotion.NORMAL, true, speed)`
+    Declara `enterDuration` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `AppMotion.duration(AppMotion.NORMAL, true, speed)`.
+L132: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L133: `* Con salida casi instantánea el contenido anterior deja de dibujarse`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L134: `* muy pronto y no compite con la pantalla entrante por CPU/GPU.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L135: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L136: `val exitDuration = if (mode == "performance") {`
+    Declara `exitDuration` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `if (mode == "performance") {`.
+L137: `24`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `24`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L138: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L139: `AppMotion.duration(AppMotion.FAST, true, speed)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L140: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L141: `val slowDuration = AppMotion.duration(AppMotion.SLOW, true, speed)`
+    Declara `slowDuration` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `AppMotion.duration(AppMotion.SLOW, true, speed)`.
+L142: `fun <V> enterSpec(): FiniteAnimationSpec<V> = tween(durationMillis = enterDuration, easing = easing)`
+    Asigna/configura `fun <V> enterSpec(): FiniteAnimationSpec<V>` usando `tween(durationMillis = enterDuration, easing = easing)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L143: `fun <V> exitSpec(): FiniteAnimationSpec<V> = tween(durationMillis = exitDuration, easing = easing)`
+    Asigna/configura `fun <V> exitSpec(): FiniteAnimationSpec<V>` usando `tween(durationMillis = exitDuration, easing = easing)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L144: `fun <V> slowSpec(): FiniteAnimationSpec<V> = tween(durationMillis = slowDuration, easing = easing)`
+    Asigna/configura `fun <V> slowSpec(): FiniteAnimationSpec<V>` usando `tween(durationMillis = slowDuration, easing = easing)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L145: `val zoomScale = (1f - 0.08f * intensity).coerceIn(0.78f, 0.98f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L146: `val deepZoomScale = (1f - 0.16f * intensity).coerceIn(0.68f, 0.95f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L147: `val subtleScale = (1f - 0.025f * intensity).coerceIn(0.94f, 0.99f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L148: `val slideFactor = intensity.coerceIn(0.5f, 1.5f)`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L149: `fun horizontalOffset(fullWidth: Int): Int = (fullWidth * slideFactor).roundToInt()`
+    Declara una función. El bloque de `horizontalOffset` se detalla después instrucción por instrucción.
+L150: `fun verticalOffset(fullHeight: Int): Int = (fullHeight * slideFactor).roundToInt()`
+    Declara una función. El bloque de `verticalOffset` se detalla después instrucción por instrucción.
+L151: `return when (style) {`
+    Finaliza la función actual y devuelve el valor indicado al llamador.
+L152: `"fade" -> fadeIn(initialAlpha = (1f - 0.70f * intensity).coerceIn(0f, 0.65f), animationSpec = enterSpec()) togetherWith`
+    Define una rama/lambda. Cuando coincide `"fade"`, se ejecuta la expresión o bloque situado después de `->`.
+L153: `fadeOut(targetAlpha = (1f - 0.85f * intensity).coerceIn(0f, 0.55f), animationSpec = exitSpec())`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L154: `"slide_left" -> slideInHorizontally(initialOffsetX = { horizontalOffset(it) }, animationSpec = enterSpec()) togetherWith`
+    Define una rama/lambda. Cuando coincide `"slide_left"`, se ejecuta la expresión o bloque situado después de `->`.
+L155: `slideOutHorizontally(targetOffsetX = { -horizontalOffset(it) }, animationSpec = exitSpec())`
+    Asigna/configura `slideOutHorizontally(targetOffsetX` usando `{ -horizontalOffset(it) }, animationSpec = exitSpec())`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L156: `"slide_right" -> slideInHorizontally(initialOffsetX = { -horizontalOffset(it) }, animationSpec = enterSpec()) togetherWith`
+    Define una rama/lambda. Cuando coincide `"slide_right"`, se ejecuta la expresión o bloque situado después de `->`.
+L157: `slideOutHorizontally(targetOffsetX = { horizontalOffset(it) }, animationSpec = exitSpec())`
+    Asigna/configura `slideOutHorizontally(targetOffsetX` usando `{ horizontalOffset(it) }, animationSpec = exitSpec())`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L158: `"slide_up" -> slideInVertically(initialOffsetY = { verticalOffset(it) }, animationSpec = enterSpec()) togetherWith`
+    Define una rama/lambda. Cuando coincide `"slide_up"`, se ejecuta la expresión o bloque situado después de `->`.
+L159: `slideOutVertically(targetOffsetY = { -verticalOffset(it) }, animationSpec = exitSpec())`
+    Asigna/configura `slideOutVertically(targetOffsetY` usando `{ -verticalOffset(it) }, animationSpec = exitSpec())`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L160: `"slide_down" -> slideInVertically(initialOffsetY = { -verticalOffset(it) }, animationSpec = enterSpec()) togetherWith`
+    Define una rama/lambda. Cuando coincide `"slide_down"`, se ejecuta la expresión o bloque situado después de `->`.
+L161: `slideOutVertically(targetOffsetY = { verticalOffset(it) }, animationSpec = exitSpec())`
+    Asigna/configura `slideOutVertically(targetOffsetY` usando `{ verticalOffset(it) }, animationSpec = exitSpec())`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L162: `"slide_zoom_left" -> (slideInHorizontally(initialOffsetX = { (horizontalOffset(it) * 0.70f).roundToInt() },`
+    Define una rama/lambda. Cuando coincide `"slide_zoom_left"`, se ejecuta la expresión o bloque situado después de `->`.
+L163: `animationSpec = enterSpec()) + scaleIn(initialScale = zoomScale, animationSpec = enterSpec()) + fadeIn(`
+    Asigna/configura `animationSpec` usando `enterSpec()) + scaleIn(initialScale = zoomScale, animationSpec = enterSpec()) + fadeIn(`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L164: `initialAlpha = 0.55f, animationSpec = enterSpec())) togetherWith`
+    Asigna/configura `initialAlpha` usando `0.55f, animationSpec = enterSpec())) togetherWith`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L165: `(slideOutHorizontally(targetOffsetX = { (-horizontalOffset(it) * 0.40f).roundToInt() }, animationSpec = exitSpec()) +`
+    Asigna/configura `(slideOutHorizontally(targetOffsetX` usando `{ (-horizontalOffset(it) * 0.40f).roundToInt() }, animationSpec = exitSpec()) +`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L166: `scaleOut(targetScale = zoomScale, animationSpec = exitSpec()) + fadeOut(targetAlpha = 0.25f,`
+    Asigna/configura `scaleOut(targetScale` usando `zoomScale, animationSpec = exitSpec()) + fadeOut(targetAlpha = 0.25f,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L167: `animationSpec = exitSpec()))`
+    Asigna/configura `animationSpec` usando `exitSpec()))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L168: `"slide_zoom_up" -> (slideInVertically(initialOffsetY = { (verticalOffset(it) * 0.65f).roundToInt() }, animationSpec = enterSpec()`
+    Define una rama/lambda. Cuando coincide `"slide_zoom_up"`, se ejecuta la expresión o bloque situado después de `->`.
+L169: `) + scaleIn(initialScale = zoomScale, animationSpec = enterSpec()) + fadeIn(initialAlpha = 0.55f,`
+    Asigna/configura `) + scaleIn(initialScale` usando `zoomScale, animationSpec = enterSpec()) + fadeIn(initialAlpha = 0.55f,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L170: `animationSpec = enterSpec())) togetherWith`
+    Asigna/configura `animationSpec` usando `enterSpec())) togetherWith`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L171: `(slideOutVertically(targetOffsetY = { (-verticalOffset(it) * 0.35f).roundToInt() }, animationSpec = exitSpec()) + scaleOut(`
+    Asigna/configura `(slideOutVertically(targetOffsetY` usando `{ (-verticalOffset(it) * 0.35f).roundToInt() }, animationSpec = exitSpec()) + scaleOut(`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L172: `targetScale = zoomScale, animationSpec = exitSpec()) + fadeOut(targetAlpha = 0.25f, animationSpec = exitSpec())`
+    Asigna/configura `targetScale` usando `zoomScale, animationSpec = exitSpec()) + fadeOut(targetAlpha = 0.25f, animationSpec = exitSpec())`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L173: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L174: `"axis_x" -> (slideInHorizontally(initialOffsetX = { (horizontalOffset(it) * 0.28f).roundToInt() }, animationSpec = enterSpec()) +`
+    Define una rama/lambda. Cuando coincide `"axis_x"`, se ejecuta la expresión o bloque situado después de `->`.
+L175: `fadeIn(initialAlpha = 0.25f, animationSpec = enterSpec()) +`
+    Asigna/configura `fadeIn(initialAlpha` usando `0.25f, animationSpec = enterSpec()) +`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L176: `scaleIn(initialScale = subtleScale, animationSpec = enterSpec())) togetherWith`
+    Asigna/configura `scaleIn(initialScale` usando `subtleScale, animationSpec = enterSpec())) togetherWith`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L177: `(slideOutHorizontally(targetOffsetX = { (-horizontalOffset(it) * 0.16f).roundToInt() }, animationSpec = exitSpec()) +`
+    Asigna/configura `(slideOutHorizontally(targetOffsetX` usando `{ (-horizontalOffset(it) * 0.16f).roundToInt() }, animationSpec = exitSpec()) +`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L178: `fadeOut(targetAlpha = 0.15f, animationSpec = exitSpec()) +`
+    Asigna/configura `fadeOut(targetAlpha` usando `0.15f, animationSpec = exitSpec()) +`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L179: `scaleOut(targetScale = subtleScale, animationSpec = exitSpec()))`
+    Asigna/configura `scaleOut(targetScale` usando `subtleScale, animationSpec = exitSpec()))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L180: `"axis_y" -> (slideInVertically(initialOffsetY = { (verticalOffset(it) * 0.24f).roundToInt() }, animationSpec = enterSpec()) +`
+    Define una rama/lambda. Cuando coincide `"axis_y"`, se ejecuta la expresión o bloque situado después de `->`.
+L181: `fadeIn(initialAlpha = 0.25f, animationSpec = enterSpec()) +`
+    Asigna/configura `fadeIn(initialAlpha` usando `0.25f, animationSpec = enterSpec()) +`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L182: `scaleIn(initialScale = subtleScale, animationSpec = enterSpec())) togetherWith`
+    Asigna/configura `scaleIn(initialScale` usando `subtleScale, animationSpec = enterSpec())) togetherWith`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L183: `(slideOutVertically(targetOffsetY = { (-verticalOffset(it) * 0.14f).roundToInt() }, animationSpec = exitSpec()) +`
+    Asigna/configura `(slideOutVertically(targetOffsetY` usando `{ (-verticalOffset(it) * 0.14f).roundToInt() }, animationSpec = exitSpec()) +`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L184: `fadeOut(targetAlpha = 0.15f, animationSpec = exitSpec()) +`
+    Asigna/configura `fadeOut(targetAlpha` usando `0.15f, animationSpec = exitSpec()) +`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L185: `scaleOut(targetScale = subtleScale, animationSpec = exitSpec()))`
+    Asigna/configura `scaleOut(targetScale` usando `subtleScale, animationSpec = exitSpec()))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L186: `"axis_z" -> (scaleIn(initialScale = deepZoomScale, animationSpec = slowSpec()) + fadeIn(initialAlpha = 0.15f,`
+    Define una rama/lambda. Cuando coincide `"axis_z"`, se ejecuta la expresión o bloque situado después de `->`.
+L187: `animationSpec = slowSpec())) togetherWith`
+    Asigna/configura `animationSpec` usando `slowSpec())) togetherWith`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L188: `(scaleOut(targetScale = (1f + 0.05f * intensity).coerceAtMost(1.12f), animationSpec = exitSpec()) + fadeOut(`
+    Asigna/configura `(scaleOut(targetScale` usando `(1f + 0.05f * intensity).coerceAtMost(1.12f), animationSpec = exitSpec()) + fadeOut(`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L189: `targetAlpha = 0f, animationSpec = exitSpec()))`
+    Asigna/configura `targetAlpha` usando `0f, animationSpec = exitSpec()))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L190: `"expand" -> (expandIn(expandFrom = Alignment.Center, animationSpec = enterSpec()) +`
+    Define una rama/lambda. Cuando coincide `"expand"`, se ejecuta la expresión o bloque situado después de `->`.
+L191: `fadeIn(initialAlpha = 0.30f, animationSpec = enterSpec())) togetherWith`
+    Asigna/configura `fadeIn(initialAlpha` usando `0.30f, animationSpec = enterSpec())) togetherWith`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L192: `(shrinkOut(shrinkTowards = Alignment.Center, animationSpec = exitSpec()) +`
+    Asigna/configura `(shrinkOut(shrinkTowards` usando `Alignment.Center, animationSpec = exitSpec()) +`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L193: `fadeOut(targetAlpha = 0.10f, animationSpec = exitSpec()))`
+    Asigna/configura `fadeOut(targetAlpha` usando `0.10f, animationSpec = exitSpec()))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L194: `"expand_horizontal" -> (expandHorizontally(expandFrom = Alignment.CenterHorizontally, animationSpec = enterSpec()) +`
+    Define una rama/lambda. Cuando coincide `"expand_horizontal"`, se ejecuta la expresión o bloque situado después de `->`.
+L195: `fadeIn(initialAlpha = 0.35f, animationSpec = enterSpec())) togetherWith`
+    Asigna/configura `fadeIn(initialAlpha` usando `0.35f, animationSpec = enterSpec())) togetherWith`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L196: `(shrinkHorizontally(shrinkTowards = Alignment.CenterHorizontally, animationSpec = exitSpec()) +`
+    Asigna/configura `(shrinkHorizontally(shrinkTowards` usando `Alignment.CenterHorizontally, animationSpec = exitSpec()) +`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L197: `fadeOut(targetAlpha = 0.10f, animationSpec = exitSpec()))`
+    Asigna/configura `fadeOut(targetAlpha` usando `0.10f, animationSpec = exitSpec()))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L198: `"expand_vertical" -> (expandVertically(expandFrom = Alignment.CenterVertically, animationSpec = enterSpec()) +`
+    Define una rama/lambda. Cuando coincide `"expand_vertical"`, se ejecuta la expresión o bloque situado después de `->`.
+L199: `fadeIn(initialAlpha = 0.35f, animationSpec = enterSpec())) togetherWith`
+    Asigna/configura `fadeIn(initialAlpha` usando `0.35f, animationSpec = enterSpec())) togetherWith`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L200: `(shrinkVertically(shrinkTowards = Alignment.CenterVertically, animationSpec = exitSpec()) +`
+    Asigna/configura `(shrinkVertically(shrinkTowards` usando `Alignment.CenterVertically, animationSpec = exitSpec()) +`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L201: `fadeOut(targetAlpha = 0.10f, animationSpec = exitSpec()))`
+    Asigna/configura `fadeOut(targetAlpha` usando `0.10f, animationSpec = exitSpec()))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L202: `"bounce" -> {`
+    Define una rama/lambda. Cuando coincide `"bounce"`, se ejecuta la expresión o bloque situado después de `->`.
+L203: `val bounceSpec = spring<Float>(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessMedium * speed)`
+    Declara `bounceSpec` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `spring<Float>(dampingRatio = Spring.DampingRatioMediumBouncy, stiffness = Spring.StiffnessMedium * speed)`.
+L204: `(scaleIn(initialScale = deepZoomScale, animationSpec = bounceSpec) + fadeIn(initialAlpha = 0.35f, animationSpec = enterSpec())`
+    Asigna/configura `(scaleIn(initialScale` usando `deepZoomScale, animationSpec = bounceSpec) + fadeIn(initialAlpha = 0.35f, animationSpec = enterSpec())`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L205: `) togetherWith`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `) togetherWith`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L206: `(scaleOut(targetScale = zoomScale, animationSpec = exitSpec()) + fadeOut(targetAlpha = 0.05f, animationSpec = exitSpec()))`
+    Asigna/configura `(scaleOut(targetScale` usando `zoomScale, animationSpec = exitSpec()) + fadeOut(targetAlpha = 0.05f, animationSpec = exitSpec()))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L207: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L208: `"elastic" -> {`
+    Define una rama/lambda. Cuando coincide `"elastic"`, se ejecuta la expresión o bloque situado después de `->`.
+L209: `val elasticSpec = spring<Float>(dampingRatio = Spring.DampingRatioLowBouncy, stiffness = Spring.StiffnessLow * speed)`
+    Declara `elasticSpec` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `spring<Float>(dampingRatio = Spring.DampingRatioLowBouncy, stiffness = Spring.StiffnessLow * speed)`.
+L210: `(scaleIn(initialScale = deepZoomScale, animationSpec = elasticSpec) + fadeIn(initialAlpha = 0.25f, animationSpec = enterSpec())`
+    Asigna/configura `(scaleIn(initialScale` usando `deepZoomScale, animationSpec = elasticSpec) + fadeIn(initialAlpha = 0.25f, animationSpec = enterSpec())`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L211: `) togetherWith`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `) togetherWith`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L212: `(scaleOut(targetScale = subtleScale, animationSpec = exitSpec()) + fadeOut(targetAlpha = 0.05f, animationSpec = exitSpec())`
+    Asigna/configura `(scaleOut(targetScale` usando `subtleScale, animationSpec = exitSpec()) + fadeOut(targetAlpha = 0.05f, animationSpec = exitSpec())`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L213: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L214: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L215: `"pop" -> (scaleIn(initialScale = (1f - 0.25f * intensity).coerceIn(0.58f, 0.88f), animationSpec = enterSpec()) +`
+    Define una rama/lambda. Cuando coincide `"pop"`, se ejecuta la expresión o bloque situado después de `->`.
+L216: `fadeIn(initialAlpha = 0.15f, animationSpec = enterSpec())) togetherWith`
+    Asigna/configura `fadeIn(initialAlpha` usando `0.15f, animationSpec = enterSpec())) togetherWith`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L217: `(scaleOut(targetScale = (1f + 0.08f * intensity).coerceAtMost(1.15f), animationSpec = exitSpec()) +`
+    Asigna/configura `(scaleOut(targetScale` usando `(1f + 0.08f * intensity).coerceAtMost(1.15f), animationSpec = exitSpec()) +`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L218: `fadeOut(targetAlpha = 0f, animationSpec = exitSpec()))`
+    Asigna/configura `fadeOut(targetAlpha` usando `0f, animationSpec = exitSpec()))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L219: `"subtle" -> (scaleIn(initialScale = subtleScale, animationSpec = enterSpec()) +`
+    Define una rama/lambda. Cuando coincide `"subtle"`, se ejecuta la expresión o bloque situado después de `->`.
+L220: `fadeIn(initialAlpha = 0.72f, animationSpec = enterSpec())) togetherWith`
+    Asigna/configura `fadeIn(initialAlpha` usando `0.72f, animationSpec = enterSpec())) togetherWith`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L221: `(scaleOut(targetScale = subtleScale, animationSpec = exitSpec()) + fadeOut(targetAlpha = 0.65f, animationSpec = exitSpec())`
+    Asigna/configura `(scaleOut(targetScale` usando `subtleScale, animationSpec = exitSpec()) + fadeOut(targetAlpha = 0.65f, animationSpec = exitSpec())`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L222: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L223: `"expressive_spring" -> {`
+    Define una rama/lambda. Cuando coincide `"expressive_spring"`, se ejecuta la expresión o bloque situado después de `->`.
+L224: `val springFloat = spring<Float>(`
+    Declara `springFloat` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `spring<Float>(`.
+L225: `dampingRatio = 0.72f,`
+    Asigna/configura `dampingRatio` usando `0.72f,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L226: `stiffness = (Spring.StiffnessMediumLow * speed).coerceAtLeast(80f)`
+    Asigna/configura `stiffness` usando `(Spring.StiffnessMediumLow * speed).coerceAtLeast(80f)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L227: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L228: `val springInt = spring<IntOffset>(`
+    Declara `springInt` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `spring<IntOffset>(`.
+L229: `dampingRatio = 0.72f,`
+    Asigna/configura `dampingRatio` usando `0.72f,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L230: `stiffness = (Spring.StiffnessMediumLow * speed).coerceAtLeast(80f)`
+    Asigna/configura `stiffness` usando `(Spring.StiffnessMediumLow * speed).coerceAtLeast(80f)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L231: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L232: `(slideInVertically(initialOffsetY = { (it * 0.14f * intensity).roundToInt() }, animationSpec = springInt) +`
+    Asigna/configura `(slideInVertically(initialOffsetY` usando `{ (it * 0.14f * intensity).roundToInt() }, animationSpec = springInt) +`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L233: `scaleIn(initialScale = (0.90f - 0.03f * intensity).coerceAtLeast(0.82f), animationSpec = springFloat) +`
+    Asigna/configura `scaleIn(initialScale` usando `(0.90f - 0.03f * intensity).coerceAtLeast(0.82f), animationSpec = springFloat) +`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L234: `fadeIn(initialAlpha = 0.22f, animationSpec = enterSpec())) togetherWith`
+    Asigna/configura `fadeIn(initialAlpha` usando `0.22f, animationSpec = enterSpec())) togetherWith`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L235: `(scaleOut(targetScale = 0.97f, animationSpec = exitSpec()) + fadeOut(targetAlpha = 0.08f, animationSpec = exitSpec()))`
+    Asigna/configura `(scaleOut(targetScale` usando `0.97f, animationSpec = exitSpec()) + fadeOut(targetAlpha = 0.08f, animationSpec = exitSpec()))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L236: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L237: `"container_transform" -> {`
+    Define una rama/lambda. Cuando coincide `"container_transform"`, se ejecuta la expresión o bloque situado después de `->`.
+L238: `val containerSpringFloat = spring<Float>(`
+    Declara `containerSpringFloat` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `spring<Float>(`.
+L239: `dampingRatio = 0.82f,`
+    Asigna/configura `dampingRatio` usando `0.82f,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L240: `stiffness = (Spring.StiffnessMedium * speed).coerceAtLeast(100f)`
+    Asigna/configura `stiffness` usando `(Spring.StiffnessMedium * speed).coerceAtLeast(100f)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L241: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L242: `val containerSpringInt = spring<IntOffset>(`
+    Declara `containerSpringInt` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `spring<IntOffset>(`.
+L243: `dampingRatio = 0.82f,`
+    Asigna/configura `dampingRatio` usando `0.82f,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L244: `stiffness = (Spring.StiffnessMedium * speed).coerceAtLeast(100f)`
+    Asigna/configura `stiffness` usando `(Spring.StiffnessMedium * speed).coerceAtLeast(100f)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L245: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L246: `(scaleIn(initialScale = (0.84f + 0.04f / intensity).coerceIn(0.82f, 0.92f), animationSpec = containerSpringFloat) +`
+    Limita el valor a un rango mínimo/máximo para impedir configuraciones fuera de los límites admitidos.
+L247: `slideInVertically(initialOffsetY = { (it * 0.08f * intensity).roundToInt() }, animationSpec = containerSpringInt) +`
+    Asigna/configura `slideInVertically(initialOffsetY` usando `{ (it * 0.08f * intensity).roundToInt() }, animationSpec = containerSpringInt) +`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L248: `fadeIn(initialAlpha = 0.18f, animationSpec = enterSpec())) togetherWith`
+    Asigna/configura `fadeIn(initialAlpha` usando `0.18f, animationSpec = enterSpec())) togetherWith`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L249: `(scaleOut(targetScale = (1.0f + 0.025f * intensity).coerceAtMost(1.06f), animationSpec = exitSpec()) +`
+    Asigna/configura `(scaleOut(targetScale` usando `(1.0f + 0.025f * intensity).coerceAtMost(1.06f), animationSpec = exitSpec()) +`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L250: `fadeOut(targetAlpha = 0.04f, animationSpec = exitSpec()))`
+    Asigna/configura `fadeOut(targetAlpha` usando `0.04f, animationSpec = exitSpec()))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L251: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L252: `"soft_reveal" -> (scaleIn(initialScale = (0.965f - 0.012f * intensity).coerceAtLeast(0.93f), animationSpec = slowSpec()) +`
+    Define una rama/lambda. Cuando coincide `"soft_reveal"`, se ejecuta la expresión o bloque situado después de `->`.
+L253: `fadeIn(initialAlpha = 0.05f, animationSpec = slowSpec())) togetherWith`
+    Asigna/configura `fadeIn(initialAlpha` usando `0.05f, animationSpec = slowSpec())) togetherWith`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L254: `(scaleOut(targetScale = 0.985f, animationSpec = exitSpec()) + fadeOut(targetAlpha = 0.12f, animationSpec = exitSpec()))`
+    Asigna/configura `(scaleOut(targetScale` usando `0.985f, animationSpec = exitSpec()) + fadeOut(targetAlpha = 0.12f, animationSpec = exitSpec()))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L255: `"elastic_slide" -> {`
+    Define una rama/lambda. Cuando coincide `"elastic_slide"`, se ejecuta la expresión o bloque situado después de `->`.
+L256: `val elasticSlideFloat = spring<Float>(`
+    Declara `elasticSlideFloat` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `spring<Float>(`.
+L257: `dampingRatio = 0.58f,`
+    Asigna/configura `dampingRatio` usando `0.58f,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L258: `stiffness = (Spring.StiffnessMediumLow * speed).coerceAtLeast(75f)`
+    Asigna/configura `stiffness` usando `(Spring.StiffnessMediumLow * speed).coerceAtLeast(75f)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L259: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L260: `val elasticSlideInt = spring<IntOffset>(`
+    Declara `elasticSlideInt` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `spring<IntOffset>(`.
+L261: `dampingRatio = 0.58f,`
+    Asigna/configura `dampingRatio` usando `0.58f,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L262: `stiffness = (Spring.StiffnessMediumLow * speed).coerceAtLeast(75f)`
+    Asigna/configura `stiffness` usando `(Spring.StiffnessMediumLow * speed).coerceAtLeast(75f)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L263: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L264: `(slideInHorizontally(initialOffsetX = { (it * 0.34f * intensity).roundToInt() }, animationSpec = elasticSlideInt) +`
+    Asigna/configura `(slideInHorizontally(initialOffsetX` usando `{ (it * 0.34f * intensity).roundToInt() }, animationSpec = elasticSlideInt) +`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L265: `scaleIn(initialScale = (0.91f - 0.025f * intensity).coerceAtLeast(0.84f), animationSpec = elasticSlideFloat) +`
+    Asigna/configura `scaleIn(initialScale` usando `(0.91f - 0.025f * intensity).coerceAtLeast(0.84f), animationSpec = elasticSlideFloat) +`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L266: `fadeIn(initialAlpha = 0.28f, animationSpec = enterSpec())) togetherWith`
+    Asigna/configura `fadeIn(initialAlpha` usando `0.28f, animationSpec = enterSpec())) togetherWith`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L267: `(slideOutHorizontally(targetOffsetX = { (-it * 0.10f * intensity).roundToInt() }, animationSpec = exitSpec()) +`
+    Asigna/configura `(slideOutHorizontally(targetOffsetX` usando `{ (-it * 0.10f * intensity).roundToInt() }, animationSpec = exitSpec()) +`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L268: `fadeOut(targetAlpha = 0.08f, animationSpec = exitSpec()))`
+    Asigna/configura `fadeOut(targetAlpha` usando `0.08f, animationSpec = exitSpec()))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L269: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L270: `"predictive" -> (slideInHorizontally(initialOffsetX = { (it * 0.12f * intensity).roundToInt() }, animationSpec = enterSpec()) +`
+    Define una rama/lambda. Cuando coincide `"predictive"`, se ejecuta la expresión o bloque situado después de `->`.
+L271: `scaleIn(initialScale = (0.955f - 0.015f * intensity).coerceAtLeast(0.92f), animationSpec = enterSpec()) +`
+    Asigna/configura `scaleIn(initialScale` usando `(0.955f - 0.015f * intensity).coerceAtLeast(0.92f), animationSpec = enterSpec()) +`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L272: `fadeIn(initialAlpha = 0.42f, animationSpec = enterSpec())) togetherWith`
+    Asigna/configura `fadeIn(initialAlpha` usando `0.42f, animationSpec = enterSpec())) togetherWith`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L273: `(slideOutHorizontally(targetOffsetX = { (-it * 0.08f * intensity).roundToInt() }, animationSpec = exitSpec()) +`
+    Asigna/configura `(slideOutHorizontally(targetOffsetX` usando `{ (-it * 0.08f * intensity).roundToInt() }, animationSpec = exitSpec()) +`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L274: `scaleOut(targetScale = 0.98f, animationSpec = exitSpec()) + fadeOut(targetAlpha = 0.15f, animationSpec = exitSpec()))`
+    Asigna/configura `scaleOut(targetScale` usando `0.98f, animationSpec = exitSpec()) + fadeOut(targetAlpha = 0.15f, animationSpec = exitSpec()))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L275: `"tonal_pop" -> {`
+    Define una rama/lambda. Cuando coincide `"tonal_pop"`, se ejecuta la expresión o bloque situado después de `->`.
+L276: `val tonalSpring = spring<Float>(`
+    Declara `tonalSpring` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `spring<Float>(`.
+L277: `dampingRatio = 0.68f,`
+    Asigna/configura `dampingRatio` usando `0.68f,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L278: `stiffness = (Spring.StiffnessMedium * speed).coerceAtLeast(105f)`
+    Asigna/configura `stiffness` usando `(Spring.StiffnessMedium * speed).coerceAtLeast(105f)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L279: `)`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L280: `(scaleIn(initialScale = (0.76f - 0.04f * intensity).coerceAtLeast(0.66f), animationSpec = tonalSpring) +`
+    Asigna/configura `(scaleIn(initialScale` usando `(0.76f - 0.04f * intensity).coerceAtLeast(0.66f), animationSpec = tonalSpring) +`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L281: `fadeIn(initialAlpha = 0.10f, animationSpec = enterSpec())) togetherWith`
+    Asigna/configura `fadeIn(initialAlpha` usando `0.10f, animationSpec = enterSpec())) togetherWith`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L282: `(scaleOut(targetScale = (1.02f + 0.025f * intensity).coerceAtMost(1.08f), animationSpec = exitSpec()) +`
+    Asigna/configura `(scaleOut(targetScale` usando `(1.02f + 0.025f * intensity).coerceAtMost(1.08f), animationSpec = exitSpec()) +`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L283: `fadeOut(targetAlpha = 0.02f, animationSpec = exitSpec()))`
+    Asigna/configura `fadeOut(targetAlpha` usando `0.02f, animationSpec = exitSpec()))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L284: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L285: `"zoom_fade" -> (scaleIn(initialScale = zoomScale, animationSpec = enterSpec()) + fadeIn(initialAlpha = 0.35f,`
+    Define una rama/lambda. Cuando coincide `"zoom_fade"`, se ejecuta la expresión o bloque situado después de `->`.
+L286: `animationSpec = enterSpec())) togetherWith`
+    Asigna/configura `animationSpec` usando `enterSpec())) togetherWith`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L287: `(scaleOut(targetScale = zoomScale, animationSpec = exitSpec()) + fadeOut(targetAlpha = 0.10f, animationSpec = exitSpec()))`
+    Asigna/configura `(scaleOut(targetScale` usando `zoomScale, animationSpec = exitSpec()) + fadeOut(targetAlpha = 0.10f, animationSpec = exitSpec()))`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L288: `else -> scaleIn(initialScale = zoomScale, animationSpec = enterSpec()) togetherWith`
+    Rama alternativa: se ejecuta cuando la condición previa no se cumple.
+L289: `scaleOut(targetScale = zoomScale, animationSpec = exitSpec())`
+    Asigna/configura `scaleOut(targetScale` usando `zoomScale, animationSpec = exitSpec())`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L290: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L291: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L293: `/**`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L294: `* Contenedor configurable de navegación entre pantallas.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L295: `* El fondo queda pintado durante toda la transición, incluso en expand/shrink,`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L296: `* para que nunca aparezca el fondo negro de la ventana.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L297: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L298: `@Composable`
+    Marca la función siguiente como Composable: Compose puede ejecutarla durante composición/recomposición para describir UI a partir de estado.
+L299: `fun <T> ConfigurableAnimatedContent(targetState: T, animationsEnabled: Boolean, animationSpeed: Float, animationStyle: String,`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `fun <T> ConfigurableAnimatedContent(targetState: T, animationsEnabled: Boolean, animationSpeed: Float, animationStyle: String,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L300: `animationEasing: String, animationIntensity: Float, performanceMode: String = "balanced", modifier: Modifier = Modifier,`
+    Asigna/configura `animationEasing: String, animationIntensity: Float, performanceMode: String` usando `"balanced", modifier: Modifier = Modifier,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L301: `content: @Composable (T) -> Unit) {`
+    Define una rama/lambda. Cuando coincide `content: @Composable (T)`, se ejecuta la expresión o bloque situado después de `->`.
+L302: `val resolvedStyle = remember(targetState, animationStyle) {`
+    Memoriza el resultado durante recomposiciones de Compose. Solo se recalcula cuando cambian las claves de `remember`, reduciendo trabajo y preservando identidad/estado local.
+L303: `val normalized = AppMotion.normalizeStyle(animationStyle)`
+    Declara `normalized` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `AppMotion.normalizeStyle(animationStyle)`.
+L304: `if (normalized == "random") {`
+    Evalúa una condición y solo ejecuta el bloque asociado cuando resulta verdadera. Condición: `normalized == "random"`.
+L305: `randomStylePool.random()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L306: `} else {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L307: `normalized`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `normalized`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L308: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L309: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L310: `Box(modifier = modifier.fillMaxSize().background(MaterialTheme.colorScheme.background), contentAlignment = Alignment.Center) {`
+    Crea un `Box` de Compose que superpone/posiciona hijos dentro de un mismo contenedor. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+L311: `AnimatedContent(targetState = targetState, modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center,`
+    Configura geometría/semántica mediante `Modifier`: tamaño, padding, posición, click, fondo u otro comportamiento del nodo Compose.
+L312: `transitionSpec = {`
+    Asigna/configura `transitionSpec` usando `{`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L313: `motionTransform(animationsEnabled = animationsEnabled, animationSpeed = animationSpeed, animationStyle = resolvedStyle,`
+    Asigna/configura `motionTransform(animationsEnabled` usando `animationsEnabled, animationSpeed = animationSpeed, animationStyle = resolvedStyle,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L314: `animationEasing = animationEasing, animationIntensity = animationIntensity, performanceMode = performanceMode)`
+    Asigna/configura `animationEasing` usando `animationEasing, animationIntensity = animationIntensity, performanceMode = performanceMode)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L315: `}, label = "screenMotionTransition") { state -> Box(modifier = Modifier.fillMaxSize()`
+    Define una rama/lambda. Cuando coincide `}, label = "screenMotionTransition") { state`, se ejecuta la expresión o bloque situado después de `->`.
+L316: `.background(MaterialTheme.colorScheme.background)) {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L317: `content(state)`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L318: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L319: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L320: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L321: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L323: `/** Compatibilidad con el nombre usado por versiones anteriores. */`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L324: `@Composable`
+    Marca la función siguiente como Composable: Compose puede ejecutarla durante composición/recomposición para describir UI a partir de estado.
+L325: `fun <T> ZoomAnimatedContent(targetState: T, animationsEnabled: Boolean, animationSpeed: Float, modifier: Modifier = Modifier,`
+    Ejecuta/declara esta expresión Kotlin dentro del contexto actual: `fun <T> ZoomAnimatedContent(targetState: T, animationsEnabled: Boolean, animationSpeed: Float, modifier: Modifier = Modifier,`. Su efecto concreto se determina por el objeto o función invocada y por el estado documentado alrededor de este bloque.
+L326: `content: @Composable (T) -> Unit) {`
+    Define una rama/lambda. Cuando coincide `content: @Composable (T)`, se ejecuta la expresión o bloque situado después de `->`.
+L327: `ConfigurableAnimatedContent(targetState = targetState, animationsEnabled = animationsEnabled, animationSpeed = animationSpeed,`
+    Asigna/configura `ConfigurableAnimatedContent(targetState` usando `targetState, animationsEnabled = animationsEnabled, animationSpeed = animationSpeed,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L328: `animationStyle = "zoom", animationEasing = "standard", animationIntensity = 1f, performanceMode = "balanced", modifier = modifier,`
+    Asigna/configura `animationStyle` usando `"zoom", animationEasing = "standard", animationIntensity = 1f, performanceMode = "balanced", modifier = modifier,`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L329: `content = content)`
+    Asigna/configura `content` usando `content)`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L330: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L332: `/**`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L333: `* Las pantallas ya no se animan por separado. Esto evita dobles transiciones,`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L334: `* recomposiciones innecesarias y flashes al navegar.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L335: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L336: `@Composable`
+    Marca la función siguiente como Composable: Compose puede ejecutarla durante composición/recomposición para describir UI a partir de estado.
+L337: `fun AnimatedScreenEntry(animationsEnabled: Boolean, animationSpeed: Float, modifier: Modifier = Modifier, content: @Composable () -> Unit`
+    Declara una función. El bloque de `AnimatedScreenEntry` se detalla después instrucción por instrucción.
+L338: `) {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L339: `Box(modifier = modifier.fillMaxSize()) {`
+    Crea un `Box` de Compose que superpone/posiciona hijos dentro de un mismo contenedor. Los `Modifier` y parámetros siguientes controlan tamaño/alineación.
+L340: `content()`
+    Completa una llamada/expresión iniciada en líneas anteriores. Los argumentos acumulados configuran la operación que se está construyendo.
+L341: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L342: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+7. RECURSOS ANDROID REFERENCIADOS
+----------------------------------------------------------------------
+- No hay referencias directas `R.*` en este archivo.
+
+8. QUIÉN USA ESTE COMPONENTE
+----------------------------------------------------------------------
+- `AppMotion` aparece también en 5 archivo(s):
+    - app/src/main/java/com/example/mynotes/ui/components/NoteCard.kt
+    - app/src/main/java/com/example/mynotes/ui/components/PaletteSelector.kt
+    - app/src/main/java/com/example/mynotes/ui/theme/NoteDetailScreen.kt
+    - app/src/main/java/com/example/mynotes/ui/theme/NotesScreen.kt
+    - app/src/main/java/com/example/mynotes/ui/theme/SourceCodeInfoScreen.kt
+
+9. QUÉ PUEDE ROMPERSE SI LO MODIFICAS
+----------------------------------------------------------------------
+- Conservar firmas públicas/callbacks y comprobar los archivos que aparecen en “quién usa este componente” antes de renombrar o cambiar tipos.
+
+10. CHECKLIST DE PRUEBA DESPUÉS DE MODIFICAR ESTE ARCHIVO
+----------------------------------------------------------------------
+- Compilar `assembleDebug` y resolver primero errores de Kotlin/AAPT.
+- Abrir la pantalla/flujo relacionado y comprobar ida y vuelta (back) sin estado duplicado.
+- Cambiar tema/paleta y verificar contraste si este archivo dibuja UI.
+
+==============================================================================================================
+FIN DEL ARCHIVO
+==============================================================================================================

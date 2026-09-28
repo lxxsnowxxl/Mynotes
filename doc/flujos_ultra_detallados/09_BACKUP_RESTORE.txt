@@ -1,0 +1,3 @@
+MYNOTES — FLUJO COMPLETO DE BACKUP/RESTORE
+
+BackupRestoreSection inicia la acción desde Settings. AppDataBackupManager toma los valores admitidos, los serializa en el formato definido y crea/escribe el archivo seleccionado. En restore valida tipos/rangos y vuelve a aplicar configuración. Las preferencias nuevas que deban sobrevivir a export/import deben añadirse explícitamente al manager; DataStore por sí solo no hace que aparezcan en el archivo de backup.

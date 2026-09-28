@@ -1,37 +1,164 @@
-# AppSettings.kt — documentación del código actual
-**Ruta real:** `app/src/main/java/com/example/mynotes/settings/AppSettings.kt`  **SHA-256:** `c0f0b3a5c38f821f6aefbb839a7b6ba20e2469293c9feaf04822bac54ca5eaf4`  **Líneas:** 158 · **Bytes:** 5475 · **Imports:** 1 · **Declaraciones detectadas:** 1
-> Documento generado fuera de `app/` a partir de lectura del código. El fuente es la única fuente de verdad; no se modificó para generar esta documentación.
-## 1. Responsabilidad
+# AppSettings.kt — explicación completa del código
 
-Modelo inmutable con todas las preferencias configurables de la app.
-## 2. Package e imports
+**Ruta:** `app/src/main/java/com/example/mynotes/settings/AppSettings.kt`  
+**SHA-256:** `c0f0b3a5c38f821f6aefbb839a7b6ba20e2469293c9feaf04822bac54ca5eaf4`  
+**Líneas:** 159  
+**Package:** `com.example.mynotes.settings`
 
-Package declarado: `com.example.mynotes.settings`.
+## 1. Para qué existe este archivo
 
-### Android / Jetpack / Compose
+Modelo inmutable que reúne todos los ajustes configurables de la app y sus valores predeterminados.
 
-`androidx.compose.runtime.Immutable`
+### Contrato de datos
 
-## 3. Declaraciones detectadas
+Los campos son el contrato de configuración. Sus defaults importan porque DataStore usa esos valores cuando una clave aún no existe. Los rangos se vuelven a limitar en Repository/ViewModel para impedir valores fuera de UI.
 
-| Línea | Tipo | Nombre | Firma/inicio |
-|---:|---|---|---|
-| 4 | `class` | `AppSettings` | `` |
+## 2. Tipos/clases declarados
 
-## 4. Estado, efectos y límites observables
+- Línea **6** — `data  class AppSettings`.
 
-- No aparecen marcadores relevantes de estado/efectos de la lista auditada.
+## 3. Estado, constantes y valores importantes
 
-Estas cifras son indicadores de superficie de cambio, no diagnósticos de error. Cualquier modificación debe preservar contratos de persistencia, lifecycle, límites numéricos y nulabilidad visibles en el fuente.
+- **`configurationMode`** (línea 13) inicia con `"unset"`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`darkMode`** (línea 14) inicia con `false`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`backgroundColor`** (línea 19) inicia con `"neutral"`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`backgroundToneIndex`** (línea 24) inicia con `0`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`backgroundIntensity`** (línea 25) inicia con `0f`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`settingsPanelTone`** (línea 32) inicia con `0f`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`surfacePanelIntensity`** (línea 40) inicia con `72f`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`headerIntensity`** (línea 41) inicia con `18f`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`textColor`** (línea 50) inicia con `"auto"`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`textOutlineEnabled`** (línea 55) inicia con `false`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`noteUiTextColor`** (línea 62) inicia con `"auto"`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`sliderStyle`** (línea 66) inicia con `"capsule"`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`font`** (línea 67) inicia con `"google_sans_bold"`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`fontSize`** (línea 68) inicia con `16f`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`soundEffectsEnabled`** (línea 74) inicia con `true`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`soundEffectsVolume`** (línea 75) inicia con `65f`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`soundEffectsTheme`** (línea 80) inicia con `"classic"`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`hapticEffectsEnabled`** (línea 85) inicia con `true`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`hapticEffectsIntensity`** (línea 86) inicia con `55f`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`hapticEffectsStyle`** (línea 87) inicia con `"soft"`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`language`** (línea 88) inicia con `"system"`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`gridColumns`** (línea 89) inicia con `2`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`sortOrder`** (línea 90) inicia con `"newest"`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`profileImageUri`** (línea 92) inicia con `""`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`iconStyle`** (línea 93) inicia con `"rounded"`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`accentColor`** (línea 94) inicia con `"palette"`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`noteCardCornerRadius`** (línea 95) inicia con `18f`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`noteCardImageHeight`** (línea 96) inicia con `112f`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`noteCardOutlineEnabled`** (línea 97) inicia con `false`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`noteCardOutlineWidth`** (línea 98) inicia con `0f`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`noteTitleMaxLines`** (línea 100) inicia con `4`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`showNoteDate`** (línea 101) inicia con `true`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`fabSize`** (línea 102) inicia con `58f`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`optionMenuOrder`** (línea 110) inicia con `"edit`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
+- **`optionMenuHiddenItems`** (línea 111) inicia con `""`. Su valor se usa dentro de la responsabilidad descrita para este archivo.
 
-## 5. Dependencias internas directas
+## 4. Funciones y flujo, una por una
 
-No importa directamente otros símbolos `com.example.mynotes.*`.
+* Modo de configuración de la interfaz:
+     * unset    = todavía no se ha elegido en el primer inicio
+     * basic    = muestra únicamente los controles esenciales
+     * advanced = conserva todos los apartados de Configuración
+      
+     * Paleta global. PaletteCatalog contiene actualmente 46 paletas,
+     * cada una con exactamente cuatro tonalidades seleccionables.
+      
+     * 0 = tono más claro
+     * 3 = tono más oscuro
+      
+     * Tonalidad del gran panel de Configuración.
+     *
+     * 0%   = surfaceContainerLow original
+     * 100% = tono seleccionado de la paleta
+      
+     * Intensidad de los recuadros/paneles translúcidos de la interfaz.
+     *
+     * 0%   = se funden con el fondo
+     * 72%  = apariencia anterior de MyNotes
+     * 100% = máximo contraste del panel
+      
+     * Color global de interfaz.
+      
+     * auto  = calcula negro/blanco según contraste con el fondo
+     * black = fuerza texto negro
+     * white = fuerza texto blanco
+      
+     * Añade un halo/contorno negro ligero alrededor del texto.
+     * Está desactivado por defecto para no añadir trabajo gráfico.
+      
+     * Color independiente para notas y sus menús.
+      
+     * Mismo comportamiento, pero aplicado al fondo individual de cada nota.
+      
+     * Diseños conservados para las barras.
+      
+     * Efectos cortos de interfaz: editar, borrar, prioridad, sliders
+     * y adjuntos. El volumen se guarda como porcentaje para que sea
+     * sencillo exponerlo en Configuración.
+      
+     * Paquete de sonidos para los efectos de interfaz.
+     * classic, soft, digital, glass, retro o pop.
+      
+     * Respuesta háptica independiente del sonido. El estilo cambia el patrón
+     * de vibración y la intensidad se guarda como porcentaje.
+      
+     * Personalización del menú ⋮ de cada nota.
+     *
+     * optionMenuOrder usa claves separadas por comas y permite
+     * cambiar el orden sin migraciones complejas de DataStore.
+     * optionMenuHiddenItems contiene las acciones ocultas.
+      
+     * note  = usa el color configurado para notas
+     * black = fuerza negro
+     * white = fuerza blanco
+      
+     * Opacidad del fondo del popup, entre 35% y 100%.
+      
+     * Elementos ocultos en los submenús.
+      
+     * Perfil global de rendimiento:
+     * performance = prioriza fluidez y menor consumo de RAM/CPU
+     * balanced    = equilibrio entre calidad y rendimiento
+     * quality     = máxima fidelidad visual
+      
+     * Animaciones ligeras sincronizadas al frame clock de Compose.
+      
+     * Preset de transición entre pantallas.
+      
+     * Curva de aceleración de las transiciones.
+      
+     * 0.5x = más lenta
+     * 1.0x = normal
+     * 2.0x = más rápida
+      
+     * 0.5x = movimiento discreto
+     * 1.0x = normal
+     * 1.5x = movimiento más marcado
 
-## 6. Recursos Android referenciados
+## 5. Cómo se conecta con el resto de MyNotes
 
-No se detectaron referencias `R.*` directas.
+- No importa directamente otro componente `com.example.mynotes`; funciona como modelo/utilidad base o mediante APIs Android/Jetpack.
 
-## 7. Puntos de revisión al modificarlo
+## 6. Recursos Android que utiliza
 
-- Conservar rangos `coerce*`, claves DataStore y compatibilidad con backups existentes.
+- No se detectaron referencias directas `R.*` en este archivo.
+
+## 7. Tecnologías y efectos relevantes
+
+- Principalmente lógica Kotlin/Compose sin I/O especial detectado por estas reglas.
+
+## 8. Lectura práctica del flujo
+
+No hay flujo ejecutable propio; su contenido sirve de declaración/configuración para otros archivos.
+
+## 9. Qué no debe romperse al modificarlo
+
+- No renombrar claves persistentes sin migración; ajustes ya guardados dependen de ellas.
+- Conservar validaciones de Uri/ruta y no confiar en nombres externos sin sanitizar.
+- Evitar trabajo bloqueante durante composición y mantener estado estable para limitar recomposiciones.
+
+## 10. Resumen en lenguaje sencillo
+
+En términos simples: Modelo inmutable que reúne todos los ajustes configurables de la app y sus valores predeterminados. La sección función por función anterior describe qué entra, qué devuelve y qué efectos produce cada operación detectada en el fuente actual.

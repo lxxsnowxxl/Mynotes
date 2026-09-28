@@ -1,0 +1,176 @@
+MYNOTES — EXPLICACIÓN ULTRA DETALLADA
+==============================================================================================================
+Archivo 8/72: app/src/main/java/com/example/mynotes/data/Note.kt
+SHA-256: 9214c204b4c1219e4602869c0d979d961f49b5f2d6e76e20afc4aeaeba7c4544
+Líneas del fuente: 47
+Package: com.example.mynotes.data
+
+1. RESPONSABILIDAD EXACTA DEL ARCHIVO
+----------------------------------------------------------------------
+Entidad principal de una nota. Define qué campos se guardan en Room para título, contenido, color, categoría, prioridad, estado favorito/fijado y metadatos temporales.
+
+2. DÓNDE ENCAJA EN LA ARQUITECTURA
+----------------------------------------------------------------------
+Este archivo pertenece principalmente a la **persistencia/modelos Room**. No debe analizarse aislado: las referencias cruzadas y callbacks se detallan más abajo.
+
+3. IMPORTACIONES, UNA POR UNA
+----------------------------------------------------------------------
+- `androidx.compose.runtime.Immutable`: Importa `androidx.compose.runtime.Immutable` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+- `androidx.room.Entity`: Importa `androidx.room.Entity` para usar persistencia SQLite declarativa con Room.
+- `androidx.room.Index`: Importa `androidx.room.Index` para usar persistencia SQLite declarativa con Room.
+- `androidx.room.PrimaryKey`: Importa `androidx.room.PrimaryKey` para usar persistencia SQLite declarativa con Room.
+
+4. DECLARACIONES Y ESTADO IMPORTANTES
+----------------------------------------------------------------------
+L24: `data class Note(`
+    Declara `Note` como `data class`: Kotlin genera automáticamente igualdad, hash, copia y representación textual a partir de sus propiedades del constructor.
+L26: `val id: Int = 0,`
+    Declara `id` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `0,`.
+L27: `val title: String,`
+    Declara `title` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L28: `val content: String,`
+    Declara `content` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L29: `val createdAt: Long = System.currentTimeMillis(),`
+    Declara `createdAt` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `System.currentTimeMillis(),`.
+L30: `val color: String = "default",`
+    Declara `color` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `"default",`.
+L31: `val priority: Int = 0,`
+    Declara `priority` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `0,`.
+L39: `val category: String = "personal",`
+    Declara `category` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `"personal",`.
+L43: `val isFavorite: Boolean = false,`
+    Declara `isFavorite` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `false,`.
+L47: `val isPinned: Boolean = false)`
+    Declara `isPinned` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `false)`.
+
+5. FUNCIONES — EXPLICACIÓN DE CADA UNA
+----------------------------------------------------------------------
+Este archivo no declara funciones Kotlin detectables (puede ser un script Gradle, clase puramente declarativa o modelo).
+
+6. EXPLICACIÓN COMPLETA LÍNEA POR LÍNEA
+----------------------------------------------------------------------
+Esta sección no omite líneas ejecutables. Repite incluso partes ya explicadas en funciones para poder leer el archivo de arriba abajo sin saltar entre secciones.
+L1: `package com.example.mynotes.data`
+    Declara que este archivo pertenece al package `com.example.mynotes.data`; esto determina su namespace Kotlin y cómo lo importan otros archivos.
+L3: `import androidx.compose.runtime.Immutable`
+    Importa `androidx.compose.runtime.Immutable` para usar estado reactivo y ciclo de recomposición de Jetpack Compose.
+L4: `import androidx.room.Entity`
+    Importa `androidx.room.Entity` para usar persistencia SQLite declarativa con Room.
+L5: `import androidx.room.Index`
+    Importa `androidx.room.Index` para usar persistencia SQLite declarativa con Room.
+L6: `import androidx.room.PrimaryKey`
+    Importa `androidx.room.PrimaryKey` para usar persistencia SQLite declarativa con Room.
+L8: `@Immutable`
+    Aplica la anotación `@Immutable` a la declaración siguiente; la anotación modifica metadatos, generación de código o comportamiento del framework.
+L9: `@Entity(tableName = "notes", indices = [`
+    Declara una entidad Room. Room genera una tabla SQLite a partir de la clase anotada y de sus campos.
+L10: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L11: `* Se conserva el índice anterior para que Room valide`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L12: `* correctamente instalaciones que ya pasaron por la versión 4.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L13: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L14: `Index(value = ["priority", "createdAt"]),`
+    Asigna/configura `Index(value` usando `["priority", "createdAt"]),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L15: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L16: `* El orden principal de la pantalla:`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L17: `* fijadas -> prioridad -> fecha.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L18: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L19: `Index(value = ["isPinned", "priority", "createdAt"]),`
+    Asigna/configura `Index(value` usando `["isPinned", "priority", "createdAt"]),`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L20: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L21: `* Acelera filtros Work / Personal.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L22: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L23: `Index(value = ["category"])])`
+    Asigna/configura `Index(value` usando `["category"])])`. Este valor alimenta el estado o parámetro que consumen las líneas posteriores.
+L24: `data class Note(`
+    Declara `Note` como `data class`: Kotlin genera automáticamente igualdad, hash, copia y representación textual a partir de sus propiedades del constructor.
+L25: `@PrimaryKey(autoGenerate = true)`
+    Aplica la anotación `@PrimaryKey(autoGenerate = true)` a la declaración siguiente; la anotación modifica metadatos, generación de código o comportamiento del framework.
+L26: `val id: Int = 0,`
+    Declara `id` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `0,`.
+L27: `val title: String,`
+    Declara `title` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L28: `val content: String,`
+    Declara `content` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L29: `val createdAt: Long = System.currentTimeMillis(),`
+    Declara `createdAt` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `System.currentTimeMillis(),`.
+L30: `val color: String = "default",`
+    Declara `color` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `"default",`.
+L31: `val priority: Int = 0,`
+    Declara `priority` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `0,`.
+L32: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L33: `* Categorías usadas por los chips del diseño.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L34: `*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L35: `* Valores actuales:`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L36: `* "work"`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L37: `* "personal"`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L38: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L39: `val category: String = "personal",`
+    Declara `category` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `"personal",`.
+L40: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L41: `* Favorita: aparece en el filtro Favorites.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L42: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L43: `val isFavorite: Boolean = false,`
+    Declara `isFavorite` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `false,`.
+L44: `/*`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L45: `* Fijada: permanece antes que el resto.`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L46: `*/`
+    Parte de un comentario de bloque/KDoc; sirve como documentación y no genera instrucciones en tiempo de ejecución.
+L47: `val isPinned: Boolean = false)`
+    Declara `isPinned` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `false)`.
+
+7. RECURSOS ANDROID REFERENCIADOS
+----------------------------------------------------------------------
+- No hay referencias directas `R.*` en este archivo.
+
+8. QUIÉN USA ESTE COMPONENTE
+----------------------------------------------------------------------
+- `Note` aparece también en 12 archivo(s):
+    - app/src/main/java/com/example/mynotes/MainActivity.kt
+    - app/src/main/java/com/example/mynotes/data/AppDataBackupManager.kt
+    - app/src/main/java/com/example/mynotes/data/AppDatabase.kt
+    - app/src/main/java/com/example/mynotes/data/NoteDao.kt
+    - app/src/main/java/com/example/mynotes/ui/components/NoteCard.kt
+    - app/src/main/java/com/example/mynotes/ui/theme/NoteDetailScreen.kt
+    - app/src/main/java/com/example/mynotes/ui/theme/NotesScreen.kt
+    - app/src/main/java/com/example/mynotes/viewmodel/NoteViewModel.kt
+    - app/src/main/java/com/example/mynotes/widget/FavoritesWidgetProvider.kt
+    - app/src/main/java/com/example/mynotes/widget/RecentNotesWidgetProvider.kt
+    - app/src/main/java/com/example/mynotes/widget/WidgetMediaPreview.kt
+    - app/src/main/java/com/example/mynotes/widget/WidgetPresentation.kt
+
+9. QUÉ PUEDE ROMPERSE SI LO MODIFICAS
+----------------------------------------------------------------------
+- Cambiar el esquema Room puede requerir aumentar versión y definir migración. Hacerlo sin migración puede impedir abrir bases existentes o forzar pérdida de datos si se usa destructive migration.
+
+10. CHECKLIST DE PRUEBA DESPUÉS DE MODIFICAR ESTE ARCHIVO
+----------------------------------------------------------------------
+- Compilar `assembleDebug` y resolver primero errores de Kotlin/AAPT.
+- Abrir la pantalla/flujo relacionado y comprobar ida y vuelta (back) sin estado duplicado.
+- Cambiar tema/paleta y verificar contraste si este archivo dibuja UI.
+
+==============================================================================================================
+FIN DEL ARCHIVO
+==============================================================================================================

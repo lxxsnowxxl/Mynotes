@@ -1,0 +1,139 @@
+MYNOTES — EXPLICACIÓN ULTRA DETALLADA
+==============================================================================================================
+Archivo 14/72: app/src/main/java/com/example/mynotes/reminders/Reminder.kt
+SHA-256: 7375bc5e54aeee254278db147ebf2691165bc8eafa2d2264b0b40d6a0f61eae2
+Líneas del fuente: 25
+Package: com.example.mynotes.reminders
+
+1. RESPONSABILIDAD EXACTA DEL ARCHIVO
+----------------------------------------------------------------------
+Modelo persistente de recordatorio: identidad, texto, fecha/hora, repetición, prioridad, color y estado habilitado.
+
+2. DÓNDE ENCAJA EN LA ARQUITECTURA
+----------------------------------------------------------------------
+Este archivo pertenece principalmente a la **subsistema de recordatorios/alarmas/notificaciones**. No debe analizarse aislado: las referencias cruzadas y callbacks se detallan más abajo.
+
+3. IMPORTACIONES, UNA POR UNA
+----------------------------------------------------------------------
+- No declara imports explícitos.
+
+4. DECLARACIONES Y ESTADO IMPORTANTES
+----------------------------------------------------------------------
+L3: `data class Reminder(`
+    Declara `Reminder` como `data class`: Kotlin genera automáticamente igualdad, hash, copia y representación textual a partir de sus propiedades del constructor.
+L4: `val id: Long = System.currentTimeMillis(),`
+    Declara `id` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `System.currentTimeMillis(),`.
+L5: `val title: String,`
+    Declara `title` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L6: `val description: String = "",`
+    Declara `description` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `"",`.
+L7: `val triggerAtMillis: Long,`
+    Declara `triggerAtMillis` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L8: `val repeatMode: String = REPEAT_NONE,`
+    Declara `repeatMode` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `REPEAT_NONE,`.
+L9: `val priority: String = PRIORITY_NORMAL,`
+    Declara `priority` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `PRIORITY_NORMAL,`.
+L10: `val colorKey: String = "palette",`
+    Declara `colorKey` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `"palette",`.
+L11: `val enabled: Boolean = true,`
+    Declara `enabled` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `true,`.
+L12: `val createdAt: Long = System.currentTimeMillis()`
+    Declara `createdAt` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `System.currentTimeMillis()`.
+L15: `const val REPEAT_NONE = "none"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L16: `const val REPEAT_DAILY = "daily"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L17: `const val REPEAT_WEEKLY = "weekly"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L18: `const val REPEAT_MONTHLY = "monthly"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L19: `const val REPEAT_WEEKDAYS = "weekdays"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L21: `const val PRIORITY_LOW = "low"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L22: `const val PRIORITY_NORMAL = "normal"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L23: `const val PRIORITY_HIGH = "high"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+
+5. FUNCIONES — EXPLICACIÓN DE CADA UNA
+----------------------------------------------------------------------
+Este archivo no declara funciones Kotlin detectables (puede ser un script Gradle, clase puramente declarativa o modelo).
+
+6. EXPLICACIÓN COMPLETA LÍNEA POR LÍNEA
+----------------------------------------------------------------------
+Esta sección no omite líneas ejecutables. Repite incluso partes ya explicadas en funciones para poder leer el archivo de arriba abajo sin saltar entre secciones.
+L1: `package com.example.mynotes.reminders`
+    Declara que este archivo pertenece al package `com.example.mynotes.reminders`; esto determina su namespace Kotlin y cómo lo importan otros archivos.
+L3: `data class Reminder(`
+    Declara `Reminder` como `data class`: Kotlin genera automáticamente igualdad, hash, copia y representación textual a partir de sus propiedades del constructor.
+L4: `val id: Long = System.currentTimeMillis(),`
+    Declara `id` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `System.currentTimeMillis(),`.
+L5: `val title: String,`
+    Declara `title` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L6: `val description: String = "",`
+    Declara `description` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `"",`.
+L7: `val triggerAtMillis: Long,`
+    Declara `triggerAtMillis` como referencia inmutable: no puede reasignarse después de inicializarse. La inicialización continúa en las líneas siguientes.
+L8: `val repeatMode: String = REPEAT_NONE,`
+    Declara `repeatMode` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `REPEAT_NONE,`.
+L9: `val priority: String = PRIORITY_NORMAL,`
+    Declara `priority` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `PRIORITY_NORMAL,`.
+L10: `val colorKey: String = "palette",`
+    Declara `colorKey` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `"palette",`.
+L11: `val enabled: Boolean = true,`
+    Declara `enabled` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `true,`.
+L12: `val createdAt: Long = System.currentTimeMillis()`
+    Declara `createdAt` como referencia inmutable: no puede reasignarse después de inicializarse. Su valor se obtiene de `System.currentTimeMillis()`.
+L13: `) {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L14: `companion object {`
+    Abre un bloque/lambda. Las instrucciones siguientes pertenecen a esta operación hasta la llave de cierre correspondiente.
+L15: `const val REPEAT_NONE = "none"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L16: `const val REPEAT_DAILY = "daily"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L17: `const val REPEAT_WEEKLY = "weekly"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L18: `const val REPEAT_MONTHLY = "monthly"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L19: `const val REPEAT_WEEKDAYS = "weekdays"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L21: `const val PRIORITY_LOW = "low"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L22: `const val PRIORITY_NORMAL = "normal"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L23: `const val PRIORITY_HIGH = "high"`
+    Declara una constante de compilación; se usa como identificador estable (acciones, extras, claves, límites) sin crear estado mutable.
+L24: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+L25: `}`
+    Delimitador estructural: abre/cierra el bloque o la lista de argumentos iniciada en las líneas anteriores; no ejecuta una operación por sí solo.
+
+7. RECURSOS ANDROID REFERENCIADOS
+----------------------------------------------------------------------
+- No hay referencias directas `R.*` en este archivo.
+
+8. QUIÉN USA ESTE COMPONENTE
+----------------------------------------------------------------------
+- `Reminder` aparece también en 4 archivo(s):
+    - app/src/main/java/com/example/mynotes/reminders/ReminderAlarmScheduler.kt
+    - app/src/main/java/com/example/mynotes/reminders/ReminderReceiver.kt
+    - app/src/main/java/com/example/mynotes/reminders/ReminderRepository.kt
+    - app/src/main/java/com/example/mynotes/ui/theme/ReminderScreen.kt
+
+9. QUÉ PUEDE ROMPERSE SI LO MODIFICAS
+----------------------------------------------------------------------
+- Los recordatorios combinan persistencia + AlarmManager + BroadcastReceiver + notificación. Cambiar solo la UI sin sincronizar scheduler/receiver puede crear alarmas huérfanas o avisos que no reflejen el estado guardado.
+
+10. CHECKLIST DE PRUEBA DESPUÉS DE MODIFICAR ESTE ARCHIVO
+----------------------------------------------------------------------
+- Compilar `assembleDebug` y resolver primero errores de Kotlin/AAPT.
+- Abrir la pantalla/flujo relacionado y comprobar ida y vuelta (back) sin estado duplicado.
+- Cambiar tema/paleta y verificar contraste si este archivo dibuja UI.
+- Crear un recordatorio a +5 minutos, editarlo, desactivarlo y confirmar que solo aparece la notificación esperada.
+- Reiniciar el dispositivo/emulador y verificar reprogramación de recordatorios activos.
+
+==============================================================================================================
+FIN DEL ARCHIVO
+==============================================================================================================
