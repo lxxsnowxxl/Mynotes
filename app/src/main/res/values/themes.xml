@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--
+        Tema XML base de la Activity.
+        Compose controla los colores reales de la interfaz.
+        Usamos un tema del framework Android para no depender
+        de un tema XML de Material3 que no existe en el proyecto.
+    -->
+    <style
+        name="Theme.MyNotes"
+        parent="@android:style/Theme.Material.Light.NoActionBar">
+
+        <item name="android:windowNoTitle">true</item>
+
+        <item name="android:windowActionModeOverlay">true</item>
+
+        <item name="android:windowBackground">
+            #FFFFFBFE
+        </item>
+
+        <item name="android:colorAccent">
+            #FF76685F
+        </item>
+
+        <item name="android:statusBarColor">
+            @android:color/transparent
+        </item>
+
+        <item name="android:navigationBarColor">
+            #FF000000
+        </item>
+
+        <item name="android:windowLightStatusBar">
+            true
+        </item>
+
+    </style>
+
+</resources>

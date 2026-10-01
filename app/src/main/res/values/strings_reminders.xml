@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="reminders">Recordatorios</string>
+    <string name="reminder_new">Nuevo recordatorio</string>
+    <string name="reminder_create_title">Nuevo recordatorio</string>
+    <string name="reminder_edit_title">Editar recordatorio</string>
+    <string name="reminder_editor_subtitle">Configura cuándo y cómo quieres que MyNotes te avise.</string>
+    <string name="reminder_panel_title">Tus recordatorios</string>
+    <string name="reminder_panel_description">Crea avisos personalizados con fecha, hora, repetición, prioridad y color.</string>
+    <string name="reminder_active_count">%1$d activos</string>
+    <string name="reminder_empty">Todavía no tienes recordatorios</string>
+    <string name="reminder_empty_description">Crea uno para recibir un aviso cuando lo necesites.</string>
+    <string name="reminder_content_section">Contenido</string>
+    <string name="reminder_title">Título</string>
+    <string name="reminder_description">Descripción</string>
+    <string name="reminder_tools">Herramientas del recordatorio</string>
+    <string name="reminder_when">Fecha y hora</string>
+    <string name="reminder_repeat">Repetición</string>
+    <string name="reminder_repeat_none">No repetir</string>
+    <string name="reminder_repeat_daily">Cada día</string>
+    <string name="reminder_repeat_weekdays">Lun–Vie</string>
+    <string name="reminder_repeat_weekly">Cada semana</string>
+    <string name="reminder_repeat_monthly">Cada mes</string>
+    <string name="reminder_priority">Prioridad</string>
+    <string name="reminder_priority_low">Baja</string>
+    <string name="reminder_priority_normal">Normal</string>
+    <string name="reminder_priority_high">Alta</string>
+    <string name="reminder_color">Color</string>
+    <string name="reminder_enabled">Recordatorio activo</string>
+    <string name="reminder_enabled_description">Programa una notificación para la fecha y hora elegidas.</string>
+    <string name="reminder_delete">Eliminar recordatorio</string>
+    <string name="reminder_title_required">Escribe un título para el recordatorio.</string>
+    <string name="reminder_future_time_required">Elige una fecha y hora futuras.</string>
+    <string name="reminder_untitled">Recordatorio</string>
+    <string name="reminder_notification_channel">Recordatorios de MyNotes</string>
+    <string name="reminder_notification_channel_description">Avisos programados desde MyNotes.</string>
+    <string name="reminder_notification_default_text">Tienes un recordatorio pendiente.</string>
+    <string name="reminder_quick_time">En unos minutos</string>
+    <string name="reminder_in_minutes">+%1$d min</string>
+</resources>

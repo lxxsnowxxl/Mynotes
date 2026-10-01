@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Single source of truth for the legacy splash icon size (Android 7-11). -->
+    <dimen name="splash_icon_size">180dp</dimen>
+</resources>

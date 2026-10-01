@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_action_menu">创建</string>
+    <string name="create_drawing">绘图</string>
+    <string name="drawing_title">新建绘图</string>
+    <string name="drawing_subtitle">选择工具和颜色，然后开始绘制</string>
+    <string name="drawing_back">返回</string>
+    <string name="drawing_save">保存绘图</string>
+    <string name="drawing_eraser">橡皮擦</string>
+    <string name="drawing_undo">撤销</string>
+    <string name="drawing_redo">重做</string>
+    <string name="drawing_clear">清空绘图</string>
+    <string name="drawing_default_note_title">绘图</string>
+    <string name="drawing_tools">工具</string>
+    <string name="drawing_canvas_color">画布颜色</string>
+    <string name="drawing_colors">颜色</string>
+    <string name="drawing_thickness">粗细</string>
+    <string name="drawing_thin">细</string>
+    <string name="drawing_medium">中</string>
+    <string name="drawing_thick">粗</string>
+    <string name="drawing_tool_fine">细笔尖</string>
+    <string name="drawing_tool_pencil">铅笔</string>
+    <string name="drawing_tool_pen">钢笔</string>
+    <string name="drawing_tool_marker">马克笔</string>
+    <string name="drawing_tool_highlighter">荧光笔</string>
+    <string name="drawing_tool_eraser">橡皮擦</string>
+    <string name="drawing_expand_canvas">放大画布</string>
+    <string name="drawing_restore_canvas">恢复画布</string>
+</resources>

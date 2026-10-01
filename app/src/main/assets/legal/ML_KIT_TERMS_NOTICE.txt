@@ -1,0 +1,14 @@
+MyNotes — Google ML Kit notice
+
+MyNotes uses Google ML Kit Subject Segmentation for the optional subject-crop
+feature in the PDF/image workflow. Google documents this API as an unbundled
+model delivered through Google Play services. Input images and generated
+results are processed on-device. ML Kit may contact Google servers for model,
+bug-fix and hardware-compatibility updates and may transmit performance and
+utilization metrics.
+
+MyNotes does not claim ownership of ML Kit. Use of the API is subject to the
+ML Kit Terms of Service and Google APIs Terms of Service.
+
+https://developers.google.com/ml-kit/terms
+https://developers.google.com/ml-kit/vision/subject-segmentation/android

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="backup_restore_title">Backup and restore</string>
+    <string name="backup_restore_description">Export notes, images, videos, audio, files, settings, and the profile image into one ZIP file. Importing replaces the current app data with the backup data.</string>
+    <string name="backup_export_button">Export</string>
+    <string name="backup_import_button">Import</string>
+    <string name="backup_processing">Processing data…</string>
+    <string name="backup_export_success">Backup created: %1$d notes and %2$d attachments.</string>
+    <string name="backup_export_skipped">%1$d attachments could not be included.</string>
+    <string name="backup_import_success">Restored %1$d notes and %2$d attachments.</string>
+    <string name="backup_operation_error">The operation could not be completed: %1$s</string>
+    <string name="backup_unknown_error">unknown error</string>
+    <string name="backup_import_confirm_title">Import backup?</string>
+    <string name="backup_import_confirm_message">Current notes, attachments, and settings will be replaced. This cannot be undone unless you have another backup.</string>
+    <string name="backup_import_confirm_action">Import and replace</string>
+    <string name="backup_cancel">Cancel</string>
+</resources>

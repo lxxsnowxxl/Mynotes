@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_link">Add link</string>
+    <string name="link_dialog_description">Paste a song, video, article, or web page link. MyNotes will try to retrieve its cover, title, and description.</string>
+    <string name="link_url">Link</string>
+    <string name="invalid_link">Enter a valid link.</string>
+    <string name="add">Add</string>
+    <string name="link">Link</string>
+</resources>

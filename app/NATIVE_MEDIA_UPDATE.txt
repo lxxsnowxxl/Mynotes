@@ -1,0 +1,6 @@
+MyNotes media update
+
+- Main screen: optimized thumbnails.
+- Note detail: prepared for full-resolution media loading.
+- Media viewers remain separate from thumbnail cache.
+- Images should load from original URI when opened.

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="option_menu_customization_title">Menu d’options</string>
+    <string name="option_menu_customization_description">Masquez, réorganisez et modifiez l’apparence du menu ⋮ de chaque note.</string>
+    <string name="option_menu_show_icons">Afficher les icônes</string>
+    <string name="option_menu_text_color">Couleur du texte du menu</string>
+    <string name="option_menu_text_follow_note">Suivre la couleur de la note</string>
+    <string name="option_menu_text_black">Noir</string>
+    <string name="option_menu_text_white">Blanc</string>
+    <string name="option_menu_change">Modifier</string>
+    <string name="option_menu_opacity">Opacité du menu</string>
+    <string name="option_menu_main_actions">Actions principales</string>
+    <string name="option_menu_main_actions_hint">Utilisez les flèches pour modifier l’ordre et l’interrupteur pour afficher ou masquer chaque action.</string>
+    <string name="option_menu_priority_submenu">Sous-menu de priorité</string>
+    <string name="option_menu_color_submenu">Sous-menu de couleur</string>
+    <string name="option_menu_move_up">Déplacer vers le haut</string>
+    <string name="option_menu_move_down">Déplacer vers le bas</string>
+    <string name="option_menu_reset">Réinitialiser le menu</string>
+</resources>

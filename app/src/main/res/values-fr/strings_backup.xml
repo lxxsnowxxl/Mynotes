@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="backup_restore_title">Sauvegarde et restauration</string>
+    <string name="backup_restore_description">Exporte les notes, images, vidéos, audios, fichiers, réglages et image de profil dans un seul fichier ZIP. Une importation remplace les données actuelles par celles de la sauvegarde.</string>
+    <string name="backup_export_button">Exporter</string>
+    <string name="backup_import_button">Importer</string>
+    <string name="backup_processing">Traitement des données…</string>
+    <string name="backup_export_success">Sauvegarde créée : %1$d notes et %2$d pièces jointes.</string>
+    <string name="backup_export_skipped">%1$d pièces jointes ne peuvent pas être incluses.</string>
+    <string name="backup_import_success">%1$d notes et %2$d pièces jointes restaurées.</string>
+    <string name="backup_operation_error">Impossible de terminer opération : %1$s</string>
+    <string name="backup_unknown_error">erreur inconnue</string>
+    <string name="backup_import_confirm_title">Importer la sauvegarde ?</string>
+    <string name="backup_import_confirm_message">Les notes, pièces jointes et réglages actuels seront remplacés. Cette action est irréversible sans autre sauvegarde.</string>
+    <string name="backup_import_confirm_action">Importer et remplacer</string>
+    <string name="backup_cancel">Annuler</string>
+</resources>

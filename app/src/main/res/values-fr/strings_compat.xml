@@ -1,0 +1,13 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="open_with_other_app">Ouvrir avec une autre application</string>
+    <string name="video_playback_failed">Impossible de lire la vidéo.</string>
+    <string name="audio_playback_failed">Impossible de lire l’audio.</string>
+    <string name="video_playback_failed_inside">Impossible de lire cette vidéo dans MyNotes.</string>
+    <string name="audio_playback_failed_inside">Impossible de lire cet audio dans MyNotes.</string>
+    <string name="pdf_page_load_failed">Impossible de charger la page %1$d.</string>
+    <string name="pdf_page_description">Page %1$d</string>
+    <string name="open_with">Ouvrir avec</string>
+    <string name="no_compatible_app">Aucune application compatible n’est installée.</string>
+    <string name="open_file_failed">Impossible d’ouvrir le fichier.</string>
+</resources>

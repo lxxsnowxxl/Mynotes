@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_action_menu">Créer</string>
+    <string name="create_drawing">Dessiner</string>
+    <string name="drawing_title">Nouveau dessin</string>
+    <string name="drawing_subtitle">Choisissez un outil et une couleur, puis dessinez</string>
+    <string name="drawing_back">Retour</string>
+    <string name="drawing_save">Enregistrer le dessin</string>
+    <string name="drawing_eraser">Gomme</string>
+    <string name="drawing_undo">Annuler</string>
+    <string name="drawing_redo">Rétablir</string>
+    <string name="drawing_clear">Effacer le dessin</string>
+    <string name="drawing_default_note_title">Dessin</string>
+    <string name="drawing_tools">Outils</string>
+    <string name="drawing_canvas_color">Couleur de la toile</string>
+    <string name="drawing_colors">Couleurs</string>
+    <string name="drawing_thickness">Épaisseur</string>
+    <string name="drawing_thin">Fin</string>
+    <string name="drawing_medium">Moyen</string>
+    <string name="drawing_thick">Épais</string>
+    <string name="drawing_tool_fine">Pointe fine</string>
+    <string name="drawing_tool_pencil">Crayon</string>
+    <string name="drawing_tool_pen">Stylo</string>
+    <string name="drawing_tool_marker">Feutre</string>
+    <string name="drawing_tool_highlighter">Surligneur</string>
+    <string name="drawing_tool_eraser">Gomme</string>
+    <string name="drawing_expand_canvas">Agrandir la toile</string>
+    <string name="drawing_restore_canvas">Restaurer la toile</string>
+</resources>

@@ -1,0 +1,57 @@
+MyNotes Proprietary Software License
+
+Copyright (c) 2026 Snow. All rights reserved.
+
+This license applies only to the original MyNotes source code, application
+code, project-specific artwork, documentation, and other original materials
+owned by the MyNotes copyright holder. Third-party software, libraries, fonts,
+services, and other third-party materials remain governed by their respective
+licenses and terms.
+
+1. Limited use license
+
+Subject to these terms, a lawful recipient of MyNotes is granted a limited,
+non-exclusive, non-transferable license to install and use the compiled MyNotes
+application for personal or internal purposes. No ownership rights are
+transferred.
+
+2. Restrictions
+
+Except with prior written permission from the copyright holder, you may not:
+
+- redistribute, republish, sublicense, sell, rent, lease, or commercially
+  distribute MyNotes or its original source code;
+- copy or distribute substantial portions of the original MyNotes source code;
+- create and distribute derivative versions of the original MyNotes code or
+  project-specific assets;
+- remove or alter copyright, ownership, license, or attribution notices; or
+- use the MyNotes name, branding, or project-specific artwork to imply
+  affiliation, sponsorship, or endorsement.
+
+Nothing in this license limits rights that cannot lawfully be restricted under
+applicable law.
+
+3. Source availability
+
+Access to source code, including source code published in a repository, does
+not by itself grant permission to copy, modify, redistribute, sublicense, or
+commercialize the original MyNotes code. Any permission beyond the limited use
+license above requires prior written authorization from the copyright holder.
+
+4. Third-party components
+
+Third-party components bundled with or used by MyNotes are excluded from this
+proprietary license and are governed by their own licenses and terms. See
+THIRD_PARTY_NOTICES.md and the legal notices bundled with the application.
+
+5. No warranty
+
+To the maximum extent permitted by applicable law, MyNotes is provided "AS IS"
+without warranties of any kind, express or implied. The copyright holder is not
+liable for damages arising from use of the software to the extent permitted by
+applicable law.
+
+6. Reservation of rights
+
+All rights not expressly granted by this license are reserved by the copyright
+holder.

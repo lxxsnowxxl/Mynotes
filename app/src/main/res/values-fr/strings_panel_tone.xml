@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_panel_tone">Teinte du panneau</string>
+    <string name="surface_panels_intensity">Intensité des panneaux</string>
+    <string name="surface_panels_intensity_description">Règle le contraste des champs de recherche, boutons et panneaux translucides dans toute l’application.</string>
+    <string name="text_black_outline">Contour noir du texte</string>
+    <string name="text_black_outline_description">Ajoute un contour noir léger pour mieux distinguer le texte clair.</string>
+</resources>

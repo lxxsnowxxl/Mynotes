@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/widget_quick_root"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/widget_surface_screen_dark"
+    android:gravity="center_vertical"
+    android:orientation="horizontal"
+    android:paddingLeft="10dp"
+    android:paddingTop="8dp"
+    android:paddingRight="10dp"
+    android:paddingBottom="8dp">
+
+    <TextView
+        android:id="@+id/widget_quick_accent"
+        android:layout_width="4dp"
+        android:layout_height="42dp"
+        android:background="#FF7C6FF0" />
+
+    <ImageView
+        android:id="@+id/widget_quick_icon"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_marginStart="10dp"
+        android:background="@drawable/widget_action_circle_dark"
+        android:contentDescription="@string/app_name"
+        android:padding="8dp"
+        android:src="@mipmap/ic_launcher_foreground" />
+
+    <LinearLayout
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="10dp"
+        android:layout_weight="1"
+        android:gravity="center_vertical"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/widget_quick_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="@string/widget_quick_capture"
+            android:textColor="#FFFFFFFF"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/widget_quick_subtitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="2dp"
+            android:ellipsize="end"
+            android:maxLines="2"
+            android:text="@string/widget_quick_capture_hint"
+            android:textColor="#D8FFFFFF"
+            android:textSize="10sp" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/widget_quick_search"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:background="@drawable/widget_action_circle_dark"
+        android:contentDescription="@string/widget_search"
+        android:padding="7dp"
+        android:src="@drawable/widget_ic_search" />
+
+    <ImageView
+        android:id="@+id/widget_quick_plus"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginStart="6dp"
+        android:background="@drawable/widget_action_primary_dark"
+        android:contentDescription="@string/widget_new_note"
+        android:padding="7dp"
+        android:src="@drawable/widget_ic_add" />
+</LinearLayout>

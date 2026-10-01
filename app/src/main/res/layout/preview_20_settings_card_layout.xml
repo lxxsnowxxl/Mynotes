@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#6E72B5"
+    android:orientation="vertical"
+    tools:ignore="ContentDescription,HardcodedText">
+
+    <LinearLayout android:layout_width="match_parent" android:layout_height="72dp" android:gravity="center_vertical" android:orientation="horizontal" android:paddingStart="16dp">
+        <ImageView android:layout_width="32dp" android:layout_height="32dp" android:src="@drawable/preview_ic_arrow_back" android:tint="#FFFFFF" />
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginStart="10dp" android:fontFamily="sans-serif" android:text="Personalización extrema" android:textColor="#FFFFFF" android:textSize="23sp" />
+    </LinearLayout>
+
+    <ScrollView android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="14dp">
+
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:background="@drawable/preview_light_group" android:orientation="vertical" android:padding="16dp">
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Tarjetas de notas" android:textColor="#111111" android:textSize="18sp" />
+
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_marginTop="10dp" android:fontFamily="sans-serif" android:text="Radio de esquinas                                    20 dp" android:textColor="#111111" android:textSize="13sp" />
+                <SeekBar android:layout_width="match_parent" android:layout_height="34dp" android:max="100" android:progress="58" />
+
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Elevación                                                     2 dp" android:textColor="#111111" android:textSize="13sp" />
+                <SeekBar android:layout_width="match_parent" android:layout_height="34dp" android:max="100" android:progress="28" />
+
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Padding interno                                           14 dp" android:textColor="#111111" android:textSize="13sp" />
+                <SeekBar android:layout_width="match_parent" android:layout_height="34dp" android:max="100" android:progress="48" />
+
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Altura de imagen                                       160 dp" android:textColor="#111111" android:textSize="13sp" />
+                <SeekBar android:layout_width="match_parent" android:layout_height="34dp" android:max="100" android:progress="60" />
+
+                <!-- V35/V46: ancho de contorno; el color real se mezcla con la paleta en Compose. -->
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Grosor del contorno                                      2.0 dp" android:textColor="#111111" android:textSize="13sp" />
+                <SeekBar android:layout_width="match_parent" android:layout_height="34dp" android:max="100" android:progress="34" />
+
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Líneas de título                                                  2" android:textColor="#111111" android:textSize="13sp" />
+                <SeekBar android:layout_width="match_parent" android:layout_height="34dp" android:max="100" android:progress="35" />
+
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Líneas de contenido                                           5" android:textColor="#111111" android:textSize="13sp" />
+                <SeekBar android:layout_width="match_parent" android:layout_height="34dp" android:max="100" android:progress="55" />
+
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:fontFamily="sans-serif" android:text="Espaciado de línea                                         1.20x" android:textColor="#111111" android:textSize="13sp" />
+                <SeekBar android:layout_width="match_parent" android:layout_height="34dp" android:max="100" android:progress="28" />
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="46dp" android:gravity="center_vertical" android:orientation="horizontal">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:fontFamily="sans-serif" android:text="Mostrar fecha" android:textColor="#111111" />
+                    <FrameLayout android:layout_width="48dp" android:layout_height="28dp" android:background="@drawable/preview_switch_on" android:padding="3dp"><View android:layout_width="22dp" android:layout_height="22dp" android:layout_gravity="end" android:background="@drawable/preview_thumb_white" /></FrameLayout>
+                </LinearLayout>
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="46dp" android:gravity="center_vertical" android:orientation="horizontal">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:fontFamily="sans-serif" android:text="Mostrar categoría" android:textColor="#111111" />
+                    <FrameLayout android:layout_width="48dp" android:layout_height="28dp" android:background="@drawable/preview_switch_on" android:padding="3dp"><View android:layout_width="22dp" android:layout_height="22dp" android:layout_gravity="end" android:background="@drawable/preview_thumb_white" /></FrameLayout>
+                </LinearLayout>
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="46dp" android:gravity="center_vertical" android:orientation="horizontal">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:fontFamily="sans-serif" android:text="Mostrar favorito" android:textColor="#111111" />
+                    <FrameLayout android:layout_width="48dp" android:layout_height="28dp" android:background="@drawable/preview_switch_on" android:padding="3dp"><View android:layout_width="22dp" android:layout_height="22dp" android:layout_gravity="end" android:background="@drawable/preview_thumb_white" /></FrameLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

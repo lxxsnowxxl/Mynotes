@@ -1,0 +1,19 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="option_menu_customization_title">选项菜单</string>
+    <string name="option_menu_customization_description">隐藏、重新排序并调整每条笔记的选项菜单外观。</string>
+    <string name="option_menu_show_icons">显示图标</string>
+    <string name="option_menu_text_color">菜单文字颜色</string>
+    <string name="option_menu_text_follow_note">跟随笔记颜色</string>
+    <string name="option_menu_text_black">黑色</string>
+    <string name="option_menu_text_white">白色</string>
+    <string name="option_menu_change">更改</string>
+    <string name="option_menu_opacity">菜单不透明度</string>
+    <string name="option_menu_main_actions">主要操作</string>
+    <string name="option_menu_main_actions_hint">使用箭头调整顺序，并使用开关显示或隐藏各项操作。</string>
+    <string name="option_menu_priority_submenu">优先级子菜单</string>
+    <string name="option_menu_color_submenu">颜色子菜单</string>
+    <string name="option_menu_move_up">上移</string>
+    <string name="option_menu_move_down">下移</string>
+    <string name="option_menu_reset">重置菜单</string>
+</resources>

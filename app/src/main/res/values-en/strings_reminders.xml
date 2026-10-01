@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="reminders">Reminders</string>
+    <string name="reminder_new">New reminder</string>
+    <string name="reminder_create_title">New reminder</string>
+    <string name="reminder_edit_title">Edit reminder</string>
+    <string name="reminder_editor_subtitle">Choose when and how MyNotes should notify you.</string>
+    <string name="reminder_panel_title">Your reminders</string>
+    <string name="reminder_panel_description">Create custom alerts with date, time, repeat, priority and color.</string>
+    <string name="reminder_active_count">%1$d active</string>
+    <string name="reminder_empty">You don’t have any reminders yet</string>
+    <string name="reminder_empty_description">Create one to get notified when you need it.</string>
+    <string name="reminder_content_section">Content</string>
+    <string name="reminder_title">Title</string>
+    <string name="reminder_description">Description</string>
+    <string name="reminder_tools">Reminder tools</string>
+    <string name="reminder_when">Date and time</string>
+    <string name="reminder_repeat">Repeat</string>
+    <string name="reminder_repeat_none">Do not repeat</string>
+    <string name="reminder_repeat_daily">Every day</string>
+    <string name="reminder_repeat_weekdays">Mon–Fri</string>
+    <string name="reminder_repeat_weekly">Every week</string>
+    <string name="reminder_repeat_monthly">Every month</string>
+    <string name="reminder_priority">Priority</string>
+    <string name="reminder_priority_low">Low</string>
+    <string name="reminder_priority_normal">Normal</string>
+    <string name="reminder_priority_high">High</string>
+    <string name="reminder_color">Color</string>
+    <string name="reminder_enabled">Reminder enabled</string>
+    <string name="reminder_enabled_description">Schedule a notification for the selected date and time.</string>
+    <string name="reminder_delete">Delete reminder</string>
+    <string name="reminder_title_required">Enter a title for the reminder.</string>
+    <string name="reminder_future_time_required">Choose a future date and time.</string>
+    <string name="reminder_untitled">Reminder</string>
+    <string name="reminder_notification_channel">MyNotes reminders</string>
+    <string name="reminder_notification_channel_description">Alerts scheduled from MyNotes.</string>
+    <string name="reminder_notification_default_text">You have a reminder waiting.</string>
+    <string name="reminder_quick_time">In a few minutes</string>
+    <string name="reminder_in_minutes">+%1$d min</string>
+</resources>

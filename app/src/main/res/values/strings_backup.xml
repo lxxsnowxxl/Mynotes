@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="backup_restore_title">Copia de seguridad y restauración</string>
+    <string name="backup_restore_description">Exporta notas, imágenes, videos, audios, archivos, ajustes e imagen de perfil a un solo archivo ZIP. Al importar, los datos actuales se reemplazan por los de la copia.</string>
+    <string name="backup_export_button">Exportar</string>
+    <string name="backup_import_button">Importar</string>
+    <string name="backup_processing">Procesando datos…</string>
+    <string name="backup_export_success">Copia creada: %1$d notas y %2$d adjuntos.</string>
+    <string name="backup_export_skipped">No se pudieron incluir %1$d adjuntos.</string>
+    <string name="backup_import_success">Restaurados %1$d notas y %2$d adjuntos.</string>
+    <string name="backup_operation_error">No se pudo completar la operación: %1$s</string>
+    <string name="backup_unknown_error">error desconocido</string>
+    <string name="backup_import_confirm_title">¿Importar copia?</string>
+    <string name="backup_import_confirm_message">Las notas, adjuntos y ajustes actuales serán reemplazados. Esta acción no se puede deshacer salvo que tengas otra copia de seguridad.</string>
+    <string name="backup_import_confirm_action">Importar y reemplazar</string>
+    <string name="backup_cancel">Cancelar</string>
+</resources>
