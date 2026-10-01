@@ -1,7 +1,0 @@
-app/src/main/res/xml/backup_rules.xml
-app/src/main/res/xml/data_extraction_rules.xml
-app/src/main/res/xml/favorites_widget_info.xml
-app/src/main/res/xml/file_paths.xml
-app/src/main/res/xml/focus_note_widget_info.xml
-app/src/main/res/xml/quick_note_widget_info.xml
-app/src/main/res/xml/recent_notes_widget_info.xml
