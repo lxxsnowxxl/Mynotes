@@ -97,7 +97,6 @@ private val accents = listOf(AccentOption("red", Color(0xFFE55757)), AccentOptio
         AccentOption("purple", Color(0xFFA05BC1)), AccentOption("pink", Color(0xFFD96787)), AccentOption("rose", Color(0xFFE16F9A)),
         AccentOption("brown", Color(0xFF9A7157)), AccentOption("graphite", Color(0xFF59636A)))
 
-
 /**
  * Secciones avanzadas separadas para que SettingsScreen pueda colocarlas como
  * items independientes de su LazyColumn. De esta forma una sección pesada
@@ -109,13 +108,8 @@ fun ExtremeCustomizationHeader(
     fontFamily: FontFamily,
     textColor: Color
 ) {
-    Text(
-        text = stringResource(R.string.extreme_personalization),
-        color = textColor,
-        fontFamily = fontFamily,
-        fontWeight = FontWeight.Bold,
-        fontSize = 20.sp
-    )
+    SettingsTitle(stringResource(R.string.extreme_personalization), textColor, fontFamily,
+        fontSize = 20.sp)
 }
 
 @Composable
@@ -131,12 +125,7 @@ fun ExtremeIconsSettingsSection(
     var iconSize by remember(settings.iconSize) { mutableFloatStateOf(settings.iconSize) }
 
     SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(14.dp)) { panelColors ->
-        Text(
-            text = stringResource(R.string.extreme_icons),
-            color = panelColors.text,
-            fontFamily = fontFamily,
-            fontWeight = FontWeight.Bold
-        )
+        SettingsTitle(stringResource(R.string.extreme_icons), panelColors.text, fontFamily)
         Box(modifier = Modifier.fillMaxWidth()) {
             AppTextButton(stringResource(
                     iconStyles.firstOrNull { it.key == settings.iconStyle }?.labelRes
@@ -194,12 +183,7 @@ fun ExtremeAccentSettingsSection(
 ) {
     val context = LocalContext.current
     SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(14.dp)) { panelColors ->
-        Text(
-            text = stringResource(R.string.extreme_accent),
-            color = panelColors.text,
-            fontFamily = fontFamily,
-            fontWeight = FontWeight.Bold
-        )
+        SettingsTitle(stringResource(R.string.extreme_accent), panelColors.text, fontFamily)
         Spacer(Modifier.height(10.dp))
         val paletteAccent = remember(settings.backgroundColor) {
             PaletteCatalog.find(settings.backgroundColor).accent
@@ -294,12 +278,7 @@ fun ExtremeNoteCardsSettingsSection(
     var lineSpacing by remember(settings.noteLineSpacing) { mutableFloatStateOf(settings.noteLineSpacing) }
 
     SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(14.dp)) { panelColors ->
-        Text(
-            text = stringResource(R.string.extreme_note_cards),
-            color = panelColors.text,
-            fontFamily = fontFamily,
-            fontWeight = FontWeight.Bold
-        )
+        SettingsTitle(stringResource(R.string.extreme_note_cards), panelColors.text, fontFamily)
         CustomSlider(stringResource(R.string.extreme_card_radius), "${radius.roundToInt()} dp", radius, { radius = it },
             { onNoteCardCornerRadiusChange(radius) }, 0f..36f, 35, settings, fontFamily, panelColors.text)
         CustomSlider(stringResource(R.string.extreme_card_elevation), "${String.format("%.1f", elevation)} dp", elevation,
@@ -384,12 +363,7 @@ fun ExtremeMotionSettingsSection(
     var previewState by remember { mutableStateOf(false) }
 
     SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(14.dp)) { panelColors ->
-        Text(
-            text = stringResource(R.string.motion_title),
-            color = panelColors.text,
-            fontFamily = fontFamily,
-            fontWeight = FontWeight.Bold
-        )
+        SettingsTitle(stringResource(R.string.motion_title), panelColors.text, fontFamily)
         SettingsToggleRow(
             title = stringResource(R.string.motion_enabled),
             checked = settings.animationsEnabled,
@@ -408,13 +382,8 @@ fun ExtremeMotionSettingsSection(
                 { animationIntensity = it }, { onAnimationIntensityChange(animationIntensity) }, 0.5f..1.5f, 9, settings,
                 fontFamily, panelColors.text)
             Spacer(Modifier.height(12.dp))
-            Text(
-                text = stringResource(R.string.motion_preview),
-                color = panelColors.text,
-                fontFamily = fontFamily,
-                fontSize = 13.sp,
-                fontWeight = FontWeight.SemiBold
-            )
+            SettingsTitle(stringResource(R.string.motion_preview), panelColors.text, fontFamily,
+                fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
             Surface(
                 modifier = Modifier.fillMaxWidth().height(96.dp).padding(top = 8.dp),
                 shape = RoundedCornerShape(16.dp),
@@ -430,13 +399,8 @@ fun ExtremeMotionSettingsSection(
                     performanceMode = settings.performanceMode
                 ) { state ->
                     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Text(
-                            text = if (state) "B" else "A",
-                            color = panelColors.text,
-                            fontFamily = fontFamily,
-                            fontSize = 28.sp,
-                            fontWeight = FontWeight.Bold
-                        )
+                        SettingsTitle(if (state) "B" else "A", panelColors.text, fontFamily,
+                            fontSize = 28.sp)
                     }
                 }
             }
@@ -475,14 +439,14 @@ private fun MotionOptionPicker(title: String, selectedKey: String, options: List
         }
     Spacer(Modifier.height(10.dp))
     Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-        Text(text = title, modifier = Modifier.weight(1f), color = textColor, fontFamily = fontFamily, fontSize = 13.sp,
-            fontWeight = FontWeight.SemiBold)
+        SettingsTitle(title, textColor, fontFamily,
+            modifier = Modifier.weight(1f), fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
         Box {
             TextButton(onClick = {
                     UiSoundPlayer.playAction(context = context, action = UiActionSound.Menu)
                     expanded = true
                 }) {
-                Text(text = stringResource(selected.labelRes), color = textColor, fontFamily = fontFamily, fontSize = 12.sp)
+                SettingsSecondaryText(stringResource(selected.labelRes), textColor, fontFamily)
                 Icon(imageVector = Icons.Default.ExpandMore, contentDescription = null, tint = textColor, modifier = Modifier.size(18.dp))
             }
             AppDropdownMenu(modifier = Modifier.heightIn(max = 176.dp).width(compactMenuWidth), expanded = expanded, onDismissRequest = {
@@ -510,9 +474,9 @@ private fun CustomSlider(title: String, label: String, value: Float, onValueChan
     range: ClosedFloatingPointRange<Float>, steps: Int, settings: AppSettings, fontFamily: FontFamily, textColor: Color) {
     Spacer(Modifier.height(12.dp))
     Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
-        Text(text = title, modifier = Modifier.weight(1f), fontFamily = fontFamily, color = textColor, fontSize = 13.sp,
-            fontWeight = FontWeight.SemiBold)
-        Text(text = label, fontFamily = fontFamily, color = textColor, fontSize = 12.sp)
+        SettingsTitle(title, textColor, fontFamily,
+            modifier = Modifier.weight(1f), fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
+        SettingsSecondaryText(label, textColor, fontFamily)
     }
     StyledSettingsSlider(value = value, onValueChange = onValueChange, onValueChangeFinished = onFinished, valueRange = range,
         steps = steps, activeColor = MaterialTheme.colorScheme.primary,

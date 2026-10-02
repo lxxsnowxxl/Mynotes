@@ -1,5 +1,6 @@
 package com.example.mynotes.ui.components
 
+import com.example.mynotes.util.moveReplacing
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -124,16 +125,6 @@ fun ProfileImageEditorDialog(
         }
     }
 
-    /*
-     * No usamos androidx.compose.ui.window.Dialog aquí. En Android 8/9,
-     * especialmente en Samsung, un Dialog crea una Window enfocada y el sistema
-     * puede mostrar la barra de navegación durante uno o dos frames antes de que
-     * podamos ocultarla. Ese era el destello de los tres botones al abrir el editor.
-     *
-     * Un Popup NO enfocable mantiene el foco en la Activity inmersiva que ya está
-     * ocultando la navegación, por lo que los botones de Android nunca reciben una
-     * ventana para reaparecer. Los gestos táctiles del editor siguen funcionando.
-     */
     BackHandler(enabled = !saving) { onDismissRequest() }
 
     Popup(
@@ -510,8 +501,5 @@ private fun persistProfileSource(context: Context, sourceUri: Uri, destination: 
     val temp = File(destination.parentFile, "${destination.name}.tmp")
     context.openUriStream(sourceUri)?.use { input -> FileOutputStream(temp).use { output -> input.copyTo(output) } } ?: return
     if (destination.exists()) destination.delete()
-    if (!temp.renameTo(destination)) {
-        temp.copyTo(destination, overwrite = true)
-        temp.delete()
-    }
+    temp.moveReplacing(destination)
 }

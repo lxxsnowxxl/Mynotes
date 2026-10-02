@@ -77,4 +77,13 @@
     <string name="pdf_library_copy_name">Copia de %1$s</string>
     <string name="pdf_library_document_count">%1$d PDF</string>
     <string name="pdf_library_autosave">Autoguardado</string>
+    <string name="pdf_flip">Invertir</string>
+    <string name="pdf_flip_horizontal">Horizontal</string>
+    <string name="pdf_flip_vertical">Vertical</string>
+    <string name="pdf_crop">Recortar</string>
+    <string name="pdf_crop_hint">Arrastra los bordes o las esquinas para recortar. Arrastra el interior para mover el marco.</string>
+    <string name="pdf_crop_reset">Restablecer</string>
+    <string name="pdf_image_apply">Aplicar</string>
+    <string name="pdf_image_edit_error">No se pudo editar esta imagen. Inténtalo de nuevo.</string>
+    <string name="pdf_image_edit_changed">El documento o la selección cambió. Selecciona la imagen e inténtalo de nuevo.</string>
 </resources>

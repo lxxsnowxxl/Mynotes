@@ -28,7 +28,7 @@ enum class UiActionSound(val sound: UiSound, val rate: Float, val volumeScale: F
     Back(UiSound.Toggle, 0.82f, 0.82f, UiHaptic.Selection),
     Save(UiSound.Edit, 1.18f, 1.00f, UiHaptic.Confirm),
     Search(UiSound.SliderTick, 1.25f, 0.55f, UiHaptic.Tick),
-    TextInput(UiSound.SliderTick, 1.36f, 0.42f, null),
+    TextInput(UiSound.SliderTick, 1.36f, 1.00f, null),
     Menu(UiSound.Toggle, 1.02f, 0.70f, UiHaptic.Selection),
     Select(UiSound.Toggle, 1.10f, 0.78f, UiHaptic.Selection),
     Favorite(UiSound.Priority, 1.28f, 0.92f, UiHaptic.Confirm),
@@ -202,13 +202,6 @@ object UiSoundPlayer {
             ?: return
 
         synchronized(previewLock) {
-            /*
-             * SoundPool permite varias reproducciones simultáneas. Para un
-             * selector de paquetes eso no es deseable: si el usuario cambia
-             * rápidamente de Classic a Soft, etc., los previews se superponen
-             * y parecen distorsionados. Detenemos exclusivamente el preview
-             * anterior; los demás sonidos normales de la UI no se alteran.
-             */
             if (previewPrimaryStreamId > 0) soundPool.stop(previewPrimaryStreamId)
             previewPrimaryStreamId = soundPool.play(soundId, previewVolume, previewVolume, 2, 0, 1f)
         }
@@ -267,14 +260,12 @@ object UiSoundPlayer {
             pool?.let {
                 return it
             }
-            /*
-             * Los efectos propios de MyNotes usan el canal multimedia en vez
-             * del canal de sonidos de sistema. Así, cuando MainActivity mutea
-             * temporalmente STREAM_SYSTEM para ocultar el clic del teclado,
-             * los sonidos configurados dentro de la app continúan audibles.
-             */
+            // Todos los sonidos de feedback de MyNotes pertenecen al grupo de
+            // notificaciones del sistema. Así el volumen físico/rápido de Android
+            // que controla "Notificaciones" gobierna teclado, efectos y vistas previas,
+            // en lugar de depender del volumen multimedia.
             val audioAttributes = AudioAttributes.Builder()
-                .setUsage(AudioAttributes.USAGE_MEDIA)
+                .setUsage(AudioAttributes.USAGE_NOTIFICATION)
                 .setContentType(AudioAttributes.CONTENT_TYPE_SONIFICATION)
                 .build()
             val newPool = SoundPool.Builder().setMaxStreams(6).setAudioAttributes(audioAttributes).build()

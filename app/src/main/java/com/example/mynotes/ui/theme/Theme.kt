@@ -151,18 +151,9 @@ internal fun lightScheme(palette:
     val baseTone = palette.tones[toneIndex.coerceIn(0, 3)]
     val body = applySectionIntensity(baseTone, backgroundIntensity)
     val header = applySectionIntensity(baseTone, headerIntensity)
-    /*
-     * 72% reproduce exactamente las mezclas que tenía la app:
-     * low 0.72, normal 0.58, high 0.42 y variant 0.45.
-     */
     val panelMix = (surfacePanelIntensity.coerceIn(0f, 100f) / 100f)
     val accent = resolveAccentColor(accentColor, palette)
     val automaticDarkTone = textColor == "auto" && toneIndex.coerceIn(0, 3) >= 2
-    /*
-     * Los tonos 1-2 se mantienen en una familia clara para texto negro.
-     * Los tonos 3-4 se mezclan hacia negro para que el texto blanco no
-     * pierda contraste aunque el usuario aumente la intensidad del panel.
-     */
     val panelTarget = if (automaticDarkTone) Color.Black else Color.White
     val surfaceVariantColor = mixColor(body, panelTarget, (panelMix * 0.625f).coerceIn(0f, 1f))
     val surfaceContainerColor = mixColor(body, panelTarget, (panelMix * 0.8055556f).coerceIn(0f, 1f))
@@ -196,11 +187,6 @@ internal fun darkScheme(palette:
     val selected = palette.tones[toneIndex.coerceIn(0, 3)]
     val automaticPaletteMode = textColor != "black" && textColor != "white"
     val automaticDarkTone = automaticPaletteMode && toneIndex.coerceIn(0, 3) >= 2
-    /*
-     * En Automático la tonalidad elegida manda sobre el modo del sistema:
-     * 1-2 permanecen claras (texto negro) y 3-4 oscuras (texto blanco).
-     * En Negro/Blanco manual se conserva el comportamiento oscuro anterior.
-     */
     val base = if (automaticPaletteMode) {
             selected
         } else {
@@ -208,11 +194,6 @@ internal fun darkScheme(palette:
         }
     val body = applySectionIntensity(base, backgroundIntensity)
     val header = applySectionIntensity(base, headerIntensity)
-    /*
-     * El modo oscuro usa mezclas mucho más pequeñas.
-     * 72% conserva la apariencia anterior y el resto escala
-     * proporcionalmente hasta el valor elegido por el usuario.
-     */
     val panelScale = (surfacePanelIntensity.coerceIn(0f, 100f) / 72f).coerceIn(0f, 1.3888889f)
     val rawAccent = resolveAccentColor(accentColor, palette)
     val accent = mixColor(rawAccent, Color.White, 0.14f)
@@ -243,7 +224,6 @@ internal fun darkScheme(palette:
         outline = ensureUiContrast(preferred = mixColor(accent, Color.White, 0.18f), background = body, minimumContrast = 3f))
 }
 
-
 internal fun resolveAppColorScheme(
     darkTheme: Boolean,
     palette: MyNotesPalette,
@@ -258,7 +238,6 @@ internal fun resolveAppColorScheme(
 } else {
     lightScheme(palette, toneIndex, backgroundIntensity, surfacePanelIntensity, headerIntensity, textColor, accentColor)
 }
-
 
 @Composable
 fun MyNotesTheme(settings: AppSettings, darkTheme: Boolean, fontFamily: FontFamily = FontFamily.Default,
@@ -285,11 +264,6 @@ fun MyNotesTheme(darkTheme: Boolean = isSystemInDarkTheme(),
     val palette = remember(backgroundColor) {
             PaletteCatalog.find(backgroundColor)
         }
-    /*
-     * Crear un ColorScheme completo implica varias mezclas de Color.
-     * Lo memorizamos para que cambiar avatar, tamaño de tarjeta, iconos,
-     * filtros, búsqueda, etc. no vuelva a calcular el tema.
-     */
     val scheme = remember(darkTheme, palette.key, backgroundToneIndex, backgroundIntensity, surfacePanelIntensity, headerIntensity,
             textColor, textOutlineEnabled, accentColor) {
             resolveAppColorScheme(darkTheme, palette, backgroundToneIndex, backgroundIntensity, surfacePanelIntensity,
@@ -302,11 +276,6 @@ fun MyNotesTheme(darkTheme: Boolean = isSystemInDarkTheme(),
         }
     MaterialTheme(colorScheme = scheme,
         typography = resolvedTypography) {
-        /*
-         * Los componentes Material toman el borde de Typography.
-         * Los Text() simples que usan LocalTextStyle también reciben
-         * el mismo halo sin tener que modificar cada pantalla.
-         */
         val inheritedTextStyle = LocalTextStyle.current.withAppFontMetrics(fontFamily).let { baseStyle ->
             if (textOutlineEnabled) baseStyle.copy(shadow = BlackTextOutlineShadow) else baseStyle
         }

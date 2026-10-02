@@ -106,10 +106,6 @@ internal object FeedbackPreferencePolicy {
 
     fun reminderTone(value: String): ReminderTone = reminderToneByKey[normalizeReminderRingtone(value)] ?: reminderTones.first()
 
-    private fun normalize(value: String, validKeys: Set<String>, fallback: String): String {
-        // Las preferencias ya normalizadas son el caso habitual de cada toque.
-        if (value in validKeys) return value
-        val normalized = value.trim().lowercase()
-        return if (normalized in validKeys) normalized else fallback
-    }
+    private fun normalize(value: String, validKeys: Set<String>, fallback: String): String =
+        value.normalizedKeyOr(validKeys, fallback)
 }

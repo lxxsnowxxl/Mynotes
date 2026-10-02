@@ -1,6 +1,7 @@
 package com.example.mynotes.ui
-import com.example.mynotes.ui.theme.rememberUiTextColors
-import com.example.mynotes.ui.components.AppIconButton
+import com.example.mynotes.ui.theme.rememberUiContentColors
+import com.example.mynotes.ui.theme.rememberAppFontFamily
+import com.example.mynotes.ui.components.AppCircularIconButton
 
 import android.Manifest
 import android.content.res.Configuration
@@ -47,7 +48,6 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -101,9 +101,6 @@ import com.example.mynotes.ui.sound.UiSound
 import com.example.mynotes.ui.sound.UiSoundPlayer
 import com.example.mynotes.util.uriDisplayName
 import com.example.mynotes.ui.theme.typographyWithFontFamily
-import com.example.mynotes.ui.theme.resolveUiTextColor
-import com.example.mynotes.ui.theme.resolveSecondaryUiTextColor
-import com.example.mynotes.ui.theme.resolveUiGraphicColor
 import com.example.mynotes.ui.theme.ensureUiContrast
 import com.example.mynotes.ui.theme.noteBackgroundColor
 import java.io.File
@@ -142,12 +139,6 @@ private fun removeProcessedUrl(value: TextFieldValue, url: String): TextFieldVal
 @Composable
 fun NoteEditorScreen(settings: AppSettings, initialTitle: String = "", initialContent: String = "", initialColor: String = "default",
     isEditing: Boolean = false,
-    /*
-     * Adjuntos que ya pertenecen a la nota.
-     *
-     * Se muestran al editar, pero NO se envían otra vez
-     * como adjuntos nuevos al guardar.
-     */
     existingAttachments: List<Attachment> = emptyList(),
     onSave: (String, String, String, List<PendingAttachment>, List<Attachment>) -> Unit, onCancel: () -> Unit) {
     val context = LocalContext.current
@@ -160,19 +151,13 @@ fun NoteEditorScreen(settings: AppSettings, initialTitle: String = "", initialCo
             context.packageManager.hasSystemFeature(PackageManager.FEATURE_MICROPHONE)
         }
     val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
-    val editorFontFamily = com.example.mynotes.ui.theme.appFontFamily(settings.font)
+    val editorFontFamily = rememberAppFontFamily(settings.font)
     val appTypography = typographyWithFontFamily(MaterialTheme.typography, editorFontFamily)
-    /*
-     * El color elegido en la paleta es también el fondo vivo del editor.
-     * Al cambiar selectedColor, Compose recompone inmediatamente la pantalla
-     * y permite previsualizar cómo quedará la nota antes de guardarla.
-     */
     var selectedColor by rememberSaveable(initialColor) {
         mutableStateOf(initialColor)
     }
     val editorBackground = noteBackgroundColor(selectedColor)
-    val (editorTextColor, editorSecondaryTextColor) = rememberUiTextColors(settings.textColor, editorBackground)
-    val editorGraphicColor = resolveUiGraphicColor(value = settings.textColor, background = editorBackground)
+    val (editorTextColor, editorSecondaryTextColor, editorGraphicColor) = rememberUiContentColors(settings.textColor, editorBackground)
     val editorAccentOutline = ensureUiContrast(preferred = MaterialTheme.colorScheme.primary, background = editorBackground,
             minimumContrast = 3f)
     var title by rememberSaveable(initialTitle, stateSaver = TextFieldValue.Saver) {
@@ -188,23 +173,11 @@ fun NoteEditorScreen(settings: AppSettings, initialTitle: String = "", initialCo
     val embeddedLinkUrls = remember(embeddedLinkState) {
         embeddedLinkState.split("\u001F").map { it.trim() }.filter { it.isNotBlank() }.distinct().take(3)
     }
-    /*
-     * Solo contiene adjuntos NUEVOS agregados durante esta
-     * sesión de edición. Los adjuntos existentes se reciben
-     * por existingAttachments.
-     */
     var newAttachments by remember {
         mutableStateOf<
                 List<PendingAttachment>
                 >(emptyList())
     }
-    /*
-     * Adjuntos existentes marcados para eliminar.
-     *
-     * No se borran de Room ni del almacenamiento hasta que
-     * el usuario pulse Guardar. Si pulsa Cancelar, no se pierde
-     * ningún archivo.
-     */
     var removedExistingAttachments by remember(initialTitle, initialContent) {
         mutableStateOf<
                 List<Attachment>
@@ -217,11 +190,6 @@ fun NoteEditorScreen(settings: AppSettings, initialTitle: String = "", initialCo
                 removed.id == attachment.id
             }
         }
-    /*
-     * ==========================================
-     * GRABACIÓN DE VOZ
-     * ==========================================
-     */
     var mediaRecorder by remember {
         mutableStateOf<MediaRecorder?>(null)
     }
@@ -238,11 +206,6 @@ fun NoteEditorScreen(settings: AppSettings, initialTitle: String = "", initialCo
             by remember {
                 mutableStateOf(false)
             }
-    /*
-     * ==========================================
-     * FUNCIONES DE GRABACIÓN
-     * ==========================================
-     */
     fun startRecording() {
         if (!hasMicrophone) {
             recordingError = microphoneUnavailableText
@@ -297,10 +260,6 @@ fun NoteEditorScreen(settings: AppSettings, initialTitle: String = "", initialCo
             recorder.release()
             mediaRecorder = null
             isRecording = false
-            /*
-             * Agregamos la grabación a
-             * los adjuntos pendientes.
-             */
             if (file.exists() && file.length() > 0L) {
                 val voiceAttachment = PendingAttachment(uri = Uri.fromFile(file),
                         type = "voice",
@@ -317,20 +276,11 @@ fun NoteEditorScreen(settings: AppSettings, initialTitle: String = "", initialCo
             }
             mediaRecorder = null
             isRecording = false
-            /*
-             * Una grabación demasiado
-             * corta puede hacer fallar stop().
-             */
             file.delete()
             recordingFile = null
             recordingError = recordingTooShortText
         }
     }
-    /*
-     * Si salimos del editor mientras
-     * todavía está grabando, liberamos
-     * el micrófono.
-     */
     DisposableEffect(Unit) {
         onDispose {
             try {
@@ -344,7 +294,6 @@ fun NoteEditorScreen(settings: AppSettings, initialTitle: String = "", initialCo
             } catch (ignored: Exception) {
             }
             mediaRecorder = null
-            /* No dejamos una grabación incompleta huérfana en cacheDir. */
             if (isRecording) {
                 recordingFile?.delete()
             }
@@ -352,11 +301,6 @@ fun NoteEditorScreen(settings: AppSettings, initialTitle: String = "", initialCo
             isRecording = false
         }
     }
-    /*
-     * ==========================================
-     * PERMISO DE MICRÓFONO
-     * ==========================================
-     */
     val microphonePermissionLauncher = rememberLauncherForActivityResult(contract = ActivityResultContracts.RequestPermission()
         ) { granted ->
             if (granted) {
@@ -395,10 +339,6 @@ fun NoteEditorScreen(settings: AppSettings, initialTitle: String = "", initialCo
         newAttachments = (newAttachments + newItems).distinctBy { it.uri }
         if (newItems.isNotEmpty()) UiSoundPlayer.play(context = context, sound = UiSound.Attachment)
     }
-    /*
-     * Los cuatro selectores conservan sus contratos y filtros; únicamente
-     * comparten la conversión idéntica de URI a PendingAttachment.
-     */
     val imagePicker = rememberLauncherForActivityResult(ActivityResultContracts.OpenMultipleDocuments()) {
         addPickedAttachments(it, "image")
     }
@@ -411,11 +351,6 @@ fun NoteEditorScreen(settings: AppSettings, initialTitle: String = "", initialCo
     val filePicker = rememberLauncherForActivityResult(ActivityResultContracts.OpenMultipleDocuments()) {
         addPickedAttachments(it, "file")
     }
-    /*
-     * ==========================================
-     * PANTALLA
-     * ==========================================
-     */
     val editorScrollState = rememberScrollState()
     MaterialTheme(colorScheme = MaterialTheme.colorScheme, typography = appTypography, shapes = MaterialTheme.shapes) {
         Scaffold(containerColor = editorBackground,
@@ -426,15 +361,12 @@ fun NoteEditorScreen(settings: AppSettings, initialTitle: String = "", initialCo
                                 navigationIconContentColor = editorGraphicColor,
                                 actionIconContentColor = editorGraphicColor),
                     navigationIcon = {
-                        Surface(shape = CircleShape, color = MaterialTheme.colorScheme.primaryContainer) {
-                            AppIconButton(Icons.Default.ArrowBack, stringResource(R.string.back),
-                                onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Back) {
-                                    if (isRecording) {
-                                        stopRecording()
-                                    }
-                                    onCancel()
-                                }, tint = MaterialTheme.colorScheme.onPrimaryContainer)
-                        }
+                        AppCircularIconButton(Icons.Default.ArrowBack, stringResource(R.string.back),
+                            onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Back) {
+                                if (isRecording) stopRecording()
+                                onCancel()
+                            }, containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer)
                     },
                     title = {
                         Text(text = if (isEditing) {
@@ -444,12 +376,11 @@ fun NoteEditorScreen(settings: AppSettings, initialTitle: String = "", initialCo
                                 })
                     },
                     actions = {
-                        Surface(shape = CircleShape, color = MaterialTheme.colorScheme.primaryContainer) {
-                            AppIconButton(Icons.Default.Check, stringResource(R.string.save), enabled = !isRecording,
-                                onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Save) {
-                                    onSave(title.text, noteContentForStorage(content.text, embeddedLinkUrls), selectedColor, newAttachments, removedExistingAttachments)
-                                }, tint = MaterialTheme.colorScheme.onPrimaryContainer)
-                        }
+                        AppCircularIconButton(Icons.Default.Check, stringResource(R.string.save), enabled = !isRecording,
+                            onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Save) {
+                                onSave(title.text, noteContentForStorage(content.text, embeddedLinkUrls), selectedColor, newAttachments, removedExistingAttachments)
+                            }, containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            tint = MaterialTheme.colorScheme.onPrimaryContainer)
                     })
             }
         ) { paddingValues ->
@@ -464,11 +395,6 @@ fun NoteEditorScreen(settings: AppSettings, initialTitle: String = "", initialCo
                     unfocusedBorderColor = editorGraphicColor, focusedContainerColor = Color.Transparent,
                     unfocusedContainerColor = Color.Transparent
                 )
-                /*
-                 * ==========================================
-                 * TÍTULO
-                 * ==========================================
-                 */
                 OutlinedTextField(
                     value = title,
                     onValueChange = { newValue ->
@@ -485,11 +411,6 @@ fun NoteEditorScreen(settings: AppSettings, initialTitle: String = "", initialCo
                     shape = RoundedCornerShape(16.dp),
                     colors = editorFieldColors)
                 Spacer(modifier = Modifier.height(14.dp))
-                /*
-                 * ==========================================
-                 * CONTENIDO
-                 * ==========================================
-                 */
                 OutlinedTextField(
                     value = content,
                     onValueChange = { newValue ->
@@ -567,24 +488,11 @@ fun NoteEditorScreen(settings: AppSettings, initialTitle: String = "", initialCo
                 Text(text = stringResource(R.string.attachments),
                     fontWeight = FontWeight.Bold)
                 Spacer(modifier = Modifier.height(10.dp))
-                /*
-                 * ==========================================
-                 * MINIATURAS
-                 * ==========================================
-                 */
                 if (visibleExistingAttachments.isNotEmpty() || newAttachments.isNotEmpty()) {
                     FlowRow(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalArrangement = Arrangement.spacedBy(8.dp)) {
-                        /*
-                         * ==========================================
-                         * ADJUNTOS YA GUARDADOS
-                         * ==========================================
-                         *
-                         * Se muestran mientras editamos, pero no
-                         * se agregan otra vez al guardar.
-                         */
                         visibleExistingAttachments.forEachIndexed {
                                     index, attachment ->
                                 val previewDelay = AppMotion.performanceValue(settings.performanceMode, 260L + index * 70L, 120L + index * 40L, 0L, 0L)
@@ -592,11 +500,6 @@ fun NoteEditorScreen(settings: AppSettings, initialTitle: String = "", initialCo
                                     attachment = PendingAttachment(uri = Uri.parse(attachment.uri),
                                             type = attachment.type,
                                             name = attachment.name),
-                                    /*
-                                     * Al tocar X solo lo quitamos de la
-                                     * edición actual. El borrado real se
-                                     * realiza al pulsar Guardar.
-                                     */
                                     previewDelayMillis = previewDelay,
                                     performanceMode = settings.performanceMode,
                                     onRemove = {
@@ -609,11 +512,6 @@ fun NoteEditorScreen(settings: AppSettings, initialTitle: String = "", initialCo
                                         }
                                     })
                             }
-                        /*
-                         * ==========================================
-                         * ADJUNTOS NUEVOS
-                         * ==========================================
-                         */
                         newAttachments.forEachIndexed {
                                     index, attachment ->
                                 val previewIndex = visibleExistingAttachments.size + index
@@ -623,10 +521,6 @@ fun NoteEditorScreen(settings: AppSettings, initialTitle: String = "", initialCo
                                     previewDelayMillis = previewDelay,
                                     performanceMode = settings.performanceMode,
                                     onRemove = {
-                                        /*
-                                         * Si es una nota de voz temporal,
-                                         * también eliminamos el archivo.
-                                         */
                                         if (attachment.type == "voice") {
                                             val uri = attachment.uri
                                             if (uri.scheme == "file") {
@@ -655,16 +549,9 @@ fun NoteEditorScreen(settings: AppSettings, initialTitle: String = "", initialCo
                     AttachmentAction(stringResource(R.string.file), Icons.Default.Description) { filePicker.launch(arrayOf("*/*")) }
                 )
                 Spacer(modifier = Modifier.height(10.dp))
-                /*
-                 * ==========================================
-                 * NOTA DE VOZ
-                 * ==========================================
-                 */
                 if (isRecording) {
                     Button(modifier = Modifier.fillMaxWidth(),
-                        onClick = UiSoundPlayer.actionHandler(context, UiActionSound.PlayPause) {
-                            stopRecording()
-                        },
+                        onClick = UiSoundPlayer.actionHandler(context, UiActionSound.PlayPause, ::stopRecording),
                         shape = RoundedCornerShape(14.dp)) {
                         Icon(imageVector = Icons.Default.Stop,
                             contentDescription = null)
@@ -678,9 +565,7 @@ fun NoteEditorScreen(settings: AppSettings, initialTitle: String = "", initialCo
                 } else {
                     OutlinedButton(
                         modifier = Modifier.fillMaxWidth(),
-                        onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Add) {
-                            requestVoiceRecording()
-                        },
+                        onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Add, ::requestVoiceRecording),
                         shape = RoundedCornerShape(14.dp),
                         colors = ButtonDefaults.outlinedButtonColors(containerColor = MaterialTheme.colorScheme.primaryContainer,
                                 contentColor = MaterialTheme.colorScheme.onPrimaryContainer),
@@ -697,18 +582,11 @@ fun NoteEditorScreen(settings: AppSettings, initialTitle: String = "", initialCo
                         color = MaterialTheme.colorScheme.error)
                 }
                 Spacer(modifier = Modifier.height(20.dp))
-                /*
-                 * ==========================================
-                 * CANCELAR / GUARDAR
-                 * ==========================================
-                 */
                 Row(modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                     OutlinedButton(
                         modifier = Modifier.weight(1f),
-                        onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Cancel) {
-                            onCancel()
-                        },
+                        onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Cancel, onCancel),
                         enabled = !isRecording,
                         shape = RoundedCornerShape(14.dp),
                         colors = ButtonDefaults.outlinedButtonColors(containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -738,11 +616,6 @@ fun NoteEditorScreen(settings: AppSettings, initialTitle: String = "", initialCo
     }
 }
 
-/*
- * ==========================================================
- * BOTÓN DE ADJUNTO
- * ==========================================================
- */
 @Composable
 private fun AttachmentButtonRow(first: AttachmentAction, second: AttachmentAction) {
     Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -755,9 +628,7 @@ private fun AttachmentButtonRow(first: AttachmentAction, second: AttachmentActio
 private fun AttachmentButton(modifier: Modifier = Modifier, text: String, icon: ImageVector, onClick: () -> Unit) {
     val context = LocalContext.current
     OutlinedButton(modifier = modifier,
-        onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Add) {
-            onClick()
-        },
+        onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Add, onClick),
         shape = RoundedCornerShape(14.dp),
         colors = ButtonDefaults.outlinedButtonColors(containerColor = MaterialTheme.colorScheme.primaryContainer,
                 contentColor = MaterialTheme.colorScheme.onPrimaryContainer),
@@ -769,11 +640,6 @@ private fun AttachmentButton(modifier: Modifier = Modifier, text: String, icon: 
     }
 }
 
-/*
- * ==========================================================
- * MINIATURA DE ADJUNTO
- * ==========================================================
- */
 @Composable
 private fun AttachmentPreview(attachment: PendingAttachment, previewDelayMillis: Long = 0L, performanceMode: String, onRemove: (() -> Unit)?
 ) {
@@ -794,9 +660,6 @@ private fun AttachmentPreview(attachment: PendingAttachment, previewDelayMillis:
         elevation = CardDefaults.cardElevation(defaultElevation = 0.dp)) {
         Box(modifier = Modifier.fillMaxSize()) {
             when (attachment.type) {
-                /*
-                 * IMAGEN
-                 */
                 "image" -> {
                     val previewReady = rememberPreviewReady(attachment.uri, previewDelayMillis)
                     if (previewReady) {
@@ -825,48 +688,27 @@ private fun AttachmentPreview(attachment: PendingAttachment, previewDelayMillis:
                         }
                     }
                 }
-                /*
-                 * VIDEO
-                 */
                 "video" -> {
                     AttachmentIconPreview(icon = Icons.Default.Videocam,
                         title = stringResource(R.string.video),
                         name = attachment.name)
                 }
-                /*
-                 * CANCIÓN / AUDIO
-                 */
                 "audio" -> {
                     AttachmentIconPreview(icon = Icons.Default.MusicNote,
                         title = stringResource(R.string.audio),
                         name = attachment.name)
                 }
-                /*
-                 * NOTA DE VOZ
-                 */
                 "voice" -> {
                     AttachmentIconPreview(icon = Icons.Default.Mic,
                         title = stringResource(R.string.voice_note),
                         name = attachment.name)
                 }
-                /*
-                 * ARCHIVO
-                 */
                 else -> {
                     AttachmentIconPreview(icon = Icons.Default.Description,
                         title = stringResource(R.string.file),
                         name = attachment.name)
                 }
             }
-            /*
-             * ==========================================
-             * BOTÓN X
-             * ==========================================
-             *
-             * Aparece tanto para adjuntos nuevos como para
-             * adjuntos existentes. En los existentes, quitarlo
-             * solo lo marca para borrar cuando se pulse Guardar.
-             */
             if (onRemove != null) {
                 Box(modifier = Modifier.align(Alignment.TopEnd).padding(4.dp).size(27.dp).clip(CircleShape).background(MaterialTheme
                                 .colorScheme.surface.copy(alpha = 0.9f)).clickable {

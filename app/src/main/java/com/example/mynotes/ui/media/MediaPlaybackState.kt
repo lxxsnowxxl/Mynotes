@@ -120,7 +120,6 @@ class MediaPlaybackState internal constructor(initialBuffering: Boolean) {
     }
 }
 
-
 @Composable
 fun MediaSeekSlider(
     player: ExoPlayer?, state: MediaPlaybackState, modifier: Modifier = Modifier,
@@ -201,7 +200,6 @@ fun BindMediaPlayer(
         }
     }
 }
-
 
 private inline fun ignorePlaybackException(action: () -> Unit) {
     try { action() } catch (_: Exception) { }

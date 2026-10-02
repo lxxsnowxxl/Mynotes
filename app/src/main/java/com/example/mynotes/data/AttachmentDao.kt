@@ -31,6 +31,15 @@ interface AttachmentDao {
     )
     suspend fun getAllAttachmentsOnce():
         List<Attachment>
+    @Query(
+        """
+        SELECT *
+        FROM attachments
+        WHERE noteId IN (:noteIds)
+        ORDER BY id ASC
+        """
+    )
+    suspend fun getAttachmentsForNotesOnce(noteIds: List<Int>): List<Attachment>
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAttachmentsForRestore(attachments: List<Attachment>)
     @Query("DELETE FROM attachments")

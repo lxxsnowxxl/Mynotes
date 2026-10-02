@@ -1,4 +1,5 @@
 package com.example.mynotes.ui
+import com.example.mynotes.ui.components.AppHeading
 import com.example.mynotes.ui.theme.rememberUiTextColors
 import com.example.mynotes.ui.components.AppIconLabel
 
@@ -40,6 +41,9 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
@@ -62,24 +66,21 @@ import com.example.mynotes.ui.components.ScrollPositionCapsule
 import com.example.mynotes.ui.motion.AnimatedScreenEntry
 import com.example.mynotes.ui.sound.UiActionSound
 import com.example.mynotes.ui.sound.UiSoundPlayer
-import com.example.mynotes.ui.theme.appFontFamily
+import com.example.mynotes.ui.theme.rememberAppFontFamily
 import com.example.mynotes.ui.theme.ensureUiContrast
-import com.example.mynotes.ui.theme.resolveSecondaryUiTextColor
-import com.example.mynotes.ui.theme.resolveUiTextColor
 import java.util.Calendar
 
 internal const val MYNOTES_REPOSITORY_URL = "https://github.com/lxxsnowxxl/Mynotes"
 internal fun Context.openMyNotesRepository() { runCatching { startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(MYNOTES_REPOSITORY_URL))) } }
+internal val LocalDevelopmentSettings = staticCompositionLocalOf<AppSettings> { error("Development settings unavailable") }
+
+@Immutable
+internal data class DevelopmentSectionStyle(val fontFamily: FontFamily, val text: Color, val secondary: Color)
+internal val LocalDevelopmentSectionStyle = staticCompositionLocalOf<DevelopmentSectionStyle> { error("Development section unavailable") }
+
 private const val MYNOTES_COMPILE_SDK = 37
 private const val MYNOTES_JAVA_COMPATIBILITY = 11
 
-/**
- * Pantalla secundaria puramente informativa.
- *
- * No modifica AppSettings, notas, adjuntos ni cachés. Su única responsabilidad
- * es mostrar, con datos obtenidos del paquete y de la configuración actual,
- * cómo está construida MyNotes y qué decisiones técnicas usa en ejecución.
- */
 @Composable
 fun DevelopmentInfoScreen(settings: AppSettings, onOpenSourceCode: () -> Unit, onBack: () -> Unit) {
     val context = LocalContext.current
@@ -87,7 +88,7 @@ fun DevelopmentInfoScreen(settings: AppSettings, onOpenSourceCode: () -> Unit, o
         @Suppress("DEPRECATION")
         context.packageManager.getPackageInfo(context.packageName, 0)
     }
-    val versionName = packageInfo.versionName.orEmpty().ifBlank { "1.7.0" }
+    val versionName = packageInfo.versionName.orEmpty().ifBlank { "1.9.0" }
     val applicationInfo = context.applicationInfo
     val buildType = stringResource(R.string.development_build_release)
     val minSdk = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) applicationInfo.minSdkVersion else 24
@@ -106,17 +107,17 @@ fun DevelopmentInfoScreen(settings: AppSettings, onOpenSourceCode: () -> Unit, o
             Icon(imageVector = Icons.Default.Info, contentDescription = null, tint = primaryText,
                 modifier = Modifier.size(28.dp))
             Column(modifier = Modifier.padding(start = 12.dp)) {
-                Text(text = "MyNotes", color = primaryText, fontFamily = fontFamily,
-                    fontWeight = FontWeight.Bold, fontSize = 24.sp)
-                Text(text = stringResource(R.string.development_info_subtitle), color = secondaryText,
-                    fontFamily = fontFamily, fontSize = 13.sp)
+                AppHeading(
+                    title = "MyNotes", subtitle = stringResource(R.string.development_info_subtitle),
+                    fontFamily = fontFamily, titleColor = primaryText, subtitleColor = secondaryText,
+                    titleSize = 24.sp
+                )
             }
         }
         Spacer(Modifier.height(18.dp))
 
         DevelopmentSection(
             title = stringResource(R.string.development_app_section),
-            settings = settings,
             modifier = Modifier.clickable {
                 val now = SystemClock.elapsedRealtime()
                 applicationTapCount = if (now - lastApplicationTapAt > 1_500L) 1 else applicationTapCount + 1
@@ -132,34 +133,31 @@ fun DevelopmentInfoScreen(settings: AppSettings, onOpenSourceCode: () -> Unit, o
                 }
             }
         ) {
-            DevelopmentValueRow(stringResource(R.string.development_version), "v$versionName", settings)
-            DevelopmentValueRow(stringResource(R.string.development_package), context.packageName, settings)
-            DevelopmentValueRow(stringResource(R.string.development_build_type), buildType, settings)
+            DevelopmentValueRow(stringResource(R.string.development_version), "v$versionName")
+            DevelopmentValueRow(stringResource(R.string.development_package), context.packageName)
+            DevelopmentValueRow(stringResource(R.string.development_build_type), buildType)
             if (developerFontUnlocked) {
-                DevelopmentValueRow(
-                    stringResource(R.string.development_developer_font),
-                    stringResource(R.string.development_developer_font_enabled),
-                    settings
-                )
+                DevelopmentValueRow(stringResource(R.string.development_developer_font),
+                    stringResource(R.string.development_developer_font_enabled))
             }
         }
 
-        DevelopmentSection(title = stringResource(R.string.development_sdk_section), settings = settings) {
-            DevelopmentValueRow(stringResource(R.string.development_min_sdk), "API $minSdk", settings)
-            DevelopmentValueRow(stringResource(R.string.development_target_sdk), "API $targetSdk", settings)
-            DevelopmentValueRow(stringResource(R.string.development_compile_sdk), "API $MYNOTES_COMPILE_SDK", settings)
-            DevelopmentValueRow(stringResource(R.string.development_device_sdk), "API ${Build.VERSION.SDK_INT}", settings)
+        DevelopmentSection(title = stringResource(R.string.development_sdk_section)) {
+            DevelopmentValueRow(stringResource(R.string.development_min_sdk), "API $minSdk")
+            DevelopmentValueRow(stringResource(R.string.development_target_sdk), "API $targetSdk")
+            DevelopmentValueRow(stringResource(R.string.development_compile_sdk), "API $MYNOTES_COMPILE_SDK")
+            DevelopmentValueRow(stringResource(R.string.development_device_sdk), "API ${Build.VERSION.SDK_INT}")
         }
 
-        DevelopmentSection(title = stringResource(R.string.development_build_section), settings = settings) {
+        DevelopmentSection(title = stringResource(R.string.development_build_section)) {
             DevelopmentValueRow(stringResource(R.string.development_build_system),
-                stringResource(R.string.development_build_system_value), settings)
+                stringResource(R.string.development_build_system_value))
             DevelopmentValueRow(stringResource(R.string.development_java_compatibility),
-                "Java $MYNOTES_JAVA_COMPATIBILITY", settings)
+                "Java $MYNOTES_JAVA_COMPATIBILITY")
             DevelopmentValueRow(stringResource(R.string.development_release_optimization),
-                stringResource(R.string.development_release_optimization_value), settings)
+                stringResource(R.string.development_release_optimization_value))
             Spacer(Modifier.height(6.dp))
-            DevelopmentParagraph(stringResource(R.string.development_build_body), settings)
+            DevelopmentParagraph(stringResource(R.string.development_build_body))
         }
 
         listOf(
@@ -168,23 +166,20 @@ fun DevelopmentInfoScreen(settings: AppSettings, onOpenSourceCode: () -> Unit, o
             R.string.development_storage_section to R.string.development_storage_body,
             R.string.development_media_section to R.string.development_media_body
         ).forEach { (titleRes, bodyRes) ->
-            DevelopmentSection(stringResource(titleRes), settings) { DevelopmentParagraph(stringResource(bodyRes), settings) }
+            DevelopmentSection(stringResource(titleRes)) { DevelopmentParagraph(stringResource(bodyRes)) }
         }
 
-        DevelopmentSection(title = stringResource(R.string.development_performance_section), settings = settings) {
-            DevelopmentParagraph(stringResource(R.string.development_performance_intro), settings)
+        DevelopmentSection(title = stringResource(R.string.development_performance_section)) {
+            DevelopmentParagraph(stringResource(R.string.development_performance_intro))
             Spacer(Modifier.height(10.dp))
             PerformanceProfileRow(title = stringResource(R.string.development_profile_performance),
-                detail = stringResource(R.string.development_profile_performance_detail), selected = settings.performanceMode == "performance",
-                settings = settings)
+                detail = stringResource(R.string.development_profile_performance_detail), selected = settings.performanceMode == "performance")
             Spacer(Modifier.height(8.dp))
             PerformanceProfileRow(title = stringResource(R.string.development_profile_balanced),
-                detail = stringResource(R.string.development_profile_balanced_detail), selected = settings.performanceMode == "balanced",
-                settings = settings)
+                detail = stringResource(R.string.development_profile_balanced_detail), selected = settings.performanceMode == "balanced")
             Spacer(Modifier.height(8.dp))
             PerformanceProfileRow(title = stringResource(R.string.development_profile_quality),
-                detail = stringResource(R.string.development_profile_quality_detail), selected = settings.performanceMode == "quality",
-                settings = settings)
+                detail = stringResource(R.string.development_profile_quality_detail), selected = settings.performanceMode == "quality")
         }
 
         listOf(
@@ -192,23 +187,23 @@ fun DevelopmentInfoScreen(settings: AppSettings, onOpenSourceCode: () -> Unit, o
             R.string.development_compatibility_section to R.string.development_compatibility_body,
             R.string.development_android_integration_section to R.string.development_android_integration_body
         ).forEach { (titleRes, bodyRes) ->
-            DevelopmentSection(stringResource(titleRes), settings) { DevelopmentParagraph(stringResource(bodyRes), settings) }
+            DevelopmentSection(stringResource(titleRes)) { DevelopmentParagraph(stringResource(bodyRes)) }
         }
 
-        DevelopmentSection(title = stringResource(R.string.development_credits_section), settings = settings) {
+        DevelopmentSection(title = stringResource(R.string.development_credits_section)) {
             DevelopmentValueRow(stringResource(R.string.development_primary_author),
-                stringResource(R.string.development_primary_author_value), settings)
-            DevelopmentValueRow(stringResource(R.string.development_github_account), "@lxxsnowxxl", settings)
+                stringResource(R.string.development_primary_author_value))
+            DevelopmentValueRow(stringResource(R.string.development_github_account), "@lxxsnowxxl")
             DevelopmentValueRow(stringResource(R.string.development_assistance),
-                stringResource(R.string.development_assistance_value), settings)
+                stringResource(R.string.development_assistance_value))
             Spacer(Modifier.height(6.dp))
-            DevelopmentParagraph(stringResource(R.string.development_credits_body), settings)
+            DevelopmentParagraph(stringResource(R.string.development_credits_body))
         }
 
-        DevelopmentSection(title = stringResource(R.string.development_repository_section), settings = settings) {
-            DevelopmentValueRow(stringResource(R.string.development_repository_host), "GitHub", settings)
-            DevelopmentValueRow(stringResource(R.string.development_repository_name), "lxxsnowxxl/Mynotes", settings)
-            DevelopmentParagraph(MYNOTES_REPOSITORY_URL, settings)
+        DevelopmentSection(title = stringResource(R.string.development_repository_section)) {
+            DevelopmentValueRow(stringResource(R.string.development_repository_host), "GitHub")
+            DevelopmentValueRow(stringResource(R.string.development_repository_name), "lxxsnowxxl/Mynotes")
+            DevelopmentParagraph(MYNOTES_REPOSITORY_URL)
             Spacer(Modifier.height(8.dp))
             TextButton(onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Menu) {
                 context.openMyNotesRepository()
@@ -218,30 +213,28 @@ fun DevelopmentInfoScreen(settings: AppSettings, onOpenSourceCode: () -> Unit, o
             }
         }
 
-        DevelopmentSection(title = stringResource(R.string.development_source_section), settings = settings) {
-            DevelopmentParagraph(stringResource(R.string.development_source_intro), settings)
+        DevelopmentSection(title = stringResource(R.string.development_source_section)) {
+            DevelopmentParagraph(stringResource(R.string.development_source_intro))
             Spacer(Modifier.height(8.dp))
-            TextButton(onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Menu) {
-                onOpenSourceCode()
-            }, modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.textButtonColors(contentColor = primaryText)) {
+            TextButton(onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Menu, onOpenSourceCode), modifier = Modifier.fillMaxWidth(), colors = ButtonDefaults.textButtonColors(contentColor = primaryText)) {
                 AppIconLabel(Icons.Default.Code, stringResource(R.string.development_source_open), iconModifier = Modifier.size(19.dp),
                     textModifier = Modifier.padding(start = 8.dp), fontFamily = fontFamily, fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
             }
         }
 
-        DevelopmentSection(title = stringResource(R.string.development_legal_section), settings = settings) {
+        DevelopmentSection(title = stringResource(R.string.development_legal_section)) {
             DevelopmentValueRow(stringResource(R.string.development_copyright),
-                stringResource(R.string.development_copyright_value, currentYear), settings)
+                stringResource(R.string.development_copyright_value, currentYear))
             DevelopmentValueRow(stringResource(R.string.development_license),
-                stringResource(R.string.development_license_value), settings)
+                stringResource(R.string.development_license_value))
             DevelopmentValueRow(stringResource(R.string.development_third_party_licenses),
-                stringResource(R.string.development_third_party_licenses_value), settings)
+                stringResource(R.string.development_third_party_licenses_value))
             DevelopmentValueRow(stringResource(R.string.development_bundled_fonts),
-                stringResource(R.string.development_bundled_fonts_value), settings)
+                stringResource(R.string.development_bundled_fonts_value))
             Spacer(Modifier.height(6.dp))
-            DevelopmentParagraph(stringResource(R.string.development_legal_body), settings)
+            DevelopmentParagraph(stringResource(R.string.development_legal_body))
             Spacer(Modifier.height(8.dp))
-            DevelopmentParagraph(stringResource(R.string.development_mlkit_notice), settings)
+            DevelopmentParagraph(stringResource(R.string.development_mlkit_notice))
         }
     }
 }
@@ -270,12 +263,13 @@ internal fun InformationScreenLayout(
     settings: AppSettings, title: String, onBack: () -> Unit,
     content: @Composable ColumnScope.(FontFamily, Color, Color) -> Unit
 ) {
-    val fontFamily = remember(settings.font) { appFontFamily(settings.font) }
+    val fontFamily = rememberAppFontFamily(settings.font)
     val scrollState = rememberScrollState()
     val screenBackground = MaterialTheme.colorScheme.background
     val (primaryText, secondaryText) = rememberUiTextColors(settings.textColor, screenBackground)
-    AnimatedScreenEntry(animationsEnabled = settings.animationsEnabled, animationSpeed = settings.animationSpeed) {
-        Scaffold(containerColor = screenBackground, topBar = {
+    CompositionLocalProvider(LocalDevelopmentSettings provides settings) {
+        AnimatedScreenEntry(animationsEnabled = settings.animationsEnabled, animationSpeed = settings.animationSpeed) {
+            Scaffold(containerColor = screenBackground, topBar = {
             DevelopmentTopBar(title, fontFamily, primaryText, onBack)
         }) { paddingValues ->
             Box(modifier = Modifier.fillMaxSize()) {
@@ -291,59 +285,63 @@ internal fun InformationScreenLayout(
         }
     }
 }
+}
 
 @Composable
-internal fun DevelopmentSection(title: String, settings: AppSettings, modifier: Modifier = Modifier, content: @Composable () -> Unit) {
+internal fun DevelopmentSection(title: String, modifier: Modifier = Modifier, content: @Composable () -> Unit) {
+    val settings = LocalDevelopmentSettings.current
     val background = MaterialTheme.colorScheme.surfaceContainerLow
-    val text = resolveUiTextColor(settings.textColor, background)
-    val border = ensureUiContrast(MaterialTheme.colorScheme.outline.copy(alpha = 0.55f), background, 2.2f)
+    val outline = MaterialTheme.colorScheme.outline
+    val (text, secondary) = rememberUiTextColors(settings.textColor, background)
+    val border = remember(background, outline) { ensureUiContrast(outline.copy(alpha = 0.55f), background, 2.2f) }
+    val style = DevelopmentSectionStyle(rememberAppFontFamily(settings.font), text, secondary)
     Surface(modifier = modifier.fillMaxWidth().padding(bottom = 12.dp), shape = RoundedCornerShape(18.dp),
         color = background, border = BorderStroke(1.dp, border), tonalElevation = 0.dp) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = title, color = text, fontFamily = appFontFamily(settings.font),
-                fontWeight = FontWeight.Bold, fontSize = 17.sp)
-            Spacer(Modifier.height(10.dp))
-            content()
+        CompositionLocalProvider(LocalDevelopmentSectionStyle provides style) {
+            Column(modifier = Modifier.padding(16.dp)) {
+                Text(text = title, color = text, fontFamily = style.fontFamily, fontWeight = FontWeight.Bold, fontSize = 17.sp)
+                Spacer(Modifier.height(10.dp))
+                content()
+            }
         }
     }
 }
 
 @Composable
-private fun DevelopmentValueRow(label: String, value: String, settings: AppSettings) {
-    val background = MaterialTheme.colorScheme.surfaceContainerLow
-    val (text, secondary) = rememberUiTextColors(settings.textColor, background)
+private fun DevelopmentValueRow(label: String, value: String) {
+    val style = LocalDevelopmentSectionStyle.current
     Row(modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp), horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.Top) {
-        Text(text = label, modifier = Modifier.weight(0.42f), color = secondary,
-            fontFamily = appFontFamily(settings.font), fontSize = 13.sp)
-        Text(text = value, modifier = Modifier.weight(0.58f), color = text, fontFamily = appFontFamily(settings.font),
+        Text(text = label, modifier = Modifier.weight(0.42f), color = style.secondary, fontFamily = style.fontFamily, fontSize = 13.sp)
+        Text(text = value, modifier = Modifier.weight(0.58f), color = style.text, fontFamily = style.fontFamily,
             fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
     }
 }
 
 @Composable
-internal fun DevelopmentParagraph(text: String, settings: AppSettings) {
-    val background = MaterialTheme.colorScheme.surfaceContainerLow
-    val secondary = resolveSecondaryUiTextColor(settings.textColor, background)
-    Text(text = text, color = secondary, fontFamily = appFontFamily(settings.font), fontSize = 13.sp, lineHeight = 19.sp)
+internal fun DevelopmentParagraph(text: String) {
+    val style = LocalDevelopmentSectionStyle.current
+    Text(text = text, color = style.secondary, fontFamily = style.fontFamily, fontSize = 13.sp, lineHeight = 19.sp)
 }
 
 @Composable
-private fun PerformanceProfileRow(title: String, detail: String, selected: Boolean, settings: AppSettings) {
+private fun PerformanceProfileRow(title: String, detail: String, selected: Boolean) {
+    val settings = LocalDevelopmentSettings.current
     val container = if (selected) MaterialTheme.colorScheme.primaryContainer else MaterialTheme.colorScheme.surfaceContainerHigh
     val (titleColor, detailColor) = rememberUiTextColors(settings.textColor, container)
+    val fontFamily = rememberAppFontFamily(settings.font)
     Surface(modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(14.dp), color = container, tonalElevation = 0.dp) {
         Column(modifier = Modifier.padding(horizontal = 12.dp, vertical = 10.dp)) {
             Row(verticalAlignment = Alignment.CenterVertically) {
-                Text(text = title, modifier = Modifier.weight(1f), color = titleColor, fontFamily = appFontFamily(settings.font),
+                Text(text = title, modifier = Modifier.weight(1f), color = titleColor, fontFamily = fontFamily,
                     fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
                 if (selected) {
                     Text(text = stringResource(R.string.development_current_profile), color = titleColor,
-                        fontFamily = appFontFamily(settings.font), fontWeight = FontWeight.Bold, fontSize = 11.sp)
+                        fontFamily = fontFamily, fontWeight = FontWeight.Bold, fontSize = 11.sp)
                 }
             }
             Text(text = detail, modifier = Modifier.padding(top = 3.dp), color = detailColor,
-                fontFamily = appFontFamily(settings.font), fontSize = 12.sp, lineHeight = 17.sp)
+                fontFamily = fontFamily, fontSize = 12.sp, lineHeight = 17.sp)
         }
     }
 }

@@ -1,5 +1,9 @@
 package com.example.mynotes.ui
+import com.example.mynotes.ui.components.SettingsTitle
+import com.example.mynotes.ui.components.AppHeading
 import com.example.mynotes.ui.theme.rememberUiTextColors
+import com.example.mynotes.ui.theme.rememberUiTextColor
+import com.example.mynotes.ui.theme.rememberUiContentColors
 import com.example.mynotes.ui.components.AppTextButton
 
 import android.content.Intent
@@ -73,7 +77,6 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.PopupProperties
 import coil3.compose.AsyncImage
 import com.example.mynotes.R
 import com.example.mynotes.reminders.ReminderFeedbackPreferences
@@ -115,8 +118,8 @@ import com.example.mynotes.ui.sound.UiSoundPlayer
 import com.example.mynotes.ui.theme.PaletteCatalog
 import com.example.mynotes.ui.theme.SettingsSectionColors
 import com.example.mynotes.ui.theme.appFontFamily
+import com.example.mynotes.ui.theme.rememberAppFontFamily
 import com.example.mynotes.ui.theme.ensureUiContrast
-import com.example.mynotes.ui.theme.resolveSecondaryUiTextColor
 import com.example.mynotes.ui.theme.resolveUiGraphicColor
 import com.example.mynotes.ui.theme.rememberAdaptiveUiButtonColors
 import com.example.mynotes.ui.theme.resolveUiTextColor
@@ -148,9 +151,7 @@ fun SettingsScreen(
 ) {
     val context = LocalContext.current
     val developerGoogleSansFlexUnlocked = DeveloperFeatures.isGoogleSansFlexUnlocked(context)
-    val fontFamily = remember(settings.font) {
-            appFontFamily(settings.font)
-        }
+    val fontFamily = rememberAppFontFamily(settings.font)
     var localTone by rememberSyncedFloatState(settings.backgroundToneIndex.toFloat(), syncKey = settings.backgroundToneIndex)
     var localBackgroundIntensity by rememberSyncedFloatState(settings.backgroundIntensity)
     var localSettingsPanelTone by rememberSyncedFloatState(settings.settingsPanelTone)
@@ -159,61 +160,30 @@ fun SettingsScreen(
     var localFontSize by rememberSyncedFloatState(settings.fontSize)
     var localProfileSize by rememberSyncedFloatState(settings.profileImageSize)
     var localSoundEffectsVolume by rememberSyncedFloatState(settings.soundEffectsVolume)
-    var localReminderSoundVolume by rememberSyncedFloatState(settings.reminderSoundVolume)
     var localHapticEffectsIntensity by rememberSyncedFloatState(settings.hapticEffectsIntensity)
-    /*
-     * ==========================================================
-     * TONALIDAD DEL PANEL DE CONFIGURACIÓN
-     * ==========================================================
-     *
-     * Este es el gran rectángulo claro que contiene:
-     * paletas, sliders, texto, fuente, idioma, columnas, etc.
-     *
-     * 0% mantiene el surfaceContainerLow de Material.
-     * 100% lo lleva al tono exacto seleccionado de la paleta.
-     */
     val selectedPalette = remember(settings.backgroundColor) {
             PaletteCatalog.find(settings.backgroundColor)
         }
     val selectedPaletteTone = selectedPalette.tones[settings.backgroundToneIndex.coerceIn(0, 3)]
-    val settingsPanelColor = lerp(MaterialTheme.colorScheme.surfaceContainerLow, selectedPaletteTone, (localSettingsPanelTone / 100f)
-                .coerceIn(0f, 1f))
-    /*
-     * En automático el texto se calcula contra el color REAL del panel de
-     * Configuración. Negro y blanco siguen siendo anulaciones manuales.
-     */
-    // Los sliders ajenos al color no necesitan repetir los cálculos de contraste.
-    // Cada resultado se invalida al cambiar su fondo real o el modo de texto.
-    val (settingsTextColor, settingsSecondaryTextColor) = rememberUiTextColors(settings.textColor, settingsPanelColor)
-    val settingsGraphicColor = remember(settings.textColor, settingsPanelColor) {
-        resolveUiGraphicColor(value = settings.textColor, background = settingsPanelColor)
+    val settingsPanelBase = MaterialTheme.colorScheme.surfaceContainerLow
+    val settingsPanelColor = remember(settingsPanelBase, selectedPaletteTone, localSettingsPanelTone) {
+        lerp(settingsPanelBase, selectedPaletteTone, (localSettingsPanelTone / 100f).coerceIn(0f, 1f))
     }
+    val (settingsTextColor, settingsSecondaryTextColor, settingsGraphicColor) =
+        rememberUiContentColors(settings.textColor, settingsPanelColor)
     val screenBackground = MaterialTheme.colorScheme.background
     val (settingsScreenTextColor, settingsScreenSecondaryTextColor) = rememberUiTextColors(settings.textColor, screenBackground)
     val topBarBackground = MaterialTheme.colorScheme.surface
-    val settingsTopBarTextColor = remember(settings.textColor, topBarBackground) {
-        resolveUiTextColor(value = settings.textColor, background = topBarBackground)
-    }
+    val settingsTopBarTextColor = rememberUiTextColor(settings.textColor, topBarBackground)
     val menuBackground = when (settings.textColor) {
             "white" -> MaterialTheme.colorScheme.inverseSurface
             else -> MaterialTheme.colorScheme.surfaceContainerHigh
         }
-    val settingsMenuTextColor = remember(settings.textColor, menuBackground) {
-        resolveUiTextColor(value = settings.textColor, background = menuBackground)
-    }
+    val settingsMenuTextColor = rememberUiTextColor(settings.textColor, menuBackground)
     val settingsListState = rememberLazyListState()
     val paletteRows = remember { PaletteCatalog.palettes.chunked(2) }
     val isAdvancedMode = settings.configurationMode == "advanced"
 
-    /*
-     * ==========================================================
-     * ACTUALIZACIONES DESDE GITHUB RELEASES
-     * ==========================================================
-     *
-     * El estado del actualizador vive sólo mientras Settings está compuesto.
-     * No se guarda en DataStore porque comprobar/descargar una actualización
-     * es una operación temporal, no una preferencia del usuario.
-     */
     val updateScope = rememberCoroutineScope()
     val installedVersion = remember(context) { GitHubUpdateManager.currentVersionName(context) }
     var updateResult by remember { mutableStateOf<GitHubUpdateManager.CheckResult?>(null) }
@@ -269,16 +239,11 @@ fun SettingsScreen(
         Scaffold(containerColor = MaterialTheme.colorScheme.background,
         topBar = {
             TopAppBar(title = {
-                    Text(text = stringResource(R.string.mock_settings),
-                        color = settingsTopBarTextColor,
-                        fontFamily = fontFamily,
-                        fontWeight = FontWeight.Bold,
+                    SettingsTitle(stringResource(R.string.mock_settings), settingsTopBarTextColor, fontFamily,
                         fontSize = 25.sp)
                 },
                 navigationIcon = {
-                    TextButton(onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Back) {
-                            onBack()
-                        },
+                    TextButton(onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Back, onBack),
                         colors = ButtonDefaults.textButtonColors(contentColor = settingsTopBarTextColor)) {
                         Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(R.string.mock_back),
@@ -300,16 +265,12 @@ fun SettingsScreen(
                     SettingsContentSurface(backgroundColor = settingsPanelColor,
                         shape = RoundedCornerShape(topStart = 22.dp, topEnd = 22.dp),
                         contentPadding = PaddingValues(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 0.dp)) {
-                            Text(text = stringResource(R.string.mock_appearance),
-                                color = settingsTextColor,
-                                fontFamily = fontFamily,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 21.sp)
-                            Text(text = stringResource(R.string.mock_appearance_description),
-                                modifier = Modifier.padding(top = 2.dp),
-                                color = settingsSecondaryTextColor,
-                                fontFamily = fontFamily,
-                                fontSize = 13.sp)
+                            AppHeading(
+                                title = stringResource(R.string.mock_appearance), subtitle = stringResource(R.string.mock_appearance_description),
+                                fontFamily = fontFamily, titleColor = settingsTextColor, subtitleColor = settingsSecondaryTextColor,
+                                titleSize = 21.sp,
+                                subtitleModifier = Modifier.padding(top = 2.dp)
+                            )
                             Spacer(modifier = Modifier.height(16.dp))
                             ProfileAndModePanel(
                                 settings = settings,
@@ -402,14 +363,6 @@ fun SettingsScreen(
                         OptionsMenuResetAction(fontFamily, settingsScreenTextColor, viewModel::resetOptionMenuSettings)
                     }
                 }
-                /*
-                 * COLOR PALETTE
-                 *
-                 * La sección ya no es un único item gigante. Cada fila de dos
-                 * paletas es un item lazy independiente, así Compose solo
-                 * compone las filas visibles y reutiliza las que salen/entran
-                 * al viewport. Esto evita crear 46 tarjetas / 184 tonos de golpe.
-                 */
                 settingsSurfaceItem(key = "palette_header", contentType = "palette_header", backgroundColor = settingsPanelColor) {
                     PaletteSettingsSegment(
                         textColorMode = settings.textColor,
@@ -597,8 +550,8 @@ fun SettingsScreen(
                             selectedKey = settings.reminderRingtone,
                             options = FeedbackPreferencePolicy.reminderTones.map { it.key to stringResource(it.labelRes) },
                             previewText = stringResource(R.string.reminder_tone_preview),
-                            sliderTitle = stringResource(R.string.reminder_sound_volume),
-                            sliderValue = localReminderSoundVolume,
+                            sliderTitle = stringResource(R.string.sound_effects_volume),
+                            sliderValue = localSoundEffectsVolume,
                             settings = settings,
                             colors = colors,
                             menuBackground = menuBackground,
@@ -613,13 +566,13 @@ fun SettingsScreen(
                             onSelected = { selectedRingtone ->
                                 UiHapticPlayer.play(context = context, haptic = UiHaptic.Selection)
                                 viewModel.setReminderRingtone(selectedRingtone)
-                                ReminderFeedbackPreferences.previewRingtone(context, selectedRingtone, localReminderSoundVolume)
+                                ReminderFeedbackPreferences.previewRingtone(context, selectedRingtone, localSoundEffectsVolume)
                             },
                             onPreview = {
-                                ReminderFeedbackPreferences.previewRingtone(context, settings.reminderRingtone, localReminderSoundVolume)
+                                ReminderFeedbackPreferences.previewRingtone(context, settings.reminderRingtone, localSoundEffectsVolume)
                             },
-                            onSliderValueChange = { localReminderSoundVolume = it },
-                            onSliderValueChangeFinished = { viewModel.setReminderSoundVolume(localReminderSoundVolume) }
+                            onSliderValueChange = { localSoundEffectsVolume = it },
+                            onSliderValueChangeFinished = { viewModel.setSoundEffectsVolume(localSoundEffectsVolume) }
                         )
                     }
                     settingsPanelItem("feedback_vibration", settings, settingsPanelColor, topSpacing = 16.dp,
@@ -730,8 +683,8 @@ fun SettingsScreen(
                     ) {
                         Icon(Icons.Default.Code, contentDescription = null, tint = panelColors.graphic, modifier = Modifier.size(23.dp))
                         Column(Modifier.weight(1f).padding(start = 12.dp, end = 8.dp)) {
-                            Text(stringResource(R.string.development_info_settings_title), color = panelColors.text,
-                                fontFamily = fontFamily, fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
+                            SettingsTitle(stringResource(R.string.development_info_settings_title), panelColors.text, fontFamily,
+                                fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
                             SettingsSecondaryText(stringResource(R.string.development_info_settings_description), panelColors.secondaryText, fontFamily, Modifier.padding(top = 2.dp))
                         }
                         Icon(Icons.Default.ChevronRight, contentDescription = null, tint = panelColors.graphic, modifier = Modifier.size(20.dp))
@@ -742,14 +695,6 @@ fun SettingsScreen(
                         shape = RoundedCornerShape(bottomStart = 22.dp, bottomEnd = 22.dp),
                         contentPadding = PaddingValues(start = 16.dp, top = 0.dp, end = 16.dp, bottom = 16.dp)) {
                             Spacer(modifier = Modifier.height(14.dp))
-                            /*
-                             * -------------------------------------------------
-                             * ACTUALIZACIONES DE LA APLICACIÓN
-                             * -------------------------------------------------
-                             * Consulta la última Release estable de GitHub. Si la etiqueta
-                             * es superior a versionName y existe un asset .apk, permite
-                             * descargarlo y pasarlo al instalador oficial de Android.
-                             */
                             SettingsSectionPanel(
                                 textColorMode = settings.textColor,
                                 contentPadding = PaddingValues(horizontal = 14.dp, vertical = 14.dp),
@@ -764,13 +709,8 @@ fun SettingsScreen(
                                             modifier = Modifier.size(23.dp)
                                         )
                                         Column(modifier = Modifier.weight(1f).padding(start = 12.dp)) {
-                                            Text(
-                                                text = stringResource(R.string.update_settings_title),
-                                                color = panelColors.text,
-                                                fontFamily = fontFamily,
-                                                fontWeight = FontWeight.SemiBold,
-                                                fontSize = 15.sp
-                                            )
+                                            SettingsTitle(stringResource(R.string.update_settings_title), panelColors.text, fontFamily,
+                                                fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
                                             SettingsSecondaryText(stringResource(R.string.update_settings_description), panelColors.secondaryText, fontFamily, Modifier.padding(top = 2.dp))
                                         }
                                     }
@@ -799,14 +739,8 @@ fun SettingsScreen(
 
                                     when (val result = updateResult) {
                                         is GitHubUpdateManager.CheckResult.UpdateAvailable -> {
-                                            Text(
-                                                text = stringResource(R.string.update_available, result.release.version),
-                                                modifier = Modifier.padding(top = 12.dp),
-                                                color = panelColors.text,
-                                                fontFamily = fontFamily,
-                                                fontWeight = FontWeight.SemiBold,
-                                                fontSize = 13.sp
-                                            )
+                                            SettingsTitle(stringResource(R.string.update_available, result.release.version), panelColors.text, fontFamily,
+                                                modifier = Modifier.padding(top = 12.dp), fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
                                             if (result.release.title.isNotBlank() && result.release.title != result.release.version) {
                                                 SettingsSecondaryText(result.release.title, panelColors.secondaryText, fontFamily, Modifier.padding(top = 2.dp))
                                             }
@@ -842,25 +776,13 @@ fun SettingsScreen(
                                                 fontFamily = fontFamily)
                                         }
 
-                                        is GitHubUpdateManager.CheckResult.Failure -> Text(
-                                            text = stringResource(R.string.update_error, result.reason),
-                                            modifier = Modifier.padding(top = 10.dp),
-                                            color = MaterialTheme.colorScheme.error,
-                                            fontFamily = fontFamily,
-                                            fontSize = 12.sp
-                                        )
+                                        is GitHubUpdateManager.CheckResult.Failure -> SettingsSecondaryText(stringResource(R.string.update_error, result.reason), MaterialTheme.colorScheme.error, fontFamily, modifier = Modifier.padding(top = 10.dp))
 
                                         null -> Unit
                                     }
 
                                     updateActionMessage?.let { message ->
-                                        Text(
-                                            text = message,
-                                            modifier = Modifier.padding(top = 8.dp),
-                                            color = MaterialTheme.colorScheme.error,
-                                            fontFamily = fontFamily,
-                                            fontSize = 12.sp
-                                        )
+                                        SettingsSecondaryText(message, MaterialTheme.colorScheme.error, fontFamily, modifier = Modifier.padding(top = 8.dp))
                                     }
                                 }
                             }
@@ -868,12 +790,6 @@ fun SettingsScreen(
                 }
             }
         }
-        /*
-         * El indicador debe ser hermano del contenido desplazable, no un hijo
-         * de la LazyColumn principal. De esa forma permanece visible en
-         * todo momento mientras Settings se desplaza y no termina colocado al
-         * final del contenido, fuera del viewport actual.
-         */
         Box(
             modifier = Modifier
                 .fillMaxSize()
@@ -890,7 +806,6 @@ fun SettingsScreen(
     }
     }
 
-/** Mantiene el estado durante el gesto y lo sincroniza al cambiar la preferencia. */
 @Composable
 private fun rememberSyncedFloatState(value: Float, syncKey: Any = value): MutableFloatState {
     val state = remember { mutableFloatStateOf(value) }
@@ -903,8 +818,8 @@ private fun SettingsFeedbackHeader(
     title: String, description: String, toggleTitle: String, checked: Boolean,
     colors: SettingsSectionColors, fontFamily: FontFamily, onCheckedChange: (Boolean) -> Unit
 ) {
-    Text(text = title, color = colors.text, fontFamily = fontFamily,
-        fontWeight = FontWeight.Bold, fontSize = 16.sp)
+    SettingsTitle(title, colors.text, fontFamily,
+        fontSize = 16.sp)
     SettingsSecondaryText(description, colors.secondaryText, fontFamily, Modifier.padding(top = 2.dp, bottom = 8.dp))
     Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween) {
@@ -983,14 +898,14 @@ private fun SettingsToggleRow(
 ) {
     Row(modifier = modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
         Column(Modifier.weight(1f)) {
-            Text(title, color = colors.text, fontFamily = fontFamily, fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
+            SettingsTitle(title, colors.text, fontFamily,
+                fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
             SettingsSecondaryText(description, colors.secondaryText, fontFamily, Modifier.padding(top = 2.dp))
         }
         Switch(checked = checked, onCheckedChange = onCheckedChange)
     }
 }
 
-/** Conserva el Surface y la Column de cada elemento de configuración. */
 @Composable
 private fun SettingsContentSurface(
     backgroundColor: Color,
@@ -1003,8 +918,6 @@ private fun SettingsContentSurface(
     }
 }
 
-
-/** Item lazy con el Surface estándar; evita repetir el mismo wrapper y espaciado final. */
 private fun LazyListScope.settingsSurfaceItem(
     key: String, backgroundColor: Color, contentType: Any? = "settings_panel",
     bottomSpacing: androidx.compose.ui.unit.Dp = 0.dp,
@@ -1018,7 +931,6 @@ private fun LazyListScope.settingsSurfaceItem(
     }
 }
 
-/** Surface + separador superior + panel estándar usado por la mayoría de ajustes. */
 private fun LazyListScope.settingsPanelItem(
     key: String,
     settings: AppSettings,
@@ -1039,7 +951,6 @@ private fun LazyListScope.settingsPanelItem(
     }
 }
 
-/** Mismos título, valor y slider; cada llamada conserva sus acciones y rango. */
 private fun LazyListScope.percentSliderItem(
     key: String, titleRes: Int, value: Float, settings: AppSettings, backgroundColor: Color, fontFamily: FontFamily,
     onValueChange: (Float) -> Unit, onValueChangeFinished: () -> Unit, descriptionRes: Int? = null
@@ -1083,7 +994,8 @@ private fun ProfileActionButton(
 ) {
     OutlinedButton(onClick = onClick, shape = RoundedCornerShape(18.dp), border = border,
         contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp), colors = colors) {
-        Text(label, color = contentColor, fontFamily = fontFamily, fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
+        SettingsTitle(label, contentColor, fontFamily,
+            fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
     }
 }
 
@@ -1129,13 +1041,6 @@ private fun ProfileAndModePanel(
         contentPadding = PaddingValues(14.dp),
         horizontalOutset = 8.dp
     ) { panelColors ->
-        /*
-         * El texto de los controles conserva EXACTAMENTE el color resuelto para
-         * el panel. En Automático esto significa blanco sobre familias oscuras
-         * y negro sobre familias claras. Adaptamos el fondo del botón, no el
-         * texto, para evitar botones grises con letras negras dentro de una UI
-         * oscura (o el caso inverso en paletas claras).
-         */
         val primaryColor = MaterialTheme.colorScheme.primary
         val accentTonalButtonBase = MaterialTheme.colorScheme.primaryContainer
         val secondaryButtonBase = MaterialTheme.colorScheme.surfaceContainerHigh
@@ -1161,23 +1066,10 @@ private fun ProfileAndModePanel(
             secondaryButtonBase, panelColors.background, settings.textColor, minimumSurfaceContrast = 1.35f)
         val modeUnselectedContainerColor = modeUnselectedColors.container
         val modeUnselectedContentColor = modeUnselectedColors.content
-        Text(
-            text = stringResource(R.string.extreme_profile),
-            color = panelColors.text,
-            fontFamily = fontFamily,
-            fontWeight = FontWeight.Bold,
-            fontSize = 15.sp
-        )
+        SettingsTitle(stringResource(R.string.extreme_profile), panelColors.text, fontFamily,
+            fontSize = 15.sp)
         Spacer(modifier = Modifier.height(10.dp))
         Row(verticalAlignment = Alignment.CenterVertically) {
-            /*
-             * Vista previa del tamaño del avatar en tiempo real.
-             *
-             * profileSize usa el estado local que actualiza el slider en cada
-             * movimiento. El valor persistente se guarda únicamente al terminar
-             * de arrastrar, evitando escrituras continuas en DataStore mientras
-             * la previsualización sigue respondiendo de forma inmediata.
-             */
             val previewAvatarSize = profileSize.coerceIn(36f, 84f).dp
             val previewIconSize = (profileSize * 0.46f).coerceIn(20f, 38f).dp
             Surface(
@@ -1249,13 +1141,8 @@ private fun ProfileAndModePanel(
         }
 
         Spacer(modifier = Modifier.height(18.dp))
-        Text(
-            text = stringResource(R.string.configuration_mode_settings_title),
-            color = panelColors.text,
-            fontFamily = fontFamily,
-            fontWeight = FontWeight.Bold,
-            fontSize = 15.sp
-        )
+        SettingsTitle(stringResource(R.string.configuration_mode_settings_title), panelColors.text, fontFamily,
+            fontSize = 15.sp)
         SettingsSecondaryText(stringResource(R.string.configuration_mode_settings_description), panelColors.secondaryText, fontFamily, Modifier.padding(top = 2.dp))
         Row(
             modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
@@ -1287,13 +1174,9 @@ private fun ProfileAndModePanel(
 @Composable
 private fun SettingTitle(text: String, color: Color, fontFamily:
         androidx.compose.ui.text.font.FontFamily) {
-    Text(text = text,
-        color = color,
-        fontFamily = fontFamily,
-        fontWeight = FontWeight.SemiBold,
-        fontSize = 15.sp)
+    SettingsTitle(text, color, fontFamily,
+        fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
 }
-
 
 @Composable
 private fun RoundedPreviewButton(
@@ -1317,12 +1200,8 @@ private fun RoundedPreviewButton(
             contentColor = buttonContentColor
         )
     ) {
-        Text(
-            text = text,
-            fontFamily = fontFamily,
-            color = buttonContentColor,
-            fontWeight = FontWeight.SemiBold
-        )
+        SettingsTitle(text, buttonContentColor, fontFamily,
+            fontWeight = FontWeight.SemiBold)
     }
 }
 
@@ -1335,10 +1214,7 @@ private fun SettingTitleRow(title: String, value: String, color: Color, fontFami
             color = color,
             fontFamily = fontFamily)
         Spacer(modifier = Modifier.weight(1f))
-        Text(text = value,
-            color = color,
-            fontFamily = fontFamily,
-            fontSize = 12.sp)
+        SettingsSecondaryText(value, color, fontFamily)
     }
 }
 
@@ -1346,11 +1222,17 @@ private fun SettingTitleRow(title: String, value: String, color: Color, fontFami
 private fun TextColorSelector(selected: String, onSelected: (String) -> Unit, fontKey: String) {
     val context = LocalContext.current
     val selectorFontFamily = remember(fontKey) { appFontFamily(fontKey) }
-    val options = listOf(
-        Triple("auto", stringResource(R.string.mock_auto), MaterialTheme.colorScheme.onSurface),
-        Triple("black", stringResource(R.string.mock_black), Color.Black),
-        Triple("white", stringResource(R.string.mock_white), Color.White)
-    )
+    val autoLabel = stringResource(R.string.mock_auto)
+    val blackLabel = stringResource(R.string.mock_black)
+    val whiteLabel = stringResource(R.string.mock_white)
+    val automaticSampleColor = MaterialTheme.colorScheme.onSurface
+    val options = remember(autoLabel, blackLabel, whiteLabel, automaticSampleColor) {
+        listOf(
+            Triple("auto", autoLabel, automaticSampleColor),
+            Triple("black", blackLabel, Color.Black),
+            Triple("white", whiteLabel, Color.White)
+        )
+    }
     Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(10.dp)) {
         options.forEach { (key, label, sampleColor) ->
             TextColorButton(
@@ -1366,9 +1248,11 @@ private fun TextColorSelector(selected: String, onSelected: (String) -> Unit, fo
 private fun TextColorButton(modifier: Modifier, label: String, sampleColor: Color, selected: Boolean, fontFamily:
         androidx.compose.ui.text.font.FontFamily, onClick: () -> Unit) {
     val buttonBackground = MaterialTheme.colorScheme.surfaceContainerLow
-    val buttonContentColor = resolveUiTextColor(value = "auto", background = buttonBackground)
-    val buttonBorderColor = ensureUiContrast(preferred = MaterialTheme.colorScheme.outline, background = buttonBackground,
-            minimumContrast = 3f)
+    val buttonOutline = MaterialTheme.colorScheme.outline
+    val (buttonContentColor, buttonBorderColor) = remember(buttonBackground, buttonOutline) {
+        resolveUiTextColor(value = "auto", background = buttonBackground) to
+            ensureUiContrast(preferred = buttonOutline, background = buttonBackground, minimumContrast = 3f)
+    }
     Surface(modifier = modifier,
         onClick = onClick,
         shape = RoundedCornerShape(13.dp),
@@ -1412,7 +1296,6 @@ private fun TextColorButton(modifier: Modifier, label: String, sampleColor: Colo
     }
 }
 
-/** Usa las mismas etiquetas del menú para mostrar la selección actual. */
 @Composable
 private fun KeyedSettingDropdown(
     title: String, selectedKey: String, options: List<Pair<String, String>>, textColor: Color,
@@ -1433,43 +1316,41 @@ private fun SettingDropdown(title: String, selectedLabel: String, options: List<
     textColorMode: String, menuBackground: Color, menuTextColor: Color, fontFamily:
         androidx.compose.ui.text.font.FontFamily, playDefaultSelectionFeedback: Boolean = true, onSelected: (String) -> Unit) {
     val context = LocalContext.current
-    var expanded by
-        remember {
-            mutableStateOf(false)
-        }
+    var expanded by remember { mutableStateOf(false) }
     val dropdownButtonBackground = MaterialTheme.colorScheme.surfaceContainerLow
-    val dropdownButtonTextColor = resolveUiTextColor(value = textColorMode, background = dropdownButtonBackground)
-    val dropdownButtonGraphicColor = com.example.mynotes.ui.theme.resolveUiGraphicColor(value = textColorMode,
-            background = dropdownButtonBackground)
-    val dropdownButtonBorderColor = ensureUiContrast(preferred = MaterialTheme.colorScheme.outline, background = dropdownButtonBackground,
-            minimumContrast = 3f)
-    // Ajusta el ancho del selector al texto visible en lugar de forzarlo
-    // a ocupar toda la mitad derecha de la fila.
-    val dropdownWidth = when {
+    val dropdownOutline = MaterialTheme.colorScheme.outline
+    val dropdownColors = remember(textColorMode, dropdownButtonBackground, dropdownOutline) {
+        Triple(
+            resolveUiTextColor(value = textColorMode, background = dropdownButtonBackground),
+            com.example.mynotes.ui.theme.resolveUiGraphicColor(value = textColorMode, background = dropdownButtonBackground),
+            ensureUiContrast(preferred = dropdownOutline, background = dropdownButtonBackground, minimumContrast = 3f)
+        )
+    }
+    val dropdownButtonTextColor = dropdownColors.first
+    val dropdownButtonGraphicColor = dropdownColors.second
+    val dropdownButtonBorderColor = dropdownColors.third
+    val (dropdownWidth, compactMenuWidth) = remember(selectedLabel, options) {
+        val buttonWidth = when {
             selectedLabel.length <= 3 -> 112.dp
             selectedLabel.length <= 7 -> 132.dp
             selectedLabel.length <= 11 -> 154.dp
             selectedLabel.length <= 16 -> 188.dp
             else -> 228.dp
         }
-    // El popup usa la opción más larga, no solo la opción seleccionada.
-    // Así queda lo más estrecho posible sin cortar innecesariamente el texto.
-    val longestOptionLength = maxOf(selectedLabel.length, options.maxOfOrNull { it.second.length } ?: 0)
-    val compactMenuWidth = when {
+        val longestOptionLength = maxOf(selectedLabel.length, options.maxOfOrNull { it.second.length } ?: 0)
+        val menuWidth = when {
             longestOptionLength <= 6 -> 112.dp
             longestOptionLength <= 10 -> 132.dp
             longestOptionLength <= 14 -> 150.dp
             longestOptionLength <= 18 -> 170.dp
             else -> 194.dp
         }
+        buttonWidth to menuWidth
+    }
     Row(modifier = Modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically) {
-        Text(text = title,
-            modifier = Modifier.weight(0.36f),
-            color = textColor,
-            fontFamily = fontFamily,
-            fontWeight = FontWeight.SemiBold,
-            fontSize = 14.sp)
+        SettingsTitle(title, textColor, fontFamily,
+            modifier = Modifier.weight(0.36f), fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
         Box(modifier = Modifier.weight(0.64f),
             contentAlignment = Alignment.CenterEnd) {
             Surface(modifier = Modifier.width(dropdownWidth),

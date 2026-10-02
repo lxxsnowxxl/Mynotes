@@ -1,5 +1,6 @@
 package com.example.mynotes.ui
-import com.example.mynotes.ui.theme.rememberUiTextColors
+import com.example.mynotes.ui.theme.rememberUiContentColors
+import com.example.mynotes.ui.theme.rememberAppFontFamily
 import com.example.mynotes.ui.components.AppIconButton
 import com.example.mynotes.ui.components.AppIconLabel
 import com.example.mynotes.ui.components.AppTextButton
@@ -11,7 +12,6 @@ import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
@@ -54,7 +54,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
@@ -94,10 +93,7 @@ import com.example.mynotes.ui.motion.AppMotion
 import com.example.mynotes.ui.sound.UiActionSound
 import com.example.mynotes.ui.sound.UiSound
 import com.example.mynotes.ui.sound.UiSoundPlayer
-import com.example.mynotes.ui.theme.appFontFamily
 import com.example.mynotes.ui.theme.resolveUiTextColor
-import com.example.mynotes.ui.theme.resolveSecondaryUiTextColor
-import com.example.mynotes.ui.theme.resolveUiGraphicColor
 import com.example.mynotes.ui.theme.compositeUiColor
 import com.example.mynotes.ui.theme.ensureUiContrast
 import com.example.mynotes.ui.theme.noteBackgroundColor
@@ -112,10 +108,6 @@ private val DetailMenuKeys = listOf("edit", "priority", "color")
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
 fun NoteDetailScreen(note: Note, noteViewModel: NoteViewModel, settings: AppSettings, onBack: () -> Unit, onEdit: (Note) -> Unit) {
-    /*
-     * Recordamos el Flow por id para no recrearlo/recolectarlo de nuevo
-     * durante recomposiciones visuales de esta pantalla.
-     */
     val attachmentsFlow = remember(note.id) {
             noteViewModel.getAttachments(note.id)
         }
@@ -128,12 +120,9 @@ fun NoteDetailScreen(note: Note, noteViewModel: NoteViewModel, settings: AppSett
     val displayContent = remember(note.content, noteLinks) {
             noteTextForDisplay(content = note.content, links = noteLinks)
         }
-    val fontFamily = remember(settings.font) {
-            appFontFamily(settings.font)
-        }
+    val fontFamily = rememberAppFontFamily(settings.font)
     val detailBackground = noteBackgroundColor(note.color)
-    val (noteTextColor, noteSecondaryTextColor) = rememberUiTextColors(settings.textColor, detailBackground)
-    val noteGraphicColor = resolveUiGraphicColor(value = settings.textColor, background = detailBackground)
+    val (noteTextColor, noteSecondaryTextColor, noteGraphicColor) = rememberUiContentColors(settings.textColor, detailBackground)
     val favoriteIconColor = ensureUiContrast(preferred = FavoriteGold, background = detailBackground, minimumContrast = 3f)
     val attachmentAddButtonContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh
     val attachmentAddButtonContentColor = resolveUiTextColor(value = settings.textColor,
@@ -159,26 +148,11 @@ fun NoteDetailScreen(note: Note, noteViewModel: NoteViewModel, settings: AppSett
         } else {
             noteGraphicColor.copy(alpha = 0.28f)
         }
-    var mainMenuExpanded by
-        remember {
-            mutableStateOf(false)
-        }
-    var priorityMenuExpanded by
-        remember {
-            mutableStateOf(false)
-        }
-    var colorMenuExpanded by
-        remember {
-            mutableStateOf(false)
-        }
-    var moveMenuExpanded by
-        remember {
-            mutableStateOf(false)
-        }
-    var deleteDialogVisible by
-        remember {
-            mutableStateOf(false)
-        }
+    var mainMenuExpanded by remember { mutableStateOf(false) }
+    var priorityMenuExpanded by remember { mutableStateOf(false) }
+    var colorMenuExpanded by remember { mutableStateOf(false) }
+    var moveMenuExpanded by remember { mutableStateOf(false) }
+    var deleteDialogVisible by remember { mutableStateOf(false) }
     val motionDuration = AppMotion.duration(AppMotion.FAST, settings.animationsEnabled, settings.animationSpeed)
     val effectiveOptionMenuTextColorMode = if (settings.optionMenuTextColor == "note") settings.textColor else settings.optionMenuTextColor
     val defaultPopupSurface = MaterialTheme.colorScheme.surfaceContainerHigh
@@ -226,9 +200,7 @@ fun NoteDetailScreen(note: Note, noteViewModel: NoteViewModel, settings: AppSett
                 },
                 navigationIcon = {
                     AppIconButton(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.mock_back),
-                        onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Back) {
-                            onBack()
-                        })
+                        onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Back, onBack))
                 },
                 actions = {
                     IconButton(onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Favorite) {
@@ -404,9 +376,6 @@ fun NoteDetailScreen(note: Note, noteViewModel: NoteViewModel, settings: AppSett
                 fontSize = (settings.fontSize + 13f).sp,
                 lineHeight = (settings.fontSize + 17f).sp)
             Spacer(modifier = Modifier.height(11.dp))
-            /*
-             * Metadata como en el mockup.
-             */
             FlowRow(modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalArrangement = Arrangement.spacedBy(6.dp),

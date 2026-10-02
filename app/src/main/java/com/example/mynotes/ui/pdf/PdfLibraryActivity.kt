@@ -1,6 +1,7 @@
 package com.example.mynotes.ui.pdf
+import com.example.mynotes.ui.components.AppHeading
 import com.example.mynotes.ui.theme.rememberUiTextColors
-import com.example.mynotes.ui.components.AppIconButton
+import com.example.mynotes.ui.components.AppCircularIconButton
 import com.example.mynotes.ui.components.AppIconLabel
 import com.example.mynotes.ui.components.AppTextButton
 
@@ -44,14 +45,12 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -78,7 +77,7 @@ import com.example.mynotes.ui.components.AppDropdownMenu
 import com.example.mynotes.ui.sound.UiActionSound
 import com.example.mynotes.ui.sound.UiSound
 import com.example.mynotes.ui.sound.UiSoundPlayer
-import com.example.mynotes.ui.theme.appFontFamily
+import com.example.mynotes.ui.theme.rememberAppFontFamily
 import com.example.mynotes.ui.theme.compositeUiColor
 import com.example.mynotes.ui.theme.ensureUiContrast
 import com.example.mynotes.ui.theme.resolveSecondaryUiTextColor
@@ -94,7 +93,7 @@ class PdfLibraryActivity : ImmersivePdfActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setPdfContent { settings ->
-            val handleBack = UiSoundPlayer.actionHandler(this@PdfLibraryActivity, UiActionSound.Back, ::finish)
+            val handleBack = UiSoundPlayer.actionHandler(this@PdfLibraryActivity, UiActionSound.Back, ::finishWithPdfMotion)
 
             BackHandler(onBack = handleBack)
 
@@ -103,11 +102,14 @@ class PdfLibraryActivity : ImmersivePdfActivity() {
                 refreshSignal = refreshSignal.intValue,
                 onBack = handleBack,
                 onNew = UiSoundPlayer.actionHandler(this, UiActionSound.Add) {
-                    startActivity(Intent(this, PdfEditorActivity::class.java))
+                    startActivity(Intent(this, PdfEditorActivity::class.java).withPdfScreenMotion(settings))
+                    suppressPendingActivityAnimation()
                 },
                 onOpen = UiSoundPlayer.actionHandler(this, UiActionSound.Open) { projectId: String ->
                     startActivity(Intent(this, PdfEditorActivity::class.java)
-                        .putExtra(PdfEditorActivity.EXTRA_PROJECT_ID, projectId))
+                        .putExtra(PdfEditorActivity.EXTRA_PROJECT_ID, projectId)
+                        .withPdfScreenMotion(settings))
+                    suppressPendingActivityAnimation()
                 }
             )
         }
@@ -130,13 +132,10 @@ private fun PdfLibraryScreen(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val fontFamily = remember(settings.font) { appFontFamily(settings.font) }
+    val fontFamily = rememberAppFontFamily(settings.font)
     val screenBackground = MaterialTheme.colorScheme.background
     val (primaryText, secondaryText) = rememberUiTextColors(settings.textColor, screenBackground)
 
-    // La cabecera forma parte del fondo principal de Mis PDF. La separación visual
-    // se reserva para las tarjetas editables, que necesitan distinguirse con claridad
-    // en cualquier paleta sin convertir el título en otra tarjeta.
     val cardContrastOverlay = if (screenBackground.luminance() > 0.5f) {
         Color.Black.copy(alpha = 0.14f)
     } else {
@@ -144,21 +143,12 @@ private fun PdfLibraryScreen(
     }
     val baseProjectCardColor = compositeUiColor(cardContrastOverlay, screenBackground)
 
-    /*
-     * En modo Automático la tarjeta se adapta al color de texto que ya resolvió
-     * la pantalla. Si Automático está usando negro (tonos claros), aclaramos la
-     * tarjeta en vez de oscurecerla; así el nombre, páginas, fecha y menú
-     * conservan contraste real. Si Automático usa blanco se mantiene el fondo
-     * anterior. Los modos Negro/Blanco manuales no cambian su fondo.
-     */
     val automaticProjectText = if (settings.textColor == "auto") {
         if (primaryText.luminance() < 0.5f) Color.Black else Color.White
     } else {
         null
     }
     val projectCardColor = if (automaticProjectText == Color.Black) {
-        // El fondo conserva el matiz de la paleta, pero se acerca claramente a
-        // blanco para que las tarjetas PDF no queden gris oscuro bajo texto negro.
         compositeUiColor(Color.White.copy(alpha = 0.52f), screenBackground)
     } else {
         baseProjectCardColor
@@ -166,11 +156,6 @@ private fun PdfLibraryScreen(
     val projectCardText = automaticProjectText ?: resolveUiTextColor(settings.textColor, projectCardColor)
     val projectCardSecondaryText = resolveSecondaryUiTextColor(settings.textColor, projectCardColor)
 
-    /*
-     * Si la tarjeta termina usando texto negro, añadimos una base muy clara casi
-     * blanca detrás de los textos principales para reforzar todavía más el contraste
-     * sin romper la paleta. Cuando el texto es blanco, no se aplica este recuadro.
-     */
     val blackTextBadgeEnabled = projectCardText.luminance() < 0.18f
     val blackTextBadgeBackground = if (blackTextBadgeEnabled) {
         Color(0xFFF8F8F6)
@@ -215,8 +200,6 @@ private fun PdfLibraryScreen(
     )
     val infoChipText = resolveUiTextColor(settings.textColor, infoChipColor)
 
-    // El menú de PDFs utiliza exactamente la misma lógica visual/configurable que
-    // el menú de opciones de las notas: color del menú, opacidad, texto e iconos.
     val effectivePopupTextColorMode = if (settings.optionMenuTextColor == "note") settings.textColor else settings.optionMenuTextColor
     val defaultPopupSurface = MaterialTheme.colorScheme.surfaceContainerHigh
     val inversePopupSurface = MaterialTheme.colorScheme.inverseSurface
@@ -320,27 +303,16 @@ private fun PdfLibraryScreen(
                     .padding(start = 24.dp, top = 18.dp, end = 24.dp, bottom = 18.dp)
             ) {
                     Row(verticalAlignment = Alignment.CenterVertically) {
-                        Surface(
-                            shape = CircleShape,
-                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.14f)
-                        ) {
-                            AppIconButton(Icons.Default.ArrowBack, stringResource(R.string.pdf_back), onClick = onBack,
-                                modifier = Modifier.size(42.dp), tint = headerText)
-                        }
+                        AppCircularIconButton(Icons.Default.ArrowBack, stringResource(R.string.pdf_back), onClick = onBack,
+                            containerColor = MaterialTheme.colorScheme.primary.copy(alpha = 0.14f),
+                            modifier = Modifier.size(42.dp), tint = headerText)
                         Spacer(Modifier.width(12.dp))
                         Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                stringResource(R.string.pdf_library_title),
-                                fontFamily = fontFamily,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = (26f * (settings.fontSize / 16f).coerceIn(0.82f, 1.24f)).coerceIn(21f, 33f).sp,
-                                color = headerText
-                            )
-                            Text(
-                                stringResource(R.string.pdf_library_subtitle),
-                                fontFamily = fontFamily,
-                                fontSize = (13f * (settings.fontSize / 16f).coerceIn(0.82f, 1.24f)).coerceIn(11f, 17f).sp,
-                                color = headerSecondaryText
+                            AppHeading(
+                                title = stringResource(R.string.pdf_library_title), subtitle = stringResource(R.string.pdf_library_subtitle),
+                                fontFamily = fontFamily, titleColor = headerText, subtitleColor = headerSecondaryText,
+                                titleSize = (26f * (settings.fontSize / 16f).coerceIn(0.82f, 1.24f)).coerceIn(21f, 33f).sp,
+                                subtitleSize = (13f * (settings.fontSize / 16f).coerceIn(0.82f, 1.24f)).coerceIn(11f, 17f).sp
                             )
                         }
                     }
@@ -374,20 +346,13 @@ private fun PdfLibraryScreen(
                             modifier = Modifier.padding(20.dp).size(48.dp)
                         )
                     }
-                    Text(
-                        stringResource(R.string.pdf_library_empty_title),
-                        fontFamily = fontFamily,
-                        fontWeight = FontWeight.Bold,
-                        color = primaryText,
-                        fontSize = 19.sp,
-                        modifier = Modifier.padding(top = 18.dp)
-                    )
-                    Text(
-                        stringResource(R.string.pdf_library_empty_description),
-                        fontFamily = fontFamily,
-                        color = secondaryText,
-                        fontSize = 14.sp,
-                        modifier = Modifier.padding(top = 7.dp)
+                    AppHeading(
+                        title = stringResource(R.string.pdf_library_empty_title), subtitle = stringResource(R.string.pdf_library_empty_description),
+                        fontFamily = fontFamily, titleColor = primaryText, subtitleColor = secondaryText,
+                        titleSize = 19.sp,
+                        titleModifier = Modifier.padding(top = 18.dp),
+                        subtitleSize = 14.sp,
+                        subtitleModifier = Modifier.padding(top = 7.dp)
                     )
                 }
             } else {
@@ -489,15 +454,10 @@ private fun PdfLibraryScreen(
                                     }
                                 }
                                 Box {
-                                    Surface(
-                                        shape = CircleShape,
-                                        color = projectCardText.copy(alpha = 0.08f)
-                                    ) {
-                                        AppIconButton(Icons.Default.MoreVert, null,
-                                            onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Menu) {
-                                                menuProjectId = project.id
-                                            }, modifier = Modifier.size(42.dp), tint = projectCardText)
-                                    }
+                                    AppCircularIconButton(Icons.Default.MoreVert, null,
+                                        onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Menu) { menuProjectId = project.id },
+                                        containerColor = projectCardText.copy(alpha = 0.08f),
+                                        modifier = Modifier.size(42.dp), tint = projectCardText)
                                     AppDropdownMenu(
                                         modifier = Modifier
                                             .heightIn(max = 300.dp)

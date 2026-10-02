@@ -64,6 +64,8 @@ import androidx.compose.material.icons.filled.RadioButtonUnchecked
 import androidx.compose.material.icons.filled.HorizontalRule
 import androidx.compose.material.icons.filled.Highlight
 import androidx.compose.material.icons.filled.CropSquare
+import androidx.compose.material.icons.filled.Crop
+import androidx.compose.material.icons.filled.Flip
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.FolderOpen
 import androidx.compose.material.icons.filled.Image
@@ -79,12 +81,10 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -126,10 +126,8 @@ import com.example.mynotes.ui.motion.AppMotion
 import com.example.mynotes.ui.sound.UiActionSound
 import com.example.mynotes.ui.sound.UiSound
 import com.example.mynotes.ui.sound.UiSoundPlayer
-import com.example.mynotes.ui.theme.appFontFamily
-import com.example.mynotes.ui.theme.resolveSecondaryUiTextColor
+import com.example.mynotes.ui.theme.rememberAppFontFamily
 import com.example.mynotes.ui.theme.rememberAdaptiveUiButtonColors
-import com.example.mynotes.ui.theme.resolveUiTextColor
 import com.example.mynotes.util.uriDisplayName
 import com.google.mlkit.common.MlKitException
 import kotlinx.coroutines.CancellationException
@@ -151,6 +149,16 @@ private val PdfEditorPalette = intArrayOf(
     0xFF47B071.toInt(), 0xFF35A8B5.toInt(), 0xFF3978D4.toInt(), 0xFF7651CA.toInt(), 0xFFD44B88.toInt()
 )
 
+private fun nextPdfElementId(pages: List<PdfPageModel>): Long {
+    var maximum = 0L
+    pages.forEach { page ->
+        page.images.forEach { maximum = maxOf(maximum, it.id) }
+        page.texts.forEach { maximum = maxOf(maximum, it.id) }
+        page.strokes.forEach { maximum = maxOf(maximum, it.id) }
+    }
+    return maximum + 1L
+}
+
 class PdfEditorActivity : ImmersivePdfActivity() {
     companion object {
         const val EXTRA_PROJECT_ID = "pdf_project_id"
@@ -163,11 +171,10 @@ class PdfEditorActivity : ImmersivePdfActivity() {
             PdfEditorScreen(
                 settings = settings,
                 initialProjectId = initialProjectId,
-                onClose = { finish() }
+                onClose = { finishWithPdfMotion() }
             )
         }
     }
-
 
 }
 
@@ -179,7 +186,7 @@ private fun PdfEditorScreen(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    val fontFamily = remember(settings.font) { appFontFamily(settings.font) }
+    val fontFamily = rememberAppFontFamily(settings.font)
     val (primaryText, secondaryText) = rememberUiTextColors(settings.textColor, MaterialTheme.colorScheme.background)
 
     var pages by remember { mutableStateOf(listOf(PdfPageModel.blank())) }
@@ -193,6 +200,8 @@ private fun PdfEditorScreen(
     var canvasTransforming by remember { mutableStateOf(false) }
     var nextElementId by remember { mutableLongStateOf(1L) }
     var aiBusy by remember { mutableStateOf(false) }
+    var imageEditBusy by remember { mutableStateOf(false) }
+    var showImageCropDialog by remember { mutableStateOf(false) }
     var pendingTextPosition by remember { mutableStateOf<PdfPoint?>(null) }
     var pendingText by remember { mutableStateOf("") }
     var showTextDialog by remember { mutableStateOf(false) }
@@ -239,11 +248,7 @@ private fun PdfEditorScreen(
                 history = emptyList()
                 redoHistory = emptyList()
                 clearSelection()
-                nextElementId = (
-                    project.pages.flatMap { page ->
-                        page.images.map { it.id } + page.texts.map { it.id } + page.strokes.map { it.id }
-                    }.filter { it > 0L }.maxOrNull() ?: 0L
-                ) + 1L
+                nextElementId = nextPdfElementId(project.pages)
                 projectReady = true
             }
             .onFailure {
@@ -275,6 +280,39 @@ private fun PdfEditorScreen(
         }
     }
 
+    fun editSelectedImage(edit: (PdfImageElement, PdfPageModel) -> PdfImageElement) {
+        if (imageEditBusy || aiBusy) return
+        val pageIndex = currentPageIndex
+        val page = pages[pageIndex]
+        val source = page.images.firstOrNull { it.id == selectedImageId } ?: return
+        val editVersion = dirtyVersion
+        imageEditBusy = true
+        scope.launch {
+            var result: PdfImageElement? = null
+            var committed = false
+            try {
+                val updated = withContext(Dispatchers.Default) { edit(source, page).also { result = it } }
+                if (currentPageIndex != pageIndex || dirtyVersion != editVersion || selectedImageId != source.id ||
+                    pages.getOrNull(pageIndex)?.images?.firstOrNull { it.id == source.id } !== source) {
+                    Toast.makeText(context, context.getString(R.string.pdf_image_edit_changed), Toast.LENGTH_LONG).show()
+                    return@launch
+                }
+                if (updated == source) return@launch
+                replaceCurrent(pages[pageIndex].copy(images = pages[pageIndex].images.map { if (it.id == source.id) updated else it }))
+                committed = true
+                UiSoundPlayer.playAction(context, UiActionSound.Confirm)
+            } catch (error: CancellationException) {
+                throw error
+            } catch (error: Throwable) {
+                Log.w("PdfImageEdits", "Image edit failed", error)
+                Toast.makeText(context, context.getString(R.string.pdf_image_edit_error), Toast.LENGTH_LONG).show()
+            } finally {
+                if (!committed) result?.bitmap?.takeIf { it !== source.bitmap }?.recycle()
+                imageEditBusy = false
+            }
+        }
+    }
+
     fun undo() {
         val previous = history.lastOrNull() ?: return
         redoHistory = (redoHistory + listOf(pages)).takeLast(30)
@@ -294,7 +332,6 @@ private fun PdfEditorScreen(
         clearSelection()
         markDirty()
     }
-
 
     fun displayNameForUri(uri: Uri): String? = context.uriDisplayName(uri)
 
@@ -317,9 +354,6 @@ private fun PdfEditorScreen(
                 pages = pages,
                 sourcePdfUri = sourcePdfUri
             )
-            // Tras el primer autoguardado de un PDF externo se usa la copia
-            // privada de MyNotes. Así el proyecto puede abrirse aunque el
-            // proveedor externo deje de estar disponible.
             if (saved.sourcePdfUri != null && sourcePdfUri != saved.sourcePdfUri) {
                 sourcePdfUri = saved.sourcePdfUri
             }
@@ -332,8 +366,6 @@ private fun PdfEditorScreen(
         uri ?: return@rememberLauncherForActivityResult
         scope.launch {
             runCatching {
-                // Un PDF exportado por MyNotes mantiene un vínculo con su proyecto editable.
-                // Si existe, recuperamos las capas originales en lugar de cargar el PDF plano.
                 val editableExport = PdfProjectRepository.loadProjectForExportedPdf(context, uri)
                 if (editableExport != null) {
                     Triple(editableExport.pages, editableExport.sourcePdfUri, true)
@@ -344,11 +376,6 @@ private fun PdfEditorScreen(
                 val newPages = if (restoredEditableExport) {
                     loadedPages
                 } else {
-                    /*
-                     * El PDF es la capa base; las ediciones creadas en PDF Studio son
-                     * overlays normalizados. Al abrir/cambiar un PDF externo conservamos
-                     * los overlays de la sesión por número de página.
-                     */
                     val previousPages = pages
                     loadedPages.mapIndexed { index, pdfPage ->
                         val previous = previousPages.getOrNull(index)
@@ -383,11 +410,7 @@ private fun PdfEditorScreen(
                 }
                 currentPageIndex = 0
                 clearSelection()
-                nextElementId = (
-                    pages.flatMap { page ->
-                        page.images.map { it.id } + page.texts.map { it.id } + page.strokes.map { it.id }
-                    }.filter { it > 0L }.maxOrNull() ?: 0L
-                ) + 1L
+                nextElementId = nextPdfElementId(pages)
 
                 runCatching {
                     context.contentResolver.takePersistableUriPermission(
@@ -461,7 +484,7 @@ private fun PdfEditorScreen(
         val id = selectedImageId ?: return
         val pageIndex = currentPageIndex
         val image = pages[pageIndex].images.firstOrNull { it.id == id } ?: return
-        if (aiBusy) return
+        if (aiBusy || imageEditBusy) return
         val editVersion = dirtyVersion
         aiBusy = true
         scope.launch {
@@ -473,13 +496,10 @@ private fun PdfEditorScreen(
                         }
                     }
                 }
-                // La descarga puede tardar: no sobrescribir ediciones hechas durante la espera.
                 if (currentPageIndex != pageIndex || dirtyVersion != editVersion || selectedImageId != id) {
                     Toast.makeText(context, context.getString(R.string.pdf_ai_crop_changed), Toast.LENGTH_LONG).show()
                     return@launch
                 }
-                // AI cutout sólo sustituye los píxeles: posición, tamaño y rotación
-                // permanecen exactamente iguales a los que tenía el usuario.
                 val updatedImage = image.copy(bitmap = cropped)
                 replaceCurrent(
                     pages[currentPageIndex].copy(
@@ -511,8 +531,16 @@ private fun PdfEditorScreen(
         }
     }
 
-    // Renderiza únicamente la página que el usuario está viendo. Para documentos
-    // largos, las páginas alejadas se liberan de memoria y se vuelven a crear al volver.
+    if (showImageCropDialog) {
+        val image = pages.getOrNull(currentPageIndex)?.images?.firstOrNull { it.id == selectedImageId }
+        if (image != null) {
+            PdfImageCropDialog(image, fontFamily, { showImageCropDialog = false }) { area ->
+                showImageCropDialog = false
+                editSelectedImage { selected, page -> PdfImageEdits.crop(selected, page, area) }
+            }
+        }
+    }
+
     LaunchedEffect(currentPageIndex, sourcePdfUri, pages.size) {
         val sourceUri = sourcePdfUri
         val targetIndex = currentPageIndex
@@ -521,8 +549,6 @@ private fun PdfEditorScreen(
             pageLoading = true
             try {
                 val rendered = PdfDocumentEngine.renderPdfPage(context, sourceUri, current.sourcePdfPageIndex)
-                // Si el usuario cambió de página mientras se rasterizaba ésta, el
-                // LaunchedEffect anterior se cancela y no debe sobrescribir la nueva vista.
                 if (currentPageIndex == targetIndex && sourcePdfUri == sourceUri) {
                     pages = pages.mapIndexed { index, page ->
                         when {
@@ -546,8 +572,6 @@ private fun PdfEditorScreen(
                 pageLoading = false
             }
         } else if (sourceUri != null) {
-            // Incluso si la página actual ya está cargada, conservar sólo un pequeño
-            // vecindario de bitmaps evita que recorrer un PDF grande llene la memoria.
             val trimmed = pages.mapIndexed { index, page ->
                 if (
                     page.sourcePdfPageIndex != null &&
@@ -853,10 +877,7 @@ private fun PdfEditorScreen(
                         canvasTransforming = transforming
                     }
                 )
-                // El acceso para abrir un PDF vive dentro del canvas, no en la barra inferior.
-                // Se muestra únicamente mientras todavía no existe un documento PDF cargado.
-                // Al cargarlo correctamente, sourcePdfUri deja de ser null y el botón desaparece.
-                if (sourcePdfUri == null) {
+                if (projectReady && !hasMeaningfulProject()) {
                     PdfCanvasOpenButton(
                         settings = settings,
                         fontFamily = fontFamily,
@@ -865,7 +886,7 @@ private fun PdfEditorScreen(
                     )
                 }
 
-                if (aiBusy || pageLoading) {
+                if (aiBusy || pageLoading || imageEditBusy) {
                     Surface(shape = CircleShape, color = MaterialTheme.colorScheme.surface.copy(alpha = 0.92f)) {
                         CircularProgressIndicator(modifier = Modifier.padding(18.dp).size(34.dp))
                     }
@@ -947,6 +968,15 @@ private fun PdfEditorScreen(
                     UiSoundPlayer.playAction(context, UiActionSound.Select)
                 },
                 onAiCrop = { runAiCrop() },
+                onFlipImage = {
+                    editSelectedImage { selected, _ -> PdfImageEdits.flip(selected, horizontal = true) }
+                },
+                onCropImage = {
+                    if (!imageEditBusy && !aiBusy && selectedImageId != null) {
+                        showImageCropDialog = true
+                        UiSoundPlayer.playAction(context, UiActionSound.Select)
+                    }
+                },
                 onScaleImage = { factor ->
                     selectedImageId?.let { id ->
                         pages[currentPageIndex].images.firstOrNull { it.id == id }?.let { image ->
@@ -1227,35 +1257,36 @@ private fun PdfTopBar(
     )
     Row(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp),
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.Top
     ) {
         AppIconButton(Icons.Default.ArrowBack, stringResource(R.string.pdf_back), onClick = onBack, tint = primaryText)
         Column(modifier = Modifier.weight(1f)) {
+            Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                Text(
+                    text = stringResource(R.string.pdf_studio),
+                    modifier = Modifier.weight(1f).padding(end = 8.dp),
+                    color = primaryText, fontFamily = fontFamily,
+                    fontWeight = FontWeight.Bold, fontSize = 25.sp
+                )
+                Button(
+                    onClick = onSave,
+                    shape = RoundedCornerShape(settings.noteCardCornerRadius.coerceIn(16f, 24f).dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = exportColors.container,
+                        contentColor = exportColors.content
+                    )
+                ) {
+                    AppIconLabel(Icons.Default.Save, stringResource(R.string.pdf_export),
+                        iconModifier = Modifier.size(settings.iconSize.coerceIn(16f, 21f).dp), tint = exportColors.content, gap = 6.dp,
+                        fontFamily = fontFamily, color = exportColors.content)
+                }
+            }
             Text(
-                stringResource(R.string.pdf_studio),
-                fontFamily = fontFamily,
-                fontWeight = FontWeight.Bold,
-                fontSize = 25.sp,
-                color = primaryText
+                text = stringResource(R.string.pdf_studio_subtitle),
+                modifier = Modifier.fillMaxWidth().padding(top = 2.dp),
+                color = secondaryText, fontFamily = fontFamily, fontSize = 13.sp,
+                softWrap = true
             )
-            Text(
-                stringResource(R.string.pdf_studio_subtitle),
-                fontFamily = fontFamily,
-                fontSize = 13.sp,
-                color = secondaryText
-            )
-        }
-        Button(
-            onClick = onSave,
-            shape = RoundedCornerShape(settings.noteCardCornerRadius.coerceIn(16f, 24f).dp),
-            colors = ButtonDefaults.buttonColors(
-                containerColor = exportColors.container,
-                contentColor = exportColors.content
-            )
-        ) {
-            AppIconLabel(Icons.Default.Save, stringResource(R.string.pdf_export),
-                iconModifier = Modifier.size(settings.iconSize.coerceIn(16f, 21f).dp), tint = exportColors.content, gap = 6.dp,
-                fontFamily = fontFamily, color = exportColors.content)
         }
     }
 }
@@ -1329,7 +1360,6 @@ private fun selectionIdsAt(page: PdfPageModel, offset: Offset, size: IntSize): T
     return Triple(image?.id, text?.id, stroke?.id)
 }
 
-
 @Composable
 private fun PdfPageCanvas(
     page: PdfPageModel,
@@ -1374,8 +1404,6 @@ private fun PdfPageCanvas(
         modifier = Modifier
             .fillMaxHeight()
             .aspectRatio(ratio)
-            // V95: zoom de dos dedos. Mientras hay dos punteros, se consume el gesto
-            // antes de las herramientas de edición para que Seleccionar no mueva objetos.
             .pointerInput(pageKey) {
                 awaitEachGesture {
                     var hadMultiTouch = false
@@ -1818,6 +1846,8 @@ private fun PdfFloatingToolbars(
     onAiCrop: () -> Unit,
     onScaleImage: (Float) -> Unit,
     onRotateImage: () -> Unit,
+    onFlipImage: () -> Unit,
+    onCropImage: () -> Unit,
     onDuplicateSelected: () -> Unit,
     onResizeSelectedText: (Float) -> Unit,
     onApplyColorToSelectedText: () -> Unit,
@@ -1879,7 +1909,6 @@ private fun PdfFloatingToolbars(
     val motionStyle = AppMotion.normalizeStyle(settings.animationStyle)
 
     Box(modifier = modifier.fillMaxSize()) {
-        // Barra superior: historial + navegación.
         FloatingBar(
             widthFraction = 0.72f,
             verticalPadding = 5.dp,
@@ -1943,7 +1972,6 @@ private fun PdfFloatingToolbars(
             }
         }
 
-        // Barra inferior: herramientas principales + contexto avanzado animado.
         FloatingBar(
             widthFraction = 0.96f,
             verticalPadding = 7.dp,
@@ -2026,6 +2054,8 @@ private fun PdfFloatingToolbars(
                                 ToolChoiceButton("−", false, toolStyle) { onScaleImage(0.88f) }
                                 ToolChoiceButton("+", false, toolStyle) { onScaleImage(1.14f) }
                                 PdfToolChip(stringResource(R.string.pdf_rotate), Icons.Default.RotateRight, false, toolStyle, onRotateImage)
+                                PdfToolChip(stringResource(R.string.pdf_flip), Icons.Default.Flip, false, toolStyle, onFlipImage)
+                                PdfToolChip(stringResource(R.string.pdf_crop), Icons.Default.Crop, false, toolStyle, onCropImage)
                                 PdfToolChip(stringResource(R.string.pdf_ai_crop), Icons.Default.AutoFixHigh, false, toolStyle, onAiCrop)
                                 PdfToolChip(stringResource(R.string.pdf_duplicate), Icons.Default.ContentCopy, false, toolStyle, onDuplicateSelected)
                                 PdfToolChip(stringResource(R.string.pdf_delete), Icons.Default.Delete, false, toolStyle, onDeleteSelected)
@@ -2171,7 +2201,6 @@ private fun PdfToolChip(label: String, icon: ImageVector, selected: Boolean, sty
         }
     }
 }
-
 
 @Composable
 private fun ToolChoiceButton(

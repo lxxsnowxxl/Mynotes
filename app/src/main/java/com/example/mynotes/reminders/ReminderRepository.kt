@@ -5,9 +5,9 @@ import android.content.SharedPreferences
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import org.json.JSONArray
-import org.json.JSONObject
 import java.util.Calendar
+
+private val ReminderOrder = compareByDescending<Reminder> { it.enabled }.thenBy { it.triggerAtMillis }
 
 /**
  * Almacén ligero e independiente de Room para recordatorios.
@@ -68,8 +68,11 @@ class ReminderRepository private constructor(context: Context) {
     fun delete(id: Long) {
         ReminderAlarmScheduler.cancel(appContext, id)
         val current = _reminders.value
-        if (current.none { it.id == id }) return
-        save(current.filterNot { it.id == id })
+        val index = current.indexOfFirst { it.id == id }
+        if (index < 0) return
+        val updated = current.toMutableList()
+        updated.removeAt(index)
+        save(updated)
     }
 
     fun setEnabled(id: Long, enabled: Boolean) {
@@ -94,18 +97,12 @@ class ReminderRepository private constructor(context: Context) {
         val current = _reminders.value
         if (current.isEmpty()) return
 
-        /*
-         * Normalizamos toda la colección en memoria y persistimos como máximo
-         * una vez. Antes, cada recordatorio vencido podía serializar de nuevo
-         * el JSON completo y además programar dos veces la misma alarma.
-         */
-        val normalized = current.map { reminder ->
-            if (!reminder.enabled || reminder.triggerAtMillis > now) {
-                reminder
-            } else if (reminder.repeatMode == Reminder.REPEAT_NONE) {
-                reminder.copy(enabled = false)
-            } else {
-                reminder.copy(
+        var normalized: MutableList<Reminder>? = null
+        current.forEachIndexed { index, reminder ->
+            val updated = when {
+                !reminder.enabled || reminder.triggerAtMillis > now -> reminder
+                reminder.repeatMode == Reminder.REPEAT_NONE -> reminder.copy(enabled = false)
+                else -> reminder.copy(
                     triggerAtMillis = nextTrigger(
                         reminder.triggerAtMillis,
                         reminder.repeatMode,
@@ -113,40 +110,30 @@ class ReminderRepository private constructor(context: Context) {
                     )
                 )
             }
+            if (updated != reminder) {
+                val target = normalized ?: current.toMutableList().also { normalized = it }
+                target[index] = updated
+            }
         }
 
-        if (normalized != current) {
-            save(normalized)
+        val effective = normalized ?: current
+        if (normalized != null) {
+            save(effective)
         }
 
-        normalized.asSequence()
-            .filter { it.enabled }
-            .forEach { ReminderAlarmScheduler.schedule(appContext, it) }
+        for (reminder in effective) {
+            if (reminder.enabled) ReminderAlarmScheduler.schedule(appContext, reminder)
+        }
     }
 
     private fun save(items: List<Reminder>) {
-        val sorted = items.sortedWith(compareByDescending<Reminder> { it.enabled }.thenBy { it.triggerAtMillis })
+        val sorted = if (isInReminderOrder(items)) items else items.sortedWith(ReminderOrder)
 
         // StateFlow evita notificar Compose si la lista es igual, pero también
         // evitamos serializar/escribir cuando el estado solicitado ya coincide.
         if (sorted == _reminders.value) return
 
-        val array = JSONArray()
-        sorted.forEach { reminder ->
-            array.put(JSONObject().apply {
-                put("id", reminder.id)
-                put("title", reminder.title)
-                put("description", reminder.description)
-                put("triggerAtMillis", reminder.triggerAtMillis)
-                put("repeatMode", reminder.repeatMode)
-                put("priority", reminder.priority)
-                put("colorKey", reminder.colorKey)
-                put("enabled", reminder.enabled)
-                put("createdAt", reminder.createdAt)
-            })
-        }
-
-        val encoded = array.toString()
+        val encoded = sorted.toJsonString()
         _reminders.value = sorted
 
         // SharedPreferences no necesita recibir otra escritura si el JSON final
@@ -161,27 +148,14 @@ class ReminderRepository private constructor(context: Context) {
 
     private fun loadReminders(rawValue: String? = preferences.getString(KEY_REMINDERS, null)): List<Reminder> {
         val raw = rawValue ?: return emptyList()
-        return runCatching {
-            val array = JSONArray(raw)
-            buildList {
-                for (index in 0 until array.length()) {
-                    val item = array.getJSONObject(index)
-                    add(
-                        Reminder(
-                            id = item.optLong("id", System.currentTimeMillis() + index),
-                            title = item.optString("title"),
-                            description = item.optString("description"),
-                            triggerAtMillis = item.optLong("triggerAtMillis"),
-                            repeatMode = item.optString("repeatMode", Reminder.REPEAT_NONE),
-                            priority = item.optString("priority", Reminder.PRIORITY_NORMAL),
-                            colorKey = item.optString("colorKey", "palette"),
-                            enabled = item.optBoolean("enabled", true),
-                            createdAt = item.optLong("createdAt", System.currentTimeMillis())
-                        )
-                    )
-                }
-            }.sortedWith(compareByDescending<Reminder> { it.enabled }.thenBy { it.triggerAtMillis })
-        }.getOrDefault(emptyList())
+        return runCatching { remindersFromJson(raw).sortedWith(ReminderOrder) }.getOrDefault(emptyList())
+    }
+
+    private fun isInReminderOrder(items: List<Reminder>): Boolean {
+        for (index in 1 until items.size) {
+            if (ReminderOrder.compare(items[index - 1], items[index]) > 0) return false
+        }
+        return true
     }
 
     companion object {
@@ -203,8 +177,8 @@ class ReminderRepository private constructor(context: Context) {
 
         fun nextTrigger(previous: Long, repeatMode: String, now: Long): Long {
             var candidate = previous
+            val calendar = Calendar.getInstance().apply { timeInMillis = previous }
             do {
-                val calendar = Calendar.getInstance().apply { timeInMillis = candidate }
                 when (repeatMode) {
                     Reminder.REPEAT_DAILY -> calendar.add(Calendar.DAY_OF_YEAR, 1)
                     Reminder.REPEAT_WEEKLY -> calendar.add(Calendar.WEEK_OF_YEAR, 1)

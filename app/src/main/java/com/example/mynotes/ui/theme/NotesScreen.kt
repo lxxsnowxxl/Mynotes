@@ -1,7 +1,11 @@
 package com.example.mynotes.ui
+import com.example.mynotes.ui.components.AppHeading
 import com.example.mynotes.ui.theme.rememberUiTextColors
+import com.example.mynotes.ui.theme.rememberUiContentColors
+import com.example.mynotes.ui.theme.rememberAppFontFamily
 import com.example.mynotes.ui.components.AppIconButton
 import com.example.mynotes.ui.components.AppIconLabel
+import com.example.mynotes.performance.NoteTextCache
 
 import android.content.res.Configuration
 import androidx.activity.compose.BackHandler
@@ -13,6 +17,7 @@ import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,9 +32,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.staggeredgrid.LazyVerticalStaggeredGrid
@@ -52,7 +56,6 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.OutlinedTextFieldDefaults
@@ -75,6 +78,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalConfiguration
@@ -102,10 +106,8 @@ import com.example.mynotes.ui.sound.UiActionSound
 import com.example.mynotes.ui.sound.UiHapticPlayer
 import com.example.mynotes.ui.sound.UiSound
 import com.example.mynotes.ui.sound.UiSoundPlayer
-import com.example.mynotes.ui.theme.appFontFamily
 import com.example.mynotes.ui.theme.resolveSecondaryUiTextColor
 import com.example.mynotes.ui.theme.resolveUiTextColor
-import com.example.mynotes.ui.theme.resolveUiGraphicColor
 import com.example.mynotes.viewmodel.NoteViewModel
 import kotlinx.coroutines.delay
 
@@ -161,11 +163,6 @@ fun NotesScreen(
 ) {
     val allAttachments by
         noteViewModel.allAttachments.collectAsStateWithLifecycle()
-    /*
-     * Índice de adjuntos calculado una sola vez por emisión de Room. Además
-     * guardamos los tipos por nota para que los filtros Images/Files no
-     * recorran cada lista de adjuntos en cada pulsación del buscador.
-     */
     val attachmentIndex = remember(allAttachments) {
             val byNote = allAttachments.groupBy {
                     it.noteId
@@ -177,19 +174,13 @@ fun NotesScreen(
             AttachmentIndex(byNote = byNote, kindsByNote = kindsByNote)
         }
     val attachmentsByNote = attachmentIndex.byNote
-    val fontFamily = remember(settings.font) {
-            appFontFamily(settings.font)
-        }
+    val fontFamily = rememberAppFontFamily(settings.font)
     val (screenPrimaryTextColor, screenSecondaryTextColor) = rememberUiTextColors(settings.textColor, MaterialTheme.colorScheme.background)
     val quickCreateSurfaceColor = MaterialTheme.colorScheme.surfaceContainerHigh
     val quickCreateTextColor = resolveUiTextColor(value = settings.textColor, background = quickCreateSurfaceColor)
     val controlSurfaceColor = MaterialTheme.colorScheme.surfaceContainerLow
-    val (controlTextColor, controlSecondaryTextColor) = rememberUiTextColors(settings.textColor, controlSurfaceColor)
-    val controlGraphicColor = resolveUiGraphicColor(value = settings.textColor, background = controlSurfaceColor)
+    val (controlTextColor, controlSecondaryTextColor, controlGraphicColor) = rememberUiContentColors(settings.textColor, controlSurfaceColor)
     val selectedControlTextColor = resolveUiTextColor(value = settings.textColor, background = MaterialTheme.colorScheme.primaryContainer)
-    // El botón flotante (+) forma parte de la interfaz principal, por lo que
-    // debe respetar el mismo selector de color de texto: Auto / Black / White.
-    // En Auto se calcula negro o blanco según el contraste real del FAB.
     val fabContainerColor = MaterialTheme.colorScheme.inverseSurface
     val fabContentColor = resolveUiTextColor(value = settings.textColor, background = fabContainerColor)
     val noteCardStyle = remember(settings.noteCardCornerRadius, settings.noteCardElevation, settings.noteCardPadding,
@@ -199,77 +190,27 @@ fun NotesScreen(
             settings.animationSpeed) {
             settings.toNoteCardStyle()
         }
-    /*
-     * Conservamos el texto escrito al girar la pantalla, pero NO el foco.
-     * Android/Compose puede intentar restaurar automáticamente el último
-     * campo de texto enfocado después de un cambio de orientación, lo que
-     * hacía que "Buscar notas" abriera el teclado por sí solo.
-     */
     var query by
         rememberSaveable {
             mutableStateOf("")
         }
-    /*
-     * El filtrado de una lista grande no necesita ejecutarse por cada evento
-     * de teclado. 90 ms sigue sintiéndose instantáneo y evita ráfagas de CPU.
-     */
-    var effectiveQuery by
-        remember {
-            mutableStateOf("")
-        }
+    var effectiveQuery by remember { mutableStateOf("") }
     LaunchedEffect(query) {
         delay(90)
         effectiveQuery = query.trim().lowercase()
     }
-    /*
-     * Construir el índice de búsqueda implica normalizar título + contenido de
-     * todas las notas. Mientras el buscador está vacío no se utiliza, así que
-     * evitamos ese trabajo por completo. Cuando el usuario empieza a buscar se
-     * crea una sola vez y se reutiliza al seguir escribiendo; solo se reconstruye
-     * si Room entrega una lista de notas nueva o el buscador vuelve a activarse.
-     *
-     * Esto es especialmente útil con notas largas y no modifica el filtrado ni
-     * ninguna ruta de adjuntos/miniaturas.
-     */
     val searchIsActive = effectiveQuery.isNotBlank()
-    val searchableTextByNote = remember(notes, searchIsActive) {
-            if (!searchIsActive) {
-                emptyMap()
-            } else {
-                notes.associate { note -> note.id to
-                        buildString(note.title.length + note.content.length + 1) {
-                            append(note.title.lowercase())
-                            append('\n')
-                            append(note.content.lowercase())
-                        }
-                }
-            }
-        }
+    val textCache = remember { NoteTextCache(::extractLinkUrls) }
+    val textIndex = remember(notes, searchIsActive) { textCache.update(notes, searchIsActive) }
+    val searchableTextByNote = textIndex.searchableTextByNote
     val focusManager = LocalFocusManager.current
     val searchFocusRequester = remember { FocusRequester() }
     val context = LocalContext.current
-    /*
-     * Estado real del grid. Además de conservar la posición, nos permite
-     * saber cuándo el usuario está desplazándose. Los trabajos pesados de
-     * previews se aplazan mientras hay scroll para no competir con VSYNC,
-     * medición/layout y rasterizado en dispositivos antiguos (especialmente
-     * Android 9 / API 28).
-     */
     val gridState = rememberLazyStaggeredGridState()
     val isGridScrolling by remember {
         derivedStateOf { gridState.isScrollInProgress }
     }
-    /*
-     * Las previews de enlaces siguen precargándose, pero solo cuando el grid
-     * lleva un breve periodo en reposo. Si el usuario vuelve a desplazar, el
-     * LaunchedEffect se cancela y el precalentamiento se reanuda después.
-     * De esta forma la red, JSON, archivos y decodificación de miniaturas no
-     * compiten constantemente con los frames del scroll.
-     */
-    val linkPreviewUrls = remember(notes) {
-            notes.asSequence().flatMap { note -> extractLinkUrls(note.content).asSequence().take(3)
-                }.distinct().take(80).toList()
-        }
+    val linkPreviewUrls = textIndex.linkPreviewUrls
     LaunchedEffect(linkPreviewUrls, isGridScrolling, settings.performanceMode) {
         if (!isGridScrolling && linkPreviewUrls.isNotEmpty()) {
             val idleDelayMs = AppMotion.performanceValue(settings.performanceMode, performance = 900L, balanced = 650L, quality = 450L)
@@ -288,20 +229,13 @@ fun NotesScreen(
         }
     LaunchedEffect(currentOrientation) {
         if (previousOrientation != currentOrientation) {
-            /*
-             * Esperamos dos frames para ejecutar el clearFocus después
-             * de la restauración automática de foco de la nueva ventana.
-             */
             withFrameNanos { }
             withFrameNanos { }
             focusManager.clearFocus(force = true)
             previousOrientation = currentOrientation
         }
     }
-    var selectedFilter by
-        remember {
-            mutableStateOf(NoteFilter.ALL)
-        }
+    var selectedFilter by remember { mutableStateOf(NoteFilter.ALL) }
 
     LaunchedEffect(widgetRequestToken) {
         if (widgetRequestToken > 0) {
@@ -314,20 +248,10 @@ fun NotesScreen(
             }
         }
     }
-    /*
-     * Solo recalculamos el filtro cuando cambian notas, adjuntos,
-     * búsqueda o filtro. Los cambios visuales ya no recorren la lista.
-     */
     val visibleNotes by
         remember(notes, attachmentIndex, searchableTextByNote) {
             derivedStateOf {
                 val normalizedQuery = effectiveQuery
-                /*
-                 * Camino caliente de la pantalla principal: cuando no hay
-                 * búsqueda ni filtro devolvemos directamente la lista de Room.
-                 * Antes se recorrían todas las notas y se creaba otra List aun
-                 * cuando el resultado era exactamente el mismo.
-                 */
                 if (normalizedQuery.isBlank() && selectedFilter == NoteFilter.ALL) {
                     return@derivedStateOf notes
                 }
@@ -344,42 +268,12 @@ fun NotesScreen(
                         NoteFilter.PRIORITY -> note.priority == 3
                         NoteFilter.WORK -> note.category == "work"
                         NoteFilter.PERSONAL -> note.category == "personal"
-                        /*
-                         * Solo consultamos el índice de adjuntos cuando el
-                         * filtro seleccionado realmente depende de él. Esto no
-                         * cambia cómo se muestran/cargan previews o miniaturas.
-                         */
                         NoteFilter.IMAGES -> "image" in attachmentIndex.kindsByNote[note.id].orEmpty()
                         NoteFilter.FILES -> "file" in attachmentIndex.kindsByNote[note.id].orEmpty()
                     }
                 }
             }
         }
-    /*
-     * MODO MAXIMUM QUALITY: precarga del área desplazable completa.
-     *
-     * LazyVerticalStaggeredGrid, por diseño, solo compone el viewport visible
-     * y un pequeño margen alrededor. Eso significa que una miniatura cuya
-     * tarjeta todavía está lejos del viewport normalmente no solicita su
-     * bitmap hasta que el usuario se acerca a ella. Para los perfiles
-     * Performance y Balanced ese comportamiento es deliberado porque reduce
-     * CPU, E/S y presión de memoria. En Maximum quality, en cambio, queremos
-     * que TODO el contenido que forma parte del scrolling actual tenga sus
-     * miniaturas preparadas antes de entrar en pantalla.
-     *
-     * Por eso construimos una lista independiente de los adjuntos que pueden
-     * producir miniatura en las tarjetas principales. Se respetan las mismas
-     * reglas visuales de ModernNoteCard: solo los primeros cuatro adjuntos de
-     * cada nota pueden formar el mosaico superior. No tiene sentido generar
-     * por adelantado una miniatura que esa tarjeta nunca mostrará.
-     *
-     * Importante: "precargar todo el scrolling" NO significa conservar todos
-     * los bitmaps 1280 px simultáneamente en RAM. AttachmentPreviewCache usa
-     * una LruCache limitada y una caché persistente en cacheDir. Así se genera
-     * la variante quality para todo el contenido desplazable, pero Android
-     * puede expulsar de RAM las miniaturas más lejanas y recuperarlas después
-     * desde disco sin volver a decodificar el archivo original.
-     */
     val qualityScrollPreviewAttachments = remember(visibleNotes, attachmentIndex, settings.performanceMode) {
         if (settings.performanceMode != "quality") {
             emptyList()
@@ -396,35 +290,8 @@ fun NotesScreen(
         }
     }
 
-    /*
-     * LaunchedEffect hace que la precarga siga el contenido real del scroll.
-     * Si cambia el filtro, la búsqueda, Room emite nuevos adjuntos o el usuario
-     * abandona Maximum quality, Compose cancela automáticamente la corrutina
-     * anterior y crea la correspondiente al nuevo conjunto.
-     *
-     * prewarm() reutiliza exactamente AttachmentPreviewCache, por lo que no
-     * existe un segundo sistema de thumbnails. En API 28 el propio caché
-     * serializa las decodificaciones pesadas a una por vez; en Android más
-     * reciente permite dos. De este modo el modo quality es agresivo en
-     * cobertura, pero mantiene las restricciones de concurrencia ya definidas
-     * para no destruir la fluidez del render.
-     */
     LaunchedEffect(qualityScrollPreviewAttachments, settings.performanceMode) {
         if (settings.performanceMode == "quality") {
-            /*
-             * PRECALENTAMIENTO PROGRESIVO EN DOS PASADAS.
-             *
-             * 1) Cubrimos primero TODO el scroll con una miniatura interna de
-             *    192/256 px. Es mucho más rápida de generar y queda disponible
-             *    como imagen inmediata para un fling rápido.
-             * 2) Solo después recorremos de nuevo la lista y construimos la
-             *    variante Maximum quality. La tarjeta sustituye la instantánea
-             *    por la definitiva cuando no estamos en pleno gesto de scroll.
-             *
-             * El resultado visual es parecido al "progressive image loading" de
-             * galerías: durante el movimiento nunca necesitamos enseñar cómo
-             * aparece una imagen pesada desde cero.
-             */
             listOf("instant", "quality").forEach { mode ->
                 qualityScrollPreviewAttachments.forEach { attachment ->
                     AttachmentPreviewCache.prewarm(
@@ -435,12 +302,7 @@ fun NotesScreen(
         }
     }
 
-    var addMenuExpanded by remember { mutableStateOf(false) }
-    BackHandler(enabled = addMenuExpanded) { addMenuExpanded = false }
-
     val motionDuration = AppMotion.duration(AppMotion.NORMAL, settings.animationsEnabled, settings.animationSpeed)
-    val animatedFabSize by
-        animateDpAsState(targetValue = settings.fabSize.dp, animationSpec = tween(durationMillis = motionDuration), label = "fabSize")
     val animatedProfileSize by
         animateDpAsState(targetValue = settings.profileImageSize.dp, animationSpec = tween(durationMillis = motionDuration), label =
                 "profileSize")
@@ -448,78 +310,34 @@ fun NotesScreen(
         animationSpeed = settings.animationSpeed) {
         Scaffold(containerColor = MaterialTheme.colorScheme.background,
         floatingActionButton = {
-            Column(
-                horizontalAlignment = Alignment.End,
-                verticalArrangement = Arrangement.spacedBy(9.dp)
-            ) {
-                AnimatedVisibility(
-                    visible = addMenuExpanded,
-                    enter = fadeIn(animationSpec = tween(motionDuration)) +
-                        expandVertically(animationSpec = tween(motionDuration), expandFrom = Alignment.Bottom),
-                    exit = fadeOut(animationSpec = tween(motionDuration)) +
-                        shrinkVertically(animationSpec = tween(motionDuration), shrinkTowards = Alignment.Bottom)
-                ) {
-                    Column(
-                        horizontalAlignment = Alignment.End,
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        listOf(
-                            QuickCreateSpec(stringResource(R.string.reminders), Icons.Default.NotificationsActive, UiActionSound.Select, onOpenReminders),
-                            QuickCreateSpec(stringResource(R.string.mock_new_note), Icons.Default.NoteAdd, UiActionSound.Add, onAddNote),
-                            QuickCreateSpec(stringResource(R.string.add_pdf), Icons.Default.PictureAsPdf, UiActionSound.Add, onAddPdf),
-                            QuickCreateSpec(stringResource(R.string.create_drawing), Icons.Default.Brush, UiActionSound.Select, onDrawNote)
-                        ).forEach { item ->
-                            QuickCreateActionButton(item.text, item.icon, fontFamily, quickCreateSurfaceColor, quickCreateTextColor) {
-                                addMenuExpanded = false
-                                UiSoundPlayer.runAction(context, item.sound, item.action)
-                            }
-                        }
-                    }
-                }
-
-                FloatingActionButton(
-                    onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Menu) {
-                        addMenuExpanded = !addMenuExpanded
-                    },
-                    modifier = Modifier.size(animatedFabSize),
-                    containerColor = fabContainerColor,
-                    contentColor = fabContentColor,
-                    shape = CircleShape
-                ) {
-                    Icon(
-                        imageVector = if (addMenuExpanded) Icons.Default.Close else Icons.Default.Add,
-                        contentDescription = stringResource(R.string.add_action_menu),
-                        modifier = Modifier.size(settings.iconSize.coerceIn(18f, 36f).dp),
-                        tint = fabContentColor
-                    )
-                }
-            }
+            QuickCreateFabMenu(
+                settings = settings,
+                fontFamily = fontFamily,
+                containerColor = quickCreateSurfaceColor,
+                contentColor = quickCreateTextColor,
+                fabContainerColor = fabContainerColor,
+                fabContentColor = fabContentColor,
+                onOpenReminders = onOpenReminders,
+                onAddNote = onAddNote,
+                onAddPdf = onAddPdf,
+                onDrawNote = onDrawNote
+            )
         }) {
             scaffoldPadding ->
         Column(modifier = Modifier.fillMaxSize().padding(scaffoldPadding).padding(horizontal = 14.dp)) {
             Spacer(modifier = Modifier.height(8.dp))
-            /*
-             * --------------------------------------------------
-             * HEADER
-             * --------------------------------------------------
-             */
             Row(modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically) {
                 Column(modifier = Modifier.weight(1f)) {
-                    Text(text = stringResource(R.string.mock_my_notes),
-                        fontFamily = fontFamily,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 30.sp,
-                        color = screenPrimaryTextColor)
-                    Text(text = stringResource(R.string.mock_notes_subtitle),
-                        modifier = Modifier.padding(top = 1.dp),
-                        fontFamily = fontFamily,
-                        fontSize = 14.sp,
-                        color = screenSecondaryTextColor)
+                    AppHeading(
+                        title = stringResource(R.string.mock_my_notes), subtitle = stringResource(R.string.mock_notes_subtitle),
+                        fontFamily = fontFamily, titleColor = screenPrimaryTextColor, subtitleColor = screenSecondaryTextColor,
+                        titleSize = 30.sp,
+                        subtitleSize = 14.sp,
+                        subtitleModifier = Modifier.padding(top = 1.dp)
+                    )
                 }
-                Surface(modifier = Modifier.size(animatedProfileSize).clip(CircleShape).clickable(onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Settings) {
-                                    onOpenSettings()
-                                }), shape = CircleShape, color = MaterialTheme.colorScheme.surfaceContainerHigh) {
+                Surface(modifier = Modifier.size(animatedProfileSize).clip(CircleShape).clickable(onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Settings, onOpenSettings)), shape = CircleShape, color = MaterialTheme.colorScheme.surfaceContainerHigh) {
                     if (settings.profileImageUri.isNotBlank()) {
                         AsyncImage(model = Uri.parse(settings.profileImageUri), contentDescription = stringResource(R.string.mock_settings
                                 ), modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Crop)
@@ -531,16 +349,9 @@ fun NotesScreen(
                     }
                 }
                 AppIconButton(Icons.Default.Settings, stringResource(R.string.mock_settings),
-                    onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Settings) {
-                        onOpenSettings()
-                    }, iconModifier = Modifier.size(settings.iconSize.coerceIn(18f, 36f).dp))
+                    onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Settings, onOpenSettings), iconModifier = Modifier.size(settings.iconSize.coerceIn(18f, 36f).dp))
             }
             Spacer(modifier = Modifier.height(14.dp))
-            /*
-             * --------------------------------------------------
-             * SEARCH
-             * --------------------------------------------------
-             */
             OutlinedTextField(value = query,
                 onValueChange = {
                     UiSoundPlayer.playTextInput(context, query, it)
@@ -576,11 +387,6 @@ fun NotesScreen(
                             focusedBorderColor = controlGraphicColor,
                             unfocusedBorderColor = controlGraphicColor))
             Spacer(modifier = Modifier.height(10.dp))
-            /*
-             * --------------------------------------------------
-             * FILTER CHIPS
-             * --------------------------------------------------
-             */
             LazyRow(modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = if (isLandscape) {
                         Arrangement.spacedBy(space = 7.dp, alignment = Alignment.CenterHorizontally)
@@ -620,11 +426,6 @@ fun NotesScreen(
                 }
             }
             Spacer(modifier = Modifier.height(10.dp))
-            /*
-             * --------------------------------------------------
-             * GRID
-             * --------------------------------------------------
-             */
             if (visibleNotes.isEmpty()) {
                 EmptyNotesState(modifier = Modifier.fillMaxSize(),
                     hasSearch = query.isNotBlank() || selectedFilter != NoteFilter.ALL,
@@ -632,13 +433,6 @@ fun NotesScreen(
                     textColorMode = settings.textColor)
             } else {
                 BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
-                    /*
-                     * Evita tarjetas demasiado estrechas en teléfonos
-                     * pequeños, split-screen y ventanas flotantes. La
-                     * preferencia del usuario sigue siendo el máximo; si la
-                     * ventana no tiene espacio, reducimos columnas de forma
-                     * temporal sin modificar el ajuste guardado.
-                     */
                     val maximumColumnsForWidth = (maxWidth.value / 145f).toInt().coerceIn(1, 3)
                     val effectiveColumns = minOf(settings.gridColumns.coerceIn(1, 3), maximumColumnsForWidth)
                 LazyVerticalStaggeredGrid(columns = StaggeredGridCells.Fixed(effectiveColumns),
@@ -701,19 +495,6 @@ fun NotesScreen(
                     state = gridState,
                     modifier = Modifier
                         .align(Alignment.CenterEnd)
-                        /*
-                         * El grid termina en el borde derecho de este contenedor.
-                         * La pantalla ya tiene 14 dp de margen exterior, por lo que
-                         * desplazamos la cápsula 9 dp hacia ese margen. De esta
-                         * forma la barra queda completamente FUERA del área del
-                         * LazyVerticalStaggeredGrid y se dibuja sobre el fondo de
-                         * la pantalla, sin cubrir tarjetas ni reducir su anchura.
-                         *
-                         * Con el track interno de 10 dp y la cápsula visual de 4 dp,
-                         * este desplazamiento deja la barra centrada dentro del
-                         * margen exterior en lugar de pegada al contenido o al
-                         * borde físico del dispositivo.
-                         */
                         .offset(x = 13.dp),
                     backgroundColor = MaterialTheme.colorScheme.background,
                     preferredColor = MaterialTheme.colorScheme.onBackground,
@@ -728,19 +509,117 @@ fun NotesScreen(
 }
 
 @Composable
+private fun QuickCreateFabMenu(
+    settings: AppSettings,
+    fontFamily: androidx.compose.ui.text.font.FontFamily,
+    containerColor: androidx.compose.ui.graphics.Color,
+    contentColor: androidx.compose.ui.graphics.Color,
+    fabContainerColor: androidx.compose.ui.graphics.Color,
+    fabContentColor: androidx.compose.ui.graphics.Color,
+    onOpenReminders: () -> Unit,
+    onAddNote: () -> Unit,
+    onAddPdf: () -> Unit,
+    onDrawNote: () -> Unit
+) {
+    var expanded by remember { mutableStateOf(false) }
+    BackHandler(enabled = expanded) { expanded = false }
+
+    val context = LocalContext.current
+    val motionDuration = AppMotion.duration(AppMotion.NORMAL, settings.animationsEnabled, settings.animationSpeed)
+    val animatedFabSize by animateDpAsState(
+        targetValue = settings.fabSize.dp,
+        animationSpec = tween(durationMillis = motionDuration),
+        label = "fabSize"
+    )
+
+    Column(
+        horizontalAlignment = Alignment.End,
+        verticalArrangement = Arrangement.spacedBy(9.dp)
+    ) {
+        AnimatedVisibility(
+            visible = expanded,
+            enter = fadeIn(animationSpec = tween(motionDuration)) +
+                expandVertically(animationSpec = tween(motionDuration), expandFrom = Alignment.Bottom),
+            exit = fadeOut(animationSpec = tween(motionDuration)) +
+                shrinkVertically(animationSpec = tween(motionDuration), shrinkTowards = Alignment.Bottom)
+        ) {
+            Column(
+                horizontalAlignment = Alignment.End,
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                listOf(
+                    QuickCreateSpec(stringResource(R.string.reminders), Icons.Default.NotificationsActive, UiActionSound.Select, onOpenReminders),
+                    QuickCreateSpec(stringResource(R.string.mock_new_note), Icons.Default.NoteAdd, UiActionSound.Add, onAddNote),
+                    QuickCreateSpec(stringResource(R.string.add_pdf), Icons.Default.PictureAsPdf, UiActionSound.Add, onAddPdf),
+                    QuickCreateSpec(stringResource(R.string.create_drawing), Icons.Default.Brush, UiActionSound.Select, onDrawNote)
+                ).forEach { item ->
+                    QuickCreateActionButton(
+                        text = item.text,
+                        icon = item.icon,
+                        fontFamily = fontFamily,
+                        containerColor = containerColor,
+                        contentColor = contentColor,
+                        animationsEnabled = settings.animationsEnabled,
+                        animationSpeed = settings.animationSpeed,
+                        animationEasing = settings.animationEasing
+                    ) {
+                        expanded = false
+                        UiSoundPlayer.runAction(context, item.sound, item.action)
+                    }
+                }
+            }
+        }
+
+        FloatingActionButton(
+            onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Menu) {
+                expanded = !expanded
+            },
+            modifier = Modifier.size(animatedFabSize),
+            containerColor = fabContainerColor,
+            contentColor = fabContentColor,
+            shape = CircleShape
+        ) {
+            Icon(
+                imageVector = if (expanded) Icons.Default.Close else Icons.Default.Add,
+                contentDescription = stringResource(R.string.add_action_menu),
+                modifier = Modifier.size(settings.iconSize.coerceIn(18f, 36f).dp),
+                tint = fabContentColor
+            )
+        }
+    }
+}
+
+@Composable
 private fun QuickCreateActionButton(
     text: String,
     icon: ImageVector,
     fontFamily: androidx.compose.ui.text.font.FontFamily,
     containerColor: androidx.compose.ui.graphics.Color,
     contentColor: androidx.compose.ui.graphics.Color,
+    animationsEnabled: Boolean,
+    animationSpeed: Float,
+    animationEasing: String,
     onClick: () -> Unit
 ) {
     val interactionSource = remember { MutableInteractionSource() }
+    val pressed by interactionSource.collectIsPressedAsState()
+    val pressDuration = AppMotion.duration(110, animationsEnabled, animationSpeed)
+    val pressScale by animateFloatAsState(
+        targetValue = if (pressed && animationsEnabled) 0.972f else 1f,
+        animationSpec = tween(
+            durationMillis = pressDuration,
+            easing = AppMotion.easing(animationEasing)
+        ),
+        label = "quickCreatePressScale"
+    )
 
     Surface(
         modifier = Modifier
             .height(46.dp)
+            .graphicsLayer {
+                scaleX = pressScale
+                scaleY = pressScale
+            }
             .clickable(
                 interactionSource = interactionSource,
                 indication = null,

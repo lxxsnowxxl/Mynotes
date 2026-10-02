@@ -1,5 +1,7 @@
 package com.example.mynotes.ui.theme
 
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.googlefonts.Font as GoogleFontsFont
@@ -7,10 +9,6 @@ import androidx.compose.ui.text.googlefonts.GoogleFont
 import com.example.mynotes.R
 import com.example.mynotes.settings.FontPreferencePolicy
 
-/*
- * Google Sans Bold se solicita al proveedor oficial de Google Fonts.
- * Conservamos la clave de preferencia histórica para no romper ajustes/backups.
- */
 private val googleFontsProvider = GoogleFont.Provider(
     providerAuthority = "com.google.android.gms.fonts",
     providerPackage = "com.google.android.gms",
@@ -39,3 +37,6 @@ fun appFontFamily(key: String): FontFamily {
         else -> FontFamily.Default
     }
 }
+
+@Composable
+internal fun rememberAppFontFamily(key: String): FontFamily = remember(key) { appFontFamily(key) }

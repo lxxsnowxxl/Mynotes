@@ -10,10 +10,13 @@ object ReminderAlarmScheduler {
     const val ACTION_FIRE_REMINDER = "com.example.mynotes.action.FIRE_REMINDER"
     const val EXTRA_REMINDER_ID = "reminder_id"
 
+    @Volatile
+    private var cachedAlarmManager: AlarmManager? = null
+
     fun schedule(context: Context, reminder: Reminder) {
         if (!reminder.enabled) return
         if (reminder.triggerAtMillis <= System.currentTimeMillis()) return
-        val manager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val manager = alarmManager(context)
         val operation = pendingIntent(context, reminder.id)
         if (Build.VERSION.SDK_INT < Build.VERSION_CODES.S) {
             // En Android 7–11 podemos conservar la hora exacta sin permiso especial.
@@ -34,9 +37,15 @@ object ReminderAlarmScheduler {
     }
 
     fun cancel(context: Context, reminderId: Long) {
-        val manager = context.getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        val manager = alarmManager(context)
         manager.cancel(pendingIntent(context, reminderId))
     }
+
+    private fun alarmManager(context: Context): AlarmManager =
+        cachedAlarmManager ?: synchronized(this) {
+            cachedAlarmManager ?: (context.applicationContext.getSystemService(Context.ALARM_SERVICE) as AlarmManager)
+                .also { cachedAlarmManager = it }
+        }
 
     private fun pendingIntent(context: Context, reminderId: Long): PendingIntent {
         val intent = Intent(context, ReminderReceiver::class.java).apply {

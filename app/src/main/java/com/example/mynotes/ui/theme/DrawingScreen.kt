@@ -1,4 +1,5 @@
 package com.example.mynotes.ui
+import com.example.mynotes.ui.components.AppHeading
 import com.example.mynotes.ui.components.AppIconButton
 
 import android.content.Context
@@ -79,7 +80,7 @@ import com.example.mynotes.R
 import com.example.mynotes.settings.AppSettings
 import com.example.mynotes.ui.sound.UiActionSound
 import com.example.mynotes.ui.sound.UiSoundPlayer
-import com.example.mynotes.ui.theme.appFontFamily
+import com.example.mynotes.ui.theme.rememberAppFontFamily
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -117,10 +118,6 @@ fun DrawingScreen(
     val density = LocalDensity.current
     val scope = rememberCoroutineScope()
 
-    // Drawing mode keeps the canvas distraction-free by hiding only the
-    // status bar (time, battery and notification icons). Restore the exact
-    // previous visibility when leaving this screen so the rest of MyNotes
-    // keeps its normal system-bar behavior.
     DisposableEffect(view) {
         val activity = context.findActivity()
         val window = activity?.window
@@ -147,7 +144,7 @@ fun DrawingScreen(
             }
         }
     }
-    val fontFamily = remember(settings.font) { appFontFamily(settings.font) }
+    val fontFamily = rememberAppFontFamily(settings.font)
 
     val defaultPaperColor = MaterialTheme.colorScheme.surface
     val canvasColors = remember(defaultPaperColor) {
@@ -245,27 +242,18 @@ fun DrawingScreen(
             verticalAlignment = Alignment.CenterVertically
         ) {
             AppIconButton(Icons.Default.ArrowBack, stringResource(R.string.drawing_back),
-                onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Back) {
-                    onCancel()
-                }, tonal = true)
+                onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Back, onCancel), tonal = true)
 
             Column(
                 modifier = Modifier
                     .weight(1f)
                     .padding(horizontal = 12.dp)
             ) {
-                Text(
-                    text = stringResource(R.string.drawing_title),
-                    fontFamily = fontFamily,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 22.sp,
-                    color = MaterialTheme.colorScheme.onBackground
-                )
-                Text(
-                    text = stringResource(R.string.drawing_subtitle),
-                    fontFamily = fontFamily,
-                    fontSize = 11.sp,
-                    color = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.68f)
+                AppHeading(
+                    title = stringResource(R.string.drawing_title), subtitle = stringResource(R.string.drawing_subtitle),
+                    fontFamily = fontFamily, titleColor = MaterialTheme.colorScheme.onBackground, subtitleColor = MaterialTheme.colorScheme.onBackground.copy(alpha = 0.68f),
+                    titleSize = 22.sp,
+                    subtitleSize = 11.sp
                 )
             }
 
@@ -412,14 +400,7 @@ fun DrawingScreen(
                     verticalAlignment = Alignment.CenterVertically,
                     horizontalArrangement = Arrangement.spacedBy(6.dp)
                 ) {
-                    Text(
-                        text = stringResource(R.string.drawing_tools),
-                        modifier = Modifier.weight(1f),
-                        fontFamily = fontFamily,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
+                    DrawingSectionLabel(stringResource(R.string.drawing_tools), fontFamily, Modifier.weight(1f))
                     Box(
                         modifier = Modifier
                             .size(24.dp)
@@ -486,14 +467,7 @@ fun DrawingScreen(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        text = stringResource(R.string.drawing_thickness),
-                        modifier = Modifier.width(68.dp),
-                        fontFamily = fontFamily,
-                        fontWeight = FontWeight.Bold,
-                        fontSize = 12.sp,
-                        color = MaterialTheme.colorScheme.onSurface
-                    )
+                    DrawingSectionLabel(stringResource(R.string.drawing_thickness), fontFamily, Modifier.width(68.dp))
                     listOf(
                         R.string.drawing_thin,
                         R.string.drawing_medium,
@@ -564,8 +538,8 @@ private fun DrawingColorSwatch(color: Color, selected: Boolean, outlineColor: Co
 }
 
 @Composable
-private fun DrawingSectionLabel(text: String, fontFamily: FontFamily) {
-    Text(text = text, fontFamily = fontFamily, fontWeight = FontWeight.Bold, fontSize = 12.sp,
+private fun DrawingSectionLabel(text: String, fontFamily: FontFamily, modifier: Modifier = Modifier) {
+    Text(text = text, modifier = modifier, fontFamily = fontFamily, fontWeight = FontWeight.Bold, fontSize = 12.sp,
         color = MaterialTheme.colorScheme.onSurface)
 }
 
@@ -712,7 +686,6 @@ private suspend fun saveDrawingToCache(
         Uri.fromFile(file)
     }.getOrNull()
 }
-
 
 private tailrec fun Context.findActivity(): Activity? = when (this) {
     is Activity -> this

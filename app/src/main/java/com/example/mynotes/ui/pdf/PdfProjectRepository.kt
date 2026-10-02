@@ -1,5 +1,6 @@
 package com.example.mynotes.ui.pdf
 
+import com.example.mynotes.util.moveReplacing
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
@@ -70,15 +71,7 @@ object PdfProjectRepository {
             .orEmpty()
             .filter { it.isDirectory }
             .mapNotNull { dir ->
-                runCatching {
-                    val json = JSONObject(File(dir, PROJECT_JSON).readText())
-                    Summary(
-                        id = json.optString("id", dir.name),
-                        name = json.optString("name", "PDF"),
-                        modifiedAt = json.optLong("modifiedAt", dir.lastModified()),
-                        pageCount = json.optJSONArray("pages")?.length() ?: 1
-                    )
-                }.getOrNull()
+                runCatching { readPdfProjectSummary(File(dir, PROJECT_JSON)) }.getOrNull()
             }
             .sortedByDescending { it.modifiedAt }
     }
@@ -244,10 +237,7 @@ object PdfProjectRepository {
                 FileOutputStream(temp).use { output -> input.copyTo(output) }
             } ?: error("No se pudo copiar el PDF base")
             if (source.exists()) source.delete()
-            if (!temp.renameTo(source)) {
-                temp.copyTo(source, overwrite = true)
-                temp.delete()
-            }
+            temp.moveReplacing(source)
         }
 
         val imagesDir = File(dir, "images").apply { mkdirs() }
@@ -330,10 +320,7 @@ object PdfProjectRepository {
         val jsonTemp = File(dir, "$PROJECT_JSON.tmp")
         jsonTemp.writeText(json.toString(2))
         if (jsonTarget.exists()) jsonTarget.delete()
-        if (!jsonTemp.renameTo(jsonTarget)) {
-            jsonTemp.copyTo(jsonTarget, overwrite = true)
-            jsonTemp.delete()
-        }
+        jsonTemp.moveReplacing(jsonTarget)
 
         // Elimina recursos obsoletos sólo después de que project.json quedó escrito.
         imagesDir.listFiles().orEmpty().filter { it.name !in referencedImages }.forEach { it.delete() }
@@ -362,7 +349,6 @@ object PdfProjectRepository {
         Project(id, name, modifiedAt, pages, internalSourceUri(context, id))
         }
     }
-
 
     /**
      * Relaciona un PDF exportado con su proyecto editable.
@@ -415,7 +401,6 @@ object PdfProjectRepository {
         return digest.digest().joinToString("") { "%02x".format(it.toInt() and 0xFF) }
     }
 
-
     suspend fun renameProject(context: Context, id: String, newName: String): Summary = withContext(Dispatchers.IO + NonCancellable) {
         val dir = directory(context, id)
         val file = File(dir, PROJECT_JSON)
@@ -428,10 +413,7 @@ object PdfProjectRepository {
         val temp = File(dir, "$PROJECT_JSON.tmp")
         temp.writeText(json.toString(2))
         if (file.exists()) file.delete()
-        if (!temp.renameTo(file)) {
-            temp.copyTo(file, overwrite = true)
-            temp.delete()
-        }
+        temp.moveReplacing(file)
         Summary(id, cleanName, modifiedAt, json.optJSONArray("pages")?.length() ?: 1)
     }
 

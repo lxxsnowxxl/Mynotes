@@ -18,16 +18,6 @@ abstract class AppDatabase :
         @Volatile
         private var INSTANCE:
                 AppDatabase? = null
-        /*
-         * -----------------------------------------------------
-         * 3 -> 4
-         * -----------------------------------------------------
-         *
-         * Esta es la migración de la fase de rendimiento anterior.
-         * Se incluye también aquí para que una instalación que aún
-         * esté en versión 3 pueda llegar hasta versión 5 sin borrar
-         * ninguna nota.
-         */
         private val MIGRATION_3_4 = object :
                 Migration(3, 4) {
                 override fun migrate(database:
@@ -48,20 +38,6 @@ abstract class AppDatabase :
                     )
                 }
             }
-        /*
-         * -----------------------------------------------------
-         * 4 -> 5
-         * -----------------------------------------------------
-         *
-         * Añade exclusivamente las propiedades necesarias para
-         * el diseño nuevo:
-         *
-         * - category
-         * - isFavorite
-         * - isPinned
-         *
-         * No se elimina ni recrea ninguna tabla.
-         */
         private val MIGRATION_4_5 = object :
                 Migration(4, 5) {
                 override fun migrate(database:
@@ -110,10 +86,6 @@ abstract class AppDatabase :
         fun getDatabase(context: Context): AppDatabase {
             return INSTANCE?: synchronized(this) {
                     val instance = Room.databaseBuilder(context.applicationContext, AppDatabase::class.java, "notes_database")
-                            /*
-                             * Importante:
-                             * no usamos fallback destructivo.
-                             */
                             .addMigrations(MIGRATION_3_4, MIGRATION_4_5).build()
                     INSTANCE = instance
                     instance

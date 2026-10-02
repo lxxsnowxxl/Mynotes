@@ -77,4 +77,13 @@
     <string name="pdf_library_copy_name">Copie de %1$s</string>
     <string name="pdf_library_document_count">%1$d PDF</string>
     <string name="pdf_library_autosave">Enregistrement auto</string>
+    <string name="pdf_flip">Retourner</string>
+    <string name="pdf_flip_horizontal">Horizontalement</string>
+    <string name="pdf_flip_vertical">Verticalement</string>
+    <string name="pdf_crop">Rogner</string>
+    <string name="pdf_crop_hint">Faites glisser les bords ou les coins pour rogner. Faites glisser la zone intérieure pour déplacer le cadre.</string>
+    <string name="pdf_crop_reset">Réinitialiser</string>
+    <string name="pdf_image_apply">Appliquer</string>
+    <string name="pdf_image_edit_error">Impossible de modifier cette image. Réessayez.</string>
+    <string name="pdf_image_edit_changed">Le document ou la sélection a changé. Sélectionnez l’image et réessayez.</string>
 </resources>

@@ -3,38 +3,32 @@ package com.example.mynotes.widget
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
-import android.view.View
 import android.widget.RemoteViews
 import com.example.mynotes.R
 import com.example.mynotes.data.AppDatabase
-import com.example.mynotes.data.Attachment
 import com.example.mynotes.data.Note
 
 class RecentNotesWidgetProvider : AppWidgetProvider() {
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
         launchAsyncIo {
-                val db = AppDatabase.getDatabase(context.applicationContext)
-                val notes = db.noteDao().getRecentNotesForWidget(2)
-                val total = db.noteDao().getNoteCountForWidget()
-                val theme = WidgetPresentation.theme(context)
-                val textContext = WidgetLocale.localizedContext(context)
-                val visualMap = WidgetMediaPreview.firstVisualByNote(db.attachmentDao().getAllAttachmentsOnce())
-                appWidgetIds.forEach { appWidgetId ->
-                    updateWidget(context, textContext, appWidgetManager, appWidgetId, notes, total, theme, visualMap)
-                }
+            val db = AppDatabase.getDatabase(context.applicationContext)
+            val notes = db.noteDao().getRecentNotesForWidget(2)
+            val total = db.noteDao().getNoteCountForWidget()
+            val environment = loadNoteWidgetEnvironment(context, db, notes.map { it.id })
+            appWidgetIds.forEach { appWidgetId ->
+                updateWidget(context, appWidgetManager, appWidgetId, notes, total, environment)
+            }
         }
     }
 
     private suspend fun updateWidget(
         context: Context,
-        textContext: Context,
         manager: AppWidgetManager,
         appWidgetId: Int,
         notes: List<Note>,
         total: Int,
-        theme: WidgetPresentation.WidgetThemeSpec,
-        visualMap: Map<Int, Attachment>
-    ) {
+        environment: NoteWidgetEnvironment
+    ) = with(environment) {
         val views = RemoteViews(context.packageName, R.layout.widget_recent_notes)
         views.setInt(R.id.widget_recent_root, "setBackgroundResource", theme.rootBackgroundRes)
         views.setTextViewText(R.id.widget_recent_title, textContext.getString(R.string.widget_recent_notes))
@@ -61,8 +55,9 @@ class RecentNotesWidgetProvider : AppWidgetProvider() {
         val accentIds = intArrayOf(R.id.widget_note_accent_1, R.id.widget_note_accent_2)
         val thumbIds = intArrayOf(R.id.widget_note_thumb_1, R.id.widget_note_thumb_2)
 
-        views.setViewVisibility(R.id.widget_recent_empty, if (notes.isEmpty()) View.VISIBLE else View.GONE)
-        views.setViewVisibility(R.id.widget_recent_cards, if (notes.isEmpty()) View.GONE else View.VISIBLE)
+        val hasNotes = notes.isNotEmpty()
+        views.setVisible(R.id.widget_recent_empty, !hasNotes)
+        views.setVisible(R.id.widget_recent_cards, hasNotes)
 
         rowIds.forEachIndexed { index, rowId ->
             val note = notes.getOrNull(index)

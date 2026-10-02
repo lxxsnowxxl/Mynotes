@@ -35,10 +35,9 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
      * Evita picos de CPU/RAM al adjuntar muchos archivos.
      */
     private val previewSemaphore = Semaphore(permits = 2)
-    private fun launchWithWidgetUpdate(block: suspend () -> Unit) {
+    private fun launchWithWidgetUpdate(block: suspend () -> Int) {
         viewModelScope.launch {
-            block()
-            MyNotesWidgetUpdater.requestUpdate(getApplication<Application>())
+            if (block() > 0) MyNotesWidgetUpdater.requestUpdate(getApplication<Application>())
         }
     }
     private data class PreparedAttachment(val attachment: Attachment, val internalUri: Uri, val type: String, val name: String?)

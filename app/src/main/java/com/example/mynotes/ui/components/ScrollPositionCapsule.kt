@@ -59,11 +59,6 @@ fun ScrollPositionCapsule(
             val content = viewport + state.maxValue.toFloat()
             val visibleFraction = (viewport / content).coerceIn(0f, 1f)
 
-            /*
-             * Para ScrollState no animamos un valor que cambia prácticamente
-             * en cada frame del gesto. La cápsula sigue exactamente al scroll
-             * y evitamos crear una animación tween de duración 0 repetidamente.
-             */
             ScrollStateCapsuleThumb(
                 state = state,
                 visibleFraction = visibleFraction,
@@ -74,7 +69,6 @@ fun ScrollPositionCapsule(
         }
     }
 }
-
 
 @Composable
 private fun ScrollStateCapsuleThumb(
@@ -145,36 +139,17 @@ fun ScrollPositionCapsule(
 
     if (totalItems <= 0 || visibleItems.isEmpty() || (!state.canScrollBackward && !state.canScrollForward)) return
 
-    /*
-     * En un StaggeredGrid el elemento con el índice menor no siempre es el
-     * que está visualmente pegado al borde superior: una tarjeta alta puede
-     * permanecer parcialmente visible durante mucho tiempo en una columna.
-     * Si se usa ese índice como ancla, al desaparecer esa tarjeta el indicador
-     * puede saltar varios índices de golpe.
-     *
-     * Tomamos en cambio el elemento cuyo borde superior está más cerca del
-     * inicio real del viewport. Esto hace que el ancla represente mejor lo que
-     * el usuario está viendo en ese instante.
-     */
     val viewportStart = layoutInfo.viewportStartOffset
     val anchorItem = visibleItems.minByOrNull { abs(it.offset.y - viewportStart) } ?: return
     val itemHeight = anchorItem.size.height.coerceAtLeast(1)
     val hiddenPart = (viewportStart - anchorItem.offset.y).coerceAtLeast(0).coerceAtMost(itemHeight)
     val fractionalOffset = hiddenPart.toFloat() / itemHeight.toFloat()
 
-    /*
-     * El denominador NO depende ya de visibleItems.size. Ese número cambia
-     * constantemente en un masonry/staggered grid cuando una tarjeta entra o
-     * sale del viewport y era la causa principal de los saltos bruscos. El
-     * total de notas sí es estable durante el gesto, por lo que proporciona
-     * una escala consistente de principio a fin.
-     */
     val stableRange = (totalItems - 1).coerceAtLeast(1)
     val estimatedProgress = ((anchorItem.index + fractionalOffset) / stableRange.toFloat()).coerceIn(0f, 1f)
     LazyCapsuleThumb(estimatedProgress, visibleItems.size, totalItems, state.canScrollBackward, state.canScrollForward,
         state.isScrollInProgress, backgroundColor, preferredColor, modifier, fixedThumbHeight, smoothMovement)
 }
-
 
 @Composable
 private fun LazyCapsuleThumb(
@@ -246,15 +221,6 @@ private fun CapsuleThumb(
     fixedThumbHeight: Dp? = null,
     smoothMovement: Boolean = false
 ) {
-    /*
-     * El indicador nunca depende de un alpha fijo. Un color semitransparente
-     * que se ve bien sobre una paleta puede desaparecer casi por completo
-     * sobre otra. En su lugar se parte del color visual preferido (normalmente
-     * el mismo de texto/gráficos configurado por el usuario) y se atenúa sólo
-     * hasta el punto en que todavía conserva contraste medible contra el fondo
-     * real de la pantalla. Si el color preferido no alcanza ese contraste, la
-     * función de contraste cae automáticamente en negro o blanco.
-     */
     // El contraste no depende de la posición: reutilizarlo durante el gesto.
     CapsuleFrame(visibleFraction, active, backgroundColor, preferredColor, modifier, fixedThumbHeight) { thumbHeight, availableTravel,
             thumbColor ->

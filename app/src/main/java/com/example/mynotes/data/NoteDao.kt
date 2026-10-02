@@ -8,7 +8,6 @@ import androidx.room.Query
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 
-
 data class WidgetNoteStats(
     val totalCount: Int,
     val favoriteCount: Int,
@@ -20,15 +19,6 @@ data class WidgetNoteStats(
 
 @Dao
 interface NoteDao {
-    /*
-     * Room devuelve la lista ya ordenada.
-     *
-     * 1. Fijadas.
-     * 2. Prioridad alta -> baja.
-     * 3. Más recientes.
-     *
-     * De esta forma Compose no ordena la colección en cada cambio.
-     */
     @Query(
         """
         SELECT *
@@ -123,20 +113,16 @@ interface NoteDao {
     suspend fun insertNote(note: Note): Long
     @Update
     suspend fun updateNote(note: Note)
-    /*
-     * Actualizaciones parciales: evitan escribir toda la fila cuando solo
-     * cambia un atributo visual o de organización.
-     */
-    @Query("UPDATE notes SET color = :color WHERE id = :noteId")
-    suspend fun updateColor(noteId: Int, color: String)
-    @Query("UPDATE notes SET priority = :priority WHERE id = :noteId")
-    suspend fun updatePriority(noteId: Int, priority: Int)
-    @Query("UPDATE notes SET isFavorite = :isFavorite WHERE id = :noteId")
-    suspend fun updateFavorite(noteId: Int, isFavorite: Boolean)
-    @Query("UPDATE notes SET isPinned = :isPinned WHERE id = :noteId")
-    suspend fun updatePinned(noteId: Int, isPinned: Boolean)
-    @Query("UPDATE notes SET category = :category WHERE id = :noteId")
-    suspend fun updateCategory(noteId: Int, category: String)
+    @Query("UPDATE notes SET color = :color WHERE id = :noteId AND color != :color")
+    suspend fun updateColor(noteId: Int, color: String): Int
+    @Query("UPDATE notes SET priority = :priority WHERE id = :noteId AND priority != :priority")
+    suspend fun updatePriority(noteId: Int, priority: Int): Int
+    @Query("UPDATE notes SET isFavorite = :isFavorite WHERE id = :noteId AND isFavorite != :isFavorite")
+    suspend fun updateFavorite(noteId: Int, isFavorite: Boolean): Int
+    @Query("UPDATE notes SET isPinned = :isPinned WHERE id = :noteId AND isPinned != :isPinned")
+    suspend fun updatePinned(noteId: Int, isPinned: Boolean): Int
+    @Query("UPDATE notes SET category = :category WHERE id = :noteId AND category != :category")
+    suspend fun updateCategory(noteId: Int, category: String): Int
     @Delete
     suspend fun deleteNote(note: Note)
 }

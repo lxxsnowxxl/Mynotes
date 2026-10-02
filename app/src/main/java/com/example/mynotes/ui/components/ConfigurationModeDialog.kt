@@ -93,13 +93,6 @@ fun ConfigurationModeDialog(
         )
     }
 
-    /*
-     * No usamos androidx.compose.ui.window.Dialog aquí. Un Dialog crea una
-     * segunda Window y varios launchers Samsung vuelven a mostrar la barra
-     * de navegación durante ese cambio de ventana. Esta capa vive dentro de
-     * la misma Window de MainActivity, por lo que conserva el modo inmersivo
-     * desde el primer frame y evita el destello de los tres botones Android.
-     */
     BackHandler(enabled = true) { /* La primera elección es obligatoria. */ }
 
     Box(
@@ -124,13 +117,8 @@ fun ConfigurationModeDialog(
                 modifier = Modifier.padding(horizontal = 22.dp, vertical = 22.dp),
                 verticalArrangement = Arrangement.Center
             ) {
-                Text(
-                    text = stringResource(R.string.configuration_mode_welcome_title),
-                    color = dialogContentColor,
-                    fontFamily = fontFamily,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = 22.sp
-                )
+                SettingsTitle(stringResource(R.string.configuration_mode_welcome_title), dialogContentColor, fontFamily,
+                    fontSize = 22.sp)
                 Text(
                     text = stringResource(R.string.configuration_mode_welcome_description),
                     modifier = Modifier.padding(top = 6.dp),
@@ -184,12 +172,7 @@ fun ConfigurationModeDialog(
                         disabledContentColor = unselectedContentColor.copy(alpha = 0.62f)
                     )
                 ) {
-                    Text(
-                        text = stringResource(R.string.configuration_mode_confirm),
-                        color = if (pendingMode != null) selectedContentColor else unselectedContentColor.copy(alpha = 0.62f),
-                        fontFamily = fontFamily,
-                        fontWeight = FontWeight.Bold
-                    )
+                    SettingsTitle(stringResource(R.string.configuration_mode_confirm), if (pendingMode != null) selectedContentColor else unselectedContentColor.copy(alpha = 0.62f), fontFamily)
                 }
 
                 Text(
@@ -221,12 +204,7 @@ private fun ConfigurationModeChoiceButton(
     val contentColor = if (selected) selectedContentColor else unselectedContentColor
     val content: @Composable () -> Unit = {
         Column(modifier = Modifier.padding(vertical = 4.dp)) {
-            Text(
-                text = title,
-                color = contentColor,
-                fontFamily = fontFamily,
-                fontWeight = FontWeight.Bold
-            )
+            SettingsTitle(title, contentColor, fontFamily)
             Text(
                 text = description,
                 color = contentColor,

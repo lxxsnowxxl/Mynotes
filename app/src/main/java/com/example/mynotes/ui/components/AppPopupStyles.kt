@@ -60,12 +60,6 @@ fun AppDropdownMenu(
         active = scrollState.isScrollInProgress
     )
 
-    /*
-     * El dibujo se realiza sobre el viewport final del DropdownMenu. El valor
-     * maxValue representa la parte del contenido que queda fuera de ese viewport,
-     * por lo que viewport + maxValue aproxima la altura total desplazable.
-     * Con esa relación se calcula tanto el tamaño de la cápsula como su recorrido.
-     */
     val menuModifier = modifier.drawWithContent {
         drawContent()
 

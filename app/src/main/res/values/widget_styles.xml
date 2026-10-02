@@ -1,5 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Reserve space for accents and descenders, including custom system fonts. -->
+    <style name="WidgetText">
+        <item name="android:includeFontPadding">true</item>
+        <item name="android:paddingTop">2dp</item>
+        <item name="android:paddingBottom">4dp</item>
+        <item name="android:lineSpacingExtra">1dp</item>
+    </style>
+
+    <style name="WidgetTextAction" parent="WidgetText">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">32dp</item>
+        <item name="android:paddingTop">6dp</item>
+        <item name="android:paddingBottom">6dp</item>
+    </style>
+
+    <style name="WidgetTextBadge" parent="WidgetText">
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:minHeight">26dp</item>
+        <item name="android:paddingTop">4dp</item>
+        <item name="android:paddingBottom">4dp</item>
+    </style>
+
     <style name="WidgetNoteRowHorizontal">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">48dp</item>

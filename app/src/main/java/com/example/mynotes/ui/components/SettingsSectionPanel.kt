@@ -53,13 +53,6 @@ internal fun SettingsSectionPanel(textColorMode: String, modifier: Modifier = Mo
     Column(
         modifier = modifier
             .fillMaxWidth()
-            /*
-             * El fondo de cada panel era recalculado en cada pasada de dibujo.
-             * En Settings hay muchos paneles y, durante un fling, eso puede
-             * provocar frames irregulares. drawWithCache conserva exactamente
-             * la misma geometría visual pero reutiliza el cálculo hasta que
-             * cambien tamaño, color u outset.
-             */
             .drawWithCache {
                 val outset = horizontalOutset.toPx()
                 val radius = 18.dp.toPx()
@@ -98,6 +91,11 @@ internal fun SettingsDropdownItem(
     )
 }
 
+@Composable
+internal fun SettingsTitle(
+    text: String, color: Color, fontFamily: FontFamily, modifier: Modifier = Modifier,
+    fontWeight: FontWeight = FontWeight.Bold, fontSize: TextUnit = TextUnit.Unspecified
+) = Text(text, modifier, color, fontFamily = fontFamily, fontWeight = fontWeight, fontSize = fontSize)
 
 @Composable
 internal fun SettingsSecondaryText(

@@ -1,5 +1,6 @@
 package com.example.mynotes.ui.components
 
+import com.example.mynotes.util.moveReplacing
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -87,12 +88,6 @@ fun extractLinkUrls(text: String): List<String> = UrlRegex.findAll(text).map { m
                 '}')
         }.filter { it.length > 8 }.distinct().toList()
 
-/*
- * Los enlaces que ya generaron una tarjeta enriquecida se guardan como una
- * línea de metadatos dentro del contenido persistido. El editor y las tarjetas
- * nunca muestran esta línea, pero seguimos conservando la URL para reconstruir
- * la preview al volver a abrir la nota sin añadir una columna nueva a Room.
- */
 private val EmbeddedLinkMarkerRegex = Regex(
     pattern = """(?m)^\s*\[\[mynotes-link:(https?://[^\]]+)]]\s*(?:\r?\n)?""",
     option = RegexOption.IGNORE_CASE
@@ -150,11 +145,6 @@ private object LinkPreviewRepository {
     private val legacyLoadGate = Semaphore(permits = 1)
     private val loadGate = Semaphore(permits = 2)
 
-    /*
-     * Lectura exclusivamente de RAM para composición. No consulta
-     * SharedPreferences ni el sistema de archivos, por lo que puede usarse
-     * al construir una tarjeta sin introducir I/O síncrono en el hilo UI.
-     */
     fun peekMemory(url: String): LinkPreviewData? = cache.get(url)
     private fun lockFor(url: String): Mutex = synchronized(locks) {
             locks.getOrPut(url) { Mutex() }
@@ -165,12 +155,6 @@ private object LinkPreviewRepository {
         }
     }
     suspend fun load(context: Context, url: String): LinkPreviewData = withContext(Dispatchers.IO) {
-            /*
-             * Toda la ruta persistencia/red/miniatura queda limitada. En API
-             * 28 o anterior permitimos un único trabajo de link preview a la
-             * vez; en Android moderno, dos. Esto incluye tanto precarga como
-             * tarjetas visibles y evita ráfagas de descargas/decodificación.
-             */
             val gate = if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) legacyLoadGate else loadGate
             gate.withPermit {
                 cache.get(url)?.let { cached -> return@withPermit ensureThumbnailCached(context = context, preview = cached).also { ready ->
@@ -198,12 +182,6 @@ private object LinkPreviewRepository {
         }
     private fun fetch(url: String): LinkPreviewData {
         val basic = LinkPreviewData.basic(url)
-        /*
-         * Varias redes sociales ya no exponen una página HTML sencilla a
-         * clientes móviles. Antes de intentar raspar la página usamos sus
-         * endpoints públicos de vista previa cuando existen. Si el endpoint
-         * no trae imagen seguimos con el HTML normal como segundo intento.
-         */
         val socialProviderPreview = when {
                 isMetaSocialUrl(url) -> fetchMetaOEmbedPreview(url)
                 isRedditRelatedUrl(url) -> fetchRedditJsonPreview(entityUrl = url, clickUrl = url)
@@ -456,10 +434,7 @@ private fun downloadThumbnail(imageUrl: String, refererUrl: String, destination:
         if (destination.exists()) {
             destination.delete()
         }
-        if (!temp.renameTo(destination)) {
-            temp.copyTo(destination, overwrite = true)
-            temp.delete()
-        }
+        temp.moveReplacing(destination)
         destination.setLastModified(System.currentTimeMillis())
         true
     } catch (_: Exception) {
@@ -1449,13 +1424,6 @@ private fun LinkPreviewData.withKnownProviderFallback(): LinkPreviewData {
 fun LinkPreviewCard(url: String, modifier: Modifier = Modifier, compact: Boolean = false, textColorMode: String = "auto",
     deferLoad: Boolean = false, onPreviewReady: ((String) -> Unit)? = null) {
     val context = LocalContext.current
-    /*
-     * La composición solo consulta RAM. La lectura persistida, el JSON, la
-     * red y la caché de miniaturas se ejecutan desde la corrutina del efecto.
-     * Si la tarjeta aparece durante un scroll rápido, deferLoad evita iniciar
-     * trabajo nuevo hasta que el grid vuelva a estar en reposo. Un preview ya
-     * cargado permanece visible porque el estado recordado no se reinicia.
-     */
     var preview by remember(url) {
         mutableStateOf(LinkPreviewRepository.peekMemory(url) ?: LinkPreviewData.basic(url))
     }

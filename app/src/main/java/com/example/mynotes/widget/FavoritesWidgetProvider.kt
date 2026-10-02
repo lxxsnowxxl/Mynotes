@@ -3,36 +3,32 @@ package com.example.mynotes.widget
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
-import android.view.View
 import android.widget.RemoteViews
 import com.example.mynotes.R
 import com.example.mynotes.data.AppDatabase
-import com.example.mynotes.data.Attachment
 import com.example.mynotes.data.Note
 
 class FavoritesWidgetProvider : AppWidgetProvider() {
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
         launchAsyncIo {
-                val db = AppDatabase.getDatabase(context.applicationContext)
-                val notes = db.noteDao().getFavoriteNotesForWidget(2)
-                val favoriteCount = db.noteDao().getFavoriteCountForWidget()
-                val theme = WidgetPresentation.theme(context)
-                val textContext = WidgetLocale.localizedContext(context)
-                val visualMap = WidgetMediaPreview.firstVisualByNote(db.attachmentDao().getAllAttachmentsOnce())
-                appWidgetIds.forEach { appWidgetId -> updateWidget(context, textContext, appWidgetManager, appWidgetId, notes, favoriteCount, theme, visualMap) }
+            val db = AppDatabase.getDatabase(context.applicationContext)
+            val notes = db.noteDao().getFavoriteNotesForWidget(2)
+            val favoriteCount = db.noteDao().getFavoriteCountForWidget()
+            val environment = loadNoteWidgetEnvironment(context, db, notes.map { it.id })
+            appWidgetIds.forEach { appWidgetId ->
+                updateWidget(context, appWidgetManager, appWidgetId, notes, favoriteCount, environment)
+            }
         }
     }
 
     private suspend fun updateWidget(
         context: Context,
-        textContext: Context,
         manager: AppWidgetManager,
         appWidgetId: Int,
         notes: List<Note>,
         total: Int,
-        theme: WidgetPresentation.WidgetThemeSpec,
-        visualMap: Map<Int, Attachment>
-    ) {
+        environment: NoteWidgetEnvironment
+    ) = with(environment) {
         val views = RemoteViews(context.packageName, R.layout.widget_favorites)
         views.setInt(R.id.widget_favorites_root, "setBackgroundResource", theme.rootBackgroundRes)
         views.setTextViewText(R.id.widget_favorites_title, textContext.getString(R.string.widget_favorites))
@@ -55,8 +51,9 @@ class FavoritesWidgetProvider : AppWidgetProvider() {
         val toggleIds = intArrayOf(R.id.widget_favorite_toggle_1, R.id.widget_favorite_toggle_2)
         val thumbIds = intArrayOf(R.id.widget_favorite_thumb_1, R.id.widget_favorite_thumb_2)
 
-        views.setViewVisibility(R.id.widget_favorites_empty, if (notes.isEmpty()) View.VISIBLE else View.GONE)
-        views.setViewVisibility(R.id.widget_favorites_cards, if (notes.isEmpty()) View.GONE else View.VISIBLE)
+        val hasNotes = notes.isNotEmpty()
+        views.setVisible(R.id.widget_favorites_empty, !hasNotes)
+        views.setVisible(R.id.widget_favorites_cards, hasNotes)
 
         rowIds.forEachIndexed { index, rowId ->
             val note = notes.getOrNull(index)

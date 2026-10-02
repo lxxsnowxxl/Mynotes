@@ -43,6 +43,17 @@ class FeedbackPreferencePolicyTest {
     }
 
     @Test
+    fun allReminderAlertsRemainInTheSharedPlaybackCatalog() {
+        val tones = FeedbackPreferencePolicy.reminderTones
+        assertEquals(44, tones.size)
+        assertEquals(44, tones.map { it.key }.toSet().size)
+        assertEquals(44, tones.map { it.soundRes }.toSet().size)
+        for (tone in tones) {
+            assertEquals(tone, FeedbackPreferencePolicy.reminderTone(tone.key))
+        }
+    }
+
+    @Test
     fun unknownKeysKeepTheOriginalFallbacks() {
         for (value in listOf("", "  ", "unknown", "CLASSIC_extra", "SOFT_extra")) {
             assertEquals("classic", FeedbackPreferencePolicy.normalizeSoundTheme(value))

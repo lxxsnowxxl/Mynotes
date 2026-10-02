@@ -3,7 +3,6 @@ package com.example.mynotes.widget
 import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
-import android.view.View
 import android.widget.RemoteViews
 import com.example.mynotes.R
 import com.example.mynotes.data.AppDatabase
@@ -11,11 +10,10 @@ import com.example.mynotes.data.AppDatabase
 class FocusNoteWidgetProvider : AppWidgetProvider() {
     override fun onUpdate(context: Context, appWidgetManager: AppWidgetManager, appWidgetIds: IntArray) {
         launchAsyncIo {
-                val db = AppDatabase.getDatabase(context.applicationContext)
-                val note = db.noteDao().getFocusNoteForWidget()
-                val theme = WidgetPresentation.theme(context)
-                val textContext = WidgetLocale.localizedContext(context)
-                val visualMap = WidgetMediaPreview.firstVisualByNote(db.attachmentDao().getAllAttachmentsOnce())
+            val db = AppDatabase.getDatabase(context.applicationContext)
+            val note = db.noteDao().getFocusNoteForWidget()
+            val environment = loadNoteWidgetEnvironment(context, db, listOfNotNull(note?.id))
+            with(environment) {
                 appWidgetIds.forEach { appWidgetId ->
                     val views = RemoteViews(context.packageName, R.layout.widget_focus_note)
                     views.setInt(R.id.widget_focus_root, "setBackgroundResource", theme.rootBackgroundRes)
@@ -34,13 +32,12 @@ class FocusNoteWidgetProvider : AppWidgetProvider() {
                     views.setOnClickPendingIntent(R.id.widget_focus_header, WidgetIntents.openApp(context, appWidgetId))
                     views.setOnClickPendingIntent(R.id.widget_focus_add, WidgetIntents.newNote(context, appWidgetId + 501))
 
+                    val hasNote = note != null
+                    views.setVisible(R.id.widget_focus_card, hasNote)
+                    views.setVisible(R.id.widget_focus_empty, !hasNote)
                     if (note == null) {
-                        views.setViewVisibility(R.id.widget_focus_card, View.GONE)
-                        views.setViewVisibility(R.id.widget_focus_empty, View.VISIBLE)
                         views.setOnClickPendingIntent(R.id.widget_focus_empty, WidgetIntents.newNote(context, appWidgetId + 502))
                     } else {
-                        views.setViewVisibility(R.id.widget_focus_card, View.VISIBLE)
-                        views.setViewVisibility(R.id.widget_focus_empty, View.GONE)
                         views.setInt(R.id.widget_focus_card, "setBackgroundResource", theme.detailCardBackgroundRes)
                         views.setTextViewText(R.id.widget_focus_title, WidgetPresentation.title(textContext, note))
                         views.setTextViewText(R.id.widget_focus_preview, WidgetPresentation.contentPreview(note, 78).ifBlank { WidgetPresentation.preview(textContext, note) })
@@ -79,6 +76,7 @@ class FocusNoteWidgetProvider : AppWidgetProvider() {
                     }
                     appWidgetManager.updateAppWidget(appWidgetId, views)
                 }
+            }
         }
     }
 }

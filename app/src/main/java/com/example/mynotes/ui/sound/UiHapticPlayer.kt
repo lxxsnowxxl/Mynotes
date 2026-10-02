@@ -148,10 +148,6 @@ object UiHapticPlayer {
             // No se fuerza feedback si el fabricante bloquea la vibración.
         }
     }
-    /*
-     * Los patrones no cambian durante la vida de la app. Mantenerlos
-     * preconstruidos evita crear LongArray/IntArray en cada pulsación.
-     */
     private val basePatterns: Map<String, HapticPattern> = mapOf(
         "soft" to HapticPattern(longArrayOf(0L, 12L), intArrayOf(0, 115)),
         "crisp" to HapticPattern(longArrayOf(0L, 9L), intArrayOf(0, 220)),

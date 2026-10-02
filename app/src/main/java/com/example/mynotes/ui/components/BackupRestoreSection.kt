@@ -76,9 +76,8 @@ fun BackupRestoreSection(settings: AppSettings, fontFamily: FontFamily, textColo
                 pendingImportUri = uri
             }
         }
-    SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(16.dp)) { panelColors -> Text(
-            text = stringResource(R.string.backup_restore_title), color = panelColors.text, fontFamily = fontFamily,
-            fontWeight = FontWeight.Bold, fontSize = 17.sp)
+    SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(16.dp)) { panelColors -> SettingsTitle(stringResource(R.string.backup_restore_title), panelColors.text, fontFamily,
+     fontSize = 17.sp)
         Spacer(Modifier.height(4.dp))
         SettingsSecondaryText(stringResource(R.string.backup_restore_description), panelColors.secondaryText, fontFamily, lineHeight = 17.sp)
         Spacer(Modifier.height(14.dp))
@@ -136,10 +135,6 @@ fun BackupRestoreSection(settings: AppSettings, fontFamily: FontFamily, textColo
                                             summary.attachmentCount)
                                     statusMessage = message
                                     Toast.makeText(context, message, Toast.LENGTH_LONG).show()
-                                    /*
-                                     * También vuelve a leer el idioma guardado
-                                     * por MainActivity.attachBaseContext().
-                                     */
                                     (context as? Activity)?.recreate()
                                 }.onFailure { error -> statusMessage = context.getString(R.string.backup_operation_error,
                                             error.message ?: context.getString(R.string.backup_unknown_error))

@@ -1,5 +1,8 @@
 package com.example.mynotes.update
 
+import com.example.mynotes.util.moveReplacing
+import com.example.mynotes.util.withHttpConnection
+import com.example.mynotes.util.requireDirectory
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
@@ -35,6 +38,8 @@ object GitHubUpdateManager {
     private const val LATEST_RELEASE_API = "https://api.github.com/repos/lxxsnowxxl/Mynotes/releases/latest"
     private const val USER_AGENT = "MyNotes-Android-Updater"
     private const val UPDATES_CACHE_DIR = "app_updates"
+    private val VERSION_NUMBER_REGEX = Regex("\\d+")
+    private val SAFE_VERSION_REGEX = Regex("[^A-Za-z0-9._-]")
 
     data class Release(
         val version: String,
@@ -63,60 +68,35 @@ object GitHubUpdateManager {
      */
     suspend fun checkForUpdate(context: Context): CheckResult = withContext(Dispatchers.IO) {
         val current = currentVersionName(context)
-        var connection: HttpURLConnection? = null
         try {
-            connection = (URL(LATEST_RELEASE_API).openConnection() as HttpURLConnection).apply {
+            URL(LATEST_RELEASE_API).withHttpConnection(configure = {
                 requestMethod = "GET"
                 connectTimeout = 12_000
                 readTimeout = 15_000
                 setRequestProperty("Accept", "application/vnd.github+json")
                 setRequestProperty("User-Agent", USER_AGENT)
                 setRequestProperty("X-GitHub-Api-Version", "2022-11-28")
-            }
-
-            when (val responseCode = connection.responseCode) {
-                HttpURLConnection.HTTP_OK -> {
-                    val payload = connection.inputStream.bufferedReader(Charsets.UTF_8).use { it.readText() }
-                    val json = JSONObject(payload)
-                    val remoteVersion = json.optString("tag_name").ifBlank { json.optString("name") }
-                    val releaseUrl = json.optString("html_url").ifBlank { RELEASES_URL }
-                    val title = json.optString("name").ifBlank { remoteVersion }
-                    val notes = json.optString("body")
-                    val assets = json.optJSONArray("assets")
-                    var apkUrl: String? = null
-                    if (assets != null) {
-                        for (index in 0 until assets.length()) {
-                            val asset = assets.optJSONObject(index) ?: continue
-                            val name = asset.optString("name")
-                            if (name.endsWith(".apk", ignoreCase = true)) {
-                                apkUrl = asset.optString("browser_download_url").takeIf { it.isNotBlank() }
-                                if (apkUrl != null) break
-                            }
-                        }
+            }) { connection ->
+                when (val responseCode = connection.responseCode) {
+                    HttpURLConnection.HTTP_OK -> {
+                        val json = JSONObject(connection.inputStream.bufferedReader(Charsets.UTF_8).use { it.readText() })
+                        val remoteVersion = json.optString("tag_name").ifBlank { json.optString("name") }
+                        val release = Release(
+                            version = remoteVersion.ifBlank { "?" },
+                            title = json.optString("name").ifBlank { remoteVersion },
+                            notes = json.optString("body"),
+                            htmlUrl = json.optString("html_url").ifBlank { RELEASES_URL },
+                            apkDownloadUrl = json.firstApkDownloadUrl()
+                        )
+                        if (isVersionNewer(remoteVersion, current)) CheckResult.UpdateAvailable(release, current)
+                        else CheckResult.UpToDate(current, release.version)
                     }
-
-                    val release = Release(
-                        version = remoteVersion.ifBlank { "?" },
-                        title = title,
-                        notes = notes,
-                        htmlUrl = releaseUrl,
-                        apkDownloadUrl = apkUrl
-                    )
-
-                    if (isVersionNewer(remoteVersion, current)) {
-                        CheckResult.UpdateAvailable(release, current)
-                    } else {
-                        CheckResult.UpToDate(current, release.version)
-                    }
+                    HttpURLConnection.HTTP_NOT_FOUND -> CheckResult.NoPublishedRelease(current)
+                    else -> CheckResult.Failure("GitHub HTTP $responseCode")
                 }
-
-                HttpURLConnection.HTTP_NOT_FOUND -> CheckResult.NoPublishedRelease(current)
-                else -> CheckResult.Failure("GitHub HTTP $responseCode")
             }
         } catch (error: Exception) {
             CheckResult.Failure(error.message ?: error.javaClass.simpleName)
-        } finally {
-            connection?.disconnect()
         }
     }
 
@@ -126,8 +106,8 @@ object GitHubUpdateManager {
      * sólo cuando su texto normalizado difiere.
      */
     private fun isVersionNewer(remote: String, current: String): Boolean {
-        val remoteParts = Regex("\\d+").findAll(remote).map { it.value.toLongOrNull() ?: 0L }.toList()
-        val currentParts = Regex("\\d+").findAll(current).map { it.value.toLongOrNull() ?: 0L }.toList()
+        val remoteParts = VERSION_NUMBER_REGEX.findAll(remote).map { it.value.toLongOrNull() ?: 0L }.toList()
+        val currentParts = VERSION_NUMBER_REGEX.findAll(current).map { it.value.toLongOrNull() ?: 0L }.toList()
         if (remoteParts.isEmpty() && currentParts.isEmpty()) {
             return remote.trim().removePrefix("v") != current.trim().removePrefix("v")
         }
@@ -145,49 +125,40 @@ object GitHubUpdateManager {
         val downloadUrl = release.apkDownloadUrl ?: throw IOException("The GitHub Release has no APK asset")
         requireTrustedHttpsUrl(downloadUrl)
 
-        val updateDirectory = File(context.cacheDir, UPDATES_CACHE_DIR).apply {
-            if (!exists() && !mkdirs()) throw IOException("Unable to create update cache directory")
-        }
-        val safeVersion = release.version.replace(Regex("[^A-Za-z0-9._-]"), "_").ifBlank { "latest" }
+        val updateDirectory = File(context.cacheDir, UPDATES_CACHE_DIR)
+            .requireDirectory("Unable to create update cache directory")
+        val safeVersion = release.version.replace(SAFE_VERSION_REGEX, "_").ifBlank { "latest" }
         val destination = File(updateDirectory, "MyNotes-$safeVersion.apk")
         val temporary = File(updateDirectory, "MyNotes-$safeVersion.download")
         if (temporary.exists()) temporary.delete()
 
-        var connection: HttpURLConnection? = null
         try {
-            connection = (URL(downloadUrl).openConnection() as HttpURLConnection).apply {
+            URL(downloadUrl).withHttpConnection(configure = {
                 requestMethod = "GET"
                 instanceFollowRedirects = true
                 connectTimeout = 15_000
                 readTimeout = 30_000
                 setRequestProperty("Accept", "application/octet-stream")
                 setRequestProperty("User-Agent", USER_AGENT)
-            }
-            val responseCode = connection.responseCode
-            if (responseCode !in 200..299) throw IOException("APK download failed: HTTP $responseCode")
-
-            BufferedInputStream(connection.inputStream, 64 * 1024).use { input ->
-                BufferedOutputStream(FileOutputStream(temporary), 64 * 1024).use { output ->
-                    input.copyTo(output, 64 * 1024)
+            }) { connection ->
+                val responseCode = connection.responseCode
+                if (responseCode !in 200..299) throw IOException("APK download failed: HTTP $responseCode")
+                BufferedInputStream(connection.inputStream, 64 * 1024).use { input ->
+                    BufferedOutputStream(FileOutputStream(temporary), 64 * 1024).use { output ->
+                        input.copyTo(output, 64 * 1024)
+                    }
                 }
             }
             if (temporary.length() < 1024L) throw IOException("Downloaded APK is unexpectedly small")
-
-            // Un APK es un contenedor ZIP; PK evita entregar al instalador una página HTML de error.
             temporary.inputStream().use { stream ->
                 if (stream.read() != 'P'.code || stream.read() != 'K'.code) {
                     throw IOException("Downloaded file is not a valid APK/ZIP container")
                 }
             }
-
             if (destination.exists()) destination.delete()
-            if (!temporary.renameTo(destination)) {
-                temporary.copyTo(destination, overwrite = true)
-                temporary.delete()
-            }
+            temporary.moveReplacing(destination)
             destination
         } finally {
-            connection?.disconnect()
             if (temporary.exists()) temporary.delete()
         }
     }
@@ -218,6 +189,17 @@ object GitHubUpdateManager {
         context.startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(safeUrl)).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK))
         true
     }.getOrDefault(false)
+
+    private fun JSONObject.firstApkDownloadUrl(): String? {
+        val assets = optJSONArray("assets") ?: return null
+        for (index in 0 until assets.length()) {
+            val asset = assets.optJSONObject(index) ?: continue
+            if (asset.optString("name").endsWith(".apk", ignoreCase = true)) {
+                asset.optString("browser_download_url").takeIf { it.isNotBlank() }?.let { return it }
+            }
+        }
+        return null
+    }
 
     private fun requireTrustedHttpsUrl(value: String) {
         val uri = Uri.parse(value)

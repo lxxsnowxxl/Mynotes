@@ -77,4 +77,13 @@
     <string name="pdf_library_copy_name">Copy of %1$s</string>
     <string name="pdf_library_document_count">%1$d PDFs</string>
     <string name="pdf_library_autosave">Autosaved</string>
+    <string name="pdf_flip">Flip</string>
+    <string name="pdf_flip_horizontal">Horizontal</string>
+    <string name="pdf_flip_vertical">Vertical</string>
+    <string name="pdf_crop">Crop</string>
+    <string name="pdf_crop_hint">Drag the edges or corners to crop. Drag inside to move the frame.</string>
+    <string name="pdf_crop_reset">Reset</string>
+    <string name="pdf_image_apply">Apply</string>
+    <string name="pdf_image_edit_error">Could not edit this image. Try again.</string>
+    <string name="pdf_image_edit_changed">The document or selection changed. Select the image and try again.</string>
 </resources>

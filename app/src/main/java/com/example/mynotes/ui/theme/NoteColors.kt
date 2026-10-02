@@ -30,6 +30,25 @@ internal fun rememberUiTextColors(value: String, background: Color): UiTextColor
         UiTextColors(resolveUiTextColor(value, background), resolveSecondaryUiTextColor(value, background))
     }
 
+@Composable
+internal fun rememberUiTextColor(value: String, background: Color): Color =
+    remember(value, background) { resolveUiTextColor(value, background) }
+
+@Composable
+internal fun rememberUiGraphicColor(value: String, background: Color): Color =
+    remember(value, background) { resolveUiGraphicColor(value, background) }
+
+@Immutable
+internal data class UiContentColors(val primary: Color, val secondary: Color, val graphic: Color)
+
+/** Agrupa texto principal/secundario y gráficos para pantallas que necesitan los tres. */
+@Composable
+internal fun rememberUiContentColors(value: String, background: Color): UiContentColors =
+    remember(value, background) {
+        UiContentColors(resolveUiTextColor(value, background), resolveSecondaryUiTextColor(value, background),
+            resolveUiGraphicColor(value, background))
+    }
+
 /**
  * Compone [foreground] sobre [background] y devuelve un color opaco.
  * Se usa para medir contraste real cuando una superficie o un icono tiene alpha.
@@ -154,7 +173,6 @@ fun ensureUiContrast(preferred: Color, background: Color, minimumContrast: Float
     }
 }
 
-
 /**
  * Contorno adaptado a la paleta: conserva la familia cromática del fondo
  * y sólo lo desplaza hacia blanco o negro lo necesario para alcanzar
@@ -179,7 +197,6 @@ fun paletteMatchedOutlineColor(background: Color, minimumContrast: Float = 3f): 
     }
     return best ?: automaticUiTextColor(backgroundOpaque)
 }
-
 
 /**
  * Construye un color de botón que conserve el color de texto ya resuelto para
@@ -208,49 +225,50 @@ fun adaptiveUiButtonContainer(
         return dr * dr + dg * dg + db * db
     }
 
-    val candidates = ArrayList<Color>(220)
-    fun add(candidate: Color) {
-        candidates += candidate.copy(alpha = 1f)
-    }
-    fun addBlendSeries(from: Color, to: Color, steps: Int = 48) {
-        for (index in 0..steps) {
-            add(mixOpaqueUiColor(from, to, index.toFloat() / steps.toFloat()))
+    var bestCandidate: Color? = null
+    var bestDistance = Float.POSITIVE_INFINITY
+
+    fun consider(candidate: Color) {
+        val opaque = candidate.copy(alpha = 1f)
+        if (uiContrastRatio(contentOpaque, opaque) < minimumContentContrast ||
+            uiContrastRatio(opaque, backgroundOpaque) < minimumSurfaceContrast
+        ) {
+            return
+        }
+        val distance = distanceSquared(opaque, preferredOpaque)
+        if (distance < bestDistance) {
+            bestDistance = distance
+            bestCandidate = opaque
         }
     }
 
-    add(preferredOpaque)
-    addBlendSeries(preferredOpaque, AccessibleBlack)
-    addBlendSeries(preferredOpaque, AccessibleWhite)
-    addBlendSeries(backgroundOpaque, AccessibleBlack)
-    addBlendSeries(backgroundOpaque, AccessibleWhite)
+    fun considerBlendSeries(from: Color, to: Color, steps: Int = 48) {
+        for (index in 0..steps) {
+            consider(mixOpaqueUiColor(from, to, index.toFloat() / steps.toFloat()))
+        }
+    }
+
+    consider(preferredOpaque)
+    // La distancia mínima ya es cero: ningún candidato posterior puede mejorarla.
+    if (bestDistance == 0f) return preferredOpaque
+    considerBlendSeries(preferredOpaque, AccessibleBlack)
+    considerBlendSeries(preferredOpaque, AccessibleWhite)
+    considerBlendSeries(backgroundOpaque, AccessibleBlack)
+    considerBlendSeries(backgroundOpaque, AccessibleWhite)
 
     // Serie neutra de respaldo. Evita que una combinación extrema de paleta,
     // acento y texto manual quede sin un candidato utilizable.
     for (index in 0..48) {
         val value = index.toFloat() / 48f
-        add(Color(value, value, value, 1f))
+        consider(Color(value, value, value, 1f))
     }
 
-    val valid = candidates.filter { candidate ->
-        uiContrastRatio(contentOpaque, candidate) >= minimumContentContrast &&
-            uiContrastRatio(candidate, backgroundOpaque) >= minimumSurfaceContrast
-    }
-
-    return valid.minByOrNull { candidate ->
-        distanceSquared(candidate, preferredOpaque)
-    } ?: run {
-        /*
-         * En la práctica siempre existe un gris que satisface ambos límites.
-         * Este fallback conserva una salida segura incluso ante parámetros de
-         * contraste imposibles introducidos en futuras modificaciones.
-         */
+    return bestCandidate ?: run {
         val fallbackTarget = if (uiContrastRatio(AccessibleBlack, contentOpaque) >
             uiContrastRatio(AccessibleWhite, contentOpaque)) AccessibleBlack else AccessibleWhite
         mixOpaqueUiColor(backgroundOpaque, fallbackTarget, 0.55f)
     }
 }
-
-
 
 data class AdaptiveUiButtonColors(
     val container: Color,
@@ -290,8 +308,8 @@ fun resolveAdaptiveUiButtonColors(
     // Recalcula el texto contra el fondo REAL resultante y estabiliza una vez
     // más el contenedor. Esto evita combinaciones grises con poco contraste
     // cuando el usuario cambia Accent color o la paleta de fondo.
-    content = automaticUiTextColor(container)
-    container = containerFor(content)
+    val resolvedContent = automaticUiTextColor(container)
+    if (resolvedContent != content) container = containerFor(resolvedContent)
     content = automaticUiTextColor(container)
 
     return AdaptiveUiButtonColors(container = container, content = content)

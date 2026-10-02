@@ -70,6 +70,19 @@ object AppMotion {
         val speed = animationSpeed.coerceIn(0.5f, 2f)
         return (baseMilliseconds / speed).roundToInt().coerceAtLeast(1)
     }
+
+    /** Same exit timing used by [ConfigurableAnimatedContent] for full-screen navigation. */
+    fun screenExitDuration(animationsEnabled: Boolean, animationSpeed: Float, performanceMode: String): Int {
+        if (!animationsEnabled) return 0
+        val mode = normalizePerformanceMode(performanceMode)
+        if (mode == "performance") return 24
+        val speedBoost = when (mode) {
+            "balanced" -> 1.10f
+            else -> 1f
+        }
+        val speed = (animationSpeed * speedBoost).coerceIn(0.5f, 2.4f)
+        return duration(FAST, true, speed)
+    }
     fun easing(key: String): Easing = when (normalizeEasing(key)) {
             "linear" -> LinearEasing
             "accelerate" -> FastOutLinearInEasing
@@ -90,12 +103,6 @@ private fun <T> AnimatedContentTransitionScope<T>.motionTransform(animationsEnab
     }
     val mode = AppMotion.normalizePerformanceMode(performanceMode)
     val requestedStyle = AppMotion.normalizeStyle(animationStyle)
-    /*
-     * Expand/shrink modifica el layout completo en cada frame.
-     * En los perfiles orientados a fluidez conservamos una apariencia
-     * equivalente mediante transformaciones de capa (scale/slide/fade),
-     * que son mucho más baratas en dispositivos antiguos.
-     */
     val style = when (mode) {
             "performance" -> when (requestedStyle) {
                     "expand", "axis_z", "bounce", "elastic", "expressive_spring", "container_transform", "tonal_pop" -> "zoom_fade"
@@ -126,10 +133,6 @@ private fun <T> AnimatedContentTransitionScope<T>.motionTransform(animationsEnab
     val intensity = (animationIntensity * intensityFactor).coerceIn(0.45f, 1.5f)
     val easing = AppMotion.easing(animationEasing)
     val enterDuration = AppMotion.duration(AppMotion.NORMAL, true, speed)
-    /*
-     * Con salida casi instantánea el contenido anterior deja de dibujarse
-     * muy pronto y no compite con la pantalla entrante por CPU/GPU.
-     */
     val exitDuration = if (mode == "performance") {
             24
         } else {

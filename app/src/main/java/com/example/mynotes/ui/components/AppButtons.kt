@@ -1,6 +1,7 @@
 package com.example.mynotes.ui.components
 
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
@@ -8,6 +9,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -43,6 +45,14 @@ internal fun AppIconButton(
     }
     if (tonal) FilledTonalIconButton(onClick = onClick, modifier = modifier, enabled = enabled, content = content)
     else IconButton(onClick = onClick, modifier = modifier, enabled = enabled, content = content)
+}
+
+@Composable
+internal fun AppCircularIconButton(
+    imageVector: ImageVector, contentDescription: String?, onClick: () -> Unit, containerColor: Color,
+    modifier: Modifier = Modifier, enabled: Boolean = true, iconModifier: Modifier = Modifier, tint: Color? = null
+) = Surface(shape = CircleShape, color = containerColor) {
+    AppIconButton(imageVector, contentDescription, onClick, modifier, enabled, iconModifier = iconModifier, tint = tint)
 }
 
 /** Emite los mismos elementos, sin añadir un Row ni otro contenedor. */

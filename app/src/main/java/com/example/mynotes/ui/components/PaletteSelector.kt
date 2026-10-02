@@ -42,42 +42,6 @@ import com.example.mynotes.ui.theme.MyNotesPalette
 import com.example.mynotes.ui.theme.resolveUiGraphicColor
 import com.example.mynotes.ui.theme.resolveUiTextColor
 
-/*
- * Selector de paletas.
- *
- * Settings usa PaletteSelectorRow directamente dentro de su LazyColumn para
- * que las 46 paletas no se compongan de golpe. PaletteSelector se conserva
- * como versión no-lazy reutilizable para cualquier pantalla que la necesite.
- */
-@Composable
-fun PaletteSelector(
-    palettes: List<MyNotesPalette>,
-    selectedPaletteKey: String,
-    selectedToneIndex: Int,
-    onPaletteSelected: (String) -> Unit,
-    onToneSelected: (paletteKey: String, toneIndex: Int) -> Unit,
-    animationsEnabled: Boolean = true,
-    animationSpeed: Float = 1f,
-    textColorMode: String = "auto",
-    fontFamily: FontFamily = FontFamily.Default
-) {
-    val paletteRows = remember(palettes) { palettes.chunked(2) }
-    Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
-        paletteRows.forEach { rowPalettes ->
-            PaletteSelectorRow(
-                rowPalettes = rowPalettes,
-                selectedPaletteKey = selectedPaletteKey,
-                selectedToneIndex = selectedToneIndex,
-                onPaletteSelected = onPaletteSelected,
-                onToneSelected = onToneSelected,
-                animationsEnabled = animationsEnabled,
-                animationSpeed = animationSpeed,
-                textColorMode = textColorMode,
-                fontFamily = fontFamily
-            )
-        }
-    }
-}
 
 @Composable
 internal fun PaletteSelectorRow(
@@ -218,12 +182,6 @@ private fun PaletteToneCircle(
                 indication = null,
                 onClick = onClick
             )
-            /*
-             * Antes cada tono utilizaba dos Box + dos clip(CircleShape) +
-             * varios backgrounds. Con 184 tonos eso generaba muchas capas al
-             * entrar a la sección. El dibujo directo conserva la geometría y
-             * colores, pero evita esas capas intermedias.
-             */
             .drawWithCache {
                 val borderWidth = 2.dp.toPx()
                 val selectedInset = 4.dp.toPx()

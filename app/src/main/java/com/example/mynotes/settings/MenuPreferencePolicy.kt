@@ -47,9 +47,25 @@ internal object MenuPreferencePolicy {
 
     private fun collectKeys(raw: String, validKeys: Set<String>): LinkedHashSet<String> {
         val result = LinkedHashSet<String>()
-        for (part in raw.splitToSequence(',')) {
-            val key = part.trim()
-            if (key in validKeys) result.add(key)
+        var segmentStart = 0
+        val length = raw.length
+
+        while (segmentStart <= length) {
+            var segmentEnd = raw.indexOf(',', segmentStart)
+            if (segmentEnd < 0) segmentEnd = length
+
+            var start = segmentStart
+            while (start < segmentEnd && raw[start].isWhitespace()) start++
+            var end = segmentEnd
+            while (end > start && raw[end - 1].isWhitespace()) end--
+
+            if (end > start) {
+                val key = raw.substring(start, end)
+                if (key in validKeys) result.add(key)
+            }
+
+            if (segmentEnd == length) break
+            segmentStart = segmentEnd + 1
         }
         return result
     }

@@ -1,5 +1,8 @@
 package com.example.mynotes.ui
+import com.example.mynotes.ui.components.AppHeading
 import com.example.mynotes.ui.theme.rememberUiTextColors
+import com.example.mynotes.ui.theme.rememberUiTextColor
+import com.example.mynotes.ui.theme.rememberUiGraphicColor
 import com.example.mynotes.ui.components.AppIconButton
 import com.example.mynotes.ui.components.AppIconLabel
 
@@ -45,7 +48,6 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.FilterChipDefaults
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.OutlinedTextField
@@ -81,11 +83,8 @@ import com.example.mynotes.ui.motion.ConfigurableAnimatedContent
 import com.example.mynotes.ui.sound.UiActionSound
 import com.example.mynotes.ui.sound.UiSound
 import com.example.mynotes.ui.sound.UiSoundPlayer
-import com.example.mynotes.ui.theme.appFontFamily
+import com.example.mynotes.ui.theme.rememberAppFontFamily
 import com.example.mynotes.ui.theme.automaticUiTextColor
-import com.example.mynotes.ui.theme.resolveSecondaryUiTextColor
-import com.example.mynotes.ui.theme.resolveUiGraphicColor
-import com.example.mynotes.ui.theme.resolveUiTextColor
 import java.text.SimpleDateFormat
 import java.util.Calendar
 import java.util.Date
@@ -111,11 +110,12 @@ private val ReminderFixedColors = listOf(
     ReminderColorOption("teal", Color(0xFF78D7D0)),
     ReminderColorOption("gray", Color(0xFFB8BEC9))
 )
+private val ReminderFixedColorByKey = ReminderFixedColors.associate { it.key to it.color }
 
 @Composable
 private fun reminderColor(key: String): Color {
     if (key == "palette") return MaterialTheme.colorScheme.primary
-    return ReminderFixedColors.firstOrNull { it.key == key }?.color ?: MaterialTheme.colorScheme.primary
+    return ReminderFixedColorByKey[key] ?: MaterialTheme.colorScheme.primary
 }
 
 @Composable
@@ -195,7 +195,7 @@ private fun ReminderList(
     onToggle: (Reminder, Boolean) -> Unit
 ) {
     val context = LocalContext.current
-    val fontFamily = remember(settings.font) { appFontFamily(settings.font) }
+    val fontFamily = rememberAppFontFamily(settings.font)
     val baseFontSize = settings.fontSize.coerceIn(12f, 24f)
     val iconSize = settings.iconSize.coerceIn(18f, 34f)
     val background = MaterialTheme.colorScheme.background
@@ -208,9 +208,7 @@ private fun ReminderList(
         containerColor = background,
         floatingActionButton = {
             FloatingActionButton(
-                onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Open) {
-                    onCreate()
-                },
+                onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Open, onCreate),
                 containerColor = MaterialTheme.colorScheme.primaryContainer,
                 contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                 shape = RoundedCornerShape((settings.noteCardCornerRadius + 2f).coerceIn(16f, 28f).dp)
@@ -234,18 +232,11 @@ private fun ReminderList(
                 ) {
                     ReminderBackButton(primaryText, iconSize, UiSoundPlayer.actionHandler(context, UiActionSound.Back, onBack))
                     Column(modifier = Modifier.weight(1f)) {
-                        Text(
-                            text = stringResource(R.string.reminders),
-                            fontFamily = fontFamily,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = (baseFontSize + 10f).sp,
-                            color = primaryText
-                        )
-                        Text(
-                            text = stringResource(R.string.reminder_active_count, activeCount),
-                            fontFamily = fontFamily,
-                            fontSize = (baseFontSize - 2f).coerceAtLeast(11f).sp,
-                            color = secondaryText
+                        AppHeading(
+                            title = stringResource(R.string.reminders), subtitle = stringResource(R.string.reminder_active_count, activeCount),
+                            fontFamily = fontFamily, titleColor = primaryText, subtitleColor = secondaryText,
+                            titleSize = (baseFontSize + 10f).sp,
+                            subtitleSize = (baseFontSize - 2f).coerceAtLeast(11f).sp
                         )
                     }
                 }
@@ -277,18 +268,11 @@ private fun ReminderList(
                         }
                         Spacer(Modifier.width(12.dp))
                         Column {
-                            Text(
-                                stringResource(R.string.reminder_panel_title),
-                                fontFamily = fontFamily,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = baseFontSize.sp,
-                                color = panelText
-                            )
-                            Text(
-                                stringResource(R.string.reminder_panel_description),
-                                fontFamily = fontFamily,
-                                fontSize = (baseFontSize - 3f).coerceAtLeast(11f).sp,
-                                color = panelSecondary
+                            AppHeading(
+                                title = stringResource(R.string.reminder_panel_title), subtitle = stringResource(R.string.reminder_panel_description),
+                                fontFamily = fontFamily, titleColor = panelText, subtitleColor = panelSecondary,
+                                titleSize = baseFontSize.sp,
+                                subtitleSize = (baseFontSize - 3f).coerceAtLeast(11f).sp
                             )
                         }
                     }
@@ -308,18 +292,11 @@ private fun ReminderList(
                             tint = secondaryText
                         )
                         Spacer(Modifier.height(12.dp))
-                        Text(
-                            stringResource(R.string.reminder_empty),
-                            fontFamily = fontFamily,
-                            fontSize = baseFontSize.sp,
-                            color = primaryText,
-                            fontWeight = FontWeight.Bold
-                        )
-                        Text(
-                            stringResource(R.string.reminder_empty_description),
-                            fontFamily = fontFamily,
-                            fontSize = (baseFontSize - 2f).coerceAtLeast(11f).sp,
-                            color = secondaryText
+                        AppHeading(
+                            title = stringResource(R.string.reminder_empty), subtitle = stringResource(R.string.reminder_empty_description),
+                            fontFamily = fontFamily, titleColor = primaryText, subtitleColor = secondaryText,
+                            titleSize = baseFontSize.sp,
+                            subtitleSize = (baseFontSize - 2f).coerceAtLeast(11f).sp
                         )
                     }
                 }
@@ -345,13 +322,16 @@ private fun ReminderCard(
     onEdit: () -> Unit,
     onToggle: (Boolean) -> Unit
 ) {
-    val fontFamily = remember(settings.font) { appFontFamily(settings.font) }
+    val fontFamily = rememberAppFontFamily(settings.font)
     val baseFontSize = settings.fontSize.coerceIn(12f, 24f)
     val iconSize = settings.iconSize.coerceIn(18f, 34f)
     val container = MaterialTheme.colorScheme.surfaceContainerLow
     val (primary, secondary) = rememberUiTextColors(settings.textColor, container)
     val locale = reminderLocale()
     val dateFormatter = remember(locale) { SimpleDateFormat("EEE, d MMM · HH:mm", locale) }
+    val triggerLabel = remember(reminder.triggerAtMillis, locale) {
+        dateFormatter.format(Date(reminder.triggerAtMillis))
+    }
     val indicatorColor = reminderColor(reminder.colorKey)
 
     Card(
@@ -389,7 +369,7 @@ private fun ReminderCard(
                 }
                 Spacer(Modifier.height(8.dp))
                 Row(verticalAlignment = Alignment.CenterVertically) {
-                    AppIconLabel(Icons.Default.Schedule, dateFormatter.format(Date(reminder.triggerAtMillis)),
+                    AppIconLabel(Icons.Default.Schedule, triggerLabel,
                         iconModifier = Modifier.size((iconSize * 0.72f).coerceAtLeast(14f).dp), tint = secondary, gap = 5.dp,
                         fontFamily = fontFamily, fontSize = (baseFontSize - 4f).coerceAtLeast(10f).sp, color = secondary)
                     Spacer(Modifier.weight(1f))
@@ -421,7 +401,7 @@ private fun ReminderEditor(
     onCancel: () -> Unit
 ) {
     val context = LocalContext.current
-    val fontFamily = remember(settings.font) { appFontFamily(settings.font) }
+    val fontFamily = rememberAppFontFamily(settings.font)
     val baseFontSize = settings.fontSize.coerceIn(12f, 24f)
     val iconSize = settings.iconSize.coerceIn(18f, 34f)
     val initialTrigger = remember(reminder?.id) {
@@ -445,10 +425,16 @@ private fun ReminderEditor(
     val background = MaterialTheme.colorScheme.background
     val contentPanel = MaterialTheme.colorScheme.surfaceContainer
     val (primaryText, secondaryText) = rememberUiTextColors(settings.textColor, background)
-    val contentPanelText = resolveUiTextColor(settings.textColor, contentPanel)
+    val contentPanelText = rememberUiTextColor(settings.textColor, contentPanel)
     val locale = reminderLocale()
     val dateFormatter = remember(locale) { SimpleDateFormat("EEE, d MMM yyyy", locale) }
     val timeFormatter = remember(locale) { SimpleDateFormat("HH:mm", locale) }
+    val triggerDateText = remember(triggerAtMillis, locale) {
+        dateFormatter.format(Date(triggerAtMillis))
+    }
+    val triggerTimeText = remember(triggerAtMillis, locale) {
+        timeFormatter.format(Date(triggerAtMillis))
+    }
 
     fun saveReminder() {
         if (title.isBlank()) {
@@ -507,9 +493,6 @@ private fun ReminderEditor(
                             overflow = TextOverflow.Ellipsis
                         )
 
-                        // Reserve one extra visual line under the title so the
-                        // subtitle starts below the Save button instead of
-                        // competing with it for the same vertical area.
                         Spacer(modifier = Modifier.height(18.dp))
 
                         Text(
@@ -595,8 +578,8 @@ private fun ReminderEditor(
                     onColorChange = { colorKey = it },
                     enabled = enabled,
                     onEnabledChange = { enabled = it },
-                    dateText = dateFormatter.format(Date(triggerAtMillis)),
-                    timeText = timeFormatter.format(Date(triggerAtMillis))
+                    dateText = triggerDateText,
+                    timeText = triggerTimeText
                 )
             }
 
@@ -643,9 +626,9 @@ private fun ReminderToolsPanel(
     val panelColor = MaterialTheme.colorScheme.surfaceContainerHigh
     val (panelText, panelSecondary) = rememberUiTextColors(settings.textColor, panelColor)
     val chipColor = MaterialTheme.colorScheme.surfaceVariant
-    val chipText = resolveUiTextColor(settings.textColor, chipColor)
+    val chipText = rememberUiTextColor(settings.textColor, chipColor)
     val selectedChipColor = MaterialTheme.colorScheme.primary
-    val selectedChipText = automaticUiTextColor(selectedChipColor)
+    val selectedChipText = remember(selectedChipColor) { automaticUiTextColor(selectedChipColor) }
     val paletteColor = MaterialTheme.colorScheme.primary
     val colorOptions = remember(paletteColor) {
         listOf(ReminderColorOption("palette", paletteColor)) + ReminderFixedColors
@@ -726,7 +709,7 @@ private fun ReminderToolsPanel(
             ReminderToolTitle(stringResource(R.string.reminder_color), fontFamily, panelText, baseFontSize)
             LazyRow(horizontalArrangement = Arrangement.spacedBy(10.dp)) {
                 items(colorOptions) { item ->
-                    val selectedBorder = resolveUiGraphicColor(settings.textColor, item.color)
+                    val selectedBorder = rememberUiGraphicColor(settings.textColor, item.color)
                     Surface(
                         modifier = Modifier.size(34.dp).clickable(
                             onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Color) { onColorChange(item.key) }

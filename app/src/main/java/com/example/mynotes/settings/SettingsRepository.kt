@@ -9,7 +9,6 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.example.mynotes.ui.motion.AppMotion
-import com.example.mynotes.ui.theme.PaletteCatalog
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
@@ -74,64 +73,49 @@ class SettingsRepository(private val context: Context) {
         private val ANIMATION_STYLE = stringPreferencesKey("animation_style")
         private val ANIMATION_EASING = stringPreferencesKey("animation_easing")
         private val ANIMATION_INTENSITY = floatPreferencesKey("animation_intensity")
-        /*
-         * Claves actuales del catálogo de paletas.
-         *
-         * Mantener esta lista sincronizada con PaletteCatalog evita que
-         * DataStore convierta una paleta válida a "neutral" al guardarla.
-         */
-        private val currentPaletteKeys = PaletteCatalog.palettes.map { it.key }.toSet()
-        /*
-         * Solo estas claves pertenecen realmente al selector antiguo.
-         * Una clave desconocida ya no se considera automáticamente legacy,
-         * evitando invertir el tono de una paleta nueva por error.
-         */
-        private val legacyPaletteKeys = setOf("yellow", "purple", "pink", "default", "gray")
     }
     val settings:
         Flow<AppSettings> =
         context.dataStore.data.map {
                     preferences ->
                 val rawPalette = preferences[BACKGROUND_COLOR]?: "neutral"
-                /*
-                 * Las paletas anteriores estaban ordenadas
-                 * oscuro -> claro.
-                 *
-                 * El nuevo selector se muestra claro -> oscuro.
-                 * Si encontramos una clave antigua invertimos
-                 * una sola vez la interpretación del índice.
-                 */
-                val rawTone = preferences[BACKGROUND_TONE_INDEX]?: if (isLegacyPalette(rawPalette)) {
+                val legacyPalette = SettingsValuePolicy.isLegacyPalette(rawPalette)
+                val rawSoundEffectsVolume = preferences[SOUND_EFFECTS_VOLUME]
+                val soundEffectsVolume = (rawSoundEffectsVolume ?: 65f).coerceIn(0f, 100f)
+                val soundEffectsEnabled = preferences[SOUND_EFFECTS_ENABLED] ?: true
+                val outlineEnabledPreference = preferences[NOTE_CARD_OUTLINE_ENABLED]
+                val outlineWidthPreference = preferences[NOTE_CARD_OUTLINE_WIDTH] ?: 1f
+                val rawTone = preferences[BACKGROUND_TONE_INDEX]?: if (legacyPalette) {
                             3
                         } else {
                             0
                         }
-                val normalizedTone = if (isLegacyPalette(rawPalette)) {
+                val normalizedTone = if (legacyPalette) {
                         3 - rawTone.coerceIn(0, 3)
                     } else {
                         rawTone.coerceIn(0, 3)
                     }
-                AppSettings(configurationMode = normalizeConfigurationMode(preferences[CONFIGURATION_MODE] ?: "unset"),
+                AppSettings(configurationMode = SettingsValuePolicy.configurationMode(preferences[CONFIGURATION_MODE] ?: "unset"),
                     darkMode = preferences[DARK_MODE]?: false,
-                    backgroundColor = normalizePaletteKey(rawPalette),
+                    backgroundColor = SettingsValuePolicy.paletteKey(rawPalette),
                     backgroundToneIndex = normalizedTone,
                     backgroundIntensity = (preferences[BACKGROUND_INTENSITY]?: 0f).coerceIn(0f, 100f),
                     settingsPanelTone = (preferences[SETTINGS_PANEL_TONE]?: 0f).coerceIn(0f, 100f),
                     surfacePanelIntensity = (preferences[SURFACE_PANEL_INTENSITY]?: 72f).coerceIn(0f, 100f),
                     headerIntensity = (preferences[HEADER_INTENSITY]?: 18f).coerceIn(0f, 100f),
-                    textColor = normalizeUiTextColor(preferences[TEXT_COLOR]?: "auto"),
+                    textColor = SettingsValuePolicy.uiTextColor(preferences[TEXT_COLOR]?: "auto"),
                     textOutlineEnabled = preferences[TEXT_OUTLINE_ENABLED]?: false,
-                    sliderStyle = normalizeSliderStyle(preferences[SLIDER_STYLE]?: "capsule"),
+                    sliderStyle = SettingsValuePolicy.sliderStyle(preferences[SLIDER_STYLE]?: "capsule"),
                     font = FontPreferencePolicy.normalize(
                         preferences[FONT] ?: FontPreferencePolicy.SYSTEM_DEFAULT,
                         googleSansFlexUnlocked = DeveloperFeatures.isGoogleSansFlexUnlocked(context)
                     ),
                     fontSize = (preferences[FONT_SIZE]?: 16f).coerceIn(12f, 28f),
-                    soundEffectsEnabled = preferences[SOUND_EFFECTS_ENABLED]?: true,
-                    soundEffectsVolume = (preferences[SOUND_EFFECTS_VOLUME]?: 65f).coerceIn(0f, 100f),
+                    soundEffectsEnabled = soundEffectsEnabled,
+                    soundEffectsVolume = soundEffectsVolume,
                     soundEffectsTheme = FeedbackPreferencePolicy.normalizeSoundTheme(preferences[SOUND_EFFECTS_THEME]?: "classic"),
-                    reminderSoundEnabled = preferences[REMINDER_SOUND_ENABLED] ?: (preferences[SOUND_EFFECTS_ENABLED] ?: true),
-                    reminderSoundVolume = (preferences[REMINDER_SOUND_VOLUME] ?: preferences[SOUND_EFFECTS_VOLUME] ?: 75f).coerceIn(0f, 100f),
+                    reminderSoundEnabled = preferences[REMINDER_SOUND_ENABLED] ?: soundEffectsEnabled,
+                    reminderSoundVolume = soundEffectsVolume,
                     reminderRingtone = FeedbackPreferencePolicy.normalizeReminderRingtone(preferences[REMINDER_RINGTONE]?: "classic"),
                     hapticEffectsEnabled = preferences[HAPTIC_EFFECTS_ENABLED]?: true,
                     hapticEffectsIntensity = (preferences[HAPTIC_EFFECTS_INTENSITY]?: 55f).coerceIn(0f, 100f),
@@ -141,19 +125,18 @@ class SettingsRepository(private val context: Context) {
                     sortOrder = preferences[SORT_ORDER]?: "newest",
                     profileImageUri = preferences[PROFILE_IMAGE_URI]?: "",
                     profileImageSize = (preferences[PROFILE_IMAGE_SIZE]?: 46f).coerceIn(36f, 84f),
-                    iconStyle = normalizeIconStyle(preferences[ICON_STYLE]?: "rounded"),
+                    iconStyle = SettingsValuePolicy.iconStyle(preferences[ICON_STYLE]?: "rounded"),
                     iconSize = (preferences[ICON_SIZE]?: 22f).coerceIn(16f, 36f),
-                    accentColor = normalizeAccentColor(preferences[ACCENT_COLOR]?: "palette"),
+                    accentColor = SettingsValuePolicy.accentColor(preferences[ACCENT_COLOR]?: "palette"),
                     noteCardCornerRadius = (preferences[NOTE_CARD_CORNER_RADIUS]?: 18f).coerceIn(0f, 36f),
                     noteCardElevation = (preferences[NOTE_CARD_ELEVATION]?: 1.5f).coerceIn(0f, 12f),
                     noteCardPadding = (preferences[NOTE_CARD_PADDING]?: 12f).coerceIn(6f, 24f),
                     noteCardImageHeight = (preferences[NOTE_CARD_IMAGE_HEIGHT]?: 112f).coerceIn(72f, 220f),
-                    noteCardOutlineEnabled = (preferences[NOTE_CARD_OUTLINE_ENABLED]?: false) &&
-                        (preferences[NOTE_CARD_OUTLINE_WIDTH]?: 1f) > 0f,
-                    noteCardOutlineWidth = if (preferences[NOTE_CARD_OUTLINE_ENABLED] == false) {
+                    noteCardOutlineEnabled = (outlineEnabledPreference ?: false) && outlineWidthPreference > 0f,
+                    noteCardOutlineWidth = if (outlineEnabledPreference == false) {
                             0f
-                        } else if (preferences[NOTE_CARD_OUTLINE_ENABLED] == true) {
-                            (preferences[NOTE_CARD_OUTLINE_WIDTH]?: 1f).coerceIn(0f, 6f)
+                        } else if (outlineEnabledPreference == true) {
+                            outlineWidthPreference.coerceIn(0f, 6f)
                         } else {
                             0f
                         },
@@ -168,7 +151,7 @@ class SettingsRepository(private val context: Context) {
                     optionMenuHiddenItems = MenuPreferencePolicy.normalizeHiddenItems(raw = preferences[OPTION_MENU_HIDDEN_ITEMS]?: "", validKeys =
                                 MenuPreferencePolicy.mainKeySet),
                     optionMenuShowIcons = preferences[OPTION_MENU_SHOW_ICONS]?: true,
-                    optionMenuTextColor = normalizeOptionMenuTextColor(preferences[OPTION_MENU_TEXT_COLOR]?: "note"),
+                    optionMenuTextColor = SettingsValuePolicy.optionMenuTextColor(preferences[OPTION_MENU_TEXT_COLOR]?: "note"),
                     optionMenuOpacity = (preferences[OPTION_MENU_OPACITY]?: 100f).coerceIn(35f, 100f),
                     priorityMenuHiddenItems = MenuPreferencePolicy.normalizeHiddenItems(raw = preferences[PRIORITY_MENU_HIDDEN_ITEMS]?: "", validKeys =
                                 MenuPreferencePolicy.priorityKeys),
@@ -186,21 +169,17 @@ class SettingsRepository(private val context: Context) {
         context.dataStore.edit { it[key] = value }
     }
 
-    suspend fun setConfigurationMode(value: String) = writePreference(CONFIGURATION_MODE, normalizeConfigurationMode(value))
+    suspend fun setConfigurationMode(value: String) = writePreference(CONFIGURATION_MODE, SettingsValuePolicy.configurationMode(value))
 
     suspend fun setDarkMode(value: Boolean) = writePreference(DARK_MODE, value)
 
-    suspend fun setBackgroundColor(value: String) = writePreference(BACKGROUND_COLOR, normalizePaletteKey(value))
+    suspend fun setBackgroundColor(value: String) = writePreference(BACKGROUND_COLOR, SettingsValuePolicy.paletteKey(value))
 
     suspend fun setBackgroundToneIndex(value: Int) {
         context.dataStore.edit {
                     preferences ->
-                /*
-                 * Si aún estaba guardada una paleta antigua,
-                 * la convertimos cuando el usuario toque un tono.
-                 */
                 val rawPalette = preferences[BACKGROUND_COLOR]?: "neutral"
-                preferences[BACKGROUND_COLOR] = normalizePaletteKey(rawPalette)
+                preferences[BACKGROUND_COLOR] = SettingsValuePolicy.paletteKey(rawPalette)
                 preferences[BACKGROUND_TONE_INDEX] = value.coerceIn(0, 3)
             }
     }
@@ -212,11 +191,11 @@ class SettingsRepository(private val context: Context) {
 
     suspend fun setHeaderIntensity(value: Float) = writePreference(HEADER_INTENSITY, value.coerceIn(0f, 100f))
 
-    suspend fun setTextColor(value: String) = writePreference(TEXT_COLOR, normalizeUiTextColor(value))
+    suspend fun setTextColor(value: String) = writePreference(TEXT_COLOR, SettingsValuePolicy.uiTextColor(value))
 
     suspend fun setTextOutlineEnabled(value: Boolean) = writePreference(TEXT_OUTLINE_ENABLED, value)
 
-    suspend fun setSliderStyle(value: String) = writePreference(SLIDER_STYLE, normalizeSliderStyle(value))
+    suspend fun setSliderStyle(value: String) = writePreference(SLIDER_STYLE, SettingsValuePolicy.sliderStyle(value))
 
     suspend fun setFont(value: String) {
         val normalized = FontPreferencePolicy.normalize(
@@ -231,13 +210,20 @@ class SettingsRepository(private val context: Context) {
 
     suspend fun setSoundEffectsEnabled(value: Boolean) = writePreference(SOUND_EFFECTS_ENABLED, value)
 
-    suspend fun setSoundEffectsVolume(value: Float) = writePreference(SOUND_EFFECTS_VOLUME, value.coerceIn(0f, 100f))
+    suspend fun setSoundEffectsVolume(value: Float) {
+        val normalized = value.coerceIn(0f, 100f)
+        context.dataStore.edit { preferences ->
+            preferences[SOUND_EFFECTS_VOLUME] = normalized
+            // Alertas y clics de escritura comparten el mismo nivel maestro que los efectos.
+            preferences[REMINDER_SOUND_VOLUME] = normalized
+        }
+    }
 
     suspend fun setSoundEffectsTheme(value: String) = writePreference(SOUND_EFFECTS_THEME, FeedbackPreferencePolicy.normalizeSoundTheme(value))
 
     suspend fun setReminderSoundEnabled(value: Boolean) = writePreference(REMINDER_SOUND_ENABLED, value)
 
-    suspend fun setReminderSoundVolume(value: Float) = writePreference(REMINDER_SOUND_VOLUME, value.coerceIn(0f, 100f))
+    suspend fun setReminderSoundVolume(value: Float) = setSoundEffectsVolume(value)
 
     suspend fun setReminderRingtone(value: String) = writePreference(REMINDER_RINGTONE, FeedbackPreferencePolicy.normalizeReminderRingtone(value))
 
@@ -257,11 +243,11 @@ class SettingsRepository(private val context: Context) {
 
     suspend fun setProfileImageSize(value: Float) = writePreference(PROFILE_IMAGE_SIZE, value.coerceIn(36f, 84f))
 
-    suspend fun setIconStyle(value: String) = writePreference(ICON_STYLE, normalizeIconStyle(value))
+    suspend fun setIconStyle(value: String) = writePreference(ICON_STYLE, SettingsValuePolicy.iconStyle(value))
 
     suspend fun setIconSize(value: Float) = writePreference(ICON_SIZE, value.coerceIn(16f, 36f))
 
-    suspend fun setAccentColor(value: String) = writePreference(ACCENT_COLOR, normalizeAccentColor(value))
+    suspend fun setAccentColor(value: String) = writePreference(ACCENT_COLOR, SettingsValuePolicy.accentColor(value))
 
     suspend fun setNoteCardCornerRadius(value: Float) = writePreference(NOTE_CARD_CORNER_RADIUS, value.coerceIn(0f, 36f))
 
@@ -300,7 +286,7 @@ class SettingsRepository(private val context: Context) {
 
     suspend fun setOptionMenuShowIcons(value: Boolean) = writePreference(OPTION_MENU_SHOW_ICONS, value)
 
-    suspend fun setOptionMenuTextColor(value: String) = writePreference(OPTION_MENU_TEXT_COLOR, normalizeOptionMenuTextColor(value))
+    suspend fun setOptionMenuTextColor(value: String) = writePreference(OPTION_MENU_TEXT_COLOR, SettingsValuePolicy.optionMenuTextColor(value))
 
     suspend fun setOptionMenuOpacity(value: Float) = writePreference(OPTION_MENU_OPACITY, value.coerceIn(35f, 100f))
 
@@ -337,17 +323,17 @@ class SettingsRepository(private val context: Context) {
      * usados por los setters normales se aplican aquí.
      */
     suspend fun restoreFromBackup(value: AppSettings) {
-        context.dataStore.edit { preferences -> preferences[CONFIGURATION_MODE] = normalizeConfigurationMode(value.configurationMode)
+        context.dataStore.edit { preferences -> preferences[CONFIGURATION_MODE] = SettingsValuePolicy.configurationMode(value.configurationMode)
             preferences[DARK_MODE] = value.darkMode
-            preferences[BACKGROUND_COLOR] = normalizePaletteKey(value.backgroundColor)
+            preferences[BACKGROUND_COLOR] = SettingsValuePolicy.paletteKey(value.backgroundColor)
             preferences[BACKGROUND_TONE_INDEX] = value.backgroundToneIndex.coerceIn(0, 3)
             preferences[BACKGROUND_INTENSITY] = value.backgroundIntensity.coerceIn(0f, 100f)
             preferences[SETTINGS_PANEL_TONE] = value.settingsPanelTone.coerceIn(0f, 100f)
             preferences[SURFACE_PANEL_INTENSITY] = value.surfacePanelIntensity.coerceIn(0f, 100f)
             preferences[HEADER_INTENSITY] = value.headerIntensity.coerceIn(0f, 100f)
-            preferences[TEXT_COLOR] = normalizeUiTextColor(value.textColor)
+            preferences[TEXT_COLOR] = SettingsValuePolicy.uiTextColor(value.textColor)
             preferences[TEXT_OUTLINE_ENABLED] = value.textOutlineEnabled
-            preferences[SLIDER_STYLE] = normalizeSliderStyle(value.sliderStyle)
+            preferences[SLIDER_STYLE] = SettingsValuePolicy.sliderStyle(value.sliderStyle)
             preferences[FONT] = FontPreferencePolicy.normalize(
                 value.font,
                 googleSansFlexUnlocked = DeveloperFeatures.isGoogleSansFlexUnlocked(context)
@@ -357,7 +343,7 @@ class SettingsRepository(private val context: Context) {
             preferences[SOUND_EFFECTS_VOLUME] = value.soundEffectsVolume.coerceIn(0f, 100f)
             preferences[SOUND_EFFECTS_THEME] = FeedbackPreferencePolicy.normalizeSoundTheme(value.soundEffectsTheme)
             preferences[REMINDER_SOUND_ENABLED] = value.reminderSoundEnabled
-            preferences[REMINDER_SOUND_VOLUME] = value.reminderSoundVolume.coerceIn(0f, 100f)
+            preferences[REMINDER_SOUND_VOLUME] = value.soundEffectsVolume.coerceIn(0f, 100f)
             preferences[REMINDER_RINGTONE] = FeedbackPreferencePolicy.normalizeReminderRingtone(value.reminderRingtone)
             preferences[HAPTIC_EFFECTS_ENABLED] = value.hapticEffectsEnabled
             preferences[HAPTIC_EFFECTS_INTENSITY] = value.hapticEffectsIntensity.coerceIn(0f, 100f)
@@ -367,9 +353,9 @@ class SettingsRepository(private val context: Context) {
             preferences[SORT_ORDER] = value.sortOrder
             preferences[PROFILE_IMAGE_URI] = value.profileImageUri
             preferences[PROFILE_IMAGE_SIZE] = value.profileImageSize.coerceIn(36f, 84f)
-            preferences[ICON_STYLE] = normalizeIconStyle(value.iconStyle)
+            preferences[ICON_STYLE] = SettingsValuePolicy.iconStyle(value.iconStyle)
             preferences[ICON_SIZE] = value.iconSize.coerceIn(16f, 36f)
-            preferences[ACCENT_COLOR] = normalizeAccentColor(value.accentColor)
+            preferences[ACCENT_COLOR] = SettingsValuePolicy.accentColor(value.accentColor)
             preferences[NOTE_CARD_CORNER_RADIUS] = value.noteCardCornerRadius.coerceIn(0f, 36f)
             preferences[NOTE_CARD_ELEVATION] = value.noteCardElevation.coerceIn(0f, 12f)
             preferences[NOTE_CARD_PADDING] = value.noteCardPadding.coerceIn(6f, 24f)
@@ -387,7 +373,7 @@ class SettingsRepository(private val context: Context) {
             preferences[OPTION_MENU_ORDER] = MenuPreferencePolicy.normalizeOrder(value.optionMenuOrder)
             preferences[OPTION_MENU_HIDDEN_ITEMS] = MenuPreferencePolicy.normalizeHiddenItems(value.optionMenuHiddenItems, MenuPreferencePolicy.mainKeySet)
             preferences[OPTION_MENU_SHOW_ICONS] = value.optionMenuShowIcons
-            preferences[OPTION_MENU_TEXT_COLOR] = normalizeOptionMenuTextColor(value.optionMenuTextColor)
+            preferences[OPTION_MENU_TEXT_COLOR] = SettingsValuePolicy.optionMenuTextColor(value.optionMenuTextColor)
             preferences[OPTION_MENU_OPACITY] = value.optionMenuOpacity.coerceIn(35f, 100f)
             preferences[PRIORITY_MENU_HIDDEN_ITEMS] = MenuPreferencePolicy.normalizeHiddenItems(value.priorityMenuHiddenItems, MenuPreferencePolicy.priorityKeys)
             preferences[COLOR_MENU_HIDDEN_ITEMS] = MenuPreferencePolicy.normalizeHiddenItems(value.colorMenuHiddenItems, MenuPreferencePolicy.colorKeys)
@@ -399,30 +385,4 @@ class SettingsRepository(private val context: Context) {
             preferences[ANIMATION_INTENSITY] = value.animationIntensity.coerceIn(0.5f, 1.5f)
         }
     }
-    private fun normalizeAllowed(value: String, fallback: String, vararg allowed: String): String = if (value in allowed) value else fallback
-    private fun normalizeOptionMenuTextColor(value: String) = normalizeAllowed(value, "note", "note", "black", "white")
-    private fun normalizeConfigurationMode(value: String) = normalizeAllowed(value, "unset", "basic", "advanced", "unset")
-    /*
-     * ---------------------------------------------------------
-     * Compatibilidad de paletas anteriores
-     * ---------------------------------------------------------
-     */
-    private fun normalizePaletteKey(value: String): String {
-        if (value in currentPaletteKeys) {
-            return value
-        }
-        return when (value) {
-            "yellow" -> "sun"
-            "purple" -> "lavender"
-            "pink" -> "soft_pink"
-            "default", "gray" -> "neutral"
-            else -> "neutral"
-        }
-    }
-    private fun isLegacyPalette(value: String): Boolean = value in legacyPaletteKeys
-    private fun normalizeUiTextColor(value: String) = normalizeAllowed(value, "auto", "auto", "black", "white")
-    private fun normalizeIconStyle(value: String) = normalizeAllowed(value, "rounded", "material", "rounded", "outlined", "minimal")
-    private fun normalizeAccentColor(value: String) = normalizeAllowed(value, "palette", "palette", "red", "coral", "orange", "amber", "yellow", "lime", "green", "mint", "teal", "cyan", "sky", "blue", "indigo", "violet", "purple", "pink", "rose", "brown", "graphite")
-    private fun normalizeSliderStyle(value: String) = normalizeAllowed(value, "capsule", "minimal", "capsule", "glow", "glass", "segmented", "dots", "gradient", "neumorphic", "line_pill", "floating")
-
 }
