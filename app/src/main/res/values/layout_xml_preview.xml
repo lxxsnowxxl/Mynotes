@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="layout_xml_screen">#F3EFE9</color>
+    <color name="layout_xml_header">#E6E2DC</color>
+    <color name="layout_xml_panel">#FCFBF9</color>
+    <color name="layout_xml_text">#000000</color>
+    <color name="layout_xml_secondary">#65625F</color>
+    <color name="layout_xml_primary">#4B4743</color>
+    <color name="layout_xml_on_primary">#FFFFFF</color>
+    <color name="layout_xml_track">#E0DDD9</color>
+    <style name="LayoutXmlPreviewTheme" parent="android:style/Theme.Material.Light.NoActionBar">
+        <item name="android:fontFamily">sans-serif</item>
+        <item name="android:colorAccent">@color/layout_xml_primary</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowActionModeOverlay">true</item>
+        <item name="android:colorBackground">@color/layout_xml_screen</item>
+    </style>
+    <string-array name="layout_xml_columns_options">
+        <item>2</item>
+        <item>1</item>
+        <item>3</item>
+    </string-array>
+    <string-array name="layout_xml_font_options">
+        <item>@string/mock_font_default</item>
+        <item>@string/mock_font_serif</item>
+        <item>@string/mock_font_monospace</item>
+    </string-array>
+    <string-array name="layout_xml_haptic_effects_theme_options">
+        <item>@string/haptic_style_soft</item>
+        <item>@string/haptic_style_crisp</item>
+        <item>@string/haptic_style_deep</item>
+        <item>@string/haptic_style_double</item>
+        <item>@string/haptic_style_pulse</item>
+        <item>@string/haptic_style_stepped</item>
+        <item>@string/haptic_style_mechanical</item>
+        <item>@string/haptic_style_minimal</item>
+        <item>@string/haptic_style_triple</item>
+        <item>@string/haptic_style_ripple</item>
+        <item>@string/haptic_style_heartbeat</item>
+        <item>@string/haptic_style_snap</item>
+        <item>@string/haptic_style_wave</item>
+        <item>@string/haptic_style_heavy</item>
+        <item>@string/haptic_style_spring</item>
+        <item>@string/haptic_style_echo</item>
+    </string-array>
+    <string-array name="layout_xml_icon_style_options">
+        <item>@string/extreme_icon_rounded</item>
+        <item>@string/extreme_icon_material</item>
+        <item>@string/extreme_icon_outlined</item>
+        <item>@string/extreme_icon_minimal</item>
+    </string-array>
+    <string-array name="layout_xml_language_options">
+        <item>Español</item>
+        <item>@string/language_system</item>
+        <item>English</item>
+        <item>Français</item>
+        <item>中文（简体）</item>
+    </string-array>
+    <string-array name="layout_xml_menu_text_options">
+        <item>@string/option_menu_text_follow_note</item>
+        <item>@string/option_menu_text_black</item>
+        <item>@string/option_menu_text_white</item>
+    </string-array>
+    <string-array name="layout_xml_motion_easing_options">
+        <item>@string/motion_easing_standard</item>
+        <item>@string/motion_easing_linear</item>
+        <item>@string/motion_easing_accelerate</item>
+        <item>@string/motion_easing_decelerate</item>
+        <item>@string/motion_easing_emphasized</item>
+        <item>@string/motion_easing_expressive</item>
+        <item>@string/motion_easing_emphasized_accel</item>
+        <item>@string/motion_easing_emphasized_decel</item>
+    </string-array>
+    <string-array name="layout_xml_motion_style_options">
+        <item>@string/motion_style_zoom</item>
+        <item>@string/motion_style_zoom_fade</item>
+        <item>@string/motion_style_fade</item>
+        <item>@string/motion_style_slide_left</item>
+        <item>@string/motion_style_slide_right</item>
+        <item>@string/motion_style_slide_up</item>
+        <item>@string/motion_style_slide_down</item>
+        <item>@string/motion_style_slide_zoom_left</item>
+        <item>@string/motion_style_slide_zoom_up</item>
+        <item>@string/motion_style_axis_x</item>
+        <item>@string/motion_style_axis_y</item>
+        <item>@string/motion_style_axis_z</item>
+        <item>@string/motion_style_expand</item>
+        <item>@string/motion_style_expand_horizontal</item>
+        <item>@string/motion_style_expand_vertical</item>
+        <item>@string/motion_style_bounce</item>
+        <item>@string/motion_style_elastic</item>
+        <item>@string/motion_style_pop</item>
+        <item>@string/motion_style_subtle</item>
+        <item>@string/motion_style_expressive_spring</item>
+        <item>@string/motion_style_container_transform</item>
+        <item>@string/motion_style_soft_reveal</item>
+        <item>@string/motion_style_elastic_slide</item>
+        <item>@string/motion_style_predictive</item>
+        <item>@string/motion_style_tonal_pop</item>
+        <item>@string/motion_style_random</item>
+    </string-array>
+    <string-array name="layout_xml_performance_options">
+        <item>@string/performance_mode_balanced</item>
+        <item>@string/performance_mode_performance</item>
+        <item>@string/performance_mode_quality</item>
+    </string-array>
+    <string-array name="layout_xml_reminder_sound_theme_options">
+        <item>@string/reminder_tone_classic</item>
+        <item>@string/reminder_tone_bell</item>
+        <item>@string/reminder_tone_crystal</item>
+        <item>@string/reminder_tone_pulse</item>
+        <item>@string/reminder_tone_sunrise</item>
+        <item>@string/reminder_tone_digital</item>
+        <item>@string/reminder_tone_alert</item>
+        <item>@string/reminder_tone_urgent</item>
+        <item>@string/reminder_tone_beacon</item>
+        <item>@string/reminder_tone_radar</item>
+        <item>@string/reminder_tone_warning</item>
+        <item>@string/reminder_tone_signal</item>
+        <item>@string/reminder_tone_pager</item>
+        <item>@string/reminder_tone_double_alarm</item>
+        <item>@string/reminder_tone_serenity</item>
+        <item>@string/reminder_tone_soft_bell</item>
+        <item>@string/reminder_tone_breeze</item>
+        <item>@string/reminder_tone_dew</item>
+        <item>@string/reminder_tone_bamboo</item>
+        <item>@string/reminder_tone_horizon</item>
+        <item>@string/reminder_tone_calm</item>
+        <item>@string/reminder_tone_moonlight</item>
+        <item>@string/reminder_tone_orbit</item>
+        <item>@string/reminder_tone_droplet</item>
+        <item>@string/reminder_tone_glass_tap</item>
+        <item>@string/reminder_tone_clockwork</item>
+        <item>@string/reminder_tone_spark</item>
+        <item>@string/reminder_tone_bubble_pop</item>
+        <item>@string/reminder_tone_comet</item>
+        <item>@string/reminder_tone_echo_ping</item>
+        <item>@string/reminder_tone_woodblock</item>
+        <item>@string/reminder_tone_starlight</item>
+        <item>@string/reminder_tone_sentinel</item>
+        <item>@string/reminder_tone_siren</item>
+        <item>@string/reminder_tone_cascade</item>
+        <item>@string/reminder_tone_escalation</item>
+        <item>@string/reminder_tone_distress</item>
+        <item>@string/reminder_tone_interlock</item>
+        <item>@string/reminder_tone_scanner</item>
+        <item>@string/reminder_tone_command</item>
+        <item>@string/reminder_tone_rapid_triple</item>
+        <item>@string/reminder_tone_priority_sequence</item>
+        <item>@string/reminder_tone_double_sweep</item>
+        <item>@string/reminder_tone_attention_burst</item>
+    </string-array>
+    <string-array name="layout_xml_slider_style_options">
+        <item>@string/mock_slider_capsule</item>
+        <item>@string/mock_slider_minimal</item>
+        <item>@string/mock_slider_glow</item>
+        <item>@string/mock_slider_glass</item>
+        <item>@string/mock_slider_segmented</item>
+        <item>@string/mock_slider_dots</item>
+        <item>@string/mock_slider_gradient</item>
+        <item>@string/mock_slider_neumorphic</item>
+        <item>@string/mock_slider_line_pill</item>
+        <item>@string/mock_slider_floating</item>
+    </string-array>
+    <string-array name="layout_xml_sound_effects_theme_options">
+        <item>@string/sound_theme_classic</item>
+        <item>@string/sound_theme_soft</item>
+        <item>@string/sound_theme_digital</item>
+        <item>@string/sound_theme_glass</item>
+        <item>@string/sound_theme_retro</item>
+        <item>@string/sound_theme_pop</item>
+        <item>@string/sound_theme_mechanical</item>
+        <item>@string/sound_theme_bubble</item>
+        <item>@string/sound_theme_arcade</item>
+        <item>@string/sound_theme_wood</item>
+        <item>@string/sound_theme_synth</item>
+        <item>@string/sound_theme_minimal</item>
+        <item>@string/sound_theme_camera</item>
+        <item>@string/sound_theme_typewriter</item>
+        <item>@string/sound_theme_metal</item>
+        <item>@string/sound_theme_pixel</item>
+        <item>@string/sound_theme_space</item>
+        <item>@string/sound_theme_chime</item>
+        <item>@string/sound_theme_paper</item>
+        <item>@string/sound_theme_neon</item>
+        <item>@string/sound_theme_material</item>
+        <item>@string/sound_theme_expressive</item>
+        <item>@string/sound_theme_prism</item>
+        <item>@string/sound_theme_aurora</item>
+        <item>@string/sound_theme_fluid</item>
+        <item>@string/sound_theme_pulse</item>
+    </string-array>
+</resources>

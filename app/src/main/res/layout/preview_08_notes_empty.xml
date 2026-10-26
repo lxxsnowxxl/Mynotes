@@ -1,11 +1,304 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Diseño compartido con NotesScreen; datos de ejemplo en src/debug.
-     Abrir con la variante debug compilada. tools:composableName renderiza el composable real. -->
-<androidx.compose.ui.platform.ComposeView
+<!-- Vistas Android editables. Referencia de diseño: Compose; mapa en doc/layout_compose_previews.json. -->
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/preview_08_notes_empty_compose"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/layout_xml_screen"
+    android:theme="@style/LayoutXmlPreviewTheme"
     tools:context="com.example.mynotes.MainActivity"
-    tools:composableName="com.example.mynotes.preview.LayoutPreviewsKt.Preview08NotesEmpty" />
+    tools:ignore="HardcodedText,ContentDescription"
+    android:id="@+id/preview_08_notes_empty_framelayout_0">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:paddingStart="14dp"
+        android:paddingEnd="14dp"
+        android:paddingTop="8dp"
+        android:id="@+id/preview_08_notes_empty_linearlayout_1">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:minHeight="56dp"
+            android:gravity="center_vertical"
+            android:id="@+id/preview_08_notes_empty_linearlayout_2">
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_weight="1"
+                android:id="@+id/preview_08_notes_empty_linearlayout_3">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/mock_my_notes"
+                    android:textSize="30sp"
+                    android:textColor="@color/layout_xml_text"
+                    android:fontFamily="sans-serif"
+                    android:textStyle="bold"
+                    android:id="@+id/preview_08_notes_empty_textview_4" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/mock_notes_subtitle"
+                    android:textSize="14sp"
+                    android:textColor="@color/layout_xml_secondary"
+                    android:fontFamily="sans-serif"
+                    android:textStyle="normal"
+                    android:layout_marginTop="1dp"
+                    android:id="@+id/preview_08_notes_empty_textview_5" />
+            </LinearLayout>
+            <ImageView
+                android:layout_width="46dp"
+                android:layout_height="46dp"
+                android:src="@drawable/preview_ic_person"
+                android:contentDescription="@null"
+                android:background="@drawable/layout_xml_tone"
+                android:padding="12dp"
+                android:id="@+id/preview_08_notes_empty_imageview_6" />
+            <ImageButton
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/preview_ic_settings"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:padding="12dp"
+                android:id="@+id/preview_08_notes_empty_open_settings"
+                android:contentDescription="@string/mock_settings"
+                android:tint="@color/layout_xml_text" />
+        </LinearLayout>
+        <Space
+            android:layout_width="1dp"
+            android:layout_height="14dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:orientation="horizontal"
+            android:background="@drawable/layout_xml_field"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:gravity="center_vertical"
+            android:id="@+id/preview_08_notes_empty_linearlayout_9">
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/preview_ic_search"
+                android:contentDescription="@null"
+                android:tint="@color/layout_xml_text"
+                android:id="@+id/preview_08_notes_empty_imageview_10" />
+            <EditText
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:id="@+id/preview_08_notes_empty_search"
+                android:hint="@string/mock_search_notes"
+                android:text=""
+                android:background="@null"
+                android:textColor="@color/layout_xml_text"
+                android:textColorHint="@color/layout_xml_secondary"
+                android:textSize="16sp"
+                android:singleLine="true"
+                android:paddingStart="12dp"
+                android:inputType="text" />
+        </LinearLayout>
+        <Space
+            android:layout_width="1dp"
+            android:layout_height="10dp" />
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none"
+            android:id="@+id/preview_08_notes_empty_horizontalscrollview_13">
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:gravity="center_vertical"
+                android:id="@+id/preview_08_notes_empty_linearlayout_14">
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:id="@+id/preview_08_notes_empty_filter_0"
+                    android:text="@string/mock_filter_all"
+                    android:textAllCaps="false"
+                    android:textColor="@color/layout_xml_on_primary"
+                    android:textSize="14sp"
+                    android:fontFamily="sans-serif"
+                    android:minHeight="44dp"
+                    android:minWidth="0dp"
+                    android:background="@drawable/layout_xml_button_filled"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:layout_marginEnd="7dp" />
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:id="@+id/preview_08_notes_empty_filter_1"
+                    android:text="@string/mock_favorites"
+                    android:textAllCaps="false"
+                    android:textColor="@color/layout_xml_text"
+                    android:textSize="14sp"
+                    android:fontFamily="sans-serif"
+                    android:minHeight="44dp"
+                    android:minWidth="0dp"
+                    android:background="@drawable/layout_xml_button_outline"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:layout_marginEnd="7dp" />
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:id="@+id/preview_08_notes_empty_filter_2"
+                    android:text="@string/widget_pinned_collection"
+                    android:textAllCaps="false"
+                    android:textColor="@color/layout_xml_text"
+                    android:textSize="14sp"
+                    android:fontFamily="sans-serif"
+                    android:minHeight="44dp"
+                    android:minWidth="0dp"
+                    android:background="@drawable/layout_xml_button_outline"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:layout_marginEnd="7dp" />
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:id="@+id/preview_08_notes_empty_filter_3"
+                    android:text="@string/widget_high_priority"
+                    android:textAllCaps="false"
+                    android:textColor="@color/layout_xml_text"
+                    android:textSize="14sp"
+                    android:fontFamily="sans-serif"
+                    android:minHeight="44dp"
+                    android:minWidth="0dp"
+                    android:background="@drawable/layout_xml_button_outline"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:layout_marginEnd="7dp" />
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:id="@+id/preview_08_notes_empty_filter_4"
+                    android:text="@string/mock_work"
+                    android:textAllCaps="false"
+                    android:textColor="@color/layout_xml_text"
+                    android:textSize="14sp"
+                    android:fontFamily="sans-serif"
+                    android:minHeight="44dp"
+                    android:minWidth="0dp"
+                    android:background="@drawable/layout_xml_button_outline"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:layout_marginEnd="7dp" />
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:id="@+id/preview_08_notes_empty_filter_5"
+                    android:text="@string/mock_personal"
+                    android:textAllCaps="false"
+                    android:textColor="@color/layout_xml_text"
+                    android:textSize="14sp"
+                    android:fontFamily="sans-serif"
+                    android:minHeight="44dp"
+                    android:minWidth="0dp"
+                    android:background="@drawable/layout_xml_button_outline"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:layout_marginEnd="7dp" />
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:id="@+id/preview_08_notes_empty_filter_6"
+                    android:text="@string/mock_images"
+                    android:textAllCaps="false"
+                    android:textColor="@color/layout_xml_text"
+                    android:textSize="14sp"
+                    android:fontFamily="sans-serif"
+                    android:minHeight="44dp"
+                    android:minWidth="0dp"
+                    android:background="@drawable/layout_xml_button_outline"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:layout_marginEnd="7dp" />
+                <Button
+                    android:layout_width="wrap_content"
+                    android:layout_height="36dp"
+                    android:id="@+id/preview_08_notes_empty_filter_7"
+                    android:text="@string/mock_files"
+                    android:textAllCaps="false"
+                    android:textColor="@color/layout_xml_text"
+                    android:textSize="14sp"
+                    android:fontFamily="sans-serif"
+                    android:minHeight="44dp"
+                    android:minWidth="0dp"
+                    android:background="@drawable/layout_xml_button_outline"
+                    android:paddingStart="12dp"
+                    android:paddingEnd="12dp"
+                    android:layout_marginEnd="7dp" />
+            </LinearLayout>
+        </HorizontalScrollView>
+        <Space
+            android:layout_width="1dp"
+            android:layout_height="10dp" />
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:id="@+id/preview_08_notes_empty_framelayout_24">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:layout_gravity="center"
+                android:gravity="center_horizontal"
+                android:id="@+id/preview_08_notes_empty_linearlayout_25">
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="📝"
+                    android:textSize="38sp"
+                    android:textColor="@color/layout_xml_text"
+                    android:fontFamily="sans-serif"
+                    android:textStyle="normal"
+                    android:id="@+id/preview_08_notes_empty_textview_26" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="No notes yet"
+                    android:textSize="14sp"
+                    android:textColor="@color/layout_xml_text"
+                    android:fontFamily="sans-serif"
+                    android:textStyle="normal"
+                    android:gravity="center"
+                    android:layout_marginTop="10dp"
+                    android:id="@+id/preview_08_notes_empty_textview_27" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Create your first note with the + button."
+                    android:textSize="14sp"
+                    android:textColor="@color/layout_xml_text"
+                    android:fontFamily="sans-serif"
+                    android:textStyle="normal"
+                    android:gravity="center"
+                    android:layout_marginTop="10dp"
+                    android:id="@+id/preview_08_notes_empty_textview_28" />
+            </LinearLayout>
+        </FrameLayout>
+    </LinearLayout>
+    <ImageButton
+        android:layout_width="58dp"
+        android:layout_height="58dp"
+        android:layout_gravity="bottom|end"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:background="@drawable/layout_xml_tone"
+        android:backgroundTint="@color/layout_xml_primary"
+        android:src="@drawable/preview_ic_add"
+        android:tint="@color/layout_xml_on_primary"
+        android:padding="18dp"
+        android:id="@+id/preview_08_notes_empty_add"
+        android:contentDescription="@string/mock_new_note" />
+</FrameLayout>

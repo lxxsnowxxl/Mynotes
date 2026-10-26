@@ -1,11 +1,110 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Diseño compartido con AttachmentViewerScreen; datos de ejemplo en src/debug.
-     Abrir con la variante debug compilada. tools:composableName renderiza el composable real. -->
-<androidx.compose.ui.platform.ComposeView
+<!-- Vistas Android editables. Referencia de diseño: Compose; mapa en doc/layout_compose_previews.json. -->
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/preview_05g_attachment_generic_compose"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/layout_xml_screen"
+    android:orientation="vertical"
+    tools:ignore="HardcodedText,ContentDescription"
+    android:theme="@style/LayoutXmlPreviewTheme"
     tools:context="com.example.mynotes.MainActivity"
-    tools:composableName="com.example.mynotes.preview.LayoutPreviewsKt.Preview05gAttachmentGeneric" />
+    android:id="@+id/preview_05g_attachment_generic_linearlayout_0">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:id="@+id/preview_05g_attachment_generic_linearlayout_1">
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/preview_ic_arrow_back"
+            android:tint="@color/layout_xml_text"
+            android:contentDescription="@null"
+            android:layout_margin="8dp"
+            android:id="@+id/preview_05g_attachment_generic_imageview_2" />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:text="archive.bin"
+            android:textColor="@color/layout_xml_text"
+            android:textSize="18sp"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:includeFontPadding="true"
+            android:id="@+id/preview_05g_attachment_generic_textview_3" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:text="↗"
+            android:textColor="@color/layout_xml_text"
+            android:textSize="24sp"
+            android:includeFontPadding="true"
+            android:id="@+id/preview_05g_attachment_generic_textview_4" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="28dp"
+        android:id="@+id/preview_05g_attachment_generic_linearlayout_5">
+        <ImageView
+            android:layout_width="74dp"
+            android:layout_height="74dp"
+            android:src="@drawable/preview_ic_file"
+            android:tint="@color/layout_xml_text"
+            android:contentDescription="@null"
+            android:id="@+id/preview_05g_attachment_generic_imageview_6" />
+        <Space
+            android:layout_width="1dp"
+            android:layout_height="16dp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:text="archive.bin"
+            android:textColor="@color/layout_xml_text"
+            android:textSize="20sp"
+            android:includeFontPadding="true"
+            android:id="@+id/preview_05g_attachment_generic_textview_8" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:text="This file cannot be previewed directly."
+            android:textColor="@color/layout_xml_text"
+            android:textSize="13sp"
+            android:layout_marginTop="5dp"
+            android:includeFontPadding="true"
+            android:id="@+id/preview_05g_attachment_generic_textview_9" />
+        <Space
+            android:layout_width="1dp"
+            android:layout_height="18dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:background="@drawable/preview_button_light"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:id="@+id/preview_05g_attachment_generic_linearlayout_11">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:text="Open with another app"
+                android:textColor="@color/layout_xml_text"
+                android:textSize="14sp"
+                android:includeFontPadding="true"
+                android:id="@+id/preview_05g_attachment_generic_textview_12" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

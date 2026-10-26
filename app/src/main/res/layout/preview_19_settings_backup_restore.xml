@@ -1,11 +1,269 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Diseño compartido con SettingsScreen; datos de ejemplo en src/debug.
-     Abrir con la variante debug compilada. tools:composableName renderiza el composable real. -->
-<androidx.compose.ui.platform.ComposeView
+<!-- Vistas Android editables. Referencia de diseño: Compose; mapa en doc/layout_compose_previews.json. -->
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/preview_19_settings_backup_restore_compose"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/layout_xml_screen"
+    android:theme="@style/LayoutXmlPreviewTheme"
     tools:context="com.example.mynotes.MainActivity"
-    tools:composableName="com.example.mynotes.preview.LayoutPreviewsKt.Preview19SettingsBackupRestore" />
+    tools:ignore="HardcodedText,ContentDescription"
+    android:id="@+id/preview_19_settings_backup_restore_framelayout_0">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:id="@+id/preview_19_settings_backup_restore_linearlayout_1">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:orientation="horizontal"
+            android:paddingStart="4dp"
+            android:paddingEnd="12dp"
+            android:gravity="center_vertical"
+            android:id="@+id/preview_19_settings_backup_restore_linearlayout_2">
+            <ImageButton
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:id="@+id/preview_19_settings_backup_restore_back"
+                android:src="@drawable/preview_ic_arrow_back"
+                android:tint="@color/layout_xml_text"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/mock_back"
+                android:padding="12dp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/mock_settings"
+                android:textSize="24sp"
+                android:textColor="@color/layout_xml_text"
+                android:fontFamily="sans-serif"
+                android:textStyle="bold"
+                android:layout_marginStart="8dp"
+                android:id="@+id/preview_19_settings_backup_restore_textview_4" />
+        </LinearLayout>
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:id="@+id/preview_19_settings_backup_restore_framelayout_5">
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fillViewport="true"
+                android:scrollbars="none"
+                android:id="@+id/preview_19_settings_backup_restore_scrollview_6">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingStart="14dp"
+                    android:paddingEnd="14dp"
+                    android:paddingBottom="32dp"
+                    android:id="@+id/preview_19_settings_backup_restore_linearlayout_7">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:id="@+id/preview_19_settings_backup_restore_panel_backup"
+                        android:background="@drawable/layout_xml_panel"
+                        android:padding="14dp"
+                        android:layout_marginBottom="12dp">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/backup_restore_title"
+                            android:textSize="16sp"
+                            android:textColor="@color/layout_xml_text"
+                            android:fontFamily="sans-serif"
+                            android:textStyle="bold"
+                            android:id="@+id/preview_19_settings_backup_restore_textview_9" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/backup_restore_description"
+                            android:textSize="12sp"
+                            android:textColor="@color/layout_xml_secondary"
+                            android:fontFamily="sans-serif"
+                            android:textStyle="normal"
+                            android:layout_marginTop="4dp"
+                            android:id="@+id/preview_19_settings_backup_restore_textview_10" />
+                        <Space
+                            android:layout_width="1dp"
+                            android:layout_height="8dp" />
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:id="@+id/preview_19_settings_backup_restore_linearlayout_12">
+                            <Button
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/preview_19_settings_backup_restore_backup_export"
+                                android:text="@string/backup_export_button"
+                                android:textAllCaps="false"
+                                android:textColor="@color/layout_xml_text"
+                                android:textSize="14sp"
+                                android:fontFamily="sans-serif"
+                                android:minHeight="44dp"
+                                android:minWidth="0dp"
+                                android:background="@drawable/layout_xml_button_outline"
+                                android:paddingStart="12dp"
+                                android:paddingEnd="12dp"
+                                android:layout_weight="1"
+                                android:layout_marginEnd="8dp" />
+                            <Button
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/preview_19_settings_backup_restore_backup_import"
+                                android:text="@string/backup_import_button"
+                                android:textAllCaps="false"
+                                android:textColor="@color/layout_xml_on_primary"
+                                android:textSize="14sp"
+                                android:fontFamily="sans-serif"
+                                android:minHeight="44dp"
+                                android:minWidth="0dp"
+                                android:background="@drawable/layout_xml_button_filled"
+                                android:paddingStart="12dp"
+                                android:paddingEnd="12dp"
+                                android:layout_weight="1" />
+                        </LinearLayout>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:id="@+id/preview_19_settings_backup_restore_panel_language"
+                        android:background="@drawable/layout_xml_panel"
+                        android:padding="14dp"
+                        android:layout_marginBottom="12dp">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:minHeight="48dp"
+                            android:gravity="center_vertical"
+                            android:id="@+id/preview_19_settings_backup_restore_linearlayout_16">
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:text="@string/mock_language"
+                                android:textSize="14sp"
+                                android:textColor="@color/layout_xml_text"
+                                android:fontFamily="sans-serif"
+                                android:textStyle="bold"
+                                android:layout_weight="1"
+                                android:id="@+id/preview_19_settings_backup_restore_textview_17" />
+                            <Spinner
+                                android:layout_width="wrap_content"
+                                android:layout_height="48dp"
+                                android:id="@+id/preview_19_settings_backup_restore_language"
+                                android:entries="@array/layout_xml_language_options"
+                                android:spinnerMode="dropdown"
+                                android:contentDescription="@string/mock_language" />
+                        </LinearLayout>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:id="@+id/preview_19_settings_backup_restore_panel_development"
+                        android:background="@drawable/layout_xml_panel"
+                        android:padding="14dp"
+                        android:layout_marginBottom="12dp">
+                        <Button
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/preview_19_settings_backup_restore_open_development"
+                            android:text="@string/development_info_settings_title"
+                            android:textAllCaps="false"
+                            android:textColor="@color/layout_xml_text"
+                            android:textSize="14sp"
+                            android:fontFamily="sans-serif"
+                            android:minHeight="44dp"
+                            android:minWidth="0dp"
+                            android:background="@drawable/layout_xml_button_outline"
+                            android:paddingStart="12dp"
+                            android:paddingEnd="12dp" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/development_info_settings_description"
+                            android:textSize="12sp"
+                            android:textColor="@color/layout_xml_secondary"
+                            android:fontFamily="sans-serif"
+                            android:textStyle="normal"
+                            android:id="@+id/preview_19_settings_backup_restore_textview_21" />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:id="@+id/preview_19_settings_backup_restore_panel_updates"
+                        android:background="@drawable/layout_xml_panel"
+                        android:padding="14dp"
+                        android:layout_marginBottom="12dp">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/update_settings_title"
+                            android:textSize="16sp"
+                            android:textColor="@color/layout_xml_text"
+                            android:fontFamily="sans-serif"
+                            android:textStyle="bold"
+                            android:id="@+id/preview_19_settings_backup_restore_textview_23" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/update_settings_description"
+                            android:textSize="12sp"
+                            android:textColor="@color/layout_xml_secondary"
+                            android:fontFamily="sans-serif"
+                            android:textStyle="normal"
+                            android:layout_marginTop="4dp"
+                            android:id="@+id/preview_19_settings_backup_restore_textview_24" />
+                        <Space
+                            android:layout_width="1dp"
+                            android:layout_height="8dp" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="MyNotes 1.7.0"
+                            android:textSize="12sp"
+                            android:textColor="@color/layout_xml_secondary"
+                            android:fontFamily="sans-serif"
+                            android:textStyle="normal"
+                            android:id="@+id/preview_19_settings_backup_restore_textview_26" />
+                        <Button
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/preview_19_settings_backup_restore_check_update"
+                            android:text="@string/update_check"
+                            android:textAllCaps="false"
+                            android:textColor="@color/layout_xml_on_primary"
+                            android:textSize="14sp"
+                            android:fontFamily="sans-serif"
+                            android:minHeight="44dp"
+                            android:minWidth="0dp"
+                            android:background="@drawable/layout_xml_button_filled"
+                            android:paddingStart="12dp"
+                            android:paddingEnd="12dp"
+                            android:layout_marginTop="12dp" />
+                    </LinearLayout>
+                </LinearLayout>
+            </ScrollView>
+            <View
+                android:layout_width="4dp"
+                android:layout_height="54dp"
+                android:id="@+id/preview_19_settings_backup_restore_scroll_capsule"
+                android:layout_gravity="end|top"
+                android:layout_marginEnd="4dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/layout_xml_scroll_capsule"
+                android:importantForAccessibility="no"
+                tools:visibility="visible" />
+        </FrameLayout>
+    </LinearLayout>
+</FrameLayout>

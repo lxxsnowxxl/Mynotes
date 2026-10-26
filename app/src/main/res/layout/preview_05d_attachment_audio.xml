@@ -1,11 +1,127 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Diseño compartido con AttachmentViewerScreen; datos de ejemplo en src/debug.
-     Abrir con la variante debug compilada. tools:composableName renderiza el composable real. -->
-<androidx.compose.ui.platform.ComposeView
+<!-- Vistas Android editables. Referencia de diseño: Compose; mapa en doc/layout_compose_previews.json. -->
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/preview_05d_attachment_audio_compose"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/layout_xml_screen"
+    android:orientation="vertical"
+    tools:ignore="HardcodedText,ContentDescription"
+    android:theme="@style/LayoutXmlPreviewTheme"
     tools:context="com.example.mynotes.MainActivity"
-    tools:composableName="com.example.mynotes.preview.LayoutPreviewsKt.Preview05dAttachmentAudio" />
+    android:id="@+id/preview_05d_attachment_audio_linearlayout_0">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:id="@+id/preview_05d_attachment_audio_linearlayout_1">
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/preview_ic_arrow_back"
+            android:tint="@color/layout_xml_text"
+            android:contentDescription="@null"
+            android:layout_margin="8dp"
+            android:id="@+id/preview_05d_attachment_audio_imageview_2" />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:text="voice-note.m4a"
+            android:textColor="@color/layout_xml_text"
+            android:textSize="18sp"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:includeFontPadding="true"
+            android:id="@+id/preview_05d_attachment_audio_textview_3" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:text="↗"
+            android:textColor="@color/layout_xml_text"
+            android:textSize="24sp"
+            android:includeFontPadding="true"
+            android:id="@+id/preview_05d_attachment_audio_textview_4" />
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:gravity="center"
+        android:orientation="vertical"
+        android:padding="28dp"
+        android:id="@+id/preview_05d_attachment_audio_linearlayout_5">
+        <ImageView
+            android:layout_width="72dp"
+            android:layout_height="72dp"
+            android:src="@drawable/preview_ic_music"
+            android:tint="@color/layout_xml_text"
+            android:contentDescription="@null"
+            android:id="@+id/preview_05d_attachment_audio_imageview_6" />
+        <Space
+            android:layout_width="1dp"
+            android:layout_height="18dp" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:text="voice-note.m4a"
+            android:textColor="@color/layout_xml_text"
+            android:textSize="20sp"
+            android:includeFontPadding="true"
+            android:id="@+id/preview_05d_attachment_audio_textview_8" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:text="Audio file"
+            android:textColor="@color/layout_xml_text"
+            android:textSize="12sp"
+            android:layout_marginTop="4dp"
+            android:includeFontPadding="true"
+            android:id="@+id/preview_05d_attachment_audio_textview_9" />
+        <SeekBar
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:layout_marginTop="24dp"
+            android:max="100"
+            android:progress="40"
+            android:progressDrawable="@drawable/layout_xml_slider_progress"
+            android:thumb="@drawable/layout_xml_slider_thumb"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:id="@+id/preview_05d_attachment_audio_seekbar_10" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:id="@+id/preview_05d_attachment_audio_linearlayout_11">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:text="▶"
+                android:textColor="@color/layout_xml_text"
+                android:textSize="26sp"
+                android:includeFontPadding="true"
+                android:id="@+id/preview_05d_attachment_audio_textview_12" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:text="00:19 / 00:42"
+                android:textColor="@color/layout_xml_text"
+                android:textSize="13sp"
+                android:layout_marginStart="14dp"
+                android:includeFontPadding="true"
+                android:id="@+id/preview_05d_attachment_audio_textview_13" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

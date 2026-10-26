@@ -1,11 +1,159 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Diseño compartido con ProfileImageEditorDialog; datos de ejemplo en src/debug.
-     Abrir con la variante debug compilada. tools:composableName renderiza el composable real. -->
-<androidx.compose.ui.platform.ComposeView
+<!-- Vistas Android editables. Referencia de diseño: Compose; mapa en doc/layout_compose_previews.json. -->
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/preview_35_profile_image_editor_compose"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/layout_xml_screen"
+    android:theme="@style/LayoutXmlPreviewTheme"
     tools:context="com.example.mynotes.MainActivity"
-    tools:composableName="com.example.mynotes.preview.LayoutPreviewsKt.Preview35ProfileImageEditor" />
+    tools:ignore="HardcodedText,ContentDescription"
+    android:id="@+id/preview_35_profile_image_editor_framelayout_0">
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#8F000000"
+        android:id="@+id/preview_35_profile_image_editor_view_1" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/layout_xml_dialog"
+        android:layout_gravity="center"
+        android:layout_marginStart="18dp"
+        android:layout_marginEnd="18dp"
+        android:padding="22dp"
+        android:id="@+id/preview_35_profile_image_editor_linearlayout_2">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/extreme_profile_editor_title"
+            android:textSize="22sp"
+            android:textColor="@color/layout_xml_text"
+            android:fontFamily="sans-serif"
+            android:textStyle="bold"
+            android:id="@+id/preview_35_profile_image_editor_textview_3" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/extreme_profile_editor_hint"
+            android:textSize="12sp"
+            android:textColor="@color/layout_xml_secondary"
+            android:fontFamily="sans-serif"
+            android:textStyle="normal"
+            android:layout_marginTop="6dp"
+            android:id="@+id/preview_35_profile_image_editor_textview_4" />
+        <Space
+            android:layout_width="1dp"
+            android:layout_height="16dp" />
+        <ImageView
+            android:layout_width="250dp"
+            android:layout_height="250dp"
+            android:src="@drawable/preview_media_photo"
+            android:contentDescription="@null"
+            android:layout_gravity="center_horizontal"
+            android:scaleType="centerCrop"
+            android:background="@drawable/layout_xml_palette_ring"
+            android:id="@+id/preview_35_profile_image_editor_imageview_6" />
+        <Space
+            android:layout_width="1dp"
+            android:layout_height="14dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:minHeight="24dp"
+            android:gravity="center_vertical"
+            android:id="@+id/preview_35_profile_image_editor_linearlayout_8">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="Zoom"
+                android:textSize="14sp"
+                android:textColor="@color/layout_xml_text"
+                android:fontFamily="sans-serif"
+                android:textStyle="bold"
+                android:layout_weight="1"
+                android:id="@+id/preview_35_profile_image_editor_textview_9" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="100%"
+                android:textSize="12sp"
+                android:textColor="@color/layout_xml_text"
+                android:fontFamily="sans-serif"
+                android:textStyle="normal"
+                android:id="@+id/preview_35_profile_image_editor_profile_zoom_value"
+                android:layout_marginStart="10dp" />
+        </LinearLayout>
+        <SeekBar
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:id="@+id/preview_35_profile_image_editor_profile_zoom"
+            android:max="1000"
+            android:progress="0"
+            android:progressDrawable="@drawable/layout_xml_slider_progress"
+            android:thumb="@drawable/layout_xml_slider_thumb"
+            android:thumbOffset="9dp"
+            android:paddingStart="14dp"
+            android:paddingEnd="14dp"
+            android:splitTrack="false"
+            android:contentDescription="Zoom" />
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/preview_35_profile_image_editor_reset"
+            android:text="@string/extreme_profile_reset"
+            android:textAllCaps="false"
+            android:textColor="@color/layout_xml_text"
+            android:textSize="14sp"
+            android:fontFamily="sans-serif"
+            android:minHeight="44dp"
+            android:minWidth="0dp"
+            android:background="@drawable/layout_xml_button_outline"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp" />
+        <Space
+            android:layout_width="1dp"
+            android:layout_height="16dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:id="@+id/preview_35_profile_image_editor_linearlayout_14">
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/preview_35_profile_image_editor_cancel"
+                android:text="@string/cancel"
+                android:textAllCaps="false"
+                android:textColor="@color/layout_xml_text"
+                android:textSize="14sp"
+                android:fontFamily="sans-serif"
+                android:minHeight="44dp"
+                android:minWidth="0dp"
+                android:background="@drawable/layout_xml_button_outline"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="10dp" />
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/preview_35_profile_image_editor_apply"
+                android:text="@string/extreme_profile_apply"
+                android:textAllCaps="false"
+                android:textColor="@color/layout_xml_on_primary"
+                android:textSize="14sp"
+                android:fontFamily="sans-serif"
+                android:minHeight="44dp"
+                android:minWidth="0dp"
+                android:background="@drawable/layout_xml_button_filled"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:layout_weight="1" />
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>

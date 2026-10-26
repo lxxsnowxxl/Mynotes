@@ -1,11 +1,357 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Diseño compartido con NoteDetailScreen; datos de ejemplo en src/debug.
-     Abrir con la variante debug compilada. tools:composableName renderiza el composable real. -->
-<androidx.compose.ui.platform.ComposeView
+<!-- Vistas Android editables. Referencia de diseño: Compose; mapa en doc/layout_compose_previews.json. -->
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/preview_17_note_detail_files_compose"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/layout_xml_screen"
+    android:theme="@style/LayoutXmlPreviewTheme"
     tools:context="com.example.mynotes.MainActivity"
-    tools:composableName="com.example.mynotes.preview.LayoutPreviewsKt.Preview17NoteDetailFiles" />
+    tools:ignore="HardcodedText,ContentDescription"
+    android:id="@+id/preview_17_note_detail_files_framelayout_0">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:id="@+id/preview_17_note_detail_files_linearlayout_1">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:orientation="horizontal"
+            android:paddingStart="4dp"
+            android:paddingEnd="12dp"
+            android:gravity="center_vertical"
+            android:id="@+id/preview_17_note_detail_files_linearlayout_2">
+            <ImageButton
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:id="@+id/preview_17_note_detail_files_back"
+                android:src="@drawable/preview_ic_arrow_back"
+                android:tint="@color/layout_xml_text"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/mock_back"
+                android:padding="12dp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textSize="24sp"
+                android:textColor="@color/layout_xml_text"
+                android:fontFamily="sans-serif"
+                android:textStyle="bold"
+                android:layout_marginStart="8dp"
+                android:id="@+id/preview_17_note_detail_files_textview_4" />
+        </LinearLayout>
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:id="@+id/preview_17_note_detail_files_framelayout_5">
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fillViewport="true"
+                android:scrollbars="none"
+                android:id="@+id/preview_17_note_detail_files_scrollview_6">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingStart="22dp"
+                    android:paddingEnd="22dp"
+                    android:paddingBottom="32dp"
+                    android:id="@+id/preview_17_note_detail_files_linearlayout_7">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Proyecto de diseño"
+                        android:textSize="29sp"
+                        android:textColor="@color/layout_xml_text"
+                        android:fontFamily="sans-serif"
+                        android:textStyle="bold"
+                        android:id="@+id/preview_17_note_detail_files_textview_8" />
+                    <Space
+                        android:layout_width="1dp"
+                        android:layout_height="11dp" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:id="@+id/preview_17_note_detail_files_linearlayout_10">
+                        <Button
+                            android:layout_width="wrap_content"
+                            android:layout_height="32dp"
+                            android:id="@+id/preview_17_note_detail_files_metadata_0"
+                            android:text="@string/mock_priority_none"
+                            android:textAllCaps="false"
+                            android:textColor="@color/layout_xml_text"
+                            android:textSize="14sp"
+                            android:fontFamily="sans-serif"
+                            android:minHeight="44dp"
+                            android:minWidth="0dp"
+                            android:background="@drawable/layout_xml_button_outline"
+                            android:paddingStart="12dp"
+                            android:paddingEnd="12dp"
+                            android:layout_marginEnd="6dp" />
+                        <Button
+                            android:layout_width="wrap_content"
+                            android:layout_height="32dp"
+                            android:id="@+id/preview_17_note_detail_files_metadata_1"
+                            android:text="@string/mock_personal"
+                            android:textAllCaps="false"
+                            android:textColor="@color/layout_xml_text"
+                            android:textSize="14sp"
+                            android:fontFamily="sans-serif"
+                            android:minHeight="44dp"
+                            android:minWidth="0dp"
+                            android:background="@drawable/layout_xml_button_outline"
+                            android:paddingStart="12dp"
+                            android:paddingEnd="12dp"
+                            android:layout_marginEnd="6dp" />
+                        <Button
+                            android:layout_width="wrap_content"
+                            android:layout_height="32dp"
+                            android:id="@+id/preview_17_note_detail_files_metadata_2"
+                            android:text="26 oct. 2026"
+                            android:textAllCaps="false"
+                            android:textColor="@color/layout_xml_text"
+                            android:textSize="14sp"
+                            android:fontFamily="sans-serif"
+                            android:minHeight="44dp"
+                            android:minWidth="0dp"
+                            android:background="@drawable/layout_xml_button_outline"
+                            android:paddingStart="12dp"
+                            android:paddingEnd="12dp"
+                            android:layout_marginEnd="6dp" />
+                    </LinearLayout>
+                    <Space
+                        android:layout_width="1dp"
+                        android:layout_height="24dp" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Revisar materiales y medidas de la carcasa.&#10;Preparar la siguiente revisión."
+                        android:textSize="16sp"
+                        android:textColor="@color/layout_xml_secondary"
+                        android:fontFamily="sans-serif"
+                        android:textStyle="normal"
+                        android:id="@+id/preview_17_note_detail_files_textview_15" />
+                    <Space
+                        android:layout_width="1dp"
+                        android:layout_height="26dp" />
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/layout_xml_track"
+                        android:id="@+id/preview_17_note_detail_files_view_17" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:layout_marginTop="18dp"
+                        android:layout_marginBottom="16dp"
+                        android:gravity="center_vertical"
+                        android:id="@+id/preview_17_note_detail_files_linearlayout_18">
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="@string/attachments"
+                            android:textSize="18sp"
+                            android:textColor="@color/layout_xml_text"
+                            android:fontFamily="sans-serif"
+                            android:textStyle="bold"
+                            android:layout_weight="1"
+                            android:id="@+id/preview_17_note_detail_files_textview_19" />
+                        <Button
+                            android:layout_width="44dp"
+                            android:layout_height="44dp"
+                            android:id="@+id/preview_17_note_detail_files_add_attachment"
+                            android:text="+"
+                            android:textAllCaps="false"
+                            android:textColor="@color/layout_xml_text"
+                            android:textSize="14sp"
+                            android:fontFamily="sans-serif"
+                            android:minHeight="44dp"
+                            android:minWidth="0dp"
+                            android:background="@drawable/layout_xml_button_outline"
+                            android:paddingStart="12dp"
+                            android:paddingEnd="12dp" />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:orientation="horizontal"
+                        android:background="@drawable/layout_xml_panel"
+                        android:padding="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:gravity="center_vertical"
+                        android:id="@+id/preview_17_note_detail_files_linearlayout_21">
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/preview_ic_file"
+                            android:contentDescription="@null"
+                            android:layout_marginEnd="8dp"
+                            android:tint="@color/layout_xml_text"
+                            android:id="@+id/preview_17_note_detail_files_imageview_22" />
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="Documento.pdf"
+                            android:textSize="12sp"
+                            android:textColor="@color/layout_xml_text"
+                            android:fontFamily="sans-serif"
+                            android:textStyle="normal"
+                            android:layout_weight="1"
+                            android:maxLines="2"
+                            android:id="@+id/preview_17_note_detail_files_textview_23" />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:orientation="horizontal"
+                        android:background="@drawable/layout_xml_panel"
+                        android:padding="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:gravity="center_vertical"
+                        android:id="@+id/preview_17_note_detail_files_linearlayout_24">
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/preview_ic_file"
+                            android:contentDescription="@null"
+                            android:layout_marginEnd="8dp"
+                            android:tint="@color/layout_xml_text"
+                            android:id="@+id/preview_17_note_detail_files_imageview_25" />
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="Reporte.docx"
+                            android:textSize="12sp"
+                            android:textColor="@color/layout_xml_text"
+                            android:fontFamily="sans-serif"
+                            android:textStyle="normal"
+                            android:layout_weight="1"
+                            android:maxLines="2"
+                            android:id="@+id/preview_17_note_detail_files_textview_26" />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="56dp"
+                        android:orientation="horizontal"
+                        android:background="@drawable/layout_xml_panel"
+                        android:padding="8dp"
+                        android:layout_marginBottom="8dp"
+                        android:gravity="center_vertical"
+                        android:id="@+id/preview_17_note_detail_files_linearlayout_27">
+                        <ImageView
+                            android:layout_width="24dp"
+                            android:layout_height="24dp"
+                            android:src="@drawable/preview_ic_file"
+                            android:contentDescription="@null"
+                            android:layout_marginEnd="8dp"
+                            android:tint="@color/layout_xml_text"
+                            android:id="@+id/preview_17_note_detail_files_imageview_28" />
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:text="Archivo.zip"
+                            android:textSize="12sp"
+                            android:textColor="@color/layout_xml_text"
+                            android:fontFamily="sans-serif"
+                            android:textStyle="normal"
+                            android:layout_weight="1"
+                            android:maxLines="2"
+                            android:id="@+id/preview_17_note_detail_files_textview_29" />
+                    </LinearLayout>
+                    <Space
+                        android:layout_width="1dp"
+                        android:layout_height="16dp" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:id="@+id/preview_17_note_detail_files_linearlayout_31">
+                        <Button
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/preview_17_note_detail_files_action_share"
+                            android:text="@string/mock_share"
+                            android:textAllCaps="false"
+                            android:textColor="@color/layout_xml_text"
+                            android:textSize="14sp"
+                            android:fontFamily="sans-serif"
+                            android:minHeight="44dp"
+                            android:minWidth="0dp"
+                            android:background="@drawable/layout_xml_button_outline"
+                            android:paddingStart="12dp"
+                            android:paddingEnd="12dp"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="4dp" />
+                        <Button
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/preview_17_note_detail_files_action_pin"
+                            android:text="@string/mock_pin"
+                            android:textAllCaps="false"
+                            android:textColor="@color/layout_xml_text"
+                            android:textSize="14sp"
+                            android:fontFamily="sans-serif"
+                            android:minHeight="44dp"
+                            android:minWidth="0dp"
+                            android:background="@drawable/layout_xml_button_outline"
+                            android:paddingStart="12dp"
+                            android:paddingEnd="12dp"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="4dp" />
+                        <Button
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/preview_17_note_detail_files_action_move"
+                            android:text="@string/mock_move"
+                            android:textAllCaps="false"
+                            android:textColor="@color/layout_xml_text"
+                            android:textSize="14sp"
+                            android:fontFamily="sans-serif"
+                            android:minHeight="44dp"
+                            android:minWidth="0dp"
+                            android:background="@drawable/layout_xml_button_outline"
+                            android:paddingStart="12dp"
+                            android:paddingEnd="12dp"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="4dp" />
+                        <Button
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/preview_17_note_detail_files_action_delete"
+                            android:text="@string/mock_delete"
+                            android:textAllCaps="false"
+                            android:textColor="@color/layout_xml_text"
+                            android:textSize="14sp"
+                            android:fontFamily="sans-serif"
+                            android:minHeight="44dp"
+                            android:minWidth="0dp"
+                            android:background="@drawable/layout_xml_button_outline"
+                            android:paddingStart="12dp"
+                            android:paddingEnd="12dp"
+                            android:layout_weight="1"
+                            android:layout_marginEnd="4dp" />
+                    </LinearLayout>
+                </LinearLayout>
+            </ScrollView>
+            <View
+                android:layout_width="4dp"
+                android:layout_height="54dp"
+                android:id="@+id/preview_17_note_detail_files_scroll_capsule"
+                android:layout_gravity="end|top"
+                android:layout_marginEnd="4dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/layout_xml_scroll_capsule"
+                android:importantForAccessibility="no"
+                tools:visibility="visible" />
+        </FrameLayout>
+    </LinearLayout>
+</FrameLayout>

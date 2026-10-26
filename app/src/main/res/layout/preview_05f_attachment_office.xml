@@ -1,11 +1,99 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Diseño compartido con AttachmentViewerScreen; datos de ejemplo en src/debug.
-     Abrir con la variante debug compilada. tools:composableName renderiza el composable real. -->
-<androidx.compose.ui.platform.ComposeView
+<!-- Vistas Android editables. Referencia de diseño: Compose; mapa en doc/layout_compose_previews.json. -->
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/preview_05f_attachment_office_compose"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/layout_xml_screen"
+    android:orientation="vertical"
+    tools:ignore="HardcodedText,ContentDescription"
+    android:theme="@style/LayoutXmlPreviewTheme"
     tools:context="com.example.mynotes.MainActivity"
-    tools:composableName="com.example.mynotes.preview.LayoutPreviewsKt.Preview05fAttachmentOffice" />
+    android:id="@+id/preview_05f_attachment_office_linearlayout_0">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="64dp"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:paddingStart="10dp"
+        android:paddingEnd="10dp"
+        android:id="@+id/preview_05f_attachment_office_linearlayout_1">
+        <ImageView
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:src="@drawable/preview_ic_arrow_back"
+            android:tint="@color/layout_xml_text"
+            android:contentDescription="@null"
+            android:layout_margin="8dp"
+            android:id="@+id/preview_05f_attachment_office_imageview_2" />
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:text="report.docx"
+            android:textColor="@color/layout_xml_text"
+            android:textSize="18sp"
+            android:layout_weight="1"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:includeFontPadding="true"
+            android:id="@+id/preview_05f_attachment_office_textview_3" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="sans-serif"
+            android:text="↗"
+            android:textColor="@color/layout_xml_text"
+            android:textSize="24sp"
+            android:includeFontPadding="true"
+            android:id="@+id/preview_05f_attachment_office_textview_4" />
+    </LinearLayout>
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:id="@+id/preview_05f_attachment_office_scrollview_5">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="20dp"
+            android:id="@+id/preview_05f_attachment_office_linearlayout_6">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:fontFamily="sans-serif"
+                android:text="Office document preview"
+                android:textColor="@color/layout_xml_text"
+                android:textSize="22sp"
+                android:includeFontPadding="true"
+                android:id="@+id/preview_05f_attachment_office_textview_7" />
+            <Space
+                android:layout_width="1dp"
+                android:layout_height="12dp" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Extracted text from DOCX / PPTX / XLSX is displayed here when possible."
+                android:textColor="@color/layout_xml_text"
+                android:textSize="14sp"
+                android:fontFamily="sans-serif"
+                android:includeFontPadding="true"
+                android:id="@+id/preview_05f_attachment_office_textview_9" />
+            <Space
+                android:layout_width="1dp"
+                android:layout_height="18dp" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Heading 1  Paragraph text from the office document.  • First item • Second item • Third item"
+                android:textColor="@color/layout_xml_text"
+                android:textSize="15sp"
+                android:fontFamily="sans-serif"
+                android:lineSpacingExtra="6dp"
+                android:includeFontPadding="true"
+                android:id="@+id/preview_05f_attachment_office_textview_11" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

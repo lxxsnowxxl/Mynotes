@@ -1,11 +1,165 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Diseño compartido con PdfImageCropDialog; datos de ejemplo en src/debug.
-     Abrir con la variante debug compilada. tools:composableName renderiza el composable real. -->
-<androidx.compose.ui.platform.ComposeView
+<!-- Vistas Android editables. Referencia de diseño: Compose; mapa en doc/layout_compose_previews.json. -->
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/preview_36_pdf_image_crop_compose"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/layout_xml_screen"
+    android:theme="@style/LayoutXmlPreviewTheme"
     tools:context="com.example.mynotes.MainActivity"
-    tools:composableName="com.example.mynotes.preview.LayoutPreviewsKt.Preview36PdfImageCrop" />
+    tools:ignore="HardcodedText,ContentDescription"
+    android:id="@+id/preview_36_pdf_image_crop_framelayout_0">
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="#8F000000"
+        android:id="@+id/preview_36_pdf_image_crop_view_1" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:background="@drawable/layout_xml_dialog"
+        android:layout_gravity="center"
+        android:layout_marginStart="18dp"
+        android:layout_marginEnd="18dp"
+        android:padding="22dp"
+        android:id="@+id/preview_36_pdf_image_crop_linearlayout_2">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pdf_crop"
+            android:textSize="22sp"
+            android:textColor="@color/layout_xml_text"
+            android:fontFamily="sans-serif"
+            android:textStyle="bold"
+            android:id="@+id/preview_36_pdf_image_crop_textview_3" />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/pdf_crop_hint"
+            android:textSize="12sp"
+            android:textColor="@color/layout_xml_secondary"
+            android:fontFamily="sans-serif"
+            android:textStyle="normal"
+            android:layout_marginTop="12dp"
+            android:id="@+id/preview_36_pdf_image_crop_textview_4" />
+        <Space
+            android:layout_width="1dp"
+            android:layout_height="12dp" />
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="250dp"
+            android:id="@+id/preview_36_pdf_image_crop_framelayout_6">
+            <ImageView
+                android:layout_width="250dp"
+                android:layout_height="250dp"
+                android:src="@drawable/preview_media_photo"
+                android:contentDescription="@null"
+                android:layout_gravity="center"
+                android:scaleType="fitCenter"
+                android:id="@+id/preview_36_pdf_image_crop_imageview_7" />
+            <View
+                android:layout_width="200dp"
+                android:layout_height="180dp"
+                android:layout_gravity="center"
+                android:background="@drawable/layout_xml_crop_bounds"
+                android:id="@+id/preview_36_pdf_image_crop_view_8" />
+            <View
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_gravity="top|start"
+                android:layout_marginStart="44dp"
+                android:layout_marginEnd="44dp"
+                android:layout_marginTop="35dp"
+                android:layout_marginBottom="35dp"
+                android:background="@drawable/layout_xml_slider_thumb"
+                android:id="@+id/preview_36_pdf_image_crop_view_9" />
+            <View
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_gravity="top|end"
+                android:layout_marginStart="44dp"
+                android:layout_marginEnd="44dp"
+                android:layout_marginTop="35dp"
+                android:layout_marginBottom="35dp"
+                android:background="@drawable/layout_xml_slider_thumb"
+                android:id="@+id/preview_36_pdf_image_crop_view_10" />
+            <View
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_gravity="bottom|start"
+                android:layout_marginStart="44dp"
+                android:layout_marginEnd="44dp"
+                android:layout_marginTop="35dp"
+                android:layout_marginBottom="35dp"
+                android:background="@drawable/layout_xml_slider_thumb"
+                android:id="@+id/preview_36_pdf_image_crop_view_11" />
+            <View
+                android:layout_width="10dp"
+                android:layout_height="10dp"
+                android:layout_gravity="bottom|end"
+                android:layout_marginStart="44dp"
+                android:layout_marginEnd="44dp"
+                android:layout_marginTop="35dp"
+                android:layout_marginBottom="35dp"
+                android:background="@drawable/layout_xml_slider_thumb"
+                android:id="@+id/preview_36_pdf_image_crop_view_12" />
+        </FrameLayout>
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/preview_36_pdf_image_crop_reset"
+            android:text="@string/pdf_crop_reset"
+            android:textAllCaps="false"
+            android:textColor="@color/layout_xml_text"
+            android:textSize="14sp"
+            android:fontFamily="sans-serif"
+            android:minHeight="44dp"
+            android:minWidth="0dp"
+            android:background="@drawable/layout_xml_button_outline"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp" />
+        <Space
+            android:layout_width="1dp"
+            android:layout_height="12dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:id="@+id/preview_36_pdf_image_crop_linearlayout_15">
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/preview_36_pdf_image_crop_cancel"
+                android:text="@android:string/cancel"
+                android:textAllCaps="false"
+                android:textColor="@color/layout_xml_text"
+                android:textSize="14sp"
+                android:fontFamily="sans-serif"
+                android:minHeight="44dp"
+                android:minWidth="0dp"
+                android:background="@drawable/layout_xml_button_outline"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:layout_weight="1"
+                android:layout_marginEnd="10dp" />
+            <Button
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/preview_36_pdf_image_crop_apply"
+                android:text="@string/pdf_image_apply"
+                android:textAllCaps="false"
+                android:textColor="@color/layout_xml_on_primary"
+                android:textSize="14sp"
+                android:fontFamily="sans-serif"
+                android:minHeight="44dp"
+                android:minWidth="0dp"
+                android:background="@drawable/layout_xml_button_filled"
+                android:paddingStart="12dp"
+                android:paddingEnd="12dp"
+                android:layout_weight="1" />
+        </LinearLayout>
+    </LinearLayout>
+</FrameLayout>

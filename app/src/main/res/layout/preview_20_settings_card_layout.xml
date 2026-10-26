@@ -1,11 +1,518 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Diseño compartido con SettingsScreen; datos de ejemplo en src/debug.
-     Abrir con la variante debug compilada. tools:composableName renderiza el composable real. -->
-<androidx.compose.ui.platform.ComposeView
+<!-- Vistas Android editables. Referencia de diseño: Compose; mapa en doc/layout_compose_previews.json. -->
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/preview_20_settings_card_layout_compose"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/layout_xml_screen"
+    android:theme="@style/LayoutXmlPreviewTheme"
     tools:context="com.example.mynotes.MainActivity"
-    tools:composableName="com.example.mynotes.preview.LayoutPreviewsKt.Preview20SettingsCardLayout" />
+    tools:ignore="HardcodedText,ContentDescription"
+    android:id="@+id/preview_20_settings_card_layout_framelayout_0">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:id="@+id/preview_20_settings_card_layout_linearlayout_1">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:orientation="horizontal"
+            android:paddingStart="4dp"
+            android:paddingEnd="12dp"
+            android:gravity="center_vertical"
+            android:id="@+id/preview_20_settings_card_layout_linearlayout_2">
+            <ImageButton
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:id="@+id/preview_20_settings_card_layout_back"
+                android:src="@drawable/preview_ic_arrow_back"
+                android:tint="@color/layout_xml_text"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/mock_back"
+                android:padding="12dp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/mock_settings"
+                android:textSize="24sp"
+                android:textColor="@color/layout_xml_text"
+                android:fontFamily="sans-serif"
+                android:textStyle="bold"
+                android:layout_marginStart="8dp"
+                android:id="@+id/preview_20_settings_card_layout_textview_4" />
+        </LinearLayout>
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:id="@+id/preview_20_settings_card_layout_framelayout_5">
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fillViewport="true"
+                android:scrollbars="none"
+                android:id="@+id/preview_20_settings_card_layout_scrollview_6">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingStart="14dp"
+                    android:paddingEnd="14dp"
+                    android:paddingBottom="32dp"
+                    android:id="@+id/preview_20_settings_card_layout_linearlayout_7">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:id="@+id/preview_20_settings_card_layout_panel_cards"
+                        android:background="@drawable/layout_xml_panel"
+                        android:padding="14dp"
+                        android:layout_marginBottom="12dp">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/extreme_note_cards"
+                            android:textSize="16sp"
+                            android:textColor="@color/layout_xml_text"
+                            android:fontFamily="sans-serif"
+                            android:textStyle="bold"
+                            android:id="@+id/preview_20_settings_card_layout_textview_9" />
+                        <Space
+                            android:layout_width="1dp"
+                            android:layout_height="8dp" />
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:minHeight="24dp"
+                            android:gravity="center_vertical"
+                            android:id="@+id/preview_20_settings_card_layout_linearlayout_11">
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:text="@string/extreme_card_radius"
+                                android:textSize="14sp"
+                                android:textColor="@color/layout_xml_text"
+                                android:fontFamily="sans-serif"
+                                android:textStyle="bold"
+                                android:layout_weight="1"
+                                android:id="@+id/preview_20_settings_card_layout_textview_12" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="18 dp"
+                                android:textSize="12sp"
+                                android:textColor="@color/layout_xml_text"
+                                android:fontFamily="sans-serif"
+                                android:textStyle="normal"
+                                android:id="@+id/preview_20_settings_card_layout_card_radius_value"
+                                android:layout_marginStart="10dp" />
+                        </LinearLayout>
+                        <SeekBar
+                            android:layout_width="match_parent"
+                            android:layout_height="44dp"
+                            android:id="@+id/preview_20_settings_card_layout_card_radius"
+                            android:max="1000"
+                            android:progress="500"
+                            android:progressDrawable="@drawable/layout_xml_slider_progress"
+                            android:thumb="@drawable/layout_xml_slider_thumb"
+                            android:thumbOffset="9dp"
+                            android:paddingStart="14dp"
+                            android:paddingEnd="14dp"
+                            android:splitTrack="false"
+                            android:contentDescription="@string/extreme_card_radius" />
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:minHeight="24dp"
+                            android:gravity="center_vertical"
+                            android:id="@+id/preview_20_settings_card_layout_linearlayout_15">
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:text="@string/extreme_card_elevation"
+                                android:textSize="14sp"
+                                android:textColor="@color/layout_xml_text"
+                                android:fontFamily="sans-serif"
+                                android:textStyle="bold"
+                                android:layout_weight="1"
+                                android:id="@+id/preview_20_settings_card_layout_textview_16" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="1.5 dp"
+                                android:textSize="12sp"
+                                android:textColor="@color/layout_xml_text"
+                                android:fontFamily="sans-serif"
+                                android:textStyle="normal"
+                                android:id="@+id/preview_20_settings_card_layout_card_elevation_value"
+                                android:layout_marginStart="10dp" />
+                        </LinearLayout>
+                        <SeekBar
+                            android:layout_width="match_parent"
+                            android:layout_height="44dp"
+                            android:id="@+id/preview_20_settings_card_layout_card_elevation"
+                            android:max="1000"
+                            android:progress="125"
+                            android:progressDrawable="@drawable/layout_xml_slider_progress"
+                            android:thumb="@drawable/layout_xml_slider_thumb"
+                            android:thumbOffset="9dp"
+                            android:paddingStart="14dp"
+                            android:paddingEnd="14dp"
+                            android:splitTrack="false"
+                            android:contentDescription="@string/extreme_card_elevation" />
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:minHeight="24dp"
+                            android:gravity="center_vertical"
+                            android:id="@+id/preview_20_settings_card_layout_linearlayout_19">
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:text="@string/extreme_card_padding"
+                                android:textSize="14sp"
+                                android:textColor="@color/layout_xml_text"
+                                android:fontFamily="sans-serif"
+                                android:textStyle="bold"
+                                android:layout_weight="1"
+                                android:id="@+id/preview_20_settings_card_layout_textview_20" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="12 dp"
+                                android:textSize="12sp"
+                                android:textColor="@color/layout_xml_text"
+                                android:fontFamily="sans-serif"
+                                android:textStyle="normal"
+                                android:id="@+id/preview_20_settings_card_layout_card_padding_value"
+                                android:layout_marginStart="10dp" />
+                        </LinearLayout>
+                        <SeekBar
+                            android:layout_width="match_parent"
+                            android:layout_height="44dp"
+                            android:id="@+id/preview_20_settings_card_layout_card_padding"
+                            android:max="1000"
+                            android:progress="333"
+                            android:progressDrawable="@drawable/layout_xml_slider_progress"
+                            android:thumb="@drawable/layout_xml_slider_thumb"
+                            android:thumbOffset="9dp"
+                            android:paddingStart="14dp"
+                            android:paddingEnd="14dp"
+                            android:splitTrack="false"
+                            android:contentDescription="@string/extreme_card_padding" />
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:minHeight="24dp"
+                            android:gravity="center_vertical"
+                            android:id="@+id/preview_20_settings_card_layout_linearlayout_23">
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:text="@string/extreme_image_height"
+                                android:textSize="14sp"
+                                android:textColor="@color/layout_xml_text"
+                                android:fontFamily="sans-serif"
+                                android:textStyle="bold"
+                                android:layout_weight="1"
+                                android:id="@+id/preview_20_settings_card_layout_textview_24" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="112 dp"
+                                android:textSize="12sp"
+                                android:textColor="@color/layout_xml_text"
+                                android:fontFamily="sans-serif"
+                                android:textStyle="normal"
+                                android:id="@+id/preview_20_settings_card_layout_image_height_value"
+                                android:layout_marginStart="10dp" />
+                        </LinearLayout>
+                        <SeekBar
+                            android:layout_width="match_parent"
+                            android:layout_height="44dp"
+                            android:id="@+id/preview_20_settings_card_layout_image_height"
+                            android:max="1000"
+                            android:progress="270"
+                            android:progressDrawable="@drawable/layout_xml_slider_progress"
+                            android:thumb="@drawable/layout_xml_slider_thumb"
+                            android:thumbOffset="9dp"
+                            android:paddingStart="14dp"
+                            android:paddingEnd="14dp"
+                            android:splitTrack="false"
+                            android:contentDescription="@string/extreme_image_height" />
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:minHeight="24dp"
+                            android:gravity="center_vertical"
+                            android:id="@+id/preview_20_settings_card_layout_linearlayout_27">
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:text="@string/extreme_note_outline_width"
+                                android:textSize="14sp"
+                                android:textColor="@color/layout_xml_text"
+                                android:fontFamily="sans-serif"
+                                android:textStyle="bold"
+                                android:layout_weight="1"
+                                android:id="@+id/preview_20_settings_card_layout_textview_28" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="0 dp"
+                                android:textSize="12sp"
+                                android:textColor="@color/layout_xml_text"
+                                android:fontFamily="sans-serif"
+                                android:textStyle="normal"
+                                android:id="@+id/preview_20_settings_card_layout_outline_width_value"
+                                android:layout_marginStart="10dp" />
+                        </LinearLayout>
+                        <SeekBar
+                            android:layout_width="match_parent"
+                            android:layout_height="44dp"
+                            android:id="@+id/preview_20_settings_card_layout_outline_width"
+                            android:max="1000"
+                            android:progress="0"
+                            android:progressDrawable="@drawable/layout_xml_slider_progress"
+                            android:thumb="@drawable/layout_xml_slider_thumb"
+                            android:thumbOffset="9dp"
+                            android:paddingStart="14dp"
+                            android:paddingEnd="14dp"
+                            android:splitTrack="false"
+                            android:contentDescription="@string/extreme_note_outline_width" />
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:minHeight="24dp"
+                            android:gravity="center_vertical"
+                            android:id="@+id/preview_20_settings_card_layout_linearlayout_31">
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:text="@string/extreme_title_lines"
+                                android:textSize="14sp"
+                                android:textColor="@color/layout_xml_text"
+                                android:fontFamily="sans-serif"
+                                android:textStyle="bold"
+                                android:layout_weight="1"
+                                android:id="@+id/preview_20_settings_card_layout_textview_32" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="4"
+                                android:textSize="12sp"
+                                android:textColor="@color/layout_xml_text"
+                                android:fontFamily="sans-serif"
+                                android:textStyle="normal"
+                                android:id="@+id/preview_20_settings_card_layout_title_lines_value"
+                                android:layout_marginStart="10dp" />
+                        </LinearLayout>
+                        <SeekBar
+                            android:layout_width="match_parent"
+                            android:layout_height="44dp"
+                            android:id="@+id/preview_20_settings_card_layout_title_lines"
+                            android:max="1000"
+                            android:progress="429"
+                            android:progressDrawable="@drawable/layout_xml_slider_progress"
+                            android:thumb="@drawable/layout_xml_slider_thumb"
+                            android:thumbOffset="9dp"
+                            android:paddingStart="14dp"
+                            android:paddingEnd="14dp"
+                            android:splitTrack="false"
+                            android:contentDescription="@string/extreme_title_lines" />
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:minHeight="24dp"
+                            android:gravity="center_vertical"
+                            android:id="@+id/preview_20_settings_card_layout_linearlayout_35">
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:text="@string/extreme_content_lines"
+                                android:textSize="14sp"
+                                android:textColor="@color/layout_xml_text"
+                                android:fontFamily="sans-serif"
+                                android:textStyle="bold"
+                                android:layout_weight="1"
+                                android:id="@+id/preview_20_settings_card_layout_textview_36" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="6"
+                                android:textSize="12sp"
+                                android:textColor="@color/layout_xml_text"
+                                android:fontFamily="sans-serif"
+                                android:textStyle="normal"
+                                android:id="@+id/preview_20_settings_card_layout_content_lines_value"
+                                android:layout_marginStart="10dp" />
+                        </LinearLayout>
+                        <SeekBar
+                            android:layout_width="match_parent"
+                            android:layout_height="44dp"
+                            android:id="@+id/preview_20_settings_card_layout_content_lines"
+                            android:max="1000"
+                            android:progress="333"
+                            android:progressDrawable="@drawable/layout_xml_slider_progress"
+                            android:thumb="@drawable/layout_xml_slider_thumb"
+                            android:thumbOffset="9dp"
+                            android:paddingStart="14dp"
+                            android:paddingEnd="14dp"
+                            android:splitTrack="false"
+                            android:contentDescription="@string/extreme_content_lines" />
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:minHeight="24dp"
+                            android:gravity="center_vertical"
+                            android:id="@+id/preview_20_settings_card_layout_linearlayout_39">
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:text="@string/extreme_line_spacing"
+                                android:textSize="14sp"
+                                android:textColor="@color/layout_xml_text"
+                                android:fontFamily="sans-serif"
+                                android:textStyle="bold"
+                                android:layout_weight="1"
+                                android:id="@+id/preview_20_settings_card_layout_textview_40" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="1.2x"
+                                android:textSize="12sp"
+                                android:textColor="@color/layout_xml_text"
+                                android:fontFamily="sans-serif"
+                                android:textStyle="normal"
+                                android:id="@+id/preview_20_settings_card_layout_line_spacing_value"
+                                android:layout_marginStart="10dp" />
+                        </LinearLayout>
+                        <SeekBar
+                            android:layout_width="match_parent"
+                            android:layout_height="44dp"
+                            android:id="@+id/preview_20_settings_card_layout_line_spacing"
+                            android:max="1000"
+                            android:progress="250"
+                            android:progressDrawable="@drawable/layout_xml_slider_progress"
+                            android:thumb="@drawable/layout_xml_slider_thumb"
+                            android:thumbOffset="9dp"
+                            android:paddingStart="14dp"
+                            android:paddingEnd="14dp"
+                            android:splitTrack="false"
+                            android:contentDescription="@string/extreme_line_spacing" />
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:minHeight="48dp"
+                            android:gravity="center_vertical"
+                            android:id="@+id/preview_20_settings_card_layout_linearlayout_43">
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:text="@string/extreme_show_date"
+                                android:textSize="14sp"
+                                android:textColor="@color/layout_xml_text"
+                                android:fontFamily="sans-serif"
+                                android:textStyle="normal"
+                                android:layout_weight="1"
+                                android:layout_marginEnd="10dp"
+                                android:id="@+id/preview_20_settings_card_layout_textview_44" />
+                            <Switch
+                                android:layout_width="52dp"
+                                android:layout_height="32dp"
+                                android:id="@+id/preview_20_settings_card_layout_show_date"
+                                android:checked="true"
+                                android:switchMinWidth="52dp"
+                                android:thumb="@drawable/layout_xml_switch_thumb"
+                                android:track="@drawable/layout_xml_switch_track"
+                                android:splitTrack="false"
+                                android:contentDescription="@string/extreme_show_date"
+                                android:showText="false" />
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:minHeight="48dp"
+                            android:gravity="center_vertical"
+                            android:id="@+id/preview_20_settings_card_layout_linearlayout_46">
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:text="@string/extreme_show_category"
+                                android:textSize="14sp"
+                                android:textColor="@color/layout_xml_text"
+                                android:fontFamily="sans-serif"
+                                android:textStyle="normal"
+                                android:layout_weight="1"
+                                android:layout_marginEnd="10dp"
+                                android:id="@+id/preview_20_settings_card_layout_textview_47" />
+                            <Switch
+                                android:layout_width="52dp"
+                                android:layout_height="32dp"
+                                android:id="@+id/preview_20_settings_card_layout_show_category"
+                                android:checked="true"
+                                android:switchMinWidth="52dp"
+                                android:thumb="@drawable/layout_xml_switch_thumb"
+                                android:track="@drawable/layout_xml_switch_track"
+                                android:splitTrack="false"
+                                android:contentDescription="@string/extreme_show_category"
+                                android:showText="false" />
+                        </LinearLayout>
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:minHeight="48dp"
+                            android:gravity="center_vertical"
+                            android:id="@+id/preview_20_settings_card_layout_linearlayout_49">
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:text="@string/extreme_show_favorite"
+                                android:textSize="14sp"
+                                android:textColor="@color/layout_xml_text"
+                                android:fontFamily="sans-serif"
+                                android:textStyle="normal"
+                                android:layout_weight="1"
+                                android:layout_marginEnd="10dp"
+                                android:id="@+id/preview_20_settings_card_layout_textview_50" />
+                            <Switch
+                                android:layout_width="52dp"
+                                android:layout_height="32dp"
+                                android:id="@+id/preview_20_settings_card_layout_show_favorite"
+                                android:checked="true"
+                                android:switchMinWidth="52dp"
+                                android:thumb="@drawable/layout_xml_switch_thumb"
+                                android:track="@drawable/layout_xml_switch_track"
+                                android:splitTrack="false"
+                                android:contentDescription="@string/extreme_show_favorite"
+                                android:showText="false" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </ScrollView>
+            <View
+                android:layout_width="4dp"
+                android:layout_height="54dp"
+                android:id="@+id/preview_20_settings_card_layout_scroll_capsule"
+                android:layout_gravity="end|top"
+                android:layout_marginEnd="4dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/layout_xml_scroll_capsule"
+                android:importantForAccessibility="no"
+                tools:visibility="visible" />
+        </FrameLayout>
+    </LinearLayout>
+</FrameLayout>

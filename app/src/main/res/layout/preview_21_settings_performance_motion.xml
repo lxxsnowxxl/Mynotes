@@ -1,11 +1,195 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Diseño compartido con SettingsScreen; datos de ejemplo en src/debug.
-     Abrir con la variante debug compilada. tools:composableName renderiza el composable real. -->
-<androidx.compose.ui.platform.ComposeView
+<!-- Vistas Android editables. Referencia de diseño: Compose; mapa en doc/layout_compose_previews.json. -->
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/preview_21_settings_performance_motion_compose"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/layout_xml_screen"
+    android:theme="@style/LayoutXmlPreviewTheme"
     tools:context="com.example.mynotes.MainActivity"
-    tools:composableName="com.example.mynotes.preview.LayoutPreviewsKt.Preview21SettingsPerformanceMotion" />
+    tools:ignore="HardcodedText,ContentDescription"
+    android:id="@+id/preview_21_settings_performance_motion_framelayout_0">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:id="@+id/preview_21_settings_performance_motion_linearlayout_1">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="64dp"
+            android:orientation="horizontal"
+            android:paddingStart="4dp"
+            android:paddingEnd="12dp"
+            android:gravity="center_vertical"
+            android:id="@+id/preview_21_settings_performance_motion_linearlayout_2">
+            <ImageButton
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:id="@+id/preview_21_settings_performance_motion_back"
+                android:src="@drawable/preview_ic_arrow_back"
+                android:tint="@color/layout_xml_text"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:contentDescription="@string/mock_back"
+                android:padding="12dp" />
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/mock_settings"
+                android:textSize="24sp"
+                android:textColor="@color/layout_xml_text"
+                android:fontFamily="sans-serif"
+                android:textStyle="bold"
+                android:layout_marginStart="8dp"
+                android:id="@+id/preview_21_settings_performance_motion_textview_4" />
+        </LinearLayout>
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:id="@+id/preview_21_settings_performance_motion_framelayout_5">
+            <ScrollView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:fillViewport="true"
+                android:scrollbars="none"
+                android:id="@+id/preview_21_settings_performance_motion_scrollview_6">
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingStart="14dp"
+                    android:paddingEnd="14dp"
+                    android:paddingBottom="32dp"
+                    android:id="@+id/preview_21_settings_performance_motion_linearlayout_7">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:id="@+id/preview_21_settings_performance_motion_panel_performance"
+                        android:background="@drawable/layout_xml_panel"
+                        android:padding="14dp"
+                        android:layout_marginBottom="12dp">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/performance_mode_title"
+                            android:textSize="16sp"
+                            android:textColor="@color/layout_xml_text"
+                            android:fontFamily="sans-serif"
+                            android:textStyle="bold"
+                            android:id="@+id/preview_21_settings_performance_motion_textview_9" />
+                        <Space
+                            android:layout_width="1dp"
+                            android:layout_height="8dp" />
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:minHeight="48dp"
+                            android:gravity="center_vertical"
+                            android:id="@+id/preview_21_settings_performance_motion_linearlayout_11">
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:text="@string/performance_mode_title"
+                                android:textSize="14sp"
+                                android:textColor="@color/layout_xml_text"
+                                android:fontFamily="sans-serif"
+                                android:textStyle="bold"
+                                android:layout_weight="1"
+                                android:id="@+id/preview_21_settings_performance_motion_textview_12" />
+                            <Spinner
+                                android:layout_width="wrap_content"
+                                android:layout_height="48dp"
+                                android:id="@+id/preview_21_settings_performance_motion_performance"
+                                android:entries="@array/layout_xml_performance_options"
+                                android:spinnerMode="dropdown"
+                                android:contentDescription="@string/performance_mode_title" />
+                        </LinearLayout>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/performance_mode_description"
+                            android:textSize="12sp"
+                            android:textColor="@color/layout_xml_secondary"
+                            android:fontFamily="sans-serif"
+                            android:textStyle="normal"
+                            android:id="@+id/preview_21_settings_performance_motion_textview_14" />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:id="@+id/preview_21_settings_performance_motion_panel_motion"
+                        android:background="@drawable/layout_xml_panel"
+                        android:padding="14dp"
+                        android:layout_marginBottom="12dp">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/motion_title"
+                            android:textSize="16sp"
+                            android:textColor="@color/layout_xml_text"
+                            android:fontFamily="sans-serif"
+                            android:textStyle="bold"
+                            android:id="@+id/preview_21_settings_performance_motion_textview_16" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/motion_description"
+                            android:textSize="12sp"
+                            android:textColor="@color/layout_xml_secondary"
+                            android:fontFamily="sans-serif"
+                            android:textStyle="normal"
+                            android:layout_marginTop="4dp"
+                            android:id="@+id/preview_21_settings_performance_motion_textview_17" />
+                        <Space
+                            android:layout_width="1dp"
+                            android:layout_height="8dp" />
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:minHeight="48dp"
+                            android:gravity="center_vertical"
+                            android:id="@+id/preview_21_settings_performance_motion_linearlayout_19">
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:text="@string/motion_enabled"
+                                android:textSize="14sp"
+                                android:textColor="@color/layout_xml_text"
+                                android:fontFamily="sans-serif"
+                                android:textStyle="normal"
+                                android:layout_weight="1"
+                                android:layout_marginEnd="10dp"
+                                android:id="@+id/preview_21_settings_performance_motion_textview_20" />
+                            <Switch
+                                android:layout_width="52dp"
+                                android:layout_height="32dp"
+                                android:id="@+id/preview_21_settings_performance_motion_animations_enabled"
+                                android:checked="false"
+                                android:switchMinWidth="52dp"
+                                android:thumb="@drawable/layout_xml_switch_thumb"
+                                android:track="@drawable/layout_xml_switch_track"
+                                android:splitTrack="false"
+                                android:contentDescription="@string/motion_enabled"
+                                android:showText="false" />
+                        </LinearLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </ScrollView>
+            <View
+                android:layout_width="4dp"
+                android:layout_height="54dp"
+                android:id="@+id/preview_21_settings_performance_motion_scroll_capsule"
+                android:layout_gravity="end|top"
+                android:layout_marginEnd="4dp"
+                android:layout_marginTop="10dp"
+                android:background="@drawable/layout_xml_scroll_capsule"
+                android:importantForAccessibility="no"
+                tools:visibility="visible" />
+        </FrameLayout>
+    </LinearLayout>
+</FrameLayout>
