@@ -15,5 +15,4 @@
     <string name="option_menu_color_submenu">Color submenu</string>
     <string name="option_menu_move_up">Move up</string>
     <string name="option_menu_move_down">Move down</string>
-    <string name="option_menu_reset">Reset menu</string>
 </resources>

@@ -5,7 +5,6 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -51,7 +50,7 @@ abstract class ImmersivePdfActivity : ComponentActivity() {
             latestSettings = settings
             val motionSettings = remember { intent.pdfScreenMotionOr(settings) }
             activeMotionSettings = motionSettings
-            val effectiveDark = settings.effectiveDarkTheme(isSystemInDarkTheme())
+            val effectiveDark = settings.effectiveDarkTheme()
             SyncDisplayPerformance(window = window, performanceMode = settings.performanceMode)
             SyncUiFeedback(context = this@ImmersivePdfActivity, settings = settings)
             MyNotesTheme(settings = settings, darkTheme = effectiveDark) {

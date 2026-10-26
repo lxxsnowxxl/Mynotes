@@ -1,4 +1,6 @@
 package com.example.mynotes.ui
+
+import com.example.mynotes.ui.preview.LocalLayoutPreview
 import com.example.mynotes.ui.components.AppHeading
 import com.example.mynotes.ui.theme.rememberUiTextColors
 import com.example.mynotes.ui.theme.rememberUiContentColors
@@ -108,7 +110,7 @@ import com.example.mynotes.ui.sound.UiSound
 import com.example.mynotes.ui.sound.UiSoundPlayer
 import com.example.mynotes.ui.theme.resolveSecondaryUiTextColor
 import com.example.mynotes.ui.theme.resolveUiTextColor
-import com.example.mynotes.viewmodel.NoteViewModel
+import com.example.mynotes.ui.state.NoteActions
 import kotlinx.coroutines.delay
 
 private enum class NoteFilter {
@@ -148,7 +150,7 @@ private fun noteFilterFromWidgetKey(key: String?): NoteFilter = when (key) {
 @Composable
 fun NotesScreen(
     notes: List<Note>,
-    noteViewModel: NoteViewModel,
+    noteViewModel: NoteActions,
     settings: AppSettings,
     initialFilterKey: String? = null,
     requestSearchFocus: Boolean = false,
@@ -161,6 +163,7 @@ fun NotesScreen(
     onOpenNote: (Note) -> Unit,
     onEditNote: (Note) -> Unit
 ) {
+    val layoutPreview = LocalLayoutPreview.current
     val allAttachments by
         noteViewModel.allAttachments.collectAsStateWithLifecycle()
     val attachmentIndex = remember(allAttachments) {
@@ -192,9 +195,9 @@ fun NotesScreen(
         }
     var query by
         rememberSaveable {
-            mutableStateOf("")
+            mutableStateOf(layoutPreview?.query.orEmpty())
         }
-    var effectiveQuery by remember { mutableStateOf("") }
+    var effectiveQuery by remember { mutableStateOf(layoutPreview?.query.orEmpty().trim().lowercase()) }
     LaunchedEffect(query) {
         delay(90)
         effectiveQuery = query.trim().lowercase()
@@ -212,6 +215,7 @@ fun NotesScreen(
     }
     val linkPreviewUrls = textIndex.linkPreviewUrls
     LaunchedEffect(linkPreviewUrls, isGridScrolling, settings.performanceMode) {
+        if (layoutPreview != null) return@LaunchedEffect
         if (!isGridScrolling && linkPreviewUrls.isNotEmpty()) {
             val idleDelayMs = AppMotion.performanceValue(settings.performanceMode, performance = 900L, balanced = 650L, quality = 450L)
             delay(idleDelayMs)
@@ -291,6 +295,7 @@ fun NotesScreen(
     }
 
     LaunchedEffect(qualityScrollPreviewAttachments, settings.performanceMode) {
+        if (layoutPreview != null) return@LaunchedEffect
         if (settings.performanceMode == "quality") {
             listOf("instant", "quality").forEach { mode ->
                 qualityScrollPreviewAttachments.forEach { attachment ->
@@ -521,7 +526,8 @@ private fun QuickCreateFabMenu(
     onAddPdf: () -> Unit,
     onDrawNote: () -> Unit
 ) {
-    var expanded by remember { mutableStateOf(false) }
+    val layoutPreview = LocalLayoutPreview.current
+    var expanded by remember { mutableStateOf(layoutPreview?.quickCreateExpanded == true) }
     BackHandler(enabled = expanded) { expanded = false }
 
     val context = LocalContext.current
@@ -628,8 +634,8 @@ private fun QuickCreateActionButton(
         shape = RoundedCornerShape(24.dp),
         color = containerColor,
         contentColor = contentColor,
-        tonalElevation = 5.dp,
-        shadowElevation = 5.dp
+        tonalElevation = 0.dp,
+        shadowElevation = 0.dp
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 14.dp, vertical = 10.dp),

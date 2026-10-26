@@ -1,5 +1,6 @@
 package com.example.mynotes.reminders
 
+import com.example.mynotes.ui.state.ReminderActions
 import android.content.Context
 import android.content.SharedPreferences
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,14 +15,14 @@ private val ReminderOrder = compareByDescending<Reminder> { it.enabled }.thenBy 
  * Esto evita tocar el esquema de notas/adjuntos y, por tanto, no introduce
  * ninguna migración que pueda poner en riesgo datos existentes.
  */
-class ReminderRepository private constructor(context: Context) {
+class ReminderRepository private constructor(context: Context) : ReminderActions {
     private val appContext = context.applicationContext
     private val preferences = appContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
     @Volatile
     private var lastKnownEncoded: String? = preferences.getString(KEY_REMINDERS, null)
 
     private val _reminders = MutableStateFlow(loadReminders(lastKnownEncoded))
-    val reminders: StateFlow<List<Reminder>> = _reminders.asStateFlow()
+    override val reminders: StateFlow<List<Reminder>> = _reminders.asStateFlow()
 
     private val preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
         if (key == KEY_REMINDERS) {
@@ -44,7 +45,7 @@ class ReminderRepository private constructor(context: Context) {
      */
     fun getReminder(id: Long): Reminder? = _reminders.value.firstOrNull { it.id == id }
 
-    fun upsert(reminder: Reminder) {
+    override fun upsert(reminder: Reminder) {
         val current = _reminders.value
         val index = current.indexOfFirst { it.id == reminder.id }
         val changed = index < 0 || current[index] != reminder
@@ -65,7 +66,7 @@ class ReminderRepository private constructor(context: Context) {
         }
     }
 
-    fun delete(id: Long) {
+    override fun delete(id: Long) {
         ReminderAlarmScheduler.cancel(appContext, id)
         val current = _reminders.value
         val index = current.indexOfFirst { it.id == id }
@@ -75,7 +76,7 @@ class ReminderRepository private constructor(context: Context) {
         save(updated)
     }
 
-    fun setEnabled(id: Long, enabled: Boolean) {
+    override fun setEnabled(id: Long, enabled: Boolean) {
         val reminder = getReminder(id) ?: return
         if (reminder.enabled == enabled) return
         upsert(reminder.copy(enabled = enabled))

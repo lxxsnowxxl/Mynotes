@@ -1,4 +1,6 @@
 package com.example.mynotes.ui
+
+import com.example.mynotes.ui.preview.LocalLayoutPreview
 import com.example.mynotes.ui.theme.rememberUiContentColors
 import com.example.mynotes.ui.theme.rememberAppFontFamily
 import com.example.mynotes.ui.components.AppCircularIconButton
@@ -93,7 +95,6 @@ import com.example.mynotes.ui.components.extractEmbeddedLinkUrls
 import com.example.mynotes.ui.components.stripEmbeddedLinkMetadata
 import com.example.mynotes.ui.components.noteContentForStorage
 import com.example.mynotes.ui.components.rememberPreviewReady
-import com.example.mynotes.ui.openAttachmentViewer
 import com.example.mynotes.settings.AppSettings
 import com.example.mynotes.settings.MenuPreferencePolicy
 import com.example.mynotes.ui.sound.UiActionSound
@@ -142,13 +143,14 @@ fun NoteEditorScreen(settings: AppSettings, initialTitle: String = "", initialCo
     existingAttachments: List<Attachment> = emptyList(),
     onSave: (String, String, String, List<PendingAttachment>, List<Attachment>) -> Unit, onCancel: () -> Unit) {
     val context = LocalContext.current
+    val layoutPreview = LocalLayoutPreview.current
     val recordingStartErrorText = stringResource(R.string.recording_start_error)
     val recordingTooShortText = stringResource(R.string.recording_too_short)
     val microphonePermissionRequiredText = stringResource(R.string.microphone_permission_required)
     val voiceNoteText = stringResource(R.string.voice_note)
     val microphoneUnavailableText = stringResource(R.string.microphone_not_available)
     val hasMicrophone = remember(context) {
-            context.packageManager.hasSystemFeature(PackageManager.FEATURE_MICROPHONE)
+            layoutPreview != null || context.packageManager.hasSystemFeature(PackageManager.FEATURE_MICROPHONE)
         }
     val isLandscape = LocalConfiguration.current.orientation == Configuration.ORIENTATION_LANDSCAPE
     val editorFontFamily = rememberAppFontFamily(settings.font)
@@ -197,7 +199,7 @@ fun NoteEditorScreen(settings: AppSettings, initialTitle: String = "", initialCo
         mutableStateOf<File?>(null)
     }
     var isRecording by remember {
-        mutableStateOf(false)
+        mutableStateOf(layoutPreview?.recording == true)
     }
     var recordingError by remember {
         mutableStateOf<String?>(null)
@@ -207,6 +209,10 @@ fun NoteEditorScreen(settings: AppSettings, initialTitle: String = "", initialCo
                 mutableStateOf(false)
             }
     fun startRecording() {
+        if (layoutPreview != null) {
+            isRecording = true
+            return
+        }
         if (!hasMicrophone) {
             recordingError = microphoneUnavailableText
             return
@@ -644,6 +650,7 @@ private fun AttachmentButton(modifier: Modifier = Modifier, text: String, icon: 
 private fun AttachmentPreview(attachment: PendingAttachment, previewDelayMillis: Long = 0L, performanceMode: String, onRemove: (() -> Unit)?
 ) {
     val context = LocalContext.current
+    val layoutPreview = LocalLayoutPreview.current
     val isBorderlessPreview = attachment.type == "image" || attachment.type == "video" || attachment.name?.substringAfterLast(".", "")
                 ?.equals("pdf", ignoreCase = true) == true
     Card(modifier = Modifier.size(width = 108.dp, height = 108.dp).clickable {
@@ -664,7 +671,8 @@ private fun AttachmentPreview(attachment: PendingAttachment, previewDelayMillis:
                     val previewReady = rememberPreviewReady(attachment.uri, previewDelayMillis)
                     if (previewReady) {
                         val imagePreview by
-                            produceState<android.graphics.Bitmap?>(initialValue = null, key1 = attachment.uri, key2 = performanceMode) {
+                            produceState<android.graphics.Bitmap?>(initialValue = layoutPreview?.mediaBitmap, key1 = attachment.uri, key2 = performanceMode) {
+                                if (layoutPreview != null) return@produceState
                                 value = AttachmentPreviewCache.withPreviewPermit {
                                     AttachmentPreviewCache.loadImagePreview(context = context, uri = attachment.uri,
                                         performanceMode = performanceMode)

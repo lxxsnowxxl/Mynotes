@@ -4,7 +4,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,6 +14,7 @@ import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -22,8 +22,6 @@ import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Switch
-import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
@@ -44,10 +42,8 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.PopupProperties
 import com.example.mynotes.R
 import com.example.mynotes.settings.AppSettings
-import com.example.mynotes.ui.components.AppDropdownMenu
 import com.example.mynotes.ui.motion.ConfigurableAnimatedContent
 import com.example.mynotes.ui.sound.UiActionSound
 import com.example.mynotes.ui.sound.UiSoundPlayer
@@ -188,62 +184,58 @@ fun ExtremeAccentSettingsSection(
         val paletteAccent = remember(settings.backgroundColor) {
             PaletteCatalog.find(settings.backgroundColor).accent
         }
-        val accentRows = remember { (listOf<AccentOption?>(null) + accents).chunked(5) }
-        Column(
+        val accentOptions = remember { listOf<AccentOption?>(null) + accents }
+        LazyRow(
             modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(12.dp)
+            contentPadding = PaddingValues(horizontal = 2.dp, vertical = 2.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            verticalAlignment = Alignment.CenterVertically
         ) {
-            accentRows.forEach { rowItems ->
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    rowItems.forEach { option ->
-                        val key = option?.key ?: "palette"
-                        val color = option?.color ?: paletteAccent
-                        val selected = settings.accentColor == key
-                        val accentInteraction = remember(key) { MutableInteractionSource() }
-                        val checkColor = if (color.luminance() > 0.48f) Color.Black else Color.White
-                        Box(
-                            modifier = Modifier
-                                .size(48.dp)
-                                .drawWithCache {
-                                    val selectedStroke = 3.dp.toPx()
-                                    val normalStroke = 1.dp.toPx()
-                                    val strokeColor = if (selected) panelColors.text
-                                    else panelColors.graphic.copy(alpha = 0.65f)
-                                    val stroke = androidx.compose.ui.graphics.drawscope.Stroke(
-                                        width = if (selected) selectedStroke else normalStroke
-                                    )
-                                    onDrawBehind {
-                                        drawCircle(color = color)
-                                        drawCircle(
-                                            color = strokeColor,
-                                            style = stroke
-                                        )
-                                    }
-                                }
-                                .clickable(
-                                    interactionSource = accentInteraction,
-                                    indication = null
-                                ) {
-                                    UiSoundPlayer.playAction(context = context, action = UiActionSound.Color)
-                                    onAccentColorChange(key)
-                                },
-                            contentAlignment = Alignment.Center
-                        ) {
-                            if (selected) {
-                                Icon(
-                                    imageVector = Icons.Default.Check,
-                                    contentDescription = null,
-                                    tint = checkColor,
-                                    modifier = Modifier.size(22.dp)
+            accentOptions.forEach { option ->
+                val key = option?.key ?: "palette"
+                item(key = key) {
+                    val color = option?.color ?: paletteAccent
+                    val selected = settings.accentColor == key
+                    val accentInteraction = remember(key) { MutableInteractionSource() }
+                    val checkColor = if (color.luminance() > 0.48f) Color.Black else Color.White
+                    Box(
+                        modifier = Modifier
+                            .size(52.dp)
+                            .padding(2.dp)
+                            .drawWithCache {
+                                val selectedStroke = 3.dp.toPx()
+                                val normalStroke = 1.dp.toPx()
+                                val strokeColor = if (selected) panelColors.text
+                                else panelColors.graphic.copy(alpha = 0.65f)
+                                val stroke = androidx.compose.ui.graphics.drawscope.Stroke(
+                                    width = if (selected) selectedStroke else normalStroke
                                 )
+                                onDrawBehind {
+                                    drawCircle(color = color)
+                                    drawCircle(
+                                        color = strokeColor,
+                                        style = stroke
+                                    )
+                                }
                             }
+                            .clickable(
+                                interactionSource = accentInteraction,
+                                indication = null
+                            ) {
+                                UiSoundPlayer.playAction(context = context, action = UiActionSound.Color)
+                                onAccentColorChange(key)
+                            },
+                        contentAlignment = Alignment.Center
+                    ) {
+                        if (selected) {
+                            Icon(
+                                imageVector = Icons.Default.Check,
+                                contentDescription = null,
+                                tint = checkColor,
+                                modifier = Modifier.size(22.dp)
+                            )
                         }
                     }
-                    repeat(5 - rowItems.size) { Spacer(Modifier.size(48.dp)) }
                 }
             }
         }
@@ -420,8 +412,9 @@ fun ExtremeMotionSettingsSection(
 private fun MotionOptionPicker(title: String, selectedKey: String, options: List<SettingsChoiceOption>, onSelected: (String) -> Unit,
     fontFamily: FontFamily, textColor: Color) {
     val context = LocalContext.current
+    val layoutPreview = com.example.mynotes.ui.preview.LocalLayoutPreview.current
     var expanded by remember {
-        mutableStateOf(false)
+        mutableStateOf(title == layoutPreview?.expandedDropdownTitle)
     }
     val selected = options.firstOrNull { it.key == selectedKey }?: options.first()
     // El ancho del popup se adapta a la opción más larga para evitar

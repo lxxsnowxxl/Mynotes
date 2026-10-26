@@ -1,4 +1,6 @@
 package com.example.mynotes.ui
+
+import com.example.mynotes.ui.preview.LocalLayoutPreview
 import com.example.mynotes.ui.components.AppHeading
 import com.example.mynotes.ui.theme.rememberUiTextColors
 import com.example.mynotes.ui.theme.rememberUiTextColor
@@ -77,7 +79,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.example.mynotes.R
 import com.example.mynotes.reminders.Reminder
-import com.example.mynotes.reminders.ReminderRepository
+import com.example.mynotes.ui.state.ReminderActions
 import com.example.mynotes.settings.AppSettings
 import com.example.mynotes.ui.motion.ConfigurableAnimatedContent
 import com.example.mynotes.ui.sound.UiActionSound
@@ -129,12 +131,13 @@ private fun reminderLocale(): Locale {
 @Composable
 fun ReminderScreen(
     settings: AppSettings,
-    repository: ReminderRepository,
+    repository: ReminderActions,
     onBack: () -> Unit,
     initialCreate: Boolean = false
 ) {
+    val layoutPreview = LocalLayoutPreview.current
     val reminders by repository.reminders.collectAsStateWithLifecycle()
-    var editingReminderId by rememberSaveable { mutableStateOf<Long?>(null) }
+    var editingReminderId by rememberSaveable { mutableStateOf(layoutPreview?.reminderEditingId) }
     var creatingReminder by rememberSaveable { mutableStateOf(initialCreate) }
 
     val editingReminder = editingReminderId?.let { id -> reminders.firstOrNull { it.id == id } }
@@ -396,7 +399,7 @@ private fun ReminderCard(
 private fun ReminderEditor(
     settings: AppSettings,
     reminder: Reminder?,
-    repository: ReminderRepository,
+    repository: ReminderActions,
     onDone: () -> Unit,
     onCancel: () -> Unit
 ) {

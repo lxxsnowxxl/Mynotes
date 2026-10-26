@@ -61,8 +61,6 @@
     <string name="mock_palette_lavender">Lavender</string>
     <string name="mock_palette_rose">Rose</string>
     <string name="mock_palette_tone">Palette tone</string>
-    <string name="mock_background_intensity">Background intensity</string>
-    <string name="mock_header_intensity">Header intensity</string>
     <string name="mock_text_color">Text color</string>
 <string name="mock_black">Black</string>
     <string name="mock_white">White</string>

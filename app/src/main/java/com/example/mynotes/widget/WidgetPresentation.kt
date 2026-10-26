@@ -1,7 +1,7 @@
 package com.example.mynotes.widget
 
 import android.content.Context
-import android.view.View
+import android.graphics.Bitmap
 import android.widget.RemoteViews
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
@@ -9,9 +9,8 @@ import androidx.compose.ui.graphics.toArgb
 import com.example.mynotes.R
 import com.example.mynotes.data.Attachment
 import com.example.mynotes.data.Note
-import com.example.mynotes.settings.SettingsRepository
+import com.example.mynotes.settings.WidgetSettings
 import com.example.mynotes.ui.theme.PaletteCatalog
-import kotlinx.coroutines.flow.first
 import java.text.SimpleDateFormat
 import java.util.Date
 
@@ -22,20 +21,19 @@ object WidgetPresentation {
         option = RegexOption.IGNORE_CASE
     )
     private val WidgetUrlRegex = Regex("""https?://[^\s<>"']+""", RegexOption.IGNORE_CASE)
+    private val WidgetBlankLinesRegex = Regex("""\n{3,}""")
+    private val WidgetPaletteKeyRegex = Regex("[^a-z0-9_]")
 
     private fun visibleNoteContent(raw: String): String = raw
         .replace(WidgetEmbeddedLinkMarkerRegex, "")
         .replace(WidgetUrlRegex, "")
-        .replace(Regex("""\n{3,}"""), "\n\n")
+        .replace(WidgetBlankLinesRegex, "\n\n")
         .trim()
 
     data class WidgetThemeSpec(
-        val dark: Boolean,
         val rootBackgroundRes: Int,
-        val cardBackgroundRes: Int,
         val noteRowBackgroundRes: Int,
         val detailCardBackgroundRes: Int,
-        val metricCardBackgroundRes: Int,
         val actionBackgroundRes: Int,
         val primaryActionBackgroundRes: Int,
         val textPrimary: Int,
@@ -44,27 +42,34 @@ object WidgetPresentation {
         val onAction: Int,
         val onPrimaryAction: Int,
         val accent: Int,
-        val countBadgeBackgroundRes: Int,
-        val countBadgeText: Int,
         val thumbnailBackgroundRes: Int,
-        val chipBackgroundRes: Int,
-        val rootBackgroundColor: Int,
-        val cardBackgroundColor: Int,
-        val noteRowBackgroundColor: Int,
-        val detailCardBackgroundColor: Int,
-        val metricCardBackgroundColor: Int,
-        val thumbnailBackgroundColor: Int,
-        val chipBackgroundColor: Int
+        val chipBackgroundRes: Int
     )
 
-    suspend fun theme(context: Context): WidgetThemeSpec {
+    private val FallbackTheme = WidgetThemeSpec(
+        rootBackgroundRes = R.drawable.widget_surface_screen_dark,
+        noteRowBackgroundRes = R.drawable.widget_note_card_dark,
+        detailCardBackgroundRes = R.drawable.widget_detail_card_dark,
+        actionBackgroundRes = R.drawable.widget_action_circle_dark,
+        primaryActionBackgroundRes = R.drawable.widget_action_primary_dark,
+        textPrimary = 0xFFF6F4FF.toInt(),
+        textSecondary = 0xFFD3D6FF.toInt(),
+        textMuted = 0xFFB2B6E5.toInt(),
+        onAction = 0xFFFFFFFF.toInt(),
+        onPrimaryAction = 0xFFFFFFFF.toInt(),
+        accent = 0xFF666666.toInt(),
+        thumbnailBackgroundRes = R.drawable.widget_thumb_background_dark,
+        chipBackgroundRes = R.drawable.widget_chip_dark
+    )
+
+    internal fun theme(context: Context, settings: WidgetSettings?): WidgetThemeSpec {
+        if (settings == null) return FallbackTheme
         return runCatching {
-            val settings = SettingsRepository(context.applicationContext).settings.first()
             val palette = PaletteCatalog.find(settings.backgroundColor)
-            val toneIndex = settings.backgroundToneIndex.coerceIn(0, 3)
-            val selectedTone = palette.tones.getOrElse(toneIndex) { palette.tones.first() }
-            val dark = settings.darkMode || selectedTone.luminance() < 0.48f || toneIndex >= 2
-            val key = palette.key.replace(Regex("[^a-z0-9_]"), "_")
+            val toneIndex = palette.normalizeToneIndex(settings.backgroundToneIndex)
+            val selectedTone = palette.tones[toneIndex]
+            val dark = settings.darkMode || selectedTone.luminance() < 0.48f || toneIndex >= palette.darkToneStartIndex
+            val key = palette.key.replace(WidgetPaletteKeyRegex, "_")
 
             /*
              * Compact widget theming:
@@ -94,19 +99,10 @@ object WidgetPresentation {
             } else {
                 blend(selectedTone, Color.Black, 0.36f)
             }
-            val countColor = if (dark) {
-                blend(selectedTone, Color.White, 0.82f)
-            } else {
-                blend(selectedTone, Color.Black, 0.42f)
-            }
-
             WidgetThemeSpec(
-                dark = dark,
                 rootBackgroundRes = themedRoot(if (dark) R.drawable.widget_surface_screen_dark else R.drawable.widget_surface_screen_light),
-                cardBackgroundRes = if (dark) R.drawable.widget_panel_card_dark else R.drawable.widget_panel_card_light,
                 noteRowBackgroundRes = if (dark) R.drawable.widget_note_card_dark else R.drawable.widget_note_card_light,
                 detailCardBackgroundRes = if (dark) R.drawable.widget_detail_card_dark else R.drawable.widget_detail_card_light,
-                metricCardBackgroundRes = if (dark) R.drawable.widget_metric_card_dark else R.drawable.widget_metric_card_light,
                 actionBackgroundRes = if (dark) R.drawable.widget_action_circle_dark else R.drawable.widget_action_circle_light,
                 primaryActionBackgroundRes = if (dark) R.drawable.widget_action_primary_dark else R.drawable.widget_action_primary_light,
                 textPrimary = if (dark) 0xFFF6F4FF.toInt() else 0xFF0F1115.toInt(),
@@ -115,57 +111,29 @@ object WidgetPresentation {
                 onAction = contrastText(actionColor),
                 onPrimaryAction = contrastText(primaryColor),
                 accent = palette.accent.toArgb(),
-                countBadgeBackgroundRes = if (dark) R.drawable.widget_count_pill_dark else R.drawable.widget_count_pill_light,
-                countBadgeText = contrastText(countColor),
                 thumbnailBackgroundRes = if (dark) R.drawable.widget_thumb_background_dark else R.drawable.widget_thumb_background_light,
-                chipBackgroundRes = if (dark) R.drawable.widget_chip_dark else R.drawable.widget_chip_light,
-                rootBackgroundColor = selectedTone.toArgb(),
-                cardBackgroundColor = selectedTone.toArgb(),
-                noteRowBackgroundColor = selectedTone.toArgb(),
-                detailCardBackgroundColor = selectedTone.toArgb(),
-                metricCardBackgroundColor = selectedTone.toArgb(),
-                thumbnailBackgroundColor = selectedTone.toArgb(),
-                chipBackgroundColor = selectedTone.toArgb()
+                chipBackgroundRes = if (dark) R.drawable.widget_chip_dark else R.drawable.widget_chip_light
             )
-        }.getOrDefault(
-            WidgetThemeSpec(
-                dark = true,
-                rootBackgroundRes = R.drawable.widget_surface_screen_dark,
-                cardBackgroundRes = R.drawable.widget_panel_card_dark,
-                noteRowBackgroundRes = R.drawable.widget_note_card_dark,
-                detailCardBackgroundRes = R.drawable.widget_detail_card_dark,
-                metricCardBackgroundRes = R.drawable.widget_metric_card_dark,
-                actionBackgroundRes = R.drawable.widget_action_circle_dark,
-                primaryActionBackgroundRes = R.drawable.widget_action_primary_dark,
-                textPrimary = 0xFFF6F4FF.toInt(),
-                textSecondary = 0xFFD3D6FF.toInt(),
-                textMuted = 0xFFB2B6E5.toInt(),
-                onAction = 0xFFFFFFFF.toInt(),
-                onPrimaryAction = 0xFFFFFFFF.toInt(),
-                accent = 0xFF666666.toInt(),
-                countBadgeBackgroundRes = R.drawable.widget_count_pill_dark,
-                countBadgeText = 0xFF2F2A31.toInt(),
-                thumbnailBackgroundRes = R.drawable.widget_thumb_background_dark,
-                chipBackgroundRes = R.drawable.widget_chip_dark,
-                rootBackgroundColor = 0xFF5F5F5F.toInt(),
-                cardBackgroundColor = 0xFF767676.toInt(),
-                noteRowBackgroundColor = 0xFF858585.toInt(),
-                detailCardBackgroundColor = 0xFF8B8B8B.toInt(),
-                metricCardBackgroundColor = 0xFF808080.toInt(),
-                thumbnailBackgroundColor = 0xFF707070.toInt(),
-                chipBackgroundColor = 0xFF555555.toInt()
-            )
-        )
+        }.getOrDefault(FallbackTheme)
     }
 
-    suspend fun accentColor(context: Context): Int = theme(context).accent
-
-    suspend fun bindNoteRow(
-        context: Context, textContext: Context, views: RemoteViews, note: Note?, visual: Attachment?, theme: WidgetThemeSpec,
-        rowId: Int, titleId: Int, previewId: Int, metaId: Int, accentId: Int, thumbId: Int, previewLength: Int
-    ): Boolean {
-        views.setViewVisibility(rowId, if (note == null) View.GONE else View.VISIBLE)
-        if (note == null) return false
+    fun bindNoteRow(
+        context: Context,
+        textContext: Context,
+        views: RemoteViews,
+        note: Note,
+        visuals: List<Attachment>?,
+        theme: WidgetThemeSpec,
+        rowId: Int,
+        titleId: Int,
+        previewId: Int,
+        metaId: Int,
+        accentId: Int,
+        thumbId: Int,
+        previewLength: Int,
+        previewWidthPx: Int = 220,
+        previewHeightPx: Int = 180
+    ) {
         views.setInt(rowId, "setBackgroundResource", theme.noteRowBackgroundRes)
         views.setInt(accentId, "setBackgroundColor", noteAccentColor(note, theme.accent))
         views.setTextViewText(titleId, title(textContext, note))
@@ -174,17 +142,40 @@ object WidgetPresentation {
         views.setTextColor(titleId, theme.textPrimary)
         views.setTextColor(previewId, theme.textSecondary)
         views.setTextColor(metaId, theme.textMuted)
-        val bitmap = runCatching { WidgetMediaPreview.loadBestPreviewBitmap(context, note, visual, 220, 180) }.getOrNull()
+        val bitmap = runCatching {
+            WidgetMediaPreview.loadBestPreviewBitmap(context, note, visuals, previewWidthPx, previewHeightPx)
+        }.getOrNull()
+        bindThumbnail(
+            views = views,
+            thumbId = thumbId,
+            bitmap = bitmap,
+            theme = theme,
+            placeholderPaddingPx = 16
+        )
+    }
+
+    internal fun bindThumbnail(
+        views: RemoteViews,
+        thumbId: Int,
+        bitmap: Bitmap?,
+        theme: WidgetThemeSpec,
+        placeholderPaddingPx: Int
+    ) {
         views.setInt(thumbId, "setBackgroundResource", theme.thumbnailBackgroundRes)
         if (bitmap != null) {
             views.setImageViewBitmap(thumbId, bitmap)
             views.setViewPadding(thumbId, 0, 0, 0, 0)
         } else {
             views.setImageViewResource(thumbId, R.drawable.widget_thumb_placeholder)
-            views.setViewPadding(thumbId, 16, 16, 16, 16)
+            views.setViewPadding(
+                thumbId,
+                placeholderPaddingPx,
+                placeholderPaddingPx,
+                placeholderPaddingPx,
+                placeholderPaddingPx
+            )
             views.setInt(thumbId, "setColorFilter", theme.textMuted)
         }
-        return true
     }
 
     fun noteAccentColor(note: Note, fallback: Int): Int = when (note.color) {
@@ -212,8 +203,11 @@ object WidgetPresentation {
 
     fun preview(context: Context, note: Note): String {
         val normalizedTitle = note.title.trim()
-        val lines = visibleNoteContent(note.content).lineSequence().map { it.trim() }.filter { it.isNotEmpty() }.toList()
-        val contentLine = lines.firstOrNull().orEmpty()
+        val contentLine = visibleNoteContent(note.content)
+            .lineSequence()
+            .map { it.trim() }
+            .firstOrNull { it.isNotEmpty() }
+            .orEmpty()
         if (contentLine.isNotEmpty() && contentLine != normalizedTitle) return contentLine
         return when {
             note.isPinned -> context.getString(R.string.widget_pinned_note)
@@ -224,11 +218,17 @@ object WidgetPresentation {
     }
 
     fun contentPreview(note: Note, maxLength: Int = 170): String {
-        val merged = visibleNoteContent(note.content).lineSequence().map { it.trim() }.filter { it.isNotEmpty() }.joinToString(" ")
+        val limit = maxLength.coerceAtLeast(1)
+        val merged = visibleNoteContent(note.content)
+            .lineSequence()
+            .map { it.trim() }
+            .filter { it.isNotEmpty() }
+            .joinToString(" ")
         return when {
             merged.isBlank() -> ""
-            merged.length <= maxLength -> merged
-            else -> merged.take(maxLength - 1).trimEnd() + "…"
+            merged.length <= limit -> merged
+            limit == 1 -> "…"
+            else -> merged.take(limit - 1).trimEnd() + "…"
         }
     }
 
@@ -256,7 +256,7 @@ object WidgetPresentation {
 
     fun shortDate(context: Context, timestamp: Long): String {
         return runCatching {
-            SimpleDateFormat("MMM d, yyyy", WidgetLocale.locale(context)).format(Date(timestamp))
+            SimpleDateFormat("MMM d, yyyy", context.resources.configuration.locales[0]).format(Date(timestamp))
         }.getOrDefault("")
     }
 

@@ -1,5 +1,7 @@
 package com.example.mynotes.ui.components
 
+import com.example.mynotes.ui.preview.LocalLayoutPreview
+
 import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
@@ -29,7 +31,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -79,12 +80,10 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.mynotes.R
-import com.example.mynotes.ui.components.AppDropdownMenu
 import com.example.mynotes.data.Attachment
 import com.example.mynotes.data.Note
 import com.example.mynotes.performance.AttachmentPreviewCache
 import com.example.mynotes.settings.MenuPreferencePolicy
-import com.example.mynotes.ui.theme.automaticUiTextColor
 import com.example.mynotes.ui.theme.resolveUiTextColor
 import com.example.mynotes.ui.theme.resolveSecondaryUiTextColor
 import com.example.mynotes.ui.theme.resolveUiGraphicColor
@@ -144,10 +143,12 @@ fun ModernNoteCard(note: Note, attachments: List<Attachment>, fontFamily: FontFa
     val displayContent = remember(note.content, noteLinks) {
         noteTextForDisplay(content = note.content, links = noteLinks)
     }
-    var mainMenuExpanded by remember { mutableStateOf(false) }
-    var priorityMenuExpanded by remember { mutableStateOf(false) }
-    var colorMenuExpanded by remember { mutableStateOf(false) }
-    var categoryMenuExpanded by remember { mutableStateOf(false) }
+    val layoutPreview = LocalLayoutPreview.current
+    val previewMenu = layoutPreview?.takeIf { it.menuNoteId == note.id }?.noteMenu
+    var mainMenuExpanded by remember { mutableStateOf(previewMenu == "main") }
+    var priorityMenuExpanded by remember { mutableStateOf(previewMenu == "priority") }
+    var colorMenuExpanded by remember { mutableStateOf(previewMenu == "color") }
+    var categoryMenuExpanded by remember { mutableStateOf(previewMenu == "category") }
 
     val effectiveMenuTextColorMode = if (optionMenuTextColor == "note") textColorMode else optionMenuTextColor
     val defaultPopupSurface = MaterialTheme.colorScheme.surfaceContainerHigh
@@ -586,6 +587,7 @@ private fun NoteCardAttachmentsPreview(attachments: List<Attachment>, previewHei
 private fun NoteCardAttachmentTile(attachment: Attachment, modifier: Modifier, compact: Boolean, fontFamily: FontFamily,
     performanceMode: String, deferHeavyLoads: Boolean, isScrolling: Boolean) {
     val context = LocalContext.current
+    val layoutPreview = LocalLayoutPreview.current
     val uri = remember(attachment.uri) {
         Uri.parse(attachment.uri)
     }
@@ -606,7 +608,7 @@ private fun NoteCardAttachmentTile(attachment: Attachment, modifier: Modifier, c
                  * falta y después la versión quality definitiva.
                  */
                 val preview = rememberCardAttachmentPreview(attachment.uri, performanceMode, deferHeavyLoads, isScrolling,
-                    initial = { AttachmentPreviewCache.peekImagePreview(uri = uri, performanceMode = performanceMode) },
+                    initial = { layoutPreview?.mediaBitmap ?: AttachmentPreviewCache.peekImagePreview(uri = uri, performanceMode = performanceMode) },
                     loader = { mode -> AttachmentPreviewCache.loadImagePreview(context = context, uri = uri, performanceMode = mode) })
                 if (preview != null) {
                     Image(bitmap = preview!!.asImageBitmap(), contentDescription = attachment.name, modifier = Modifier.fillMaxSize(),
@@ -618,7 +620,10 @@ private fun NoteCardAttachmentTile(attachment: Attachment, modifier: Modifier, c
             }
             attachment.type == "video" -> {
                 val preview = rememberCardAttachmentPreview(attachment.uri, performanceMode, deferHeavyLoads, isScrolling,
-                    initial = { AttachmentPreviewCache.peekVideoPreview(uri = uri, performanceMode = performanceMode) },
+                    initial = { layoutPreview?.let { sample -> sample.mediaBitmap?.let { bitmap ->
+                        AttachmentPreviewCache.MediaPreview(bitmap, sample.durationMillis.toLong(), bitmap.width, bitmap.height)
+                    } }
+                        ?: AttachmentPreviewCache.peekVideoPreview(uri = uri, performanceMode = performanceMode) },
                     isMissing = { it?.bitmap == null }, acceptQuality = { it?.bitmap != null },
                     loader = { mode -> AttachmentPreviewCache.loadVideoPreview(context = context, uri = uri, performanceMode = mode) })
                 val bitmap = preview?.bitmap
@@ -645,7 +650,7 @@ private fun NoteCardAttachmentTile(attachment: Attachment, modifier: Modifier, c
             }
             extension == "pdf" -> {
                 val preview = rememberCardAttachmentPreview(attachment.uri, performanceMode, deferHeavyLoads, isScrolling,
-                    initial = { AttachmentPreviewCache.peekPdfPreview(uri = uri, performanceMode = performanceMode) },
+                    initial = { layoutPreview?.documentBitmap ?: AttachmentPreviewCache.peekPdfPreview(uri = uri, performanceMode = performanceMode) },
                     loader = { mode -> AttachmentPreviewCache.loadPdfFirstPage(context = context, uri = uri, performanceMode = mode) })
                 if (preview != null) {
                     Image(bitmap = preview!!.asImageBitmap(), contentDescription = attachment.name, modifier = Modifier.fillMaxSize(),
@@ -674,8 +679,10 @@ private fun <T> rememberCardAttachmentPreview(
     acceptQuality: (T?) -> Boolean = { it != null },
     loader: suspend (String) -> T?
 ): T? {
+    val layoutPreview = LocalLayoutPreview.current
     var preview by remember(uriKey, performanceMode) { mutableStateOf(initial()) }
     LaunchedEffect(uriKey, performanceMode, deferHeavyLoads, isScrolling) {
+        if (layoutPreview != null) return@LaunchedEffect
         if (deferHeavyLoads) return@LaunchedEffect
         if (performanceMode == "quality") {
             if (isScrolling) return@LaunchedEffect

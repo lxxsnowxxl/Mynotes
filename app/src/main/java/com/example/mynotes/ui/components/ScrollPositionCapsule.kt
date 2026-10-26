@@ -90,16 +90,18 @@ private fun ScrollStateCapsuleThumb(
 }
 
 /**
- * Variante para listas LazyColumn/LazyRow verticales. La longitud de la
- * cápsula representa de forma aproximada cuántos elementos están visibles y
- * su posición se calcula a partir del primer elemento visible y su offset.
+ * Variante para listas verticales LazyColumn. La cápsula mantiene una altura
+ * fija aunque cambie la cantidad de elementos visibles al recorrer secciones
+ * con alturas diferentes. Su posición se estima a partir del primer elemento
+ * visible y su offset.
  */
 @Composable
 fun ScrollPositionCapsule(
     state: LazyListState,
     modifier: Modifier = Modifier,
     backgroundColor: Color = MaterialTheme.colorScheme.background,
-    preferredColor: Color = MaterialTheme.colorScheme.onBackground
+    preferredColor: Color = MaterialTheme.colorScheme.onBackground,
+    fixedThumbHeight: Dp = 54.dp
 ) {
     val layoutInfo = state.layoutInfo
     val visibleItems = layoutInfo.visibleItemsInfo
@@ -114,7 +116,7 @@ fun ScrollPositionCapsule(
     val scrollableItems = (totalItems - visibleItems.size).coerceAtLeast(1)
     val estimatedProgress = ((first.index + fractionalOffset) / scrollableItems.toFloat()).coerceIn(0f, 1f)
     LazyCapsuleThumb(estimatedProgress, visibleItems.size, totalItems, state.canScrollBackward, state.canScrollForward,
-        state.isScrollInProgress, backgroundColor, preferredColor, modifier)
+        state.isScrollInProgress, backgroundColor, preferredColor, modifier, fixedThumbHeight = fixedThumbHeight)
 }
 
 /**

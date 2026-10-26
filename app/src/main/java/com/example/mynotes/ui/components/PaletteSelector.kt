@@ -6,14 +6,18 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyRow
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.Icon
@@ -21,51 +25,88 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawWithCache
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.drawscope.Stroke
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.example.mynotes.ui.motion.AppMotion
 import com.example.mynotes.ui.sound.UiActionSound
 import com.example.mynotes.ui.sound.UiSoundPlayer
 import com.example.mynotes.ui.theme.MyNotesPalette
+import com.example.mynotes.ui.theme.PaletteCatalog
 import com.example.mynotes.ui.theme.resolveUiGraphicColor
 import com.example.mynotes.ui.theme.resolveUiTextColor
 
+private val PaletteItemWidth = 132.dp
+private val ToneDiameter = 48.dp
+private val ToneClusterSize = 100.dp
+private val PaletteSelectionCircleSize = 120.dp
+private val TonePositions = listOf(
+    26.dp to 0.dp,
+    0.dp to 27.dp,
+    52.dp to 27.dp,
+    14.dp to 52.dp,
+    40.dp to 52.dp
+).also { positions ->
+    check(positions.size == PaletteCatalog.SELECTABLE_TONE_COUNT) {
+        "Tone selector geometry must match PaletteCatalog.SELECTABLE_TONE_COUNT"
+    }
+}
 
+/**
+ * Selector horizontal de color con cinco tonos en una composición tipo flor.
+ * Todas las familias comparten la misma geometría: un tono arriba, dos al
+ * centro y dos abajo, con solapamiento uniforme y fácil acceso táctil.
+ *
+ * La selección se indica únicamente con contorno y palomita, sin mover ni
+ * elevar la tonalidad seleccionada sobre las demás.
+ */
 @Composable
 internal fun PaletteSelectorRow(
-    rowPalettes: List<MyNotesPalette>,
+    palettes: List<MyNotesPalette>,
     selectedPaletteKey: String,
     selectedToneIndex: Int,
-    onPaletteSelected: (String) -> Unit,
     onToneSelected: (paletteKey: String, toneIndex: Int) -> Unit,
     animationsEnabled: Boolean = true,
     animationSpeed: Float = 1f,
     textColorMode: String = "auto",
     fontFamily: FontFamily = FontFamily.Default
 ) {
-    Row(
+    val initialIndex = remember(palettes, selectedPaletteKey) {
+        palettes.indexOfFirst { it.key == selectedPaletteKey }.coerceAtLeast(0)
+    }
+    val listState = rememberLazyListState(initialFirstVisibleItemIndex = initialIndex)
+
+    LaunchedEffect(selectedPaletteKey, palettes) {
+        val selectedIndex = palettes.indexOfFirst { it.key == selectedPaletteKey }
+        if (selectedIndex >= 0 && listState.layoutInfo.visibleItemsInfo.none { it.index == selectedIndex }) {
+            listState.animateScrollToItem(selectedIndex)
+        }
+    }
+
+    LazyRow(
         modifier = Modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(10.dp)
+        state = listState,
+        contentPadding = PaddingValues(horizontal = 4.dp, vertical = 2.dp),
+        horizontalArrangement = Arrangement.spacedBy(6.dp)
     ) {
-        rowPalettes.forEach { palette ->
-            PaletteCard(
-                modifier = Modifier.weight(1f),
+        items(
+            items = palettes,
+            key = { it.key }
+        ) { palette ->
+            PaletteStackItem(
                 palette = palette,
                 selected = palette.key == selectedPaletteKey,
                 selectedToneIndex = selectedToneIndex,
-                onPaletteSelected = onPaletteSelected,
                 onToneSelected = onToneSelected,
                 animationsEnabled = animationsEnabled,
                 animationSpeed = animationSpeed,
@@ -73,150 +114,136 @@ internal fun PaletteSelectorRow(
                 fontFamily = fontFamily
             )
         }
-        if (rowPalettes.size == 1) {
-            Spacer(modifier = Modifier.weight(1f))
-        }
     }
 }
 
 @Composable
-private fun PaletteCard(
-    modifier: Modifier,
+private fun PaletteStackItem(
     palette: MyNotesPalette,
     selected: Boolean,
     selectedToneIndex: Int,
-    onPaletteSelected: (String) -> Unit,
     onToneSelected: (paletteKey: String, toneIndex: Int) -> Unit,
     animationsEnabled: Boolean,
     animationSpeed: Float,
     textColorMode: String,
     fontFamily: FontFamily
 ) {
-    val context = LocalContext.current
-    val shape = RoundedCornerShape(16.dp)
     val cardBackground = MaterialTheme.colorScheme.surfaceContainerLow
     val cardTextColor = remember(textColorMode, cardBackground) {
         resolveUiTextColor(value = textColorMode, background = cardBackground)
     }
-    // La animación del borde no cambia el contraste de la tarjeta.
     val cardGraphicColor = remember(textColorMode, cardBackground) {
         resolveUiGraphicColor(value = textColorMode, background = cardBackground)
     }
     val motionDuration = AppMotion.duration(AppMotion.FAST, animationsEnabled, animationSpeed)
-    val cardInteractionSource = remember { MutableInteractionSource() }
-    val animatedBorderWidth by animateDpAsState(
-        targetValue = if (selected) 1.8.dp else 1.dp,
+    val selectionOutlineWidth by animateDpAsState(
+        targetValue = if (selected) 2.dp else 0.dp,
         animationSpec = tween(durationMillis = motionDuration),
-        label = "paletteBorder"
+        label = "paletteSelectionOutline"
     )
 
-    Surface(
-        modifier = modifier.clickable(
-            interactionSource = cardInteractionSource,
-            indication = null,
-            onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Theme) { onPaletteSelected(palette.key) }
-        ),
-        shape = shape,
-        color = cardBackground,
-        contentColor = cardTextColor,
-        tonalElevation = 0.dp,
-        shadowElevation = 0.dp,
-        border = BorderStroke(width = animatedBorderWidth, color = cardGraphicColor)
+    Column(
+        modifier = Modifier
+            .width(PaletteItemWidth)
+            .padding(horizontal = 2.dp, vertical = 8.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 12.dp, vertical = 11.dp)
+        Surface(
+            modifier = Modifier.size(PaletteSelectionCircleSize),
+            shape = CircleShape,
+            color = Color.Transparent,
+            tonalElevation = 0.dp,
+            shadowElevation = 0.dp,
+            border = if (selected) {
+                BorderStroke(
+                    width = selectionOutlineWidth,
+                    color = cardGraphicColor
+                )
+            } else null
         ) {
-            Text(
-                text = stringResource(palette.labelRes),
-                style = MaterialTheme.typography.labelLarge,
-                fontFamily = fontFamily,
-                fontWeight = FontWeight.SemiBold,
-                color = cardTextColor,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis
-            )
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 10.dp),
-                horizontalArrangement = Arrangement.spacedBy(6.dp),
-                verticalAlignment = Alignment.CenterVertically
+            Box(
+                modifier = Modifier.size(PaletteSelectionCircleSize),
+                contentAlignment = Alignment.Center
             ) {
-                palette.tones.forEachIndexed { index, tone ->
-                    PaletteToneCircle(
-                        modifier = Modifier
-                            .weight(1f)
-                            .aspectRatio(1f),
-                        color = tone,
-                        selected = selected && selectedToneIndex == index,
-                        frameColor = cardBackground,
-                        indicatorColor = cardGraphicColor,
-                        onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Color) { onToneSelected(palette.key, index) }
-                    )
+                Box(
+                    modifier = Modifier.size(ToneClusterSize),
+                    contentAlignment = Alignment.TopStart
+                ) {
+                    palette.tones.forEachIndexed { toneIndex, toneColor ->
+                        val (offsetX, offsetY) = TonePositions[toneIndex]
+                        Box(
+                            modifier = Modifier.offset(x = offsetX, y = offsetY)
+                        ) {
+                            PaletteTone(
+                                color = toneColor,
+                                selected = selected && selectedToneIndex == toneIndex,
+                                outlineColor = cardGraphicColor,
+                                onClick = {
+                                    onToneSelected(palette.key, toneIndex)
+                                }
+                            )
+                        }
+                    }
                 }
             }
         }
+
+        Text(
+            text = stringResource(palette.labelRes),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 8.dp, start = 2.dp, end = 2.dp),
+            style = MaterialTheme.typography.labelMedium,
+            fontFamily = fontFamily,
+            fontWeight = if (selected) FontWeight.Bold else FontWeight.SemiBold,
+            color = cardTextColor,
+            textAlign = TextAlign.Center,
+            maxLines = 2
+        )
     }
 }
 
 @Composable
-private fun PaletteToneCircle(
-    modifier: Modifier = Modifier,
+private fun PaletteTone(
     color: Color,
     selected: Boolean,
-    frameColor: Color,
-    indicatorColor: Color,
+    outlineColor: Color,
     onClick: () -> Unit
 ) {
+    val context = LocalContext.current
+    val interactionSource = remember { MutableInteractionSource() }
     val checkColor = remember(color) {
         if (color.luminance() > 0.48f) Color.Black else Color.White
     }
-    val toneInteractionSource = remember { MutableInteractionSource() }
 
-    Box(
-        modifier = modifier
+    Surface(
+        modifier = Modifier.size(ToneDiameter)
             .clickable(
-                interactionSource = toneInteractionSource,
+                interactionSource = interactionSource,
                 indication = null,
-                onClick = onClick
-            )
-            .drawWithCache {
-                val borderWidth = 2.dp.toPx()
-                val selectedInset = 4.dp.toPx()
-                val radius = size.minDimension / 2f
-                val borderRadius = (radius - borderWidth / 2f).coerceAtLeast(0f)
-                val toneRadius = (radius - selectedInset).coerceAtLeast(0f)
-                val borderStroke = Stroke(width = borderWidth)
-                onDrawBehind {
-                    if (selected) {
-                        drawCircle(color = frameColor, radius = radius)
-                        drawCircle(
-                            color = indicatorColor,
-                            radius = borderRadius,
-                            style = borderStroke
-                        )
-                        drawCircle(
-                            color = color,
-                            radius = toneRadius
-                        )
-                    } else {
-                        drawCircle(color = color, radius = radius)
-                    }
-                }
-            },
-        contentAlignment = Alignment.Center
+                onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Color, onClick)
+            ),
+        shape = CircleShape,
+        color = color,
+        tonalElevation = 0.dp,
+        shadowElevation = if (selected) 2.dp else 0.dp,
+        border = BorderStroke(
+            width = if (selected) 2.dp else 1.dp,
+            color = if (selected) outlineColor else outlineColor.copy(alpha = 0.22f)
+        )
     ) {
         if (selected) {
-            Icon(
-                imageVector = Icons.Default.Check,
-                contentDescription = null,
-                tint = checkColor,
-                modifier = Modifier
-                    .fillMaxWidth(0.48f)
-                    .aspectRatio(1f)
-            )
+            Box(
+                modifier = Modifier.size(ToneDiameter),
+                contentAlignment = Alignment.Center
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Check,
+                    contentDescription = null,
+                    tint = checkColor,
+                    modifier = Modifier.size(20.dp)
+                )
+            }
         }
     }
 }

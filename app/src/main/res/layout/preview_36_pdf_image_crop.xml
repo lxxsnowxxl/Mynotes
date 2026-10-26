@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Diseño compartido con PdfImageCropDialog; datos de ejemplo en src/debug.
+     Abrir con la variante debug compilada. tools:composableName renderiza el composable real. -->
+<androidx.compose.ui.platform.ComposeView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/preview_36_pdf_image_crop_compose"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.example.mynotes.MainActivity"
+    tools:composableName="com.example.mynotes.preview.LayoutPreviewsKt.Preview36PdfImageCrop" />

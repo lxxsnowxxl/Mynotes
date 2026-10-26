@@ -1,4 +1,6 @@
 package com.example.mynotes.ui.pdf
+
+import com.example.mynotes.ui.preview.LocalLayoutPreview
 import com.example.mynotes.ui.components.AppHeading
 import com.example.mynotes.ui.theme.rememberUiTextColors
 import com.example.mynotes.ui.components.AppCircularIconButton
@@ -123,7 +125,7 @@ class PdfLibraryActivity : ImmersivePdfActivity() {
 }
 
 @Composable
-private fun PdfLibraryScreen(
+internal fun PdfLibraryScreen(
     settings: AppSettings,
     refreshSignal: Int,
     onBack: () -> Unit,
@@ -212,13 +214,15 @@ private fun PdfLibraryScreen(
     val popupColor = popupBaseColor.copy(alpha = popupAlpha)
     val popupVisualBackground = compositeUiColor(popupColor, projectCardColor)
     val popupTextColor = resolveUiTextColor(effectivePopupTextColorMode, popupVisualBackground)
-    var projects by remember { mutableStateOf<List<PdfProjectRepository.Summary>>(emptyList()) }
+    val layoutPreview = LocalLayoutPreview.current
+    var projects by remember { mutableStateOf(layoutPreview?.pdfProjects ?: emptyList<PdfProjectRepository.Summary>()) }
     var deleteTarget by remember { mutableStateOf<PdfProjectRepository.Summary?>(null) }
     var renameTarget by remember { mutableStateOf<PdfProjectRepository.Summary?>(null) }
     var renameText by remember { mutableStateOf("") }
     var menuProjectId by remember { mutableStateOf<String?>(null) }
 
     LaunchedEffect(refreshSignal) {
+        if (layoutPreview != null) return@LaunchedEffect
         projects = PdfProjectRepository.listProjects(context)
     }
 
@@ -560,9 +564,11 @@ private fun PdfProjectThumbnail(
     cardBackground: Color
 ) {
     val context = LocalContext.current
-    var thumbnail by remember(project.id, project.modifiedAt) { mutableStateOf<android.graphics.Bitmap?>(null) }
+    val layoutPreview = LocalLayoutPreview.current
+    var thumbnail by remember(project.id, project.modifiedAt) { mutableStateOf(layoutPreview?.documentBitmap) }
 
     LaunchedEffect(project.id, project.modifiedAt) {
+        if (layoutPreview != null) return@LaunchedEffect
         thumbnail = PdfProjectRepository.loadProjectThumbnail(
             context = context,
             id = project.id,

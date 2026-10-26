@@ -1,5 +1,7 @@
 package com.example.mynotes.ui.components
 
+import com.example.mynotes.ui.preview.LocalLayoutPreview
+
 import android.app.ActivityManager
 import android.content.Context
 import android.net.Uri
@@ -137,7 +139,9 @@ private fun InlineImageAttachment(attachment: Attachment) {
      *
      * No se aplica retraso de preview a las imágenes de detalle.
      */
+    val layoutPreview = LocalLayoutPreview.current
     val detailBitmapLimit = remember(context) {
+        if (layoutPreview != null) return@remember Size.ORIGINAL
             val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE)
                     as? ActivityManager
             when {
@@ -147,7 +151,7 @@ private fun InlineImageAttachment(attachment: Attachment) {
             }
         }
     val fullResolutionRequest = remember(context, uri, detailBitmapLimit) {
-            ImageRequest.Builder(context).data(uri).size(Size.ORIGINAL)
+            ImageRequest.Builder(context).data(layoutPreview?.mediaBitmap ?: uri).size(Size.ORIGINAL)
                 /*
                  * Equipos normales conservan la resolución original. Solo
                  * limitamos el bitmap en dispositivos oficialmente Low-RAM o
@@ -267,7 +271,12 @@ private fun InlineImageAttachment(attachment: Attachment) {
 private fun InlineVideoAttachment(attachment: Attachment, previewDelayMillis: Long, performanceMode: String) {
     val context = LocalContext.current
     val uri = remember(attachment.uri) { Uri.parse(attachment.uri) }
-    val preview by produceState<AttachmentPreviewCache.MediaPreview?>(initialValue = null, key1 = attachment.uri, key2 = performanceMode) {
+    val layoutPreview = LocalLayoutPreview.current
+    val initialPreview = layoutPreview?.let { sample -> sample.mediaBitmap?.let { bitmap ->
+        AttachmentPreviewCache.MediaPreview(bitmap, sample.durationMillis.toLong(), bitmap.width, bitmap.height)
+    } }
+    val preview by produceState<AttachmentPreviewCache.MediaPreview?>(initialValue = initialPreview, key1 = attachment.uri, key2 = performanceMode) {
+        if (layoutPreview != null) return@produceState
         if (previewDelayMillis > 0L) delay(previewDelayMillis)
         value = AttachmentPreviewCache.withPreviewPermit {
             AttachmentPreviewCache.loadVideoPreview(context = context, uri = uri, performanceMode = performanceMode)
@@ -277,6 +286,9 @@ private fun InlineVideoAttachment(attachment: Attachment, previewDelayMillis: Lo
     val textureView = remember(uri) { TextureView(context).apply { isOpaque = false } }
     var player by remember(uri) { mutableStateOf<ExoPlayer?>(null) }
     val playback = rememberMediaPlaybackState(uri)
+    LocalLayoutPreview.current?.let { sample ->
+        playback.setPreviewProgress(sample.positionMillis, sample.durationMillis)
+    }
     BindMediaPlayer(
         player = player,
         uri = uri,
@@ -314,7 +326,7 @@ private fun InlineVideoAttachment(attachment: Attachment, previewDelayMillis: Lo
                     modifier = Modifier.align(Alignment.Center).clickable {
                         UiSoundPlayer.playAction(context = context, action = UiActionSound.PlayPause)
                         playback.reset(buffering = true)
-                        player = ExoPlayer.Builder(context).build()
+                        if (layoutPreview == null) player = ExoPlayer.Builder(context).build()
                     },
                     shape = CircleShape,
                     color = Color.Black.copy(alpha = 0.62f)
@@ -377,9 +389,13 @@ private fun InlineVideoAttachment(attachment: Attachment, previewDelayMillis: Lo
 @Composable
 private fun InlineAudioAttachment(attachment: Attachment, fontFamily: FontFamily) {
     val context = LocalContext.current
+    val layoutPreview = LocalLayoutPreview.current
     val uri = remember(attachment.uri) { Uri.parse(attachment.uri) }
     var player by remember(uri) { mutableStateOf<ExoPlayer?>(null) }
     val playback = rememberMediaPlaybackState(uri)
+    LocalLayoutPreview.current?.let { sample ->
+        playback.setPreviewProgress(sample.positionMillis, sample.durationMillis)
+    }
     BindMediaPlayer(
         player = player,
         uri = uri,
@@ -404,7 +420,7 @@ private fun InlineAudioAttachment(attachment: Attachment, fontFamily: FontFamily
                         val currentPlayer = player
                         if (currentPlayer == null) {
                             playback.reset(buffering = true)
-                            player = ExoPlayer.Builder(context).build()
+                            if (layoutPreview == null) player = ExoPlayer.Builder(context).build()
                         } else if (playback.prepared) {
                             playback.toggle(currentPlayer) { InlinePlaybackCoordinator.activate(currentPlayer) }
                         }
@@ -462,7 +478,9 @@ private fun InlineAudioAttachment(attachment: Attachment, fontFamily: FontFamily
 private fun InlinePdfAttachment(attachment: Attachment, previewDelayMillis: Long, performanceMode: String) {
     val context = LocalContext.current
     val uri = remember(attachment.uri) { Uri.parse(attachment.uri) }
-    val preview by produceState<android.graphics.Bitmap?>(initialValue = null, key1 = attachment.uri, key2 = performanceMode) {
+    val layoutPreview = LocalLayoutPreview.current
+    val preview by produceState<android.graphics.Bitmap?>(initialValue = layoutPreview?.documentBitmap, key1 = attachment.uri, key2 = performanceMode) {
+        if (layoutPreview != null) return@produceState
         if (previewDelayMillis > 0L) {
             delay(previewDelayMillis)
         }

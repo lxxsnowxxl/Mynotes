@@ -8,7 +8,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
@@ -47,7 +46,6 @@ import com.example.mynotes.ui.theme.appFontFamily
 import com.example.mynotes.ui.theme.effectiveDarkTheme
 import com.example.mynotes.viewmodel.NoteViewModel
 import com.example.mynotes.viewmodel.SettingsViewModel
-import com.example.mynotes.widget.MyNotesWidgetUpdater
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
@@ -66,7 +64,6 @@ class MainActivity : ComponentActivity() {
     }
     private fun changeAppLanguage(language: String) {
         saveAppLanguage(language)
-        MyNotesWidgetUpdater.requestUpdate(this)
         recreate()
     }
     private fun installImeNavigationBarRecovery() {
@@ -127,7 +124,6 @@ class MainActivity : ComponentActivity() {
             val reminderRepository = remember {
                 ReminderRepository.getInstance(applicationContext)
             }
-            val systemDarkTheme = isSystemInDarkTheme()
             SyncUiFeedback(context = this@MainActivity, settings = settings)
 
             LaunchedEffect(settings.soundEffectsEnabled) {
@@ -148,18 +144,15 @@ class MainActivity : ComponentActivity() {
                 settings.darkMode,
                 settings.backgroundColor,
                 settings.backgroundToneIndex,
-                settings.backgroundIntensity,
                 settings.surfacePanelIntensity,
-                settings.headerIntensity,
                 settings.textColor,
                 settings.accentColor,
-                settings.fontSize,
-                systemDarkTheme
+                settings.fontSize
             ) {
                 ReminderFeedbackPreferences.sync(this@MainActivity, settings)
             }
             
-            val effectiveDarkTheme = settings.effectiveDarkTheme(systemDarkTheme)
+            val effectiveDarkTheme = settings.effectiveDarkTheme()
             LaunchedEffect(effectiveDarkTheme) {
                 applySystemBarAppearance(effectiveDarkTheme)
             }
@@ -355,11 +348,8 @@ class MainActivity : ComponentActivity() {
                                             title = title,
                                             content = content,
                                             color = color,
-                                            newAttachments = attachments)
-                                    removedAttachments.forEach {
-                                                attachment ->
-                                            noteViewModel.deleteAttachment(attachment)
-                                        }
+                                            newAttachments = attachments,
+                                            removedAttachments = removedAttachments)
                                 }
                                 closeEditor()
                             },

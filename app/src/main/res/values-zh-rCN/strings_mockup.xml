@@ -61,8 +61,6 @@
     <string name="mock_palette_lavender">薰衣草色</string>
     <string name="mock_palette_rose">玫瑰色</string>
     <string name="mock_palette_tone">调色板色调</string>
-    <string name="mock_background_intensity">背景强度</string>
-    <string name="mock_header_intensity">标题栏强度</string>
     <string name="mock_text_color">文字颜色</string>
 <string name="mock_black">黑色</string>
     <string name="mock_white">白色</string>

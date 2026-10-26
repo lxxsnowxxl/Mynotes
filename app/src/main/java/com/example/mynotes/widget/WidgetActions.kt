@@ -13,10 +13,4 @@ object WidgetActions {
 
     const val COLLECTION_ALL = "all"
     const val COLLECTION_FAVORITES = "favorites"
-    const val COLLECTION_PINNED = "pinned"
-    const val COLLECTION_PRIORITY = "priority"
-    const val COLLECTION_WORK = "work"
-    const val COLLECTION_PERSONAL = "personal"
-    const val COLLECTION_IMAGES = "images"
-    const val COLLECTION_FILES = "files"
 }

@@ -1,5 +1,6 @@
 package com.example.mynotes.viewmodel
 
+import com.example.mynotes.ui.state.NoteActions
 import android.app.Application
 import android.net.Uri
 import androidx.lifecycle.AndroidViewModel
@@ -25,7 +26,7 @@ import kotlinx.coroutines.sync.withPermit
 import kotlinx.coroutines.withContext
 import java.io.File
 
-class NoteViewModel(application: Application) : AndroidViewModel(application) {
+class NoteViewModel(application: Application) : AndroidViewModel(application), NoteActions {
     private val database = AppDatabase.getDatabase(application)
     private val noteDao = database.noteDao()
     private val attachmentDao = database.attachmentDao()
@@ -50,7 +51,7 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
      *
      * NotesScreen observa esta lista una sola vez.
      */
-    val allAttachments = attachmentDao.getAllAttachments().distinctUntilChanged().stateIn(scope = viewModelScope, started = SharingStarted
+    override val allAttachments = attachmentDao.getAllAttachments().distinctUntilChanged().stateIn(scope = viewModelScope, started = SharingStarted
                         .WhileSubscribed(5000), initialValue = emptyList())
     /*
      * =========================================================
@@ -307,40 +308,43 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
      * OBTENER ADJUNTOS DE UNA NOTA
      * =========================================================
      */
-    fun getAttachments(noteId: Int) = attachmentDao.getAttachments(noteId)
+    override fun getAttachments(noteId: Int) = attachmentDao.getAttachments(noteId)
     /*
      * =========================================================
      * EDITAR NOTA
      * =========================================================
      *
-     * Los adjuntos existentes permanecen.
-     *
-     * Además dejamos preparado el método para que posteriormente
-     * el editor pueda añadir nuevos archivos mientras editamos.
+     * Guarda los campos editados y los cambios de adjuntos en una transacción.
+     * Sólo notifica a los widgets cuando hubo cambios reales.
      */
-    fun updateNote(note: Note, title: String, content: String, color: String = note.color, newAttachments:
-        List<PendingAttachment> = emptyList()) {
+    fun updateNote(
+        note: Note,
+        title: String,
+        content: String,
+        color: String = note.color,
+        newAttachments: List<PendingAttachment> = emptyList(),
+        removedAttachments: List<Attachment> = emptyList()
+    ) {
         viewModelScope.launch {
-            val updatedNote = note.copy(title = title, content = content, color = color)
-            if (newAttachments.isEmpty()) {
-                noteDao.updateNote(updatedNote)
-                MyNotesWidgetUpdater.requestUpdate(getApplication<Application>())
-                return@launch
-            }
-            val currentAttachments = attachmentDao.getAttachmentsOnce(note.id)
-            val prepared = prepareAttachments(noteId = note.id, attachments = newAttachments, startingIndex = currentAttachments.size)
-            database.withTransaction {
-                    noteDao.updateNote(updatedNote)
-                    if (prepared.isNotEmpty()) {
-                        attachmentDao.insertAttachments(prepared.map {
-                                    it.attachment
-                                })
-                    }
+            val prepared = if (newAttachments.isEmpty()) emptyList() else prepareAttachments(
+                noteId = note.id,
+                attachments = newAttachments,
+                startingIndex = attachmentDao.countAttachmentsForNote(note.id)
+            )
+            val changed = database.withTransaction {
+                val updated = noteDao.updateEditedFields(note.id, title, content, color)
+                val removed = if (removedAttachments.isEmpty()) 0 else
+                    attachmentDao.deleteAttachments(removedAttachments)
+                if (prepared.isNotEmpty()) {
+                    attachmentDao.insertAttachments(prepared.map { it.attachment })
                 }
+                updated > 0 || removed > 0 || prepared.isNotEmpty()
+            }
+            if (changed) MyNotesWidgetUpdater.requestUpdate(getApplication<Application>())
             if (prepared.isNotEmpty()) {
                 prewarmAttachments(prepared)
             }
-            MyNotesWidgetUpdater.requestUpdate(getApplication<Application>())
+            cleanUpAttachmentFiles(removedAttachments)
         }
     }
     /*
@@ -348,7 +352,7 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
      * CAMBIAR COLOR
      * =========================================================
      */
-    fun changeNoteColor(note: Note, color: String) {
+    override fun changeNoteColor(note: Note, color: String) {
         launchWithWidgetUpdate { noteDao.updateColor(noteId = note.id, color = color) }
     }
     /*
@@ -356,7 +360,7 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
      * CAMBIAR PRIORIDAD
      * =========================================================
      */
-    fun changePriority(note: Note, priority: Int) {
+    override fun changePriority(note: Note, priority: Int) {
         launchWithWidgetUpdate { noteDao.updatePriority(noteId = note.id, priority = priority) }
     }
     /*
@@ -364,7 +368,7 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
      * FAVORITA
      * =========================================================
      */
-    fun toggleFavorite(note: Note) {
+    override fun toggleFavorite(note: Note) {
         launchWithWidgetUpdate { noteDao.updateFavorite(noteId = note.id, isFavorite = !note.isFavorite) }
     }
     /*
@@ -372,7 +376,7 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
      * FIJAR / DESFIJAR
      * =========================================================
      */
-    fun togglePinned(note: Note) {
+    override fun togglePinned(note: Note) {
         launchWithWidgetUpdate { noteDao.updatePinned(noteId = note.id, isPinned = !note.isPinned) }
     }
     /*
@@ -382,35 +386,21 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
      *
      * El diseño utiliza Work y Personal.
      */
-    fun changeCategory(note: Note, category: String) {
+    override fun changeCategory(note: Note, category: String) {
         val normalized = when (category) {
                 "work" -> "work"
                 else -> "personal"
             }
         launchWithWidgetUpdate { noteDao.updateCategory(noteId = note.id, category = normalized) }
     }
-    /*
-     * =========================================================
-     * ELIMINAR UN ADJUNTO
-     * =========================================================
-     *
-     * Se usa desde la pantalla de edición cuando el usuario
-     * marca un adjunto existente con la X y después pulsa Guardar.
-     *
-     * Borra:
-     * 1. el archivo físico del almacenamiento interno;
-     * 2. el registro Attachment de Room.
-     */
-    fun deleteAttachment(attachment: Attachment) {
-        viewModelScope.launch {
-            /*
-             * Quitamos primero el registro de Room para que la UI responda
-             * inmediatamente. La limpieza de caché/archivo ocurre después en IO.
-             */
-            attachmentDao.deleteAttachment(attachment)
-            AttachmentPreviewCache.invalidate(context = getApplication<Application>(), uri = Uri.parse(attachment.uri))
-            withContext(Dispatchers.IO) {
-                deletePrivateFileIfPresent(Uri.parse(attachment.uri))
+    // Room se actualiza antes de limpiar archivos; toda la limpieza ocurre en IO.
+    private suspend fun cleanUpAttachmentFiles(attachments: List<Attachment>) {
+        if (attachments.isEmpty()) return
+        withContext(Dispatchers.IO) {
+            attachments.forEach { attachment ->
+                val uri = Uri.parse(attachment.uri)
+                AttachmentPreviewCache.invalidate(context = getApplication<Application>(), uri = uri)
+                deletePrivateFileIfPresent(uri)
             }
         }
     }
@@ -430,7 +420,7 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
      * documentos
      * cualquier otro archivo privado.
      */
-    fun deleteNote(note: Note) {
+    override fun deleteNote(note: Note) {
         viewModelScope.launch {
             val attachments = attachmentDao.getAttachmentsOnce(note.id)
             /*
@@ -442,13 +432,7 @@ class NoteViewModel(application: Application) : AndroidViewModel(application) {
                     noteDao.deleteNote(note)
                 }
             MyNotesWidgetUpdater.requestUpdate(getApplication<Application>())
-            attachments.forEach { attachment -> AttachmentPreviewCache.invalidate(context = getApplication<Application>(),
-                    uri = Uri.parse(attachment.uri))
-            }
-            withContext(Dispatchers.IO) {
-                attachments.forEach { attachment -> deletePrivateFileIfPresent(Uri.parse(attachment.uri))
-                }
-            }
+            cleanUpAttachmentFiles(attachments)
         }
     }
     private fun deletePrivateFileIfPresent(uri: Uri) {

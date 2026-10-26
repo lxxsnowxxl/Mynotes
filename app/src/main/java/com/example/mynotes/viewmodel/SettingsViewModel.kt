@@ -3,6 +3,7 @@ package com.example.mynotes.viewmodel
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import com.example.mynotes.ui.state.SettingsActions
 import com.example.mynotes.settings.AppSettings
 import com.example.mynotes.settings.SettingsRepository
 import com.example.mynotes.widget.MyNotesWidgetUpdater
@@ -11,7 +12,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
-class SettingsViewModel(application: Application) : AndroidViewModel(application) {
+class SettingsViewModel(application: Application) : AndroidViewModel(application), SettingsActions {
     private val repository = SettingsRepository(application)
     val settings:
         StateFlow<AppSettings> =
@@ -20,134 +21,115 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
                 // "loading" evita que el diálogo de primer inicio parpadee
                 // antes de que DataStore entregue el modo ya guardado.
                 initialValue = AppSettings(configurationMode = "loading"))
-    /**
-     * Evita lanzar una coroutine y abrir una transacción de DataStore cuando
-     * el valor solicitado ya está aplicado. Esto es especialmente importante
-     * para sliders, switches y menús que pueden reenviar el mismo valor durante
-     * recomposiciones o gestos rápidos.
-     */
-    private fun <T> launchIfChanged(
-        current: T,
-        requested: T,
-        update: suspend (T) -> Unit,
-        refreshWidgets: Boolean = false
-    ) {
-        if (current == requested) return
+    /** DataStore decide si cambió el valor; la UI puede seguir mostrando una emisión anterior. */
+    private fun updateSetting(refreshWidgets: Boolean = false, update: suspend () -> Boolean) {
         viewModelScope.launch {
-            update(requested)
-            if (refreshWidgets) MyNotesWidgetUpdater.requestUpdate(getApplication<Application>())
+            val changed = update()
+            if (changed && refreshWidgets) MyNotesWidgetUpdater.requestUpdate(getApplication<Application>())
         }
     }
 
-    fun setConfigurationMode(value: String) = launchIfChanged(settings.value.configurationMode, value, repository::setConfigurationMode)
+    override fun setConfigurationMode(value: String) = updateSetting { repository.setConfigurationMode(value) }
 
-    fun setDarkMode(value: Boolean) = launchIfChanged(settings.value.darkMode, value, repository::setDarkMode, refreshWidgets = true)
+    override fun setDarkMode(value: Boolean) = updateSetting(refreshWidgets = true) { repository.setDarkMode(value) }
 
-    fun setBackgroundColor(value: String) = launchIfChanged(settings.value.backgroundColor, value, repository::setBackgroundColor, refreshWidgets = true)
+    override fun setBackgroundSelection(paletteKey: String, toneIndex: Int) = updateSetting(refreshWidgets = true) { repository.setBackgroundSelection(paletteKey, toneIndex) }
 
-    fun setBackgroundToneIndex(value: Int) = launchIfChanged(settings.value.backgroundToneIndex, value.coerceIn(0, 3), repository::setBackgroundToneIndex, refreshWidgets = true)
+    override fun setSettingsPanelTone(value: Float) = updateSetting { repository.setSettingsPanelTone(value) }
 
-    fun setBackgroundIntensity(value: Float) = launchIfChanged(settings.value.backgroundIntensity, value.coerceIn(0f, 100f), repository::setBackgroundIntensity, refreshWidgets = true)
+    override fun setSurfacePanelIntensity(value: Float) = updateSetting { repository.setSurfacePanelIntensity(value) }
 
-    fun setSettingsPanelTone(value: Float) = launchIfChanged(settings.value.settingsPanelTone, value.coerceIn(0f, 100f), repository::setSettingsPanelTone)
+    override fun setTextColor(value: String) = updateSetting { repository.setTextColor(value) }
 
-    fun setSurfacePanelIntensity(value: Float) = launchIfChanged(settings.value.surfacePanelIntensity, value.coerceIn(0f, 100f), repository::setSurfacePanelIntensity, refreshWidgets = true)
+    override fun setTextOutlineEnabled(value: Boolean) = updateSetting { repository.setTextOutlineEnabled(value) }
 
-    fun setHeaderIntensity(value: Float) = launchIfChanged(settings.value.headerIntensity, value.coerceIn(0f, 100f), repository::setHeaderIntensity)
+    override fun setSliderStyle(value: String) = updateSetting { repository.setSliderStyle(value) }
 
-    fun setTextColor(value: String) = launchIfChanged(settings.value.textColor, value, repository::setTextColor)
+    override fun setFont(value: String) = updateSetting { repository.setFont(value) }
 
-    fun setTextOutlineEnabled(value: Boolean) = launchIfChanged(settings.value.textOutlineEnabled, value, repository::setTextOutlineEnabled)
+    override fun setFontSize(value: Float) = updateSetting { repository.setFontSize(value) }
 
-    fun setSliderStyle(value: String) = launchIfChanged(settings.value.sliderStyle, value, repository::setSliderStyle)
+    override fun setSoundEffectsEnabled(value: Boolean) = updateSetting { repository.setSoundEffectsEnabled(value) }
 
-    fun setFont(value: String) = launchIfChanged(settings.value.font, value, repository::setFont)
+    override fun setSoundEffectsVolume(value: Float) = updateSetting { repository.setSoundEffectsVolume(value) }
 
-    fun setFontSize(value: Float) = launchIfChanged(settings.value.fontSize, value.coerceIn(12f, 28f), repository::setFontSize)
+    override fun setSoundEffectsTheme(value: String) = updateSetting { repository.setSoundEffectsTheme(value) }
 
-    fun setSoundEffectsEnabled(value: Boolean) = launchIfChanged(settings.value.soundEffectsEnabled, value, repository::setSoundEffectsEnabled)
+    override fun setReminderSoundEnabled(value: Boolean) = updateSetting { repository.setReminderSoundEnabled(value) }
 
-    fun setSoundEffectsVolume(value: Float) = launchIfChanged(settings.value.soundEffectsVolume, value.coerceIn(0f, 100f), repository::setSoundEffectsVolume)
+    override fun setReminderSoundVolume(value: Float) = updateSetting { repository.setReminderSoundVolume(value) }
 
-    fun setSoundEffectsTheme(value: String) = launchIfChanged(settings.value.soundEffectsTheme, value, repository::setSoundEffectsTheme)
+    override fun setReminderRingtone(value: String) = updateSetting { repository.setReminderRingtone(value) }
 
-    fun setReminderSoundEnabled(value: Boolean) = launchIfChanged(settings.value.reminderSoundEnabled, value, repository::setReminderSoundEnabled)
+    override fun setHapticEffectsEnabled(value: Boolean) = updateSetting { repository.setHapticEffectsEnabled(value) }
 
-    fun setReminderSoundVolume(value: Float) = launchIfChanged(settings.value.reminderSoundVolume, value.coerceIn(0f, 100f), repository::setReminderSoundVolume)
+    override fun setHapticEffectsIntensity(value: Float) = updateSetting { repository.setHapticEffectsIntensity(value) }
 
-    fun setReminderRingtone(value: String) = launchIfChanged(settings.value.reminderRingtone, value, repository::setReminderRingtone)
+    override fun setHapticEffectsStyle(value: String) = updateSetting { repository.setHapticEffectsStyle(value) }
 
-    fun setHapticEffectsEnabled(value: Boolean) = launchIfChanged(settings.value.hapticEffectsEnabled, value, repository::setHapticEffectsEnabled)
+    override fun setLanguage(value: String) = updateSetting(refreshWidgets = true) { repository.setLanguage(value) }
 
-    fun setHapticEffectsIntensity(value: Float) = launchIfChanged(settings.value.hapticEffectsIntensity, value.coerceIn(0f, 100f), repository::setHapticEffectsIntensity)
+    override fun setGridColumns(value: Int) = updateSetting { repository.setGridColumns(value) }
 
-    fun setHapticEffectsStyle(value: String) = launchIfChanged(settings.value.hapticEffectsStyle, value, repository::setHapticEffectsStyle)
+    override fun setSortOrder(value: String) = updateSetting { repository.setSortOrder(value) }
 
-    fun setLanguage(value: String) = launchIfChanged(settings.value.language, value, repository::setLanguage, refreshWidgets = true)
+    override fun setProfileImageUri(value: String) = updateSetting { repository.setProfileImageUri(value) }
 
-    fun setGridColumns(value: Int) = launchIfChanged(settings.value.gridColumns, value.coerceIn(1, 3), repository::setGridColumns)
+    override fun setProfileImageSize(value: Float) = updateSetting { repository.setProfileImageSize(value) }
 
-    fun setSortOrder(value: String) = launchIfChanged(settings.value.sortOrder, value, repository::setSortOrder)
+    override fun setIconStyle(value: String) = updateSetting { repository.setIconStyle(value) }
 
-    fun setProfileImageUri(value: String) = launchIfChanged(settings.value.profileImageUri, value, repository::setProfileImageUri)
+    override fun setIconSize(value: Float) = updateSetting { repository.setIconSize(value) }
 
-    fun setProfileImageSize(value: Float) = launchIfChanged(settings.value.profileImageSize, value.coerceIn(36f, 84f), repository::setProfileImageSize)
+    override fun setAccentColor(value: String) = updateSetting { repository.setAccentColor(value) }
 
-    fun setIconStyle(value: String) = launchIfChanged(settings.value.iconStyle, value, repository::setIconStyle)
+    override fun setNoteCardCornerRadius(value: Float) = updateSetting { repository.setNoteCardCornerRadius(value) }
 
-    fun setIconSize(value: Float) = launchIfChanged(settings.value.iconSize, value.coerceIn(16f, 36f), repository::setIconSize)
+    override fun setNoteCardElevation(value: Float) = updateSetting { repository.setNoteCardElevation(value) }
 
-    fun setAccentColor(value: String) = launchIfChanged(settings.value.accentColor, value, repository::setAccentColor)
+    override fun setNoteCardPadding(value: Float) = updateSetting { repository.setNoteCardPadding(value) }
 
-    fun setNoteCardCornerRadius(value: Float) = launchIfChanged(settings.value.noteCardCornerRadius, value.coerceIn(0f, 36f), repository::setNoteCardCornerRadius)
+    override fun setNoteCardImageHeight(value: Float) = updateSetting { repository.setNoteCardImageHeight(value) }
 
-    fun setNoteCardElevation(value: Float) = launchIfChanged(settings.value.noteCardElevation, value.coerceIn(0f, 12f), repository::setNoteCardElevation)
+    override fun setNoteCardOutlineWidth(value: Float) = updateSetting { repository.setNoteCardOutlineWidth(value) }
 
-    fun setNoteCardPadding(value: Float) = launchIfChanged(settings.value.noteCardPadding, value.coerceIn(6f, 24f), repository::setNoteCardPadding)
+    override fun setNoteTitleMaxLines(value: Int) = updateSetting { repository.setNoteTitleMaxLines(value) }
 
-    fun setNoteCardImageHeight(value: Float) = launchIfChanged(settings.value.noteCardImageHeight, value.coerceIn(72f, 220f), repository::setNoteCardImageHeight)
+    override fun setNoteContentMaxLines(value: Int) = updateSetting { repository.setNoteContentMaxLines(value) }
 
-    fun setNoteCardOutlineWidth(value: Float) = launchIfChanged(settings.value.noteCardOutlineWidth, value.coerceIn(0f, 6f), repository::setNoteCardOutlineWidth)
+    override fun setNoteLineSpacing(value: Float) = updateSetting { repository.setNoteLineSpacing(value) }
 
-    fun setNoteTitleMaxLines(value: Int) = launchIfChanged(settings.value.noteTitleMaxLines, value.coerceIn(1, 8), repository::setNoteTitleMaxLines)
+    override fun setShowNoteDate(value: Boolean) = updateSetting { repository.setShowNoteDate(value) }
 
-    fun setNoteContentMaxLines(value: Int) = launchIfChanged(settings.value.noteContentMaxLines, value.coerceIn(2, 14), repository::setNoteContentMaxLines)
+    override fun setShowCategoryChip(value: Boolean) = updateSetting { repository.setShowCategoryChip(value) }
 
-    fun setNoteLineSpacing(value: Float) = launchIfChanged(settings.value.noteLineSpacing, value.coerceIn(1f, 1.8f), repository::setNoteLineSpacing)
+    override fun setShowFavoriteIcon(value: Boolean) = updateSetting { repository.setShowFavoriteIcon(value) }
 
-    fun setShowNoteDate(value: Boolean) = launchIfChanged(settings.value.showNoteDate, value, repository::setShowNoteDate)
+    override fun setFabSize(value: Float) = updateSetting { repository.setFabSize(value) }
 
-    fun setShowCategoryChip(value: Boolean) = launchIfChanged(settings.value.showCategoryChip, value, repository::setShowCategoryChip)
+    override fun setOptionMenuOrder(value: String) = updateSetting { repository.setOptionMenuOrder(value) }
 
-    fun setShowFavoriteIcon(value: Boolean) = launchIfChanged(settings.value.showFavoriteIcon, value, repository::setShowFavoriteIcon)
+    override fun setOptionMenuHiddenItems(value: String) = updateSetting { repository.setOptionMenuHiddenItems(value) }
 
-    fun setFabSize(value: Float) = launchIfChanged(settings.value.fabSize, value.coerceIn(48f, 82f), repository::setFabSize)
+    override fun setOptionMenuShowIcons(value: Boolean) = updateSetting { repository.setOptionMenuShowIcons(value) }
 
-    fun setOptionMenuOrder(value: String) = launchIfChanged(settings.value.optionMenuOrder, value, repository::setOptionMenuOrder)
+    override fun setOptionMenuTextColor(value: String) = updateSetting { repository.setOptionMenuTextColor(value) }
 
-    fun setOptionMenuHiddenItems(value: String) = launchIfChanged(settings.value.optionMenuHiddenItems, value, repository::setOptionMenuHiddenItems)
+    override fun setOptionMenuOpacity(value: Float) = updateSetting { repository.setOptionMenuOpacity(value) }
 
-    fun setOptionMenuShowIcons(value: Boolean) = launchIfChanged(settings.value.optionMenuShowIcons, value, repository::setOptionMenuShowIcons)
+    override fun setPriorityMenuHiddenItems(value: String) = updateSetting { repository.setPriorityMenuHiddenItems(value) }
 
-    fun setOptionMenuTextColor(value: String) = launchIfChanged(settings.value.optionMenuTextColor, value, repository::setOptionMenuTextColor)
+    override fun setColorMenuHiddenItems(value: String) = updateSetting { repository.setColorMenuHiddenItems(value) }
 
-    fun setOptionMenuOpacity(value: Float) = launchIfChanged(settings.value.optionMenuOpacity, value.coerceIn(35f, 100f), repository::setOptionMenuOpacity)
+    override fun setPerformanceMode(value: String) = updateSetting { repository.setPerformanceMode(value) }
 
-    fun setPriorityMenuHiddenItems(value: String) = launchIfChanged(settings.value.priorityMenuHiddenItems, value, repository::setPriorityMenuHiddenItems)
+    override fun setAnimationsEnabled(value: Boolean) = updateSetting { repository.setAnimationsEnabled(value) }
 
-    fun setColorMenuHiddenItems(value: String) = launchIfChanged(settings.value.colorMenuHiddenItems, value, repository::setColorMenuHiddenItems)
+    override fun setAnimationSpeed(value: Float) = updateSetting { repository.setAnimationSpeed(value) }
 
-    fun resetOptionMenuSettings() { viewModelScope.launch { repository.resetOptionMenuSettings() } }
-    fun setPerformanceMode(value: String) = launchIfChanged(settings.value.performanceMode, value, repository::setPerformanceMode)
+    override fun setAnimationStyle(value: String) = updateSetting { repository.setAnimationStyle(value) }
 
-    fun setAnimationsEnabled(value: Boolean) = launchIfChanged(settings.value.animationsEnabled, value, repository::setAnimationsEnabled)
+    override fun setAnimationEasing(value: String) = updateSetting { repository.setAnimationEasing(value) }
 
-    fun setAnimationSpeed(value: Float) = launchIfChanged(settings.value.animationSpeed, value.coerceIn(0.5f, 2f), repository::setAnimationSpeed)
-
-    fun setAnimationStyle(value: String) = launchIfChanged(settings.value.animationStyle, value, repository::setAnimationStyle)
-
-    fun setAnimationEasing(value: String) = launchIfChanged(settings.value.animationEasing, value, repository::setAnimationEasing)
-
-    fun setAnimationIntensity(value: Float) = launchIfChanged(settings.value.animationIntensity, value.coerceIn(0.5f, 1.5f), repository::setAnimationIntensity)
-
+    override fun setAnimationIntensity(value: Float) = updateSetting { repository.setAnimationIntensity(value) }
 }

@@ -1,4 +1,6 @@
 package com.example.mynotes.ui
+
+import com.example.mynotes.ui.preview.LocalLayoutPreview
 import com.example.mynotes.ui.components.AppHeading
 import com.example.mynotes.ui.theme.rememberUiTextColors
 import com.example.mynotes.ui.components.AppIconLabel
@@ -10,7 +12,6 @@ import android.os.Build
 import android.os.SystemClock
 import android.widget.Toast
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -84,20 +85,21 @@ private const val MYNOTES_JAVA_COMPATIBILITY = 11
 @Composable
 fun DevelopmentInfoScreen(settings: AppSettings, onOpenSourceCode: () -> Unit, onBack: () -> Unit) {
     val context = LocalContext.current
+    val layoutPreview = LocalLayoutPreview.current
     val packageInfo = remember(context.packageName) {
         @Suppress("DEPRECATION")
-        context.packageManager.getPackageInfo(context.packageName, 0)
+        if (layoutPreview != null) null else context.packageManager.getPackageInfo(context.packageName, 0)
     }
-    val versionName = packageInfo.versionName.orEmpty().ifBlank { "1.9.0" }
-    val applicationInfo = context.applicationInfo
+    val versionName = packageInfo?.versionName.orEmpty().ifBlank { "2.1.0" }
+    val applicationInfo = if (layoutPreview != null) null else context.applicationInfo
     val buildType = stringResource(R.string.development_build_release)
-    val minSdk = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) applicationInfo.minSdkVersion else 24
-    val targetSdk = applicationInfo.targetSdkVersion
+    val minSdk = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) applicationInfo?.minSdkVersion ?: 24 else 24
+    val targetSdk = applicationInfo?.targetSdkVersion ?: 36
     val currentYear = remember { Calendar.getInstance().get(Calendar.YEAR) }
     var applicationTapCount by remember { mutableIntStateOf(0) }
     var lastApplicationTapAt by remember { mutableLongStateOf(0L) }
     var developerFontUnlocked by remember(context) {
-        mutableStateOf(DeveloperFeatures.isGoogleSansFlexUnlocked(context))
+        mutableStateOf(if (layoutPreview != null) false else DeveloperFeatures.isGoogleSansFlexUnlocked(context))
     }
 
     InformationScreenLayout(
@@ -118,7 +120,7 @@ fun DevelopmentInfoScreen(settings: AppSettings, onOpenSourceCode: () -> Unit, o
 
         DevelopmentSection(
             title = stringResource(R.string.development_app_section),
-            modifier = Modifier.clickable {
+            onClick = {
                 val now = SystemClock.elapsedRealtime()
                 applicationTapCount = if (now - lastApplicationTapAt > 1_500L) 1 else applicationTapCount + 1
                 lastApplicationTapAt = now
@@ -288,21 +290,37 @@ internal fun InformationScreenLayout(
 }
 
 @Composable
-internal fun DevelopmentSection(title: String, modifier: Modifier = Modifier, content: @Composable () -> Unit) {
+internal fun DevelopmentSection(
+    title: String, modifier: Modifier = Modifier, onClick: (() -> Unit)? = null,
+    content: @Composable () -> Unit
+) {
     val settings = LocalDevelopmentSettings.current
     val background = MaterialTheme.colorScheme.surfaceContainerLow
     val outline = MaterialTheme.colorScheme.outline
     val (text, secondary) = rememberUiTextColors(settings.textColor, background)
     val border = remember(background, outline) { ensureUiContrast(outline.copy(alpha = 0.55f), background, 2.2f) }
     val style = DevelopmentSectionStyle(rememberAppFontFamily(settings.font), text, secondary)
-    Surface(modifier = modifier.fillMaxWidth().padding(bottom = 12.dp), shape = RoundedCornerShape(18.dp),
-        color = background, border = BorderStroke(1.dp, border), tonalElevation = 0.dp) {
+    val shape = RoundedCornerShape(18.dp)
+    val sectionContent: @Composable () -> Unit = {
         CompositionLocalProvider(LocalDevelopmentSectionStyle provides style) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(text = title, color = text, fontFamily = style.fontFamily, fontWeight = FontWeight.Bold, fontSize = 17.sp)
                 Spacer(Modifier.height(10.dp))
                 content()
             }
+        }
+    }
+    // El espacio entre secciones queda fuera de la superficie pulsable.
+    // Surface recorta su indicación de pulsación con la misma forma del recuadro.
+    Box(modifier = modifier.fillMaxWidth().padding(bottom = 12.dp)) {
+        if (onClick != null) {
+            Surface(onClick = onClick, modifier = Modifier.fillMaxWidth(), shape = shape,
+                color = background, border = BorderStroke(1.dp, border), tonalElevation = 0.dp,
+                shadowElevation = 0.dp, content = sectionContent)
+        } else {
+            Surface(modifier = Modifier.fillMaxWidth(), shape = shape,
+                color = background, border = BorderStroke(1.dp, border), tonalElevation = 0.dp,
+                shadowElevation = 0.dp, content = sectionContent)
         }
     }
 }

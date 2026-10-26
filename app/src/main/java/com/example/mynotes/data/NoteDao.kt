@@ -5,17 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
-
-data class WidgetNoteStats(
-    val totalCount: Int,
-    val favoriteCount: Int,
-    val pinnedCount: Int,
-    val highPriorityCount: Int,
-    val workCount: Int,
-    val personalCount: Int
-)
 
 @Dao
 interface NoteDao {
@@ -62,20 +52,6 @@ interface NoteDao {
 
     @Query(
         """
-        SELECT
-            COUNT(*) AS totalCount,
-            COALESCE(SUM(CASE WHEN isFavorite = 1 THEN 1 ELSE 0 END), 0) AS favoriteCount,
-            COALESCE(SUM(CASE WHEN isPinned = 1 THEN 1 ELSE 0 END), 0) AS pinnedCount,
-            COALESCE(SUM(CASE WHEN priority = 3 THEN 1 ELSE 0 END), 0) AS highPriorityCount,
-            COALESCE(SUM(CASE WHEN category = 'work' THEN 1 ELSE 0 END), 0) AS workCount,
-            COALESCE(SUM(CASE WHEN category != 'work' THEN 1 ELSE 0 END), 0) AS personalCount
-        FROM notes
-        """
-    )
-    suspend fun getWidgetStats(): WidgetNoteStats
-
-    @Query(
-        """
         SELECT *
         FROM notes
         WHERE isFavorite = 1
@@ -84,17 +60,6 @@ interface NoteDao {
         """
     )
     suspend fun getFavoriteNotesForWidget(limit: Int): List<Note>
-
-    @Query(
-        """
-        SELECT *
-        FROM notes
-        WHERE isPinned = 1
-        ORDER BY priority DESC, createdAt DESC
-        LIMIT :limit
-        """
-    )
-    suspend fun getPinnedNotesForWidget(limit: Int): List<Note>
 
     @Query(
         """
@@ -111,16 +76,23 @@ interface NoteDao {
     suspend fun deleteAllNotes()
     @Insert
     suspend fun insertNote(note: Note): Long
-    @Update
-    suspend fun updateNote(note: Note)
+    @Query("""
+        UPDATE notes SET title = :title, content = :content, color = :color
+        WHERE id = :noteId AND (title != :title OR content != :content OR color != :color)
+    """)
+    suspend fun updateEditedFields(noteId: Int, title: String, content: String, color: String): Int
     @Query("UPDATE notes SET color = :color WHERE id = :noteId AND color != :color")
     suspend fun updateColor(noteId: Int, color: String): Int
     @Query("UPDATE notes SET priority = :priority WHERE id = :noteId AND priority != :priority")
     suspend fun updatePriority(noteId: Int, priority: Int): Int
     @Query("UPDATE notes SET isFavorite = :isFavorite WHERE id = :noteId AND isFavorite != :isFavorite")
     suspend fun updateFavorite(noteId: Int, isFavorite: Boolean): Int
+    @Query("UPDATE notes SET isFavorite = CASE WHEN isFavorite = 1 THEN 0 ELSE 1 END WHERE id = :noteId")
+    suspend fun toggleFavorite(noteId: Int): Int
     @Query("UPDATE notes SET isPinned = :isPinned WHERE id = :noteId AND isPinned != :isPinned")
     suspend fun updatePinned(noteId: Int, isPinned: Boolean): Int
+    @Query("UPDATE notes SET isPinned = CASE WHEN isPinned = 1 THEN 0 ELSE 1 END WHERE id = :noteId")
+    suspend fun togglePinned(noteId: Int): Int
     @Query("UPDATE notes SET category = :category WHERE id = :noteId AND category != :category")
     suspend fun updateCategory(noteId: Int, category: String): Int
     @Delete

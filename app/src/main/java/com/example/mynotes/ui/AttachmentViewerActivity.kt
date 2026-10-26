@@ -1,5 +1,7 @@
 package com.example.mynotes.ui
 
+import com.example.mynotes.ui.preview.LocalLayoutPreview
+
 import android.app.Activity
 import android.app.ActivityManager
 import android.content.ActivityNotFoundException
@@ -20,7 +22,6 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -180,10 +181,9 @@ class AttachmentViewerActivity : ComponentActivity() {
             val settingsViewModel: SettingsViewModel = viewModel()
             val settings by settingsViewModel.settings.collectAsStateWithLifecycle()
             SyncDisplayPerformance(window = window, performanceMode = settings.performanceMode)
-            /* Igual que la Activity principal: Básico = tema del teléfono;
+            /* Igual que la Activity principal: Básico = tema claro;
              * Avanzado = preferencia manual guardada. */
-            val systemDarkTheme = isSystemInDarkTheme()
-            val effectiveDarkTheme = settings.effectiveDarkTheme(systemDarkTheme)
+            val effectiveDarkTheme = settings.effectiveDarkTheme()
             LaunchedEffect(effectiveDarkTheme) {
                 applySystemBarAppearance(effectiveDarkTheme)
             }
@@ -196,7 +196,7 @@ class AttachmentViewerActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun AttachmentViewerScreen(uriString: String, type: String, name: String?, explicitMimeType: String?, onBack: () -> Unit) {
+internal fun AttachmentViewerScreen(uriString: String, type: String, name: String?, explicitMimeType: String?, onBack: () -> Unit) {
     val context = LocalContext.current
     val uri = remember(uriString) { Uri.parse(uriString) }
     val mimeType = remember(uriString, explicitMimeType, name) {
@@ -264,7 +264,9 @@ private fun AttachmentViewerScreen(uriString: String, type: String, name: String
 @Composable
 private fun ImageViewer(uri: Uri, name: String?) {
     val context = LocalContext.current
+    val layoutPreview = LocalLayoutPreview.current
     val bitmapLimit = remember(context) {
+        if (layoutPreview != null) return@remember Size.ORIGINAL
             val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as? ActivityManager
             when {
                 activityManager?.isLowRamDevice == true -> Size(3072, 3072)
@@ -273,7 +275,7 @@ private fun ImageViewer(uri: Uri, name: String?) {
             }
         }
     val request = remember(context, uri, bitmapLimit) {
-            ImageRequest.Builder(context).data(uri).size(Size.ORIGINAL).maxBitmapSize(bitmapLimit).precision(Precision.EXACT).scale(
+            ImageRequest.Builder(context).data(layoutPreview?.mediaBitmap ?: uri).size(Size.ORIGINAL).maxBitmapSize(bitmapLimit).precision(Precision.EXACT).scale(
                     Scale.FIT).allowHardware(true).memoryCachePolicy(CachePolicy.DISABLED).build()
         }
     var failed by
@@ -305,9 +307,18 @@ private fun rememberViewerPlayback(
     uri: Uri,
     playWhenReady: Boolean,
     copyFallback: (Context, Uri) -> File?
-): Pair<ExoPlayer, MediaPlaybackState> {
+): Pair<ExoPlayer?, MediaPlaybackState> {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
+    val layoutPreview = LocalLayoutPreview.current
+    if (layoutPreview != null) {
+        val playback = remember(uri) {
+            MediaPlaybackState(initialBuffering = false).also {
+                it.setPreviewProgress(layoutPreview.positionMillis, layoutPreview.durationMillis)
+            }
+        }
+        return null to playback
+    }
     val player = remember(uri) { ExoPlayer.Builder(context).build() }
     val playback = rememberMediaPlaybackState(uri, initialBuffering = true)
     var fallbackAttempted by remember(uri) { mutableStateOf(false) }
@@ -351,7 +362,12 @@ private fun VideoViewer(uri: Uri, name: String, mimeType: String) {
     val (player, playback) = rememberViewerPlayback(uri, playWhenReady = true, copyFallback = ::copyVideoToPlaybackCache)
     Column(modifier = Modifier.fillMaxSize().background(Color.Black)) {
         Box(modifier = Modifier.fillMaxWidth().weight(1f), contentAlignment = Alignment.Center) {
-            AndroidView(factory = {
+            if (player == null) {
+                LocalLayoutPreview.current?.mediaBitmap?.let { bitmap ->
+                    Image(bitmap = bitmap.asImageBitmap(), contentDescription = name,
+                        modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Fit)
+                }
+            } else AndroidView(factory = {
                     PlayerView(context).apply {
                         useController = false
                         resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
@@ -375,7 +391,7 @@ private fun VideoViewer(uri: Uri, name: String, mimeType: String) {
                 MediaSeekSlider(player, playback, positionToInt = { it.roundToInt() })
                 Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                     IconButton(enabled = playback.prepared && !playback.error, onClick = UiSoundPlayer.actionHandler(context, UiActionSound.PlayPause) {
-                        playback.toggle(player)
+                        player?.let { playback.toggle(it) }
                     }) {
                         Icon(
                             imageVector = if (playback.playing) Icons.Default.Pause else Icons.Default.PlayArrow,
@@ -418,7 +434,7 @@ private fun AudioFileViewer(uri: Uri, name: String, mimeType: String) {
         Text(text = "${formatTime(playback.position)} / ${formatTime(playback.duration)}", fontSize = 13.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
         Spacer(modifier = Modifier.height(16.dp))
         Button(enabled = playback.prepared && !playback.error, onClick = UiSoundPlayer.actionHandler(context, UiActionSound.PlayPause) {
-            playback.toggle(player)
+            player?.let { playback.toggle(it) }
         }) {
             Icon(imageVector = if (playback.playing) Icons.Default.Pause else Icons.Default.PlayArrow, contentDescription = null)
             Spacer(modifier = Modifier.size(8.dp))
@@ -438,8 +454,9 @@ private fun PdfViewer(uri: Uri) {
     val context = LocalContext.current
     val density = LocalDensity.current
     val pdfScrollState = rememberLazyListState()
+    val layoutPreview = LocalLayoutPreview.current
     val handle = remember(uri) {
-        try {
+        if (layoutPreview != null) null else try {
             openPdfHandle(context, uri)
         } catch (_: Exception) {
             null
@@ -453,7 +470,7 @@ private fun PdfViewer(uri: Uri) {
             }
         }
     }
-    if (handle == null) {
+    if (handle == null && layoutPreview?.documentBitmap == null) {
         GenericFileViewer(uri = uri, name = androidx.compose.ui.res.stringResource(R.string.pdf_document), extension = "pdf",
             mimeType = "application/pdf")
         return
@@ -462,8 +479,9 @@ private fun PdfViewer(uri: Uri) {
         val widthPx = with(density) {
             maxWidth.roundToPx().coerceAtLeast(360).coerceAtMost(1080)
         }
-        val pages = remember(handle.pageCount) {
-            (0 until handle.pageCount).toList()
+        val pageCount = if (layoutPreview != null) 1 else requireNotNull(handle).pageCount
+        val pages = remember(pageCount) {
+            (0 until pageCount).toList()
         }
         LazyColumn(state = pdfScrollState, modifier = Modifier.fillMaxSize(), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             items(items = pages, key = { it }) { pageIndex -> PdfPage(handle = handle, pageIndex = pageIndex, targetWidth = widthPx)
@@ -474,11 +492,14 @@ private fun PdfViewer(uri: Uri) {
 }
 
 @Composable
-private fun PdfPage(handle: PdfHandle, pageIndex: Int, targetWidth: Int) {
-    val renderResult by produceState(initialValue = Pair(false, null as Bitmap?), key1 = handle, key2 = pageIndex, key3 = targetWidth) {
+private fun PdfPage(handle: PdfHandle?, pageIndex: Int, targetWidth: Int) {
+    val layoutPreview = LocalLayoutPreview.current
+    val initialBitmap = layoutPreview?.documentBitmap
+    val renderResult by produceState(initialValue = Pair(initialBitmap != null, initialBitmap), key1 = handle, key2 = pageIndex, key3 = targetWidth) {
+        if (layoutPreview != null) return@produceState
         val bitmap = withContext(Dispatchers.IO) {
             try {
-                handle.renderPage(pageIndex, targetWidth)
+                requireNotNull(handle).renderPage(pageIndex, targetWidth)
             } catch (_: Exception) {
                 null
             }
@@ -569,7 +590,9 @@ private fun openPdfHandle(context: Context, uri: Uri): PdfHandle {
 @Composable
 private fun TextFileViewer(uri: Uri, extension: String) {
     val context = LocalContext.current
-    val text by produceState<String?>(initialValue = null, key1 = uri) {
+    val layoutPreview = LocalLayoutPreview.current
+    val text by produceState<String?>(initialValue = layoutPreview?.viewerText, key1 = uri) {
+        if (layoutPreview != null) return@produceState
         value = withContext(Dispatchers.IO) {
             readTextPreview(context, uri)
         }
@@ -598,7 +621,9 @@ private fun TextFileViewer(uri: Uri, extension: String) {
 @Composable
 private fun OfficeTextViewer(uri: Uri, extension: String, name: String, mimeType: String) {
     val context = LocalContext.current
-    val extracted by produceState<String?>(initialValue = null, key1 = uri, key2 = extension) {
+    val layoutPreview = LocalLayoutPreview.current
+    val extracted by produceState<String?>(initialValue = layoutPreview?.viewerText, key1 = uri, key2 = extension) {
+        if (layoutPreview != null) return@produceState
         value = withContext(Dispatchers.IO) {
             extractOfficeText(context = context, uri = uri, extension = extension)
         }
@@ -628,7 +653,9 @@ private fun OfficeTextViewer(uri: Uri, extension: String, name: String, mimeType
 @Composable
 private fun GenericFileViewer(uri: Uri, name: String, extension: String, mimeType: String) {
     val context = LocalContext.current
-    val fileSize by produceState<Long?>(initialValue = null, key1 = uri) {
+    val layoutPreview = LocalLayoutPreview.current
+    val fileSize by produceState<Long?>(initialValue = if (layoutPreview != null) 2_400_000L else null, key1 = uri) {
+        if (layoutPreview != null) return@produceState
         value = withContext(Dispatchers.IO) {
             resolveFileSize(context, uri)
         }

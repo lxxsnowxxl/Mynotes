@@ -9,6 +9,7 @@ import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import com.example.mynotes.ui.motion.AppMotion
+import com.example.mynotes.ui.theme.PaletteCatalog
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
@@ -17,14 +18,13 @@ private val Context.dataStore by
     preferencesDataStore(name = "app_settings")
 class SettingsRepository(private val context: Context) {
     companion object {
+        private const val LEGACY_TONE_MAX_INDEX = 3
         private val CONFIGURATION_MODE = stringPreferencesKey("configuration_mode")
         private val DARK_MODE = booleanPreferencesKey("dark_mode")
         private val BACKGROUND_COLOR = stringPreferencesKey("background_color")
         private val BACKGROUND_TONE_INDEX = intPreferencesKey("background_tone_index")
-        private val BACKGROUND_INTENSITY = floatPreferencesKey("background_intensity")
         private val SETTINGS_PANEL_TONE = floatPreferencesKey("settings_panel_tone")
         private val SURFACE_PANEL_INTENSITY = floatPreferencesKey("surface_panel_intensity")
-        private val HEADER_INTENSITY = floatPreferencesKey("header_intensity")
         private val TEXT_COLOR = stringPreferencesKey("text_color")
         private val TEXT_OUTLINE_ENABLED = booleanPreferencesKey("text_outline_enabled")
         private val SLIDER_STYLE = stringPreferencesKey("slider_style")
@@ -73,36 +73,42 @@ class SettingsRepository(private val context: Context) {
         private val ANIMATION_STYLE = stringPreferencesKey("animation_style")
         private val ANIMATION_EASING = stringPreferencesKey("animation_easing")
         private val ANIMATION_INTENSITY = floatPreferencesKey("animation_intensity")
+
+        internal fun readWidgetSettings(preferences: Preferences): WidgetSettings {
+            val rawPalette = preferences[BACKGROUND_COLOR] ?: "neutral"
+            val paletteKey = SettingsValuePolicy.paletteKey(rawPalette)
+            val palette = PaletteCatalog.find(paletteKey)
+            val legacyPalette = SettingsValuePolicy.isLegacyPalette(rawPalette)
+            val rawTone = preferences[BACKGROUND_TONE_INDEX] ?: if (legacyPalette) LEGACY_TONE_MAX_INDEX else 0
+            val tone = if (legacyPalette) LEGACY_TONE_MAX_INDEX - rawTone.coerceIn(0, LEGACY_TONE_MAX_INDEX) else rawTone
+            return WidgetSettings(
+                darkMode = preferences[DARK_MODE] ?: false,
+                backgroundColor = paletteKey,
+                backgroundToneIndex = palette.normalizeToneIndex(tone),
+                language = preferences[LANGUAGE] ?: "system"
+            )
+        }
     }
+
+    internal val widgetSettings: Flow<WidgetSettings> =
+        context.dataStore.data.map { readWidgetSettings(it) }.distinctUntilChanged()
+
     val settings:
         Flow<AppSettings> =
         context.dataStore.data.map {
                     preferences ->
-                val rawPalette = preferences[BACKGROUND_COLOR]?: "neutral"
-                val legacyPalette = SettingsValuePolicy.isLegacyPalette(rawPalette)
+                val appearance = readWidgetSettings(preferences)
                 val rawSoundEffectsVolume = preferences[SOUND_EFFECTS_VOLUME]
                 val soundEffectsVolume = (rawSoundEffectsVolume ?: 65f).coerceIn(0f, 100f)
                 val soundEffectsEnabled = preferences[SOUND_EFFECTS_ENABLED] ?: true
                 val outlineEnabledPreference = preferences[NOTE_CARD_OUTLINE_ENABLED]
                 val outlineWidthPreference = preferences[NOTE_CARD_OUTLINE_WIDTH] ?: 1f
-                val rawTone = preferences[BACKGROUND_TONE_INDEX]?: if (legacyPalette) {
-                            3
-                        } else {
-                            0
-                        }
-                val normalizedTone = if (legacyPalette) {
-                        3 - rawTone.coerceIn(0, 3)
-                    } else {
-                        rawTone.coerceIn(0, 3)
-                    }
                 AppSettings(configurationMode = SettingsValuePolicy.configurationMode(preferences[CONFIGURATION_MODE] ?: "unset"),
-                    darkMode = preferences[DARK_MODE]?: false,
-                    backgroundColor = SettingsValuePolicy.paletteKey(rawPalette),
-                    backgroundToneIndex = normalizedTone,
-                    backgroundIntensity = (preferences[BACKGROUND_INTENSITY]?: 0f).coerceIn(0f, 100f),
+                    darkMode = appearance.darkMode,
+                    backgroundColor = appearance.backgroundColor,
+                    backgroundToneIndex = appearance.backgroundToneIndex,
                     settingsPanelTone = (preferences[SETTINGS_PANEL_TONE]?: 0f).coerceIn(0f, 100f),
                     surfacePanelIntensity = (preferences[SURFACE_PANEL_INTENSITY]?: 72f).coerceIn(0f, 100f),
-                    headerIntensity = (preferences[HEADER_INTENSITY]?: 18f).coerceIn(0f, 100f),
                     textColor = SettingsValuePolicy.uiTextColor(preferences[TEXT_COLOR]?: "auto"),
                     textOutlineEnabled = preferences[TEXT_OUTLINE_ENABLED]?: false,
                     sliderStyle = SettingsValuePolicy.sliderStyle(preferences[SLIDER_STYLE]?: "capsule"),
@@ -115,12 +121,12 @@ class SettingsRepository(private val context: Context) {
                     soundEffectsVolume = soundEffectsVolume,
                     soundEffectsTheme = FeedbackPreferencePolicy.normalizeSoundTheme(preferences[SOUND_EFFECTS_THEME]?: "classic"),
                     reminderSoundEnabled = preferences[REMINDER_SOUND_ENABLED] ?: soundEffectsEnabled,
-                    reminderSoundVolume = soundEffectsVolume,
+                    reminderSoundVolume = (preferences[REMINDER_SOUND_VOLUME] ?: 65f).coerceIn(0f, 100f),
                     reminderRingtone = FeedbackPreferencePolicy.normalizeReminderRingtone(preferences[REMINDER_RINGTONE]?: "classic"),
                     hapticEffectsEnabled = preferences[HAPTIC_EFFECTS_ENABLED]?: true,
                     hapticEffectsIntensity = (preferences[HAPTIC_EFFECTS_INTENSITY]?: 55f).coerceIn(0f, 100f),
                     hapticEffectsStyle = FeedbackPreferencePolicy.normalizeHapticStyle(preferences[HAPTIC_EFFECTS_STYLE]?: "soft"),
-                    language = preferences[LANGUAGE]?: "system",
+                    language = appearance.language,
                     gridColumns = (preferences[GRID_COLUMNS]?: 2).coerceIn(1, 3),
                     sortOrder = preferences[SORT_ORDER]?: "newest",
                     profileImageUri = preferences[PROFILE_IMAGE_URI]?: "",
@@ -133,13 +139,7 @@ class SettingsRepository(private val context: Context) {
                     noteCardPadding = (preferences[NOTE_CARD_PADDING]?: 12f).coerceIn(6f, 24f),
                     noteCardImageHeight = (preferences[NOTE_CARD_IMAGE_HEIGHT]?: 112f).coerceIn(72f, 220f),
                     noteCardOutlineEnabled = (outlineEnabledPreference ?: false) && outlineWidthPreference > 0f,
-                    noteCardOutlineWidth = if (outlineEnabledPreference == false) {
-                            0f
-                        } else if (outlineEnabledPreference == true) {
-                            outlineWidthPreference.coerceIn(0f, 6f)
-                        } else {
-                            0f
-                        },
+                    noteCardOutlineWidth = if (outlineEnabledPreference == true) outlineWidthPreference.coerceIn(0f, 6f) else 0f,
                     noteTitleMaxLines = (preferences[NOTE_TITLE_MAX_LINES]?: 4).coerceIn(1, 8),
                     noteContentMaxLines = (preferences[NOTE_CONTENT_MAX_LINES]?: 6).coerceIn(2, 14),
                     noteLineSpacing = (preferences[NOTE_LINE_SPACING]?: 1.20f).coerceIn(1f, 1.8f),
@@ -164,32 +164,25 @@ class SettingsRepository(private val context: Context) {
                     animationSpeed = (preferences[ANIMATION_SPEED]?: 1f).coerceIn(0.5f, 2f),
                     animationIntensity = (preferences[ANIMATION_INTENSITY]?: 1f).coerceIn(0.5f, 1.5f))
             }.distinctUntilChanged()
-    /** Escritura común para ajustes de una sola clave; conserva la transacción. */
-    private suspend fun <T> writePreference(key: Preferences.Key<T>, value: T) {
-        context.dataStore.edit { it[key] = value }
-    }
+    private suspend fun <T> writePreference(key: Preferences.Key<T>, value: T): Boolean =
+        context.dataStore.editIfChanged { setIfChanged(key, value) }
 
     suspend fun setConfigurationMode(value: String) = writePreference(CONFIGURATION_MODE, SettingsValuePolicy.configurationMode(value))
 
     suspend fun setDarkMode(value: Boolean) = writePreference(DARK_MODE, value)
 
-    suspend fun setBackgroundColor(value: String) = writePreference(BACKGROUND_COLOR, SettingsValuePolicy.paletteKey(value))
-
-    suspend fun setBackgroundToneIndex(value: Int) {
-        context.dataStore.edit {
-                    preferences ->
-                val rawPalette = preferences[BACKGROUND_COLOR]?: "neutral"
-                preferences[BACKGROUND_COLOR] = SettingsValuePolicy.paletteKey(rawPalette)
-                preferences[BACKGROUND_TONE_INDEX] = value.coerceIn(0, 3)
-            }
+    suspend fun setBackgroundSelection(paletteKey: String, toneIndex: Int): Boolean {
+        val normalizedPaletteKey = SettingsValuePolicy.paletteKey(paletteKey)
+        val normalizedToneIndex = PaletteCatalog.find(normalizedPaletteKey).normalizeToneIndex(toneIndex)
+        return context.dataStore.editIfChanged {
+            val paletteChanged = setIfChanged(BACKGROUND_COLOR, normalizedPaletteKey)
+            val toneChanged = setIfChanged(BACKGROUND_TONE_INDEX, normalizedToneIndex)
+            paletteChanged || toneChanged
+        }
     }
-    suspend fun setBackgroundIntensity(value: Float) = writePreference(BACKGROUND_INTENSITY, value.coerceIn(0f, 100f))
-
     suspend fun setSettingsPanelTone(value: Float) = writePreference(SETTINGS_PANEL_TONE, value.coerceIn(0f, 100f))
 
     suspend fun setSurfacePanelIntensity(value: Float) = writePreference(SURFACE_PANEL_INTENSITY, value.coerceIn(0f, 100f))
-
-    suspend fun setHeaderIntensity(value: Float) = writePreference(HEADER_INTENSITY, value.coerceIn(0f, 100f))
 
     suspend fun setTextColor(value: String) = writePreference(TEXT_COLOR, SettingsValuePolicy.uiTextColor(value))
 
@@ -197,33 +190,24 @@ class SettingsRepository(private val context: Context) {
 
     suspend fun setSliderStyle(value: String) = writePreference(SLIDER_STYLE, SettingsValuePolicy.sliderStyle(value))
 
-    suspend fun setFont(value: String) {
+    suspend fun setFont(value: String): Boolean {
         val normalized = FontPreferencePolicy.normalize(
             value,
             googleSansFlexUnlocked = DeveloperFeatures.isGoogleSansFlexUnlocked(context)
         )
-        context.dataStore.edit {
-            it[FONT] = normalized
-        }
+        return writePreference(FONT, normalized)
     }
     suspend fun setFontSize(value: Float) = writePreference(FONT_SIZE, value.coerceIn(12f, 28f))
 
     suspend fun setSoundEffectsEnabled(value: Boolean) = writePreference(SOUND_EFFECTS_ENABLED, value)
 
-    suspend fun setSoundEffectsVolume(value: Float) {
-        val normalized = value.coerceIn(0f, 100f)
-        context.dataStore.edit { preferences ->
-            preferences[SOUND_EFFECTS_VOLUME] = normalized
-            // Alertas y clics de escritura comparten el mismo nivel maestro que los efectos.
-            preferences[REMINDER_SOUND_VOLUME] = normalized
-        }
-    }
+    suspend fun setSoundEffectsVolume(value: Float) = writePreference(SOUND_EFFECTS_VOLUME, value.coerceIn(0f, 100f))
 
     suspend fun setSoundEffectsTheme(value: String) = writePreference(SOUND_EFFECTS_THEME, FeedbackPreferencePolicy.normalizeSoundTheme(value))
 
     suspend fun setReminderSoundEnabled(value: Boolean) = writePreference(REMINDER_SOUND_ENABLED, value)
 
-    suspend fun setReminderSoundVolume(value: Float) = setSoundEffectsVolume(value)
+    suspend fun setReminderSoundVolume(value: Float) = writePreference(REMINDER_SOUND_VOLUME, value.coerceIn(0f, 100f))
 
     suspend fun setReminderRingtone(value: String) = writePreference(REMINDER_RINGTONE, FeedbackPreferencePolicy.normalizeReminderRingtone(value))
 
@@ -257,13 +241,14 @@ class SettingsRepository(private val context: Context) {
 
     suspend fun setNoteCardImageHeight(value: Float) = writePreference(NOTE_CARD_IMAGE_HEIGHT, value.coerceIn(72f, 220f))
 
-    suspend fun setNoteCardOutlineWidth(value: Float) {
+    suspend fun setNoteCardOutlineWidth(value: Float): Boolean {
         val normalized = value.coerceIn(0f, 6f)
-        context.dataStore.edit {
-            it[NOTE_CARD_OUTLINE_WIDTH] = normalized
+        return context.dataStore.editIfChanged {
+            val widthChanged = setIfChanged(NOTE_CARD_OUTLINE_WIDTH, normalized)
             // v38 removes the visible switch. Zero thickness is now the
             // disabled state, while any positive width enables the outline.
-            it[NOTE_CARD_OUTLINE_ENABLED] = normalized > 0.01f
+            val enabledChanged = setIfChanged(NOTE_CARD_OUTLINE_ENABLED, normalized > 0.01f)
+            widthChanged || enabledChanged
         }
     }
     suspend fun setNoteTitleMaxLines(value: Int) = writePreference(NOTE_TITLE_MAX_LINES, value.coerceIn(1, 8))
@@ -294,17 +279,6 @@ class SettingsRepository(private val context: Context) {
 
     suspend fun setColorMenuHiddenItems(value: String) = writePreference(COLOR_MENU_HIDDEN_ITEMS, MenuPreferencePolicy.normalizeHiddenItems(value, MenuPreferencePolicy.colorKeys))
 
-    suspend fun resetOptionMenuSettings() {
-        context.dataStore.edit {
-            it[OPTION_MENU_ORDER] = MenuPreferencePolicy.defaultOrder
-            it[OPTION_MENU_HIDDEN_ITEMS] = ""
-            it[OPTION_MENU_SHOW_ICONS] = true
-            it[OPTION_MENU_TEXT_COLOR] = "note"
-            it[OPTION_MENU_OPACITY] = 100f
-            it[PRIORITY_MENU_HIDDEN_ITEMS] = ""
-            it[COLOR_MENU_HIDDEN_ITEMS] = ""
-        }
-    }
     suspend fun setPerformanceMode(value: String) = writePreference(PERFORMANCE_MODE, AppMotion.normalizePerformanceMode(value))
 
     suspend fun setAnimationsEnabled(value: Boolean) = writePreference(ANIMATIONS_ENABLED, value)
@@ -325,12 +299,11 @@ class SettingsRepository(private val context: Context) {
     suspend fun restoreFromBackup(value: AppSettings) {
         context.dataStore.edit { preferences -> preferences[CONFIGURATION_MODE] = SettingsValuePolicy.configurationMode(value.configurationMode)
             preferences[DARK_MODE] = value.darkMode
-            preferences[BACKGROUND_COLOR] = SettingsValuePolicy.paletteKey(value.backgroundColor)
-            preferences[BACKGROUND_TONE_INDEX] = value.backgroundToneIndex.coerceIn(0, 3)
-            preferences[BACKGROUND_INTENSITY] = value.backgroundIntensity.coerceIn(0f, 100f)
+            val normalizedPaletteKey = SettingsValuePolicy.paletteKey(value.backgroundColor)
+            preferences[BACKGROUND_COLOR] = normalizedPaletteKey
+            preferences[BACKGROUND_TONE_INDEX] = PaletteCatalog.find(normalizedPaletteKey).normalizeToneIndex(value.backgroundToneIndex)
             preferences[SETTINGS_PANEL_TONE] = value.settingsPanelTone.coerceIn(0f, 100f)
             preferences[SURFACE_PANEL_INTENSITY] = value.surfacePanelIntensity.coerceIn(0f, 100f)
-            preferences[HEADER_INTENSITY] = value.headerIntensity.coerceIn(0f, 100f)
             preferences[TEXT_COLOR] = SettingsValuePolicy.uiTextColor(value.textColor)
             preferences[TEXT_OUTLINE_ENABLED] = value.textOutlineEnabled
             preferences[SLIDER_STYLE] = SettingsValuePolicy.sliderStyle(value.sliderStyle)
@@ -343,7 +316,7 @@ class SettingsRepository(private val context: Context) {
             preferences[SOUND_EFFECTS_VOLUME] = value.soundEffectsVolume.coerceIn(0f, 100f)
             preferences[SOUND_EFFECTS_THEME] = FeedbackPreferencePolicy.normalizeSoundTheme(value.soundEffectsTheme)
             preferences[REMINDER_SOUND_ENABLED] = value.reminderSoundEnabled
-            preferences[REMINDER_SOUND_VOLUME] = value.soundEffectsVolume.coerceIn(0f, 100f)
+            preferences[REMINDER_SOUND_VOLUME] = value.reminderSoundVolume.coerceIn(0f, 100f)
             preferences[REMINDER_RINGTONE] = FeedbackPreferencePolicy.normalizeReminderRingtone(value.reminderRingtone)
             preferences[HAPTIC_EFFECTS_ENABLED] = value.hapticEffectsEnabled
             preferences[HAPTIC_EFFECTS_INTENSITY] = value.hapticEffectsIntensity.coerceIn(0f, 100f)

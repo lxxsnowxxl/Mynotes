@@ -6,11 +6,62 @@ import androidx.compose.ui.graphics.Color
 import com.example.mynotes.R
 
 @Immutable
-data class MyNotesPalette(val key: String,
-    @StringRes val labelRes: Int, val tones: List<Color>, val accent: Color)
+data class MyNotesPalette(
+    val key: String,
+    @StringRes val labelRes: Int,
+    val tones: List<Color>,
+    val accent: Color
+) {
+    init {
+        require(tones.isNotEmpty()) { "Palette $key must contain at least one tone" }
+    }
+
+    fun normalizeToneIndex(index: Int): Int = index.coerceIn(0, tones.lastIndex)
+
+    fun toneAt(index: Int): Color = tones[normalizeToneIndex(index)]
+
+    val darkToneStartIndex: Int
+        get() = (tones.size + 1) / 2
+}
+
 object PaletteCatalog {
-    private fun p(key: String, labelRes: Int, c1: Long, c2: Long, c3: Long, c4: Long, accent: Long) = MyNotesPalette(key = key,
-        labelRes = labelRes, tones = listOf(Color(c1), Color(c2), Color(c3), Color(c4)), accent = Color(accent))
+    const val SELECTABLE_TONE_COUNT = 5
+    private const val INTERMEDIATE_TONE_MIX = 0.55f
+
+    private fun mix(first: Color, second: Color, amount: Float): Color {
+        val value = amount.coerceIn(0f, 1f)
+        return Color(
+            red = first.red + (second.red - first.red) * value,
+            green = first.green + (second.green - first.green) * value,
+            blue = first.blue + (second.blue - first.blue) * value,
+            alpha = 1f
+        )
+    }
+
+    private fun expandedTones(c1: Long, c2: Long, c3: Long, c4: Long): List<Color> {
+        val tone1 = Color(c1)
+        val tone2 = Color(c2)
+        val tone3 = Color(c3)
+        val tone4 = Color(c4)
+        return listOf(
+            tone1,
+            mix(tone1, tone2, INTERMEDIATE_TONE_MIX),
+            tone2,
+            tone3,
+            tone4
+        ).also { tones ->
+            check(tones.size == SELECTABLE_TONE_COUNT) {
+                "Expanded palette must expose $SELECTABLE_TONE_COUNT tones"
+            }
+        }
+    }
+
+    private fun p(key: String, labelRes: Int, c1: Long, c2: Long, c3: Long, c4: Long, accent: Long) = MyNotesPalette(
+        key = key,
+        labelRes = labelRes,
+        tones = expandedTones(c1, c2, c3, c4),
+        accent = Color(accent)
+    )
     val palettes = listOf(p("neutral", R.string.mock_palette_neutral, 0xFFF3EFE9, 0xFFD9D0C5, 0xFF726B65, 0xFF2D2D2D, 0xFF4B4743),
         p("warm", R.string.mock_palette_warm, 0xFFFFE8D2, 0xFFF3C59B, 0xFF995E38, 0xFF9C4F2A, 0xFFD9773C),
         p("sage", R.string.mock_palette_sage, 0xFFE7ECE4, 0xFFB9C9B7, 0xFF597260, 0xFF315C47, 0xFF5E836D),
@@ -33,8 +84,8 @@ object PaletteCatalog {
         p("green", R.string.mock_palette_green, 0xFFE9F6E9, 0xFFB6DDB4, 0xFF4C764E, 0xFF2C6133, 0xFF4D8953),
         p("mint", R.string.mock_palette_mint, 0xFFE9FAF4, 0xFFB9EAD9, 0xFF457664, 0xFF2E7961, 0xFF55A889),
         p("peach", R.string.mock_palette_peach, 0xFFFFEFE5, 0xFFFFD0B6, 0xFF965F48, 0xFFA5573C, 0xFFE3825B),
-        // Paletas brillantes. Los tonos 1-2 siguen siendo claros para texto negro
-        // y los tonos 3-4 mantienen suficiente contraste para texto blanco.
+        // Paletas brillantes. Los tonos 1-3 priorizan texto negro
+        // y los tonos 4-5 priorizan texto blanco, con comprobación de contraste.
         p("neon_pink", R.string.mock_palette_neon_pink, 0xFFFFF0FA, 0xFFFF66C4, 0xFFC21875, 0xFF8A0E53, 0xFFFF3EAE),
         p("electric_blue", R.string.mock_palette_electric_blue, 0xFFE8F4FF, 0xFF40A9FF, 0xFF0066CC, 0xFF004799, 0xFF238CFF),
         p("electric_cyan", R.string.mock_palette_electric_cyan, 0xFFE6FFFF, 0xFF20E0FF, 0xFF007C99, 0xFF00566B, 0xFF00CFE8),
@@ -43,7 +94,7 @@ object PaletteCatalog {
         p("vivid_orange", R.string.mock_palette_vivid_orange, 0xFFFFF1DE, 0xFFFF9F1C, 0xFFB94D00, 0xFF823500, 0xFFFF7A00),
         p("neon_yellow", R.string.mock_palette_neon_yellow, 0xFFFFFCE0, 0xFFFFE83D, 0xFF8A7200, 0xFF604E00, 0xFFFFD600),
         p("neon_green", R.string.mock_palette_neon_green, 0xFFE8FFE9, 0xFF55F26C, 0xFF1B7D34, 0xFF115824, 0xFF2EEA59),
-        // Paletas adicionales. Cada una conserva cuatro tonos seleccionables.
+        // Paletas adicionales. Cada una conserva cinco tonos seleccionables.
         p("midnight", R.string.mock_palette_midnight, 0xFFE9EDF7, 0xFFAEBBDD, 0xFF5A6B9A, 0xFF202A44, 0xFF4B5F91),
         p("navy", R.string.mock_palette_navy, 0xFFE7EEF8, 0xFFA8BEDA, 0xFF4C6F98, 0xFF173A63, 0xFF356896),
         p("emerald", R.string.mock_palette_emerald, 0xFFE5F5EC, 0xFFAFE0C3, 0xFF3D7857, 0xFF1F6442, 0xFF3F8E63),

@@ -13,9 +13,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.KeyboardArrowDown
 import androidx.compose.material.icons.filled.KeyboardArrowUp
-import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Slider
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
@@ -36,9 +34,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.PopupProperties
 import com.example.mynotes.R
-import com.example.mynotes.ui.components.AppDropdownMenu
 import com.example.mynotes.settings.AppSettings
 import com.example.mynotes.settings.MenuPreferencePolicy
 import com.example.mynotes.ui.sound.UiActionSound
@@ -241,24 +237,6 @@ private fun MenuVisibilitySection(
 }
 
 @Composable
-fun OptionsMenuResetAction(
-    fontFamily: FontFamily,
-    textColor: Color,
-    onReset: () -> Unit
-) {
-    val context = LocalContext.current
-    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.End) {
-        TextButton(onClick = {
-            UiSoundPlayer.playAction(context = context, action = UiActionSound.Restore)
-            onReset()
-        }) {
-            AppIconLabel(Icons.Default.Refresh, stringResource(R.string.option_menu_reset), tint = textColor,
-                textModifier = Modifier.padding(start = 6.dp), color = textColor, fontFamily = fontFamily, fontWeight = FontWeight.SemiBold)
-        }
-    }
-}
-
-@Composable
 private fun MenuOrderRow(label: String, visible: Boolean, canHide: Boolean, canMoveUp: Boolean, canMoveDown: Boolean,
     onVisibleChange: (Boolean) -> Unit, onMoveUp: () -> Unit, onMoveDown: () -> Unit, fontFamily: FontFamily, textColor: Color) {
     val context = LocalContext.current
@@ -285,39 +263,43 @@ private fun MenuMoveButton(icon: ImageVector, descriptionRes: Int, enabled: Bool
 private fun CompactToggleGrid(options: List<MenuOptionDescriptor>, hiddenItems: Set<String>, visibleCount: Int,
     onHiddenItemsChange: (String) -> Unit, fontFamily: FontFamily, textColor: Color) {
     val rows = remember(options) { options.chunked(2) }
-    rows.forEach {
-                rowOptions ->
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp), verticalAlignment =
-                    Alignment.CenterVertically) {
-                rowOptions.forEach {
-                            option ->
-                        val visible = option.key !in
-                                hiddenItems
-                        SettingsToggleRow(title = stringResource(option.labelRes), checked = visible, onCheckedChange = {
-                                checked ->
-                                val next = hiddenItems.toMutableSet()
-                                if (checked) {
-                                    next.remove(option.key)
-                                } else if (visibleCount >
-                                    1) {
-                                    next.add(option.key)
-                                }
-                                onHiddenItemsChange(next.joinToString(","))
-                            }, enabled = !visible || visibleCount >
-                                        1, fontFamily = fontFamily, textColor = textColor, modifier = Modifier.weight(1f), compact = true)
-                    }
-                if (rowOptions.size == 1) {
-                    Spacer(modifier = Modifier.weight(1f))
-                }
+    rows.forEach { rowOptions ->
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            rowOptions.forEach { option ->
+                val visible = option.key !in hiddenItems
+                SettingsToggleRow(
+                    title = stringResource(option.labelRes),
+                    checked = visible,
+                    onCheckedChange = { checked ->
+                        val next = hiddenItems.toMutableSet()
+                        if (checked) {
+                            next.remove(option.key)
+                        } else if (visibleCount > 1) {
+                            next.add(option.key)
+                        }
+                        onHiddenItemsChange(next.joinToString(","))
+                    },
+                    enabled = !visible || visibleCount > 1,
+                    fontFamily = fontFamily,
+                    textColor = textColor,
+                    modifier = Modifier.weight(1f),
+                    compact = true
+                )
             }
+            if (rowOptions.size == 1) Spacer(modifier = Modifier.weight(1f))
         }
+    }
 }
 
 @Composable
-private fun optionMenuTextColorLabel(value: String): String {
-    return stringResource(when (value) {
-            "black" -> R.string.option_menu_text_black
-            "white" -> R.string.option_menu_text_white
-            else -> R.string.option_menu_text_follow_note
-        })
-}
+private fun optionMenuTextColorLabel(value: String): String = stringResource(
+    when (value) {
+        "black" -> R.string.option_menu_text_black
+        "white" -> R.string.option_menu_text_white
+        else -> R.string.option_menu_text_follow_note
+    }
+)

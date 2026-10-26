@@ -74,8 +74,6 @@
     <string name="tap_to_open">点击打开</string>
     <string name="file_extension_tap_to_open">%1$s · 点击打开</string>
     <string name="open_file">打开文件</string>
-    <string name="background_intensity">背景强度：%1$d%%</string>
-    <string name="header_intensity">标题栏强度：%1$d%%</string>
     <string name="text_color">文字颜色</string>
     <string name="text_color_black">黑色</string>
     <string name="text_color_white">白色</string>

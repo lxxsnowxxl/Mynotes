@@ -74,8 +74,6 @@
     <string name="tap_to_open">Toca para abrir</string>
     <string name="file_extension_tap_to_open">%1$s · Toca para abrir</string>
     <string name="open_file">Abrir archivo</string>
-    <string name="background_intensity">Intensidad del fondo: %1$d%%</string>
-    <string name="header_intensity">Intensidad del encabezado: %1$d%%</string>
     <string name="text_color">Color del texto</string>
     <string name="text_color_black">Negro</string>
     <string name="text_color_white">Blanco</string>

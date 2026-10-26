@@ -105,7 +105,8 @@ fun ProfileImageEditorDialog(
 ) {
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
-    var sourceBitmap by remember(sourceUri) { mutableStateOf<Bitmap?>(null) }
+    val layoutPreview = com.example.mynotes.ui.preview.LocalLayoutPreview.current
+    var sourceBitmap by remember(sourceUri) { mutableStateOf(layoutPreview?.mediaBitmap) }
     var loadFailed by remember(sourceUri) { mutableStateOf(false) }
     var saving by remember(sourceUri) { mutableStateOf(false) }
     var zoom by remember(sourceUri) { mutableFloatStateOf(PROFILE_MIN_ZOOM) }
@@ -113,6 +114,7 @@ fun ProfileImageEditorDialog(
     var viewportSize by remember(sourceUri) { mutableStateOf(IntSize.Zero) }
 
     LaunchedEffect(sourceUri) {
+        if (layoutPreview != null) return@LaunchedEffect
         sourceBitmap = withContext(Dispatchers.IO) { decodeProfileBitmap(context, sourceUri) }
         loadFailed = sourceBitmap == null
         zoom = PROFILE_MIN_ZOOM

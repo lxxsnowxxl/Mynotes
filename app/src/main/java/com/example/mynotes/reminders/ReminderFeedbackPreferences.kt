@@ -1,7 +1,6 @@
 package com.example.mynotes.reminders
 
 import android.content.Context
-import android.content.res.Configuration
 import android.media.AudioAttributes
 import android.media.AudioDeviceInfo
 import android.media.AudioManager
@@ -11,7 +10,6 @@ import android.os.Build
 import android.os.Handler
 import android.os.Looper
 import androidx.compose.ui.graphics.toArgb
-import com.example.mynotes.R
 import com.example.mynotes.settings.AppSettings
 import com.example.mynotes.settings.FeedbackPreferencePolicy
 import com.example.mynotes.ui.sound.UiHaptic
@@ -66,12 +64,10 @@ object ReminderFeedbackPreferences {
     )
 
     fun sync(context: Context, settings: AppSettings) {
-        val systemDark = (context.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK) ==
-            Configuration.UI_MODE_NIGHT_YES
-        val effectiveDark = settings.effectiveDarkTheme(systemDark)
+        val effectiveDark = settings.effectiveDarkTheme()
         val palette = PaletteCatalog.find(settings.backgroundColor)
-        val scheme = resolveAppColorScheme(effectiveDark, palette, settings.backgroundToneIndex, settings.backgroundIntensity,
-            settings.surfacePanelIntensity, settings.headerIntensity, settings.textColor, settings.accentColor)
+        val scheme = resolveAppColorScheme(effectiveDark, palette, settings.backgroundToneIndex,
+            settings.surfacePanelIntensity, settings.textColor, settings.accentColor)
         val panel = scheme.surfaceContainer
         val primaryText = resolveUiTextColor(settings.textColor, panel)
         val secondaryText = resolveSecondaryUiTextColor(settings.textColor, panel)
@@ -81,7 +77,7 @@ object ReminderFeedbackPreferences {
             soundVolume = settings.soundEffectsVolume.coerceIn(0f, 100f),
             soundTheme = UiSoundPlayer.normalizeTheme(settings.soundEffectsTheme),
             reminderSoundEnabled = settings.reminderSoundEnabled,
-            reminderSoundVolume = settings.soundEffectsVolume.coerceIn(0f, 100f),
+            reminderSoundVolume = settings.reminderSoundVolume.coerceIn(0f, 100f),
             reminderRingtone = FeedbackPreferencePolicy.normalizeReminderRingtone(settings.reminderRingtone),
             hapticEnabled = settings.hapticEffectsEnabled,
             hapticIntensity = settings.hapticEffectsIntensity.coerceIn(0f, 100f),
@@ -115,13 +111,12 @@ object ReminderFeedbackPreferences {
 
     fun read(context: Context): Snapshot {
         val prefs = context.getSharedPreferences(PREFS, Context.MODE_PRIVATE)
-        val sharedSoundVolume = prefs.getFloat(KEY_SOUND_VOLUME, 65f).coerceIn(0f, 100f)
         return Snapshot(
             soundEnabled = prefs.getBoolean(KEY_SOUND_ENABLED, true),
-            soundVolume = sharedSoundVolume,
+            soundVolume = prefs.getFloat(KEY_SOUND_VOLUME, 65f).coerceIn(0f, 100f),
             soundTheme = UiSoundPlayer.normalizeTheme(prefs.getString(KEY_SOUND_THEME, UiSoundPlayer.DEFAULT_THEME).orEmpty()),
             reminderSoundEnabled = prefs.getBoolean(KEY_REMINDER_SOUND_ENABLED, true),
-            reminderSoundVolume = sharedSoundVolume,
+            reminderSoundVolume = prefs.getFloat(KEY_REMINDER_SOUND_VOLUME, 65f).coerceIn(0f, 100f),
             reminderRingtone = FeedbackPreferencePolicy.normalizeReminderRingtone(prefs.getString(KEY_REMINDER_RINGTONE, "classic").orEmpty()),
             hapticEnabled = prefs.getBoolean(KEY_HAPTIC_ENABLED, true),
             hapticIntensity = prefs.getFloat(KEY_HAPTIC_INTENSITY, 55f).coerceIn(0f, 100f),
@@ -199,13 +194,11 @@ object ReminderFeedbackPreferences {
                 try { previous.stop() } catch (_: IllegalStateException) { }
                 previous.release()
             }
-            // Los recordatorios usan sonidos de alerta dedicados. Cuando hay una salida Bluetooth
-            // conectada, la alerta parte del 100 % de ganancia interna y recibe un refuerzo adicional
-            // de +6 dB. El control maestro sigue siendo STREAM_NOTIFICATION: si el usuario baja o
+            // Bluetooth conserva el refuerzo de +6 dB y respeta el porcentaje de alertas.
+            // El control maestro sigue siendo STREAM_NOTIFICATION: si el usuario baja o
             // silencia Notificaciones en Android, MyNotes respeta ese nivel del sistema.
             val bluetoothBoost = hasBluetoothOutput(audioManager)
-            val normalVolume = (volumePercent / 100f).coerceIn(0f, 1f)
-            val playbackVolume = if (bluetoothBoost) 1f else normalVolume
+            val playbackVolume = (volumePercent / 100f).coerceIn(0f, 1f)
             val player = MediaPlayer.create(
                 context.applicationContext,
                 FeedbackPreferencePolicy.reminderTone(ringtone).soundRes,
@@ -221,7 +214,7 @@ object ReminderFeedbackPreferences {
                     }
                 } catch (_: Exception) {
                     // Algunos dispositivos/firmwares no exponen LoudnessEnhancer. En ese caso,
-                    // mantenemos igualmente la alerta Bluetooth al 100 % de ganancia interna.
+                    // reproducimos la alerta con el porcentaje elegido sin refuerzo adicional.
                     null
                 }
             } else {

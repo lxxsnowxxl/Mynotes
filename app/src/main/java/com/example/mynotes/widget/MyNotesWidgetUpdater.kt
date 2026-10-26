@@ -6,13 +6,16 @@ import android.content.Context
 import android.content.Intent
 import android.os.Handler
 import android.os.Looper
+import android.util.Log
+import kotlinx.coroutines.CancellationException
+import kotlinx.coroutines.launch
 
 /**
  * Punto único para solicitar refrescos de todos los widgets de MyNotes.
  *
  * Varias acciones de la app pueden ocurrir en ráfaga (guardar una nota,
  * eliminar varios adjuntos, cambiar propiedades seguidas, restaurar backup).
- * Enviar seis broadcasts por cada una de esas operaciones provoca consultas
+ * Enviar broadcasts por cada una de esas operaciones provoca consultas
  * repetidas a Room y trabajo redundante del launcher.
  *
  * Agrupamos las solicitudes cercanas en una sola actualización. El retraso es
@@ -38,8 +41,19 @@ object MyNotesWidgetUpdater {
             applicationContext.also { applicationContext = null }
         } ?: return@Runnable
 
-        val manager = AppWidgetManager.getInstance(context)
-        providers.forEach { updateProvider(context, manager, it) }
+        // Las consultas al servicio de widgets y sus broadcasts no bloquean la interfaz.
+        WidgetIoScope.launch {
+            val manager = AppWidgetManager.getInstance(context)
+            providers.forEach { provider ->
+                try {
+                    updateProvider(context, manager, provider)
+                } catch (cancelled: CancellationException) {
+                    throw cancelled
+                } catch (error: Exception) {
+                    Log.w("MyNotesWidgets", "Widget update could not be requested", error)
+                }
+            }
+        }
     }
 
     fun requestUpdate(context: Context) {

@@ -1,4 +1,6 @@
 package com.example.mynotes.ui.pdf
+
+import com.example.mynotes.ui.preview.LocalLayoutPreview
 import com.example.mynotes.ui.theme.rememberUiTextColors
 import com.example.mynotes.ui.components.AppIconButton
 import com.example.mynotes.ui.components.AppIconLabel
@@ -179,7 +181,7 @@ class PdfEditorActivity : ImmersivePdfActivity() {
 }
 
 @Composable
-private fun PdfEditorScreen(
+internal fun PdfEditorScreen(
     settings: AppSettings,
     initialProjectId: String?,
     onClose: () -> Unit
@@ -189,7 +191,8 @@ private fun PdfEditorScreen(
     val fontFamily = rememberAppFontFamily(settings.font)
     val (primaryText, secondaryText) = rememberUiTextColors(settings.textColor, MaterialTheme.colorScheme.background)
 
-    var pages by remember { mutableStateOf(listOf(PdfPageModel.blank())) }
+    val layoutPreview = LocalLayoutPreview.current
+    var pages by remember { mutableStateOf(layoutPreview?.pdfPages?.takeIf { it.isNotEmpty() } ?: listOf(PdfPageModel.blank())) }
     var currentPageIndex by remember { mutableIntStateOf(0) }
     var tool by remember { mutableStateOf(PdfEditorTool.SELECT) }
     var penColor by remember { mutableIntStateOf(AndroidColor.BLACK) }
@@ -198,7 +201,7 @@ private fun PdfEditorScreen(
     var selectedTextId by remember { mutableStateOf<Long?>(null) }
     var selectedStrokeId by remember { mutableStateOf<Long?>(null) }
     var canvasTransforming by remember { mutableStateOf(false) }
-    var nextElementId by remember { mutableLongStateOf(1L) }
+    var nextElementId by remember { mutableLongStateOf(nextPdfElementId(pages)) }
     var aiBusy by remember { mutableStateOf(false) }
     var imageEditBusy by remember { mutableStateOf(false) }
     var showImageCropDialog by remember { mutableStateOf(false) }
@@ -235,9 +238,10 @@ private fun PdfEditorScreen(
     var projectName by remember(initialProjectId) { mutableStateOf(context.getString(R.string.pdf_library_untitled)) }
     var projectReady by remember(initialProjectId) { mutableStateOf(initialProjectId == null) }
     var dirtyVersion by remember { mutableIntStateOf(0) }
-    var autosaveBusy by remember { mutableStateOf(false) }
+    val saveCoordinator = remember(projectId) { PdfProjectSaveCoordinator() }
 
     LaunchedEffect(initialProjectId) {
+        if (layoutPreview != null) return@LaunchedEffect
         if (initialProjectId == null) return@LaunchedEffect
         runCatching { PdfProjectRepository.loadProject(context, initialProjectId) }
             .onSuccess { project ->
@@ -344,21 +348,22 @@ private fun PdfEditorScreen(
     }
 
     suspend fun persistProject() {
-        if (!projectReady || !hasMeaningfulProject()) return
-        autosaveBusy = true
-        try {
+        if (layoutPreview != null) return
+        saveCoordinator.saveIfChanged(currentVersion = {
+            if (projectReady && hasMeaningfulProject()) dirtyVersion else null
+        }) {
+            val savedSource = sourcePdfUri
             val saved = PdfProjectRepository.saveProject(
                 context = context,
                 id = projectId,
                 name = projectName,
                 pages = pages,
-                sourcePdfUri = sourcePdfUri
+                sourcePdfUri = savedSource
             )
-            if (saved.sourcePdfUri != null && sourcePdfUri != saved.sourcePdfUri) {
+            // Una importación más reciente debe conservar su propio PDF base.
+            if (saved.sourcePdfUri != null && sourcePdfUri == savedSource) {
                 sourcePdfUri = saved.sourcePdfUri
             }
-        } finally {
-            autosaveBusy = false
         }
     }
 

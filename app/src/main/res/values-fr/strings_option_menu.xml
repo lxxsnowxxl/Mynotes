@@ -15,5 +15,4 @@
     <string name="option_menu_color_submenu">Sous-menu de couleur</string>
     <string name="option_menu_move_up">Déplacer vers le haut</string>
     <string name="option_menu_move_down">Déplacer vers le bas</string>
-    <string name="option_menu_reset">Réinitialiser le menu</string>
 </resources>

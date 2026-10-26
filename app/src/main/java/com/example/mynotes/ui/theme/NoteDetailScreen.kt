@@ -1,4 +1,6 @@
 package com.example.mynotes.ui
+
+import com.example.mynotes.ui.preview.LocalLayoutPreview
 import com.example.mynotes.ui.theme.rememberUiContentColors
 import com.example.mynotes.ui.theme.rememberAppFontFamily
 import com.example.mynotes.ui.components.AppIconButton
@@ -97,7 +99,7 @@ import com.example.mynotes.ui.theme.resolveUiTextColor
 import com.example.mynotes.ui.theme.compositeUiColor
 import com.example.mynotes.ui.theme.ensureUiContrast
 import com.example.mynotes.ui.theme.noteBackgroundColor
-import com.example.mynotes.viewmodel.NoteViewModel
+import com.example.mynotes.ui.state.NoteActions
 import java.text.DateFormat
 import java.util.Date
 
@@ -107,7 +109,8 @@ private val DetailMenuKeys = listOf("edit", "priority", "color")
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
-fun NoteDetailScreen(note: Note, noteViewModel: NoteViewModel, settings: AppSettings, onBack: () -> Unit, onEdit: (Note) -> Unit) {
+fun NoteDetailScreen(note: Note, noteViewModel: NoteActions, settings: AppSettings, onBack: () -> Unit, onEdit: (Note) -> Unit) {
+    val layoutPreview = LocalLayoutPreview.current
     val attachmentsFlow = remember(note.id) {
             noteViewModel.getAttachments(note.id)
         }
@@ -152,7 +155,7 @@ fun NoteDetailScreen(note: Note, noteViewModel: NoteViewModel, settings: AppSett
     var priorityMenuExpanded by remember { mutableStateOf(false) }
     var colorMenuExpanded by remember { mutableStateOf(false) }
     var moveMenuExpanded by remember { mutableStateOf(false) }
-    var deleteDialogVisible by remember { mutableStateOf(false) }
+    var deleteDialogVisible by remember { mutableStateOf(layoutPreview?.deleteDialog == true) }
     val motionDuration = AppMotion.duration(AppMotion.FAST, settings.animationsEnabled, settings.animationSpeed)
     val effectiveOptionMenuTextColorMode = if (settings.optionMenuTextColor == "note") settings.textColor else settings.optionMenuTextColor
     val defaultPopupSurface = MaterialTheme.colorScheme.surfaceContainerHigh

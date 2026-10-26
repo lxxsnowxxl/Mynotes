@@ -1,4 +1,6 @@
 package com.example.mynotes.ui
+
+import com.example.mynotes.ui.preview.LocalLayoutPreview
 import com.example.mynotes.ui.components.SettingsTitle
 import com.example.mynotes.ui.components.AppHeading
 import com.example.mynotes.ui.theme.rememberUiTextColors
@@ -30,7 +32,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -55,9 +56,9 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableFloatState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
@@ -98,7 +99,6 @@ import com.example.mynotes.ui.components.OptionsMenuColorSettingsSection
 import com.example.mynotes.ui.components.OptionsMenuHeader
 import com.example.mynotes.ui.components.OptionsMenuMainActionsSettingsSection
 import com.example.mynotes.ui.components.OptionsMenuPrioritySettingsSection
-import com.example.mynotes.ui.components.OptionsMenuResetAction
 import com.example.mynotes.ui.components.PaletteSelectorRow
 import com.example.mynotes.ui.components.PaletteSettingsSegment
 import com.example.mynotes.ui.components.ProfileImageEditorDialog
@@ -124,7 +124,7 @@ import com.example.mynotes.ui.theme.resolveUiGraphicColor
 import com.example.mynotes.ui.theme.rememberAdaptiveUiButtonColors
 import com.example.mynotes.ui.theme.resolveUiTextColor
 import com.example.mynotes.update.GitHubUpdateManager
-import com.example.mynotes.viewmodel.SettingsViewModel
+import com.example.mynotes.ui.state.SettingsActions
 import kotlin.math.roundToInt
 import kotlinx.coroutines.launch
 
@@ -146,25 +146,24 @@ private val SliderStyleOptions = listOf(SliderStyleOption("minimal", R.string.mo
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SettingsScreen(
-    settings: AppSettings, viewModel: SettingsViewModel, onLanguageChange: (String) -> Unit,
+    settings: AppSettings, viewModel: SettingsActions, onLanguageChange: (String) -> Unit,
     onOpenDevelopmentInfo: () -> Unit, onBack: () -> Unit
 ) {
     val context = LocalContext.current
-    val developerGoogleSansFlexUnlocked = DeveloperFeatures.isGoogleSansFlexUnlocked(context)
+    val layoutPreview = LocalLayoutPreview.current
+    val developerGoogleSansFlexUnlocked = if (layoutPreview != null) false else DeveloperFeatures.isGoogleSansFlexUnlocked(context)
     val fontFamily = rememberAppFontFamily(settings.font)
-    var localTone by rememberSyncedFloatState(settings.backgroundToneIndex.toFloat(), syncKey = settings.backgroundToneIndex)
-    var localBackgroundIntensity by rememberSyncedFloatState(settings.backgroundIntensity)
     var localSettingsPanelTone by rememberSyncedFloatState(settings.settingsPanelTone)
     var localSurfacePanelIntensity by rememberSyncedFloatState(settings.surfacePanelIntensity)
-    var localHeaderIntensity by rememberSyncedFloatState(settings.headerIntensity)
     var localFontSize by rememberSyncedFloatState(settings.fontSize)
     var localProfileSize by rememberSyncedFloatState(settings.profileImageSize)
     var localSoundEffectsVolume by rememberSyncedFloatState(settings.soundEffectsVolume)
+    var localReminderSoundVolume by rememberSyncedFloatState(settings.reminderSoundVolume)
     var localHapticEffectsIntensity by rememberSyncedFloatState(settings.hapticEffectsIntensity)
     val selectedPalette = remember(settings.backgroundColor) {
             PaletteCatalog.find(settings.backgroundColor)
         }
-    val selectedPaletteTone = selectedPalette.tones[settings.backgroundToneIndex.coerceIn(0, 3)]
+    val selectedPaletteTone = selectedPalette.toneAt(settings.backgroundToneIndex)
     val settingsPanelBase = MaterialTheme.colorScheme.surfaceContainerLow
     val settingsPanelColor = remember(settingsPanelBase, selectedPaletteTone, localSettingsPanelTone) {
         lerp(settingsPanelBase, selectedPaletteTone, (localSettingsPanelTone / 100f).coerceIn(0f, 1f))
@@ -173,19 +172,18 @@ fun SettingsScreen(
         rememberUiContentColors(settings.textColor, settingsPanelColor)
     val screenBackground = MaterialTheme.colorScheme.background
     val (settingsScreenTextColor, settingsScreenSecondaryTextColor) = rememberUiTextColors(settings.textColor, screenBackground)
-    val topBarBackground = MaterialTheme.colorScheme.surface
-    val settingsTopBarTextColor = rememberUiTextColor(settings.textColor, topBarBackground)
     val menuBackground = when (settings.textColor) {
             "white" -> MaterialTheme.colorScheme.inverseSurface
             else -> MaterialTheme.colorScheme.surfaceContainerHigh
         }
     val settingsMenuTextColor = rememberUiTextColor(settings.textColor, menuBackground)
-    val settingsListState = rememberLazyListState()
-    val paletteRows = remember { PaletteCatalog.palettes.chunked(2) }
+    val settingsListState = rememberLazyListState(initialFirstVisibleItemIndex = layoutPreview?.settingsItemIndex ?: 0)
     val isAdvancedMode = settings.configurationMode == "advanced"
 
     val updateScope = rememberCoroutineScope()
-    val installedVersion = remember(context) { GitHubUpdateManager.currentVersionName(context) }
+    val installedVersion = remember(context) {
+        if (layoutPreview != null) "1.7.0" else GitHubUpdateManager.currentVersionName(context)
+    }
     var updateResult by remember { mutableStateOf<GitHubUpdateManager.CheckResult?>(null) }
     var checkingForUpdate by remember { mutableStateOf(false) }
     var downloadingUpdate by remember { mutableStateOf(false) }
@@ -238,18 +236,27 @@ fun SettingsScreen(
         animationSpeed = settings.animationSpeed) {
         Scaffold(containerColor = MaterialTheme.colorScheme.background,
         topBar = {
-            TopAppBar(title = {
-                    SettingsTitle(stringResource(R.string.mock_settings), settingsTopBarTextColor, fontFamily,
+            TopAppBar(
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = screenBackground,
+                    scrolledContainerColor = screenBackground,
+                    titleContentColor = settingsScreenTextColor,
+                    navigationIconContentColor = settingsScreenTextColor,
+                    actionIconContentColor = settingsScreenTextColor
+                ),
+                title = {
+                    SettingsTitle(stringResource(R.string.mock_settings), settingsScreenTextColor, fontFamily,
                         fontSize = 25.sp)
                 },
                 navigationIcon = {
                     TextButton(onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Back, onBack),
-                        colors = ButtonDefaults.textButtonColors(contentColor = settingsTopBarTextColor)) {
+                        colors = ButtonDefaults.textButtonColors(contentColor = settingsScreenTextColor)) {
                         Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                             contentDescription = stringResource(R.string.mock_back),
                             modifier = Modifier.size(25.dp))
                     }
-                })
+                }
+            )
         }) {
             paddingValues ->
         Box(modifier = Modifier.fillMaxSize().padding(paddingValues), contentAlignment = Alignment.TopCenter) {
@@ -359,9 +366,6 @@ fun SettingsScreen(
                     settingsSurfaceItem(key = "options_color", contentType = "settings_panel", backgroundColor = settingsPanelColor, bottomSpacing = 8.dp) {
                         OptionsMenuColorSettingsSection(settings, fontFamily, viewModel::setColorMenuHiddenItems)
                     }
-                    settingsSurfaceItem(key = "options_reset", contentType = "settings_action", backgroundColor = settingsPanelColor, bottomSpacing = 14.dp) {
-                        OptionsMenuResetAction(fontFamily, settingsScreenTextColor, viewModel::resetOptionMenuSettings)
-                    }
                 }
                 settingsSurfaceItem(key = "palette_header", contentType = "palette_header", backgroundColor = settingsPanelColor) {
                     PaletteSettingsSegment(
@@ -378,77 +382,37 @@ fun SettingsScreen(
                         Spacer(modifier = Modifier.height(10.dp))
                     }
                 }
-                itemsIndexed(
-                    items = paletteRows,
-                    key = { _, row -> "palette_row_${row.first().key}" },
-                    contentType = { _, _ -> "palette_row" }
-                ) { rowIndex, rowPalettes ->
-                    val isLastPaletteRow = rowIndex == paletteRows.lastIndex
-                    SettingsContentSurface(backgroundColor = settingsPanelColor) {
-                        PaletteSettingsSegment(
+                settingsSurfaceItem(
+                    key = "palette_carousel",
+                    contentType = "palette_carousel",
+                    backgroundColor = settingsPanelColor
+                ) {
+                    PaletteSettingsSegment(
+                        textColorMode = settings.textColor,
+                        contentPadding = PaddingValues(
+                            start = 6.dp,
+                            top = 0.dp,
+                            end = 0.dp,
+                            bottom = if (isAdvancedMode) 20.dp else 14.dp
+                        ),
+                        horizontalOutset = 8.dp,
+                        roundBottom = true
+                    ) {
+                        PaletteSelectorRow(
+                            palettes = PaletteCatalog.palettes,
+                            selectedPaletteKey = settings.backgroundColor,
+                            selectedToneIndex = settings.backgroundToneIndex,
+                            onToneSelected = viewModel::setBackgroundSelection,
+                            animationsEnabled = settings.animationsEnabled,
+                            animationSpeed = settings.animationSpeed,
                             textColorMode = settings.textColor,
-                            contentPadding = PaddingValues(
-                                start = 6.dp,
-                                top = 0.dp,
-                                end = 0.dp,
-                                bottom = when {
-                                    !isLastPaletteRow -> 10.dp
-                                    isAdvancedMode -> 20.dp
-                                    else -> 14.dp
-                                }
-                            ),
-                            horizontalOutset = 8.dp,
-                            roundBottom = isLastPaletteRow && !isAdvancedMode
-                        ) {
-                            PaletteSelectorRow(
-                                rowPalettes = rowPalettes,
-                                selectedPaletteKey = settings.backgroundColor,
-                                selectedToneIndex = settings.backgroundToneIndex,
-                                onPaletteSelected = { paletteKey ->
-                                    viewModel.setBackgroundColor(paletteKey)
-                                },
-                                onToneSelected = { paletteKey, toneIndex ->
-                                    localTone = toneIndex.toFloat()
-                                    viewModel.setBackgroundColor(paletteKey)
-                                    viewModel.setBackgroundToneIndex(toneIndex)
-                                },
-                                animationsEnabled = settings.animationsEnabled,
-                                animationSpeed = settings.animationSpeed,
-                                textColorMode = settings.textColor,
-                                fontFamily = fontFamily
-                            )
-                        }
+                            fontFamily = fontFamily
+                        )
                     }
                 }
                 if (isAdvancedMode) {
-                    settingsSurfaceItem(key = "palette_tone", contentType = "palette_footer", backgroundColor = settingsPanelColor) {
-                        PaletteSettingsSegment(
-                            textColorMode = settings.textColor,
-                            contentPadding = PaddingValues(start = 6.dp, top = 0.dp, end = 0.dp, bottom = 14.dp),
-                            horizontalOutset = 8.dp,
-                            roundBottom = true
-                        ) { panelColors ->
-                            LabeledSettingsSlider(
-                                title = stringResource(R.string.mock_palette_tone),
-                                value = localTone,
-                                valueLabel = "${localTone.roundToInt() + 1}/4",
-                                textColor = panelColors.text,
-                                fontFamily = fontFamily,
-                                onValueChange = { localTone = it },
-                                onValueChangeFinished = { viewModel.setBackgroundToneIndex(localTone.roundToInt().coerceIn(0, 3)) },
-                                valueRange = 0f..3f,
-                                steps = 2,
-                                style = settings.sliderStyle,
-                            )
-                        }
-                    }
-
                     percentSliderItem("appearance_panel_tone", R.string.settings_panel_tone, localSettingsPanelTone, settings,
                         settingsPanelColor, fontFamily, { localSettingsPanelTone = it }, { viewModel.setSettingsPanelTone(localSettingsPanelTone) })
-                    percentSliderItem("appearance_background_intensity", R.string.mock_background_intensity, localBackgroundIntensity,
-                        settings, settingsPanelColor, fontFamily, { localBackgroundIntensity = it }, { viewModel.setBackgroundIntensity(localBackgroundIntensity) })
-                    percentSliderItem("appearance_header_intensity", R.string.mock_header_intensity, localHeaderIntensity, settings,
-                        settingsPanelColor, fontFamily, { localHeaderIntensity = it }, { viewModel.setHeaderIntensity(localHeaderIntensity) })
                     percentSliderItem("appearance_translucent_panels", R.string.surface_panels_intensity, localSurfacePanelIntensity, settings,
                         settingsPanelColor, fontFamily, { localSurfacePanelIntensity = it }, { viewModel.setSurfacePanelIntensity(localSurfacePanelIntensity) },
                         descriptionRes = R.string.surface_panels_intensity_description)
@@ -550,8 +514,8 @@ fun SettingsScreen(
                             selectedKey = settings.reminderRingtone,
                             options = FeedbackPreferencePolicy.reminderTones.map { it.key to stringResource(it.labelRes) },
                             previewText = stringResource(R.string.reminder_tone_preview),
-                            sliderTitle = stringResource(R.string.sound_effects_volume),
-                            sliderValue = localSoundEffectsVolume,
+                            sliderTitle = stringResource(R.string.reminder_sound_volume),
+                            sliderValue = localReminderSoundVolume,
                             settings = settings,
                             colors = colors,
                             menuBackground = menuBackground,
@@ -566,13 +530,13 @@ fun SettingsScreen(
                             onSelected = { selectedRingtone ->
                                 UiHapticPlayer.play(context = context, haptic = UiHaptic.Selection)
                                 viewModel.setReminderRingtone(selectedRingtone)
-                                ReminderFeedbackPreferences.previewRingtone(context, selectedRingtone, localSoundEffectsVolume)
+                                ReminderFeedbackPreferences.previewRingtone(context, selectedRingtone, localReminderSoundVolume)
                             },
                             onPreview = {
-                                ReminderFeedbackPreferences.previewRingtone(context, settings.reminderRingtone, localSoundEffectsVolume)
+                                ReminderFeedbackPreferences.previewRingtone(context, settings.reminderRingtone, localReminderSoundVolume)
                             },
-                            onSliderValueChange = { localSoundEffectsVolume = it },
-                            onSliderValueChangeFinished = { viewModel.setSoundEffectsVolume(localSoundEffectsVolume) }
+                            onSliderValueChange = { localReminderSoundVolume = it },
+                            onSliderValueChangeFinished = { viewModel.setReminderSoundVolume(localReminderSoundVolume) }
                         )
                     }
                     settingsPanelItem("feedback_vibration", settings, settingsPanelColor, topSpacing = 16.dp,
@@ -807,11 +771,8 @@ fun SettingsScreen(
     }
 
 @Composable
-private fun rememberSyncedFloatState(value: Float, syncKey: Any = value): MutableFloatState {
-    val state = remember { mutableFloatStateOf(value) }
-    LaunchedEffect(syncKey) { state.floatValue = value }
-    return state
-}
+private fun rememberSyncedFloatState(value: Float): MutableFloatState =
+    remember(value) { mutableFloatStateOf(value) }
 
 @Composable
 private fun SettingsFeedbackHeader(
@@ -1316,7 +1277,8 @@ private fun SettingDropdown(title: String, selectedLabel: String, options: List<
     textColorMode: String, menuBackground: Color, menuTextColor: Color, fontFamily:
         androidx.compose.ui.text.font.FontFamily, playDefaultSelectionFeedback: Boolean = true, onSelected: (String) -> Unit) {
     val context = LocalContext.current
-    var expanded by remember { mutableStateOf(false) }
+    val layoutPreview = LocalLayoutPreview.current
+    var expanded by remember { mutableStateOf(title == layoutPreview?.expandedDropdownTitle) }
     val dropdownButtonBackground = MaterialTheme.colorScheme.surfaceContainerLow
     val dropdownOutline = MaterialTheme.colorScheme.outline
     val dropdownColors = remember(textColorMode, dropdownButtonBackground, dropdownOutline) {

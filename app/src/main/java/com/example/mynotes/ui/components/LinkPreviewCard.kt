@@ -1,5 +1,7 @@
 package com.example.mynotes.ui.components
 
+import com.example.mynotes.ui.preview.LocalLayoutPreview
+
 import com.example.mynotes.util.moveReplacing
 import android.content.Context
 import android.content.Intent
@@ -1424,10 +1426,14 @@ private fun LinkPreviewData.withKnownProviderFallback(): LinkPreviewData {
 fun LinkPreviewCard(url: String, modifier: Modifier = Modifier, compact: Boolean = false, textColorMode: String = "auto",
     deferLoad: Boolean = false, onPreviewReady: ((String) -> Unit)? = null) {
     val context = LocalContext.current
+    val layoutPreview = LocalLayoutPreview.current
     var preview by remember(url) {
-        mutableStateOf(LinkPreviewRepository.peekMemory(url) ?: LinkPreviewData.basic(url))
+        mutableStateOf(if (layoutPreview != null) LinkPreviewData.basic(url).copy(
+            title = layoutPreview.linkTitle, description = layoutPreview.linkDescription
+        ) else LinkPreviewRepository.peekMemory(url) ?: LinkPreviewData.basic(url))
     }
     LaunchedEffect(url, deferLoad) {
+        if (layoutPreview != null) return@LaunchedEffect
         if (!deferLoad) {
             val loadedPreview = LinkPreviewRepository.load(context = context.applicationContext, url = url)
             preview = loadedPreview
@@ -1442,7 +1448,7 @@ fun LinkPreviewCard(url: String, modifier: Modifier = Modifier, compact: Boolean
     }
     val title = preview.title?.takeIf { it.isNotBlank() }?: preview.siteName?.takeIf { it.isNotBlank() }?: preview.host
     val subtitle = preview.description?.takeIf { it.isNotBlank() }
-    val imageModel: Any? = preview.cachedImagePath?.let(::File)?.takeIf { it.isFile && it.length() > 0L }
+    val imageModel: Any? = layoutPreview?.mediaBitmap ?: preview.cachedImagePath?.let(::File)?.takeIf { it.isFile && it.length() > 0L }
             // Si el guardado local falla (CDN con hot-link protection), Coil
             // todavía puede intentar cargar directamente la URL remota.
             ?: preview.imageUrl

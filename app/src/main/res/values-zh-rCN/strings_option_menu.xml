@@ -15,5 +15,4 @@
     <string name="option_menu_color_submenu">颜色子菜单</string>
     <string name="option_menu_move_up">上移</string>
     <string name="option_menu_move_down">下移</string>
-    <string name="option_menu_reset">重置菜单</string>
 </resources>

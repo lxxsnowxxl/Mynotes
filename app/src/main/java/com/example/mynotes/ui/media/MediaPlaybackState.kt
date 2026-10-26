@@ -37,6 +37,15 @@ class MediaPlaybackState internal constructor(initialBuffering: Boolean) {
     var position by mutableIntStateOf(0)
         private set
 
+    /** Estado de ejemplo inyectado por las vistas de diseño, sin reproductor ni archivo. */
+    internal fun setPreviewProgress(positionMillis: Int, durationMillis: Int) {
+        prepared = true
+        buffering = false
+        error = false
+        duration = durationMillis.coerceAtLeast(0)
+        position = positionMillis.coerceIn(0, duration)
+    }
+
     fun reset(buffering: Boolean = false) {
         prepared = false
         this.buffering = buffering

@@ -12,7 +12,7 @@ internal object SettingsValuePolicy {
         "palette", "red", "coral", "orange", "amber", "yellow", "lime", "green", "mint", "teal", "cyan", "sky",
         "blue", "indigo", "violet", "purple", "pink", "rose", "brown", "graphite"
     )
-    private val currentPaletteKeys = PaletteCatalog.palettes.mapTo(HashSet(PaletteCatalog.palettes.size * 4 / 3 + 1)) { it.key }
+    private val currentPaletteKeys = PaletteCatalog.palettes.mapTo(hashSetOf<String>()) { it.key }
     private val legacyPaletteKeys = setOf("yellow", "purple", "pink", "default", "gray")
 
     fun configurationMode(value: String) = value.validOr(configurationModes, "unset")

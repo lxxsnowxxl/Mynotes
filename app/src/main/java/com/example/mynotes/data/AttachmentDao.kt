@@ -62,12 +62,14 @@ interface AttachmentDao {
         """
     )
     suspend fun getAttachmentsOnce(noteId: Int): List<Attachment>
+    @Query("SELECT COUNT(*) FROM attachments WHERE noteId = :noteId")
+    suspend fun countAttachmentsForNote(noteId: Int): Int
     @Insert
     suspend fun insertAttachment(attachment: Attachment)
     @Insert
     suspend fun insertAttachments(attachments: List<Attachment>)
     @Delete
-    suspend fun deleteAttachment(attachment: Attachment)
+    suspend fun deleteAttachments(attachments: List<Attachment>): Int
     @Query(
         """
         DELETE FROM attachments
