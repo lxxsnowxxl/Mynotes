@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_profile_edit_short">编辑</string>
+    <string name="settings_profile_remove_short">移除</string>
+    <string name="settings_mode_basic_hint">基础设置</string>
+    <string name="settings_mode_advanced_hint">全部控制项</string>
+</resources>

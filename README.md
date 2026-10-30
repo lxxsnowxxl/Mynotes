@@ -214,6 +214,14 @@ secrets.properties
 
 Review staged files before each public push, especially when local credentials, signing files, exports, or test data have been added to the workspace.
 
+Support the project
+
+If MyNotes is useful to you, consider supporting its development with a voluntary contribution.
+
+[Support MyNotes via PayPal](https://paypal.me/ttsnowtt?locale.x=es_XC&country.x=MX)
+
+Thank you for your support!
+
 Copyright and license
 
 © 2026 Snow · MyNotes

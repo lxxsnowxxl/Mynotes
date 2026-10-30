@@ -1,5 +1,6 @@
 package com.example.mynotes.ui.pdf
 
+import com.example.mynotes.ui.components.appScreenBackground
 import com.example.mynotes.ui.preview.LocalLayoutPreview
 import com.example.mynotes.ui.theme.rememberUiTextColors
 import com.example.mynotes.ui.components.AppIconButton
@@ -697,7 +698,7 @@ internal fun PdfEditorScreen(
         )
     }
 
-    Column(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.background).padding(top = 26.dp)) {
+    Column(modifier = Modifier.fillMaxSize().appScreenBackground().padding(top = 26.dp)) {
         PdfTopBar(
             settings = settings,
             fontFamily = fontFamily,

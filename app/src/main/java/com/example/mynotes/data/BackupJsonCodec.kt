@@ -48,6 +48,7 @@ internal fun settingsToJson(settings: AppSettings, profileEntry: String?) = JSON
         put("darkMode", settings.darkMode)
         put("backgroundColor", settings.backgroundColor)
         put("backgroundToneIndex", settings.backgroundToneIndex)
+        put("settingsBackgroundStyle", settings.settingsBackgroundStyle)
         put("settingsPanelTone", settings.settingsPanelTone.toDouble())
         put("surfacePanelIntensity", settings.surfacePanelIntensity.toDouble())
         put("textColor", settings.textColor)
@@ -105,6 +106,7 @@ internal fun jsonToSettings(json: JSONObject): AppSettings {
             darkMode = json.optBoolean("darkMode", defaults.darkMode),
             backgroundColor = json.optString("backgroundColor", defaults.backgroundColor),
             backgroundToneIndex = json.optInt("backgroundToneIndex", defaults.backgroundToneIndex),
+            settingsBackgroundStyle = json.optString("settingsBackgroundStyle", defaults.settingsBackgroundStyle),
             settingsPanelTone = json.optDouble("settingsPanelTone", defaults.settingsPanelTone.toDouble()).toFloat(),
             surfacePanelIntensity = json.optDouble("surfacePanelIntensity", defaults.surfacePanelIntensity.toDouble()).toFloat(),
             textColor = json.optString("textColor", defaults.textColor),

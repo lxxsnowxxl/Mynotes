@@ -69,6 +69,7 @@ internal val PreviewSettingsActions = object : SettingsActions {
     override fun setConfigurationMode(value: String) { }
     override fun setDarkMode(value: Boolean) { }
     override fun setBackgroundSelection(paletteKey: String, toneIndex: Int) { }
+    override fun setSettingsBackgroundStyle(value: String) { }
     override fun setSettingsPanelTone(value: Float) { }
     override fun setSurfacePanelIntensity(value: Float) { }
     override fun setTextColor(value: String) { }

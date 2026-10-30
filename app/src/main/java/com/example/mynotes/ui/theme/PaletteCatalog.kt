@@ -113,5 +113,20 @@ object PaletteCatalog {
         p("monochrome", R.string.mock_palette_monochrome, 0xFFF5F5F5, 0xFFD5D5D5, 0xFF6C6C6C, 0xFF303030, 0xFF606060))
     private val palettesByKey: Map<String, MyNotesPalette> = palettes.associateBy { it.key }
 
+    // 23 familias visibles. El catálogo completo conserva los colores ya guardados.
+    val settingsPaletteKeys = listOf(
+        "neutral", "warm", "sage", "ocean", "lavender", "rose", "sunset", "cream",
+        "graphite", "coral", "blue", "green", "mint", "neon_pink", "electric_blue",
+        "neon_lime", "neon_violet", "midnight", "emerald", "coffee", "olive", "mustard", "monochrome"
+    )
+    val settingsPalettes: List<MyNotesPalette> = settingsPaletteKeys.map { key -> palettesByKey.getValue(key) }
+
+    fun palettesForSettings(selectedKey: String): List<MyNotesPalette> {
+        val selected = palettesByKey[selectedKey]
+        return if (selected != null && selectedKey !in settingsPaletteKeys) {
+            settingsPalettes.dropLast(1) + selected
+        } else settingsPalettes
+    }
+
     fun find(key: String): MyNotesPalette = palettesByKey[key] ?: palettes.first()
 }

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_background_title">Fond de l’application</string>
+    <string name="settings_background_description">Choisissez des tons unis, dégradés ou floutés pour tous les écrans. Le texte et les commandes restent nets.</string>
+    <string name="settings_background_solid">Uni</string>
+    <string name="settings_background_gradient">Dégradé</string>
+    <string name="settings_background_blur">Flou</string>
+</resources>

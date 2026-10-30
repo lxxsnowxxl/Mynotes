@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_profile_edit_short">Editar</string>
+    <string name="settings_profile_remove_short">Quitar</string>
+    <string name="settings_mode_basic_hint">Ajustes esenciales</string>
+    <string name="settings_mode_advanced_hint">Todos los controles</string>
+</resources>

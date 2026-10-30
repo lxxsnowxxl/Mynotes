@@ -23,6 +23,7 @@ class SettingsRepository(private val context: Context) {
         private val DARK_MODE = booleanPreferencesKey("dark_mode")
         private val BACKGROUND_COLOR = stringPreferencesKey("background_color")
         private val BACKGROUND_TONE_INDEX = intPreferencesKey("background_tone_index")
+        private val SETTINGS_BACKGROUND_STYLE = stringPreferencesKey("settings_background_style")
         private val SETTINGS_PANEL_TONE = floatPreferencesKey("settings_panel_tone")
         private val SURFACE_PANEL_INTENSITY = floatPreferencesKey("surface_panel_intensity")
         private val TEXT_COLOR = stringPreferencesKey("text_color")
@@ -107,6 +108,7 @@ class SettingsRepository(private val context: Context) {
                     darkMode = appearance.darkMode,
                     backgroundColor = appearance.backgroundColor,
                     backgroundToneIndex = appearance.backgroundToneIndex,
+                    settingsBackgroundStyle = SettingsValuePolicy.settingsBackgroundStyle(preferences[SETTINGS_BACKGROUND_STYLE] ?: "solid"),
                     settingsPanelTone = (preferences[SETTINGS_PANEL_TONE]?: 0f).coerceIn(0f, 100f),
                     surfacePanelIntensity = (preferences[SURFACE_PANEL_INTENSITY]?: 72f).coerceIn(0f, 100f),
                     textColor = SettingsValuePolicy.uiTextColor(preferences[TEXT_COLOR]?: "auto"),
@@ -181,6 +183,9 @@ class SettingsRepository(private val context: Context) {
         }
     }
     suspend fun setSettingsPanelTone(value: Float) = writePreference(SETTINGS_PANEL_TONE, value.coerceIn(0f, 100f))
+
+    suspend fun setSettingsBackgroundStyle(value: String) =
+        writePreference(SETTINGS_BACKGROUND_STYLE, SettingsValuePolicy.settingsBackgroundStyle(value))
 
     suspend fun setSurfacePanelIntensity(value: Float) = writePreference(SURFACE_PANEL_INTENSITY, value.coerceIn(0f, 100f))
 
@@ -302,6 +307,7 @@ class SettingsRepository(private val context: Context) {
             val normalizedPaletteKey = SettingsValuePolicy.paletteKey(value.backgroundColor)
             preferences[BACKGROUND_COLOR] = normalizedPaletteKey
             preferences[BACKGROUND_TONE_INDEX] = PaletteCatalog.find(normalizedPaletteKey).normalizeToneIndex(value.backgroundToneIndex)
+            preferences[SETTINGS_BACKGROUND_STYLE] = SettingsValuePolicy.settingsBackgroundStyle(value.settingsBackgroundStyle)
             preferences[SETTINGS_PANEL_TONE] = value.settingsPanelTone.coerceIn(0f, 100f)
             preferences[SURFACE_PANEL_INTENSITY] = value.surfacePanelIntensity.coerceIn(0f, 100f)
             preferences[TEXT_COLOR] = SettingsValuePolicy.uiTextColor(value.textColor)

@@ -1,5 +1,7 @@
 package com.example.mynotes.ui
 
+import com.example.mynotes.ui.components.appScreenBackground
+import com.example.mynotes.ui.components.appScreenContainerColor
 import com.example.mynotes.ui.preview.LocalLayoutPreview
 import com.example.mynotes.ui.theme.rememberUiContentColors
 import com.example.mynotes.ui.theme.rememberAppFontFamily
@@ -359,10 +361,11 @@ fun NoteEditorScreen(settings: AppSettings, initialTitle: String = "", initialCo
     }
     val editorScrollState = rememberScrollState()
     MaterialTheme(colorScheme = MaterialTheme.colorScheme, typography = appTypography, shapes = MaterialTheme.shapes) {
-        Scaffold(containerColor = editorBackground,
+        Scaffold(modifier = Modifier.appScreenBackground(editorBackground, editorTextColor), containerColor = Color.Transparent,
+            contentColor = editorTextColor,
             topBar = {
-                TopAppBar(colors = TopAppBarDefaults.topAppBarColors(containerColor = editorBackground,
-                                scrolledContainerColor = editorBackground,
+                TopAppBar(colors = TopAppBarDefaults.topAppBarColors(containerColor = appScreenContainerColor(editorBackground),
+                                scrolledContainerColor = appScreenContainerColor(editorBackground),
                                 titleContentColor = editorTextColor,
                                 navigationIconContentColor = editorGraphicColor,
                                 actionIconContentColor = editorGraphicColor),

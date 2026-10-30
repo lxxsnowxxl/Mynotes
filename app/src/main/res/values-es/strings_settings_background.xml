@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_background_title">Fondo de la aplicación</string>
+    <string name="settings_background_description">Elige tonos sólidos, degradados o difuminados para todas las pantallas. El texto y los controles permanecen nítidos.</string>
+    <string name="settings_background_solid">Sólido</string>
+    <string name="settings_background_gradient">Degradado</string>
+    <string name="settings_background_blur">Blur</string>
+</resources>

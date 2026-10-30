@@ -29,7 +29,7 @@ import com.example.mynotes.ui.ReminderScreen
 import com.example.mynotes.ui.SettingsScreen
 import com.example.mynotes.ui.SourceCodeInfoScreen
 
-/** Cada entrada XML llama a la pantalla real. Este archivo contiene únicamente datos y estados iniciales. */
+/** Estados Compose para comparar con los diseños XML editables. */
 @Composable
 private fun LayoutPreviewScreen(scene: String) {
     val mediaBitmap = rememberPreviewBitmap()
@@ -38,6 +38,12 @@ private fun LayoutPreviewScreen(scene: String) {
         configurationMode = if (scene == "preview_25_settings_basic_profile_mode") "basic" else "advanced",
         animationsEnabled = scene == "preview_07_settings_transition_dropdown",
         language = "es",
+        profileImageUri = if (scene == "preview_26_settings_advanced_profile_mode") "preview://profile" else "",
+        settingsBackgroundStyle = when (scene) {
+            "preview_38_settings_background_gradient" -> "gradient"
+            "preview_39_settings_background_blur" -> "blur"
+            else -> "solid"
+        },
         soundEffectsVolume = 35f,
         reminderSoundVolume = 80f,
         gridColumns = when (scene) {
@@ -45,7 +51,11 @@ private fun LayoutPreviewScreen(scene: String) {
             "preview_11_notes_three_columns" -> 3
             else -> 2
         },
-        backgroundColor = if (scene == "preview_22_settings_palette_tones") "lavender" else "neutral"
+        backgroundColor = when (scene) {
+            "preview_22_settings_palette_tones", "preview_39_settings_background_blur" -> "lavender"
+            "preview_38_settings_background_gradient" -> "ocean"
+            else -> "neutral"
+        }
     )
     val sampleImage = remember(mediaBitmap) {
         PdfImageElement(1, mediaBitmap, 0.10f, 0.32f, 0.80f, 0.36f)
@@ -68,15 +78,18 @@ private fun LayoutPreviewScreen(scene: String) {
             "preview_04_settings" -> 0 // appearance_profile
             "preview_04b_settings_personalization" -> 2 // extreme_icons
             "preview_04c_settings_options_menu" -> 8 // options_header
-            "preview_04d_settings_sound_haptic" -> 20 // feedback_sound_effects
+            "preview_04d_settings_sound_haptic" -> 19 // feedback_sound_effects
             "preview_07_settings_transition_dropdown" -> 7 // extreme_motion
-            "preview_18_settings_appearance_text" -> 17 // appearance_text_color
-            "preview_19_settings_backup_restore" -> 27 // layout_backup_restore
+            "preview_18_settings_appearance_text" -> 16 // appearance_text_color
+            "preview_19_settings_backup_restore" -> 26 // layout_backup_restore
             "preview_20_settings_card_layout" -> 4 // extreme_note_cards
             "preview_21_settings_performance_motion" -> 6 // extreme_performance
-            "preview_22_settings_palette_tones" -> 13 // palette_header
+            "preview_22_settings_palette_tones" -> 13 // palette_background
             "preview_25_settings_basic_profile_mode" -> 0 // appearance_profile
             "preview_26_settings_advanced_profile_mode" -> 0 // appearance_profile
+            "preview_37_settings_background_solid" -> 13 // palette_background
+            "preview_38_settings_background_gradient" -> 13 // palette_background
+            "preview_39_settings_background_blur" -> 13 // palette_background
             else -> 0
         },
         noteMenu = when (scene) {
@@ -166,7 +179,10 @@ private fun LayoutPreviewScreen(scene: String) {
             "preview_21_settings_performance_motion",
             "preview_22_settings_palette_tones",
             "preview_25_settings_basic_profile_mode",
-            "preview_26_settings_advanced_profile_mode" -> SettingsScreen(
+            "preview_26_settings_advanced_profile_mode",
+            "preview_37_settings_background_solid",
+            "preview_38_settings_background_gradient",
+            "preview_39_settings_background_blur" -> SettingsScreen(
                 settings = settings, viewModel = PreviewSettingsActions, onLanguageChange = {}, onOpenDevelopmentInfo = {}, onBack = {}
             )
             "preview_05_attachment_viewer" -> AttachmentViewerScreen("preview://sample/documento.pdf", "file", "Documento.pdf", "application/pdf") {}
@@ -501,3 +517,21 @@ fun Preview36PdfImageCrop() {
     LayoutPreviewScreen("preview_36_pdf_image_crop")
 }
 
+
+@Preview(name = "preview_37_settings_background_solid", group = "Layouts Compose", widthDp = 411, heightDp = 891, locale = "es", showBackground = true)
+@Composable
+fun Preview37SettingsBackgroundSolid() {
+    LayoutPreviewScreen("preview_37_settings_background_solid")
+}
+
+@Preview(name = "preview_38_settings_background_gradient", group = "Layouts Compose", widthDp = 411, heightDp = 891, locale = "es", showBackground = true)
+@Composable
+fun Preview38SettingsBackgroundGradient() {
+    LayoutPreviewScreen("preview_38_settings_background_gradient")
+}
+
+@Preview(name = "preview_39_settings_background_blur", group = "Layouts Compose", widthDp = 411, heightDp = 891, locale = "es", showBackground = true)
+@Composable
+fun Preview39SettingsBackgroundBlur() {
+    LayoutPreviewScreen("preview_39_settings_background_blur")
+}

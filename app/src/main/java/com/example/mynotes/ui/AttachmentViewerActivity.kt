@@ -1,5 +1,7 @@
 package com.example.mynotes.ui
 
+import com.example.mynotes.ui.components.appScreenBackground
+import com.example.mynotes.ui.components.appScreenContainerColor
 import com.example.mynotes.ui.preview.LocalLayoutPreview
 
 import android.app.Activity
@@ -212,7 +214,8 @@ internal fun AttachmentViewerScreen(uriString: String, type: String, name: Strin
             extension == "pdf" -> "PDF"
             else -> androidx.compose.ui.res.stringResource(R.string.file)
         }
-    Scaffold(modifier = Modifier.fillMaxSize(), containerColor = MaterialTheme.colorScheme.background, topBar = {
+    Scaffold(modifier = Modifier.fillMaxSize().appScreenBackground(), containerColor = Color.Transparent,
+        contentColor = MaterialTheme.colorScheme.onBackground, topBar = {
             TopAppBar(title = {
                     Text(text = title, maxLines = 1, overflow = TextOverflow.Ellipsis, fontWeight = FontWeight.SemiBold)
                 }, navigationIcon = {
@@ -229,7 +232,8 @@ internal fun AttachmentViewerScreen(uriString: String, type: String, name: Strin
                         Icon(imageVector = Icons.Default.OpenInNew,
                             contentDescription = androidx.compose.ui.res.stringResource(R.string.open_with_other_app))
                     }
-                }, colors = TopAppBarDefaults.topAppBarColors(containerColor = MaterialTheme.colorScheme.background,
+                }, colors = TopAppBarDefaults.topAppBarColors(containerColor = appScreenContainerColor(),
+                    scrolledContainerColor = appScreenContainerColor(),
                     titleContentColor = MaterialTheme.colorScheme.onBackground,
                     navigationIconContentColor = MaterialTheme.colorScheme.onBackground,
                     actionIconContentColor = MaterialTheme.colorScheme.onBackground))
@@ -360,7 +364,7 @@ private fun rememberViewerPlayback(
 private fun VideoViewer(uri: Uri, name: String, mimeType: String) {
     val context = LocalContext.current
     val (player, playback) = rememberViewerPlayback(uri, playWhenReady = true, copyFallback = ::copyVideoToPlaybackCache)
-    Column(modifier = Modifier.fillMaxSize().background(Color.Black)) {
+    Column(modifier = Modifier.fillMaxSize()) {
         Box(modifier = Modifier.fillMaxWidth().weight(1f), contentAlignment = Alignment.Center) {
             if (player == null) {
                 LocalLayoutPreview.current?.mediaBitmap?.let { bitmap ->
@@ -379,7 +383,9 @@ private fun VideoViewer(uri: Uri, name: String, mimeType: String) {
                 }, modifier = Modifier.fillMaxSize())
             if (playback.buffering && !playback.error) CircularProgressIndicator(color = Color.White)
             if (playback.error) {
-                Column(modifier = Modifier.padding(24.dp), horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+                Column(modifier = Modifier.padding(24.dp)
+                    .background(Color.Black.copy(alpha = 0.78f), RoundedCornerShape(14.dp)).padding(16.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
                     Text(text = androidx.compose.ui.res.stringResource(R.string.video_playback_failed_inside), color = Color.White)
                     Spacer(modifier = Modifier.height(14.dp))
                     OpenExternallyButton(uri = uri, name = name, mimeType = mimeType)

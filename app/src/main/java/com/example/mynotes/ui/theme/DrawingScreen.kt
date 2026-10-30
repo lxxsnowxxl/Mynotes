@@ -1,4 +1,5 @@
 package com.example.mynotes.ui
+import com.example.mynotes.ui.components.appScreenBackground
 import com.example.mynotes.ui.components.AppHeading
 import com.example.mynotes.ui.components.AppIconButton
 
@@ -234,7 +235,7 @@ fun DrawingScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(MaterialTheme.colorScheme.background)
+            .appScreenBackground()
             .padding(horizontal = 14.dp, vertical = 10.dp)
     ) {
         Row(

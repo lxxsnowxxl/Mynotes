@@ -1,5 +1,6 @@
 package com.example.mynotes.ui
 
+import com.example.mynotes.ui.components.appScreenBackground
 import com.example.mynotes.ui.preview.LocalLayoutPreview
 import com.example.mynotes.ui.components.AppHeading
 import com.example.mynotes.ui.theme.rememberUiTextColors
@@ -80,6 +81,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
@@ -313,7 +315,8 @@ fun NotesScreen(
                 "profileSize")
     AnimatedScreenEntry(animationsEnabled = settings.animationsEnabled,
         animationSpeed = settings.animationSpeed) {
-        Scaffold(containerColor = MaterialTheme.colorScheme.background,
+        Scaffold(modifier = Modifier.appScreenBackground(), containerColor = Color.Transparent,
+        contentColor = MaterialTheme.colorScheme.onBackground,
         floatingActionButton = {
             QuickCreateFabMenu(
                 settings = settings,

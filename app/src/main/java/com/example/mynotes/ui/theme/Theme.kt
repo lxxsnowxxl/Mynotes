@@ -17,6 +17,7 @@ import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import com.example.mynotes.settings.AppSettings
+import com.example.mynotes.ui.components.AppBackgroundProvider
 
 private const val FIXED_HEADER_DARKEN_AMOUNT = 0.054f
 private fun mixColor(first: Color, second: Color, amount: Float): Color {
@@ -238,7 +239,7 @@ fun MyNotesTheme(settings: AppSettings, darkTheme: Boolean, fontFamily: FontFami
     backgroundColor = settings.backgroundColor, backgroundToneIndex = settings.backgroundToneIndex,
     surfacePanelIntensity = settings.surfacePanelIntensity, textColor = settings.textColor,
     textOutlineEnabled = settings.textOutlineEnabled, accentColor = settings.accentColor,
-    fontFamily = fontFamily, content = content)
+    fontFamily = fontFamily, content = { AppBackgroundProvider(settings, content) })
 
 @Composable
 fun MyNotesTheme(darkTheme: Boolean = isSystemInDarkTheme(),

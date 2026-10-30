@@ -1,5 +1,7 @@
 package com.example.mynotes.ui
 
+import com.example.mynotes.ui.components.appScreenBackground
+import com.example.mynotes.ui.components.appScreenContainerColor
 import com.example.mynotes.ui.preview.LocalLayoutPreview
 import com.example.mynotes.ui.theme.rememberUiContentColors
 import com.example.mynotes.ui.theme.rememberAppFontFamily
@@ -192,9 +194,11 @@ fun NoteDetailScreen(note: Note, noteViewModel: NoteActions, settings: AppSettin
     val detailScrollState = rememberScrollState()
     AnimatedScreenEntry(animationsEnabled = settings.animationsEnabled,
         animationSpeed = settings.animationSpeed) {
-        Scaffold(containerColor = detailBackground,
+        Scaffold(modifier = Modifier.appScreenBackground(detailBackground, noteTextColor), containerColor = Color.Transparent,
+        contentColor = noteTextColor,
         topBar = {
-            TopAppBar(colors = TopAppBarDefaults.topAppBarColors(containerColor = detailBackground,
+            TopAppBar(colors = TopAppBarDefaults.topAppBarColors(containerColor = appScreenContainerColor(detailBackground),
+                            scrolledContainerColor = appScreenContainerColor(detailBackground),
                             titleContentColor = noteTextColor,
                             navigationIconContentColor = noteTextColor,
                             actionIconContentColor = noteTextColor),
@@ -306,8 +310,9 @@ fun NoteDetailScreen(note: Note, noteViewModel: NoteActions, settings: AppSettin
                 })
         },
         bottomBar = {
-            Surface(color = detailBackground,
-                shadowElevation = 8.dp) {
+            Surface(modifier = Modifier.fillMaxWidth(),
+                color = appScreenContainerColor(detailBackground), contentColor = noteTextColor,
+                tonalElevation = 0.dp, shadowElevation = 0.dp) {
                 Row(modifier = Modifier.fillMaxWidth().navigationBarsPadding().padding(horizontal = 12.dp, vertical = 4.dp),
                     horizontalArrangement = Arrangement.SpaceAround,
                     verticalAlignment = Alignment.CenterVertically) {

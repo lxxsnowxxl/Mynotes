@@ -30,10 +30,8 @@ import androidx.compose.animation.core.LinearOutSlowInEasing
 import androidx.compose.animation.core.Spring
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.core.tween
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -307,13 +305,12 @@ fun <T> ConfigurableAnimatedContent(targetState: T, animationsEnabled: Boolean, 
                 normalized
             }
         }
-    Box(modifier = modifier.fillMaxSize().background(MaterialTheme.colorScheme.background), contentAlignment = Alignment.Center) {
+    Box(modifier = modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         AnimatedContent(targetState = targetState, modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center,
             transitionSpec = {
                 motionTransform(animationsEnabled = animationsEnabled, animationSpeed = animationSpeed, animationStyle = resolvedStyle,
                     animationEasing = animationEasing, animationIntensity = animationIntensity, performanceMode = performanceMode)
-            }, label = "screenMotionTransition") { state -> Box(modifier = Modifier.fillMaxSize()
-                    .background(MaterialTheme.colorScheme.background)) {
+            }, label = "screenMotionTransition") { state -> Box(modifier = Modifier.fillMaxSize()) {
                 content(state)
             }
         }

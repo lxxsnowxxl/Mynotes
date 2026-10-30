@@ -1,5 +1,6 @@
 package com.example.mynotes.ui
 
+import com.example.mynotes.ui.components.appScreenBackground
 import com.example.mynotes.ui.preview.LocalLayoutPreview
 import com.example.mynotes.ui.components.AppHeading
 import com.example.mynotes.ui.theme.rememberUiTextColors
@@ -208,7 +209,9 @@ private fun ReminderList(
     val activeCount = remember(reminders) { reminders.count { it.enabled } }
 
     Scaffold(
-        containerColor = background,
+        modifier = Modifier.appScreenBackground(background, primaryText),
+        containerColor = Color.Transparent,
+        contentColor = primaryText,
         floatingActionButton = {
             FloatingActionButton(
                 onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Open, onCreate),
@@ -470,7 +473,8 @@ private fun ReminderEditor(
         onDone()
     }
 
-    Scaffold(containerColor = background) { padding ->
+    Scaffold(modifier = Modifier.appScreenBackground(background, primaryText), containerColor = Color.Transparent,
+        contentColor = primaryText) { padding ->
         LazyColumn(
             modifier = Modifier.fillMaxSize().padding(padding).padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)

@@ -9,6 +9,7 @@ data class AppSettings(
     val darkMode: Boolean = false,
     val backgroundColor: String = "neutral",
     val backgroundToneIndex: Int = 0,
+    val settingsBackgroundStyle: String = "solid",
     val settingsPanelTone: Float = 0f,
     val surfacePanelIntensity: Float = 72f,
     val textColor: String = "auto",

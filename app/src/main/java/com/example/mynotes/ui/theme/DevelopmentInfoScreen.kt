@@ -1,5 +1,8 @@
 package com.example.mynotes.ui
 
+import com.example.mynotes.ui.components.appScreenBackground
+import com.example.mynotes.ui.components.appScreenContainerColor
+import androidx.compose.material3.TopAppBarDefaults
 import com.example.mynotes.ui.preview.LocalLayoutPreview
 import com.example.mynotes.ui.components.AppHeading
 import com.example.mynotes.ui.theme.rememberUiTextColors
@@ -90,7 +93,7 @@ fun DevelopmentInfoScreen(settings: AppSettings, onOpenSourceCode: () -> Unit, o
         @Suppress("DEPRECATION")
         if (layoutPreview != null) null else context.packageManager.getPackageInfo(context.packageName, 0)
     }
-    val versionName = packageInfo?.versionName.orEmpty().ifBlank { "v2.1.0" }
+    val versionName = packageInfo?.versionName.orEmpty().ifBlank { "v2.5.0" }
     val applicationInfo = if (layoutPreview != null) null else context.applicationInfo
     val buildType = stringResource(R.string.development_build_release)
     val minSdk = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) applicationInfo?.minSdkVersion ?: 24 else 24
@@ -248,6 +251,10 @@ internal fun DevelopmentTopBar(
 ) {
     val context = LocalContext.current
     TopAppBar(
+        colors = TopAppBarDefaults.topAppBarColors(
+            containerColor = appScreenContainerColor(), scrolledContainerColor = appScreenContainerColor(),
+            titleContentColor = contentColor, navigationIconContentColor = contentColor
+        ),
         title = { Text(title, fontFamily = fontFamily, fontWeight = FontWeight.Bold, fontSize = 24.sp) },
         navigationIcon = {
             TextButton(
@@ -271,7 +278,8 @@ internal fun InformationScreenLayout(
     val (primaryText, secondaryText) = rememberUiTextColors(settings.textColor, screenBackground)
     CompositionLocalProvider(LocalDevelopmentSettings provides settings) {
         AnimatedScreenEntry(animationsEnabled = settings.animationsEnabled, animationSpeed = settings.animationSpeed) {
-            Scaffold(containerColor = screenBackground, topBar = {
+            Scaffold(modifier = Modifier.appScreenBackground(screenBackground, primaryText), containerColor = Color.Transparent,
+                contentColor = primaryText, topBar = {
             DevelopmentTopBar(title, fontFamily, primaryText, onBack)
         }) { paddingValues ->
             Box(modifier = Modifier.fillMaxSize()) {

@@ -5,7 +5,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/layout_xml_screen"
+    android:background="@drawable/layout_xml_app_background"
     android:theme="@style/LayoutXmlPreviewTheme"
     tools:context="com.example.mynotes.MainActivity"
     tools:ignore="HardcodedText,ContentDescription"
@@ -1402,7 +1402,7 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:id="@+id/preview_04c_settings_options_menu_panel_palette"
+                        android:id="@+id/preview_04c_settings_options_menu_panel_palette_background"
                         android:background="@drawable/layout_xml_panel"
                         android:padding="14dp"
                         android:layout_marginBottom="12dp">
@@ -1417,7 +1417,7 @@
                             android:id="@+id/preview_04c_settings_options_menu_textview_148" />
                         <Space
                             android:layout_width="1dp"
-                            android:layout_height="8dp" />
+                            android:layout_height="10dp" />
                         <HorizontalScrollView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
@@ -2011,243 +2011,6 @@
                                         <View
                                             android:layout_width="48dp"
                                             android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_violet_dusk_0"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#F8F4E9"
-                                            android:layout_marginStart="36dp"
-                                            android:layout_marginTop="10dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="violet_dusk 1" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_violet_dusk_1"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#F7E6D2"
-                                            android:layout_marginStart="10dp"
-                                            android:layout_marginTop="37dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="violet_dusk 2" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_violet_dusk_2"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#F6DBC0"
-                                            android:layout_marginStart="62dp"
-                                            android:layout_marginTop="37dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="violet_dusk 3" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_violet_dusk_3"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#935073"
-                                            android:layout_marginStart="24dp"
-                                            android:layout_marginTop="62dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="violet_dusk 4" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_violet_dusk_4"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#502D55"
-                                            android:layout_marginStart="50dp"
-                                            android:layout_marginTop="62dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="violet_dusk 5" />
-                                    </FrameLayout>
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="@string/mock_palette_violet_dusk"
-                                        android:textSize="12sp"
-                                        android:textColor="@color/layout_xml_text"
-                                        android:fontFamily="sans-serif"
-                                        android:textStyle="bold"
-                                        android:gravity="center"
-                                        android:layout_marginTop="8dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_textview_217" />
-                                </LinearLayout>
-                                <LinearLayout
-                                    android:layout_width="132dp"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="vertical"
-                                    android:gravity="center_horizontal"
-                                    android:layout_marginEnd="6dp"
-                                    android:id="@+id/preview_04c_settings_options_menu_linearlayout_218">
-                                    <FrameLayout
-                                        android:layout_width="120dp"
-                                        android:layout_height="120dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_framelayout_219">
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_marple_0"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#FFE3B3"
-                                            android:layout_marginStart="36dp"
-                                            android:layout_marginTop="10dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="marple 1" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_marple_1"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#FFC890"
-                                            android:layout_marginStart="10dp"
-                                            android:layout_marginTop="37dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="marple 2" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_marple_2"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#FFB173"
-                                            android:layout_marginStart="62dp"
-                                            android:layout_marginTop="37dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="marple 3" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_marple_3"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#B64949"
-                                            android:layout_marginStart="24dp"
-                                            android:layout_marginTop="62dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="marple 4" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_marple_4"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#CA2851"
-                                            android:layout_marginStart="50dp"
-                                            android:layout_marginTop="62dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="marple 5" />
-                                    </FrameLayout>
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="@string/mock_palette_marple"
-                                        android:textSize="12sp"
-                                        android:textColor="@color/layout_xml_text"
-                                        android:fontFamily="sans-serif"
-                                        android:textStyle="bold"
-                                        android:gravity="center"
-                                        android:layout_marginTop="8dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_textview_225" />
-                                </LinearLayout>
-                                <LinearLayout
-                                    android:layout_width="132dp"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="vertical"
-                                    android:gravity="center_horizontal"
-                                    android:layout_marginEnd="6dp"
-                                    android:id="@+id/preview_04c_settings_options_menu_linearlayout_226">
-                                    <FrameLayout
-                                        android:layout_width="120dp"
-                                        android:layout_height="120dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_framelayout_227">
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_classic_0"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#F9F7F2"
-                                            android:layout_marginStart="36dp"
-                                            android:layout_marginTop="10dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="classic 1" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_classic_1"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#EDEAE4"
-                                            android:layout_marginStart="10dp"
-                                            android:layout_marginTop="37dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="classic 2" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_classic_2"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#E4E0D8"
-                                            android:layout_marginStart="62dp"
-                                            android:layout_marginTop="37dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="classic 3" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_classic_3"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#706C67"
-                                            android:layout_marginStart="24dp"
-                                            android:layout_marginTop="62dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="classic 4" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_classic_4"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#4A4743"
-                                            android:layout_marginStart="50dp"
-                                            android:layout_marginTop="62dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="classic 5" />
-                                    </FrameLayout>
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="@string/mock_palette_classic"
-                                        android:textSize="12sp"
-                                        android:textColor="@color/layout_xml_text"
-                                        android:fontFamily="sans-serif"
-                                        android:textStyle="bold"
-                                        android:gravity="center"
-                                        android:layout_marginTop="8dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_textview_233" />
-                                </LinearLayout>
-                                <LinearLayout
-                                    android:layout_width="132dp"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="vertical"
-                                    android:gravity="center_horizontal"
-                                    android:layout_marginEnd="6dp"
-                                    android:id="@+id/preview_04c_settings_options_menu_linearlayout_234">
-                                    <FrameLayout
-                                        android:layout_width="120dp"
-                                        android:layout_height="120dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_framelayout_235">
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
                                             android:id="@+id/preview_04c_settings_options_menu_palette_cream_0"
                                             android:background="@drawable/layout_xml_tone"
                                             android:backgroundTint="#FFF9EA"
@@ -2311,7 +2074,7 @@
                                         android:textStyle="bold"
                                         android:gravity="center"
                                         android:layout_marginTop="8dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_textview_241" />
+                                        android:id="@+id/preview_04c_settings_options_menu_textview_217" />
                                 </LinearLayout>
                                 <LinearLayout
                                     android:layout_width="132dp"
@@ -2319,11 +2082,11 @@
                                     android:orientation="vertical"
                                     android:gravity="center_horizontal"
                                     android:layout_marginEnd="6dp"
-                                    android:id="@+id/preview_04c_settings_options_menu_linearlayout_242">
+                                    android:id="@+id/preview_04c_settings_options_menu_linearlayout_218">
                                     <FrameLayout
                                         android:layout_width="120dp"
                                         android:layout_height="120dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_framelayout_243">
+                                        android:id="@+id/preview_04c_settings_options_menu_framelayout_219">
                                         <View
                                             android:layout_width="48dp"
                                             android:layout_height="48dp"
@@ -2390,7 +2153,7 @@
                                         android:textStyle="bold"
                                         android:gravity="center"
                                         android:layout_marginTop="8dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_textview_249" />
+                                        android:id="@+id/preview_04c_settings_options_menu_textview_225" />
                                 </LinearLayout>
                                 <LinearLayout
                                     android:layout_width="132dp"
@@ -2398,90 +2161,11 @@
                                     android:orientation="vertical"
                                     android:gravity="center_horizontal"
                                     android:layout_marginEnd="6dp"
-                                    android:id="@+id/preview_04c_settings_options_menu_linearlayout_250">
+                                    android:id="@+id/preview_04c_settings_options_menu_linearlayout_226">
                                     <FrameLayout
                                         android:layout_width="120dp"
                                         android:layout_height="120dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_framelayout_251">
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_soft_pink_0"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#FFF0F4"
-                                            android:layout_marginStart="36dp"
-                                            android:layout_marginTop="10dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="soft_pink 1" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_soft_pink_1"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#FCDCE5"
-                                            android:layout_marginStart="10dp"
-                                            android:layout_marginTop="37dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="soft_pink 2" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_soft_pink_2"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#F9CCD8"
-                                            android:layout_marginStart="62dp"
-                                            android:layout_marginTop="37dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="soft_pink 3" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_soft_pink_3"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#975B6B"
-                                            android:layout_marginStart="24dp"
-                                            android:layout_marginTop="62dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="soft_pink 4" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_soft_pink_4"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#A33C5A"
-                                            android:layout_marginStart="50dp"
-                                            android:layout_marginTop="62dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="soft_pink 5" />
-                                    </FrameLayout>
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="@string/mock_palette_soft_pink"
-                                        android:textSize="12sp"
-                                        android:textColor="@color/layout_xml_text"
-                                        android:fontFamily="sans-serif"
-                                        android:textStyle="bold"
-                                        android:gravity="center"
-                                        android:layout_marginTop="8dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_textview_257" />
-                                </LinearLayout>
-                                <LinearLayout
-                                    android:layout_width="132dp"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="vertical"
-                                    android:gravity="center_horizontal"
-                                    android:layout_marginEnd="6dp"
-                                    android:id="@+id/preview_04c_settings_options_menu_linearlayout_258">
-                                    <FrameLayout
-                                        android:layout_width="120dp"
-                                        android:layout_height="120dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_framelayout_259">
+                                        android:id="@+id/preview_04c_settings_options_menu_framelayout_227">
                                         <View
                                             android:layout_width="48dp"
                                             android:layout_height="48dp"
@@ -2548,7 +2232,7 @@
                                         android:textStyle="bold"
                                         android:gravity="center"
                                         android:layout_marginTop="8dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_textview_265" />
+                                        android:id="@+id/preview_04c_settings_options_menu_textview_233" />
                                 </LinearLayout>
                                 <LinearLayout
                                     android:layout_width="132dp"
@@ -2556,169 +2240,11 @@
                                     android:orientation="vertical"
                                     android:gravity="center_horizontal"
                                     android:layout_marginEnd="6dp"
-                                    android:id="@+id/preview_04c_settings_options_menu_linearlayout_266">
+                                    android:id="@+id/preview_04c_settings_options_menu_linearlayout_234">
                                     <FrameLayout
                                         android:layout_width="120dp"
                                         android:layout_height="120dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_framelayout_267">
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_orange_0"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#FFEDD9"
-                                            android:layout_marginStart="36dp"
-                                            android:layout_marginTop="10dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="orange 1" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_orange_1"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#FFD6AE"
-                                            android:layout_marginStart="10dp"
-                                            android:layout_marginTop="37dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="orange 2" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_orange_2"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#FFC48B"
-                                            android:layout_marginStart="62dp"
-                                            android:layout_marginTop="37dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="orange 3" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_orange_3"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#9F5C1A"
-                                            android:layout_marginStart="24dp"
-                                            android:layout_marginTop="62dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="orange 4" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_orange_4"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#9C4A00"
-                                            android:layout_marginStart="50dp"
-                                            android:layout_marginTop="62dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="orange 5" />
-                                    </FrameLayout>
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="@string/mock_palette_orange"
-                                        android:textSize="12sp"
-                                        android:textColor="@color/layout_xml_text"
-                                        android:fontFamily="sans-serif"
-                                        android:textStyle="bold"
-                                        android:gravity="center"
-                                        android:layout_marginTop="8dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_textview_273" />
-                                </LinearLayout>
-                                <LinearLayout
-                                    android:layout_width="132dp"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="vertical"
-                                    android:gravity="center_horizontal"
-                                    android:layout_marginEnd="6dp"
-                                    android:id="@+id/preview_04c_settings_options_menu_linearlayout_274">
-                                    <FrameLayout
-                                        android:layout_width="120dp"
-                                        android:layout_height="120dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_framelayout_275">
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_sun_0"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#FFF7CC"
-                                            android:layout_marginStart="36dp"
-                                            android:layout_marginTop="10dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="sun 1" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_sun_1"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#FFECA1"
-                                            android:layout_marginStart="10dp"
-                                            android:layout_marginTop="37dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="sun 2" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_sun_2"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#FFE37D"
-                                            android:layout_marginStart="62dp"
-                                            android:layout_marginTop="37dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="sun 3" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_sun_3"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#826A25"
-                                            android:layout_marginStart="24dp"
-                                            android:layout_marginTop="62dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="sun 4" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_sun_4"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#8B6700"
-                                            android:layout_marginStart="50dp"
-                                            android:layout_marginTop="62dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="sun 5" />
-                                    </FrameLayout>
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="@string/mock_palette_sun"
-                                        android:textSize="12sp"
-                                        android:textColor="@color/layout_xml_text"
-                                        android:fontFamily="sans-serif"
-                                        android:textStyle="bold"
-                                        android:gravity="center"
-                                        android:layout_marginTop="8dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_textview_281" />
-                                </LinearLayout>
-                                <LinearLayout
-                                    android:layout_width="132dp"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="vertical"
-                                    android:gravity="center_horizontal"
-                                    android:layout_marginEnd="6dp"
-                                    android:id="@+id/preview_04c_settings_options_menu_linearlayout_282">
-                                    <FrameLayout
-                                        android:layout_width="120dp"
-                                        android:layout_height="120dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_framelayout_283">
+                                        android:id="@+id/preview_04c_settings_options_menu_framelayout_235">
                                         <View
                                             android:layout_width="48dp"
                                             android:layout_height="48dp"
@@ -2785,7 +2311,7 @@
                                         android:textStyle="bold"
                                         android:gravity="center"
                                         android:layout_marginTop="8dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_textview_289" />
+                                        android:id="@+id/preview_04c_settings_options_menu_textview_241" />
                                 </LinearLayout>
                                 <LinearLayout
                                     android:layout_width="132dp"
@@ -2793,169 +2319,11 @@
                                     android:orientation="vertical"
                                     android:gravity="center_horizontal"
                                     android:layout_marginEnd="6dp"
-                                    android:id="@+id/preview_04c_settings_options_menu_linearlayout_290">
+                                    android:id="@+id/preview_04c_settings_options_menu_linearlayout_242">
                                     <FrameLayout
                                         android:layout_width="120dp"
                                         android:layout_height="120dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_framelayout_291">
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_sky_0"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#EAF9FF"
-                                            android:layout_marginStart="36dp"
-                                            android:layout_marginTop="10dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="sky 1" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_sky_1"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#CEEFFB"
-                                            android:layout_marginStart="10dp"
-                                            android:layout_marginTop="37dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="sky 2" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_sky_2"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#B8E7F7"
-                                            android:layout_marginStart="62dp"
-                                            android:layout_marginTop="37dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="sky 3" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_sky_3"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#417388"
-                                            android:layout_marginStart="24dp"
-                                            android:layout_marginTop="62dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="sky 4" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_sky_4"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#267494"
-                                            android:layout_marginStart="50dp"
-                                            android:layout_marginTop="62dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="sky 5" />
-                                    </FrameLayout>
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="@string/mock_palette_sky"
-                                        android:textSize="12sp"
-                                        android:textColor="@color/layout_xml_text"
-                                        android:fontFamily="sans-serif"
-                                        android:textStyle="bold"
-                                        android:gravity="center"
-                                        android:layout_marginTop="8dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_textview_297" />
-                                </LinearLayout>
-                                <LinearLayout
-                                    android:layout_width="132dp"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="vertical"
-                                    android:gravity="center_horizontal"
-                                    android:layout_marginEnd="6dp"
-                                    android:id="@+id/preview_04c_settings_options_menu_linearlayout_298">
-                                    <FrameLayout
-                                        android:layout_width="120dp"
-                                        android:layout_height="120dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_framelayout_299">
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_cyan_0"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#E5FAFA"
-                                            android:layout_marginStart="36dp"
-                                            android:layout_marginTop="10dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="cyan 1" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_cyan_1"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#C4F0F0"
-                                            android:layout_marginStart="10dp"
-                                            android:layout_marginTop="37dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="cyan 2" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_cyan_2"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#A9E7E8"
-                                            android:layout_marginStart="62dp"
-                                            android:layout_marginTop="37dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="cyan 3" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_cyan_3"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#307778"
-                                            android:layout_marginStart="24dp"
-                                            android:layout_marginTop="62dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="cyan 4" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_cyan_4"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#176C70"
-                                            android:layout_marginStart="50dp"
-                                            android:layout_marginTop="62dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="cyan 5" />
-                                    </FrameLayout>
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="@string/mock_palette_cyan"
-                                        android:textSize="12sp"
-                                        android:textColor="@color/layout_xml_text"
-                                        android:fontFamily="sans-serif"
-                                        android:textStyle="bold"
-                                        android:gravity="center"
-                                        android:layout_marginTop="8dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_textview_305" />
-                                </LinearLayout>
-                                <LinearLayout
-                                    android:layout_width="132dp"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="vertical"
-                                    android:gravity="center_horizontal"
-                                    android:layout_marginEnd="6dp"
-                                    android:id="@+id/preview_04c_settings_options_menu_linearlayout_306">
-                                    <FrameLayout
-                                        android:layout_width="120dp"
-                                        android:layout_height="120dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_framelayout_307">
+                                        android:id="@+id/preview_04c_settings_options_menu_framelayout_243">
                                         <View
                                             android:layout_width="48dp"
                                             android:layout_height="48dp"
@@ -3022,7 +2390,7 @@
                                         android:textStyle="bold"
                                         android:gravity="center"
                                         android:layout_marginTop="8dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_textview_313" />
+                                        android:id="@+id/preview_04c_settings_options_menu_textview_249" />
                                 </LinearLayout>
                                 <LinearLayout
                                     android:layout_width="132dp"
@@ -3030,11 +2398,11 @@
                                     android:orientation="vertical"
                                     android:gravity="center_horizontal"
                                     android:layout_marginEnd="6dp"
-                                    android:id="@+id/preview_04c_settings_options_menu_linearlayout_314">
+                                    android:id="@+id/preview_04c_settings_options_menu_linearlayout_250">
                                     <FrameLayout
                                         android:layout_width="120dp"
                                         android:layout_height="120dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_framelayout_315">
+                                        android:id="@+id/preview_04c_settings_options_menu_framelayout_251">
                                         <View
                                             android:layout_width="48dp"
                                             android:layout_height="48dp"
@@ -3101,7 +2469,7 @@
                                         android:textStyle="bold"
                                         android:gravity="center"
                                         android:layout_marginTop="8dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_textview_321" />
+                                        android:id="@+id/preview_04c_settings_options_menu_textview_257" />
                                 </LinearLayout>
                                 <LinearLayout
                                     android:layout_width="132dp"
@@ -3109,90 +2477,11 @@
                                     android:orientation="vertical"
                                     android:gravity="center_horizontal"
                                     android:layout_marginEnd="6dp"
-                                    android:id="@+id/preview_04c_settings_options_menu_linearlayout_322">
+                                    android:id="@+id/preview_04c_settings_options_menu_linearlayout_258">
                                     <FrameLayout
                                         android:layout_width="120dp"
                                         android:layout_height="120dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_framelayout_323">
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_peach_0"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#FFEFE5"
-                                            android:layout_marginStart="36dp"
-                                            android:layout_marginTop="10dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="peach 1" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_peach_1"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#FFDECB"
-                                            android:layout_marginStart="10dp"
-                                            android:layout_marginTop="37dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="peach 2" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_peach_2"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#FFD0B6"
-                                            android:layout_marginStart="62dp"
-                                            android:layout_marginTop="37dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="peach 3" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_peach_3"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#965F48"
-                                            android:layout_marginStart="24dp"
-                                            android:layout_marginTop="62dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="peach 4" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_peach_4"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#A5573C"
-                                            android:layout_marginStart="50dp"
-                                            android:layout_marginTop="62dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="peach 5" />
-                                    </FrameLayout>
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="@string/mock_palette_peach"
-                                        android:textSize="12sp"
-                                        android:textColor="@color/layout_xml_text"
-                                        android:fontFamily="sans-serif"
-                                        android:textStyle="bold"
-                                        android:gravity="center"
-                                        android:layout_marginTop="8dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_textview_329" />
-                                </LinearLayout>
-                                <LinearLayout
-                                    android:layout_width="132dp"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="vertical"
-                                    android:gravity="center_horizontal"
-                                    android:layout_marginEnd="6dp"
-                                    android:id="@+id/preview_04c_settings_options_menu_linearlayout_330">
-                                    <FrameLayout
-                                        android:layout_width="120dp"
-                                        android:layout_height="120dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_framelayout_331">
+                                        android:id="@+id/preview_04c_settings_options_menu_framelayout_259">
                                         <View
                                             android:layout_width="48dp"
                                             android:layout_height="48dp"
@@ -3259,7 +2548,7 @@
                                         android:textStyle="bold"
                                         android:gravity="center"
                                         android:layout_marginTop="8dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_textview_337" />
+                                        android:id="@+id/preview_04c_settings_options_menu_textview_265" />
                                 </LinearLayout>
                                 <LinearLayout
                                     android:layout_width="132dp"
@@ -3267,11 +2556,11 @@
                                     android:orientation="vertical"
                                     android:gravity="center_horizontal"
                                     android:layout_marginEnd="6dp"
-                                    android:id="@+id/preview_04c_settings_options_menu_linearlayout_338">
+                                    android:id="@+id/preview_04c_settings_options_menu_linearlayout_266">
                                     <FrameLayout
                                         android:layout_width="120dp"
                                         android:layout_height="120dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_framelayout_339">
+                                        android:id="@+id/preview_04c_settings_options_menu_framelayout_267">
                                         <View
                                             android:layout_width="48dp"
                                             android:layout_height="48dp"
@@ -3338,7 +2627,7 @@
                                         android:textStyle="bold"
                                         android:gravity="center"
                                         android:layout_marginTop="8dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_textview_345" />
+                                        android:id="@+id/preview_04c_settings_options_menu_textview_273" />
                                 </LinearLayout>
                                 <LinearLayout
                                     android:layout_width="132dp"
@@ -3346,90 +2635,11 @@
                                     android:orientation="vertical"
                                     android:gravity="center_horizontal"
                                     android:layout_marginEnd="6dp"
-                                    android:id="@+id/preview_04c_settings_options_menu_linearlayout_346">
+                                    android:id="@+id/preview_04c_settings_options_menu_linearlayout_274">
                                     <FrameLayout
                                         android:layout_width="120dp"
                                         android:layout_height="120dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_framelayout_347">
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_electric_cyan_0"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#E6FFFF"
-                                            android:layout_marginStart="36dp"
-                                            android:layout_marginTop="10dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="electric_cyan 1" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_electric_cyan_1"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#79EEFF"
-                                            android:layout_marginStart="10dp"
-                                            android:layout_marginTop="37dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="electric_cyan 2" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_electric_cyan_2"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#20E0FF"
-                                            android:layout_marginStart="62dp"
-                                            android:layout_marginTop="37dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="electric_cyan 3" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_electric_cyan_3"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#007C99"
-                                            android:layout_marginStart="24dp"
-                                            android:layout_marginTop="62dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="electric_cyan 4" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_electric_cyan_4"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#00566B"
-                                            android:layout_marginStart="50dp"
-                                            android:layout_marginTop="62dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="electric_cyan 5" />
-                                    </FrameLayout>
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="@string/mock_palette_electric_cyan"
-                                        android:textSize="12sp"
-                                        android:textColor="@color/layout_xml_text"
-                                        android:fontFamily="sans-serif"
-                                        android:textStyle="bold"
-                                        android:gravity="center"
-                                        android:layout_marginTop="8dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_textview_353" />
-                                </LinearLayout>
-                                <LinearLayout
-                                    android:layout_width="132dp"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="vertical"
-                                    android:gravity="center_horizontal"
-                                    android:layout_marginEnd="6dp"
-                                    android:id="@+id/preview_04c_settings_options_menu_linearlayout_354">
-                                    <FrameLayout
-                                        android:layout_width="120dp"
-                                        android:layout_height="120dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_framelayout_355">
+                                        android:id="@+id/preview_04c_settings_options_menu_framelayout_275">
                                         <View
                                             android:layout_width="48dp"
                                             android:layout_height="48dp"
@@ -3496,7 +2706,7 @@
                                         android:textStyle="bold"
                                         android:gravity="center"
                                         android:layout_marginTop="8dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_textview_361" />
+                                        android:id="@+id/preview_04c_settings_options_menu_textview_281" />
                                 </LinearLayout>
                                 <LinearLayout
                                     android:layout_width="132dp"
@@ -3504,11 +2714,11 @@
                                     android:orientation="vertical"
                                     android:gravity="center_horizontal"
                                     android:layout_marginEnd="6dp"
-                                    android:id="@+id/preview_04c_settings_options_menu_linearlayout_362">
+                                    android:id="@+id/preview_04c_settings_options_menu_linearlayout_282">
                                     <FrameLayout
                                         android:layout_width="120dp"
                                         android:layout_height="120dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_framelayout_363">
+                                        android:id="@+id/preview_04c_settings_options_menu_framelayout_283">
                                         <View
                                             android:layout_width="48dp"
                                             android:layout_height="48dp"
@@ -3575,7 +2785,7 @@
                                         android:textStyle="bold"
                                         android:gravity="center"
                                         android:layout_marginTop="8dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_textview_369" />
+                                        android:id="@+id/preview_04c_settings_options_menu_textview_289" />
                                 </LinearLayout>
                                 <LinearLayout
                                     android:layout_width="132dp"
@@ -3583,248 +2793,11 @@
                                     android:orientation="vertical"
                                     android:gravity="center_horizontal"
                                     android:layout_marginEnd="6dp"
-                                    android:id="@+id/preview_04c_settings_options_menu_linearlayout_370">
+                                    android:id="@+id/preview_04c_settings_options_menu_linearlayout_290">
                                     <FrameLayout
                                         android:layout_width="120dp"
                                         android:layout_height="120dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_framelayout_371">
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_vivid_orange_0"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#FFF1DE"
-                                            android:layout_marginStart="36dp"
-                                            android:layout_marginTop="10dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="vivid_orange 1" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_vivid_orange_1"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#FFC473"
-                                            android:layout_marginStart="10dp"
-                                            android:layout_marginTop="37dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="vivid_orange 2" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_vivid_orange_2"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#FF9F1C"
-                                            android:layout_marginStart="62dp"
-                                            android:layout_marginTop="37dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="vivid_orange 3" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_vivid_orange_3"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#B94D00"
-                                            android:layout_marginStart="24dp"
-                                            android:layout_marginTop="62dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="vivid_orange 4" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_vivid_orange_4"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#823500"
-                                            android:layout_marginStart="50dp"
-                                            android:layout_marginTop="62dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="vivid_orange 5" />
-                                    </FrameLayout>
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="@string/mock_palette_vivid_orange"
-                                        android:textSize="12sp"
-                                        android:textColor="@color/layout_xml_text"
-                                        android:fontFamily="sans-serif"
-                                        android:textStyle="bold"
-                                        android:gravity="center"
-                                        android:layout_marginTop="8dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_textview_377" />
-                                </LinearLayout>
-                                <LinearLayout
-                                    android:layout_width="132dp"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="vertical"
-                                    android:gravity="center_horizontal"
-                                    android:layout_marginEnd="6dp"
-                                    android:id="@+id/preview_04c_settings_options_menu_linearlayout_378">
-                                    <FrameLayout
-                                        android:layout_width="120dp"
-                                        android:layout_height="120dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_framelayout_379">
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_neon_yellow_0"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#FFFCE0"
-                                            android:layout_marginStart="36dp"
-                                            android:layout_marginTop="10dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="neon_yellow 1" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_neon_yellow_1"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#FFF186"
-                                            android:layout_marginStart="10dp"
-                                            android:layout_marginTop="37dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="neon_yellow 2" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_neon_yellow_2"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#FFE83D"
-                                            android:layout_marginStart="62dp"
-                                            android:layout_marginTop="37dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="neon_yellow 3" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_neon_yellow_3"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#8A7200"
-                                            android:layout_marginStart="24dp"
-                                            android:layout_marginTop="62dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="neon_yellow 4" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_neon_yellow_4"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#604E00"
-                                            android:layout_marginStart="50dp"
-                                            android:layout_marginTop="62dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="neon_yellow 5" />
-                                    </FrameLayout>
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="@string/mock_palette_neon_yellow"
-                                        android:textSize="12sp"
-                                        android:textColor="@color/layout_xml_text"
-                                        android:fontFamily="sans-serif"
-                                        android:textStyle="bold"
-                                        android:gravity="center"
-                                        android:layout_marginTop="8dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_textview_385" />
-                                </LinearLayout>
-                                <LinearLayout
-                                    android:layout_width="132dp"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="vertical"
-                                    android:gravity="center_horizontal"
-                                    android:layout_marginEnd="6dp"
-                                    android:id="@+id/preview_04c_settings_options_menu_linearlayout_386">
-                                    <FrameLayout
-                                        android:layout_width="120dp"
-                                        android:layout_height="120dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_framelayout_387">
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_neon_green_0"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#E8FFE9"
-                                            android:layout_marginStart="36dp"
-                                            android:layout_marginTop="10dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="neon_green 1" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_neon_green_1"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#97F8A4"
-                                            android:layout_marginStart="10dp"
-                                            android:layout_marginTop="37dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="neon_green 2" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_neon_green_2"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#55F26C"
-                                            android:layout_marginStart="62dp"
-                                            android:layout_marginTop="37dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="neon_green 3" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_neon_green_3"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#1B7D34"
-                                            android:layout_marginStart="24dp"
-                                            android:layout_marginTop="62dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="neon_green 4" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_neon_green_4"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#115824"
-                                            android:layout_marginStart="50dp"
-                                            android:layout_marginTop="62dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="neon_green 5" />
-                                    </FrameLayout>
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="@string/mock_palette_neon_green"
-                                        android:textSize="12sp"
-                                        android:textColor="@color/layout_xml_text"
-                                        android:fontFamily="sans-serif"
-                                        android:textStyle="bold"
-                                        android:gravity="center"
-                                        android:layout_marginTop="8dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_textview_393" />
-                                </LinearLayout>
-                                <LinearLayout
-                                    android:layout_width="132dp"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="vertical"
-                                    android:gravity="center_horizontal"
-                                    android:layout_marginEnd="6dp"
-                                    android:id="@+id/preview_04c_settings_options_menu_linearlayout_394">
-                                    <FrameLayout
-                                        android:layout_width="120dp"
-                                        android:layout_height="120dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_framelayout_395">
+                                        android:id="@+id/preview_04c_settings_options_menu_framelayout_291">
                                         <View
                                             android:layout_width="48dp"
                                             android:layout_height="48dp"
@@ -3891,7 +2864,7 @@
                                         android:textStyle="bold"
                                         android:gravity="center"
                                         android:layout_marginTop="8dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_textview_401" />
+                                        android:id="@+id/preview_04c_settings_options_menu_textview_297" />
                                 </LinearLayout>
                                 <LinearLayout
                                     android:layout_width="132dp"
@@ -3899,90 +2872,11 @@
                                     android:orientation="vertical"
                                     android:gravity="center_horizontal"
                                     android:layout_marginEnd="6dp"
-                                    android:id="@+id/preview_04c_settings_options_menu_linearlayout_402">
+                                    android:id="@+id/preview_04c_settings_options_menu_linearlayout_298">
                                     <FrameLayout
                                         android:layout_width="120dp"
                                         android:layout_height="120dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_framelayout_403">
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_navy_0"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#E7EEF8"
-                                            android:layout_marginStart="36dp"
-                                            android:layout_marginTop="10dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="navy 1" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_navy_1"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#C4D4E8"
-                                            android:layout_marginStart="10dp"
-                                            android:layout_marginTop="37dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="navy 2" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_navy_2"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#A8BEDA"
-                                            android:layout_marginStart="62dp"
-                                            android:layout_marginTop="37dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="navy 3" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_navy_3"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#4C6F98"
-                                            android:layout_marginStart="24dp"
-                                            android:layout_marginTop="62dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="navy 4" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_navy_4"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#173A63"
-                                            android:layout_marginStart="50dp"
-                                            android:layout_marginTop="62dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="navy 5" />
-                                    </FrameLayout>
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="@string/mock_palette_navy"
-                                        android:textSize="12sp"
-                                        android:textColor="@color/layout_xml_text"
-                                        android:fontFamily="sans-serif"
-                                        android:textStyle="bold"
-                                        android:gravity="center"
-                                        android:layout_marginTop="8dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_textview_409" />
-                                </LinearLayout>
-                                <LinearLayout
-                                    android:layout_width="132dp"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="vertical"
-                                    android:gravity="center_horizontal"
-                                    android:layout_marginEnd="6dp"
-                                    android:id="@+id/preview_04c_settings_options_menu_linearlayout_410">
-                                    <FrameLayout
-                                        android:layout_width="120dp"
-                                        android:layout_height="120dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_framelayout_411">
+                                        android:id="@+id/preview_04c_settings_options_menu_framelayout_299">
                                         <View
                                             android:layout_width="48dp"
                                             android:layout_height="48dp"
@@ -4049,7 +2943,7 @@
                                         android:textStyle="bold"
                                         android:gravity="center"
                                         android:layout_marginTop="8dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_textview_417" />
+                                        android:id="@+id/preview_04c_settings_options_menu_textview_305" />
                                 </LinearLayout>
                                 <LinearLayout
                                     android:layout_width="132dp"
@@ -4057,643 +2951,11 @@
                                     android:orientation="vertical"
                                     android:gravity="center_horizontal"
                                     android:layout_marginEnd="6dp"
-                                    android:id="@+id/preview_04c_settings_options_menu_linearlayout_418">
+                                    android:id="@+id/preview_04c_settings_options_menu_linearlayout_306">
                                     <FrameLayout
                                         android:layout_width="120dp"
                                         android:layout_height="120dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_framelayout_419">
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_forest_0"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#E9F0E6"
-                                            android:layout_marginStart="36dp"
-                                            android:layout_marginTop="10dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="forest 1" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_forest_1"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#D1DECA"
-                                            android:layout_marginStart="10dp"
-                                            android:layout_marginTop="37dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="forest 2" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_forest_2"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#BDD0B4"
-                                            android:layout_marginStart="62dp"
-                                            android:layout_marginTop="37dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="forest 3" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_forest_3"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#5D7252"
-                                            android:layout_marginStart="24dp"
-                                            android:layout_marginTop="62dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="forest 4" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_forest_4"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#304D2C"
-                                            android:layout_marginStart="50dp"
-                                            android:layout_marginTop="62dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="forest 5" />
-                                    </FrameLayout>
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="@string/mock_palette_forest"
-                                        android:textSize="12sp"
-                                        android:textColor="@color/layout_xml_text"
-                                        android:fontFamily="sans-serif"
-                                        android:textStyle="bold"
-                                        android:gravity="center"
-                                        android:layout_marginTop="8dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_textview_425" />
-                                </LinearLayout>
-                                <LinearLayout
-                                    android:layout_width="132dp"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="vertical"
-                                    android:gravity="center_horizontal"
-                                    android:layout_marginEnd="6dp"
-                                    android:id="@+id/preview_04c_settings_options_menu_linearlayout_426">
-                                    <FrameLayout
-                                        android:layout_width="120dp"
-                                        android:layout_height="120dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_framelayout_427">
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_turquoise_0"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#E5F7F5"
-                                            android:layout_marginStart="36dp"
-                                            android:layout_marginTop="10dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="turquoise 1" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_turquoise_1"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#C2E9E4"
-                                            android:layout_marginStart="10dp"
-                                            android:layout_marginTop="37dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="turquoise 2" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_turquoise_2"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#A6DDD7"
-                                            android:layout_marginStart="62dp"
-                                            android:layout_marginTop="37dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="turquoise 3" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_turquoise_3"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#337773"
-                                            android:layout_marginStart="24dp"
-                                            android:layout_marginTop="62dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="turquoise 4" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_turquoise_4"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#176963"
-                                            android:layout_marginStart="50dp"
-                                            android:layout_marginTop="62dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="turquoise 5" />
-                                    </FrameLayout>
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="@string/mock_palette_turquoise"
-                                        android:textSize="12sp"
-                                        android:textColor="@color/layout_xml_text"
-                                        android:fontFamily="sans-serif"
-                                        android:textStyle="bold"
-                                        android:gravity="center"
-                                        android:layout_marginTop="8dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_textview_433" />
-                                </LinearLayout>
-                                <LinearLayout
-                                    android:layout_width="132dp"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="vertical"
-                                    android:gravity="center_horizontal"
-                                    android:layout_marginEnd="6dp"
-                                    android:id="@+id/preview_04c_settings_options_menu_linearlayout_434">
-                                    <FrameLayout
-                                        android:layout_width="120dp"
-                                        android:layout_height="120dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_framelayout_435">
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_ice_0"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#F0FAFD"
-                                            android:layout_marginStart="36dp"
-                                            android:layout_marginTop="10dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="ice 1" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_ice_1"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#DBF1F7"
-                                            android:layout_marginStart="10dp"
-                                            android:layout_marginTop="37dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="ice 2" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_ice_2"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#C9EAF2"
-                                            android:layout_marginStart="62dp"
-                                            android:layout_marginTop="37dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="ice 3" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_ice_3"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#4B727C"
-                                            android:layout_marginStart="24dp"
-                                            android:layout_marginTop="62dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="ice 4" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_ice_4"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#367486"
-                                            android:layout_marginStart="50dp"
-                                            android:layout_marginTop="62dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="ice 5" />
-                                    </FrameLayout>
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="@string/mock_palette_ice"
-                                        android:textSize="12sp"
-                                        android:textColor="@color/layout_xml_text"
-                                        android:fontFamily="sans-serif"
-                                        android:textStyle="bold"
-                                        android:gravity="center"
-                                        android:layout_marginTop="8dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_textview_441" />
-                                </LinearLayout>
-                                <LinearLayout
-                                    android:layout_width="132dp"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="vertical"
-                                    android:gravity="center_horizontal"
-                                    android:layout_marginEnd="6dp"
-                                    android:id="@+id/preview_04c_settings_options_menu_linearlayout_442">
-                                    <FrameLayout
-                                        android:layout_width="120dp"
-                                        android:layout_height="120dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_framelayout_443">
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_indigo_0"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#EEEFFD"
-                                            android:layout_marginStart="36dp"
-                                            android:layout_marginTop="10dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="indigo 1" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_indigo_1"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#D8DAF7"
-                                            android:layout_marginStart="10dp"
-                                            android:layout_marginTop="37dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="indigo 2" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_indigo_2"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#C6C8F2"
-                                            android:layout_marginStart="62dp"
-                                            android:layout_marginTop="37dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="indigo 3" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_indigo_3"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#6367A7"
-                                            android:layout_marginStart="24dp"
-                                            android:layout_marginTop="62dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="indigo 4" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_indigo_4"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#3C427F"
-                                            android:layout_marginStart="50dp"
-                                            android:layout_marginTop="62dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="indigo 5" />
-                                    </FrameLayout>
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="@string/mock_palette_indigo"
-                                        android:textSize="12sp"
-                                        android:textColor="@color/layout_xml_text"
-                                        android:fontFamily="sans-serif"
-                                        android:textStyle="bold"
-                                        android:gravity="center"
-                                        android:layout_marginTop="8dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_textview_449" />
-                                </LinearLayout>
-                                <LinearLayout
-                                    android:layout_width="132dp"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="vertical"
-                                    android:gravity="center_horizontal"
-                                    android:layout_marginEnd="6dp"
-                                    android:id="@+id/preview_04c_settings_options_menu_linearlayout_450">
-                                    <FrameLayout
-                                        android:layout_width="120dp"
-                                        android:layout_height="120dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_framelayout_451">
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_plum_0"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#F6EBF5"
-                                            android:layout_marginStart="36dp"
-                                            android:layout_marginTop="10dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="plum 1" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_plum_1"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#EBD2E8"
-                                            android:layout_marginStart="10dp"
-                                            android:layout_marginTop="37dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="plum 2" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_plum_2"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#E2BEDD"
-                                            android:layout_marginStart="62dp"
-                                            android:layout_marginTop="37dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="plum 3" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_plum_3"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#8E5C86"
-                                            android:layout_marginStart="24dp"
-                                            android:layout_marginTop="62dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="plum 4" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_plum_4"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#65375E"
-                                            android:layout_marginStart="50dp"
-                                            android:layout_marginTop="62dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="plum 5" />
-                                    </FrameLayout>
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="@string/mock_palette_plum"
-                                        android:textSize="12sp"
-                                        android:textColor="@color/layout_xml_text"
-                                        android:fontFamily="sans-serif"
-                                        android:textStyle="bold"
-                                        android:gravity="center"
-                                        android:layout_marginTop="8dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_textview_457" />
-                                </LinearLayout>
-                                <LinearLayout
-                                    android:layout_width="132dp"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="vertical"
-                                    android:gravity="center_horizontal"
-                                    android:layout_marginEnd="6dp"
-                                    android:id="@+id/preview_04c_settings_options_menu_linearlayout_458">
-                                    <FrameLayout
-                                        android:layout_width="120dp"
-                                        android:layout_height="120dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_framelayout_459">
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_wine_0"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#F6E9ED"
-                                            android:layout_marginStart="36dp"
-                                            android:layout_marginTop="10dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="wine 1" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_wine_1"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#ECD0D9"
-                                            android:layout_marginStart="10dp"
-                                            android:layout_marginTop="37dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="wine 2" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_wine_2"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#E3BCC8"
-                                            android:layout_marginStart="62dp"
-                                            android:layout_marginTop="37dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="wine 3" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_wine_3"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#9E576C"
-                                            android:layout_marginStart="24dp"
-                                            android:layout_marginTop="62dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="wine 4" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_wine_4"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#642C3E"
-                                            android:layout_marginStart="50dp"
-                                            android:layout_marginTop="62dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="wine 5" />
-                                    </FrameLayout>
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="@string/mock_palette_wine"
-                                        android:textSize="12sp"
-                                        android:textColor="@color/layout_xml_text"
-                                        android:fontFamily="sans-serif"
-                                        android:textStyle="bold"
-                                        android:gravity="center"
-                                        android:layout_marginTop="8dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_textview_465" />
-                                </LinearLayout>
-                                <LinearLayout
-                                    android:layout_width="132dp"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="vertical"
-                                    android:gravity="center_horizontal"
-                                    android:layout_marginEnd="6dp"
-                                    android:id="@+id/preview_04c_settings_options_menu_linearlayout_466">
-                                    <FrameLayout
-                                        android:layout_width="120dp"
-                                        android:layout_height="120dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_framelayout_467">
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_cherry_0"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#FFE9EC"
-                                            android:layout_marginStart="36dp"
-                                            android:layout_marginTop="10dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="cherry 1" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_cherry_1"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#FBD0D7"
-                                            android:layout_marginStart="10dp"
-                                            android:layout_marginTop="37dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="cherry 2" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_cherry_2"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#F7BCC5"
-                                            android:layout_marginStart="62dp"
-                                            android:layout_marginTop="37dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="cherry 3" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_cherry_3"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#AD4E5C"
-                                            android:layout_marginStart="24dp"
-                                            android:layout_marginTop="62dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="cherry 4" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_cherry_4"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#9E2D42"
-                                            android:layout_marginStart="50dp"
-                                            android:layout_marginTop="62dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="cherry 5" />
-                                    </FrameLayout>
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="@string/mock_palette_cherry"
-                                        android:textSize="12sp"
-                                        android:textColor="@color/layout_xml_text"
-                                        android:fontFamily="sans-serif"
-                                        android:textStyle="bold"
-                                        android:gravity="center"
-                                        android:layout_marginTop="8dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_textview_473" />
-                                </LinearLayout>
-                                <LinearLayout
-                                    android:layout_width="132dp"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="vertical"
-                                    android:gravity="center_horizontal"
-                                    android:layout_marginEnd="6dp"
-                                    android:id="@+id/preview_04c_settings_options_menu_linearlayout_474">
-                                    <FrameLayout
-                                        android:layout_width="120dp"
-                                        android:layout_height="120dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_framelayout_475">
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_terracotta_0"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#F9ECE6"
-                                            android:layout_marginStart="36dp"
-                                            android:layout_marginTop="10dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="terracotta 1" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_terracotta_1"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#F0D4C7"
-                                            android:layout_marginStart="10dp"
-                                            android:layout_marginTop="37dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="terracotta 2" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_terracotta_2"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#E8C1AE"
-                                            android:layout_marginStart="62dp"
-                                            android:layout_marginTop="37dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="terracotta 3" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_terracotta_3"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#975E46"
-                                            android:layout_marginStart="24dp"
-                                            android:layout_marginTop="62dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="terracotta 4" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_terracotta_4"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#75412F"
-                                            android:layout_marginStart="50dp"
-                                            android:layout_marginTop="62dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="terracotta 5" />
-                                    </FrameLayout>
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="@string/mock_palette_terracotta"
-                                        android:textSize="12sp"
-                                        android:textColor="@color/layout_xml_text"
-                                        android:fontFamily="sans-serif"
-                                        android:textStyle="bold"
-                                        android:gravity="center"
-                                        android:layout_marginTop="8dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_textview_481" />
-                                </LinearLayout>
-                                <LinearLayout
-                                    android:layout_width="132dp"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="vertical"
-                                    android:gravity="center_horizontal"
-                                    android:layout_marginEnd="6dp"
-                                    android:id="@+id/preview_04c_settings_options_menu_linearlayout_482">
-                                    <FrameLayout
-                                        android:layout_width="120dp"
-                                        android:layout_height="120dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_framelayout_483">
+                                        android:id="@+id/preview_04c_settings_options_menu_framelayout_307">
                                         <View
                                             android:layout_width="48dp"
                                             android:layout_height="48dp"
@@ -4760,7 +3022,7 @@
                                         android:textStyle="bold"
                                         android:gravity="center"
                                         android:layout_marginTop="8dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_textview_489" />
+                                        android:id="@+id/preview_04c_settings_options_menu_textview_313" />
                                 </LinearLayout>
                                 <LinearLayout
                                     android:layout_width="132dp"
@@ -4768,90 +3030,11 @@
                                     android:orientation="vertical"
                                     android:gravity="center_horizontal"
                                     android:layout_marginEnd="6dp"
-                                    android:id="@+id/preview_04c_settings_options_menu_linearlayout_490">
+                                    android:id="@+id/preview_04c_settings_options_menu_linearlayout_314">
                                     <FrameLayout
                                         android:layout_width="120dp"
                                         android:layout_height="120dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_framelayout_491">
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_sand_0"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#FBF5E8"
-                                            android:layout_marginStart="36dp"
-                                            android:layout_marginTop="10dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="sand 1" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_sand_1"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#F1E4CB"
-                                            android:layout_marginStart="10dp"
-                                            android:layout_marginTop="37dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="sand 2" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_sand_2"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#E8D7B3"
-                                            android:layout_marginStart="62dp"
-                                            android:layout_marginTop="37dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="sand 3" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_sand_3"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#7D6A47"
-                                            android:layout_marginStart="24dp"
-                                            android:layout_marginTop="62dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="sand 4" />
-                                        <View
-                                            android:layout_width="48dp"
-                                            android:layout_height="48dp"
-                                            android:id="@+id/preview_04c_settings_options_menu_palette_sand_4"
-                                            android:background="@drawable/layout_xml_tone"
-                                            android:backgroundTint="#75603C"
-                                            android:layout_marginStart="50dp"
-                                            android:layout_marginTop="62dp"
-                                            android:clickable="true"
-                                            android:focusable="true"
-                                            android:contentDescription="sand 5" />
-                                    </FrameLayout>
-                                    <TextView
-                                        android:layout_width="wrap_content"
-                                        android:layout_height="wrap_content"
-                                        android:text="@string/mock_palette_sand"
-                                        android:textSize="12sp"
-                                        android:textColor="@color/layout_xml_text"
-                                        android:fontFamily="sans-serif"
-                                        android:textStyle="bold"
-                                        android:gravity="center"
-                                        android:layout_marginTop="8dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_textview_497" />
-                                </LinearLayout>
-                                <LinearLayout
-                                    android:layout_width="132dp"
-                                    android:layout_height="wrap_content"
-                                    android:orientation="vertical"
-                                    android:gravity="center_horizontal"
-                                    android:layout_marginEnd="6dp"
-                                    android:id="@+id/preview_04c_settings_options_menu_linearlayout_498">
-                                    <FrameLayout
-                                        android:layout_width="120dp"
-                                        android:layout_height="120dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_framelayout_499">
+                                        android:id="@+id/preview_04c_settings_options_menu_framelayout_315">
                                         <View
                                             android:layout_width="48dp"
                                             android:layout_height="48dp"
@@ -4918,7 +3101,7 @@
                                         android:textStyle="bold"
                                         android:gravity="center"
                                         android:layout_marginTop="8dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_textview_505" />
+                                        android:id="@+id/preview_04c_settings_options_menu_textview_321" />
                                 </LinearLayout>
                                 <LinearLayout
                                     android:layout_width="132dp"
@@ -4926,11 +3109,11 @@
                                     android:orientation="vertical"
                                     android:gravity="center_horizontal"
                                     android:layout_marginEnd="6dp"
-                                    android:id="@+id/preview_04c_settings_options_menu_linearlayout_506">
+                                    android:id="@+id/preview_04c_settings_options_menu_linearlayout_322">
                                     <FrameLayout
                                         android:layout_width="120dp"
                                         android:layout_height="120dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_framelayout_507">
+                                        android:id="@+id/preview_04c_settings_options_menu_framelayout_323">
                                         <View
                                             android:layout_width="48dp"
                                             android:layout_height="48dp"
@@ -4997,7 +3180,7 @@
                                         android:textStyle="bold"
                                         android:gravity="center"
                                         android:layout_marginTop="8dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_textview_513" />
+                                        android:id="@+id/preview_04c_settings_options_menu_textview_329" />
                                 </LinearLayout>
                                 <LinearLayout
                                     android:layout_width="132dp"
@@ -5005,11 +3188,11 @@
                                     android:orientation="vertical"
                                     android:gravity="center_horizontal"
                                     android:layout_marginEnd="6dp"
-                                    android:id="@+id/preview_04c_settings_options_menu_linearlayout_514">
+                                    android:id="@+id/preview_04c_settings_options_menu_linearlayout_330">
                                     <FrameLayout
                                         android:layout_width="120dp"
                                         android:layout_height="120dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_framelayout_515">
+                                        android:id="@+id/preview_04c_settings_options_menu_framelayout_331">
                                         <View
                                             android:layout_width="48dp"
                                             android:layout_height="48dp"
@@ -5076,10 +3259,114 @@
                                         android:textStyle="bold"
                                         android:gravity="center"
                                         android:layout_marginTop="8dp"
-                                        android:id="@+id/preview_04c_settings_options_menu_textview_521" />
+                                        android:id="@+id/preview_04c_settings_options_menu_textview_337" />
                                 </LinearLayout>
                             </LinearLayout>
                         </HorizontalScrollView>
+                        <Space
+                            android:layout_width="1dp"
+                            android:layout_height="20dp" />
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:id="@+id/preview_04c_settings_options_menu_linearlayout_339">
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:layout_weight="1"
+                                android:padding="7dp"
+                                android:layout_marginEnd="8dp"
+                                android:background="@drawable/layout_xml_button_outline"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:id="@+id/preview_04c_settings_options_menu_background_solid">
+                                <FrameLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="64dp"
+                                    android:background="@drawable/layout_xml_settings_neutral_solid"
+                                    android:id="@+id/preview_04c_settings_options_menu_framelayout_341">
+                                    <ImageView
+                                        android:layout_width="18dp"
+                                        android:layout_height="18dp"
+                                        android:src="@drawable/preview_ic_check"
+                                        android:contentDescription="@null"
+                                        android:layout_gravity="top|end"
+                                        android:layout_margin="4dp"
+                                        android:tint="#000000"
+                                        android:id="@+id/preview_04c_settings_options_menu_imageview_342" />
+                                </FrameLayout>
+                                <RadioButton
+                                    android:layout_width="match_parent"
+                                    android:layout_height="36dp"
+                                    android:text="@string/settings_background_solid"
+                                    android:id="@+id/preview_04c_settings_options_menu_background_solid_selected"
+                                    android:textColor="@color/layout_xml_text"
+                                    android:textSize="12sp"
+                                    android:checked="true"
+                                    android:button="@null"
+                                    android:gravity="center"
+                                    android:layout_marginTop="7dp" />
+                            </LinearLayout>
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:layout_weight="1"
+                                android:padding="7dp"
+                                android:layout_marginEnd="8dp"
+                                android:background="@drawable/layout_xml_button_outline"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:id="@+id/preview_04c_settings_options_menu_background_gradient">
+                                <FrameLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="64dp"
+                                    android:background="@drawable/layout_xml_settings_neutral_gradient"
+                                    android:id="@+id/preview_04c_settings_options_menu_framelayout_345" />
+                                <RadioButton
+                                    android:layout_width="match_parent"
+                                    android:layout_height="36dp"
+                                    android:text="@string/settings_background_gradient"
+                                    android:id="@+id/preview_04c_settings_options_menu_background_gradient_selected"
+                                    android:textColor="@color/layout_xml_text"
+                                    android:textSize="12sp"
+                                    android:checked="false"
+                                    android:button="@null"
+                                    android:gravity="center"
+                                    android:layout_marginTop="7dp" />
+                            </LinearLayout>
+                            <LinearLayout
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:orientation="vertical"
+                                android:layout_weight="1"
+                                android:padding="7dp"
+                                android:layout_marginEnd="0dp"
+                                android:background="@drawable/layout_xml_button_outline"
+                                android:clickable="true"
+                                android:focusable="true"
+                                android:id="@+id/preview_04c_settings_options_menu_background_blur">
+                                <FrameLayout
+                                    android:layout_width="match_parent"
+                                    android:layout_height="64dp"
+                                    android:background="@drawable/layout_xml_settings_neutral_blur"
+                                    android:id="@+id/preview_04c_settings_options_menu_framelayout_348" />
+                                <RadioButton
+                                    android:layout_width="match_parent"
+                                    android:layout_height="36dp"
+                                    android:text="@string/settings_background_blur"
+                                    android:id="@+id/preview_04c_settings_options_menu_background_blur_selected"
+                                    android:textColor="@color/layout_xml_text"
+                                    android:textSize="12sp"
+                                    android:checked="false"
+                                    android:button="@null"
+                                    android:gravity="center"
+                                    android:layout_marginTop="7dp" />
+                            </LinearLayout>
+                        </LinearLayout>
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -5095,7 +3382,7 @@
                             android:orientation="horizontal"
                             android:minHeight="24dp"
                             android:gravity="center_vertical"
-                            android:id="@+id/preview_04c_settings_options_menu_linearlayout_523">
+                            android:id="@+id/preview_04c_settings_options_menu_linearlayout_351">
                             <TextView
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -5105,7 +3392,7 @@
                                 android:fontFamily="sans-serif"
                                 android:textStyle="bold"
                                 android:layout_weight="1"
-                                android:id="@+id/preview_04c_settings_options_menu_textview_524" />
+                                android:id="@+id/preview_04c_settings_options_menu_textview_352" />
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -5145,7 +3432,7 @@
                             android:orientation="horizontal"
                             android:minHeight="24dp"
                             android:gravity="center_vertical"
-                            android:id="@+id/preview_04c_settings_options_menu_linearlayout_528">
+                            android:id="@+id/preview_04c_settings_options_menu_linearlayout_356">
                             <TextView
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -5155,7 +3442,7 @@
                                 android:fontFamily="sans-serif"
                                 android:textStyle="bold"
                                 android:layout_weight="1"
-                                android:id="@+id/preview_04c_settings_options_menu_textview_529" />
+                                android:id="@+id/preview_04c_settings_options_menu_textview_357" />
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -5188,7 +3475,7 @@
                             android:textColor="@color/layout_xml_secondary"
                             android:fontFamily="sans-serif"
                             android:textStyle="normal"
-                            android:id="@+id/preview_04c_settings_options_menu_textview_532" />
+                            android:id="@+id/preview_04c_settings_options_menu_textview_360" />
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -5206,7 +3493,7 @@
                             android:textColor="@color/layout_xml_text"
                             android:fontFamily="sans-serif"
                             android:textStyle="bold"
-                            android:id="@+id/preview_04c_settings_options_menu_textview_534" />
+                            android:id="@+id/preview_04c_settings_options_menu_textview_362" />
                         <Space
                             android:layout_width="1dp"
                             android:layout_height="8dp" />
@@ -5215,7 +3502,7 @@
                             android:layout_height="wrap_content"
                             android:orientation="horizontal"
                             android:checkedButton="@+id/preview_04c_settings_options_menu_text_auto"
-                            android:id="@+id/preview_04c_settings_options_menu_radiogroup_536">
+                            android:id="@+id/preview_04c_settings_options_menu_radiogroup_364">
                             <RadioButton
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -5259,7 +3546,7 @@
                             android:orientation="horizontal"
                             android:minHeight="48dp"
                             android:gravity="center_vertical"
-                            android:id="@+id/preview_04c_settings_options_menu_linearlayout_541">
+                            android:id="@+id/preview_04c_settings_options_menu_linearlayout_369">
                             <TextView
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -5270,7 +3557,7 @@
                                 android:textStyle="normal"
                                 android:layout_weight="1"
                                 android:layout_marginEnd="10dp"
-                                android:id="@+id/preview_04c_settings_options_menu_textview_542" />
+                                android:id="@+id/preview_04c_settings_options_menu_textview_370" />
                             <Switch
                                 android:layout_width="52dp"
                                 android:layout_height="32dp"
@@ -5291,7 +3578,7 @@
                             android:textColor="@color/layout_xml_secondary"
                             android:fontFamily="sans-serif"
                             android:textStyle="normal"
-                            android:id="@+id/preview_04c_settings_options_menu_textview_544" />
+                            android:id="@+id/preview_04c_settings_options_menu_textview_372" />
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -5307,7 +3594,7 @@
                             android:orientation="horizontal"
                             android:minHeight="48dp"
                             android:gravity="center_vertical"
-                            android:id="@+id/preview_04c_settings_options_menu_linearlayout_546">
+                            android:id="@+id/preview_04c_settings_options_menu_linearlayout_374">
                             <TextView
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -5317,7 +3604,7 @@
                                 android:fontFamily="sans-serif"
                                 android:textStyle="bold"
                                 android:layout_weight="1"
-                                android:id="@+id/preview_04c_settings_options_menu_textview_547" />
+                                android:id="@+id/preview_04c_settings_options_menu_textview_375" />
                             <Spinner
                                 android:layout_width="wrap_content"
                                 android:layout_height="48dp"
@@ -5332,7 +3619,7 @@
                             android:orientation="horizontal"
                             android:minHeight="24dp"
                             android:gravity="center_vertical"
-                            android:id="@+id/preview_04c_settings_options_menu_linearlayout_549">
+                            android:id="@+id/preview_04c_settings_options_menu_linearlayout_377">
                             <TextView
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -5342,7 +3629,7 @@
                                 android:fontFamily="sans-serif"
                                 android:textStyle="bold"
                                 android:layout_weight="1"
-                                android:id="@+id/preview_04c_settings_options_menu_textview_550" />
+                                android:id="@+id/preview_04c_settings_options_menu_textview_378" />
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"

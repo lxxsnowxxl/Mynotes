@@ -11,6 +11,7 @@ interface SettingsActions {
     fun setConfigurationMode(value: String)
     fun setDarkMode(value: Boolean)
     fun setBackgroundSelection(paletteKey: String, toneIndex: Int)
+    fun setSettingsBackgroundStyle(value: String)
     fun setSettingsPanelTone(value: Float)
     fun setSurfacePanelIntensity(value: Float)
     fun setTextColor(value: String)

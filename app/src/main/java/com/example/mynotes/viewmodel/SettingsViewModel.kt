@@ -37,6 +37,8 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
 
     override fun setSettingsPanelTone(value: Float) = updateSetting { repository.setSettingsPanelTone(value) }
 
+    override fun setSettingsBackgroundStyle(value: String) = updateSetting { repository.setSettingsBackgroundStyle(value) }
+
     override fun setSurfacePanelIntensity(value: Float) = updateSetting { repository.setSurfacePanelIntensity(value) }
 
     override fun setTextColor(value: String) = updateSetting { repository.setTextColor(value) }

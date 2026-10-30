@@ -1,5 +1,6 @@
 package com.example.mynotes.ui.pdf
 
+import com.example.mynotes.ui.components.appScreenBackground
 import com.example.mynotes.ui.preview.LocalLayoutPreview
 import com.example.mynotes.ui.components.AppHeading
 import com.example.mynotes.ui.theme.rememberUiTextColors
@@ -297,7 +298,7 @@ internal fun PdfLibraryScreen(
     Box(
         modifier = Modifier
             .fillMaxSize()
-            .background(screenBackground)
+            .appScreenBackground(screenBackground)
             .padding(top = 30.dp)
     ) {
         Column(modifier = Modifier.fillMaxSize()) {

@@ -16,7 +16,9 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -33,6 +35,7 @@ import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -43,11 +46,15 @@ import androidx.compose.material.icons.filled.Code
 import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.PhotoCamera
+import androidx.compose.material.icons.filled.Crop
+import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
@@ -71,14 +78,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.lerp
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
 import com.example.mynotes.R
 import com.example.mynotes.reminders.ReminderFeedbackPreferences
 import com.example.mynotes.settings.AppSettings
@@ -100,11 +114,13 @@ import com.example.mynotes.ui.components.OptionsMenuHeader
 import com.example.mynotes.ui.components.OptionsMenuMainActionsSettingsSection
 import com.example.mynotes.ui.components.OptionsMenuPrioritySettingsSection
 import com.example.mynotes.ui.components.PaletteSelectorRow
-import com.example.mynotes.ui.components.PaletteSettingsSegment
 import com.example.mynotes.ui.components.ProfileImageEditorDialog
 import com.example.mynotes.ui.components.ScrollPositionCapsule
 import com.example.mynotes.ui.components.SettingsDropdownItem
 import com.example.mynotes.ui.components.SettingsSectionPanel
+import com.example.mynotes.ui.components.SettingsBackgroundOptions
+import com.example.mynotes.ui.components.appScreenBackground
+import com.example.mynotes.ui.components.settingsBackgroundColors
 import com.example.mynotes.ui.components.SettingsSecondaryText
 import com.example.mynotes.ui.components.StyledSettingsSlider
 import com.example.mynotes.ui.components.clearManagedProfileImages
@@ -172,6 +188,17 @@ fun SettingsScreen(
         rememberUiContentColors(settings.textColor, settingsPanelColor)
     val screenBackground = MaterialTheme.colorScheme.background
     val (settingsScreenTextColor, settingsScreenSecondaryTextColor) = rememberUiTextColors(settings.textColor, screenBackground)
+    val backgroundColors = remember(selectedPalette, settings.backgroundToneIndex, screenBackground, settingsScreenTextColor) {
+        settingsBackgroundColors(selectedPalette, settings.backgroundToneIndex, screenBackground, settingsScreenTextColor)
+    }
+    val settingsContentBackground = if (settings.settingsBackgroundStyle == "solid") settingsPanelColor else Color.Transparent
+    val settingsHeaderBackground = if (settings.settingsBackgroundStyle == "solid") screenBackground else Color.Transparent
+    val baseColorScheme = MaterialTheme.colorScheme
+    val settingsColorScheme = remember(baseColorScheme, settingsPanelColor, settings.settingsBackgroundStyle) {
+        if (settings.settingsBackgroundStyle == "solid") baseColorScheme
+        else baseColorScheme.copy(surfaceContainerLow = settingsPanelColor)
+    }
+    val settingsPalettes = remember(settings.backgroundColor) { PaletteCatalog.palettesForSettings(settings.backgroundColor) }
     val menuBackground = when (settings.textColor) {
             "white" -> MaterialTheme.colorScheme.inverseSurface
             else -> MaterialTheme.colorScheme.surfaceContainerHigh
@@ -234,12 +261,14 @@ fun SettingsScreen(
     }
     AnimatedScreenEntry(animationsEnabled = settings.animationsEnabled,
         animationSpeed = settings.animationSpeed) {
-        Scaffold(containerColor = MaterialTheme.colorScheme.background,
+        MaterialTheme(colorScheme = settingsColorScheme) {
+        Box(Modifier.fillMaxSize().appScreenBackground(screenBackground, settingsScreenTextColor)) {
+        Scaffold(containerColor = Color.Transparent, contentColor = settingsScreenTextColor,
         topBar = {
             TopAppBar(
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = screenBackground,
-                    scrolledContainerColor = screenBackground,
+                    containerColor = settingsHeaderBackground,
+                    scrolledContainerColor = settingsHeaderBackground,
                     titleContentColor = settingsScreenTextColor,
                     navigationIconContentColor = settingsScreenTextColor,
                     actionIconContentColor = settingsScreenTextColor
@@ -269,7 +298,7 @@ fun SettingsScreen(
                     .padding(start = 14.dp, end = 14.dp, bottom = 32.dp)
             ) {
                 item(key = "appearance_profile") {
-                    SettingsContentSurface(backgroundColor = settingsPanelColor,
+                    SettingsContentSurface(backgroundColor = settingsContentBackground,
                         shape = RoundedCornerShape(topStart = 22.dp, topEnd = 22.dp),
                         contentPadding = PaddingValues(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 0.dp)) {
                             AppHeading(
@@ -283,7 +312,7 @@ fun SettingsScreen(
                                 settings = settings,
                                 fontFamily = fontFamily,
                                 isAdvancedMode = isAdvancedMode,
-                                profileSize = localProfileSize,
+                                profileSize = { localProfileSize },
                                 onProfileSizeValueChange = { localProfileSize = it },
                                 onConfigurationModeChange = viewModel::setConfigurationMode,
                                 onProfileImageUriChange = viewModel::setProfileImageUri,
@@ -293,20 +322,20 @@ fun SettingsScreen(
                     }
                 }
                 if (isAdvancedMode) {
-                    settingsSurfaceItem(key = "extreme_header", contentType = "settings_header", backgroundColor = settingsPanelColor, bottomSpacing = 10.dp) {
+                    settingsSurfaceItem(key = "extreme_header", contentType = "settings_header", backgroundColor = settingsContentBackground, bottomSpacing = 10.dp) {
                         Spacer(modifier = Modifier.height(8.dp))
                         ExtremeCustomizationHeader(
                             fontFamily = fontFamily,
                             textColor = settingsScreenTextColor
                         )
                     }
-                    settingsSurfaceItem(key = "extreme_icons", contentType = "settings_panel", backgroundColor = settingsPanelColor, bottomSpacing = 12.dp) {
+                    settingsSurfaceItem(key = "extreme_icons", contentType = "settings_panel", backgroundColor = settingsContentBackground, bottomSpacing = 12.dp) {
                         ExtremeIconsSettingsSection(settings, fontFamily, viewModel::setIconStyle, viewModel::setIconSize)
                     }
-                    settingsSurfaceItem(key = "extreme_accent", contentType = "settings_panel", backgroundColor = settingsPanelColor, bottomSpacing = 12.dp) {
+                    settingsSurfaceItem(key = "extreme_accent", contentType = "settings_panel", backgroundColor = settingsContentBackground, bottomSpacing = 12.dp) {
                         ExtremeAccentSettingsSection(settings, fontFamily, viewModel::setAccentColor)
                     }
-                    settingsSurfaceItem(key = "extreme_note_cards", contentType = "settings_panel", backgroundColor = settingsPanelColor, bottomSpacing = 12.dp) {
+                    settingsSurfaceItem(key = "extreme_note_cards", contentType = "settings_panel", backgroundColor = settingsContentBackground, bottomSpacing = 12.dp) {
                         ExtremeNoteCardsSettingsSection(
                             settings = settings,
                             fontFamily = fontFamily,
@@ -323,13 +352,13 @@ fun SettingsScreen(
                             onShowFavoriteIconChange = viewModel::setShowFavoriteIcon
                         )
                     }
-                    settingsSurfaceItem(key = "extreme_fab", contentType = "settings_panel", backgroundColor = settingsPanelColor, bottomSpacing = 12.dp) {
+                    settingsSurfaceItem(key = "extreme_fab", contentType = "settings_panel", backgroundColor = settingsContentBackground, bottomSpacing = 12.dp) {
                         ExtremeFabSettingsSection(settings, fontFamily, viewModel::setFabSize)
                     }
-                    settingsSurfaceItem(key = "extreme_performance", contentType = "settings_panel", backgroundColor = settingsPanelColor, bottomSpacing = 12.dp) {
+                    settingsSurfaceItem(key = "extreme_performance", contentType = "settings_panel", backgroundColor = settingsContentBackground, bottomSpacing = 12.dp) {
                         ExtremePerformanceSettingsSection(settings, fontFamily, viewModel::setPerformanceMode)
                     }
-                    settingsSurfaceItem(key = "extreme_motion", contentType = "settings_panel", backgroundColor = settingsPanelColor, bottomSpacing = 18.dp) {
+                    settingsSurfaceItem(key = "extreme_motion", contentType = "settings_panel", backgroundColor = settingsContentBackground, bottomSpacing = 18.dp) {
                         ExtremeMotionSettingsSection(
                             settings = settings,
                             fontFamily = fontFamily,
@@ -340,10 +369,10 @@ fun SettingsScreen(
                             onAnimationIntensityChange = viewModel::setAnimationIntensity
                         )
                     }
-                    settingsSurfaceItem(key = "options_header", contentType = "settings_header", backgroundColor = settingsPanelColor, bottomSpacing = 10.dp) {
+                    settingsSurfaceItem(key = "options_header", contentType = "settings_header", backgroundColor = settingsContentBackground, bottomSpacing = 10.dp) {
                         OptionsMenuHeader(fontFamily, settingsScreenTextColor, settingsScreenSecondaryTextColor)
                     }
-                    settingsSurfaceItem(key = "options_appearance", contentType = "settings_panel", backgroundColor = settingsPanelColor, bottomSpacing = 8.dp) {
+                    settingsSurfaceItem(key = "options_appearance", contentType = "settings_panel", backgroundColor = settingsContentBackground, bottomSpacing = 8.dp) {
                         OptionsMenuAppearanceSettingsSection(
                             settings,
                             fontFamily,
@@ -352,7 +381,7 @@ fun SettingsScreen(
                             viewModel::setOptionMenuOpacity
                         )
                     }
-                    settingsSurfaceItem(key = "options_main_actions", contentType = "settings_panel", backgroundColor = settingsPanelColor, bottomSpacing = 8.dp) {
+                    settingsSurfaceItem(key = "options_main_actions", contentType = "settings_panel", backgroundColor = settingsContentBackground, bottomSpacing = 8.dp) {
                         OptionsMenuMainActionsSettingsSection(
                             settings,
                             fontFamily,
@@ -360,19 +389,18 @@ fun SettingsScreen(
                             viewModel::setOptionMenuHiddenItems
                         )
                     }
-                    settingsSurfaceItem(key = "options_priority", contentType = "settings_panel", backgroundColor = settingsPanelColor, bottomSpacing = 8.dp) {
+                    settingsSurfaceItem(key = "options_priority", contentType = "settings_panel", backgroundColor = settingsContentBackground, bottomSpacing = 8.dp) {
                         OptionsMenuPrioritySettingsSection(settings, fontFamily, viewModel::setPriorityMenuHiddenItems)
                     }
-                    settingsSurfaceItem(key = "options_color", contentType = "settings_panel", backgroundColor = settingsPanelColor, bottomSpacing = 8.dp) {
+                    settingsSurfaceItem(key = "options_color", contentType = "settings_panel", backgroundColor = settingsContentBackground, bottomSpacing = 8.dp) {
                         OptionsMenuColorSettingsSection(settings, fontFamily, viewModel::setColorMenuHiddenItems)
                     }
                 }
-                settingsSurfaceItem(key = "palette_header", contentType = "palette_header", backgroundColor = settingsPanelColor) {
-                    PaletteSettingsSegment(
+                settingsSurfaceItem(key = "palette_background", contentType = "palette_background", backgroundColor = settingsContentBackground, bottomSpacing = 12.dp) {
+                    SettingsSectionPanel(
                         textColorMode = settings.textColor,
-                        contentPadding = PaddingValues(start = 6.dp, top = 14.dp, end = 0.dp, bottom = 0.dp),
-                        horizontalOutset = 8.dp,
-                        roundTop = true
+                        contentPadding = PaddingValues(start = 6.dp, top = 14.dp, end = 6.dp, bottom = 14.dp),
+                        horizontalOutset = 8.dp
                     ) { panelColors ->
                         SettingTitle(
                             text = stringResource(R.string.mock_color_palette),
@@ -380,26 +408,8 @@ fun SettingsScreen(
                             fontFamily = fontFamily
                         )
                         Spacer(modifier = Modifier.height(10.dp))
-                    }
-                }
-                settingsSurfaceItem(
-                    key = "palette_carousel",
-                    contentType = "palette_carousel",
-                    backgroundColor = settingsPanelColor
-                ) {
-                    PaletteSettingsSegment(
-                        textColorMode = settings.textColor,
-                        contentPadding = PaddingValues(
-                            start = 6.dp,
-                            top = 0.dp,
-                            end = 0.dp,
-                            bottom = if (isAdvancedMode) 20.dp else 14.dp
-                        ),
-                        horizontalOutset = 8.dp,
-                        roundBottom = true
-                    ) {
                         PaletteSelectorRow(
-                            palettes = PaletteCatalog.palettes,
+                            palettes = settingsPalettes,
                             selectedPaletteKey = settings.backgroundColor,
                             selectedToneIndex = settings.backgroundToneIndex,
                             onToneSelected = viewModel::setBackgroundSelection,
@@ -408,23 +418,31 @@ fun SettingsScreen(
                             textColorMode = settings.textColor,
                             fontFamily = fontFamily
                         )
+                        Spacer(modifier = Modifier.height(20.dp))
+                        SettingsBackgroundOptions(
+                            selectedStyle = settings.settingsBackgroundStyle,
+                            colors = backgroundColors,
+                            panel = panelColors,
+                            fontFamily = fontFamily,
+                            onStyleSelected = viewModel::setSettingsBackgroundStyle
+                        )
                     }
                 }
                 if (isAdvancedMode) {
                     percentSliderItem("appearance_panel_tone", R.string.settings_panel_tone, localSettingsPanelTone, settings,
-                        settingsPanelColor, fontFamily, { localSettingsPanelTone = it }, { viewModel.setSettingsPanelTone(localSettingsPanelTone) })
+                        settingsContentBackground, fontFamily, { localSettingsPanelTone = it }, { viewModel.setSettingsPanelTone(localSettingsPanelTone) })
                     percentSliderItem("appearance_translucent_panels", R.string.surface_panels_intensity, localSurfacePanelIntensity, settings,
-                        settingsPanelColor, fontFamily, { localSurfacePanelIntensity = it }, { viewModel.setSurfacePanelIntensity(localSurfacePanelIntensity) },
+                        settingsContentBackground, fontFamily, { localSurfacePanelIntensity = it }, { viewModel.setSurfacePanelIntensity(localSurfacePanelIntensity) },
                         descriptionRes = R.string.surface_panels_intensity_description)
 
-                    settingsPanelItem("appearance_text_color", settings, settingsPanelColor) { panelColors ->
+                    settingsPanelItem("appearance_text_color", settings, settingsContentBackground) { panelColors ->
                         SettingTitle(stringResource(R.string.mock_text_color), panelColors.text, fontFamily)
                         Spacer(Modifier.height(8.dp))
                         TextColorSelector(settings.textColor, viewModel::setTextColor, settings.font)
                     }
 
                     settingsPanelItem(
-                        "appearance_text_outline", settings, settingsPanelColor, topSpacing = 12.dp,
+                        "appearance_text_outline", settings, settingsContentBackground, topSpacing = 12.dp,
                         contentPadding = PaddingValues(vertical = 0.dp)
                     ) { panelColors ->
                         SettingsToggleRow(
@@ -438,7 +456,7 @@ fun SettingsScreen(
                         )
                     }
                 }
-                settingsPanelItem("font", settings, settingsPanelColor, topSpacing = 20.dp, contentType = null) { panelColors ->
+                settingsPanelItem("font", settings, settingsContentBackground, topSpacing = 20.dp, contentType = null) { panelColors ->
                     if (isAdvancedMode) {
                         val systemFontLabel = stringResource(R.string.mock_font_default)
                         val googleSansFlexLabel = stringResource(R.string.mock_font_google_sans_flex)
@@ -473,7 +491,7 @@ fun SettingsScreen(
                     )
                 }
                 if (isAdvancedMode) {
-                    settingsPanelItem("feedback_sound_effects", settings, settingsPanelColor, contentPadding = FeedbackSettingsPanelPadding) { colors ->
+                    settingsPanelItem("feedback_sound_effects", settings, settingsContentBackground, contentPadding = FeedbackSettingsPanelPadding) { colors ->
                         FeedbackSettingsPanel(
                             title = stringResource(R.string.sound_effects),
                             description = stringResource(R.string.sound_effects_description),
@@ -503,7 +521,7 @@ fun SettingsScreen(
                             onSliderValueChangeFinished = { viewModel.setSoundEffectsVolume(localSoundEffectsVolume) }
                         )
                     }
-                    settingsPanelItem("feedback_alert_sounds", settings, settingsPanelColor, topSpacing = 16.dp,
+                    settingsPanelItem("feedback_alert_sounds", settings, settingsContentBackground, topSpacing = 16.dp,
                         contentPadding = FeedbackSettingsPanelPadding) { colors ->
                         FeedbackSettingsPanel(
                             title = stringResource(R.string.reminder_tones),
@@ -539,7 +557,7 @@ fun SettingsScreen(
                             onSliderValueChangeFinished = { viewModel.setReminderSoundVolume(localReminderSoundVolume) }
                         )
                     }
-                    settingsPanelItem("feedback_vibration", settings, settingsPanelColor, topSpacing = 16.dp,
+                    settingsPanelItem("feedback_vibration", settings, settingsContentBackground, topSpacing = 16.dp,
                         contentPadding = FeedbackSettingsPanelPadding) { colors ->
                         FeedbackSettingsPanel(
                             title = stringResource(R.string.haptic_effects),
@@ -579,7 +597,7 @@ fun SettingsScreen(
                         )
                     }
                 }
-                settingsPanelItem("language", settings, settingsPanelColor, topSpacing = 18.dp, contentType = null) { panelColors ->
+                settingsPanelItem("language", settings, settingsContentBackground, topSpacing = 18.dp, contentType = null) { panelColors ->
                     SettingDropdown(
                         title = stringResource(R.string.mock_language),
                         selectedLabel = when (settings.language) {
@@ -598,7 +616,7 @@ fun SettingsScreen(
                     )
                 }
                 if (isAdvancedMode) {
-                    settingsPanelItem("layout_columns", settings, settingsPanelColor) { panelColors ->
+                    settingsPanelItem("layout_columns", settings, settingsContentBackground) { panelColors ->
                         SettingDropdown(
                             title = stringResource(R.string.mock_columns), selectedLabel = settings.gridColumns.toString(),
                             options = listOf("1" to "1", "2" to "2", "3" to "3"), textColor = panelColors.text,
@@ -608,7 +626,7 @@ fun SettingsScreen(
                         )
                     }
 
-                    settingsPanelItem("layout_slider_design", settings, settingsPanelColor) { panelColors ->
+                    settingsPanelItem("layout_slider_design", settings, settingsContentBackground) { panelColors ->
                         KeyedSettingDropdown(
                             title = stringResource(R.string.mock_slider_style), selectedKey = settings.sliderStyle,
                             options = SliderStyleOptions.map { it.key to stringResource(it.labelRes) }, textColor = panelColors.text,
@@ -617,7 +635,7 @@ fun SettingsScreen(
                         )
                     }
 
-                    settingsPanelItem("layout_dark_mode", settings, settingsPanelColor, topSpacing = 17.dp) { panelColors ->
+                    settingsPanelItem("layout_dark_mode", settings, settingsContentBackground, topSpacing = 17.dp) { panelColors ->
                         SettingsToggleRow(
                             title = stringResource(R.string.mock_dark_mode),
                             description = stringResource(R.string.mock_dark_mode_description),
@@ -628,14 +646,14 @@ fun SettingsScreen(
                         )
                     }
 
-                    settingsSurfaceItem(key = "layout_backup_restore", contentType = "settings_panel", backgroundColor = settingsPanelColor) {
+                    settingsSurfaceItem(key = "layout_backup_restore", contentType = "settings_panel", backgroundColor = settingsContentBackground) {
                             Spacer(modifier = Modifier.height(18.dp))
                             BackupRestoreSection(settings = settings, fontFamily = fontFamily, textColor = settingsTextColor,
                                 secondaryTextColor = settingsSecondaryTextColor, graphicColor = settingsGraphicColor)
                         }
                 }
                 settingsPanelItem(
-                    "development", settings, settingsPanelColor, topSpacing = 22.dp, contentType = null,
+                    "development", settings, settingsContentBackground, topSpacing = 22.dp, contentType = null,
                     contentPadding = PaddingValues(0.dp)
                 ) { panelColors ->
                     Row(
@@ -655,7 +673,7 @@ fun SettingsScreen(
                     }
                 }
                 item(key = "updates") {
-                    SettingsContentSurface(backgroundColor = settingsPanelColor,
+                    SettingsContentSurface(backgroundColor = settingsContentBackground,
                         shape = RoundedCornerShape(bottomStart = 22.dp, bottomEnd = 22.dp),
                         contentPadding = PaddingValues(start = 16.dp, top = 0.dp, end = 16.dp, bottom = 16.dp)) {
                             Spacer(modifier = Modifier.height(14.dp))
@@ -767,6 +785,8 @@ fun SettingsScreen(
             )
         }
         }
+    }
+    }
     }
     }
 
@@ -949,15 +969,94 @@ private fun LabeledSettingsSlider(
 }
 
 @Composable
-private fun ProfileActionButton(
-    label: String, fontFamily: FontFamily, contentColor: Color, border: BorderStroke,
-    colors: androidx.compose.material3.ButtonColors, onClick: () -> Unit
+private fun ProfileSecondaryAction(
+    label: String, icon: ImageVector, fontFamily: FontFamily, contentColor: Color,
+    modifier: Modifier = Modifier, onClick: () -> Unit
 ) {
-    OutlinedButton(onClick = onClick, shape = RoundedCornerShape(18.dp), border = border,
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 10.dp), colors = colors) {
-        SettingsTitle(label, contentColor, fontFamily,
-            fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
+    TextButton(
+        onClick = onClick, modifier = modifier.heightIn(min = 48.dp), shape = RoundedCornerShape(10.dp),
+        contentPadding = PaddingValues(horizontal = 4.dp, vertical = 8.dp),
+        colors = ButtonDefaults.textButtonColors(contentColor = contentColor)
+    ) {
+        Icon(icon, contentDescription = null, modifier = Modifier.size(16.dp))
+        Spacer(Modifier.width(6.dp))
+        Text(label, fontFamily = fontFamily, fontWeight = FontWeight.Medium, fontSize = 12.sp)
     }
+}
+
+@Composable
+private fun ConfigurationModeCard(
+    title: String, description: String, isSelected: Boolean,
+    containerColor: Color, contentColor: Color, fontFamily: FontFamily,
+    modifier: Modifier = Modifier, onClick: () -> Unit
+) {
+    Surface(
+        onClick = onClick,
+        modifier = modifier.semantics { selected = isSelected; role = Role.RadioButton },
+        shape = RoundedCornerShape(16.dp), color = containerColor, contentColor = contentColor,
+        border = BorderStroke(if (isSelected) 1.5.dp else 1.dp,
+            contentColor.copy(alpha = if (isSelected) 0.65f else 0.20f)),
+        tonalElevation = 0.dp, shadowElevation = 0.dp
+    ) {
+        Column(Modifier.fillMaxWidth().padding(12.dp)) {
+            Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Text(title, modifier = Modifier.weight(1f), color = contentColor, fontFamily = fontFamily,
+                    fontWeight = FontWeight.SemiBold, fontSize = 13.sp, lineHeight = 18.sp)
+                Surface(
+                    modifier = Modifier.size(20.dp), shape = CircleShape,
+                    color = if (isSelected) contentColor else Color.Transparent,
+                    border = BorderStroke(1.dp, contentColor.copy(alpha = if (isSelected) 1f else 0.55f))
+                ) {
+                    if (isSelected) Box(contentAlignment = Alignment.Center) {
+                        Icon(Icons.Default.Check, contentDescription = null, tint = containerColor,
+                            modifier = Modifier.size(14.dp))
+                    }
+                }
+            }
+            SettingsSecondaryText(description, contentColor, fontFamily,
+                Modifier.padding(top = 8.dp), lineHeight = 16.sp)
+        }
+    }
+}
+
+@Composable
+private fun ProfileAvatarPreview(
+    profileSize: () -> Float, model: Any?, hasPhoto: Boolean, profileLabel: String,
+    actionLabel: String, panelColors: SettingsSectionColors, placeholderColor: Color,
+    onClick: () -> Unit
+) {
+    val size = profileSize().coerceIn(36f, 84f)
+    Surface(
+        modifier = Modifier.size(size.dp + 12.dp).clickable(onClickLabel = actionLabel, onClick = onClick),
+        shape = CircleShape, color = panelColors.background,
+        border = BorderStroke(1.5.dp, panelColors.graphic.copy(alpha = 0.35f))
+    ) {
+        Surface(modifier = Modifier.fillMaxSize().padding(6.dp), shape = CircleShape, color = placeholderColor) {
+            if (hasPhoto) {
+                AsyncImage(model = model, contentDescription = profileLabel,
+                    modifier = Modifier.fillMaxSize().clip(CircleShape), contentScale = ContentScale.Crop)
+            } else {
+                Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+                    Icon(Icons.Default.Person, contentDescription = profileLabel,
+                        modifier = Modifier.size((size * 0.46f).coerceIn(20f, 38f).dp), tint = panelColors.text)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ProfileAvatarSizeControl(
+    profileSize: () -> Float, textColor: Color, fontFamily: FontFamily, style: String,
+    onValueChange: (Float) -> Unit, onValueChangeFinished: () -> Unit
+) {
+    val size = profileSize()
+    LabeledSettingsSlider(
+        title = stringResource(R.string.extreme_profile_size), value = size,
+        valueLabel = "${size.roundToInt()} dp", textColor = textColor, fontFamily = fontFamily,
+        onValueChange = onValueChange, onValueChangeFinished = onValueChangeFinished,
+        valueRange = 36f..84f, steps = 23, style = style
+    )
 }
 
 @Composable
@@ -965,13 +1064,21 @@ private fun ProfileAndModePanel(
     settings: AppSettings,
     fontFamily: androidx.compose.ui.text.font.FontFamily,
     isAdvancedMode: Boolean,
-    profileSize: Float,
+    profileSize: () -> Float,
     onProfileSizeValueChange: (Float) -> Unit,
     onConfigurationModeChange: (String) -> Unit,
     onProfileImageUriChange: (String) -> Unit,
     onProfileImageSizeChange: () -> Unit,
 ) {
     val context = LocalContext.current
+    val layoutPreview = LocalLayoutPreview.current
+    val avatarPixels = with(LocalDensity.current) { 84.dp.roundToPx() }
+    val avatarModel = remember(context, settings.profileImageUri, avatarPixels, layoutPreview?.mediaBitmap) {
+        if (layoutPreview?.mediaBitmap != null) layoutPreview.mediaBitmap
+        else if (settings.profileImageUri.isNotBlank()) {
+            ImageRequest.Builder(context).data(Uri.parse(settings.profileImageUri)).size(avatarPixels).build()
+        } else null
+    }
     var profileEditorUri by remember { mutableStateOf<Uri?>(null) }
     val picker = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
         if (uri != null) {
@@ -1003,22 +1110,7 @@ private fun ProfileAndModePanel(
         horizontalOutset = 8.dp
     ) { panelColors ->
         val primaryColor = MaterialTheme.colorScheme.primary
-        val accentTonalButtonBase = MaterialTheme.colorScheme.primaryContainer
         val secondaryButtonBase = MaterialTheme.colorScheme.surfaceContainerHigh
-        val actionButtonColors = rememberAdaptiveUiButtonColors(
-            accentTonalButtonBase, panelColors.background, settings.textColor, minimumSurfaceContrast = 1.65f)
-        val actionButtonContainerColor = actionButtonColors.container
-        val actionButtonContentColor = actionButtonColors.content
-        val actionButtonBorderColor = remember(actionButtonContentColor, actionButtonContainerColor) {
-            ensureUiContrast(
-                preferred = actionButtonContentColor,
-                background = actionButtonContainerColor,
-                minimumContrast = 3f
-            )
-        }
-        val profileActionBorder = BorderStroke(1.dp, actionButtonBorderColor)
-        val profileActionColors = ButtonDefaults.outlinedButtonColors(
-            containerColor = actionButtonContainerColor, contentColor = actionButtonContentColor)
         val modeSelectedColors = rememberAdaptiveUiButtonColors(
             primaryColor, panelColors.background, settings.textColor, minimumSurfaceContrast = 1.85f)
         val modeSelectedContainerColor = modeSelectedColors.container
@@ -1027,105 +1119,116 @@ private fun ProfileAndModePanel(
             secondaryButtonBase, panelColors.background, settings.textColor, minimumSurfaceContrast = 1.35f)
         val modeUnselectedContainerColor = modeUnselectedColors.container
         val modeUnselectedContentColor = modeUnselectedColors.content
-        SettingsTitle(stringResource(R.string.extreme_profile), panelColors.text, fontFamily,
-            fontSize = 15.sp)
-        Spacer(modifier = Modifier.height(10.dp))
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            val previewAvatarSize = profileSize.coerceIn(36f, 84f).dp
-            val previewIconSize = (profileSize * 0.46f).coerceIn(20f, 38f).dp
-            Surface(
-                modifier = Modifier.size(previewAvatarSize).clickable(enabled = settings.profileImageUri.isNotBlank()) {
-                    UiSoundPlayer.playAction(context = context, action = UiActionSound.Open)
-                    profileEditorUri = managedProfileSourceUri(context, settings.profileImageUri)
-                        ?: Uri.parse(settings.profileImageUri)
-                },
-                shape = CircleShape,
-                color = MaterialTheme.colorScheme.surfaceContainerHigh
-            ) {
-                if (settings.profileImageUri.isNotBlank()) {
-                    AsyncImage(
-                        model = Uri.parse(settings.profileImageUri),
-                        contentDescription = null,
-                        modifier = Modifier.fillMaxSize().clip(CircleShape),
-                        contentScale = ContentScale.Crop
-                    )
-                } else {
-                    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-                        Icon(
-                            imageVector = Icons.Default.Person,
-                            contentDescription = null,
-                            modifier = Modifier.size(previewIconSize),
-                            tint = panelColors.text
-                        )
-                    }
-                }
-            }
-            Column(
-                modifier = Modifier.padding(start = 12.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                ProfileActionButton(stringResource(R.string.extreme_change_photo), fontFamily, actionButtonContentColor,
-                    profileActionBorder, profileActionColors) {
-                    UiSoundPlayer.playAction(context = context, action = UiActionSound.Add)
-                    picker.launch(arrayOf("image/*"))
-                }
-                if (settings.profileImageUri.isNotBlank()) {
-                    ProfileActionButton(stringResource(R.string.extreme_edit_photo), fontFamily, actionButtonContentColor,
-                        profileActionBorder, profileActionColors) {
+        val hasPhoto = settings.profileImageUri.isNotBlank()
+        val profileLabel = stringResource(R.string.extreme_profile)
+        val photoActionLabel = stringResource(if (hasPhoto) R.string.extreme_edit_photo else R.string.extreme_change_photo)
+        val largeText = LocalDensity.current.fontScale > 1.3f
+        val avatar: @Composable () -> Unit = {
+            ProfileAvatarPreview(
+                profileSize = profileSize, model = avatarModel, hasPhoto = hasPhoto, profileLabel = profileLabel,
+                actionLabel = photoActionLabel, panelColors = panelColors, placeholderColor = secondaryButtonBase,
+                onClick = {
+                    if (hasPhoto) {
                         UiSoundPlayer.playAction(context = context, action = UiActionSound.Open)
-                        profileEditorUri = managedProfileSourceUri(context, settings.profileImageUri) ?: Uri.parse(settings.profileImageUri)
+                        profileEditorUri = managedProfileSourceUri(context, settings.profileImageUri)
+                            ?: Uri.parse(settings.profileImageUri)
+                    } else {
+                        UiSoundPlayer.playAction(context = context, action = UiActionSound.Add)
+                        picker.launch(arrayOf("image/*"))
                     }
-                    ProfileActionButton(stringResource(R.string.extreme_remove_photo), fontFamily, actionButtonContentColor,
-                        profileActionBorder, profileActionColors) {
-                        UiSoundPlayer.play(context = context, sound = UiSound.Delete)
-                        clearManagedProfileImages(context)
-                        onProfileImageUriChange("")
+                }
+            )
+        }
+        val photoActions: @Composable () -> Unit = {
+            Column(Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                Button(
+                    onClick = {
+                        UiSoundPlayer.playAction(context = context, action = UiActionSound.Add)
+                        picker.launch(arrayOf("image/*"))
+                    },
+                    modifier = Modifier.fillMaxWidth().heightIn(min = 48.dp), shape = RoundedCornerShape(12.dp),
+                    contentPadding = PaddingValues(horizontal = 12.dp, vertical = 10.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = modeSelectedContainerColor,
+                        contentColor = modeSelectedContentColor)
+                ) {
+                    Icon(Icons.Default.PhotoCamera, contentDescription = null, modifier = Modifier.size(18.dp))
+                    Spacer(Modifier.width(8.dp))
+                    Text(stringResource(R.string.extreme_change_photo), fontFamily = fontFamily,
+                        fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
+                }
+                if (hasPhoto) {
+                    Row(Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                        ProfileSecondaryAction(stringResource(R.string.settings_profile_edit_short), Icons.Default.Crop,
+                            fontFamily, panelColors.text, modifier = Modifier.weight(1f)) {
+                            UiSoundPlayer.playAction(context = context, action = UiActionSound.Open)
+                            profileEditorUri = managedProfileSourceUri(context, settings.profileImageUri) ?: Uri.parse(settings.profileImageUri)
+                        }
+                        ProfileSecondaryAction(stringResource(R.string.settings_profile_remove_short), Icons.Default.DeleteOutline,
+                            fontFamily, panelColors.text, modifier = Modifier.weight(1f)) {
+                            UiSoundPlayer.play(context = context, sound = UiSound.Delete)
+                            clearManagedProfileImages(context)
+                            onProfileImageUriChange("")
+                        }
                     }
                 }
             }
         }
-
+        SettingsTitle(profileLabel, panelColors.text, fontFamily, fontSize = 17.sp)
+        Spacer(Modifier.height(14.dp))
+        BoxWithConstraints(Modifier.fillMaxWidth()) {
+            if (maxWidth < 260.dp || largeText) {
+                Column(Modifier.fillMaxWidth(), horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(14.dp)) {
+                    Box(Modifier.size(96.dp), contentAlignment = Alignment.Center) { avatar() }
+                    photoActions()
+                }
+            } else {
+                Row(Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                    Box(Modifier.size(96.dp), contentAlignment = Alignment.Center) { avatar() }
+                    Column(Modifier.weight(1f)) { photoActions() }
+                }
+            }
+        }
         if (isAdvancedMode) {
-            Spacer(modifier = Modifier.height(12.dp))
-            LabeledSettingsSlider(
-                title = stringResource(R.string.extreme_profile_size),
-                value = profileSize,
-                valueLabel = "${profileSize.roundToInt()} dp",
-                textColor = panelColors.text,
-                fontFamily = fontFamily,
-                onValueChange = onProfileSizeValueChange,
-                onValueChangeFinished = onProfileImageSizeChange,
-                valueRange = 36f..84f,
-                steps = 23,
+            Spacer(modifier = Modifier.height(16.dp))
+            ProfileAvatarSizeControl(
+                profileSize = profileSize, textColor = panelColors.text, fontFamily = fontFamily,
                 style = settings.sliderStyle,
+                onValueChange = onProfileSizeValueChange,
+                onValueChangeFinished = onProfileImageSizeChange
             )
         }
 
-        Spacer(modifier = Modifier.height(18.dp))
+        HorizontalDivider(modifier = Modifier.padding(vertical = 20.dp), color = panelColors.graphic.copy(alpha = 0.16f))
         SettingsTitle(stringResource(R.string.configuration_mode_settings_title), panelColors.text, fontFamily,
             fontSize = 15.sp)
-        SettingsSecondaryText(stringResource(R.string.configuration_mode_settings_description), panelColors.secondaryText, fontFamily, Modifier.padding(top = 2.dp))
-        Row(
-            modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
-            horizontalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            listOf("basic" to R.string.configuration_mode_basic, "advanced" to R.string.configuration_mode_advanced).forEach { (mode, labelRes) ->
-                val selected = settings.configurationMode == mode
-                val contentColor = if (selected) modeSelectedContentColor else modeUnselectedContentColor
-                Button(
-                    onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Select) {
-                        onConfigurationModeChange(mode)
-                    },
-                    modifier = Modifier.weight(1f),
-                    shape = RoundedCornerShape(13.dp),
-                    contentPadding = PaddingValues(horizontal = 6.dp, vertical = 10.dp),
-                    colors = ButtonDefaults.buttonColors(
-                        containerColor = if (selected) modeSelectedContainerColor else modeUnselectedContainerColor,
-                        contentColor = contentColor
-                    )
-                ) {
-                    Text(stringResource(labelRes), color = contentColor, fontFamily = fontFamily, fontWeight = FontWeight.SemiBold,
-                        fontSize = 13.sp, maxLines = 1)
+        Spacer(Modifier.height(12.dp))
+        val modes = listOf(
+            Triple("basic", R.string.configuration_mode_basic, R.string.settings_mode_basic_hint),
+            Triple("advanced", R.string.configuration_mode_advanced, R.string.settings_mode_advanced_hint)
+        )
+        val modeCard: @Composable (Triple<String, Int, Int>, Modifier) -> Unit = { (mode, labelRes, hintRes), modifier ->
+            val isSelected = settings.configurationMode == mode
+            ConfigurationModeCard(
+                title = stringResource(labelRes), description = stringResource(hintRes), isSelected = isSelected,
+                containerColor = if (isSelected) modeSelectedContainerColor else modeUnselectedContainerColor,
+                contentColor = if (isSelected) modeSelectedContentColor else modeUnselectedContentColor,
+                fontFamily = fontFamily, modifier = modifier,
+                onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Select) {
+                    onConfigurationModeChange(mode)
+                }
+            )
+        }
+        BoxWithConstraints(Modifier.fillMaxWidth()) {
+            if (maxWidth < 260.dp || largeText) {
+                Column(Modifier.fillMaxWidth().selectableGroup(), verticalArrangement = Arrangement.spacedBy(10.dp)) {
+                    modes.forEach { modeCard(it, Modifier.fillMaxWidth()) }
+                }
+            } else {
+                Row(Modifier.fillMaxWidth().height(IntrinsicSize.Min).selectableGroup(),
+                    horizontalArrangement = Arrangement.spacedBy(10.dp)) {
+                    modes.forEach { modeCard(it, Modifier.weight(1f).fillMaxHeight()) }
                 }
             }
         }

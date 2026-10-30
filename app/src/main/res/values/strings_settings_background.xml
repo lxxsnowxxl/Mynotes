@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_background_title">Application background</string>
+    <string name="settings_background_description">Choose solid, gradient or blurred tones for all screens. Text and controls stay sharp.</string>
+    <string name="settings_background_solid">Solid</string>
+    <string name="settings_background_gradient">Gradient</string>
+    <string name="settings_background_blur">Blur</string>
+</resources>
