@@ -23,17 +23,17 @@
             android:paddingEnd="12dp"
             android:gravity="center_vertical"
             android:id="@+id/preview_03_note_detail_linearlayout_2">
-            <ImageButton
+            <android.widget.ImageButton
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:id="@+id/preview_03_note_detail_back"
                 android:src="@drawable/preview_ic_arrow_back"
                 android:tint="@color/layout_xml_text"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:background="@android:color/transparent"
                 android:contentDescription="@string/mock_back"
                 android:padding="12dp" />
             <TextView
-                android:layout_width="wrap_content"
+                android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:text=""
                 android:textSize="24sp"
@@ -41,7 +41,29 @@
                 android:fontFamily="sans-serif"
                 android:textStyle="bold"
                 android:layout_marginStart="8dp"
-                android:id="@+id/preview_03_note_detail_textview_4" />
+                android:id="@+id/preview_03_note_detail_textview_4"
+                android:layout_weight="1" />
+            <TextView
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:text="☆"
+                android:textSize="26sp"
+                android:gravity="center"
+                android:textColor="@color/layout_xml_text"
+                android:id="@+id/preview_03_note_detail_detail_favorite"
+                android:clickable="true"
+                android:focusable="true"
+                android:contentDescription="@string/mock_favorites"
+                android:background="@android:color/transparent" />
+            <android.widget.ImageButton
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:id="@+id/preview_03_note_detail_detail_options"
+                android:src="@drawable/preview_ic_more"
+                android:tint="@color/layout_xml_text"
+                android:padding="12dp"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/mock_settings" />
         </LinearLayout>
         <FrameLayout
             android:layout_width="match_parent"
@@ -192,132 +214,5 @@
                 android:importantForAccessibility="no"
                 tools:visibility="visible" />
         </FrameLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:paddingStart="12dp"
-            android:paddingEnd="12dp"
-            android:paddingTop="4dp"
-            android:paddingBottom="4dp"
-            android:id="@+id/preview_03_note_detail_note_detail_bottom_bar"
-            android:background="#00000000"
-            android:elevation="0dp"
-            android:clipChildren="true"
-            android:clipToPadding="true"
-            android:gravity="center_vertical">
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_weight="1"
-                android:gravity="center_horizontal"
-                android:id="@+id/preview_03_note_detail_linearlayout_23">
-                <ImageButton
-                    android:layout_width="38dp"
-                    android:layout_height="38dp"
-                    android:id="@+id/preview_03_note_detail_action_share"
-                    android:padding="9.5dp"
-                    android:src="@drawable/layout_xml_detail_share"
-                    android:tint="@color/layout_xml_text"
-                    android:contentDescription="@string/mock_share"
-                    android:background="?android:attr/selectableItemBackgroundBorderless" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/mock_share"
-                    android:textSize="9sp"
-                    android:textColor="@color/layout_xml_text"
-                    android:fontFamily="sans-serif"
-                    android:textStyle="normal"
-                    android:gravity="center"
-                    android:layout_marginTop="2dp"
-                    android:id="@+id/preview_03_note_detail_textview_25" />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_weight="1"
-                android:gravity="center_horizontal"
-                android:id="@+id/preview_03_note_detail_linearlayout_26">
-                <ImageButton
-                    android:layout_width="38dp"
-                    android:layout_height="38dp"
-                    android:id="@+id/preview_03_note_detail_action_pin"
-                    android:padding="9.5dp"
-                    android:src="@drawable/preview_ic_pin"
-                    android:tint="@color/layout_xml_text"
-                    android:contentDescription="@string/mock_pin"
-                    android:background="?android:attr/selectableItemBackgroundBorderless" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/mock_pin"
-                    android:textSize="9sp"
-                    android:textColor="@color/layout_xml_text"
-                    android:fontFamily="sans-serif"
-                    android:textStyle="normal"
-                    android:gravity="center"
-                    android:layout_marginTop="2dp"
-                    android:id="@+id/preview_03_note_detail_textview_28" />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_weight="1"
-                android:gravity="center_horizontal"
-                android:id="@+id/preview_03_note_detail_linearlayout_29">
-                <ImageButton
-                    android:layout_width="38dp"
-                    android:layout_height="38dp"
-                    android:id="@+id/preview_03_note_detail_action_move"
-                    android:padding="9.5dp"
-                    android:src="@drawable/preview_ic_move"
-                    android:tint="@color/layout_xml_text"
-                    android:contentDescription="@string/mock_move"
-                    android:background="?android:attr/selectableItemBackgroundBorderless" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/mock_move"
-                    android:textSize="9sp"
-                    android:textColor="@color/layout_xml_text"
-                    android:fontFamily="sans-serif"
-                    android:textStyle="normal"
-                    android:gravity="center"
-                    android:layout_marginTop="2dp"
-                    android:id="@+id/preview_03_note_detail_textview_31" />
-            </LinearLayout>
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:layout_weight="1"
-                android:gravity="center_horizontal"
-                android:id="@+id/preview_03_note_detail_linearlayout_32">
-                <ImageButton
-                    android:layout_width="38dp"
-                    android:layout_height="38dp"
-                    android:id="@+id/preview_03_note_detail_action_delete"
-                    android:padding="9.5dp"
-                    android:src="@drawable/preview_ic_delete"
-                    android:tint="#D32F2F"
-                    android:contentDescription="@string/mock_delete"
-                    android:background="?android:attr/selectableItemBackgroundBorderless" />
-                <TextView
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:text="@string/mock_delete"
-                    android:textSize="9sp"
-                    android:textColor="#D32F2F"
-                    android:fontFamily="sans-serif"
-                    android:textStyle="normal"
-                    android:gravity="center"
-                    android:layout_marginTop="2dp"
-                    android:id="@+id/preview_03_note_detail_textview_34" />
-            </LinearLayout>
-        </LinearLayout>
     </LinearLayout>
 </FrameLayout>

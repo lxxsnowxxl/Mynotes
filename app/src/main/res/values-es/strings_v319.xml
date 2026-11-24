@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="v319_read_later">Leer después</string>
+    <string name="v319_remove_read_later">Quitar de Leer después</string>
+    <string name="v319_old_notes">Antiguas</string>
+    <string name="v319_duplicates">Repetidas</string>
+    <string name="v319_reading_filter">Por leer</string>
+
+    <string name="v319_tasks_progress">Tareas completadas: %1$d/%2$d</string>
+    <string name="v319_idle_motion">Temblor angular tras inactividad</string>
+    <string name="v319_motion_strength">Intensidad del giro (1–5): %1$d</string>
+    <string name="v319_motion_frequency">Frecuencia del movimiento: %1$d</string>
+    <string name="v319_show_all_notes">Ver todas las notas</string>
+</resources>

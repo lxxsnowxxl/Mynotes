@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="card_motion_settings_title">卡片动画</string>
+    <string name="card_motion_settings_subtitle">选择笔记卡片闲置时的动画</string>
+    <string name="card_motion_toggle">启用闲置卡片动画</string>
+    <string name="card_motion_global_disabled">全局动画已关闭，请先启用。</string>
+    <string name="card_motion_style_label">动画样式</string>
+    <string name="card_motion_angular">左右滑动</string>
+    <string name="card_motion_angular_desc">左右滑动并轻微转动</string>
+    <string name="card_motion_sway">3D 倾斜</string>
+    <string name="card_motion_sway_desc">向两侧倾斜，呈现立体感</string>
+    <string name="card_motion_breathe">漂浮</string>
+    <string name="card_motion_breathe_desc">沿弧线升起，再轻轻落下</string>
+    <string name="card_motion_heartbeat">双重脉动</string>
+    <string name="card_motion_heartbeat_desc">先收缩，再以不同力度脉动两次</string>
+    <string name="card_motion_spring">弹性回弹</string>
+    <string name="card_motion_spring_desc">压缩、拉伸，再弹跳两次</string>
+    <string name="card_motion_random">随机</string>
+    <string name="card_motion_random_desc">每次选择不同的效果</string>
+    <string name="card_motion_intensity_label">强度</string>
+    <string name="card_motion_frequency_label">频率</string>
+    <string name="card_motion_preview">预览</string>
+    <string name="card_motion_replay">重播</string>
+    <string name="card_motion_safety_hint">暂停操作后，每次只有一张可见笔记卡片会动。触摸或滚动列表时，动画会停止。</string>
+    <string name="card_motion_off">已关闭</string>
+</resources>

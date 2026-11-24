@@ -142,14 +142,13 @@ private fun InlineImageAttachment(attachment: Attachment) {
     val layoutPreview = LocalLayoutPreview.current
     val detailBitmapLimit = remember(context) {
         if (layoutPreview != null) return@remember Size.ORIGINAL
-            val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE)
-                    as? ActivityManager
-            when {
-                activityManager?.isLowRamDevice == true -> Size(3072, 3072)
-                (activityManager?.memoryClass ?: 256) < 192 -> Size(4096, 4096)
-                else -> Size.ORIGINAL
-            }
+        val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as? ActivityManager
+        when {
+            activityManager?.isLowRamDevice == true -> Size(3072, 3072)
+            (activityManager?.memoryClass ?: 256) < 192 -> Size(4096, 4096)
+            else -> Size.ORIGINAL
         }
+    }
     val fullResolutionRequest = remember(context, uri, detailBitmapLimit) {
             ImageRequest.Builder(context).data(layoutPreview?.mediaBitmap ?: uri).size(Size.ORIGINAL)
                 /*
@@ -208,7 +207,7 @@ private fun InlineImageAttachment(attachment: Attachment) {
                 Modifier
             }
         if (!imageFailed) {
-            AsyncImage(model = fullResolutionRequest, contentDescription = attachment.name, modifier = Modifier.fillMaxWidth()
+            AsyncImage(model = fullResolutionRequest, contentDescription = com.example.mynotes.studio.plusImageDescription(attachment.uri, attachment.name), modifier = Modifier.fillMaxWidth()
                     .then(gestureModifier).graphicsLayer {
                         scaleX = zoom
                         scaleY = zoom
@@ -247,7 +246,7 @@ private fun InlineImageAttachment(attachment: Attachment) {
          */
         if (!imageFailed) {
         Surface(modifier = Modifier.align(Alignment.BottomEnd).padding(12.dp).size(48.dp), shape = CircleShape, color = Color.White,
-            shadowElevation = 4.dp, onClick = {
+            shadowElevation = 0.dp, onClick = {
                 UiSoundPlayer.playAction(context = context, action = UiActionSound.Zoom)
                 zoomEnabled = !zoomEnabled
             }) {
@@ -306,7 +305,7 @@ private fun InlineVideoAttachment(attachment: Attachment, previewDelayMillis: Lo
         ) {
             val previewBitmap = preview?.bitmap
             if (player == null && previewBitmap != null) {
-                Image(bitmap = previewBitmap.asImageBitmap(), contentDescription = attachment.name, modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Fit)
+                Image(bitmap = previewBitmap.asImageBitmap(), contentDescription = com.example.mynotes.studio.plusImageDescription(attachment.uri, attachment.name), modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Fit)
             }
             if (player != null) AndroidView(factory = { textureView }, modifier = Modifier.fillMaxSize())
             if (player != null && playback.buffering && !playback.error) {
@@ -360,7 +359,7 @@ private fun InlineVideoAttachment(attachment: Attachment, previewDelayMillis: Lo
         if (currentPlayer != null && !playback.error) {
             Surface(color = Color.Black, contentColor = Color.White) {
                 Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp)) {
-                    MediaSeekSlider(currentPlayer, playback, enabled = playback.prepared)
+                    MediaSeekSlider(currentPlayer, playback, enabled = playback.prepared, backgroundColor = Color.Black)
                     Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                         Surface(modifier = Modifier.clickable(enabled = playback.prepared) {
                             UiSoundPlayer.playAction(context = context, action = UiActionSound.PlayPause)
@@ -391,6 +390,12 @@ private fun InlineAudioAttachment(attachment: Attachment, fontFamily: FontFamily
     val context = LocalContext.current
     val layoutPreview = LocalLayoutPreview.current
     val uri = remember(attachment.uri) { Uri.parse(attachment.uri) }
+    val metadataDuration by produceState(initialValue = layoutPreview?.durationMillis?.toLong() ?: 0L, key1 = uri) {
+        if (layoutPreview != null) return@produceState
+        value = AttachmentPreviewCache.withPreviewPermit {
+            AttachmentPreviewCache.loadAudioPreview(context, uri, loadAlbumArt = false, performanceMode = "instant").durationMillis
+        }
+    }
     var player by remember(uri) { mutableStateOf<ExoPlayer?>(null) }
     val playback = rememberMediaPlaybackState(uri)
     LocalLayoutPreview.current?.let { sample ->
@@ -434,7 +439,7 @@ private fun InlineAudioAttachment(attachment: Attachment, fontFamily: FontFamily
                         } else {
                             Icon(
                                 imageVector = if (playback.playing) Icons.Default.Pause else Icons.Default.PlayArrow,
-                                contentDescription = if (playback.playing) "Pausar audio" else "Reproducir audio",
+                                contentDescription = stringResource(if (playback.playing) R.string.design_pause_audio else R.string.design_play_audio),
                                 modifier = Modifier.size(30.dp),
                                 tint = MaterialTheme.colorScheme.onPrimaryContainer
                             )
@@ -461,14 +466,16 @@ private fun InlineAudioAttachment(attachment: Attachment, fontFamily: FontFamily
                     }
                     Spacer(modifier = Modifier.height(5.dp))
                     Text(
-                        text = if (playback.error) stringResource(R.string.audio_playback_failed) else "${formatMinuteSecondDuration(playback.position.toLong())} / ${formatMinuteSecondDuration(playback.duration.toLong())}",
+                        text = if (playback.error) stringResource(R.string.audio_playback_failed) else "${formatMinuteSecondDuration(playback.position.toLong())} / ${formatMinuteSecondDuration(if (playback.duration > 0) playback.duration.toLong() else metadataDuration)}",
                         fontFamily = fontFamily,
-                        fontSize = 11.sp,
+                        fontSize = 12.sp,
                         color = if (playback.error) MaterialTheme.colorScheme.error else MaterialTheme.colorScheme.onSurfaceVariant
                     )
                 }
             }
             Spacer(modifier = Modifier.height(8.dp))
+            AudioWaveformGlyph(Modifier.fillMaxWidth().height(32.dp),
+                progress = if (playback.duration > 0) playback.position.toFloat() / playback.duration else 0f)
             MediaSeekSlider(player, playback)
         }
     }
@@ -489,19 +496,24 @@ private fun InlinePdfAttachment(attachment: Attachment, previewDelayMillis: Long
         }
     }
     val bitmap = preview
-    if (bitmap != null) {
-        val ratio = if (bitmap.height > 0) {
-                bitmap.width.toFloat() / bitmap.height.toFloat()
-            } else {
-                0.72f
-            }
-        Image(bitmap = bitmap.asImageBitmap(), contentDescription = attachment.name, modifier = Modifier.fillMaxWidth().aspectRatio(
-                    ratio.coerceIn(0.5f, 1.5f)).clip(InlineAttachmentShape).clickable {
-                    UiSoundPlayer.playAction(context = context, action = UiActionSound.Open)
-                    openAttachment(context = context, attachment = attachment)
-                }, contentScale = ContentScale.Fit)
-    } else {
-        InlineFileAttachment(attachment = attachment, extension = "pdf", fontFamily = FontFamily.Default)
+    val pages = rememberDocumentPageCount(attachment)
+    Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
+        Text(if (pages == null) "PDF" else stringResource(R.string.design_pdf_pages, pages),
+            style = MaterialTheme.typography.labelMedium)
+        if (bitmap != null) {
+            val ratio = if (bitmap.height > 0) {
+                    bitmap.width.toFloat() / bitmap.height.toFloat()
+                } else {
+                    0.72f
+                }
+            Image(bitmap = bitmap.asImageBitmap(), contentDescription = com.example.mynotes.studio.plusImageDescription(attachment.uri, attachment.name), modifier = Modifier.fillMaxWidth().aspectRatio(
+                        ratio.coerceIn(0.5f, 1.5f)).clip(InlineAttachmentShape).clickable {
+                        UiSoundPlayer.playAction(context = context, action = UiActionSound.Open)
+                        openAttachment(context = context, attachment = attachment)
+                    }, contentScale = ContentScale.Fit)
+        } else {
+            InlineFileAttachment(attachment = attachment, extension = "pdf", fontFamily = FontFamily.Default)
+        }
     }
 }
 

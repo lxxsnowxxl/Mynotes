@@ -1,6 +1,7 @@
 package com.example.mynotes.ui.components
 
 import com.example.mynotes.ui.preview.LocalLayoutPreview
+import com.example.mynotes.ui.sound.UiSemanticSoundPolicy
 
 import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
@@ -11,12 +12,17 @@ import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
+import androidx.compose.material.icons.filled.CheckCircle
+import androidx.compose.material.icons.filled.RadioButtonUnchecked
+import com.example.mynotes.ui.notes.NoteCover
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -42,6 +48,8 @@ import androidx.compose.material.icons.filled.Mic
 import androidx.compose.material.icons.filled.MusicNote
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.BookmarkAdd
+import androidx.compose.material.icons.filled.BookmarkRemove
 import androidx.compose.material.icons.filled.Palette
 import androidx.compose.material.icons.filled.PriorityHigh
 import androidx.compose.material.icons.filled.PushPin
@@ -59,10 +67,14 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -72,6 +84,7 @@ import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
@@ -85,20 +98,21 @@ import com.example.mynotes.data.Note
 import com.example.mynotes.performance.AttachmentPreviewCache
 import com.example.mynotes.settings.MenuPreferencePolicy
 import com.example.mynotes.ui.theme.resolveUiTextColor
-import com.example.mynotes.ui.theme.resolveSecondaryUiTextColor
-import com.example.mynotes.ui.theme.resolveUiGraphicColor
+import com.example.mynotes.ui.theme.rememberUiContentColors
 import com.example.mynotes.ui.theme.compositeUiColor
 import com.example.mynotes.ui.theme.ensureUiContrast
 import com.example.mynotes.ui.theme.noteBackgroundColor
+import com.example.mynotes.ui.theme.noteUsesGlobalBackground
 import com.example.mynotes.ui.theme.paletteMatchedOutlineColor
 import com.example.mynotes.ui.motion.AppMotion
 import com.example.mynotes.ui.media.formatMinuteSecondDuration
 import com.example.mynotes.ui.sound.UiActionSound
 import com.example.mynotes.ui.sound.UiSoundPlayer
-import java.text.DateFormat
-import java.util.Date
+import kotlinx.coroutines.delay
 
 private val FavoriteGold = Color(0xFFF5A623)
+
+private enum class NoteCardMenu { MAIN, PRIORITY, COLOR, CATEGORY }
 
 /*
  * Tarjeta reutilizable de la pantalla principal.
@@ -113,123 +127,99 @@ private val FavoriteGold = Color(0xFFF5A623)
  * - fecha;
  * - menú de prioridad/color/categoría.
  */
+@OptIn(ExperimentalLayoutApi::class, androidx.compose.foundation.ExperimentalFoundationApi::class)
 @Composable
 fun ModernNoteCard(note: Note, attachments: List<Attachment>, fontFamily: FontFamily, fontSize: Float,
     style: NoteCardStyle, textColorMode: String, optionMenuOrder: String, optionMenuHiddenItems: String, optionMenuShowIcons: Boolean, optionMenuTextColor: String,
     optionMenuOpacity: Float, priorityMenuHiddenItems: String, colorMenuHiddenItems: String, performanceMode: String,
-    isScrolling: Boolean = false, onOpen: () -> Unit, onEdit: () -> Unit, onToggleFavorite: () -> Unit, onTogglePinned: () -> Unit,
+    onOpen: () -> Unit, onEdit: () -> Unit, onToggleFavorite: () -> Unit, onTogglePinned: () -> Unit,
     onPriorityChange: (Int) -> Unit,
-    onColorChange: (String) -> Unit, onCategoryChange: (String) -> Unit, onDelete: () -> Unit) {
-    val cardColor = noteBackgroundColor(note.color)
-    val textColor = resolveUiTextColor(value = textColorMode, background = cardColor)
-    val secondaryTextColor = resolveSecondaryUiTextColor(value = textColorMode, background = cardColor)
-    val graphicColor = resolveUiGraphicColor(value = textColorMode, background = cardColor)
-    val favoriteIconColor = ensureUiContrast(preferred = FavoriteGold, background = cardColor, minimumContrast = 3f)
-    /*
-     * Durante un gesto de scroll evitamos animaciones internas de tamaño y
-     * transiciones que pueden obligar al StaggeredGrid a re-medir tarjetas
-     * durante varios frames. Fuera del scroll se conserva exactamente la
-     * configuración de animaciones elegida por el usuario.
-     */
-    val motionDuration = if (isScrolling) 0 else AppMotion.duration(AppMotion.FAST, style.animationsEnabled, style.animationSpeed)
-    val animatedCardColor by
-        animateColorAsState(targetValue = cardColor, animationSpec = tween(durationMillis = motionDuration), label = "noteCardColor")
+    onColorChange: (String) -> Unit, onCategoryChange: (String) -> Unit, onDelete: () -> Unit, isSelected: Boolean = false,
+    onLongPress: () -> Unit = {}, selectionMode: Boolean = false, folderName: String? = null,
+    isReadLater: Boolean = false, onToggleReadLater: () -> Unit = {},
+    globalPaletteCardColor: Color? = null, globalPaletteCardOutlineColor: Color? = null,
+    scrolling: State<Boolean>? = null, onMenuStateChange: (Boolean) -> Unit = {}) {
+    // Sólo cambiar tarjetas que antes copiaban el fondo global de la pantalla.
+    // Colores elegidos explícitamente por el usuario permanecen intactos.
+    val isGlobalCard = noteUsesGlobalBackground(note.color)
+    val cardColor = if (isGlobalCard && globalPaletteCardColor != null) globalPaletteCardColor else noteBackgroundColor(note.color)
+    val (textColor, secondaryTextColor, graphicColor) = rememberUiContentColors(textColorMode, cardColor)
+    val favoriteIconColor = remember(cardColor) { ensureUiContrast(FavoriteGold, cardColor, 3f) }
+    val motionDuration = AppMotion.duration(AppMotion.FAST, style.animationsEnabled, style.animationSpeed)
+    val animatedCardColor = animateColorAsState(
+        targetValue = cardColor, animationSpec = tween(durationMillis = motionDuration), label = "noteCardColor"
+    )
     val previewAttachments = remember(attachments) {
         attachments.take(4)
     }
-    val noteLinks = remember(note.content) {
-        extractLinkUrls(note.content)
+    val previewCache = LocalNoteCardPreviewCache.current
+    val preview = remember(previewCache, note.id, note.content, note.formattingEnabled) {
+        previewCache?.previewFor(note) ?: NoteCardPreviewText.build(note.content, note.formattingEnabled)
     }
-    val displayContent = remember(note.content, noteLinks) {
-        noteTextForDisplay(content = note.content, links = noteLinks)
+    val renderedCardColor = if (animatedCardColor.value != cardColor && scrolling?.value == true) {
+        cardColor
+    } else {
+        animatedCardColor.value
     }
-    val layoutPreview = LocalLayoutPreview.current
-    val previewMenu = layoutPreview?.takeIf { it.menuNoteId == note.id }?.noteMenu
-    var mainMenuExpanded by remember { mutableStateOf(previewMenu == "main") }
-    var priorityMenuExpanded by remember { mutableStateOf(previewMenu == "priority") }
-    var colorMenuExpanded by remember { mutableStateOf(previewMenu == "color") }
-    var categoryMenuExpanded by remember { mutableStateOf(previewMenu == "category") }
-
-    val effectiveMenuTextColorMode = if (optionMenuTextColor == "note") textColorMode else optionMenuTextColor
-    val defaultPopupSurface = MaterialTheme.colorScheme.surfaceContainerHigh
-    val inversePopupSurface = MaterialTheme.colorScheme.inverseSurface
-    val popupBaseColor = when (effectiveMenuTextColorMode) {
-        "white" -> if (defaultPopupSurface.luminance() < 0.46f) defaultPopupSurface else inversePopupSurface
-        "black" -> if (defaultPopupSurface.luminance() > 0.54f) defaultPopupSurface else inversePopupSurface
-        else -> defaultPopupSurface
-    }
-    val popupAlpha = (optionMenuOpacity / 100f).coerceIn(0.35f, 1f)
-    val popupColor = popupBaseColor.copy(alpha = popupAlpha)
-    val popupVisualBackground = compositeUiColor(foreground = popupColor, background = cardColor)
-    val noteOutlineColor = paletteMatchedOutlineColor(animatedCardColor)
-    val menuTextColor = resolveUiTextColor(value = effectiveMenuTextColorMode, background = popupVisualBackground)
-    val mainMenuOrder = remember(optionMenuOrder) {
-        MenuPreferencePolicy.orderedKeys(optionMenuOrder)
-    }
-    val hiddenMainMenuItems = remember(optionMenuHiddenItems) {
-        MenuPreferencePolicy.hiddenKeys(optionMenuHiddenItems, MenuPreferencePolicy.mainKeySet)
-    }
-    val visibleMainMenuItems = remember(mainMenuOrder, hiddenMainMenuItems) {
-        mainMenuOrder.filterNot { it in hiddenMainMenuItems }.ifEmpty { listOf("edit") }
-    }
-    val hiddenPriorityItems = remember(priorityMenuHiddenItems) {
-        MenuPreferencePolicy.hiddenKeys(priorityMenuHiddenItems, MenuPreferencePolicy.priorityKeys)
-    }
-    val visiblePriorityOptions = remember(hiddenPriorityItems) {
-        MenuPreferencePolicy.priorityOptions.filterNot { it.key in hiddenPriorityItems }.ifEmpty { MenuPreferencePolicy.priorityOptions }
-    }
-    val hiddenColorItems = remember(colorMenuHiddenItems) {
-        MenuPreferencePolicy.hiddenKeys(colorMenuHiddenItems, MenuPreferencePolicy.colorKeys)
-    }
-    val visibleColorOptions = remember(hiddenColorItems) {
-        MenuPreferencePolicy.colorOptions.filterNot { it.key in hiddenColorItems }.ifEmpty { MenuPreferencePolicy.colorOptions }
+    val border = when {
+        isSelected -> BorderStroke(2.dp, graphicColor)
+        style.outlineEnabled -> BorderStroke(style.outlineWidth.dp, paletteMatchedOutlineColor(renderedCardColor))
+        isGlobalCard && globalPaletteCardColor != null ->
+            BorderStroke(1.dp, globalPaletteCardOutlineColor ?: paletteMatchedOutlineColor(renderedCardColor).copy(alpha = 0.22f))
+        else -> null
     }
     val cardInteractionSource = remember { MutableInteractionSource() }
 
-    Card(modifier = Modifier.fillMaxWidth().clickable(interactionSource = cardInteractionSource,
+    Card(modifier = Modifier.fillMaxWidth().combinedClickable(interactionSource = cardInteractionSource,
                 indication = null,
-                onClick = onOpen),
+                onClick = { UiSoundPlayer.runWithFallbackClick(UiActionSound.Open, onOpen) },
+                onLongClick = { UiSoundPlayer.runWithFallbackClick(actionBlock = onLongPress) },
+                onLongClickLabel = stringResource(R.string.organize_select_note)),
         shape = RoundedCornerShape(style.cornerRadius.dp),
-        colors = CardDefaults.cardColors(containerColor = animatedCardColor),
-        border = if (style.outlineEnabled) BorderStroke(style.outlineWidth.dp, noteOutlineColor) else null,
+        colors = CardDefaults.cardColors(containerColor = renderedCardColor),
+        border = border,
         elevation = CardDefaults.cardElevation(defaultElevation = style.elevation.dp)) {
-        val cardContentModifier = if (isScrolling) {
-            Modifier
-        } else {
-            Modifier.animateContentSize(animationSpec = tween(durationMillis = motionDuration))
-        }
         val outlineContentInset = if (style.outlineEnabled) {
             (style.outlineWidth * 0.90f).coerceIn(0f, 5.4f)
         } else {
             0f
         }
 
-        Column(modifier = cardContentModifier) {
+        Column {
             val contentHorizontalPadding = (style.padding + outlineContentInset).dp
             val mediaHorizontalPadding = (outlineContentInset * 0.10f).coerceAtLeast(1f).dp
             val topContentPadding = (style.padding * 0.75f + outlineContentInset * 0.45f).dp
             val mediaTopPadding = (outlineContentInset * 0.10f).coerceAtLeast(1f).dp
             val bottomContentPadding = (style.padding * 0.90f + outlineContentInset).dp
-            val hasMediaPreview = previewAttachments.isNotEmpty() || noteLinks.isNotEmpty()
+            val hasMediaPreview = previewAttachments.isNotEmpty() || preview.link != null
             val mediaPreviewHeight = (style.imageHeight * 1.10f).dp
             val cardTitleFontSize = (fontSize + 1f).coerceAtLeast(12f)
             val cardBodyFontSize = (fontSize - 2f).coerceAtLeast(11f)
             val cardTitleLineHeight = (cardTitleFontSize * 1.22f).coerceAtLeast(cardTitleFontSize + 2f)
             val cardBodyLineHeight = (cardBodyFontSize * style.lineSpacing).coerceAtLeast(cardBodyFontSize + 1f)
             val actionRow: @Composable (Modifier, Boolean) -> Unit = { actionModifier, overlayMode ->
-                NoteCardActionRow(modifier = actionModifier, overlayMode = overlayMode, note = note, showFavorite = style.showFavorite,
-                    graphicColor = graphicColor, favoriteIconColor = favoriteIconColor, menuTextColor = menuTextColor, popupColor = popupColor,
-                    motionDuration = motionDuration, optionMenuShowIcons = optionMenuShowIcons, visibleMainMenuItems = visibleMainMenuItems,
-                    visiblePriorityOptions = visiblePriorityOptions, visibleColorOptions = visibleColorOptions, mainMenuExpanded = mainMenuExpanded,
-                    onMainMenuExpandedChange = { mainMenuExpanded = it }, priorityMenuExpanded = priorityMenuExpanded,
-                    onPriorityMenuExpandedChange = { priorityMenuExpanded = it }, colorMenuExpanded = colorMenuExpanded,
-                    onColorMenuExpandedChange = { colorMenuExpanded = it }, categoryMenuExpanded = categoryMenuExpanded,
-                    onCategoryMenuExpandedChange = { categoryMenuExpanded = it }, onEdit = onEdit, onToggleFavorite = onToggleFavorite,
+                if (selectionMode) Row(actionModifier.padding(8.dp), horizontalArrangement = Arrangement.End) {
+                    Icon(if (isSelected) Icons.Default.CheckCircle else Icons.Default.RadioButtonUnchecked, null, Modifier.size(24.dp))
+                } else NoteCardActionRow(modifier = actionModifier, overlayMode = overlayMode, note = note, showFavorite = style.showFavorite,
+                    graphicColor = graphicColor, favoriteIconColor = favoriteIconColor, cardColor = cardColor,
+                    motionDuration = motionDuration, optionMenuShowIcons = optionMenuShowIcons, optionMenuOrder = optionMenuOrder,
+                    optionMenuHiddenItems = optionMenuHiddenItems, priorityMenuHiddenItems = priorityMenuHiddenItems,
+                    colorMenuHiddenItems = colorMenuHiddenItems,
+                    menuTextColorMode = if (optionMenuTextColor == "note") textColorMode else optionMenuTextColor,
+                    optionMenuOpacity = optionMenuOpacity, onMenuStateChange = onMenuStateChange,
+                    onEdit = onEdit, onToggleFavorite = onToggleFavorite,
                     onTogglePinned = onTogglePinned, onPriorityChange = onPriorityChange, onColorChange = onColorChange,
-                    onCategoryChange = onCategoryChange, onDelete = onDelete)
+                    onCategoryChange = onCategoryChange, onDelete = onDelete,
+                    isReadLater = isReadLater, onToggleReadLater = onToggleReadLater)
             }
 
-            if (hasMediaPreview) {
+            if (note.coverUri != null || note.coverIcon != null) {
+                Box(Modifier.fillMaxWidth()) {
+                    NoteCover(note, Modifier.fillMaxWidth().height(mediaPreviewHeight), performanceMode, scrolling = scrolling)
+                    actionRow(Modifier.align(Alignment.TopEnd).padding(6.dp), true)
+                    if (attachments.isNotEmpty()) AttachmentMetaBadge(stringResource(R.string.organize_attachment_count, attachments.size), Modifier.align(Alignment.BottomEnd))
+                }
+            } else if (hasMediaPreview) {
                 Box(modifier = Modifier.fillMaxWidth().padding(
                         start = mediaHorizontalPadding,
                         end = mediaHorizontalPadding,
@@ -242,17 +232,19 @@ fun ModernNoteCard(note: Note, attachments: List<Attachment>, fontFamily: FontFa
                                 previewHeight = mediaPreviewHeight,
                                 cornerRadius = style.cornerRadius.dp,
                                 fontFamily = fontFamily,
-                                performanceMode = performanceMode,
-                                deferHeavyLoads = isScrolling && performanceMode != "quality",
-                                isScrolling = isScrolling)
+                                performanceMode = performanceMode, scrolling = scrolling)
                         }
-                        if (noteLinks.isNotEmpty()) {
+                        if (preview.link != null) {
                             Spacer(modifier = Modifier.height(if (previewAttachments.isNotEmpty()) 6.dp else 0.dp))
                             Box(modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(style.cornerRadius.dp))) {
-                                LinkPreviewCard(url = noteLinks.first(), modifier = Modifier.fillMaxWidth(), textColorMode = textColorMode,
-                                    deferLoad = isScrolling)
+                                NoteListLinkPreview(url = preview.link, modifier = Modifier.fillMaxWidth(), textColorMode = textColorMode,
+                                    scrolling = scrolling)
                             }
                         }
+                    }
+                    if (attachments.size > previewAttachments.size) {
+                        AttachmentMetaBadge(stringResource(R.string.design_more_attachments, attachments.size - previewAttachments.size),
+                            Modifier.align(Alignment.BottomEnd))
                     }
                     actionRow(Modifier.align(Alignment.TopEnd).padding(top = 6.dp, end = 6.dp), true)
                 }
@@ -278,8 +270,8 @@ fun ModernNoteCard(note: Note, attachments: List<Attachment>, fontFamily: FontFa
                     lineHeight = cardTitleLineHeight.sp,
                     maxLines = style.titleMaxLines,
                     overflow = TextOverflow.Ellipsis)
-                if (displayContent.isNotBlank()) {
-                    Text(text = displayContent,
+                if (preview.text.isNotBlank()) {
+                    Text(text = preview.text,
                         modifier = Modifier.fillMaxWidth().padding(top = 4.dp),
                         color = secondaryTextColor,
                         fontFamily = fontFamily,
@@ -287,6 +279,12 @@ fun ModernNoteCard(note: Note, attachments: List<Attachment>, fontFamily: FontFa
                         lineHeight = cardBodyLineHeight.sp,
                         maxLines = style.contentMaxLines,
                         overflow = TextOverflow.Ellipsis)
+                }
+                if (preview.tasks.total > 0) {
+                    Text(text = stringResource(R.string.v319_tasks_progress, preview.tasks.complete, preview.tasks.total),
+                        color = secondaryTextColor, fontFamily = fontFamily,
+                    style = MaterialTheme.typography.labelSmall,
+                        modifier = Modifier.padding(top = 6.dp))
                 }
             }
 
@@ -296,20 +294,24 @@ fun ModernNoteCard(note: Note, attachments: List<Attachment>, fontFamily: FontFa
                     top = 8.dp,
                     bottom = bottomContentPadding
                 )) {
-                Row(modifier = Modifier.fillMaxWidth().padding(bottom = (outlineContentInset * 0.20f).dp),
-                    verticalAlignment = Alignment.CenterVertically) {
+                FlowRow(modifier = Modifier.fillMaxWidth().padding(bottom = (outlineContentInset * 0.20f).dp),
+                    horizontalArrangement = Arrangement.SpaceBetween, verticalArrangement = Arrangement.spacedBy(4.dp)) {
                     if (style.showCategory) {
-                        CategoryPill(category = note.category)
+                        if (folderName == null) CategoryPill(category = note.category)
+                        else Text(folderName, style = MaterialTheme.typography.labelMedium, color = secondaryTextColor,
+                            maxLines = 2, overflow = TextOverflow.Ellipsis)
                     }
-                    Spacer(modifier = Modifier.weight(1f))
                     if (style.showDate) {
-                        Text(text = remember(note.createdAt) {
-                                    DateFormat.getDateInstance(DateFormat.MEDIUM).format(Date(note.createdAt))
+                        val locale = LocalConfiguration.current.locales[0]
+                        val formatter = LocalNoteCardDateFormatter.current
+                        Text(text = remember(note.createdAt, formatter, locale) {
+                                    formatNoteCardDate(note.createdAt, formatter, locale)
                                 },
                             color = secondaryTextColor,
                             fontFamily = fontFamily,
-                            fontSize = 10.sp,
-                            maxLines = 1)
+                            fontSize = 12.sp,
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis)
                     }
                 }
             }
@@ -321,8 +323,9 @@ fun ModernNoteCard(note: Note, attachments: List<Attachment>, fontFamily: FontFa
 private fun NoteCardActionButton(
     overlayMode: Boolean, overlayModifier: Modifier, buttonModifier: Modifier, onClick: () -> Unit, content: @Composable () -> Unit
 ) {
-    if (overlayMode) Box(overlayModifier.clickable(onClick = onClick), contentAlignment = Alignment.Center) { content() }
-    else IconButton(onClick = onClick, modifier = buttonModifier) { content() }
+    val click = { UiSoundPlayer.runWithFallbackClick(actionBlock = onClick) }
+    if (overlayMode) Box(overlayModifier.clickable(onClick = click), contentAlignment = Alignment.Center) { content() }
+    else IconButton(onClick = click, modifier = buttonModifier) { content() }
 }
 
 @Composable
@@ -333,41 +336,32 @@ private fun NoteCardActionRow(
     showFavorite: Boolean,
     graphicColor: Color,
     favoriteIconColor: Color,
-    menuTextColor: Color,
-    popupColor: Color,
+    cardColor: Color,
     motionDuration: Int,
     optionMenuShowIcons: Boolean,
-    visibleMainMenuItems: List<String>,
-    visiblePriorityOptions: List<MenuPreferencePolicy.PriorityOption>,
-    visibleColorOptions: List<MenuPreferencePolicy.ColorOption>,
-    mainMenuExpanded: Boolean,
-    onMainMenuExpandedChange: (Boolean) -> Unit,
-    priorityMenuExpanded: Boolean,
-    onPriorityMenuExpandedChange: (Boolean) -> Unit,
-    colorMenuExpanded: Boolean,
-    onColorMenuExpandedChange: (Boolean) -> Unit,
-    categoryMenuExpanded: Boolean,
-    onCategoryMenuExpandedChange: (Boolean) -> Unit,
+    optionMenuOrder: String,
+    optionMenuHiddenItems: String,
+    priorityMenuHiddenItems: String,
+    colorMenuHiddenItems: String,
+    menuTextColorMode: String,
+    optionMenuOpacity: Float,
+    onMenuStateChange: (Boolean) -> Unit,
     onEdit: () -> Unit,
     onToggleFavorite: () -> Unit,
     onTogglePinned: () -> Unit,
     onPriorityChange: (Int) -> Unit,
     onColorChange: (String) -> Unit,
     onCategoryChange: (String) -> Unit,
-    onDelete: () -> Unit
+    onDelete: () -> Unit,
+    isReadLater: Boolean,
+    onToggleReadLater: () -> Unit
 ) {
     val context = LocalContext.current
-    val overlayBackground = Color.Black.copy(alpha = 0.30f)
+    // El oscurecimiento más fuerte mantiene los iconos claros sobre fotos muy luminosas.
+    val overlayBackground = Color.Black.copy(alpha = 0.68f)
     val baseIconTint = if (overlayMode) Color.White else graphicColor
     val overlayButtonModifier = Modifier.size(30.dp).clip(CircleShape).background(overlayBackground)
     val buttonModifier = Modifier.size(40.dp)
-    fun finishMainMenu(action: () -> Unit) { onMainMenuExpandedChange(false); action() }
-    fun openSubmenu(setExpanded: (Boolean) -> Unit) {
-        UiSoundPlayer.playAction(context, UiActionSound.Menu)
-        onMainMenuExpandedChange(false)
-        setExpanded(true)
-    }
-
     Row(modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(if (overlayMode) 7.dp else 0.dp, Alignment.End),
         verticalAlignment = Alignment.CenterVertically) {
@@ -393,133 +387,237 @@ private fun NoteCardActionRow(
             }
         }
         Box {
+            val layoutPreview = LocalLayoutPreview.current
+            val previewMenu = layoutPreview?.takeIf { it.menuNoteId == note.id }?.noteMenu
+            var menu by remember(note.id) {
+                mutableStateOf(when (previewMenu) {
+                    "main" -> NoteCardMenu.MAIN
+                    "priority" -> NoteCardMenu.PRIORITY
+                    "color" -> NoteCardMenu.COLOR
+                    "category" -> NoteCardMenu.CATEGORY
+                    else -> null
+                })
+            }
+            var menuWasOpened by remember(note.id) { mutableStateOf(menu != null) }
+            val reportMenuState by rememberUpdatedState(onMenuStateChange)
+            val changeMenu: (NoteCardMenu?) -> Unit = { next ->
+                menu = next
+                if (next != null) {
+                    menuWasOpened = true
+                    reportMenuState(true)
+                }
+            }
             NoteCardActionButton(overlayMode, overlayButtonModifier, buttonModifier,
-                UiSoundPlayer.actionHandler(context, UiActionSound.Menu) { onMainMenuExpandedChange(true) }) {
+                UiSoundPlayer.actionHandler(context, UiActionSound.Menu) { changeMenu(NoteCardMenu.MAIN) }) {
                 Icon(imageVector = Icons.Default.MoreVert, contentDescription = null, tint = baseIconTint,
                     modifier = Modifier.size(if (overlayMode) 17.dp else 20.dp))
             }
-            AppDropdownMenu(modifier = Modifier.heightIn(max = 300.dp).widthIn(min = 156.dp, max = 224.dp),
-                expanded = mainMenuExpanded,
-                onDismissRequest = {
-                    onMainMenuExpandedChange(false)
-                },
-                containerColor = popupColor) {
-                visibleMainMenuItems.forEachIndexed { index, key ->
-                    if (key == "delete" && index > 0) {
-                        HorizontalDivider()
-                    }
-                    when (key) {
-                        "edit" -> {
-                            ConfigurableDropdownMenuItem(label = stringResource(R.string.mock_edit), icon = Icons.Default.Edit,
-                                showIcon = optionMenuShowIcons, textColor = menuTextColor) {
-                                finishMainMenu(onEdit)
-                            }
-                        }
-                        "favorite" -> {
-                            ConfigurableDropdownMenuItem(label = if (note.isFavorite) {
-                                        stringResource(R.string.mock_remove_favorite)
-                                    } else {
-                                        stringResource(R.string.mock_add_favorite)
-                                    },
-                                icon = if (note.isFavorite) {
-                                        Icons.Default.Star
-                                    } else {
-                                        Icons.Default.StarBorder
-                                    },
-                                showIcon = optionMenuShowIcons,
-                                textColor = menuTextColor) {
-                                finishMainMenu(onToggleFavorite)
-                            }
-                        }
-                        "pin" -> {
-                            ConfigurableDropdownMenuItem(label = if (note.isPinned) {
-                                        stringResource(R.string.mock_unpin)
-                                    } else {
-                                        stringResource(R.string.mock_pin)
-                                    },
-                                icon = Icons.Default.PushPin,
-                                showIcon = optionMenuShowIcons,
-                                textColor = menuTextColor) {
-                                finishMainMenu(onTogglePinned)
-                            }
-                        }
-                        "priority" -> {
-                            ConfigurableDropdownMenuItem(label = stringResource(R.string.mock_priority), icon = Icons.Default.PriorityHigh,
-                                showIcon = optionMenuShowIcons, textColor = menuTextColor) {
-                                openSubmenu(onPriorityMenuExpandedChange)
-                            }
-                        }
-                        "color" -> {
-                            ConfigurableDropdownMenuItem(label = stringResource(R.string.mock_color), icon = Icons.Default.Palette,
-                                showIcon = optionMenuShowIcons, textColor = menuTextColor) {
-                                openSubmenu(onColorMenuExpandedChange)
-                            }
-                        }
-                        "move" -> {
-                            ConfigurableDropdownMenuItem(label = stringResource(R.string.mock_move), icon = if (note.category == "work") {
-                                        Icons.Default.Work
-                                    } else {
-                                        Icons.Default.Person
-                                    },
-                                showIcon = optionMenuShowIcons,
-                                textColor = menuTextColor) {
-                                openSubmenu(onCategoryMenuExpandedChange)
-                            }
-                        }
-                        "delete" -> {
-                            ConfigurableDropdownMenuItem(label = stringResource(R.string.mock_delete), icon = Icons.Default.Delete,
-                                showIcon = optionMenuShowIcons, textColor = Color(0xFFC62828)) {
-                                finishMainMenu(onDelete)
-                            }
-                        }
+            if (menuWasOpened) {
+                DisposableEffect(note.id) {
+                    onDispose { reportMenuState(false) }
+                }
+                LaunchedEffect(menu) {
+                    if (menu == null) {
+                        // Conserva la salida del popup antes de liberar su composición.
+                        delay(180L)
+                        menuWasOpened = false
                     }
                 }
-            }
-            AppDropdownMenu(modifier = Modifier.heightIn(max = 300.dp).widthIn(min = 156.dp, max = 224.dp),
-                expanded = priorityMenuExpanded,
-                onDismissRequest = {
-                    onPriorityMenuExpandedChange(false)
-                },
-                containerColor = popupColor) {
-                visiblePriorityOptions.forEach { option ->
-                    PriorityMenuItem(label = stringResource(option.labelRes), selected = note.priority == option.value,
-                        textColor = menuTextColor, showIndicator = optionMenuShowIcons) {
-                        onPriorityMenuExpandedChange(false)
-                        onPriorityChange(option.value)
-                    }
-                }
-            }
-            AppDropdownMenu(modifier = Modifier.heightIn(max = 300.dp).widthIn(min = 156.dp, max = 224.dp),
-                expanded = colorMenuExpanded,
-                onDismissRequest = {
-                    onColorMenuExpandedChange(false)
-                },
-                containerColor = popupColor) {
-                visibleColorOptions.forEach { option ->
-                    val optionColor = option.argb?.let { Color(it) } ?: MaterialTheme.colorScheme.surfaceContainerLow
-                    ColorMenuItem(label = stringResource(option.labelRes), color = optionColor, textColor = menuTextColor,
-                        showSwatch = optionMenuShowIcons) {
-                        onColorMenuExpandedChange(false)
-                        onColorChange(option.key)
-                    }
-                }
-            }
-            AppDropdownMenu(expanded = categoryMenuExpanded,
-                onDismissRequest = {
-                    onCategoryMenuExpandedChange(false)
-                },
-                containerColor = popupColor) {
-                listOf("work" to (R.string.mock_work to Icons.Default.Work), "personal" to (R.string.mock_personal to Icons.Default.Person))
-                    .forEach { (category, item) ->
-                        ConfigurableDropdownMenuItem(stringResource(item.first), item.second, optionMenuShowIcons, menuTextColor) {
-                            onCategoryMenuExpandedChange(false)
-                            onCategoryChange(category)
-                        }
-                    }
+                NoteCardMenus(
+                    note, menu, changeMenu, cardColor, menuTextColorMode, optionMenuOpacity,
+                    optionMenuShowIcons, optionMenuOrder, optionMenuHiddenItems, priorityMenuHiddenItems, colorMenuHiddenItems,
+                    onEdit, onToggleFavorite, onTogglePinned, onPriorityChange, onColorChange, onCategoryChange, onDelete,
+                    isReadLater, onToggleReadLater
+                )
             }
         }
     }
 }
+
+@Composable
+private fun NoteCardMenus(
+    note: Note,
+    menu: NoteCardMenu?,
+    onMenuChange: (NoteCardMenu?) -> Unit,
+    cardColor: Color,
+    textColorMode: String,
+    opacity: Float,
+    optionMenuShowIcons: Boolean,
+    optionMenuOrder: String,
+    hiddenMain: String,
+    hiddenPriority: String,
+    hiddenColors: String,
+    onEdit: () -> Unit,
+    onToggleFavorite: () -> Unit,
+    onTogglePinned: () -> Unit,
+    onPriorityChange: (Int) -> Unit,
+    onColorChange: (String) -> Unit,
+    onCategoryChange: (String) -> Unit,
+    onDelete: () -> Unit,
+    isReadLater: Boolean,
+    onToggleReadLater: () -> Unit
+) {
+    val context = LocalContext.current
+    val surface = MaterialTheme.colorScheme.surfaceContainerHigh
+    val inverseSurface = MaterialTheme.colorScheme.inverseSurface
+    val popupColor = remember(textColorMode, surface, inverseSurface, opacity) {
+        val base = when (textColorMode) {
+            "white" -> if (surface.luminance() < 0.46f) surface else inverseSurface
+            "black" -> if (surface.luminance() > 0.54f) surface else inverseSurface
+            else -> surface
+        }
+        base.copy(alpha = (opacity / 100f).coerceIn(0.35f, 1f))
+    }
+    val menuTextColor = remember(popupColor, cardColor, textColorMode) {
+        val background = compositeUiColor(foreground = popupColor, background = cardColor)
+        ensureUiContrast(resolveUiTextColor(value = textColorMode, background = background), background, 4.5f)
+    }
+    val visibleMainMenuItems = remember(optionMenuOrder, hiddenMain) {
+        val hidden = MenuPreferencePolicy.hiddenKeys(hiddenMain, MenuPreferencePolicy.mainKeySet)
+        MenuPreferencePolicy.orderedKeys(optionMenuOrder).filterNot { it in hidden }.ifEmpty { listOf("edit") }
+    }
+    val visiblePriorityOptions = remember(hiddenPriority) {
+        val hidden = MenuPreferencePolicy.hiddenKeys(hiddenPriority, MenuPreferencePolicy.priorityKeys)
+        MenuPreferencePolicy.priorityOptions.filterNot { it.key in hidden }.ifEmpty { MenuPreferencePolicy.priorityOptions }
+    }
+    fun finishMainMenu(action: () -> Unit) {
+        onMenuChange(null)
+        action()
+    }
+    fun openSubmenu(next: NoteCardMenu) {
+        UiSoundPlayer.playAction(context, UiActionSound.Menu)
+        onMenuChange(next)
+    }
+
+    AppDropdownMenu(modifier = Modifier.heightIn(max = 300.dp).widthIn(min = 156.dp, max = 224.dp),
+        expanded = menu == NoteCardMenu.MAIN,
+        onDismissRequest = {
+            if (menu == NoteCardMenu.MAIN) onMenuChange(null)
+        },
+        containerColor = popupColor) {
+        ConfigurableDropdownMenuItem(
+            label = stringResource(if (isReadLater) R.string.v319_remove_read_later else R.string.v319_read_later),
+            icon = if (isReadLater) Icons.Default.BookmarkRemove else Icons.Default.BookmarkAdd,
+            showIcon = optionMenuShowIcons, textColor = menuTextColor) {
+            finishMainMenu(onToggleReadLater)
+        }
+        HorizontalDivider()
+        visibleMainMenuItems.forEachIndexed { index, key ->
+            if (key == "delete" && index > 0) {
+                HorizontalDivider()
+            }
+            when (key) {
+                "edit" -> {
+                    ConfigurableDropdownMenuItem(label = stringResource(R.string.mock_edit), icon = Icons.Default.Edit,
+                        showIcon = optionMenuShowIcons, textColor = menuTextColor) {
+                        finishMainMenu(onEdit)
+                    }
+                }
+                "favorite" -> {
+                    ConfigurableDropdownMenuItem(label = if (note.isFavorite) {
+                                stringResource(R.string.mock_remove_favorite)
+                            } else {
+                                stringResource(R.string.mock_add_favorite)
+                            },
+                        icon = if (note.isFavorite) {
+                                Icons.Default.Star
+                            } else {
+                                Icons.Default.StarBorder
+                            },
+                        showIcon = optionMenuShowIcons,
+                        textColor = menuTextColor) {
+                        finishMainMenu(onToggleFavorite)
+                    }
+                }
+                "pin" -> {
+                    ConfigurableDropdownMenuItem(label = if (note.isPinned) {
+                                stringResource(R.string.mock_unpin)
+                            } else {
+                                stringResource(R.string.mock_pin)
+                            },
+                        icon = Icons.Default.PushPin,
+                        showIcon = optionMenuShowIcons,
+                        textColor = menuTextColor) {
+                        finishMainMenu(onTogglePinned)
+                    }
+                }
+                "priority" -> {
+                    ConfigurableDropdownMenuItem(label = stringResource(R.string.mock_priority), icon = Icons.Default.PriorityHigh,
+                        showIcon = optionMenuShowIcons, textColor = menuTextColor) {
+                        openSubmenu(NoteCardMenu.PRIORITY)
+                    }
+                }
+                "color" -> {
+                    ConfigurableDropdownMenuItem(label = stringResource(R.string.mock_color), icon = Icons.Default.Palette,
+                        showIcon = optionMenuShowIcons, textColor = menuTextColor) {
+                        openSubmenu(NoteCardMenu.COLOR)
+                    }
+                }
+                "move" -> {
+                    ConfigurableDropdownMenuItem(label = stringResource(R.string.mock_move), icon = if (note.category == "work") {
+                                Icons.Default.Work
+                            } else {
+                                Icons.Default.Person
+                            },
+                        showIcon = optionMenuShowIcons,
+                        textColor = menuTextColor) {
+                        openSubmenu(NoteCardMenu.CATEGORY)
+                    }
+                }
+                "delete" -> {
+                    ConfigurableDropdownMenuItem(label = stringResource(R.string.mock_delete), icon = Icons.Default.Delete,
+                        showIcon = optionMenuShowIcons, textColor = Color(0xFFC62828)) {
+                        finishMainMenu(onDelete)
+                    }
+                }
+            }
+        }
+    }
+    AppDropdownMenu(modifier = Modifier.heightIn(max = 300.dp).widthIn(min = 156.dp, max = 224.dp),
+        expanded = menu == NoteCardMenu.PRIORITY,
+        onDismissRequest = {
+            if (menu == NoteCardMenu.PRIORITY) onMenuChange(null)
+        },
+        containerColor = popupColor) {
+        visiblePriorityOptions.forEach { option ->
+            PriorityMenuItem(label = stringResource(option.labelRes), selected = note.priority == option.value,
+                textColor = menuTextColor, showIndicator = optionMenuShowIcons) {
+                onMenuChange(null)
+                onPriorityChange(option.value)
+            }
+        }
+    }
+    if (menu == NoteCardMenu.COLOR) {
+        val hiddenColorItems = remember(hiddenColors) {
+            MenuPreferencePolicy.hiddenKeys(hiddenColors, MenuPreferencePolicy.colorKeys)
+        }
+        NotePaletteDialog(
+            selectedColor = note.color,
+            hiddenColorItems = hiddenColorItems,
+            containerColor = popupColor,
+            contentColor = menuTextColor,
+            onDismiss = { onMenuChange(null) },
+            onColorSelected = { color ->
+                // Keep palette open so several tones can be previewed/applied.
+                onColorChange(color)
+            }
+        )
+    }
+    AppDropdownMenu(expanded = menu == NoteCardMenu.CATEGORY,
+        onDismissRequest = {
+            if (menu == NoteCardMenu.CATEGORY) onMenuChange(null)
+        },
+        containerColor = popupColor) {
+        listOf("work" to (R.string.mock_work to Icons.Default.Work), "personal" to (R.string.mock_personal to Icons.Default.Person))
+            .forEach { (category, item) ->
+                ConfigurableDropdownMenuItem(stringResource(item.first), item.second, optionMenuShowIcons, menuTextColor) {
+                    onMenuChange(null)
+                    onCategoryChange(category)
+                }
+            }
+    }
+}
+
 @Composable
 fun CategoryPill(category: String, fontFamily: FontFamily = FontFamily.Default) {
     val work = category == "work"
@@ -549,33 +647,27 @@ fun CategoryPill(category: String, fontFamily: FontFamily = FontFamily.Default) 
 }
 
 @Composable
-private fun NoteCardAttachmentsPreview(attachments: List<Attachment>, previewHeight: androidx.compose.ui.unit.Dp,
-    cornerRadius: androidx.compose.ui.unit.Dp, fontFamily: FontFamily, performanceMode: String, deferHeavyLoads: Boolean,
-    isScrolling: Boolean) {
-    val shape = RoundedCornerShape(cornerRadius)
+private fun NoteCardAttachmentsPreview(
+    attachments: List<Attachment>, previewHeight: androidx.compose.ui.unit.Dp,
+    cornerRadius: androidx.compose.ui.unit.Dp, fontFamily: FontFamily, performanceMode: String, scrolling: State<Boolean>?
+) {
+    val shape = remember(cornerRadius) { RoundedCornerShape(cornerRadius) }
     if (attachments.size == 1) {
-        Box(modifier = Modifier.fillMaxWidth().height(previewHeight).clip(shape)) {
-            NoteCardAttachmentTile(attachment = attachments.first(), modifier = Modifier.fillMaxSize(), compact = false,
-                fontFamily = fontFamily, performanceMode = performanceMode, deferHeavyLoads = deferHeavyLoads, isScrolling = isScrolling)
+        Box(Modifier.fillMaxWidth().height(previewHeight).clip(shape)) {
+            NoteCardAttachmentTile(attachments.first(), Modifier.fillMaxSize(), compact = false,
+                fontFamily = fontFamily, performanceMode = performanceMode, scrolling = scrolling)
         }
         return
     }
-    val multiHeight = (previewHeight.value * 1.35f).dp
-    Column(modifier = Modifier.fillMaxWidth().height(multiHeight).clip(shape), verticalArrangement = Arrangement.spacedBy(0.dp)) {
-        val rows = attachments.take(4).chunked(2)
-        rows.forEach { rowAttachments -> Row(modifier = Modifier.weight(1f), horizontalArrangement = Arrangement.spacedBy(0.dp)) {
-                if (rowAttachments.size == 1) {
-                    /*
-                     * Con tres adjuntos, el último ocupa toda la segunda
-                     * fila. Antes quedaba medio mosaico vacío, algo muy
-                     * visible en tablets y en tarjetas de una sola columna.
-                     */
-                    NoteCardAttachmentTile(attachment = rowAttachments.first(), modifier = Modifier.fillMaxWidth().fillMaxHeight(),
-                        compact = true, fontFamily = fontFamily, performanceMode = performanceMode, deferHeavyLoads = deferHeavyLoads, isScrolling = isScrolling)
-                } else {
-                    rowAttachments.forEach { attachment -> NoteCardAttachmentTile(attachment = attachment, modifier = Modifier.weight(1f)
-                                .fillMaxHeight(), compact = true, fontFamily = fontFamily, performanceMode = performanceMode,
-                            deferHeavyLoads = deferHeavyLoads, isScrolling = isScrolling)
+    val rows = remember(attachments) { attachments.chunked(2) }
+    Column(Modifier.fillMaxWidth().height(previewHeight * 1.35f).clip(shape)) {
+        rows.forEach { rowAttachments ->
+            Row(Modifier.weight(1f)) {
+                rowAttachments.forEach { attachment ->
+                    key(attachment.id, attachment.uri) {
+                        // Con tres adjuntos, el último ocupa el ancho de la segunda fila.
+                        NoteCardAttachmentTile(attachment, Modifier.weight(1f).fillMaxHeight(), compact = true,
+                            fontFamily = fontFamily, performanceMode = performanceMode, scrolling = scrolling)
                     }
                 }
             }
@@ -585,8 +677,8 @@ private fun NoteCardAttachmentsPreview(attachments: List<Attachment>, previewHei
 
 @Composable
 private fun NoteCardAttachmentTile(attachment: Attachment, modifier: Modifier, compact: Boolean, fontFamily: FontFamily,
-    performanceMode: String, deferHeavyLoads: Boolean, isScrolling: Boolean) {
-    val context = LocalContext.current
+    performanceMode: String, scrolling: State<Boolean>?) {
+    val context = LocalContext.current.applicationContext
     val layoutPreview = LocalLayoutPreview.current
     val uri = remember(attachment.uri) {
         Uri.parse(attachment.uri)
@@ -600,18 +692,17 @@ private fun NoteCardAttachmentTile(attachment: Attachment, modifier: Modifier, c
         when {
             attachment.type == "image" -> {
                 /*
-                 * Maximum quality usa carga progresiva sin "pop-in": primero
-                 * intentamos dibujar de forma síncrona cualquier preview que el
-                 * precalentamiento ya dejó en RAM. Si estamos desplazándonos no
-                 * sustituimos la imagen visible a mitad del gesto. Al quedar el
-                 * grid quieto recuperamos/generamos la instantánea si hiciera
-                 * falta y después la versión quality definitiva.
+                 * Reutiliza la RAM y los JPEG pequeños de disco durante el scroll.
+                 * La decodificación del original y la mejora a la calidad elegida
+                 * esperan hasta que la lista quede quieta.
                  */
-                val preview = rememberCardAttachmentPreview(attachment.uri, performanceMode, deferHeavyLoads, isScrolling,
+                val preview = rememberCardAttachmentPreview(attachment.uri, performanceMode, scrolling,
                     initial = { layoutPreview?.mediaBitmap ?: AttachmentPreviewCache.peekImagePreview(uri = uri, performanceMode = performanceMode) },
+                    cachedLoader = { AttachmentPreviewCache.loadCachedPreview(context, uri, "image", performanceMode)?.bitmap },
+                    isTargetPreview = { AttachmentPreviewCache.isExactBitmapPreview("image", uri, performanceMode, it) },
                     loader = { mode -> AttachmentPreviewCache.loadImagePreview(context = context, uri = uri, performanceMode = mode) })
                 if (preview != null) {
-                    Image(bitmap = preview!!.asImageBitmap(), contentDescription = attachment.name, modifier = Modifier.fillMaxSize(),
+                    Image(bitmap = remember(preview) { preview.asImageBitmap() }, contentDescription = attachment.name, modifier = Modifier.fillMaxSize(),
                         contentScale = ContentScale.Crop)
                 } else {
                     FileLikeFallbackTile(icon = Icons.Default.Description, label = stringResource(R.string.image), compact = compact,
@@ -619,16 +710,19 @@ private fun NoteCardAttachmentTile(attachment: Attachment, modifier: Modifier, c
                 }
             }
             attachment.type == "video" -> {
-                val preview = rememberCardAttachmentPreview(attachment.uri, performanceMode, deferHeavyLoads, isScrolling,
+                val preview = rememberCardAttachmentPreview(attachment.uri, performanceMode, scrolling,
                     initial = { layoutPreview?.let { sample -> sample.mediaBitmap?.let { bitmap ->
                         AttachmentPreviewCache.MediaPreview(bitmap, sample.durationMillis.toLong(), bitmap.width, bitmap.height)
                     } }
                         ?: AttachmentPreviewCache.peekVideoPreview(uri = uri, performanceMode = performanceMode) },
-                    isMissing = { it?.bitmap == null }, acceptQuality = { it?.bitmap != null },
+                    accept = { it?.bitmap != null },
+                    cachedLoader = { AttachmentPreviewCache.loadCachedPreview(context, uri, "video", performanceMode) },
+                    isTargetPreview = { it != null && it.width > 0 && it.height > 0 &&
+                        AttachmentPreviewCache.isExactBitmapPreview("video", uri, performanceMode, it.bitmap) },
                     loader = { mode -> AttachmentPreviewCache.loadVideoPreview(context = context, uri = uri, performanceMode = mode) })
                 val bitmap = preview?.bitmap
                 if (bitmap != null) {
-                    Image(bitmap = bitmap.asImageBitmap(), contentDescription = attachment.name, modifier = Modifier.fillMaxSize(),
+                    Image(bitmap = remember(bitmap) { bitmap.asImageBitmap() }, contentDescription = attachment.name, modifier = Modifier.fillMaxSize(),
                         contentScale = ContentScale.Crop)
                 } else {
                     FileLikeFallbackTile(icon = Icons.Default.PlayArrow, label = stringResource(R.string.video), compact = compact,
@@ -644,21 +738,39 @@ private fun NoteCardAttachmentTile(attachment: Attachment, modifier: Modifier, c
                 }
             }
             attachment.type == "voice" || attachment.type == "audio" -> {
-                FileLikeFallbackTile(icon = if (attachment.type == "voice") Icons.Default.Mic else Icons.Default.MusicNote,
-                    label = if (attachment.type == "voice") stringResource(R.string.voice_note) else stringResource(R.string.audio),
-                    compact = compact, fontFamily = fontFamily)
+                val preview = rememberCardAttachmentPreview(attachment.uri, performanceMode, scrolling,
+                    initial = { layoutPreview?.let { AttachmentPreviewCache.MediaPreview(durationMillis = it.durationMillis.toLong()) } },
+                    progressive = false,
+                    loader = { mode -> AttachmentPreviewCache.loadAudioPreview(context, uri, loadAlbumArt = false, performanceMode = mode) })
+                Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.surfaceContainerLow) {
+                    Column(Modifier.padding(if (compact) 8.dp else 16.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
+                        Icon(if (attachment.type == "voice") Icons.Default.Mic else Icons.Default.MusicNote, null,
+                            Modifier.size(if (compact) 20.dp else 28.dp))
+                        AudioWaveformGlyph(Modifier.fillMaxWidth().padding(vertical = 8.dp).height(if (compact) 20.dp else 28.dp))
+                        Text(if ((preview?.durationMillis ?: 0L) > 0L) formatMinuteSecondDuration(preview!!.durationMillis)
+                            else stringResource(if (attachment.type == "voice") R.string.voice_note else R.string.audio),
+                            fontFamily = fontFamily, style = MaterialTheme.typography.labelMedium, maxLines = 1,
+                            overflow = TextOverflow.Ellipsis)
+                    }
+                }
             }
             extension == "pdf" -> {
-                val preview = rememberCardAttachmentPreview(attachment.uri, performanceMode, deferHeavyLoads, isScrolling,
+                val preview = rememberCardAttachmentPreview(attachment.uri, performanceMode, scrolling,
                     initial = { layoutPreview?.documentBitmap ?: AttachmentPreviewCache.peekPdfPreview(uri = uri, performanceMode = performanceMode) },
+                    cachedLoader = { AttachmentPreviewCache.loadCachedPreview(context, uri, "pdf", performanceMode)?.bitmap },
+                    isTargetPreview = { AttachmentPreviewCache.isExactBitmapPreview("pdf", uri, performanceMode, it) },
                     loader = { mode -> AttachmentPreviewCache.loadPdfFirstPage(context = context, uri = uri, performanceMode = mode) })
                 if (preview != null) {
-                    Image(bitmap = preview!!.asImageBitmap(), contentDescription = attachment.name, modifier = Modifier.fillMaxSize(),
+                    Image(bitmap = remember(preview) { preview.asImageBitmap() }, contentDescription = attachment.name, modifier = Modifier.fillMaxSize(),
                         contentScale = ContentScale.Crop)
                 } else {
                     FileLikeFallbackTile(icon = Icons.Default.Description, label = extension.uppercase(), compact = compact,
                         fontFamily = fontFamily)
                 }
+                val pages = rememberDocumentPageCount(attachment, scrolling = scrolling)
+                AttachmentMetaBadge(if (pages == null) "PDF" else stringResource(R.string.design_pdf_pages, pages),
+                    Modifier.align(Alignment.BottomStart))
             }
             else -> {
                 FileLikeFallbackTile(icon = Icons.Default.Description,
@@ -669,28 +781,49 @@ private fun NoteCardAttachmentTile(attachment: Attachment, modifier: Modifier, c
 }
 
 @Composable
-private fun <T> rememberCardAttachmentPreview(
+internal fun <T> rememberCardAttachmentPreview(
     uriKey: String,
     performanceMode: String,
-    deferHeavyLoads: Boolean,
-    isScrolling: Boolean,
+    scrolling: State<Boolean>?,
     initial: () -> T?,
-    isMissing: (T?) -> Boolean = { it == null },
-    acceptQuality: (T?) -> Boolean = { it != null },
+    progressive: Boolean = true,
+    accept: (T?) -> Boolean = { it != null },
+    cachedLoader: (suspend () -> T?)? = null,
+    isTargetPreview: ((T?) -> Boolean)? = null,
     loader: suspend (String) -> T?
 ): T? {
     val layoutPreview = LocalLayoutPreview.current
     var preview by remember(uriKey, performanceMode) { mutableStateOf(initial()) }
-    LaunchedEffect(uriKey, performanceMode, deferHeavyLoads, isScrolling) {
-        if (layoutPreview != null) return@LaunchedEffect
-        if (deferHeavyLoads) return@LaunchedEffect
-        if (performanceMode == "quality") {
-            if (isScrolling) return@LaunchedEffect
-            if (isMissing(preview)) preview = AttachmentPreviewCache.withPreviewPermit { loader("instant") }
-            val qualityPreview = AttachmentPreviewCache.withPreviewPermit { loader("quality") }
-            if (acceptQuality(qualityPreview)) preview = qualityPreview
-        } else if (isMissing(preview)) {
-            preview = AttachmentPreviewCache.withPreviewPermit { loader(performanceMode) }
+    // Una vista previa provisional en RAM puede pertenecer a otra resolución.
+    var loaded by remember(uriKey, performanceMode) {
+        mutableStateOf(accept(preview) && (isTargetPreview?.invoke(preview) ?: (performanceMode != "quality")))
+    }
+    LaunchedEffect(uriKey, performanceMode) {
+        if (layoutPreview != null || accept(preview) || cachedLoader == null) return@LaunchedEffect
+        // Cached JPEGs are small, bounded reads; original media stays deferred until idle.
+        val cached = AttachmentPreviewCache.withPreviewPermit { cachedLoader() }
+        if (!accept(preview) && accept(cached)) preview = cached
+    }
+    val canLoad = layoutPreview == null && !loaded && scrolling?.value != true
+    LaunchedEffect(uriKey, performanceMode, canLoad) {
+        if (!canLoad) return@LaunchedEffect
+        delay(130L)
+        if (performanceMode == "quality" && progressive && !accept(preview)) {
+            AttachmentPreviewCache.withPreviewPermit {
+                if (scrolling?.value == true) null else loader("instant")
+            }?.let { preview = it }
+        }
+        val result = AttachmentPreviewCache.withPreviewPermit {
+            if (scrolling?.value == true) null
+            else if (performanceMode == "quality") loader("quality")
+            else loader(performanceMode)
+        }
+        if (accept(result)) {
+            preview = result
+            loaded = true
+        } else if (result != null && (performanceMode != "quality" || preview == null)) {
+            // Algunos vídeos permiten leer la duración aunque no entreguen una miniatura.
+            preview = result
         }
     }
     return preview
@@ -726,7 +859,7 @@ private fun CompactNoteMenuItem(
         contentPadding = PaddingValues(horizontal = 12.dp, vertical = 2.dp),
         text = { Text(label, color = textColor, fontFamily = fontFamily, fontSize = 13.sp, fontWeight = fontWeight, maxLines = maxLines) },
         leadingIcon = leadingIcon,
-        onClick = onClick
+        onClick = { UiSoundPlayer.runWithFallbackClick(UiSemanticSoundPolicy.forLabel(label), onClick) }
     )
 }
 
@@ -745,9 +878,3 @@ internal fun PriorityMenuItem(
     leadingIcon = if (showIndicator) {{ if (selected) Box(Modifier.size(10.dp).clip(CircleShape).background(MaterialTheme.colorScheme.primary)) }} else null,
     onClick = onClick)
 
-@Composable
-internal fun ColorMenuItem(
-    label: String, color: Color, textColor: Color, showSwatch: Boolean,
-    fontFamily: FontFamily? = null, onClick: () -> Unit
-) = CompactNoteMenuItem(label, textColor, fontFamily, maxLines = 2,
-    leadingIcon = if (showSwatch) {{ Box(Modifier.size(20.dp).clip(CircleShape).background(color)) }} else null, onClick = onClick)

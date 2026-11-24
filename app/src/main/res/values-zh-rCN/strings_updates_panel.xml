@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="update_panel_subtitle">新功能、问题修复和体验改进。</string>
+    <string name="update_installed_label">已安装版本</string>
+    <string name="update_latest_label">新版本</string>
+    <string name="update_status_attention">需要处理</string>
+    <string name="update_status_checking">正在查找更新</string>
+    <string name="update_status_available">有可用更新</string>
+    <string name="update_status_current">已是最新版本</string>
+    <string name="update_status_no_release">尚无已发布版本</string>
+    <string name="update_status_ready">可以检查更新</string>
+    <string name="update_status_checking_detail">正在检查 GitHub 上发布的最新版本。</string>
+    <string name="update_status_downloading_detail">下载完成后将打开 Android 安装程序。</string>
+    <string name="update_status_available_detail">新版 MyNotes 已可下载。</string>
+    <string name="update_status_ready_detail">在 GitHub 上查看最新改进。</string>
+    <string name="update_retry">重试</string>
+    <string name="update_check_again">再次检查</string>
+</resources>

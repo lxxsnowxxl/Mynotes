@@ -1,6 +1,9 @@
 package com.example.mynotes
 
 import android.content.Context
+import androidx.lifecycle.lifecycleScope
+import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.launch
 import android.content.Intent
 import android.os.Bundle
 import android.net.Uri
@@ -8,6 +11,7 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.BackHandler
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.SystemBarStyle
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.ui.Modifier
@@ -17,7 +21,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.example.mynotes.data.AppDatabase
@@ -66,20 +69,10 @@ class MainActivity : ComponentActivity() {
         saveAppLanguage(language)
         recreate()
     }
-    private fun installImeNavigationBarRecovery() {
-        ViewCompat.setOnApplyWindowInsetsListener(window.decorView) { view, insets ->
-            val isImeVisible = insets.isVisible(WindowInsetsCompat.Type.ime())
-            if (keyboardSounds.onImeVisibilityChanged(isImeVisible)) {
-                view.post { applyAndroidNavigationBarPolicy() }
-            }
-            insets
-        }
-        ViewCompat.requestApplyInsets(window.decorView)
-    }
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
         if (hasFocus) {
-            applyAndroidNavigationBarPolicy()
+            window.applyAndroidNavigationBarPolicy()
         }
     }
     override fun onResume() {
@@ -87,7 +80,7 @@ class MainActivity : ComponentActivity() {
         keyboardSounds.onResume()
         ViewCompat.requestApplyInsets(window.decorView)
         DisplayPerformanceController.reapplyLastRequest(window)
-        applyAndroidNavigationBarPolicy()
+        window.applyAndroidNavigationBarPolicy()
     }
     override fun onPause() {
         keyboardSounds.onPause()
@@ -95,7 +88,7 @@ class MainActivity : ComponentActivity() {
     }
     override fun onMultiWindowModeChanged(isInMultiWindowMode: Boolean) {
         super.onMultiWindowModeChanged(isInMultiWindowMode)
-        applyAndroidNavigationBarPolicy()
+        window.applyAndroidNavigationBarPolicy()
     }
     override fun onDestroy() {
         keyboardSounds.restore()
@@ -105,16 +98,40 @@ class MainActivity : ComponentActivity() {
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
         setIntent(intent)
-        incoming.handle(intent)
+        lifecycleScope.launch {
+            try {
+                com.example.mynotes.studio.StudioBackups.recover(applicationContext)
+                if (this@MainActivity.intent === intent) incoming.handle(intent)
+            } catch (cancelled: kotlinx.coroutines.CancellationException) {
+                throw cancelled
+            } catch (error: Exception) {
+                com.example.mynotes.studio.StudioJobs.failure("Restore recovery", error)
+            }
+        }
     }
     override fun onCreate(savedInstanceState: Bundle?) {
         setTheme(R.style.Theme_MyNotes)
         super.onCreate(savedInstanceState)
+        // Cancel periodic/manual background jobs created by the removed Workspace module.
+        lifecycleScope.launch(kotlinx.coroutines.Dispatchers.IO) {
+            runCatching {
+                val work = androidx.work.WorkManager.getInstance(applicationContext)
+                work.cancelUniqueWork("mynotes_automatic_sync")
+                work.cancelUniqueWork("mynotes_sync_now")
+            }
+        }
         keyboardSounds = SystemKeyboardSoundController(this)
+        lifecycleScope.launch {
+            com.example.mynotes.studio.StudioFiles.epoch.drop(1).collect { recreate() }
+        }
         incoming.handle(intent)
-        enableEdgeToEdge()
-        installImeNavigationBarRecovery()
-        applyAndroidNavigationBarPolicy()
+        enableEdgeToEdge(navigationBarStyle = SystemBarStyle.auto(
+            android.graphics.Color.TRANSPARENT, android.graphics.Color.TRANSPARENT
+        ))
+        installKeyboardAwareNavigationBarPolicy { visible ->
+            keyboardSounds.onImeVisibilityChanged(visible)
+        }
+        window.applyAndroidNavigationBarPolicy()
         setContent {
             val noteViewModel:
                     NoteViewModel = viewModel()
@@ -153,8 +170,9 @@ class MainActivity : ComponentActivity() {
             }
             
             val effectiveDarkTheme = settings.effectiveDarkTheme()
-            LaunchedEffect(effectiveDarkTheme) {
-                applySystemBarAppearance(effectiveDarkTheme)
+            LaunchedEffect(settings.backgroundColor, settings.backgroundToneIndex,
+                settings.darkMode, settings.oledMode, settings.configurationMode) {
+                applySystemBarAppearance(settings)
             }
             SyncDisplayPerformance(window = window, performanceMode = settings.performanceMode)
             var showEditor by remember { mutableStateOf(false) }
@@ -168,6 +186,7 @@ class MainActivity : ComponentActivity() {
             var showSourceCodeInfo by remember { mutableStateOf(false) }
             var selectedNote by remember { mutableStateOf<Note?>(null) }
             var editingNote by remember { mutableStateOf<Note?>(null) }
+            var newNoteFolderId by remember { mutableStateOf<String?>(null) }
             fun resetNavigation() {
                 showSourceCodeInfo = false
                 showDevelopmentInfo = false
@@ -183,7 +202,7 @@ class MainActivity : ComponentActivity() {
                 resetNavigation()
                 action()
             }
-            fun openEditor(note: Note? = null) = openExclusive { editingNote = note; showEditor = true }
+            fun openEditor(note: Note? = null) = openExclusive { editingNote = note; newNoteFolderId = null; showEditor = true }
             fun openDrawing() = openExclusive { showDrawing = true }
             fun openReminders() = openExclusive { createReminderOnOpen = false; showReminders = true }
             fun openNote(note: Note) = openExclusive(clearShare = false) { selectedNote = note }
@@ -326,6 +345,8 @@ class MainActivity : ComponentActivity() {
                             } else {
                                 emptyList()
                             }
+                        val editorFolders by noteViewModel.folders.collectAsStateWithLifecycle()
+                        val editorNotes by noteViewModel.notes.collectAsStateWithLifecycle()
                         AnimatedScreenEntry(animationsEnabled = settings.animationsEnabled,
                             animationSpeed = settings.animationSpeed) {
                             NoteEditorScreen(
@@ -335,27 +356,20 @@ class MainActivity : ComponentActivity() {
                             initialColor = screen.note?.color?: "default",
                             isEditing = screen.note != null,
                             existingAttachments = existingAttachments,
-                            onSave = {
-                                    title, content, color, attachments, removedAttachments ->
-                                val noteBeingEdited = screen.note
-                                if (noteBeingEdited == null) {
-                                    noteViewModel.addNote(title = title,
-                                            content = content,
-                                            color = color,
-                                            attachments = attachments)
-                                } else {
-                                    noteViewModel.updateNote(note = noteBeingEdited,
-                                            title = title,
-                                            content = content,
-                                            color = color,
-                                            newAttachments = attachments,
-                                            removedAttachments = removedAttachments)
+                            initialNote = screen.note,
+                            initialFolderId = screen.note?.folderId ?: newNoteFolderId,
+                            folders = editorFolders,
+                            noteCatalog = editorNotes,
+                            onSave = { draft ->
+                                noteViewModel.saveDraft(screen.note, draft) {
+                                    com.example.mynotes.data.workspace.NoteWorkspaceStore.discard(this@MainActivity,
+                                        com.example.mynotes.data.workspace.NoteWorkspaceStore.key(screen.note?.id), draft.workspaceSession)
                                 }
                                 closeEditor()
                             },
                             onCancel = {
                                 closeEditor()
-                            })
+                            }, onFocusModeChange = settingsViewModel::setEditorFocusMode)
                         }
                     }
                     AppDestination.DRAWING -> {
@@ -383,7 +397,9 @@ class MainActivity : ComponentActivity() {
                         )
                     }
                     AppDestination.REMINDERS -> {
+                        val reminderNotes by noteViewModel.notes.collectAsStateWithLifecycle()
                         ReminderScreen(
+                            noteCatalog = reminderNotes,
                             settings = settings,
                             repository = reminderRepository,
                             onBack = {
@@ -405,7 +421,7 @@ class MainActivity : ComponentActivity() {
                             onBack = {
                                 selectedNote = null
                             },
-                            onEdit = ::openEditor)
+                            onEdit = ::openEditor, settingsActions = settingsViewModel)
                     }
                     AppDestination.NOTES -> {
                         val notes by noteViewModel.notes.collectAsStateWithLifecycle()
@@ -434,7 +450,9 @@ class MainActivity : ComponentActivity() {
                                 showSettings = true
                             },
                             onOpenNote = ::openNote,
-                            onEditNote = ::openEditor)
+                            onEditNote = ::openEditor,
+                            settingsActions = settingsViewModel,
+                            onAddInFolder = { id -> openEditor(); newNoteFolderId = id })
                     }
                 }
                 }

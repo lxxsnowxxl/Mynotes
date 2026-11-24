@@ -19,14 +19,16 @@ class SettingsSectionColorsTest {
         }
     }
     @Test
-    fun manualBlackAndWhiteChoicesRemainUnchanged() {
+    fun manualChoicesAreRespectedWhenLegibleAndRepairedWhenNot() {
         backgrounds.forEach { background -> listOf("black" to Color.Black, "white" to Color.White).forEach { (mode, ink) ->
-                val colors = settingsSectionColors(background, mode)
+            val colors = settingsSectionColors(background, mode)
+            if (uiContrastRatio(ink, background) >= 4.5f) {
                 assertEquals(ink, colors.text)
-                assertEquals(ink, colors.secondaryText)
-                assertEquals(ink, colors.graphic)
             }
-        }
+            assertTrue(uiContrastRatio(colors.text, background) >= 4.499f)
+            assertTrue(uiContrastRatio(colors.secondaryText, background) >= 4.499f)
+            assertTrue(uiContrastRatio(colors.graphic, background) >= 2.999f)
+        } }
     }
     @Test
     fun backgroundIsExactlyTheReferenceWithoutAnotherTranslucentLayer() {

@@ -44,8 +44,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import coil3.compose.AsyncImage
 import com.example.mynotes.ui.theme.resolveUiTextColor
-import com.example.mynotes.ui.theme.resolveSecondaryUiTextColor
-import com.example.mynotes.ui.theme.resolveUiGraphicColor
 import com.example.mynotes.ui.motion.AppMotion
 import com.example.mynotes.ui.sound.UiActionSound
 import com.example.mynotes.ui.sound.UiSoundPlayer
@@ -86,14 +84,18 @@ private val UrlRegex = Regex(
 /**
  * Extrae URLs HTTP/HTTPS del texto de la nota conservando el orden.
  */
-fun extractLinkUrls(text: String): List<String> = UrlRegex.findAll(text).map { match -> match.value.trimEnd('.', ',', ';', '!', ')', ']',
-                '}')
-        }.filter { it.length > 8 }.distinct().toList()
+internal fun noteLinkUrls(text: String): Sequence<String> = UrlRegex.findAll(text).map { match ->
+    match.value.trimEnd('.', ',', ';', '!', ')', ']', '}')
+}
+
+fun extractLinkUrls(text: String): List<String> = noteLinkUrls(text).filter { it.length > 8 }.distinct().toList()
 
 private val EmbeddedLinkMarkerRegex = Regex(
     pattern = """(?m)^\s*\[\[mynotes-link:(https?://[^\]]+)]]\s*(?:\r?\n)?""",
     option = RegexOption.IGNORE_CASE
 )
+private val BlankLineSpaces = Regex("""(?m)^[ \t]+$""")
+private val ExcessLineBreaks = Regex("""\n{3,}""")
 
 fun extractEmbeddedLinkUrls(text: String): List<String> = EmbeddedLinkMarkerRegex.findAll(text)
     .mapNotNull { match -> match.groupValues.getOrNull(1)?.trim()?.takeIf { it.isNotBlank() } }
@@ -102,7 +104,7 @@ fun extractEmbeddedLinkUrls(text: String): List<String> = EmbeddedLinkMarkerRege
 
 fun stripEmbeddedLinkMetadata(text: String): String = text
     .replace(EmbeddedLinkMarkerRegex, "")
-    .replace(Regex("""\n{3,}"""), "\n\n")
+    .replace(ExcessLineBreaks, "\n\n")
     .trimEnd()
 
 fun noteContentForStorage(visibleContent: String, embeddedLinks: List<String>): String {
@@ -125,8 +127,8 @@ fun noteTextForDisplay(content: String, links: List<String>): String {
     var visible = stripEmbeddedLinkMetadata(content)
     links.forEach { url -> visible = visible.replace(url, "") }
     return visible
-        .replace(Regex("""(?m)^[ \t]+$"""), "")
-        .replace(Regex("""\n{3,}"""), "\n\n")
+        .replace(BlankLineSpaces, "")
+        .replace(ExcessLineBreaks, "\n\n")
         .trim()
 }
 
@@ -143,14 +145,12 @@ private data class LinkPreviewData(val url: String, val title: String?, val desc
 
 private object LinkPreviewRepository {
     private val cache = LruCache<String, LinkPreviewData>(120)
-    private val locks = mutableMapOf<String, Mutex>()
+    private val locks = Array(64) { Mutex() }
     private val legacyLoadGate = Semaphore(permits = 1)
     private val loadGate = Semaphore(permits = 2)
 
     fun peekMemory(url: String): LinkPreviewData? = cache.get(url)
-    private fun lockFor(url: String): Mutex = synchronized(locks) {
-            locks.getOrPut(url) { Mutex() }
-        }
+    private fun lockFor(url: String): Mutex = locks[(url.hashCode() and Int.MAX_VALUE) % locks.size]
     fun peek(context: Context, url: String): LinkPreviewData? {
         cache.get(url)?.let { return it }
         return readPersistedPreview(context = context, url = url)?.also { cached -> cache.put(url, cached)
@@ -159,19 +159,20 @@ private object LinkPreviewRepository {
     suspend fun load(context: Context, url: String): LinkPreviewData = withContext(Dispatchers.IO) {
             val gate = if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P) legacyLoadGate else loadGate
             gate.withPermit {
-                cache.get(url)?.let { cached -> return@withPermit ensureThumbnailCached(context = context, preview = cached).also { ready ->
-                        cache.put(url, ready)
-                        persistPreview(context, url, ready)
-                    }
-                }
                 lockFor(url).withLock {
-                    cache.get(url)?.let { cached -> return@withLock cached
+                    cache.get(url)?.let { cached ->
+                        val ready = ensureThumbnailCached(context = context, preview = cached)
+                        if (ready != cached) {
+                            cache.put(url, ready)
+                            persistPreview(context, url, ready)
+                        }
+                        return@withLock ready
                     }
                     val persisted = readPersistedPreview(context = context, url = url)
                     if (persisted != null) {
                         val ready = ensureThumbnailCached(context = context, preview = persisted)
                         cache.put(url, ready)
-                        persistPreview(context, url, ready)
+                        if (ready != persisted) persistPreview(context, url, ready)
                         return@withLock ready
                     }
                     val fetched = fetch(url)
@@ -1424,40 +1425,79 @@ private fun LinkPreviewData.withKnownProviderFallback(): LinkPreviewData {
 
 @Composable
 fun LinkPreviewCard(url: String, modifier: Modifier = Modifier, compact: Boolean = false, textColorMode: String = "auto",
-    deferLoad: Boolean = false, onPreviewReady: ((String) -> Unit)? = null) {
+    deferLoad: Boolean = false, onPreviewReady: ((String) -> Unit)? = null) = LinkPreviewContent(url, modifier, compact, textColorMode, deferLoad, onPreviewReady, null)
+
+// Keep full-width 170 dp images; text-only links and short metadata use their natural height.
+@Composable
+internal fun NoteListLinkPreview(
+    url: String, modifier: Modifier, textColorMode: String, scrolling: androidx.compose.runtime.State<Boolean>?
+) = LinkPreviewContent(url, modifier, false, textColorMode, false, null, scrolling)
+
+@Composable
+private fun LinkPreviewContent(
+    url: String,
+    modifier: Modifier,
+    compact: Boolean,
+    textColorMode: String,
+    deferLoad: Boolean,
+    onPreviewReady: ((String) -> Unit)?,
+    scrolling: androidx.compose.runtime.State<Boolean>?
+) {
     val context = LocalContext.current
     val layoutPreview = LocalLayoutPreview.current
+    val reportPreviewReady by androidx.compose.runtime.rememberUpdatedState(onPreviewReady)
     var preview by remember(url) {
         mutableStateOf(if (layoutPreview != null) LinkPreviewData.basic(url).copy(
             title = layoutPreview.linkTitle, description = layoutPreview.linkDescription
         ) else LinkPreviewRepository.peekMemory(url) ?: LinkPreviewData.basic(url))
     }
-    LaunchedEffect(url, deferLoad) {
+    var loadedOnList by remember(url) {
+        mutableStateOf(scrolling != null && LinkPreviewRepository.peekMemory(url) != null)
+    }
+    val deferred = deferLoad || (scrolling != null && !loadedOnList && scrolling.value)
+    LaunchedEffect(url, deferred) {
         if (layoutPreview != null) return@LaunchedEffect
-        if (!deferLoad) {
+        if (!deferred && !loadedOnList) {
+            // Evitar trabajo de red inmediatamente después de un fling.
+            delay(160L)
             val loadedPreview = LinkPreviewRepository.load(context = context.applicationContext, url = url)
             preview = loadedPreview
+            loadedOnList = scrolling != null
             val hasRichPreview = !loadedPreview.title.isNullOrBlank() ||
                 !loadedPreview.description.isNullOrBlank() ||
                 !loadedPreview.imageUrl.isNullOrBlank() ||
                 !loadedPreview.cachedImagePath.isNullOrBlank()
             if (hasRichPreview) {
-                onPreviewReady?.invoke(url)
+                reportPreviewReady?.invoke(url)
             }
         }
     }
     val title = preview.title?.takeIf { it.isNotBlank() }?: preview.siteName?.takeIf { it.isNotBlank() }?: preview.host
     val subtitle = preview.description?.takeIf { it.isNotBlank() }
-    val imageModel: Any? = layoutPreview?.mediaBitmap ?: preview.cachedImagePath?.let(::File)?.takeIf { it.isFile && it.length() > 0L }
-            // Si el guardado local falla (CDN con hot-link protection), Coil
-            // todavía puede intentar cargar directamente la URL remota.
-            ?: preview.imageUrl
+    var remoteFallback by remember(url, preview.cachedImagePath) { mutableStateOf(false) }
+    val remoteReady = scrolling == null || layoutPreview != null || loadedOnList
+    val imageModel = remember(layoutPreview?.mediaBitmap, preview.cachedImagePath, preview.imageUrl, remoteReady, remoteFallback) {
+        val cachedFile = preview.cachedImagePath?.let(::File)
+        val localImage = if (scrolling == null) cachedFile?.takeIf { it.isFile && it.length() > 0L }
+            else cachedFile?.takeUnless { remoteFallback }
+        layoutPreview?.mediaBitmap ?: localImage ?: preview.imageUrl?.takeIf { remoteReady }
+    }
     val previewBackground = MaterialTheme.colorScheme.surfaceContainer
     val placeholderBackground = MaterialTheme.colorScheme.surfaceContainerHigh
-    val previewPrimaryText = resolveUiTextColor(value = textColorMode, background = previewBackground)
-    val previewSecondaryText = resolveSecondaryUiTextColor(value = textColorMode, background = previewBackground)
-    val previewGraphicColor = resolveUiGraphicColor(value = textColorMode, background = previewBackground)
-    val placeholderTextColor = resolveUiTextColor(value = textColorMode, background = placeholderBackground)
+    val previewPrimaryText = remember(textColorMode, previewBackground) {
+        com.example.mynotes.ui.theme.ensureUiContrast(
+            resolveUiTextColor(value = textColorMode, background = previewBackground), previewBackground, 4.5f)
+    }
+    val previewSecondaryText = remember(previewPrimaryText, previewBackground) {
+        com.example.mynotes.ui.theme.softenUiColorToContrast(previewPrimaryText, previewBackground, 4.5f, 0.58f)
+    }
+    val previewGraphicColor = remember(previewPrimaryText, previewBackground) {
+        com.example.mynotes.ui.theme.softenUiColorToContrast(previewPrimaryText, previewBackground, 3f, 0.72f)
+    }
+    val placeholderTextColor = remember(textColorMode, placeholderBackground) {
+        com.example.mynotes.ui.theme.ensureUiContrast(
+            resolveUiTextColor(value = textColorMode, background = placeholderBackground), placeholderBackground, 4.5f)
+    }
     BoxWithConstraints(modifier = modifier.fillMaxWidth()) {
         val veryCompact = compact && maxWidth < 170.dp
         val narrowCompact = compact && maxWidth < 220.dp
@@ -1496,7 +1536,11 @@ fun LinkPreviewCard(url: String, modifier: Modifier = Modifier, compact: Boolean
                 Column(modifier = Modifier.fillMaxWidth()) {
                     if (imageModel != null) {
                         AsyncImage(model = imageModel, contentDescription = null, modifier = Modifier.fillMaxWidth().height(170.dp),
-                            contentScale = ContentScale.Crop)
+                            contentScale = ContentScale.Crop, onError = {
+                                if (scrolling != null && imageModel is File) remoteFallback = true
+                            })
+                    } else if (!remoteReady && preview.imageUrl != null) {
+                        Spacer(Modifier.fillMaxWidth().height(170.dp))
                     }
                     LinkPreviewText(title = title, subtitle = subtitle, siteName = preview.siteName ?: preview.host, compact = false,
                         primaryTextColor = previewPrimaryText, secondaryTextColor = previewSecondaryText,
@@ -1520,7 +1564,8 @@ private fun LinkPreviewImage(imageModel: Any?, siteName: String, placeholderText
 
 @Composable
 private fun LinkPreviewText(title: String, subtitle: String?, siteName: String, compact: Boolean, veryCompact: Boolean = false,
-    showSubtitle: Boolean = true, primaryTextColor: Color, secondaryTextColor: Color, graphicColor: Color, modifier: Modifier = Modifier) {
+    showSubtitle: Boolean = true,
+    primaryTextColor: Color, secondaryTextColor: Color, graphicColor: Color, modifier: Modifier = Modifier) {
     Column(modifier = modifier, verticalArrangement = Arrangement.Center) {
         Row(verticalAlignment = Alignment.CenterVertically) {
             Text(text = siteName, modifier = Modifier.weight(1f), color = secondaryTextColor, style = MaterialTheme.typography.labelMedium,
@@ -1537,15 +1582,12 @@ private fun LinkPreviewText(title: String, subtitle: String?, siteName: String, 
                 }, fontWeight = FontWeight.SemiBold, maxLines = if (compact) 2 else 3, overflow = TextOverflow.Ellipsis)
         if (showSubtitle && !subtitle.isNullOrBlank()) {
             Spacer(modifier = Modifier.height(4.dp))
-            Text(text = subtitle, color = secondaryTextColor, style = if (veryCompact) {
+            val subtitleLines = when { veryCompact -> 1; compact -> 2; else -> 3 }
+            Text(text = subtitle.orEmpty(), color = secondaryTextColor, style = if (veryCompact) {
                         MaterialTheme.typography.labelMedium
                     } else {
                         MaterialTheme.typography.bodySmall
-                    }, maxLines = when {
-                        veryCompact -> 1
-                        compact -> 2
-                        else -> 3
-                    }, overflow = TextOverflow.Ellipsis)
+                    }, maxLines = subtitleLines, overflow = TextOverflow.Ellipsis)
         }
     }
 }

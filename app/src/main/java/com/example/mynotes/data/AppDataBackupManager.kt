@@ -32,7 +32,7 @@ import java.util.zip.ZipOutputStream
  */
 object AppDataBackupManager {
     private const val FORMAT_NAME = "mynotes-backup"
-    private const val FORMAT_VERSION = 1
+    private const val FORMAT_VERSION = 2
     private const val DATA_ENTRY = "data.json"
     private const val ATTACHMENTS_PREFIX = "attachments/"
     private const val PROFILE_PREFIX = "profile/"
@@ -44,8 +44,11 @@ object AppDataBackupManager {
             runCatching {
                 val appContext = context.applicationContext
                 val database = AppDatabase.getDatabase(appContext)
-                val notes = database.noteDao().getAllNotesOnce()
-                val attachments = database.attachmentDao().getAllAttachmentsOnce()
+                val (notes, attachments, folders) = database.withTransaction {
+                    val notes = database.noteDao().getAllNotesOnce()+database.noteDao().deletedNotes()
+                    val ids = notes.map { it.id }.toSet()
+                    Triple(notes, database.attachmentDao().getAllAttachmentsOnce().filter { it.noteId in ids }, database.folderDao().allOnce())
+                }
                 val output = appContext.contentResolver.openOutputStream(destination, "w"
                 ) ?: error("No se pudo abrir el archivo de destino")
                 return@runCatching output.use { rawOutput -> ZipOutputStream(rawOutput.buffered()).use { zip ->
@@ -80,6 +83,7 @@ object AppDataBackupManager {
                             put("notes", JSONArray().apply {
                                     notes.forEach { put(noteToJson(it)) }
                                 })
+                            put("folders", JSONArray().apply { folders.forEach { put(folderToJson(it)) } })
                             put("attachments", attachmentJson)
                             put("settings", settingsToJson(settings = settings, profileEntry = profileEntry))
                         }
@@ -92,7 +96,7 @@ object AppDataBackupManager {
                 }
             }
         }
-    suspend fun importBackup(context: Context, source: Uri): Result<BackupSummary> = withContext(Dispatchers.IO) {
+    suspend fun importBackup(context: Context, source: Uri, restoreNotes:Boolean=true,restoreSettings:Boolean=true): Result<BackupSummary> = withContext(Dispatchers.IO) {
             runCatching {
                 val appContext = context.applicationContext
                 val stageDir = File(appContext.cacheDir, "backup_restore_${UUID.randomUUID()}")
@@ -114,11 +118,13 @@ object AppDataBackupManager {
                     if (data.optString("format") != FORMAT_NAME) {
                         error("El archivo no es una copia de MyNotes")
                     }
-                    if (data.optInt("version", -1) != FORMAT_VERSION) {
+                    if (data.optInt("version", -1) !in 1..FORMAT_VERSION) {
                         error("Versión de copia no compatible")
                     }
                     val notes = jsonToNotes(data.getJSONArray("notes"))
+                    val folders = jsonToFolders(data.optJSONArray("folders") ?: JSONArray())
                     val attachmentRecords = jsonToAttachmentRecords(data.getJSONArray("attachments"))
+                    require(attachmentRecords.filter { it.type == "cover" }.groupBy { it.noteId }.values.all { it.size == 1 }) { "Duplicate note covers" }
                     val settingsJson = data.optJSONObject("settings") ?: JSONObject()
                     var restoredSettings = jsonToSettings(settingsJson)
                     val noteIds = notes.map {
@@ -143,7 +149,7 @@ object AppDataBackupManager {
                         error("No se pudo preparar el almacenamiento de adjuntos")
                     }
                     val restoreToken = System.currentTimeMillis()
-                    val restoredAttachments = attachmentRecords.map { record -> val sourceFile = safeStageFile(stageDir = stageDir,
+                    val restoredAttachments = (if(restoreNotes)attachmentRecords else emptyList()).map { record -> val sourceFile = safeStageFile(stageDir = stageDir,
                                 entryName = record.fileEntry)
                             if (!sourceFile.isFile) {
                                 error("Falta un adjunto en la copia: ${record.fileEntry}")
@@ -156,7 +162,7 @@ object AppDataBackupManager {
                                 name = record.name, createdAt = record.createdAt)
                         }
                     val profileEntry = settingsJson.optString("profileEntry", "")
-                    if (profileEntry.isNotBlank()) {
+                    if (restoreSettings&&profileEntry.isNotBlank()) {
                         val profileSource = safeStageFile(stageDir, profileEntry)
                         if (profileSource.isFile) {
                             val profileDir = File(appContext.filesDir, "profile_backup")
@@ -173,13 +179,16 @@ object AppDataBackupManager {
                     } else {
                         restoredSettings = restoredSettings.copy(profileImageUri = "")
                     }
+                    val restoredNotes = restoredNotePresentation(notes, folders, restoredAttachments)
                     val database = AppDatabase.getDatabase(appContext)
                     try {
-                        database.withTransaction {
+                        if(restoreNotes)database.withTransaction {
                             database.attachmentDao().deleteAllAttachments()
                             database.noteDao().deleteAllNotes()
-                            if (notes.isNotEmpty()) {
-                                database.noteDao().insertNotes(notes)
+                            database.folderDao().deleteAll()
+                            if (folders.isNotEmpty()) database.folderDao().restore(folders)
+                            if (restoredNotes.isNotEmpty()) {
+                                database.noteDao().insertNotes(restoredNotes)
                             }
                             if (restoredAttachments.isNotEmpty()) {
                                 database.attachmentDao().insertAttachmentsForRestore(restoredAttachments)
@@ -189,6 +198,8 @@ object AppDataBackupManager {
                         importedFiles.forEach { it.delete() }
                         throw e
                     }
+                    if(restoreNotes){
+                    com.example.mynotes.data.workspace.NoteWorkspaceStore.clearNoteStateAfterRestore(appContext)
                     // La base ya apunta únicamente a los archivos recién restaurados.
                     // Eliminamos adjuntos antiguos que hayan quedado en almacenamiento.
                     val keepPaths = importedFiles.filter {
@@ -200,6 +211,8 @@ object AppDataBackupManager {
                             file.deleteRecursively()
                         }
                     }
+                    }
+                    if(restoreSettings){
                     SettingsRepository(appContext).restoreFromBackup(restoredSettings)
                     val activeProfilePath = Uri.parse(restoredSettings.profileImageUri).takeIf {
                                 it.scheme == "file"
@@ -213,6 +226,7 @@ object AppDataBackupManager {
                     // MainActivity usa esta preferencia antes de que DataStore esté listo.
                     appContext.getSharedPreferences("locale_prefs", Context.MODE_PRIVATE).edit()
                         .putString("language", restoredSettings.language).commit()
+                    }
                     // Los previews se vuelven a generar para las nuevas rutas.
                     listOf("video_previews", "audio_previews", "pdf_previews", "docx_previews").forEach { name -> File(appContext.cacheDir,
                             "mynotes_perf_v2/$name").deleteRecursively()

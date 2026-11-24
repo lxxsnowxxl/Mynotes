@@ -5,4 +5,5 @@
     <string name="settings_background_solid">纯色</string>
     <string name="settings_background_gradient">渐变</string>
     <string name="settings_background_blur">模糊</string>
+    <string name="settings_background_animated_blur">动态模糊</string>
 </resources>

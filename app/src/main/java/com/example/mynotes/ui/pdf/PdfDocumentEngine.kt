@@ -13,17 +13,11 @@ import android.graphics.Typeface
 import android.graphics.pdf.PdfDocument
 import android.graphics.pdf.PdfRenderer
 import android.net.Uri
-import java.io.File
-import java.io.FileOutputStream
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import kotlin.math.max
 import kotlin.math.roundToInt
 
 object PdfDocumentEngine {
-    private const val RENDER_WIDTH = 1200
-    private const val MAX_BITMAP_SIDE = 2600
-
     /**
      * Abre únicamente la estructura del PDF y crea marcadores ligeros para
      * sus páginas. No rasteriza todas las páginas en memoria.
@@ -36,9 +30,8 @@ object PdfDocumentEngine {
                 if (renderer.pageCount <= 0) {
                     listOf(PdfPageModel.blank())
                 } else {
-                    List(renderer.pageCount) { index ->
-                        PdfPageModel(sourcePdfPageIndex = index)
-                    }
+                    require(renderer.pageCount <= 20000){"PDF contains too many pages"}
+                    List(renderer.pageCount){index->renderer.openPage(index).use{page->PdfPageModel(widthPt=595,heightPt=(595f*page.height/page.width.coerceAtLeast(1)).roundToInt().coerceAtLeast(1),sourcePdfPageIndex=index)}}
                 }
             }
         }
@@ -58,40 +51,17 @@ object PdfDocumentEngine {
         }
     }
 
-    private fun renderPage(page: PdfRenderer.Page): PdfRenderedPage {
+    private fun renderPage(page: PdfRenderer.Page, rasterWidth: Int = PdfBitmapPolicy.RENDER_WIDTH): PdfRenderedPage {
         val ratio = page.height.toFloat() / page.width.toFloat().coerceAtLeast(1f)
-        val targetWidth = RENDER_WIDTH
-        val targetHeight = (targetWidth * ratio).roundToInt().coerceAtLeast(1)
+        val rasterSize = PdfBitmapPolicy.rasterSize(page.width, page.height, rasterWidth)
+        val targetWidth = rasterSize.width
+        val targetHeight = rasterSize.height
         val bitmap = Bitmap.createBitmap(targetWidth, targetHeight, Bitmap.Config.ARGB_8888)
         Canvas(bitmap).drawColor(Color.WHITE)
         page.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY)
         val pageWidth = 595
         val pageHeight = (pageWidth * ratio).roundToInt().coerceAtLeast(1)
         return PdfRenderedPage(pageWidth, pageHeight, bitmap)
-    }
-
-    suspend fun loadPdf(context: Context, uri: Uri): List<PdfPageModel> = withContext(Dispatchers.IO) {
-        val descriptor = context.contentResolver.openFileDescriptor(uri, "r")
-            ?: error("No se pudo abrir el PDF")
-        descriptor.use { pfd ->
-            PdfRenderer(pfd).use { renderer ->
-                buildList {
-                    for (index in 0 until renderer.pageCount) {
-                        renderer.openPage(index).use { page ->
-                            val rendered = renderPage(page)
-                            add(
-                                PdfPageModel(
-                                    widthPt = rendered.widthPt,
-                                    heightPt = rendered.heightPt,
-                                    background = rendered.bitmap,
-                                    sourcePdfPageIndex = index
-                                )
-                            )
-                        }
-                    }
-                }.ifEmpty { listOf(PdfPageModel.blank()) }
-            }
-        }
     }
 
     /**
@@ -104,18 +74,18 @@ object PdfDocumentEngine {
         sourcePdfUri: Uri?,
         targetWidthPx: Int = 260
     ): Bitmap = withContext(Dispatchers.IO) {
+        val safeWidth = targetWidthPx.coerceIn(96, 720)
         var pageForPreview = page
 
         if (page.background == null && page.sourcePdfPageIndex != null && sourcePdfUri != null) {
             val descriptor = context.contentResolver.openFileDescriptor(sourcePdfUri, "r")
             descriptor?.use { pfd ->
                 PdfRenderer(pfd).use { renderer ->
-                    pageForPreview = page.withRenderedBackground(renderer)
+                    pageForPreview = page.withRenderedBackground(renderer, safeWidth)
                 }
             }
         }
 
-        val safeWidth = targetWidthPx.coerceIn(96, 720)
         val ratio = pageForPreview.heightPt.toFloat() / pageForPreview.widthPt.toFloat().coerceAtLeast(1f)
         val safeHeight = (safeWidth * ratio).roundToInt().coerceIn(128, 1024)
         val bitmap = Bitmap.createBitmap(safeWidth, safeHeight, Bitmap.Config.ARGB_8888)
@@ -133,20 +103,24 @@ object PdfDocumentEngine {
         bitmap
     }
 
+    suspend fun renderFlatPage(context:Context,page:PdfPageModel,source:Uri?,maxSide:Int=2400):Bitmap=withContext(Dispatchers.IO){
+        var temporary:Bitmap?=null;var model=page
+        if(page.background==null&&page.sourcePdfPageIndex!=null&&source!=null){val base=renderPdfPage(context,source,page.sourcePdfPageIndex);temporary=base.bitmap;model=page.copy(widthPt=base.widthPt,heightPt=base.heightPt,background=base.bitmap)}
+        val scale=minOf(2f,maxSide.toFloat()/maxOf(model.widthPt,model.heightPt).coerceAtLeast(1));val bitmap=Bitmap.createBitmap((model.widthPt*scale).roundToInt().coerceAtLeast(1),(model.heightPt*scale).roundToInt().coerceAtLeast(1),Bitmap.Config.ARGB_8888)
+        try{val canvas=Canvas(bitmap);canvas.scale(scale,scale);drawPage(canvas,model,Typeface.create("sans-serif",Typeface.NORMAL),Typeface.create("sans-serif",Typeface.BOLD));bitmap}catch(error:Throwable){bitmap.recycle();throw error}finally{temporary?.recycle()}
+    }
+
     suspend fun loadImage(context: Context, uri: Uri): Bitmap = withContext(Dispatchers.IO) {
-        val bytes = context.contentResolver.openInputStream(uri)?.use { it.readBytes() }
-            ?: error("No se pudo abrir la imagen")
+        val resolver = context.contentResolver
         val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
-        BitmapFactory.decodeByteArray(bytes, 0, bytes.size, bounds)
-        var sample = 1
-        while (max(bounds.outWidth, bounds.outHeight) / sample > MAX_BITMAP_SIDE) {
-            sample *= 2
-        }
+        val boundsStream = resolver.openInputStream(uri) ?: error("No se pudo abrir la imagen")
+        boundsStream.use { BitmapFactory.decodeStream(it, null, bounds) }
+        if (bounds.outWidth <= 0 || bounds.outHeight <= 0) error("Formato de imagen no compatible")
         val options = BitmapFactory.Options().apply {
-            inSampleSize = sample
+            inSampleSize = PdfBitmapPolicy.imageSampleSize(bounds.outWidth, bounds.outHeight)
             inPreferredConfig = Bitmap.Config.ARGB_8888
         }
-        BitmapFactory.decodeByteArray(bytes, 0, bytes.size, options)
+        resolver.openInputStream(uri)?.use { BitmapFactory.decodeStream(it, null, options) }
             ?: error("Formato de imagen no compatible")
     }
 
@@ -159,19 +133,6 @@ object PdfDocumentEngine {
         writePdfDocument(context, pages, sourcePdfUri) { document ->
             context.contentResolver.openOutputStream(uri, "w")?.use { document.writeTo(it) }
                 ?: error("No se pudo crear el archivo PDF")
-        }
-    }
-
-    /** Guarda una copia PDF dentro del almacenamiento privado de MyNotes. */
-    suspend fun exportPdfToFile(
-        context: Context,
-        file: File,
-        pages: List<PdfPageModel>,
-        sourcePdfUri: Uri? = null
-    ) = withContext(Dispatchers.IO) {
-        file.parentFile?.mkdirs()
-        writePdfDocument(context, pages, sourcePdfUri) { document ->
-            FileOutputStream(file).use { document.writeTo(it) }
         }
     }
 
@@ -209,11 +170,11 @@ object PdfDocumentEngine {
         }
     }
 
-    private fun PdfPageModel.withRenderedBackground(renderer: PdfRenderer): PdfPageModel {
+    private fun PdfPageModel.withRenderedBackground(renderer: PdfRenderer, rasterWidth: Int = PdfBitmapPolicy.RENDER_WIDTH): PdfPageModel {
         val index = sourcePdfPageIndex ?: return this
         if (index !in 0 until renderer.pageCount) return this
         return renderer.openPage(index).use { source ->
-            val rendered = renderPage(source)
+            val rendered = renderPage(source, rasterWidth)
             copy(widthPt = rendered.widthPt, heightPt = rendered.heightPt, background = rendered.bitmap)
         }
     }
@@ -227,20 +188,22 @@ object PdfDocumentEngine {
 
         page.strokes.forEach { stroke ->
             if (stroke.points.isEmpty()) return@forEach
-            val path = Path()
-            val first = stroke.points.first()
-            path.moveTo(first.x * page.widthPt, first.y * page.heightPt)
-            stroke.points.drop(1).forEach { point ->
-                path.lineTo(point.x * page.widthPt, point.y * page.heightPt)
-            }
-            paint.reset()
-            paint.isAntiAlias = true
-            paint.style = Paint.Style.STROKE
-            paint.strokeCap = Paint.Cap.ROUND
-            paint.strokeJoin = Paint.Join.ROUND
-            paint.strokeWidth = stroke.widthPt
+            paint.reset(); paint.isAntiAlias = true; paint.strokeCap = Paint.Cap.ROUND; paint.strokeJoin = Paint.Join.ROUND
             paint.color = stroke.colorArgb
-            canvas.drawPath(path, paint)
+            if (stroke.points.size == 1) {
+                val point = stroke.points.first(); paint.style = Paint.Style.FILL
+                canvas.drawCircle(point.x * page.widthPt, point.y * page.heightPt, stroke.widthPt * point.pressure / 2, paint)
+            } else if (stroke.points.all { it.pressure == 1f }) {
+                val path = Path(); val first = stroke.points.first(); path.moveTo(first.x * page.widthPt, first.y * page.heightPt)
+                stroke.points.drop(1).forEach { path.lineTo(it.x * page.widthPt, it.y * page.heightPt) }
+                paint.style = Paint.Style.STROKE; paint.strokeWidth = stroke.widthPt; canvas.drawPath(path, paint)
+            } else {
+                paint.style = Paint.Style.STROKE
+                stroke.points.zipWithNext().forEach { (a, b) ->
+                    paint.strokeWidth = stroke.widthPt * (a.pressure + b.pressure) / 2
+                    canvas.drawLine(a.x * page.widthPt, a.y * page.heightPt, b.x * page.widthPt, b.y * page.heightPt, paint)
+                }
+            }
         }
 
         page.images.forEach { image ->

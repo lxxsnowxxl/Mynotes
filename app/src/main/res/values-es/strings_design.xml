@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="design_styles">Estilos completos</string>
+    <string name="design_styles_description">Aplica colores, tipografía y tarjetas coordinados. Tus notas conservan sus colores.</string>
+    <string name="design_preview">Vista previa</string>
+    <string name="design_preset_minimal">Minimalista</string>
+    <string name="design_preset_notebook">Cuaderno</string>
+    <string name="design_preset_oled">OLED</string>
+    <string name="design_preset_default">Por defecto</string>
+    <string name="design_density">Densidad de tarjetas</string>
+    <string name="design_compact">Compacto</string>
+    <string name="design_comfortable">Cómodo</string>
+    <string name="design_focus">Modo enfoque</string>
+    <string name="design_focus_description">Abre el editor con el panel inferior de herramientas oculto.</string>
+    <string name="design_enter_focus">Activar modo enfoque</string>
+    <string name="design_exit_focus">Salir del modo enfoque</string>
+    <string name="design_editor_tools">Adjuntos y herramientas</string>
+    <string name="design_show_grid">Mostrar cuadrícula</string>
+    <string name="design_show_list">Mostrar lista</string>
+    <string name="design_use_comfortable">Usar tarjetas cómodas</string>
+    <string name="design_use_compact">Usar tarjetas compactas</string>
+    <string name="design_sort_by">Ordenar notas</string>
+    <string name="design_sort_newest">Más recientes</string>
+    <string name="design_sort_oldest">Más antiguas</string>
+    <string name="design_sort_title">Título, A–Z</string>
+    <string name="design_sort_priority">Mayor prioridad</string>
+    <string name="design_section_pinned">Fijadas</string>
+    <string name="design_section_today">Hoy</string>
+    <string name="design_section_week">Esta semana</string>
+    <string name="design_section_earlier">Anteriores</string>
+    <string name="design_section_notes">Notas</string>
+    <string name="design_select_note">Selecciona una nota</string>
+    <string name="design_select_note_description">Léela aquí mientras mantienes tu colección a la vista.</string>
+    <string name="design_close_preview">Cerrar vista de la nota</string>
+    <string name="design_clear_filters">Limpiar búsqueda y filtros</string>
+    <string name="design_create_first">Crear primera nota</string>
+    <string name="design_more_attachments">+%1$d más</string>
+    <string name="design_pdf_pages">PDF · %1$d pág.</string>
+    <string name="design_play_audio">Reproducir audio</string>
+    <string name="design_pause_audio">Pausar audio</string>
+    <plurals name="design_note_count">
+        <item quantity="one">%1$d nota</item>
+        <item quantity="other">%1$d notas</item>
+    </plurals>
+</resources>

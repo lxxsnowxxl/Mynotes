@@ -18,6 +18,8 @@ import com.example.mynotes.util.openUriStream
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.coroutines.sync.Semaphore
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.sync.withPermit
 import org.xmlpull.v1.XmlPullParser
 import java.io.BufferedInputStream
@@ -74,8 +76,8 @@ object AttachmentPreviewCache {
     /*
      * La resolución de las miniaturas sigue el perfil seleccionado en
      * Configuración > Rendimiento. Cada perfil usa su propia variante de
-     * caché, por lo que al cambiar de modo no se reutiliza por accidente una
-     * miniatura generada con otra resolución.
+     * caché. Una variante pequeña puede aparecer mientras se carga la
+     * resolución elegida, sin impedir su actualización al quedar en reposo.
      *
      * performance = menos RAM/CPU y archivos de caché más pequeños
      * balanced    = calidad intermedia (equivalente al comportamiento previo)
@@ -87,7 +89,7 @@ object AttachmentPreviewCache {
     private fun previewProfile(performanceMode: String): PreviewProfile = when (performanceMode) {
             /*
              * "instant" no es una cuarta opción visible de Rendimiento. Es una
-             * miniatura interna muy pequeña que Maximum quality usa como
+             * miniatura interna muy pequeña que la lista usa como
              * representación inmediata mientras la variante 1280/1080/1440 se
              * prepara fuera del frame crítico del scroll. Al ser persistente,
              * una nota ya visitada puede volver a mostrar imagen desde el primer
@@ -138,11 +140,24 @@ object AttachmentPreviewCache {
     private fun rememberBitmap(memoryKey: String, cacheTag: String, bitmap: Bitmap) {
         if (cacheTag == "instant") instantMemoryCache.put(memoryKey, bitmap) else bitmapMemoryCache.put(memoryKey, bitmap)
     }
+    private val qualityTags = listOf("quality", "instant", "balanced", "performance")
+    private val balancedTags = listOf("balanced", "instant", "performance")
+    private val performanceTags = listOf("performance", "instant")
+    // Store metadata separately, without retaining another reference to large video bitmaps.
+    private val videoMetadataMemoryCache = LruCache<String, MediaPreview>(120)
+    private val cachedThumbnailTags = listOf("instant", "performance", "balanced", "quality")
+    // Bounded striped locks prevent concurrent cells from decoding the same variant twice.
+    private val bitmapLoadLocks = Array(64) { Mutex() }
+    private fun bitmapPreviewLock(kind: String, uri: Uri, performanceMode: String): Mutex {
+        val tag = previewProfile(performanceMode).cacheTag
+        val hash = 31 * (31 * kind.hashCode() + uri.hashCode()) + tag.hashCode()
+        return bitmapLoadLocks[(hash and Int.MAX_VALUE) % bitmapLoadLocks.size]
+    }
     private fun preferredTags(performanceMode: String): List<String> = when (performanceMode) {
-            "quality" -> listOf("quality", "instant", "balanced", "performance")
-            "balanced" -> listOf("balanced", "performance")
-            else -> listOf("performance")
-        }
+        "quality" -> qualityTags
+        "balanced" -> balancedTags
+        else -> performanceTags
+    }
     /*
      * Consultas sin I/O. Se usan al componer una tarjeta: si el precalentamiento
      * ya dejó un bitmap en RAM, Compose puede dibujarlo en el primer frame y no
@@ -153,9 +168,45 @@ object AttachmentPreviewCache {
         return preferredTags(performanceMode).firstNotNullOfOrNull { tag -> memoryBitmap("$kind:$key-$tag", tag) }
     }
     fun peekImagePreview(uri: Uri, performanceMode: String): Bitmap? = peekBitmap("image", uri, performanceMode)
-    fun peekVideoPreview(uri: Uri, performanceMode: String): MediaPreview? =
-        peekBitmap("video", uri, performanceMode)?.let { MediaPreview(bitmap = it) }
+    fun peekVideoPreview(uri: Uri, performanceMode: String): MediaPreview? {
+        val key = cacheKey(uri)
+        return preferredTags(performanceMode).firstNotNullOfOrNull { tag ->
+            val memoryKey = "video:$key-$tag"
+            memoryBitmap(memoryKey, tag)?.let { bitmap ->
+                (videoMetadataMemoryCache.get(memoryKey) ?: MediaPreview()).copy(bitmap = bitmap)
+            }
+        }
+    }
     fun peekPdfPreview(uri: Uri, performanceMode: String): Bitmap? = peekBitmap("pdf", uri, performanceMode)
+
+    /** A small fallback is useful immediately, but must not suppress the selected quality upgrade. */
+    internal fun isExactBitmapPreview(kind: String, uri: Uri, performanceMode: String, bitmap: Bitmap?): Boolean {
+        val tag = previewProfile(performanceMode).cacheTag
+        return bitmap != null && memoryBitmap("$kind:${cacheKey(uri)}-$tag", tag) === bitmap
+    }
+
+    /** Read existing thumbnail files only; never open an original image, video or PDF during a fling. */
+    internal suspend fun loadCachedPreview(
+        context: Context, uri: Uri, kind: String, performanceMode: String
+    ): MediaPreview? = withContext(Dispatchers.IO) {
+        require(kind in setOf("image", "video", "pdf"))
+        val warm = if (kind == "video") peekVideoPreview(uri, performanceMode)
+            else peekBitmap(kind, uri, performanceMode)?.let { MediaPreview(bitmap = it) }
+        if (warm != null) return@withContext warm
+        val key = cacheKey(uri)
+        val directory = File(context.cacheDir, "mynotes_perf_v2/${kind}_previews")
+        for (tag in cachedThumbnailTags) {
+            val bitmap = decodeCachedBitmap(File(directory, "$key-$tag.jpg"), maxDimension = 192) ?: continue
+            val memoryKey = "$kind:$key-instant"
+            rememberBitmap(memoryKey, "instant", bitmap)
+            val metadata = if (kind == "video") {
+                readMediaMetadata(File(directory, "$key-$tag.meta")) ?: MediaPreview()
+            } else MediaPreview()
+            if (kind == "video") videoMetadataMemoryCache.put(memoryKey, metadata.copy(bitmap = null))
+            return@withContext metadata.copy(bitmap = bitmap)
+        }
+        null
+    }
     /*
      * ========================================================
      * IMAGEN
@@ -169,6 +220,7 @@ object AttachmentPreviewCache {
      * miniatura se vuelve a crear automáticamente desde el adjunto privado.
      */
     suspend fun loadImagePreview(context: Context, uri: Uri, performanceMode: String = "balanced"): Bitmap? = withContext(Dispatchers.IO) {
+        bitmapPreviewLock("image", uri, performanceMode).withLock {
             val directory = cacheDirectory(context, "image_previews")
             val key = cacheKey(uri)
             val profile = previewProfile(performanceMode)
@@ -190,6 +242,7 @@ object AttachmentPreviewCache {
             rememberBitmap(memoryKey, profile.cacheTag, bitmap)
             bitmap
         }
+    }
     /*
      * ========================================================
      * VIDEO
@@ -197,6 +250,7 @@ object AttachmentPreviewCache {
      */
     suspend fun loadVideoPreview(context: Context, uri: Uri, performanceMode: String = "balanced"): MediaPreview = withContext(
             Dispatchers.IO) {
+        bitmapPreviewLock("video", uri, performanceMode).withLock {
             val directory = cacheDirectory(context, "video_previews")
             val key = cacheKey(uri)
             val profile = previewProfile(performanceMode)
@@ -204,7 +258,9 @@ object AttachmentPreviewCache {
             val imageFile = File(directory, "$profileKey.jpg")
             val metadataFile = File(directory, "$profileKey.meta")
             val memoryKey = "video:$profileKey"
-            val cachedMetadata = readMediaMetadata(metadataFile)
+            val cachedMetadata = videoMetadataMemoryCache.get(memoryKey) ?: readMediaMetadata(metadataFile)?.also {
+                videoMetadataMemoryCache.put(memoryKey, it.copy(bitmap = null))
+            }
             val memoryBitmap = memoryBitmap(memoryKey, profile.cacheTag)
             if (memoryBitmap != null && cachedMetadata != null) {
                 return@withContext cachedMetadata.copy(bitmap = memoryBitmap)
@@ -242,9 +298,11 @@ object AttachmentPreviewCache {
                         width = width,
                         height = height)
                 writeMediaMetadata(metadataFile, result)
+                videoMetadataMemoryCache.put(memoryKey, result.copy(bitmap = null))
                 result
             }
         }
+    }
     /*
      * ========================================================
      * AUDIO
@@ -337,6 +395,7 @@ object AttachmentPreviewCache {
      * ========================================================
      */
     suspend fun loadPdfFirstPage(context: Context, uri: Uri, performanceMode: String = "balanced"): Bitmap? = withContext(Dispatchers.IO) {
+        bitmapPreviewLock("pdf", uri, performanceMode).withLock {
             val directory = cacheDirectory(context, "pdf_previews")
             val key = cacheKey(uri)
             val profile = previewProfile(performanceMode)
@@ -398,6 +457,7 @@ object AttachmentPreviewCache {
                 }
             }
         }
+    }
     /*
      * ========================================================
      * PRECALENTAR DESPUÉS DE GUARDAR
@@ -450,6 +510,7 @@ object AttachmentPreviewCache {
                 instantMemoryCache.remove("image:$key-$profile")
                 instantMemoryCache.remove("video:$key-$profile")
                 instantMemoryCache.remove("pdf:$key-$profile")
+                videoMetadataMemoryCache.remove("video:$key-$profile")
             }
             // Compatibilidad con cachés antiguas sin sufijo de perfil.
             bitmapMemoryCache.remove("image:$key")
@@ -486,11 +547,18 @@ object AttachmentPreviewCache {
         }
         return directory
     }
+    private const val HEX_DIGITS = "0123456789abcdef"
+
     private fun cacheKey(uri: Uri): String {
         val digest = MessageDigest.getInstance("SHA-256").digest(uri.toString().toByteArray(Charsets.UTF_8))
-        return digest.joinToString(separator = "") {
-                byte -> "%02x".format(byte)
+        // La consulta rápida de RAM también pasa por aquí al componer una tarjeta.
+        return buildString(digest.size * 2) {
+            for (byte in digest) {
+                val value = byte.toInt() and 0xff
+                append(HEX_DIGITS[value ushr 4])
+                append(HEX_DIGITS[value and 0x0f])
             }
+        }
     }
     private inline fun withMediaRetriever(
         context: Context, uri: Uri, block: (MediaMetadataRetriever) -> MediaPreview
@@ -653,7 +721,7 @@ object AttachmentPreviewCache {
             }
         }
     }
-    private fun decodeCachedBitmap(file: File): Bitmap? {
+    private fun decodeCachedBitmap(file: File, maxDimension: Int? = null): Bitmap? {
         if (!file.exists() || file.length() <= 0L) {
             return null
         }
@@ -661,6 +729,14 @@ object AttachmentPreviewCache {
             val options = BitmapFactory.Options().apply {
                         inPreferredConfig = Bitmap.Config.ARGB_8888
                     }
+            if (maxDimension != null) {
+                val bounds = BitmapFactory.Options().apply { inJustDecodeBounds = true }
+                BitmapFactory.decodeFile(file.absolutePath, bounds)
+                if (bounds.outWidth <= 0 || bounds.outHeight <= 0) return null
+                var sample = 1
+                while (max(bounds.outWidth, bounds.outHeight) / sample > maxDimension) sample *= 2
+                options.inSampleSize = sample
+            }
             BitmapFactory.decodeFile(file.absolutePath, options)
         } catch (e: Exception) {
             null

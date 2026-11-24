@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_section_expand">展开设置</string>
+    <string name="settings_section_collapse">收起设置</string>
+    <string name="settings_section_expanded">已展开</string>
+    <string name="settings_section_collapsed">已收起</string>
+</resources>

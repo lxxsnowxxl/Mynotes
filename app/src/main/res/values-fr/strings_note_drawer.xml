@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="note_tools_panel_title">Outils de note</string>
+    <string name="note_tools_collapse">Masquer les outils</string>
+    <string name="note_tools_expand">Afficher les outils</string>
+    <string name="note_tools_drag_vertical">Déplacer les outils verticalement</string>
+    <string name="drawing_tools_panel_title">Outils de dessin</string>
+    <string name="pdf_tools_panel_title">Outils PDF</string>
+    <string name="drawing_layout_split">Vue divisée</string>
+    <string name="drawing_layout_floating">Panneau flottant</string>
+</resources>

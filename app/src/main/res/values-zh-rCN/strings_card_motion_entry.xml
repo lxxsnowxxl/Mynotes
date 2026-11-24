@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="card_motion_entry_summary">为闲置笔记添加轻微动效。</string>
+    <string name="card_motion_selected_effect">所选效果</string>
+    <string name="card_motion_entry_paused">已暂停</string>
+    <string name="card_motion_entry_enabled">已启用</string>
+    <string name="card_motion_entry_intensity">强度 %1$d/5</string>
+    <string name="card_motion_entry_frequency">频率：%1$s</string>
+    <string name="card_motion_frequency_low">偶尔</string>
+    <string name="card_motion_frequency_normal">适中</string>
+    <string name="card_motion_frequency_high">频繁</string>
+    <string name="card_motion_entry_preview">预览</string>
+    <string name="card_motion_entry_customize">自定义</string>
+    <string name="card_motion_entry_disabled_hint">启用闲置卡片动画后即可预览此效果。</string>
+    <string name="card_motion_entry_behavior">暂停操作后，每次只有一张可见笔记移动。触摸或滚动列表即可停止。</string>
+</resources>

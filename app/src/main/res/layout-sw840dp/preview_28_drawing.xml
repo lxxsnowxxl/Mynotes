@@ -1,0 +1,71 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- v314: editable structural reference. Runtime behavior is implemented in Compose. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:background="@drawable/layout_xml_app_background" android:theme="@style/LayoutXmlPreviewTheme" android:padding="12dp" tools:context="com.example.mynotes.MainActivity" android:id="@+id/preview_28_drawing_workspace_0">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:id="@+id/preview_28_drawing_workspace_1">
+        <android.widget.ImageButton android:layout_width="48dp" android:layout_height="48dp" android:src="@drawable/preview_ic_arrow_back" android:contentDescription="@string/drawing_back" android:background="@android:color/transparent" android:padding="12dp" android:id="@+id/preview_28_drawing_workspace_2"/>
+        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:text="@string/drawing_title" android:textSize="22sp" android:textColor="@color/layout_xml_text" android:padding="6dp" android:textStyle="bold" android:layout_weight="1" android:id="@+id/preview_28_drawing_workspace_3"/>
+        <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/save" android:minHeight="48dp" android:id="@+id/preview_28_drawing_workspace_4"/>
+    </LinearLayout>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical">
+        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:text="@string/workspace_saved" android:textSize="12sp" android:textColor="@color/layout_xml_text" android:padding="6dp" android:id="@+id/preview_28_drawing_workspace_5"/>
+        <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/drawing_layout_split" android:contentDescription="@string/drawing_layout_split" android:minHeight="40dp"/>
+    </LinearLayout>
+    <FrameLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:id="@+id/preview_28_drawing_workspace_6">
+        <FrameLayout android:layout_width="match_parent" android:layout_height="match_parent" android:background="@drawable/layout_xml_app_background" android:layout_margin="8dp" android:id="@+id/preview_28_drawing_workspace_7">
+            <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/workspace_fit" android:minHeight="48dp" android:layout_gravity="top|end" android:id="@+id/preview_28_drawing_workspace_8"/>
+        </FrameLayout>
+        <ScrollView android:layout_width="360dp" android:layout_height="440dp" android:layout_marginStart="12dp" android:id="@+id/preview_28_drawing_workspace_9" android:layout_gravity="start|center_vertical" android:layout_marginEnd="48dp" android:visibility="gone">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="12dp" android:background="@drawable/layout_xml_workspace_tool_panel" android:id="@+id/preview_28_drawing_workspace_10">
+                <TextView android:layout_width="match_parent" android:layout_height="48dp" android:text="@string/drawing_tools_panel_title" android:textSize="18sp" android:textColor="@color/layout_xml_text" android:padding="12dp"/><EditText android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="@string/workspace_project_name" android:textSize="18sp" android:minHeight="56dp" android:gravity="top|start" android:inputType="textCapSentences" android:minLines="1" android:textColor="@color/layout_xml_text" android:padding="14dp" android:background="@drawable/layout_xml_tone" android:id="@+id/preview_28_drawing_workspace_11"/>
+                <HorizontalScrollView android:layout_width="match_parent" android:layout_height="wrap_content" android:fillViewport="true" android:id="@+id/preview_28_drawing_workspace_12">
+                    <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:id="@+id/preview_28_drawing_workspace_13">
+                        <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/drawing_undo" android:minHeight="48dp" android:id="@+id/preview_28_drawing_workspace_14"/>
+                        <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/drawing_redo" android:minHeight="48dp" android:id="@+id/preview_28_drawing_workspace_15"/>
+                        <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/drawing_clear" android:minHeight="48dp" android:id="@+id/preview_28_drawing_workspace_16"/>
+                    </LinearLayout>
+                </HorizontalScrollView>
+                <HorizontalScrollView android:layout_width="match_parent" android:layout_height="wrap_content" android:fillViewport="true" android:id="@+id/preview_28_drawing_workspace_17">
+                    <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:id="@+id/preview_28_drawing_workspace_18">
+                        <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/pdf_draw" android:minHeight="48dp" android:id="@+id/preview_28_drawing_workspace_19"/>
+                        <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/workspace_select" android:minHeight="48dp" android:id="@+id/preview_28_drawing_workspace_20"/>
+                        <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/workspace_pan" android:minHeight="48dp" android:id="@+id/preview_28_drawing_workspace_21"/>
+                        <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/workspace_line" android:minHeight="48dp" android:id="@+id/preview_28_drawing_workspace_22"/>
+                        <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/workspace_rectangle" android:minHeight="48dp" android:id="@+id/preview_28_drawing_workspace_23"/>
+                        <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/workspace_ellipse" android:minHeight="48dp" android:id="@+id/preview_28_drawing_workspace_24"/>
+                    </LinearLayout>
+                </HorizontalScrollView>
+                <HorizontalScrollView android:layout_width="match_parent" android:layout_height="wrap_content" android:fillViewport="true" android:id="@+id/preview_28_drawing_workspace_25">
+                    <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:id="@+id/preview_28_drawing_workspace_26">
+                        <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/drawing_tool_fine" android:minHeight="48dp" android:id="@+id/preview_28_drawing_workspace_27"/>
+                        <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/drawing_tool_pencil" android:minHeight="48dp" android:id="@+id/preview_28_drawing_workspace_28"/>
+                        <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/drawing_tool_pen" android:minHeight="48dp" android:id="@+id/preview_28_drawing_workspace_29"/>
+                        <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/drawing_tool_highlighter" android:minHeight="48dp" android:id="@+id/preview_28_drawing_workspace_30"/>
+                        <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/drawing_tool_eraser" android:minHeight="48dp" android:id="@+id/preview_28_drawing_workspace_31"/>
+                    </LinearLayout>
+                </HorizontalScrollView>
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/drawing_colors" android:textSize="14sp" android:textColor="@color/layout_xml_text" android:padding="6dp" android:id="@+id/preview_28_drawing_workspace_32"/>
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:id="@+id/preview_28_drawing_workspace_33">
+                    <View android:layout_width="30dp" android:layout_height="30dp" android:background="#FF242424" android:layout_margin="4dp" android:id="@+id/preview_28_drawing_workspace_34"/>
+                    <View android:layout_width="30dp" android:layout_height="30dp" android:background="#FFD83A3A" android:layout_margin="4dp" android:id="@+id/preview_28_drawing_workspace_35"/>
+                    <View android:layout_width="30dp" android:layout_height="30dp" android:background="#FFF57C32" android:layout_margin="4dp" android:id="@+id/preview_28_drawing_workspace_36"/>
+                    <View android:layout_width="30dp" android:layout_height="30dp" android:background="#FFF3C63D" android:layout_margin="4dp" android:id="@+id/preview_28_drawing_workspace_37"/>
+                    <View android:layout_width="30dp" android:layout_height="30dp" android:background="#FF49A765" android:layout_margin="4dp" android:id="@+id/preview_28_drawing_workspace_38"/>
+                    <View android:layout_width="30dp" android:layout_height="30dp" android:background="#FF3977D4" android:layout_margin="4dp" android:id="@+id/preview_28_drawing_workspace_39"/>
+                    <View android:layout_width="30dp" android:layout_height="30dp" android:background="#FF7754C7" android:layout_margin="4dp" android:id="@+id/preview_28_drawing_workspace_40"/>
+                </LinearLayout>
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/drawing_thickness" android:textSize="14sp" android:textColor="@color/layout_xml_text" android:padding="6dp" android:id="@+id/preview_28_drawing_workspace_41"/>
+                <SeekBar android:layout_width="match_parent" android:layout_height="44dp" android:progress="18" android:max="100" android:minHeight="44dp" android:id="@+id/preview_28_drawing_workspace_42" android:progressDrawable="@drawable/layout_xml_slider_progress" android:thumb="@drawable/layout_xml_slider_thumb" android:thumbOffset="10dp" android:paddingStart="14dp" android:paddingEnd="14dp" android:splitTrack="false"/>
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/workspace_pattern" android:textSize="14sp" android:textColor="@color/layout_xml_text" android:padding="6dp" android:id="@+id/preview_28_drawing_workspace_43"/>
+                <HorizontalScrollView android:layout_width="match_parent" android:layout_height="wrap_content" android:fillViewport="true" android:id="@+id/preview_28_drawing_workspace_44">
+                    <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:id="@+id/preview_28_drawing_workspace_45">
+                        <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/workspace_plain" android:minHeight="48dp" android:id="@+id/preview_28_drawing_workspace_46"/>
+                        <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/workspace_grid" android:minHeight="48dp" android:id="@+id/preview_28_drawing_workspace_47"/>
+                        <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/workspace_ruled" android:minHeight="48dp" android:id="@+id/preview_28_drawing_workspace_48"/>
+                    </LinearLayout>
+                </HorizontalScrollView>
+                <Switch android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/workspace_stylus_only" android:minHeight="48dp" android:id="@+id/preview_28_drawing_workspace_49"/>
+                <Switch android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/workspace_pressure" android:checked="true" android:minHeight="48dp" android:id="@+id/preview_28_drawing_workspace_50"/>
+            </LinearLayout>
+        </ScrollView>
+    <TextView android:layout_width="48dp" android:layout_height="64dp" android:layout_gravity="start|center_vertical" android:gravity="center" android:text="›" android:contentDescription="@string/note_tools_expand" android:textSize="24sp" android:textColor="#000000" android:background="@drawable/layout_xml_workspace_tool_tab" android:id="@+id/preview_28_drawing_tab" android:minWidth="48dp"  android:minHeight="64dp"  android:backgroundTint="@null"  android:padding="0dp"  android:paddingTop="8dp"  android:includeFontPadding="false"  android:elevation="2dp"  android:clickable="true"  android:focusable="true" /></FrameLayout>
+</LinearLayout>

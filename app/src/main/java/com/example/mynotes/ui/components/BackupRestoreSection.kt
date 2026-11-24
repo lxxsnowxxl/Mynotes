@@ -45,6 +45,8 @@ import java.util.Locale
 
 @Composable
 fun BackupRestoreSection(settings: AppSettings, fontFamily: FontFamily, textColor: Color, secondaryTextColor: Color, graphicColor: Color) {
+    val composeResources = androidx.compose.ui.platform.LocalResources.current
+
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     var busy by remember { mutableStateOf(false) }
@@ -56,13 +58,13 @@ fun BackupRestoreSection(settings: AppSettings, fontFamily: FontFamily, textColo
                     busy = true
                     statusMessage = null
                     val result = AppDataBackupManager.exportBackup(context = context, destination = uri, settings = settings)
-                    result.onSuccess { summary -> statusMessage = context.getString(R.string.backup_export_success, summary.noteCount,
+                    result.onSuccess { summary -> statusMessage = composeResources.getString(R.string.backup_export_success, summary.noteCount,
                                     summary.attachmentCount)
                             if (summary.skippedAttachmentCount > 0) {
-                                statusMessage += " " + context.getString(R.string.backup_export_skipped, summary.skippedAttachmentCount)
+                                statusMessage += " " + composeResources.getString(R.string.backup_export_skipped, summary.skippedAttachmentCount)
                             }
-                        }.onFailure { error -> statusMessage = context.getString(R.string.backup_operation_error,
-                                    error.message ?: context.getString(R.string.backup_unknown_error))
+                        }.onFailure { error -> statusMessage = composeResources.getString(R.string.backup_operation_error,
+                                    error.message ?: composeResources.getString(R.string.backup_unknown_error))
                         }
                     busy = false
                 }
@@ -128,13 +130,13 @@ fun BackupRestoreSection(settings: AppSettings, fontFamily: FontFamily, textColo
                             busy = true
                             statusMessage = null
                             val result = AppDataBackupManager.importBackup(context = context, source = importUri)
-                            result.onSuccess { summary -> val message = context.getString(R.string.backup_import_success, summary.noteCount,
+                            result.onSuccess { summary -> val message = composeResources.getString(R.string.backup_import_success, summary.noteCount,
                                             summary.attachmentCount)
                                     statusMessage = message
                                     Toast.makeText(context, message, Toast.LENGTH_LONG).show()
                                     (context as? Activity)?.recreate()
-                                }.onFailure { error -> statusMessage = context.getString(R.string.backup_operation_error,
-                                            error.message ?: context.getString(R.string.backup_unknown_error))
+                                }.onFailure { error -> statusMessage = composeResources.getString(R.string.backup_operation_error,
+                                            error.message ?: composeResources.getString(R.string.backup_unknown_error))
                                 }
                             busy = false
                         }

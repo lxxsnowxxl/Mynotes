@@ -22,6 +22,10 @@ internal class MainIntentState {
     fun handle(intent: Intent?) {
         handleShare(intent)
         handleWidget(intent)
+        val link = intent?.data
+        if (intent?.action == Intent.ACTION_VIEW && link?.scheme == "mynotes" && link.host == "note" && link.pathSegments.size == 1) {
+            link.lastPathSegment?.toIntOrNull()?.takeIf { it > 0 }?.let { prepareWidget(noteId = it) }
+        }
         if (intent?.getBooleanExtra(ReminderReceiver.EXTRA_OPEN_REMINDERS, false) == true) openReminders = true
     }
 
@@ -53,8 +57,11 @@ internal class MainIntentState {
     }
 
     private fun handleShare(intent: Intent?) {
-        if (intent?.action != Intent.ACTION_SEND) return
-        val text = intent.getCharSequenceExtra(Intent.EXTRA_TEXT)?.toString()?.trim().orEmpty()
+        val action = intent?.action ?: return
+        if (action != Intent.ACTION_SEND && action != Intent.ACTION_PROCESS_TEXT) return
+        val text = intent.getCharSequenceExtra(
+            if (action == Intent.ACTION_PROCESS_TEXT) Intent.EXTRA_PROCESS_TEXT else Intent.EXTRA_TEXT
+        )?.toString()?.trim().orEmpty()
         if (text.isBlank()) return
         sharedText = text
         sharedTitle = intent.getCharSequenceExtra(Intent.EXTRA_SUBJECT)?.toString()?.trim()?.takeIf { it.isNotBlank() }

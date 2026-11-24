@@ -26,4 +26,6 @@
     <string name="drawing_tool_eraser">橡皮擦</string>
     <string name="drawing_expand_canvas">放大画布</string>
     <string name="drawing_restore_canvas">恢复画布</string>
+    <string name="drawing_compact_more">更多</string>
+    <string name="drawing_compact_back">返回</string>
 </resources>

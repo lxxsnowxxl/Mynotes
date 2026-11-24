@@ -31,12 +31,11 @@ class FontPreferencePolicyTest {
     }
 
     @Test
-    fun legacyGoogleSansKeysMigrateToAndroidSystemFont() {
+    fun retiredGoogleSansKeysMigrateToAndroidSystemFont() {
         listOf(
             "google_sans",
             "google_sans_regular",
             "google_sans_medium",
-            "google_sans_bold",
             "google_sans_italic",
             "google_sans_medium_italic",
             "google_sans_bold_italic",
@@ -47,6 +46,18 @@ class FontPreferencePolicyTest {
                 FontPreferencePolicy.normalize(legacyKey, googleSansFlexUnlocked = true)
             )
         }
+    }
+
+    @Test
+    fun legacyBoldAliasUsesDownloadableFontOnlyAfterUnlock() {
+        assertEquals(
+            FontPreferencePolicy.DEVELOPER_GOOGLE_SANS_FLEX,
+            FontPreferencePolicy.normalize("google_sans_bold", googleSansFlexUnlocked = true)
+        )
+        assertEquals(
+            FontPreferencePolicy.SYSTEM_DEFAULT,
+            FontPreferencePolicy.normalize("google_sans_bold", googleSansFlexUnlocked = false)
+        )
     }
 
     @Test

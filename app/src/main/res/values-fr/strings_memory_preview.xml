@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="attachment_preview_memory_limit">Aperçu limité pour réduire la mémoire utilisée. Le fichier d’origine reste complet.</string>
+</resources>

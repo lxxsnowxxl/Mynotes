@@ -17,7 +17,6 @@ import com.example.mynotes.ui.sound.UiHapticPlayer
 import com.example.mynotes.ui.sound.UiSoundPlayer
 import com.example.mynotes.ui.theme.PaletteCatalog
 import com.example.mynotes.ui.theme.resolveAppColorScheme
-import com.example.mynotes.ui.theme.resolveSecondaryUiTextColor
 import com.example.mynotes.ui.theme.resolveUiTextColor
 import com.example.mynotes.ui.theme.effectiveDarkTheme
 
@@ -69,8 +68,9 @@ object ReminderFeedbackPreferences {
         val scheme = resolveAppColorScheme(effectiveDark, palette, settings.backgroundToneIndex,
             settings.surfacePanelIntensity, settings.textColor, settings.accentColor)
         val panel = scheme.surfaceContainer
-        val primaryText = resolveUiTextColor(settings.textColor, panel)
-        val secondaryText = resolveSecondaryUiTextColor(settings.textColor, panel)
+        val primaryText = com.example.mynotes.ui.theme.ensureUiContrast(
+            resolveUiTextColor(settings.textColor, panel), panel, 4.5f)
+        val secondaryText = com.example.mynotes.ui.theme.softenUiColorToContrast(primaryText, panel, 4.5f, 0.58f)
 
         val desired = Snapshot(
             soundEnabled = settings.soundEffectsEnabled,

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="note_palette_close">关闭</string>
+    <string name="note_palette_empty">暂无可用配色</string>
+    <string name="note_palette_tone">色调 %1$d</string>
+    <string name="note_palette_select_tone">%2$s 的色调 %1$d</string>
+</resources>

@@ -28,7 +28,7 @@
         </item>
 
         <item name="android:navigationBarColor">
-            #FF000000
+            @android:color/transparent
         </item>
 
         <item name="android:windowLightStatusBar">

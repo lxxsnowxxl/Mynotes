@@ -1,11 +1,15 @@
 package com.example.mynotes.ui.pdf
 
 import com.example.mynotes.ui.components.appScreenBackground
+import com.example.mynotes.ui.components.AppCircularIconButton
+import com.example.mynotes.ui.workspace.PaletteWorkspaceTheme
 import com.example.mynotes.ui.preview.LocalLayoutPreview
 import com.example.mynotes.ui.theme.rememberUiTextColors
 import com.example.mynotes.ui.components.AppIconButton
 import com.example.mynotes.ui.components.AppIconLabel
 import com.example.mynotes.ui.components.AppTextButton
+import com.example.mynotes.ui.components.HideDialogNavigationBar
+import androidx.compose.ui.window.DialogProperties
 
 import android.graphics.Color as AndroidColor
 import android.graphics.Paint
@@ -18,25 +22,30 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.EnterTransition
-import androidx.compose.animation.ExitTransition
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
-import androidx.compose.animation.scaleIn
-import androidx.compose.animation.scaleOut
-import androidx.compose.animation.slideInVertically
-import androidx.compose.animation.slideOutVertically
-import androidx.compose.animation.togetherWith
-import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.gestures.waitForUpOrCancellation
+import androidx.compose.foundation.gestures.awaitFirstDown
 import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.Switch
+import androidx.compose.material.icons.filled.Bookmark
+import androidx.compose.material.icons.filled.BookmarkBorder
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Draw
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.saveable.rememberSaveable
+import com.example.mynotes.ui.workspace.*
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -51,7 +60,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -75,7 +83,6 @@ import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.PictureAsPdf
 import androidx.compose.material.icons.filled.Redo
 import androidx.compose.material.icons.filled.RotateRight
-import androidx.compose.material.icons.filled.Save
 import androidx.compose.material.icons.filled.SelectAll
 import androidx.compose.material.icons.filled.TextFields
 import androidx.compose.material.icons.filled.Undo
@@ -83,14 +90,13 @@ import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableLongStateOf
@@ -98,9 +104,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.rememberUpdatedState
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.clipToBounds
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
@@ -125,12 +131,16 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.mynotes.R
 import com.example.mynotes.settings.AppSettings
-import com.example.mynotes.ui.motion.AppMotion
+import com.example.mynotes.ui.motion.appMotionTransform
+import com.example.mynotes.ui.motion.rememberMotionStyle
 import com.example.mynotes.ui.sound.UiActionSound
+import com.example.mynotes.ui.sound.UiHaptic
+import com.example.mynotes.ui.sound.UiHapticPlayer
 import com.example.mynotes.ui.sound.UiSound
 import com.example.mynotes.ui.sound.UiSoundPlayer
 import com.example.mynotes.ui.theme.rememberAppFontFamily
 import com.example.mynotes.ui.theme.rememberAdaptiveUiButtonColors
+import com.example.mynotes.ui.theme.compositeUiColor
 import com.example.mynotes.util.uriDisplayName
 import com.google.mlkit.common.MlKitException
 import kotlinx.coroutines.CancellationException
@@ -185,8 +195,10 @@ class PdfEditorActivity : ImmersivePdfActivity() {
 internal fun PdfEditorScreen(
     settings: AppSettings,
     initialProjectId: String?,
-    onClose: () -> Unit
+    onClose: () -> Unit, suggestedProjectId:String?=null,studioTool:Int=0,initialPageIndex:Int=0,onStudioConsumed:()->Unit={}
 ) {
+    val composeResources = androidx.compose.ui.platform.LocalResources.current
+
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val fontFamily = rememberAppFontFamily(settings.font)
@@ -212,7 +224,20 @@ internal fun PdfEditorScreen(
     var textSize by remember { mutableFloatStateOf(18f) }
     var history by remember { mutableStateOf(listOf<List<PdfPageModel>>()) }
     var redoHistory by remember { mutableStateOf(listOf<List<PdfPageModel>>()) }
-    var showTestModeNotice by remember { mutableStateOf(true) }
+    var gesturePages by remember { mutableStateOf<List<PdfPageModel>?>(null) }
+    var showTestModeNotice by rememberSaveable { mutableStateOf(true) }
+    var showSearch by remember { mutableStateOf(false) }
+    var showSignatures by remember { mutableStateOf(false) }
+    var showExportRange by remember { mutableStateOf(false) }
+    var showPageBrowser by rememberSaveable { mutableStateOf(false) }
+    // PDF Studio reutiliza la pestaña lateral de Nueva nota, pero mantiene
+    // su propio conjunto de herramientas y su estado abierto/cerrado.
+    var pdfToolsExpanded by rememberSaveable { mutableStateOf(false) }
+    BackHandler(enabled = pdfToolsExpanded) { pdfToolsExpanded = false }
+    var stylusOnly by rememberSaveable { mutableStateOf(false) }
+    var pendingExport by remember { mutableStateOf<List<PdfPageModel>>(emptyList()) }
+    var pendingExportSource by remember { mutableStateOf<Uri?>(null) }
+    var pendingExportFull by remember { mutableStateOf(false) }
     var sourcePdfUri by remember { mutableStateOf<Uri?>(null) }
     var pageLoading by remember { mutableStateOf(false) }
     var showGoToPageDialog by remember { mutableStateOf(false) }
@@ -235,10 +260,11 @@ internal fun PdfEditorScreen(
         UiSoundPlayer.playAction(context, UiActionSound.Navigation)
     }
 
-    val projectId = remember(initialProjectId) { initialProjectId ?: PdfProjectRepository.newProjectId() }
-    var projectName by remember(initialProjectId) { mutableStateOf(context.getString(R.string.pdf_library_untitled)) }
+    val projectId = remember(initialProjectId) { initialProjectId ?: suggestedProjectId ?: PdfProjectRepository.newProjectId() }
+    var projectName by remember(initialProjectId) { mutableStateOf(composeResources.getString(R.string.pdf_library_untitled)) }
     var projectReady by remember(initialProjectId) { mutableStateOf(initialProjectId == null) }
     var dirtyVersion by remember { mutableIntStateOf(0) }
+    val projectEpoch=remember{com.example.mynotes.studio.StudioFiles.epoch.value}
     val saveCoordinator = remember(projectId) { PdfProjectSaveCoordinator() }
 
     LaunchedEffect(initialProjectId) {
@@ -249,7 +275,7 @@ internal fun PdfEditorScreen(
                 pages = project.pages
                 projectName = project.name
                 sourcePdfUri = project.sourcePdfUri
-                currentPageIndex = 0
+                currentPageIndex = initialPageIndex.coerceIn(0,project.pages.lastIndex)
                 history = emptyList()
                 redoHistory = emptyList()
                 clearSelection()
@@ -258,7 +284,7 @@ internal fun PdfEditorScreen(
             }
             .onFailure {
                 projectReady = true
-                Toast.makeText(context, context.getString(R.string.pdf_library_error_open_project), Toast.LENGTH_LONG).show()
+                Toast.makeText(context, composeResources.getString(R.string.pdf_library_error_open_project), Toast.LENGTH_LONG).show()
             }
     }
 
@@ -273,6 +299,16 @@ internal fun PdfEditorScreen(
         pages = newPages
         currentPageIndex = currentPageIndex.coerceIn(0, pages.lastIndex)
         markDirty()
+    }
+
+    fun editGesture(phase: Int) {
+        if (phase == 0) { gesturePages = pages; return }
+        val before = gesturePages ?: return
+        gesturePages = null
+        if (before != pages) {
+            if (phase == 2) { pages = before; markDirty() }
+            else { history = (history + listOf(before)).takeLast(30); redoHistory = emptyList() }
+        }
     }
 
     fun replaceCurrent(page: PdfPageModel, recordHistory: Boolean = true) {
@@ -299,18 +335,18 @@ internal fun PdfEditorScreen(
                 val updated = withContext(Dispatchers.Default) { edit(source, page).also { result = it } }
                 if (currentPageIndex != pageIndex || dirtyVersion != editVersion || selectedImageId != source.id ||
                     pages.getOrNull(pageIndex)?.images?.firstOrNull { it.id == source.id } !== source) {
-                    Toast.makeText(context, context.getString(R.string.pdf_image_edit_changed), Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, composeResources.getString(R.string.pdf_image_edit_changed), Toast.LENGTH_LONG).show()
                     return@launch
                 }
                 if (updated == source) return@launch
                 replaceCurrent(pages[pageIndex].copy(images = pages[pageIndex].images.map { if (it.id == source.id) updated else it }))
                 committed = true
-                UiSoundPlayer.playAction(context, UiActionSound.Confirm)
+                UiHapticPlayer.play(context, UiHaptic.Confirm)
             } catch (error: CancellationException) {
                 throw error
             } catch (error: Throwable) {
                 Log.w("PdfImageEdits", "Image edit failed", error)
-                Toast.makeText(context, context.getString(R.string.pdf_image_edit_error), Toast.LENGTH_LONG).show()
+                Toast.makeText(context, composeResources.getString(R.string.pdf_image_edit_error), Toast.LENGTH_LONG).show()
             } finally {
                 if (!committed) result?.bitmap?.takeIf { it !== source.bitmap }?.recycle()
                 imageEditBusy = false
@@ -344,12 +380,14 @@ internal fun PdfEditorScreen(
         return sourcePdfUri != null ||
             pages.size > 1 ||
             pages.any { page ->
-                page.strokes.isNotEmpty() || page.texts.isNotEmpty() || page.images.isNotEmpty()
+                page.strokes.isNotEmpty() || page.texts.isNotEmpty() || page.images.isNotEmpty() || page.bookmarked
             }
     }
 
     suspend fun persistProject() {
-        if (layoutPreview != null) return
+        if(projectEpoch!=com.example.mynotes.studio.StudioFiles.epoch.value)return
+        if (layoutPreview != null || !projectReady || !hasMeaningfulProject()) return
+        try {
         saveCoordinator.saveIfChanged(currentVersion = {
             if (projectReady && hasMeaningfulProject()) dirtyVersion else null
         }) {
@@ -364,12 +402,14 @@ internal fun PdfEditorScreen(
             // Una importación más reciente debe conservar su propio PDF base.
             if (saved.sourcePdfUri != null && sourcePdfUri == savedSource) {
                 sourcePdfUri = saved.sourcePdfUri
+                if (savedSource != null && savedSource != saved.sourcePdfUri) com.example.mynotes.data.workspace.WorkspaceAssets.release(context, listOf(savedSource))
             }
         }
+        } catch (cancelled: CancellationException) { throw cancelled }
+        catch (error: Exception) { throw error }
     }
 
-    val openPdfLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
-        uri ?: return@rememberLauncherForActivityResult
+    fun importPdf(uri: Uri, displayName: String? = null) {
         scope.launch {
             runCatching {
                 val editableExport = PdfProjectRepository.loadProjectForExportedPdf(context, uri)
@@ -391,14 +431,15 @@ internal fun PdfEditorScreen(
                             pdfPage.copy(
                                 strokes = previous.strokes,
                                 texts = previous.texts,
-                                images = previous.images
+                                images = previous.images,
+                                bookmarked = previous.bookmarked
                             )
                         }
                     }.toMutableList().also { mergedPages ->
                         if (previousPages.size > loadedPages.size) {
                             previousPages.drop(loadedPages.size)
                                 .filter { page ->
-                                    page.strokes.isNotEmpty() || page.texts.isNotEmpty() || page.images.isNotEmpty()
+                                    page.strokes.isNotEmpty() || page.texts.isNotEmpty() || page.images.isNotEmpty() || page.bookmarked
                                 }
                                 .forEach { oldPage ->
                                     mergedPages += oldPage.copy(sourcePdfPageIndex = null)
@@ -411,7 +452,7 @@ internal fun PdfEditorScreen(
                 history = emptyList()
                 redoHistory = emptyList()
                 sourcePdfUri = loadedSourceUri
-                displayNameForUri(uri)?.let { displayName ->
+                (displayName ?: displayNameForUri(uri))?.let { displayName ->
                     projectName = displayName.substringBeforeLast('.', displayName)
                 }
                 currentPageIndex = 0
@@ -428,16 +469,14 @@ internal fun PdfEditorScreen(
                 markDirty()
                 UiSoundPlayer.playAction(context, UiActionSound.Open)
             }.onFailure {
-                Toast.makeText(context, context.getString(R.string.pdf_error_open), Toast.LENGTH_LONG).show()
+                Toast.makeText(context, composeResources.getString(R.string.pdf_error_open), Toast.LENGTH_LONG).show()
             }
         }
-    }
+        }
+    val openPdfLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri -> if (uri != null) importPdf(uri) }
 
-    val imageLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
-        uri ?: return@rememberLauncherForActivityResult
-        scope.launch {
-            runCatching { PdfDocumentEngine.loadImage(context, uri) }
-                .onSuccess { bitmap ->
+    fun insertBitmap(bitmap: android.graphics.Bitmap) {
+
                     val ratio = bitmap.height.toFloat() / bitmap.width.toFloat().coerceAtLeast(1f)
                     val width = 0.46f
                     val height = (width * ratio * pages[currentPageIndex].widthPt / pages[currentPageIndex].heightPt)
@@ -454,22 +493,28 @@ internal fun PdfEditorScreen(
                     setSelection(imageId = element.id)
                     tool = PdfEditorTool.SELECT
                     UiSoundPlayer.playAction(context, UiActionSound.Add)
-                }
-                .onFailure { Toast.makeText(context, context.getString(R.string.pdf_error_image), Toast.LENGTH_LONG).show() }
-        }
+
     }
+    fun importImage(uri: Uri) {
+        scope.launch { runCatching { PdfDocumentEngine.loadImage(context, uri) }.onSuccess { bitmap -> insertBitmap(bitmap); com.example.mynotes.data.workspace.WorkspaceAssets.release(context, listOf(uri)) }
+            .onFailure { Toast.makeText(context, R.string.pdf_error_image, Toast.LENGTH_LONG).show() } }
+    }
+    val imageLauncher = rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri -> uri?.let(::importImage) }
 
     val exportLauncher = rememberLauncherForActivityResult(ActivityResultContracts.CreateDocument("application/pdf")) { uri ->
         uri ?: return@rememberLauncherForActivityResult
         scope.launch {
             runCatching {
-                PdfDocumentEngine.exportPdf(context, uri, pages, sourcePdfUri)
-                PdfProjectRepository.registerExportedPdf(context, uri, projectId)
+                val exported = pendingExport
+                require(exported.isNotEmpty())
+                PdfDocumentEngine.exportPdf(context, uri, exported, pendingExportSource)
+                if (pendingExportFull) PdfProjectRepository.registerExportedPdf(context, uri, projectId)
+                else PdfProjectRepository.registerFlatExport(context, uri)
             }.onSuccess {
                     UiSoundPlayer.playAction(context, UiActionSound.Save)
-                    Toast.makeText(context, context.getString(R.string.pdf_saved), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, composeResources.getString(R.string.pdf_saved), Toast.LENGTH_SHORT).show()
                 }
-                .onFailure { Toast.makeText(context, context.getString(R.string.pdf_error_save), Toast.LENGTH_LONG).show() }
+                .onFailure { Toast.makeText(context, composeResources.getString(R.string.pdf_error_save), Toast.LENGTH_LONG).show() }
         }
     }
 
@@ -479,10 +524,13 @@ internal fun PdfEditorScreen(
         runCatching { persistProject() }
     }
 
+    WorkspaceOnStop { scope.launch { runCatching { persistProject() } } }
+    val exitSaver by rememberUpdatedState<suspend ()->Unit>({persistProject()})
+    DisposableEffect(projectId){onDispose{if(layoutPreview==null)com.example.mynotes.studio.StudioJobs.start("Save PDF on exit"){exitSaver()}}}
+
     BackHandler {
         scope.launch {
-            runCatching { persistProject() }
-            onClose()
+            runCatching { persistProject() }.onSuccess { onClose() }.onFailure { Toast.makeText(context, R.string.workspace_save_error, Toast.LENGTH_LONG).show() }
         }
     }
 
@@ -498,12 +546,12 @@ internal fun PdfEditorScreen(
                 val cropped = withContext(Dispatchers.Default) {
                     PdfSubjectCropper.isolateAndCrop(context.applicationContext, image.bitmap) {
                         withContext(Dispatchers.Main.immediate) {
-                            Toast.makeText(context, context.getString(R.string.pdf_ai_crop_downloading), Toast.LENGTH_LONG).show()
+                            Toast.makeText(context, composeResources.getString(R.string.pdf_ai_crop_downloading), Toast.LENGTH_LONG).show()
                         }
                     }
                 }
                 if (currentPageIndex != pageIndex || dirtyVersion != editVersion || selectedImageId != id) {
-                    Toast.makeText(context, context.getString(R.string.pdf_ai_crop_changed), Toast.LENGTH_LONG).show()
+                    Toast.makeText(context, composeResources.getString(R.string.pdf_ai_crop_changed), Toast.LENGTH_LONG).show()
                     return@launch
                 }
                 val updatedImage = image.copy(bitmap = cropped)
@@ -512,8 +560,8 @@ internal fun PdfEditorScreen(
                         images = pages[currentPageIndex].images.map { if (it.id == id) updatedImage else it }
                     )
                 )
-                UiSoundPlayer.playAction(context, UiActionSound.Confirm)
-                Toast.makeText(context, context.getString(R.string.pdf_ai_crop_done), Toast.LENGTH_SHORT).show()
+                UiHapticPlayer.play(context, UiHaptic.Confirm)
+                Toast.makeText(context, composeResources.getString(R.string.pdf_ai_crop_done), Toast.LENGTH_SHORT).show()
             } catch (error: CancellationException) {
                 throw error
             } catch (error: Throwable) {
@@ -530,7 +578,7 @@ internal fun PdfEditorScreen(
                         (error is MlKitException && error.errorCode == MlKitException.UNAVAILABLE) -> R.string.pdf_ai_crop_not_ready
                     else -> R.string.pdf_ai_crop_error
                 }
-                Toast.makeText(context, context.getString(message), Toast.LENGTH_LONG).show()
+                Toast.makeText(context, composeResources.getString(message), Toast.LENGTH_LONG).show()
             } finally {
                 aiBusy = false
             }
@@ -573,7 +621,7 @@ internal fun PdfEditorScreen(
             } catch (cancelled: CancellationException) {
                 throw cancelled
             } catch (_: Throwable) {
-                Toast.makeText(context, context.getString(R.string.pdf_error_page), Toast.LENGTH_LONG).show()
+                Toast.makeText(context, composeResources.getString(R.string.pdf_error_page), Toast.LENGTH_LONG).show()
             } finally {
                 pageLoading = false
             }
@@ -595,7 +643,11 @@ internal fun PdfEditorScreen(
                 showGoToPageDialog = false
                 goToPageError = false
             },
-            title = { Text(stringResource(R.string.pdf_go_to_page), fontFamily = fontFamily) },
+            properties = DialogProperties(decorFitsSystemWindows = false),
+            title = {
+                HideDialogNavigationBar(preventFocusFlash = true)
+                Text(stringResource(R.string.pdf_go_to_page), fontFamily = fontFamily)
+            },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(
@@ -647,9 +699,11 @@ internal fun PdfEditorScreen(
     }
 
     if (showTextDialog) {
-        AlertDialog(
+        PreparedPdfAlertDialog(
             onDismissRequest = { showTextDialog = false },
-            title = { Text(stringResource(R.string.pdf_add_text), fontFamily = fontFamily) },
+            title = {
+                Text(stringResource(R.string.pdf_add_text), fontFamily = fontFamily)
+            },
             text = {
                 Column(verticalArrangement = Arrangement.spacedBy(10.dp)) {
                     OutlinedTextField(
@@ -698,147 +752,201 @@ internal fun PdfEditorScreen(
         )
     }
 
-    Column(modifier = Modifier.fillMaxSize().appScreenBackground().padding(top = 26.dp)) {
-        PdfTopBar(
-            settings = settings,
-            fontFamily = fontFamily,
-            primaryText = primaryText,
-            secondaryText = secondaryText,
-            onBack = {
-                UiSoundPlayer.playAction(context, UiActionSound.Back)
-                scope.launch {
-                    runCatching { persistProject() }
-                    onClose()
-                }
-            },
-            onSave = {
-                UiSoundPlayer.playAction(context, UiActionSound.Save)
-                val date = SimpleDateFormat("yyyyMMdd_HHmm", Locale.US).format(Date())
-                scope.launch {
-                    runCatching { persistProject() }
-                    exportLauncher.launch("MyNotes_$date.pdf")
-                }
-            }
-        )
+    if (showSearch) PdfSearchDialog(projectId, sourcePdfUri, pages, onPage = { currentPageIndex = it; clearSelection() }, onDismiss = { showSearch = false })
+    if (showSignatures) PdfSignatureDialog(onBitmap = ::insertBitmap, onDismiss = { showSignatures = false })
+    if (showExportRange) PdfRangeDialog(pages.size, onExport = { indices ->
+        pendingExport = indices.map { pages[it] }; pendingExportSource = sourcePdfUri
+        pendingExportFull = indices.size == pages.size
+        showExportRange = false
+        scope.launch {
+            runCatching { persistProject() }
+            exportLauncher.launch("MyNotes_${SimpleDateFormat("yyyyMMdd_HHmm", Locale.US).format(Date())}.pdf")
+        }
+    }, onDismiss = { showExportRange = false })
+    WorkspaceDropReceiver(onAssets = { assets -> assets.firstOrNull { it.mimeType == "application/pdf" }?.let { importPdf(it.uri, it.name) }
+        ?: assets.filter { it.mimeType.startsWith("image/") }.forEach { importImage(it.uri) }
+    }, onError = { Toast.makeText(context, R.string.workspace_drop_error, Toast.LENGTH_SHORT).show() })
 
-        val page = pages[currentPageIndex]
-        Box(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth()
-                .padding(horizontal = 10.dp, vertical = 6.dp)
-        ) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(top = 4.dp)
-                    .clipToBounds(),
-                contentAlignment = Alignment.TopCenter
-            ) {
-                PdfPageCanvas(
-                    page = page,
-                    pageKey = currentPageIndex,
-                    tool = tool,
-                    penColor = penColor,
-                    penWidth = penWidth,
-                    selectedImageId = selectedImageId,
-                    selectedTextId = selectedTextId,
-                    selectedStrokeId = selectedStrokeId,
-                    onStrokeFinished = { stroke ->
-                        val editableStroke = if (stroke.id > 0L) stroke else stroke.copy(id = nextElementId++)
-                        replaceCurrent(pages[currentPageIndex].copy(strokes = pages[currentPageIndex].strokes + editableStroke))
-                    },
-                    onEraseAt = { point ->
-                        val livePage = pages[currentPageIndex]
-                        val threshold = 0.035f
-                        val filtered = livePage.strokes.filterNot { stroke ->
-                            stroke.points.any { p -> abs(p.x - point.x) < threshold && abs(p.y - point.y) < threshold }
-                        }
-                        if (filtered.size != livePage.strokes.size) {
-                            replaceCurrent(livePage.copy(strokes = filtered), recordHistory = false)
-                        }
-                    },
-                    onTextTap = { point ->
-                        pendingTextPosition = point
-                        pendingText = ""
-                        showTextDialog = true
-                    },
-                    onSelect = { imageId, textId, strokeId ->
-                        selectedImageId = imageId
-                        selectedTextId = textId
-                        selectedStrokeId = strokeId
-                    },
-                    onMoveImage = { id, dx, dy ->
-                        replaceCurrent(
-                            pages[currentPageIndex].copy(
-                                images = pages[currentPageIndex].images.map { image ->
-                                    if (image.id != id) image else image.copy(
-                                        x = (image.x + dx).coerceIn(0f, 1f - image.width),
-                                        y = (image.y + dy).coerceIn(0f, 1f - image.height)
-                                    )
-                                }
-                            ),
-                            recordHistory = false
-                        )
-                    },
-                    onResizeImage = { id, dx, dy ->
-                        val livePage = pages[currentPageIndex]
-                        val currentImage = livePage.images.firstOrNull { it.id == id }
-                        if (currentImage != null) {
-                            val normalizedDx = dx / currentImage.width.coerceAtLeast(0.001f)
-                            val normalizedDy = dy / currentImage.height.coerceAtLeast(0.001f)
-                            val factor = (1f + if (abs(normalizedDx) >= abs(normalizedDy)) normalizedDx else normalizedDy)
-                                .coerceIn(0.20f, 5f)
+    PaletteWorkspaceTheme(settings.surfacePanelIntensity) {
+        Column(modifier = Modifier.fillMaxSize().appScreenBackground().statusBarsPadding().navigationBarsPadding()
+            .then(workspaceShortcuts({ scope.launch { runCatching { persistProject() } } }, ::undo, ::redo, { showSearch = true }))) {
+            PdfTopBar(
+                fontFamily = fontFamily,
+                textColorMode = settings.textColor,
+                primaryText = primaryText,
+                secondaryText = secondaryText,
+                onBack = {
+                    UiSoundPlayer.playAction(context, UiActionSound.Back)
+                    scope.launch {
+                        runCatching { persistProject() }.onSuccess { onClose() }.onFailure { Toast.makeText(context, R.string.workspace_save_error, Toast.LENGTH_LONG).show() }
+                    }
+                },
+                onSave = { showExportRange = true }
 
-                            val aspect = (currentImage.height / currentImage.width.coerceAtLeast(0.001f))
-                                .coerceAtLeast(0.05f)
-                            val maxWidth = (1f - currentImage.x).coerceAtLeast(0.08f)
-                            val maxHeight = (1f - currentImage.y).coerceAtLeast(0.05f)
+            )
 
-                            var newWidth = (currentImage.width * factor).coerceIn(0.08f, maxWidth)
-                            var newHeight = newWidth * aspect
-                            if (newHeight > maxHeight) {
-                                newHeight = maxHeight
-                                newWidth = (newHeight / aspect).coerceIn(0.08f, maxWidth)
+            val page = pages[currentPageIndex]
+            if (showTestModeNotice) PdfTestModeNotice(settings, fontFamily, { showTestModeNotice = false }, Modifier.padding(horizontal = 12.dp))
+            com.example.mynotes.studio.PlusStatusPill(showSaved = false)
+            AdaptiveWorkspace(
+                modifier = Modifier.weight(1f).padding(horizontal = 10.dp, vertical = 6.dp),
+                expandedTools = pdfToolsExpanded,
+                toolPanelIntensity = settings.surfacePanelIntensity,
+                toolsDrawer = true,
+                drawerTitleRes = R.string.pdf_tools_panel_title,
+                // La lista de acciones PDF es extensa; mostrarla con scroll dentro de
+                // un panel de altura limitada, evitando que cubra todo el documento.
+                drawerMaxHeightFraction = 0.58f,
+                compactTools = true,
+                onDrawerOpenChange = { pdfToolsExpanded = it },
+                content = {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(top = 4.dp)
+                        .clipToBounds(),
+                    contentAlignment = Alignment.TopCenter
+                ) {
+                    PdfPageCanvas(
+                        page = page,
+                        backgroundColor = if (projectReady && !hasMeaningfulProject())
+                            MaterialTheme.colorScheme.surfaceContainerLow else Color.White,
+                        pageKey = currentPageIndex,
+                        stylusOnly = stylusOnly,
+                        tool = tool,
+                        penColor = penColor,
+                        penWidth = penWidth,
+                        selectedImageId = selectedImageId,
+                        selectedTextId = selectedTextId,
+                        selectedStrokeId = selectedStrokeId,
+                        onEditGesture = ::editGesture,
+                        onStrokeFinished = { stroke ->
+                            val editableStroke = if (stroke.id > 0L) stroke else stroke.copy(id = nextElementId++)
+                            replaceCurrent(pages[currentPageIndex].copy(strokes = pages[currentPageIndex].strokes + editableStroke))
+                        },
+                        onEraseAt = { point ->
+                            val livePage = pages[currentPageIndex]
+                            val threshold = 0.035f
+                            val filtered = livePage.strokes.filterNot { stroke ->
+                                stroke.points.any { p -> abs(p.x - point.x) < threshold && abs(p.y - point.y) < threshold }
                             }
-
+                            if (filtered.size != livePage.strokes.size) {
+                                replaceCurrent(livePage.copy(strokes = filtered), recordHistory = false)
+                            }
+                        },
+                        onTextTap = { point ->
+                            pendingTextPosition = point
+                            pendingText = ""
+                            showTextDialog = true
+                        },
+                        onSelect = { imageId, textId, strokeId ->
+                            selectedImageId = imageId
+                            selectedTextId = textId
+                            selectedStrokeId = strokeId
+                        },
+                        onMoveImage = { id, dx, dy ->
                             replaceCurrent(
-                                livePage.copy(
-                                    images = livePage.images.map { image ->
-                                        if (image.id == id) image.copy(width = newWidth, height = newHeight) else image
+                                pages[currentPageIndex].copy(
+                                    images = pages[currentPageIndex].images.map { image ->
+                                        if (image.id != id) image else image.copy(
+                                            x = (image.x + dx).coerceIn(0f, 1f - image.width),
+                                            y = (image.y + dy).coerceIn(0f, 1f - image.height)
+                                        )
                                     }
                                 ),
                                 recordHistory = false
                             )
-                        }
-                    },
-                    onMoveText = { id, dx, dy ->
-                        replaceCurrent(
-                            pages[currentPageIndex].copy(
-                                texts = pages[currentPageIndex].texts.map { text ->
-                                    if (text.id != id) text else text.copy(
-                                        x = (text.x + dx).coerceIn(0.01f, 0.97f),
-                                        y = (text.y + dy).coerceIn(0.03f, 0.97f)
+                        },
+                        onResizeImage = { id, dx, dy ->
+                            val livePage = pages[currentPageIndex]
+                            val currentImage = livePage.images.firstOrNull { it.id == id }
+                            if (currentImage != null) {
+                                val normalizedDx = dx / currentImage.width.coerceAtLeast(0.001f)
+                                val normalizedDy = dy / currentImage.height.coerceAtLeast(0.001f)
+                                val factor = (1f + if (abs(normalizedDx) >= abs(normalizedDy)) normalizedDx else normalizedDy)
+                                    .coerceIn(0.20f, 5f)
+
+                                val aspect = (currentImage.height / currentImage.width.coerceAtLeast(0.001f))
+                                    .coerceAtLeast(0.05f)
+                                val maxWidth = (1f - currentImage.x).coerceAtLeast(0.08f)
+                                val maxHeight = (1f - currentImage.y).coerceAtLeast(0.05f)
+
+                                var newWidth = (currentImage.width * factor).coerceIn(0.08f, maxWidth)
+                                var newHeight = newWidth * aspect
+                                if (newHeight > maxHeight) {
+                                    newHeight = maxHeight
+                                    newWidth = (newHeight / aspect).coerceIn(0.08f, maxWidth)
+                                }
+
+                                replaceCurrent(
+                                    livePage.copy(
+                                        images = livePage.images.map { image ->
+                                            if (image.id == id) image.copy(width = newWidth, height = newHeight) else image
+                                        }
+                                    ),
+                                    recordHistory = false
+                                )
+                            }
+                        },
+                        onMoveText = { id, dx, dy ->
+                            replaceCurrent(
+                                pages[currentPageIndex].copy(
+                                    texts = pages[currentPageIndex].texts.map { text ->
+                                        if (text.id != id) text else text.copy(
+                                            x = (text.x + dx).coerceIn(0.01f, 0.97f),
+                                            y = (text.y + dy).coerceIn(0.03f, 0.97f)
+                                        )
+                                    }
+                                ),
+                                recordHistory = false
+                            )
+                        },
+                        onMoveStroke = { id, dx, dy ->
+                            val livePage = pages[currentPageIndex]
+                            val stroke = livePage.strokes.firstOrNull { it.id == id }
+                            if (stroke != null) {
+                                val bounds = strokeBounds(stroke)
+                                if (bounds != null) {
+                                    val safeDx = dx.coerceIn(-bounds.left, 1f - bounds.right)
+                                    val safeDy = dy.coerceIn(-bounds.top, 1f - bounds.bottom)
+                                    replaceCurrent(
+                                        livePage.copy(
+                                            strokes = livePage.strokes.map { item ->
+                                                if (item.id == id) item.copy(
+                                                    points = item.points.map { point ->
+                                                        point.copy(x = point.x + safeDx, y = point.y + safeDy)
+                                                    }
+                                                ) else item
+                                            }
+                                        ),
+                                        recordHistory = false
                                     )
                                 }
-                            ),
-                            recordHistory = false
-                        )
-                    },
-                    onMoveStroke = { id, dx, dy ->
-                        val livePage = pages[currentPageIndex]
-                        val stroke = livePage.strokes.firstOrNull { it.id == id }
-                        if (stroke != null) {
-                            val bounds = strokeBounds(stroke)
-                            if (bounds != null) {
-                                val safeDx = dx.coerceIn(-bounds.left, 1f - bounds.right)
-                                val safeDy = dy.coerceIn(-bounds.top, 1f - bounds.bottom)
+                            }
+                        },
+                        onResizeStroke = { id, dx, dy ->
+                            val livePage = pages[currentPageIndex]
+                            val stroke = livePage.strokes.firstOrNull { it.id == id }
+                            val bounds = stroke?.let(::strokeBounds)
+                            if (stroke != null && bounds != null) {
+                                val width = (bounds.right - bounds.left).coerceAtLeast(0.002f)
+                                val height = (bounds.bottom - bounds.top).coerceAtLeast(0.002f)
+                                val relativeDx = dx / width
+                                val relativeDy = dy / height
+                                val factor = (1f + if (abs(relativeDx) >= abs(relativeDy)) relativeDx else relativeDy)
+                                    .coerceIn(0.20f, 5f)
+                                val maxFactorX = ((1f - bounds.left) / width).coerceAtLeast(0.20f)
+                                val maxFactorY = ((1f - bounds.top) / height).coerceAtLeast(0.20f)
+                                val safeFactor = factor.coerceAtMost(minOf(maxFactorX, maxFactorY))
                                 replaceCurrent(
                                     livePage.copy(
                                         strokes = livePage.strokes.map { item ->
                                             if (item.id == id) item.copy(
                                                 points = item.points.map { point ->
-                                                    PdfPoint(point.x + safeDx, point.y + safeDy)
+                                                    point.copy(
+                                                        x = (bounds.left + (point.x - bounds.left) * safeFactor).coerceIn(0f, 1f),
+                                                        y = (bounds.top + (point.y - bounds.top) * safeFactor).coerceIn(0f, 1f)
+                                                    )
                                                 }
                                             ) else item
                                         }
@@ -846,300 +954,278 @@ internal fun PdfEditorScreen(
                                     recordHistory = false
                                 )
                             }
+                        },
+                        onTransformingChanged = { transforming ->
+                            canvasTransforming = transforming
                         }
-                    },
-                    onResizeStroke = { id, dx, dy ->
-                        val livePage = pages[currentPageIndex]
-                        val stroke = livePage.strokes.firstOrNull { it.id == id }
-                        val bounds = stroke?.let(::strokeBounds)
-                        if (stroke != null && bounds != null) {
-                            val width = (bounds.right - bounds.left).coerceAtLeast(0.002f)
-                            val height = (bounds.bottom - bounds.top).coerceAtLeast(0.002f)
-                            val relativeDx = dx / width
-                            val relativeDy = dy / height
-                            val factor = (1f + if (abs(relativeDx) >= abs(relativeDy)) relativeDx else relativeDy)
-                                .coerceIn(0.20f, 5f)
-                            val maxFactorX = ((1f - bounds.left) / width).coerceAtLeast(0.20f)
-                            val maxFactorY = ((1f - bounds.top) / height).coerceAtLeast(0.20f)
-                            val safeFactor = factor.coerceAtMost(minOf(maxFactorX, maxFactorY))
-                            replaceCurrent(
-                                livePage.copy(
-                                    strokes = livePage.strokes.map { item ->
-                                        if (item.id == id) item.copy(
-                                            points = item.points.map { point ->
-                                                PdfPoint(
-                                                    x = (bounds.left + (point.x - bounds.left) * safeFactor).coerceIn(0f, 1f),
-                                                    y = (bounds.top + (point.y - bounds.top) * safeFactor).coerceIn(0f, 1f)
-                                                )
-                                            }
-                                        ) else item
-                                    }
-                                ),
-                                recordHistory = false
-                            )
-                        }
-                    },
-                    onTransformingChanged = { transforming ->
-                        canvasTransforming = transforming
-                    }
-                )
-                if (projectReady && !hasMeaningfulProject()) {
-                    PdfCanvasOpenButton(
-                        settings = settings,
-                        fontFamily = fontFamily,
-                        onClick = { openPdfLauncher.launch(arrayOf("application/pdf")) },
-                        modifier = Modifier.align(Alignment.Center)
                     )
-                }
+                    if (projectReady && !hasMeaningfulProject()) {
+                        PdfCanvasOpenButton(
+                            settings = settings,
+                            fontFamily = fontFamily,
+                            onClick = { openPdfLauncher.launch(arrayOf("application/pdf")) },
+                            modifier = Modifier.align(Alignment.Center)
+                        )
+                    }
 
-                if (aiBusy || pageLoading || imageEditBusy) {
-                    Surface(shape = CircleShape, color = MaterialTheme.colorScheme.surface.copy(alpha = 0.92f)) {
-                        CircularProgressIndicator(modifier = Modifier.padding(18.dp).size(34.dp))
+                    if (aiBusy || pageLoading || imageEditBusy) {
+                        Surface(shape = CircleShape, color = MaterialTheme.colorScheme.surface.copy(alpha = 0.92f)) {
+                            CircularProgressIndicator(modifier = Modifier.padding(18.dp).size(34.dp))
+                        }
                     }
                 }
-            }
-
-            PdfFloatingToolbars(
-                settings = settings,
-                fontFamily = fontFamily,
-                tool = tool,
-                penColor = penColor,
-                penWidth = penWidth,
-                pageIndex = currentPageIndex,
-                pageCount = pages.size,
-                selectedImage = pages[currentPageIndex].images.firstOrNull { it.id == selectedImageId },
-                selectedText = pages[currentPageIndex].texts.firstOrNull { it.id == selectedTextId },
-                selectedStroke = pages[currentPageIndex].strokes.firstOrNull { it.id == selectedStrokeId },
-                selectionTemporarilyDisabled = canvasTransforming,
-                canUndo = history.isNotEmpty(),
-                canRedo = redoHistory.isNotEmpty(),
-                onTool = {
-                    tool = it
-                    UiSoundPlayer.playAction(context, UiActionSound.Select)
-                },
-                onColor = {
-                    penColor = it
-                    UiSoundPlayer.playAction(context, UiActionSound.Color)
-                },
-                onPenWidth = {
-                    penWidth = it
-                    UiSoundPlayer.play(context, UiSound.SliderTick)
-                },
-                onAddImage = { imageLauncher.launch(arrayOf("image/png", "image/jpeg", "image/webp")) },
-                onAddPage = {
-                    UiSoundPlayer.playAction(context, UiActionSound.Add)
-                    commit(pages + PdfPageModel.blank())
-                    currentPageIndex = pages.lastIndex
-                    clearSelection()
-                },
-                onDuplicatePage = {
-                    val copy = pages[currentPageIndex].copy()
-                    val updated = pages.toMutableList().apply { add(currentPageIndex + 1, copy) }
-                    commit(updated)
-                    currentPageIndex = (currentPageIndex + 1).coerceAtMost(updated.lastIndex)
-                    clearSelection()
-                    UiSoundPlayer.playAction(context, UiActionSound.Add)
-                },
-                onDeletePage = {
-                    if (pages.size > 1) {
-                        val updated = pages.toMutableList().apply { removeAt(currentPageIndex) }
-                        commit(updated)
-                        currentPageIndex = currentPageIndex.coerceAtMost(updated.lastIndex)
-                    } else {
-                        replaceCurrent(PdfPageModel.blank())
-                    }
-                    clearSelection()
-                    UiSoundPlayer.play(context, UiSound.Delete)
-                },
-                onClearPageEdits = {
-                    val current = pages[currentPageIndex]
-                    replaceCurrent(current.copy(strokes = emptyList(), texts = emptyList(), images = emptyList()))
-                    clearSelection()
-                    UiSoundPlayer.play(context, UiSound.Delete)
-                },
-                onPreviousPage = { navigatePage(-1) },
-                onNextPage = { navigatePage(1) },
-                onGoToPage = {
-                    goToPageInput = (currentPageIndex + 1).toString()
-                    goToPageError = false
-                    showGoToPageDialog = true
-                    UiSoundPlayer.playAction(context, UiActionSound.Select)
-                },
-                onUndo = {
-                    undo()
-                    UiSoundPlayer.playAction(context, UiActionSound.Back)
-                },
-                onRedo = {
-                    redo()
-                    UiSoundPlayer.playAction(context, UiActionSound.Select)
-                },
-                onAiCrop = { runAiCrop() },
-                onFlipImage = {
-                    editSelectedImage { selected, _ -> PdfImageEdits.flip(selected, horizontal = true) }
-                },
-                onCropImage = {
-                    if (!imageEditBusy && !aiBusy && selectedImageId != null) {
-                        showImageCropDialog = true
+            }, supporting = {
+                // Las herramientas más usadas aparecen primero; las utilidades PDF avanzadas
+                // quedan en filas horizontales desplazables al final del mismo panel.
+                PdfFloatingToolbars(
+                    settings = settings,
+                    fontFamily = fontFamily,
+                    tool = tool,
+                    penColor = penColor,
+                    penWidth = penWidth,
+                    pageIndex = currentPageIndex,
+                    pageCount = pages.size,
+                    pageHasEdits = pages[currentPageIndex].let { it.strokes.isNotEmpty() || it.texts.isNotEmpty() || it.images.isNotEmpty() },
+                    selectedImage = pages[currentPageIndex].images.firstOrNull { it.id == selectedImageId },
+                    selectedText = pages[currentPageIndex].texts.firstOrNull { it.id == selectedTextId },
+                    selectedStroke = pages[currentPageIndex].strokes.firstOrNull { it.id == selectedStrokeId },
+                    selectionTemporarilyDisabled = canvasTransforming,
+                    canUndo = history.isNotEmpty(),
+                    canRedo = redoHistory.isNotEmpty(),
+                    onTool = {
+                        tool = it
                         UiSoundPlayer.playAction(context, UiActionSound.Select)
-                    }
-                },
-                onScaleImage = { factor ->
-                    selectedImageId?.let { id ->
-                        pages[currentPageIndex].images.firstOrNull { it.id == id }?.let { image ->
-                            val centerX = image.x + image.width / 2f
-                            val centerY = image.y + image.height / 2f
-                            val newWidth = (image.width * factor).coerceIn(0.08f, 0.92f)
-                            val newHeight = (image.height * factor).coerceIn(0.05f, 0.92f)
+                    },
+                    onColor = {
+                        penColor = it
+                        UiSoundPlayer.playAction(context, UiActionSound.Color)
+                    },
+                    onPenWidth = {
+                        penWidth = it
+                        UiSoundPlayer.play(context, UiSound.SliderTick)
+                    },
+                    onAddImage = { imageLauncher.launch(arrayOf("image/png", "image/jpeg", "image/webp")) },
+                    onAddPage = {
+                        UiSoundPlayer.playAction(context, UiActionSound.Add)
+                        commit(pages + PdfPageModel.blank())
+                        currentPageIndex = pages.lastIndex
+                        clearSelection()
+                    },
+                    onDuplicatePage = {
+                        val copy = pages[currentPageIndex].copy()
+                        val updated = pages.toMutableList().apply { add(currentPageIndex + 1, copy) }
+                        commit(updated)
+                        currentPageIndex = (currentPageIndex + 1).coerceAtMost(updated.lastIndex)
+                        clearSelection()
+                        UiSoundPlayer.playAction(context, UiActionSound.Add)
+                    },
+                    onDeletePage = {
+                        if (pages.size > 1) {
+                            val updated = pages.toMutableList().apply { removeAt(currentPageIndex) }
+                            commit(updated)
+                            currentPageIndex = currentPageIndex.coerceAtMost(updated.lastIndex)
+                        } else {
+                            replaceCurrent(PdfPageModel.blank())
+                        }
+                        clearSelection()
+                        UiSoundPlayer.play(context, UiSound.Delete)
+                    },
+                    onClearPageEdits = {
+                        val current = pages[currentPageIndex]
+                        replaceCurrent(current.copy(strokes = emptyList(), texts = emptyList(), images = emptyList()))
+                        clearSelection()
+                        UiSoundPlayer.play(context, UiSound.Delete)
+                    },
+                    onPreviousPage = { navigatePage(-1) },
+                    onNextPage = { navigatePage(1) },
+                    onGoToPage = {
+                        goToPageInput = (currentPageIndex + 1).toString()
+                        goToPageError = false
+                        showGoToPageDialog = true
+                        UiSoundPlayer.playAction(context, UiActionSound.Select)
+                    },
+                    onUndo = {
+                        undo()
+                        UiSoundPlayer.playAction(context, UiActionSound.Back)
+                    },
+                    onRedo = {
+                        redo()
+                        UiSoundPlayer.playAction(context, UiActionSound.Select)
+                    },
+                    onAiCrop = { runAiCrop() },
+                    onFlipImage = {
+                        editSelectedImage { selected, _ -> PdfImageEdits.flip(selected, horizontal = true) }
+                    },
+                    onCropImage = {
+                        if (!imageEditBusy && !aiBusy && selectedImageId != null) {
+                            showImageCropDialog = true
+                            UiSoundPlayer.playAction(context, UiActionSound.Select)
+                        }
+                    },
+                    onScaleImage = { factor ->
+                        selectedImageId?.let { id ->
+                            pages[currentPageIndex].images.firstOrNull { it.id == id }?.let { image ->
+                                val centerX = image.x + image.width / 2f
+                                val centerY = image.y + image.height / 2f
+                                val newWidth = (image.width * factor).coerceIn(0.08f, 0.92f)
+                                val newHeight = (image.height * factor).coerceIn(0.05f, 0.92f)
+                                replaceCurrent(
+                                    pages[currentPageIndex].copy(images = pages[currentPageIndex].images.map {
+                                        if (it.id == id) it.copy(
+                                            width = newWidth,
+                                            height = newHeight,
+                                            x = (centerX - newWidth / 2f).coerceIn(0f, 1f - newWidth),
+                                            y = (centerY - newHeight / 2f).coerceIn(0f, 1f - newHeight)
+                                        ) else it
+                                    })
+                                )
+                                UiSoundPlayer.play(context, UiSound.SliderTick)
+                            }
+                        }
+                    },
+                    onRotateImage = {
+                        selectedImageId?.let { id ->
                             replaceCurrent(
                                 pages[currentPageIndex].copy(images = pages[currentPageIndex].images.map {
-                                    if (it.id == id) it.copy(
-                                        width = newWidth,
-                                        height = newHeight,
-                                        x = (centerX - newWidth / 2f).coerceIn(0f, 1f - newWidth),
-                                        y = (centerY - newHeight / 2f).coerceIn(0f, 1f - newHeight)
-                                    ) else it
+                                    if (it.id == id) it.copy(rotationDegrees = (it.rotationDegrees + 90f) % 360f) else it
+                                })
+                            )
+                            UiSoundPlayer.playAction(context, UiActionSound.Move)
+                        }
+                    },
+                    onDuplicateSelected = {
+                        when {
+                            selectedImageId != null -> {
+                                val source = pages[currentPageIndex].images.firstOrNull { it.id == selectedImageId }
+                                source?.let {
+                                    val duplicate = it.copy(
+                                        id = nextElementId++,
+                                        x = (it.x + 0.035f).coerceIn(0f, 1f - it.width),
+                                        y = (it.y + 0.035f).coerceIn(0f, 1f - it.height)
+                                    )
+                                    replaceCurrent(pages[currentPageIndex].copy(images = pages[currentPageIndex].images + duplicate))
+                                    setSelection(imageId = duplicate.id)
+                                }
+                            }
+                            selectedStrokeId != null -> {
+                                val source = pages[currentPageIndex].strokes.firstOrNull { it.id == selectedStrokeId }
+                                source?.let { stroke ->
+                                    val bounds = strokeBounds(stroke)
+                                    val offsetX = bounds?.let { minOf(0.03f, 1f - it.right) } ?: 0.03f
+                                    val offsetY = bounds?.let { minOf(0.03f, 1f - it.bottom) } ?: 0.03f
+                                    val duplicate = stroke.copy(
+                                        id = nextElementId++,
+                                        points = stroke.points.map { point ->
+                                            point.copy(
+                                                x = (point.x + offsetX).coerceIn(0f, 1f),
+                                                y = (point.y + offsetY).coerceIn(0f, 1f)
+                                            )
+                                        }
+                                    )
+                                    replaceCurrent(pages[currentPageIndex].copy(strokes = pages[currentPageIndex].strokes + duplicate))
+                                    setSelection(strokeId = duplicate.id)
+                                }
+                            }
+                            selectedTextId != null -> {
+                                val source = pages[currentPageIndex].texts.firstOrNull { it.id == selectedTextId }
+                                source?.let {
+                                    val duplicate = it.copy(
+                                        id = nextElementId++,
+                                        x = (it.x + 0.03f).coerceIn(0.01f, 0.97f),
+                                        y = (it.y + 0.03f).coerceIn(0.03f, 0.97f)
+                                    )
+                                    replaceCurrent(pages[currentPageIndex].copy(texts = pages[currentPageIndex].texts + duplicate))
+                                    setSelection(textId = duplicate.id)
+                                }
+                            }
+                        }
+                        UiSoundPlayer.playAction(context, UiActionSound.Add)
+                    },
+                    onResizeSelectedText = { factor ->
+                        selectedTextId?.let { id ->
+                            replaceCurrent(
+                                pages[currentPageIndex].copy(texts = pages[currentPageIndex].texts.map {
+                                    if (it.id == id) it.copy(sizePt = (it.sizePt * factor).coerceIn(8f, 72f)) else it
                                 })
                             )
                             UiSoundPlayer.play(context, UiSound.SliderTick)
                         }
-                    }
-                },
-                onRotateImage = {
-                    selectedImageId?.let { id ->
-                        replaceCurrent(
-                            pages[currentPageIndex].copy(images = pages[currentPageIndex].images.map {
-                                if (it.id == id) it.copy(rotationDegrees = (it.rotationDegrees + 90f) % 360f) else it
-                            })
-                        )
-                        UiSoundPlayer.playAction(context, UiActionSound.Move)
-                    }
-                },
-                onDuplicateSelected = {
-                    when {
-                        selectedImageId != null -> {
-                            val source = pages[currentPageIndex].images.firstOrNull { it.id == selectedImageId }
-                            source?.let {
-                                val duplicate = it.copy(
-                                    id = nextElementId++,
-                                    x = (it.x + 0.035f).coerceIn(0f, 1f - it.width),
-                                    y = (it.y + 0.035f).coerceIn(0f, 1f - it.height)
-                                )
-                                replaceCurrent(pages[currentPageIndex].copy(images = pages[currentPageIndex].images + duplicate))
-                                setSelection(imageId = duplicate.id)
-                            }
-                        }
-                        selectedStrokeId != null -> {
-                            val source = pages[currentPageIndex].strokes.firstOrNull { it.id == selectedStrokeId }
-                            source?.let { stroke ->
-                                val bounds = strokeBounds(stroke)
-                                val offsetX = bounds?.let { minOf(0.03f, 1f - it.right) } ?: 0.03f
-                                val offsetY = bounds?.let { minOf(0.03f, 1f - it.bottom) } ?: 0.03f
-                                val duplicate = stroke.copy(
-                                    id = nextElementId++,
-                                    points = stroke.points.map { point ->
-                                        PdfPoint(
-                                            (point.x + offsetX).coerceIn(0f, 1f),
-                                            (point.y + offsetY).coerceIn(0f, 1f)
-                                        )
-                                    }
-                                )
-                                replaceCurrent(pages[currentPageIndex].copy(strokes = pages[currentPageIndex].strokes + duplicate))
-                                setSelection(strokeId = duplicate.id)
-                            }
-                        }
-                        selectedTextId != null -> {
-                            val source = pages[currentPageIndex].texts.firstOrNull { it.id == selectedTextId }
-                            source?.let {
-                                val duplicate = it.copy(
-                                    id = nextElementId++,
-                                    x = (it.x + 0.03f).coerceIn(0.01f, 0.97f),
-                                    y = (it.y + 0.03f).coerceIn(0.03f, 0.97f)
-                                )
-                                replaceCurrent(pages[currentPageIndex].copy(texts = pages[currentPageIndex].texts + duplicate))
-                                setSelection(textId = duplicate.id)
-                            }
-                        }
-                    }
-                    UiSoundPlayer.playAction(context, UiActionSound.Add)
-                },
-                onResizeSelectedText = { factor ->
-                    selectedTextId?.let { id ->
-                        replaceCurrent(
-                            pages[currentPageIndex].copy(texts = pages[currentPageIndex].texts.map {
-                                if (it.id == id) it.copy(sizePt = (it.sizePt * factor).coerceIn(8f, 72f)) else it
-                            })
-                        )
-                        UiSoundPlayer.play(context, UiSound.SliderTick)
-                    }
-                },
-                onApplyColorToSelectedText = {
-                    selectedTextId?.let { id ->
-                        replaceCurrent(
-                            pages[currentPageIndex].copy(texts = pages[currentPageIndex].texts.map {
-                                if (it.id == id) it.copy(colorArgb = penColor) else it
-                            })
-                        )
-                        UiSoundPlayer.playAction(context, UiActionSound.Color)
-                    }
-                },
-                onApplyColorToSelectedStroke = { color ->
-                    selectedStrokeId?.let { id ->
-                        replaceCurrent(
-                            pages[currentPageIndex].copy(strokes = pages[currentPageIndex].strokes.map { stroke ->
-                                if (stroke.id == id) stroke.copy(colorArgb = color) else stroke
-                            })
-                        )
-                        penColor = color
-                        UiSoundPlayer.playAction(context, UiActionSound.Color)
-                    }
-                },
-                onSetSelectedStrokeWidth = { width ->
-                    selectedStrokeId?.let { id ->
-                        replaceCurrent(
-                            pages[currentPageIndex].copy(strokes = pages[currentPageIndex].strokes.map { stroke ->
-                                if (stroke.id == id) stroke.copy(widthPt = width) else stroke
-                            })
-                        )
-                        penWidth = width
-                        UiSoundPlayer.play(context, UiSound.SliderTick)
-                    }
-                },
-                onDeleteSelected = {
-                    when {
-                        selectedImageId != null -> {
-                            val id = selectedImageId
-                            replaceCurrent(pages[currentPageIndex].copy(images = pages[currentPageIndex].images.filterNot { it.id == id }))
-                            selectedImageId = null
-                        }
-                        selectedStrokeId != null -> {
-                            val id = selectedStrokeId
-                            replaceCurrent(pages[currentPageIndex].copy(strokes = pages[currentPageIndex].strokes.filterNot { it.id == id }))
-                            selectedStrokeId = null
-                        }
-                        selectedTextId != null -> {
-                            val id = selectedTextId
-                            replaceCurrent(pages[currentPageIndex].copy(texts = pages[currentPageIndex].texts.filterNot { it.id == id }))
-                            selectedTextId = null
-                        }
-                    }
-                    UiSoundPlayer.play(context, UiSound.Delete)
-                },
-                modifier = Modifier.fillMaxSize()
-            )
-
-            if (showTestModeNotice) {
-                PdfTestModeNotice(
-                    settings = settings,
-                    fontFamily = fontFamily,
-                    onDismiss = {
-                        showTestModeNotice = false
-                        UiSoundPlayer.playAction(context, UiActionSound.Back)
                     },
-                    modifier = Modifier
-                        .align(Alignment.Center)
-                        .padding(horizontal = 10.dp)
+                    onApplyColorToSelectedText = {
+                        selectedTextId?.let { id ->
+                            replaceCurrent(
+                                pages[currentPageIndex].copy(texts = pages[currentPageIndex].texts.map {
+                                    if (it.id == id) it.copy(colorArgb = penColor) else it
+                                })
+                            )
+                            UiSoundPlayer.playAction(context, UiActionSound.Color)
+                        }
+                    },
+                    onApplyColorToSelectedStroke = { color ->
+                        selectedStrokeId?.let { id ->
+                            replaceCurrent(
+                                pages[currentPageIndex].copy(strokes = pages[currentPageIndex].strokes.map { stroke ->
+                                    if (stroke.id == id) stroke.copy(colorArgb = color) else stroke
+                                })
+                            )
+                            penColor = color
+                            UiSoundPlayer.playAction(context, UiActionSound.Color)
+                        }
+                    },
+                    onSetSelectedStrokeWidth = { width ->
+                        selectedStrokeId?.let { id ->
+                            replaceCurrent(
+                                pages[currentPageIndex].copy(strokes = pages[currentPageIndex].strokes.map { stroke ->
+                                    if (stroke.id == id) stroke.copy(widthPt = width) else stroke
+                                })
+                            )
+                            penWidth = width
+                            UiSoundPlayer.play(context, UiSound.SliderTick)
+                        }
+                    },
+                    onDeleteSelected = {
+                        when {
+                            selectedImageId != null -> {
+                                val id = selectedImageId
+                                replaceCurrent(pages[currentPageIndex].copy(images = pages[currentPageIndex].images.filterNot { it.id == id }))
+                                selectedImageId = null
+                            }
+                            selectedStrokeId != null -> {
+                                val id = selectedStrokeId
+                                replaceCurrent(pages[currentPageIndex].copy(strokes = pages[currentPageIndex].strokes.filterNot { it.id == id }))
+                                selectedStrokeId = null
+                            }
+                            selectedTextId != null -> {
+                                val id = selectedTextId
+                                replaceCurrent(pages[currentPageIndex].copy(texts = pages[currentPageIndex].texts.filterNot { it.id == id }))
+                                selectedTextId = null
+                            }
+                        }
+                        UiSoundPlayer.play(context, UiSound.Delete)
+                    },
+                    modifier = Modifier.fillMaxWidth()
                 )
-            }
+                // Acciones rápidas: búsqueda, firma, marcador y explorador de páginas.
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    WorkspaceToolIconButton(Icons.Default.Search, stringResource(R.string.workspace_find), onClick = { showSearch = true })
+                    WorkspaceToolIconButton(Icons.Default.Draw, stringResource(R.string.workspace_signature), onClick = { showSignatures = true })
+                    WorkspaceToolIconButton(if (page.bookmarked) Icons.Default.Bookmark else Icons.Default.BookmarkBorder,
+                        stringResource(if (page.bookmarked) R.string.workspace_unbookmark else R.string.workspace_bookmark),
+                        onClick = { replaceCurrent(page.copy(bookmarked = !page.bookmarked)) })
+                    WorkspaceToolIconButton(Icons.Default.PictureAsPdf, stringResource(R.string.workspace_pages), onClick = { showPageBrowser = !showPageBrowser })
+                }
+                if (showPageBrowser) PdfPageBrowser(pages, sourcePdfUri, currentPageIndex) { currentPageIndex = it; clearSelection() }
+                Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
+                    Text(stringResource(R.string.workspace_stylus_only), Modifier.weight(1f)); Switch(stylusOnly, { stylusOnly = it }, colors = workspaceToolSwitchColors())
+                }
+                // Utilidades de PDF: siguen disponibles sin ocupar varias filas del panel.
+                com.example.mynotes.studio.StudioPdfTools(projectId,pages,sourcePdfUri,currentPageIndex,studioTool,onStudioConsumed,onPage={currentPageIndex=it;clearSelection()},onReplace=::commit,onSource={uri,models->sourcePdfUri=uri;commit(models);history=emptyList();redoHistory=emptyList();markDirty()})
+                com.example.mynotes.studio.PlusPdfTools(projectId,projectName,pages,sourcePdfUri,currentPageIndex,studioTool,onStudioConsumed)
+            })
         }
     }
 }
@@ -1151,20 +1237,20 @@ private fun PdfCanvasOpenButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val canvasBackground = MaterialTheme.colorScheme.surface
+    val canvasBackground = MaterialTheme.colorScheme.surfaceContainerLow
     val colors = rememberAdaptiveUiButtonColors(
         MaterialTheme.colorScheme.surfaceContainerHigh, canvasBackground, settings.textColor, 7.0f, 1.35f
     )
     val fontScale = (settings.fontSize / 16f).coerceIn(0.82f, 1.20f)
-    val radius = settings.noteCardCornerRadius.coerceIn(18f, 30f).dp
 
     Surface(
-        modifier = modifier.clickable(onClick = onClick),
+        modifier = modifier.clickable(onClick = { UiSoundPlayer.runWithFallbackClick(UiActionSound.Open, onClick) }),
         color = colors.container,
         contentColor = colors.content,
-        shape = RoundedCornerShape(radius),
-        tonalElevation = 5.dp,
-        shadowElevation = 8.dp
+        shape = RoundedCornerShape(14.dp),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outlineVariant),
+        tonalElevation = 0.dp,
+        shadowElevation = 0.dp
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 22.dp, vertical = 13.dp),
@@ -1185,107 +1271,81 @@ private fun PdfTestModeNotice(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val base = MaterialTheme.colorScheme.surfaceContainerHigh
-    val alpha = (0.90f + settings.surfacePanelIntensity.coerceIn(0f, 100f) / 100f * 0.08f)
-        .coerceIn(0.90f, 0.98f)
-    val container = base.copy(alpha = alpha)
-    val (titleColor, bodyColor) = rememberUiTextColors(settings.textColor, base)
-    val closeColors = rememberAdaptiveUiButtonColors(
-        MaterialTheme.colorScheme.primary, base, settings.textColor, 7.0f, 1.35f
+    var info by remember { mutableStateOf(false) }
+    if (info) AlertDialog(
+        onDismissRequest = { info = false },
+        properties = DialogProperties(decorFitsSystemWindows = false),
+        title = {
+            HideDialogNavigationBar(preventFocusFlash = true)
+            Text(stringResource(R.string.pdf_test_mode_title))
+        },
+        text = { Text(stringResource(R.string.pdf_test_mode_description)) },
+        confirmButton = {
+            TextButton(onClick = {
+                info = false
+                UiSoundPlayer.playFallbackClick()
+            }) { Text(stringResource(R.string.workspace_done)) }
+        }
     )
-    val fontScale = (settings.fontSize / 16f).coerceIn(0.82f, 1.20f)
-    val radius = settings.noteCardCornerRadius.coerceIn(18f, 30f).dp
-
-    Surface(
-        modifier = modifier
-            .fillMaxWidth(0.92f)
-            .widthIn(max = 410.dp),
-        color = container,
-        shape = RoundedCornerShape(radius),
-        tonalElevation = 8.dp,
-        shadowElevation = 12.dp
-    ) {
-        Row(
-            modifier = Modifier.padding(start = 16.dp, top = 13.dp, bottom = 13.dp, end = 9.dp),
-            verticalAlignment = Alignment.Top
-        ) {
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(7.dp)
-            ) {
-                Text(
-                    text = stringResource(R.string.pdf_test_mode_title),
-                    color = titleColor,
-                    fontFamily = fontFamily,
-                    fontWeight = FontWeight.Bold,
-                    fontSize = (17f * fontScale).coerceIn(15f, 21f).sp,
-                    lineHeight = (21f * fontScale).coerceIn(19f, 25f).sp
-                )
-                Text(
-                    text = stringResource(R.string.pdf_test_mode_description),
-                    color = bodyColor,
-                    fontFamily = fontFamily,
-                    fontSize = (14f * fontScale).coerceIn(12.5f, 17f).sp,
-                    lineHeight = (20f * fontScale).coerceIn(18f, 24f).sp
-                )
-            }
-            Surface(
-                modifier = Modifier
-                    .size(34.dp)
-                    .clickable(onClick = onDismiss),
-                color = closeColors.container,
-                contentColor = closeColors.content,
-                shape = CircleShape
-            ) {
-                Box(contentAlignment = Alignment.Center) {
-                    Icon(
-                        imageVector = Icons.Default.Close,
-                        contentDescription = stringResource(R.string.pdf_test_mode_close),
-                        modifier = Modifier.size(settings.iconSize.coerceIn(16f, 21f).dp)
-                    )
-                }
-            }
+    Surface(modifier.fillMaxWidth(), shape = MaterialTheme.shapes.medium, color = MaterialTheme.colorScheme.surfaceContainerHigh) {
+        Row(Modifier.padding(start = 12.dp), verticalAlignment = Alignment.CenterVertically) {
+            Text(stringResource(R.string.workspace_beta), Modifier.weight(1f), style = MaterialTheme.typography.labelMedium, maxLines = 2)
+            AppIconButton(Icons.Default.Info, stringResource(R.string.workspace_info), onClick = { info = true })
+            AppIconButton(Icons.Default.Close, stringResource(R.string.pdf_test_mode_close), onClick = onDismiss)
         }
     }
 }
 
 @Composable
 private fun PdfTopBar(
-    settings: AppSettings,
     fontFamily: FontFamily,
+    textColorMode: String,
     primaryText: Color,
     secondaryText: Color,
     onBack: () -> Unit,
     onSave: () -> Unit
 ) {
-    val exportColors = rememberAdaptiveUiButtonColors(
-        MaterialTheme.colorScheme.primary, MaterialTheme.colorScheme.background, settings.textColor, 7.0f, 1.35f
-    )
+    val topBarBackground = MaterialTheme.colorScheme.background
+    val exportColors = rememberAdaptiveUiButtonColors(MaterialTheme.colorScheme.primary, topBarBackground, textColorMode)
+    val exportContainer = exportColors.container
+    val exportContent = exportColors.content
+    BoxWithConstraints(Modifier.fillMaxWidth()) {
     Row(
         modifier = Modifier.fillMaxWidth().padding(horizontal = 12.dp, vertical = 8.dp),
         verticalAlignment = Alignment.Top
     ) {
-        AppIconButton(Icons.Default.ArrowBack, stringResource(R.string.pdf_back), onClick = onBack, tint = primaryText)
+        AppCircularIconButton(Icons.Default.ArrowBack, stringResource(R.string.pdf_back), onClick = onBack,
+            containerColor = MaterialTheme.colorScheme.surfaceContainerHigh, tint = primaryText)
         Column(modifier = Modifier.weight(1f)) {
             Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                 Text(
                     text = stringResource(R.string.pdf_studio),
                     modifier = Modifier.weight(1f).padding(end = 8.dp),
                     color = primaryText, fontFamily = fontFamily,
-                    fontWeight = FontWeight.Bold, fontSize = 25.sp
+                    fontWeight = FontWeight.Bold, fontSize = 25.sp,maxLines=2,overflow=androidx.compose.ui.text.style.TextOverflow.Ellipsis
                 )
                 Button(
-                    onClick = onSave,
-                    shape = RoundedCornerShape(settings.noteCardCornerRadius.coerceIn(16f, 24f).dp),
+                    onClick = { UiSoundPlayer.runWithFallbackClick(UiActionSound.Save, onSave) },
+                    modifier = Modifier.heightIn(min = 48.dp).widthIn(min = 96.dp),
+                    shape = RoundedCornerShape(14.dp),
                     colors = ButtonDefaults.buttonColors(
-                        containerColor = exportColors.container,
-                        contentColor = exportColors.content
-                    )
+                        containerColor = exportContainer,
+                        contentColor = exportContent,
+                        disabledContainerColor = compositeUiColor(
+                            primaryText.copy(alpha = 0.12f), topBarBackground
+                        ),
+                        disabledContentColor = primaryText.copy(alpha = 0.50f)
+                    ),
+                    contentPadding = PaddingValues(horizontal = 18.dp, vertical = 0.dp)
                 ) {
-                    AppIconLabel(Icons.Default.Save, stringResource(R.string.pdf_export),
-                        iconModifier = Modifier.size(settings.iconSize.coerceIn(16f, 21f).dp), tint = exportColors.content, gap = 6.dp,
-                        fontFamily = fontFamily, color = exportColors.content)
+                    Text(
+                        text = stringResource(R.string.pdf_export),
+                        fontFamily = fontFamily,
+                        fontWeight = FontWeight.Bold,
+                        maxLines = 1
+                    )
                 }
+
             }
             Text(
                 text = stringResource(R.string.pdf_studio_subtitle),
@@ -1294,6 +1354,7 @@ private fun PdfTopBar(
                 softWrap = true
             )
         }
+    }
     }
 }
 
@@ -1366,16 +1427,28 @@ private fun selectionIdsAt(page: PdfPageModel, offset: Offset, size: IntSize): T
     return Triple(image?.id, text?.id, stroke?.id)
 }
 
+private suspend fun androidx.compose.ui.input.pointer.AwaitPointerEventScope.awaitPdfDrawingPointer(stylusOnly: Boolean): androidx.compose.ui.input.pointer.PointerInputChange? {
+    val first = awaitFirstDown(requireUnconsumed = false)
+    if (!stylusOnly || first.type == androidx.compose.ui.input.pointer.PointerType.Stylus || first.type == androidx.compose.ui.input.pointer.PointerType.Eraser) return first
+    while (true) {
+        val event = awaitPointerEvent()
+        event.changes.firstOrNull { it.pressed && (it.type == androidx.compose.ui.input.pointer.PointerType.Stylus || it.type == androidx.compose.ui.input.pointer.PointerType.Eraser) }?.let { return it }
+        if (event.changes.none { it.pressed }) return null
+    }
+}
+
 @Composable
 private fun PdfPageCanvas(
     page: PdfPageModel,
     pageKey: Int,
+    stylusOnly: Boolean,
     tool: PdfEditorTool,
     penColor: Int,
     penWidth: Float,
     selectedImageId: Long?,
     selectedTextId: Long?,
     selectedStrokeId: Long?,
+    onEditGesture: (Int) -> Unit,
     onStrokeFinished: (PdfStroke) -> Unit,
     onEraseAt: (PdfPoint) -> Unit,
     onTextTap: (PdfPoint) -> Unit,
@@ -1385,7 +1458,8 @@ private fun PdfPageCanvas(
     onMoveText: (Long, Float, Float) -> Unit,
     onMoveStroke: (Long, Float, Float) -> Unit,
     onResizeStroke: (Long, Float, Float) -> Unit,
-    onTransformingChanged: (Boolean) -> Unit
+    onTransformingChanged: (Boolean) -> Unit,
+    backgroundColor: Color = Color.White
 ) {
     var transientPoints by remember(tool, pageKey) { mutableStateOf<List<Offset>>(emptyList()) }
     var transientShapeStart by remember(tool, pageKey) { mutableStateOf<Offset?>(null) }
@@ -1417,9 +1491,10 @@ private fun PdfPageCanvas(
                         var event = awaitPointerEvent(PointerEventPass.Initial)
                         while (event.changes.any { it.pressed }) {
                             val pressed = event.changes.filter { it.pressed }
-                            if (pressed.size >= 2) {
+                            if (pressed.size >= 2 && pressed.all { it.type == androidx.compose.ui.input.pointer.PointerType.Touch }) {
                                 if (!hadMultiTouch) {
                                     hadMultiTouch = true
+                                    onEditGesture(2)
                                     transformingCanvas = true
                                     onTransformingChanged(true)
                                     onSelect(null, null, null)
@@ -1478,7 +1553,7 @@ private fun PdfPageCanvas(
                 translationX = panOffset.x
                 translationY = panOffset.y
             }
-            .background(Color.White, RoundedCornerShape(22.dp))
+            .background(backgroundColor, RoundedCornerShape(22.dp))
             .border(1.dp, MaterialTheme.colorScheme.outline.copy(alpha = 0.7f), RoundedCornerShape(22.dp))
             .pointerInput(tool, pageKey, transformingCanvas) {
                 if (tool == PdfEditorTool.SELECT && !transformingCanvas) {
@@ -1488,11 +1563,13 @@ private fun PdfPageCanvas(
                     }
                 }
             }
-            .pointerInput(tool, pageKey, penColor, penWidth, transformingCanvas) {
+            .pointerInput(tool, pageKey, penColor, penWidth, transformingCanvas, stylusOnly) {
                 if (transformingCanvas) return@pointerInput
                 when (tool) {
-                    PdfEditorTool.TEXT -> detectTapGestures { offset ->
-                        onTextTap(PdfPoint(offset.x / size.width, offset.y / size.height))
+                    PdfEditorTool.TEXT -> awaitEachGesture {
+                        val down = awaitPdfDrawingPointer(stylusOnly) ?: return@awaitEachGesture
+                        val up = waitForUpOrCancellation()
+                        if (up != null) { up.consume(); onTextTap(PdfPoint(down.position.x / size.width, down.position.y / size.height)) }
                     }
                     PdfEditorTool.SELECT -> {
                         var activeImageId: Long? = null
@@ -1502,6 +1579,7 @@ private fun PdfPageCanvas(
                         var resizingStrokeId: Long? = null
                         detectDragGestures(
                             onDragStart = { offset ->
+                                onEditGesture(0)
                                 val livePage = latestPage
                                 val selectedImage = livePage.images.firstOrNull { it.id == latestSelectedImageId }
                                 val selectedStroke = livePage.strokes.firstOrNull { it.id == latestSelectedStrokeId }
@@ -1569,72 +1647,68 @@ private fun PdfPageCanvas(
                                 } ?: activeStrokeId?.let { id ->
                                     onMoveStroke(id, dragAmount.x / size.width, dragAmount.y / size.height)
                                 }
-                            }
+                            },
+                            onDragEnd = { onEditGesture(1) },
+                            onDragCancel = { onEditGesture(2) }
                         )
                     }
-                    PdfEditorTool.PEN, PdfEditorTool.HIGHLIGHTER -> detectDragGestures(
-                        onDragStart = { transientPoints = listOf(it) },
-                        onDrag = { change, _ ->
-                            change.consume()
-                            transientPoints = transientPoints + change.position
-                        },
-                        onDragEnd = {
-                            if (transientPoints.size >= 2) {
-                                onStrokeFinished(
-                                    PdfStroke(
-                                        points = transientPoints.map { PdfPoint(it.x / size.width, it.y / size.height) },
-                                        colorArgb = if (tool == PdfEditorTool.HIGHLIGHTER) highlighterColor else penColor,
-                                        widthPt = if (tool == PdfEditorTool.HIGHLIGHTER) highlighterWidth else penWidth
-                                    )
-                                )
-                            }
-                            transientPoints = emptyList()
-                        },
-                        onDragCancel = { transientPoints = emptyList() }
-                    )
-                    PdfEditorTool.LINE, PdfEditorTool.RECTANGLE, PdfEditorTool.ELLIPSE -> {
-                        var dragStart: Offset? = null
-                        var dragEnd: Offset? = null
-                        detectDragGestures(
-                            onDragStart = {
-                                dragStart = it
-                                dragEnd = it
-                                transientShapeStart = it
-                                transientShapeEnd = it
-                            },
-                            onDrag = { change, _ ->
+                    PdfEditorTool.PEN, PdfEditorTool.HIGHLIGHTER -> awaitEachGesture {
+                        val down = awaitPdfDrawingPointer(stylusOnly) ?: return@awaitEachGesture
+                        var cancelled = false
+                        val samples = mutableListOf(PdfPoint(down.position.x / size.width, down.position.y / size.height,
+                            if (down.type == androidx.compose.ui.input.pointer.PointerType.Stylus && tool == PdfEditorTool.PEN) down.pressure.coerceIn(.15f, 2f) else 1f))
+                        transientPoints = listOf(down.position)
+                        try {
+                            down.consume()
+                            while (true) {
+                                val event = awaitPointerEvent()
+                                val change = event.changes.firstOrNull { it.id == down.id } ?: break
+                                if ((down.type != androidx.compose.ui.input.pointer.PointerType.Stylus && down.type != androidx.compose.ui.input.pointer.PointerType.Eraser && event.changes.count { it.pressed } > 1) || change.isConsumed) { cancelled = true; break }
+                                if (!change.pressed) break
+                                samples += PdfPoint((change.position.x / size.width).coerceIn(0f, 1f), (change.position.y / size.height).coerceIn(0f, 1f),
+                                    if (change.type == androidx.compose.ui.input.pointer.PointerType.Stylus && tool == PdfEditorTool.PEN) change.pressure.coerceIn(.15f, 2f) else 1f)
+                                transientPoints = transientPoints + change.position
                                 change.consume()
-                                dragEnd = change.position
-                                transientShapeEnd = change.position
-                            },
-                            onDragEnd = {
-                                val startPoint = dragStart
-                                val endPoint = dragEnd
-                                if (startPoint != null && endPoint != null) {
-                                    buildShapeStroke(
-                                        tool = tool,
-                                        start = PdfPoint(startPoint.x / size.width, startPoint.y / size.height),
-                                        end = PdfPoint(endPoint.x / size.width, endPoint.y / size.height),
-                                        colorArgb = penColor,
-                                        widthPt = penWidth
-                                    )?.let(onStrokeFinished)
-                                }
-                                transientShapeStart = null
-                                transientShapeEnd = null
-                            },
-                            onDragCancel = {
-                                transientShapeStart = null
-                                transientShapeEnd = null
                             }
-                        )
+                            if (!cancelled) onStrokeFinished(PdfStroke(points = samples, colorArgb = if (tool == PdfEditorTool.HIGHLIGHTER) highlighterColor else penColor,
+                                widthPt = if (tool == PdfEditorTool.HIGHLIGHTER) highlighterWidth else penWidth))
+                        } finally { transientPoints = emptyList() }
                     }
-                    PdfEditorTool.ERASER -> detectDragGestures(
-                        onDragStart = { onEraseAt(PdfPoint(it.x / size.width, it.y / size.height)) },
-                        onDrag = { change, _ ->
-                            change.consume()
-                            onEraseAt(PdfPoint(change.position.x / size.width, change.position.y / size.height))
-                        }
-                    )
+                    PdfEditorTool.LINE, PdfEditorTool.RECTANGLE, PdfEditorTool.ELLIPSE -> awaitEachGesture {
+                        val down = awaitPdfDrawingPointer(stylusOnly) ?: return@awaitEachGesture
+                        val start = down.position
+                        var end = start
+                        var completed = false
+                        transientShapeStart = start; transientShapeEnd = start
+                        try {
+                            down.consume()
+                            while (true) {
+                                val event = awaitPointerEvent()
+                                val change = event.changes.firstOrNull { it.id == down.id } ?: break
+                                if (change.isConsumed || (down.type == androidx.compose.ui.input.pointer.PointerType.Touch && event.changes.count { it.pressed } > 1)) break
+                                if (!change.pressed) { completed = true; break }
+                                end = Offset(change.position.x.coerceIn(0f, size.width.toFloat()), change.position.y.coerceIn(0f, size.height.toFloat()))
+                                transientShapeEnd = end; change.consume()
+                            }
+                            if (completed) buildShapeStroke(tool, PdfPoint(start.x / size.width, start.y / size.height),
+                                PdfPoint(end.x / size.width, end.y / size.height), penColor, penWidth)?.let(onStrokeFinished)
+                        } finally { transientShapeStart = null; transientShapeEnd = null }
+                    }
+                    PdfEditorTool.ERASER -> awaitEachGesture {
+                        val down = awaitPdfDrawingPointer(stylusOnly) ?: return@awaitEachGesture
+                        var completed = false
+                        onEditGesture(0)
+                        try {
+                            onEraseAt(PdfPoint(down.position.x / size.width, down.position.y / size.height)); down.consume()
+                            while (true) {
+                                val event = awaitPointerEvent()
+                                val change = event.changes.firstOrNull { it.id == down.id } ?: break
+                                if (change.isConsumed || (down.type == androidx.compose.ui.input.pointer.PointerType.Touch && event.changes.count { it.pressed } > 1)) break
+                                if (!change.pressed) { completed = true; break }
+                                onEraseAt(PdfPoint(change.position.x / size.width, change.position.y / size.height)); change.consume()
+                            }
+                        } finally { onEditGesture(if (completed) 1 else 2) }
+                    }
                     PdfEditorTool.PAGE -> Unit
                 }
             }
@@ -1644,17 +1718,17 @@ private fun PdfPageCanvas(
         }
 
         page.strokes.forEach { stroke ->
-            if (stroke.points.size < 2) return@forEach
-            val path = Path().apply {
-                val first = stroke.points.first()
-                moveTo(first.x * size.width, first.y * size.height)
-                stroke.points.drop(1).forEach { lineTo(it.x * size.width, it.y * size.height) }
+            val widthPx = stroke.widthPt * size.width / page.widthPt
+            if (stroke.points.size == 1) stroke.points.first().let { drawCircle(Color(stroke.colorArgb), widthPx * it.pressure / 2, Offset(it.x * size.width, it.y * size.height)) }
+            else if (stroke.points.all { it.pressure == 1f }) {
+                val path = Path().apply {
+                    stroke.points.firstOrNull()?.let { moveTo(it.x * size.width, it.y * size.height) }
+                    stroke.points.drop(1).forEach { lineTo(it.x * size.width, it.y * size.height) }
+                }
+                drawPath(path, Color(stroke.colorArgb), style = Stroke(width = widthPx, cap = androidx.compose.ui.graphics.StrokeCap.Round))
+            } else stroke.points.zipWithNext().forEach { (a, b) ->
+                drawLine(Color(stroke.colorArgb), Offset(a.x * size.width, a.y * size.height), Offset(b.x * size.width, b.y * size.height), widthPx * (a.pressure + b.pressure) / 2, androidx.compose.ui.graphics.StrokeCap.Round)
             }
-            drawPath(
-                path = path,
-                color = Color(stroke.colorArgb),
-                style = Stroke(width = stroke.widthPt * size.width / page.widthPt, cap = androidx.compose.ui.graphics.StrokeCap.Round)
-            )
 
             if (stroke.id == selectedStrokeId) {
                 strokeBounds(stroke)?.let { bounds ->
@@ -1818,9 +1892,11 @@ private data class PdfToolStyle(
     val selectedContent: Color,
     val iconSize: Dp,
     val labelSize: TextUnit,
-    val radius: Dp
+    val radius: Dp,
+    val selectedOutline: Color? = null
 )
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun PdfFloatingToolbars(
     settings: AppSettings,
@@ -1830,6 +1906,7 @@ private fun PdfFloatingToolbars(
     penWidth: Float,
     pageIndex: Int,
     pageCount: Int,
+    pageHasEdits: Boolean,
     selectedImage: PdfImageElement?,
     selectedText: PdfTextElement?,
     selectedStroke: PdfStroke?,
@@ -1862,17 +1939,7 @@ private fun PdfFloatingToolbars(
     onDeleteSelected: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val panelBase = MaterialTheme.colorScheme.surfaceContainer
-    val panelAlpha = (0.84f + settings.surfacePanelIntensity.coerceIn(0f, 100f) / 100f * 0.14f)
-        .coerceIn(0.84f, 0.98f)
-    val panelColor = panelBase.copy(alpha = panelAlpha)
-    val (primaryText, secondaryText) = rememberUiTextColors(settings.textColor, panelBase)
-    val idleColors = rememberAdaptiveUiButtonColors(
-        MaterialTheme.colorScheme.surfaceContainerHigh, panelBase, settings.textColor, 7.0f, 1.30f
-    )
-    val selectedColors = rememberAdaptiveUiButtonColors(
-        MaterialTheme.colorScheme.primary, panelBase, settings.textColor, 7.0f, 1.40f
-    )
+    val toolColors = MaterialTheme.colorScheme
     val fontScale = (settings.fontSize / 16f).coerceIn(0.82f, 1.24f)
     val labelSize = (10.5f * fontScale).coerceIn(9f, 13f).sp
     val pageSize = (12f * fontScale).coerceIn(10.5f, 15f).sp
@@ -1884,10 +1951,10 @@ private fun PdfFloatingToolbars(
         else -> 18.dp
     }
     val toolStyle = PdfToolStyle(
-        fontFamily, idleColors.container, idleColors.content, selectedColors.container, selectedColors.content,
-        iconSize, labelSize, chipRadius
+        fontFamily, toolColors.surfaceContainerHigh, toolColors.onSurface,
+        toolColors.primaryContainer, toolColors.onPrimaryContainer,
+        iconSize, labelSize, chipRadius, selectedOutline = toolColors.outline
     )
-    val barRadius = settings.noteCardCornerRadius.coerceIn(18f, 30f).dp
     val drawingTool = tool in setOf(
         PdfEditorTool.PEN,
         PdfEditorTool.HIGHLIGHTER,
@@ -1905,187 +1972,123 @@ private fun PdfFloatingToolbars(
         tool == PdfEditorTool.TEXT -> "text"
         else -> "none"
     }
-    val motionDuration = AppMotion.duration(
-        AppMotion.NORMAL,
-        settings.animationsEnabled,
-        settings.animationSpeed * if (settings.performanceMode == "performance") 1.2f else 1f
-    )
-    val motionEasing = AppMotion.easing(settings.animationEasing)
-    val motionIntensity = settings.animationIntensity.coerceIn(0.45f, 1.5f)
-    val motionStyle = AppMotion.normalizeStyle(settings.animationStyle)
+    val toolMotionStyle = rememberMotionStyle(contextMode, settings.animationStyle)
 
-    Box(modifier = modifier.fillMaxSize()) {
-        FloatingBar(
-            widthFraction = 0.72f,
-            verticalPadding = 5.dp,
-            panelColor = panelColor,
-            radius = barRadius,
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .padding(top = 10.dp)
+    var group by remember { mutableIntStateOf(0) }
+    WorkspaceToolSection(modifier.fillMaxWidth()) {
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp, vertical = 6.dp),
+            verticalArrangement = Arrangement.spacedBy(5.dp)
         ) {
             Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+                modifier = Modifier.fillMaxWidth().horizontalScroll(rememberScrollState()),
+                horizontalArrangement = Arrangement.spacedBy(5.dp)
             ) {
-                Row(horizontalArrangement = Arrangement.spacedBy(3.dp)) {
-                    SmallIconCircle(
-                        icon = Icons.Default.Undo,
-                        description = stringResource(R.string.pdf_undo),
-                        enabled = canUndo,
-                        contentColor = idleColors.content,
-                        disabledColor = idleColors.content.copy(alpha = 0.38f),
-                        containerColor = idleColors.container,
-                        iconSize = iconSize,
-                        onClick = onUndo
-                    )
-                    SmallIconCircle(
-                        icon = Icons.Default.Redo,
-                        description = stringResource(R.string.pdf_redo),
-                        enabled = canRedo,
-                        contentColor = idleColors.content,
-                        disabledColor = idleColors.content.copy(alpha = 0.38f),
-                        containerColor = idleColors.container,
-                        iconSize = iconSize,
-                        onClick = onRedo
-                    )
-                }
-                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(1.dp)) {
-                    PageArrowButton("‹", pageIndex > 0, primaryText, secondaryText, onPreviousPage)
-                    Surface(
-                        modifier = Modifier.clickable(onClick = onGoToPage),
-                        color = idleColors.container,
-                        contentColor = idleColors.content,
-                        shape = RoundedCornerShape(chipRadius)
-                    ) {
-                        Row(
-                            modifier = Modifier.padding(horizontal = 9.dp, vertical = 5.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                            horizontalArrangement = Arrangement.spacedBy(4.dp)
-                        ) {
-                            Text("#", fontFamily = fontFamily, fontWeight = FontWeight.Bold, fontSize = pageSize)
-                            Text(
-                                stringResource(R.string.pdf_page_counter, pageIndex + 1, pageCount),
-                                fontFamily = fontFamily,
-                                fontWeight = FontWeight.SemiBold,
-                                fontSize = pageSize
-                            )
+                listOf(R.string.workspace_annotate, R.string.workspace_insert, R.string.workspace_pages).forEachIndexed { index, label ->
+                    WorkspaceToolFilterChip(group == index, onClick = {
+                        UiSoundPlayer.runWithFallbackClick {
+                            group = index
+                            if (index == 2) onTool(PdfEditorTool.PAGE)
+                            else if (tool == PdfEditorTool.PAGE) onTool(PdfEditorTool.SELECT)
                         }
-                    }
-                    PageArrowButton("›", pageIndex < pageCount - 1, primaryText, secondaryText, onNextPage)
+                    }, label = { Text(stringResource(label)) })
                 }
             }
-        }
-
-        FloatingBar(
-            widthFraction = 0.96f,
-            verticalPadding = 7.dp,
-            panelColor = panelColor,
-            radius = barRadius,
-            modifier = Modifier
-                .align(Alignment.BottomCenter)
-                .padding(bottom = 4.dp)
-        ) {
-            Column(verticalArrangement = Arrangement.spacedBy(6.dp)) {
-                PdfToolRow(6.dp) {
-                    PdfToolChip(stringResource(R.string.pdf_select), Icons.Default.SelectAll,
-                        tool == PdfEditorTool.SELECT && !selectionTemporarilyDisabled, toolStyle) { if (!selectionTemporarilyDisabled) onTool(PdfEditorTool.SELECT) }
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(5.dp), verticalArrangement = Arrangement.spacedBy(4.dp)) {
+                if (group == 0) {
+                    PdfToolChip(stringResource(R.string.pdf_select), Icons.Default.SelectAll, tool == PdfEditorTool.SELECT && !selectionTemporarilyDisabled, toolStyle) { if (!selectionTemporarilyDisabled) onTool(PdfEditorTool.SELECT) }
                     PdfToolChip(stringResource(R.string.pdf_draw), Icons.Default.Brush, tool == PdfEditorTool.PEN, toolStyle) { onTool(PdfEditorTool.PEN) }
                     PdfToolChip(stringResource(R.string.pdf_highlighter), Icons.Default.Highlight, tool == PdfEditorTool.HIGHLIGHTER, toolStyle) { onTool(PdfEditorTool.HIGHLIGHTER) }
                     PdfToolChip(stringResource(R.string.pdf_line), Icons.Default.HorizontalRule, tool == PdfEditorTool.LINE, toolStyle) { onTool(PdfEditorTool.LINE) }
                     PdfToolChip(stringResource(R.string.pdf_rectangle), Icons.Default.CropSquare, tool == PdfEditorTool.RECTANGLE, toolStyle) { onTool(PdfEditorTool.RECTANGLE) }
                     PdfToolChip(stringResource(R.string.pdf_ellipse), Icons.Default.RadioButtonUnchecked, tool == PdfEditorTool.ELLIPSE, toolStyle) { onTool(PdfEditorTool.ELLIPSE) }
-                    PdfToolChip(stringResource(R.string.pdf_text), Icons.Default.TextFields, tool == PdfEditorTool.TEXT, toolStyle) { onTool(PdfEditorTool.TEXT) }
                     PdfToolChip(stringResource(R.string.pdf_eraser), Icons.Default.Delete, tool == PdfEditorTool.ERASER, toolStyle) { onTool(PdfEditorTool.ERASER) }
+                } else if (group == 1) {
+                    PdfToolChip(stringResource(R.string.pdf_text), Icons.Default.TextFields, tool == PdfEditorTool.TEXT, toolStyle) { onTool(PdfEditorTool.TEXT) }
                     PdfToolChip(stringResource(R.string.pdf_add_image), Icons.Default.Image, false, toolStyle, onAddImage)
-                    PdfToolChip(stringResource(R.string.pdf_pages), Icons.Default.PictureAsPdf, tool == PdfEditorTool.PAGE, toolStyle) { onTool(PdfEditorTool.PAGE) }
                 }
-
-                AnimatedContent(
-                    targetState = contextMode,
-                    transitionSpec = {
-                        if (!settings.animationsEnabled || motionDuration <= 0) {
-                            EnterTransition.None togetherWith ExitTransition.None
-                        } else if (motionStyle.startsWith("slide") || motionStyle == "axis_y" || motionStyle == "elastic_slide") {
-                            (slideInVertically(
-                                initialOffsetY = { (it * 0.20f * motionIntensity).roundToInt() },
-                                animationSpec = tween(motionDuration, easing = motionEasing)
-                            ) + fadeIn(animationSpec = tween(motionDuration, easing = motionEasing))) togetherWith
-                                (slideOutVertically(
-                                    targetOffsetY = { (it * 0.12f * motionIntensity).roundToInt() },
-                                    animationSpec = tween((motionDuration * 0.75f).roundToInt().coerceAtLeast(1), easing = motionEasing)
-                                ) + fadeOut(animationSpec = tween((motionDuration * 0.75f).roundToInt().coerceAtLeast(1), easing = motionEasing)))
-                        } else if (motionStyle == "fade" || motionStyle == "soft_reveal" || motionStyle == "subtle") {
-                            fadeIn(animationSpec = tween(motionDuration, easing = motionEasing)) togetherWith
-                                fadeOut(animationSpec = tween((motionDuration * 0.75f).roundToInt().coerceAtLeast(1), easing = motionEasing))
-                        } else {
-                            (fadeIn(animationSpec = tween(motionDuration, easing = motionEasing)) +
-                                scaleIn(
-                                    initialScale = (1f - 0.045f * motionIntensity).coerceIn(0.90f, 0.98f),
-                                    animationSpec = tween(motionDuration, easing = motionEasing)
-                                )) togetherWith
-                                (fadeOut(animationSpec = tween((motionDuration * 0.75f).roundToInt().coerceAtLeast(1), easing = motionEasing)) +
-                                    scaleOut(
-                                        targetScale = 0.98f,
-                                        animationSpec = tween((motionDuration * 0.75f).roundToInt().coerceAtLeast(1), easing = motionEasing)
-                                    ))
-                        }
-                    },
-                    label = "pdfToolContext"
-                ) { mode ->
-                    when (mode) {
-                        "stroke", "text" -> {
-                            PdfToolRow(7.dp) {
-                                PdfPaletteChoices(penColor, onColor)
-                                if (mode == "stroke") {
-                                    ToolChoiceButton(stringResource(R.string.pdf_thin), penWidth == 2f, toolStyle) { onPenWidth(2f) }
-                                    ToolChoiceButton(stringResource(R.string.pdf_medium), penWidth == 5f, toolStyle) { onPenWidth(5f) }
-                                    ToolChoiceButton(stringResource(R.string.pdf_thick), penWidth == 10f, toolStyle) { onPenWidth(10f) }
-                                }
+            }
+            AnimatedContent(
+                targetState = contextMode,
+                transitionSpec = {
+                    appMotionTransform(
+                        animationsEnabled = settings.animationsEnabled,
+                        animationSpeed = settings.animationSpeed,
+                        animationStyle = toolMotionStyle,
+                        animationEasing = settings.animationEasing,
+                        animationIntensity = settings.animationIntensity,
+                        performanceMode = settings.performanceMode
+                    )
+                },
+                label = "pdfToolContext"
+            ) { mode ->
+                when (mode) {
+                    "stroke", "text" -> {
+                        PdfToolRow(7.dp) {
+                            PdfPaletteChoices(penColor, onColor)
+                            if (mode == "stroke") {
+                                ToolChoiceButton(stringResource(R.string.pdf_thin), penWidth == 2f, toolStyle) { onPenWidth(2f) }
+                                ToolChoiceButton(stringResource(R.string.pdf_medium), penWidth == 5f, toolStyle) { onPenWidth(5f) }
+                                ToolChoiceButton(stringResource(R.string.pdf_thick), penWidth == 10f, toolStyle) { onPenWidth(10f) }
                             }
                         }
-                        "selected_stroke" -> {
-                            PdfToolRow(7.dp) {
-                                PdfPaletteChoices(selectedStroke?.colorArgb, onApplyColorToSelectedStroke)
-                                ToolChoiceButton(stringResource(R.string.pdf_thin), (selectedStroke?.widthPt ?: 0f) <= 2.5f, toolStyle) { onSetSelectedStrokeWidth(2f) }
-                                ToolChoiceButton(stringResource(R.string.pdf_medium), (selectedStroke?.widthPt ?: 0f) in 2.5f..7f, toolStyle) { onSetSelectedStrokeWidth(5f) }
-                                ToolChoiceButton(stringResource(R.string.pdf_thick), (selectedStroke?.widthPt ?: 0f) > 7f, toolStyle) { onSetSelectedStrokeWidth(10f) }
-                                PdfToolChip(stringResource(R.string.pdf_duplicate), Icons.Default.ContentCopy, false, toolStyle, onDuplicateSelected)
-                                PdfToolChip(stringResource(R.string.pdf_delete), Icons.Default.Delete, false, toolStyle, onDeleteSelected)
-                            }
-                        }
-                        "image" -> {
-                            PdfToolRow(6.dp) {
-                                ToolChoiceButton("−", false, toolStyle) { onScaleImage(0.88f) }
-                                ToolChoiceButton("+", false, toolStyle) { onScaleImage(1.14f) }
-                                PdfToolChip(stringResource(R.string.pdf_rotate), Icons.Default.RotateRight, false, toolStyle, onRotateImage)
-                                PdfToolChip(stringResource(R.string.pdf_flip), Icons.Default.Flip, false, toolStyle, onFlipImage)
-                                PdfToolChip(stringResource(R.string.pdf_crop), Icons.Default.Crop, false, toolStyle, onCropImage)
-                                PdfToolChip(stringResource(R.string.pdf_ai_crop), Icons.Default.AutoFixHigh, false, toolStyle, onAiCrop)
-                                PdfToolChip(stringResource(R.string.pdf_duplicate), Icons.Default.ContentCopy, false, toolStyle, onDuplicateSelected)
-                                PdfToolChip(stringResource(R.string.pdf_delete), Icons.Default.Delete, false, toolStyle, onDeleteSelected)
-                            }
-                        }
-                        "selected_text" -> {
-                            PdfToolRow(6.dp) {
-                                ToolChoiceButton("A−", false, toolStyle) { onResizeSelectedText(0.90f) }
-                                ToolChoiceButton("A+", false, toolStyle) { onResizeSelectedText(1.10f) }
-                                PdfToolChip(stringResource(R.string.pdf_apply_color), Icons.Default.Highlight, false, toolStyle, onApplyColorToSelectedText)
-                                PdfToolChip(stringResource(R.string.pdf_duplicate), Icons.Default.ContentCopy, false, toolStyle, onDuplicateSelected)
-                                PdfToolChip(stringResource(R.string.pdf_delete_text), Icons.Default.Delete, false, toolStyle, onDeleteSelected)
-                            }
-                        }
-                        "page" -> {
-                            PdfToolRow(6.dp) {
-                                PdfToolChip(stringResource(R.string.pdf_add_page), Icons.Default.Add, false, toolStyle, onAddPage)
-                                PdfToolChip(stringResource(R.string.pdf_duplicate_page), Icons.Default.ContentCopy, false, toolStyle, onDuplicatePage)
-                                PdfToolChip(stringResource(R.string.pdf_clear_edits), Icons.Default.DeleteSweep, false, toolStyle, onClearPageEdits)
-                                PdfToolChip(stringResource(R.string.pdf_delete_page), Icons.Default.Delete, false, toolStyle, onDeletePage)
-                            }
-                        }
-                        else -> Spacer(Modifier.height(0.dp))
                     }
+                    "selected_stroke" -> {
+                        PdfToolRow(7.dp) {
+                            PdfPaletteChoices(selectedStroke?.colorArgb, onApplyColorToSelectedStroke)
+                            ToolChoiceButton(stringResource(R.string.pdf_thin), (selectedStroke?.widthPt ?: 0f) <= 2.5f, toolStyle) { onSetSelectedStrokeWidth(2f) }
+                            ToolChoiceButton(stringResource(R.string.pdf_medium), (selectedStroke?.widthPt ?: 0f) in 2.5f..7f, toolStyle) { onSetSelectedStrokeWidth(5f) }
+                            ToolChoiceButton(stringResource(R.string.pdf_thick), (selectedStroke?.widthPt ?: 0f) > 7f, toolStyle) { onSetSelectedStrokeWidth(10f) }
+                            PdfToolChip(stringResource(R.string.pdf_duplicate), Icons.Default.ContentCopy, false, toolStyle, onDuplicateSelected)
+                            PdfToolChip(stringResource(R.string.pdf_delete), Icons.Default.Delete, false, toolStyle, onDeleteSelected)
+                        }
+                    }
+                    "image" -> {
+                        PdfToolRow(6.dp) {
+                            ToolChoiceButton("−", false, toolStyle) { onScaleImage(0.88f) }
+                            ToolChoiceButton("+", false, toolStyle) { onScaleImage(1.14f) }
+                            PdfToolChip(stringResource(R.string.pdf_rotate), Icons.Default.RotateRight, false, toolStyle, onRotateImage)
+                            PdfToolChip(stringResource(R.string.pdf_flip), Icons.Default.Flip, false, toolStyle, onFlipImage)
+                            PdfToolChip(stringResource(R.string.pdf_crop), Icons.Default.Crop, false, toolStyle, onCropImage)
+                            PdfToolChip(stringResource(R.string.pdf_ai_crop), Icons.Default.AutoFixHigh, false, toolStyle, onAiCrop)
+                            PdfToolChip(stringResource(R.string.pdf_duplicate), Icons.Default.ContentCopy, false, toolStyle, onDuplicateSelected)
+                            PdfToolChip(stringResource(R.string.pdf_delete), Icons.Default.Delete, false, toolStyle, onDeleteSelected)
+                        }
+                    }
+                    "selected_text" -> {
+                        PdfToolRow(6.dp) {
+                            ToolChoiceButton("A−", false, toolStyle) { onResizeSelectedText(0.90f) }
+                            ToolChoiceButton("A+", false, toolStyle) { onResizeSelectedText(1.10f) }
+                            PdfToolChip(stringResource(R.string.pdf_apply_color), Icons.Default.Highlight, false, toolStyle, onApplyColorToSelectedText)
+                            PdfToolChip(stringResource(R.string.pdf_duplicate), Icons.Default.ContentCopy, false, toolStyle, onDuplicateSelected)
+                            PdfToolChip(stringResource(R.string.pdf_delete_text), Icons.Default.Delete, false, toolStyle, onDeleteSelected)
+                        }
+                    }
+                    "page" -> {
+                        PdfToolRow(6.dp) {
+                            PdfToolChip(stringResource(R.string.pdf_add_page), Icons.Default.Add, false, toolStyle, onAddPage)
+                            PdfToolChip(stringResource(R.string.pdf_duplicate_page), Icons.Default.ContentCopy, false, toolStyle, onDuplicatePage)
+                            if (pageHasEdits) PdfToolChip(stringResource(R.string.pdf_clear_edits), Icons.Default.DeleteSweep, false, toolStyle, onClearPageEdits)
+                            if (pageCount > 1 || pageHasEdits) PdfToolChip(stringResource(R.string.pdf_delete_page), Icons.Default.Delete, false, toolStyle, onDeletePage)
+                        }
+                    }
+                    else -> Spacer(Modifier.height(0.dp))
+                }
+            }
+            FlowRow(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    WorkspaceToolIconButton(Icons.Default.Undo, stringResource(R.string.pdf_undo), enabled = canUndo, onClick = onUndo)
+                    WorkspaceToolIconButton(Icons.Default.Redo, stringResource(R.string.pdf_redo), enabled = canRedo, onClick = onRedo)
+                }
+                Row(verticalAlignment = Alignment.CenterVertically, horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+                    PageArrowButton("‹", pageIndex > 0, onPreviousPage)
+                    WorkspaceToolActionButton(onClick = { UiSoundPlayer.runWithFallbackClick(actionBlock = onGoToPage) }) {
+                        Text(stringResource(R.string.pdf_page_counter, pageIndex + 1, pageCount), fontSize = pageSize)
+                    }
+                    PageArrowButton("›", pageIndex < pageCount - 1, onNextPage)
                 }
             }
         }
@@ -2103,36 +2106,13 @@ private fun PdfToolRow(spacing: Dp, content: @Composable RowScope.() -> Unit) {
 }
 
 @Composable
-private fun FloatingBar(
-    widthFraction: Float,
-    verticalPadding: androidx.compose.ui.unit.Dp,
-    panelColor: Color,
-    radius: androidx.compose.ui.unit.Dp,
-    modifier: Modifier = Modifier,
-    content: @Composable () -> Unit
-) {
-    Surface(
-        modifier = modifier
-            .fillMaxWidth(widthFraction.coerceIn(0.55f, 0.98f))
-            .widthIn(max = 410.dp),
-        color = panelColor,
-        shape = RoundedCornerShape(radius),
-        tonalElevation = 6.dp,
-        shadowElevation = 9.dp
-    ) {
-        Box(modifier = Modifier.padding(horizontal = 9.dp, vertical = verticalPadding)) {
-            content()
-        }
-    }
-}
-
-@Composable
 private fun PdfPaletteChoices(selectedColor: Int?, onColor: (Int) -> Unit) {
+    val ring = LocalWorkspaceDrawerColors.current?.sectionMutedContent ?: MaterialTheme.colorScheme.outline
     PdfEditorPalette.forEach { color ->
         val selected = selectedColor == color
         Box(Modifier.size(24.dp).background(Color(color), CircleShape)
-            .border(if (selected) 3.dp else 1.dp, if (selected) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.outline, CircleShape)
-            .clickable { onColor(color) })
+            .border(if (selected) 3.dp else 1.dp, if (selected) MaterialTheme.colorScheme.primary else ring, CircleShape)
+            .clickable { UiSoundPlayer.runWithFallbackClick(UiActionSound.Color) { onColor(color) } })
     }
 }
 
@@ -2140,51 +2120,24 @@ private fun PdfPaletteChoices(selectedColor: Int?, onColor: (Int) -> Unit) {
 private fun PageArrowButton(
     label: String,
     enabled: Boolean,
-    contentColor: Color,
-    disabledColor: Color,
     onClick: () -> Unit
 ) {
+    val colors = MaterialTheme.colorScheme
+    val disabledContent = LocalWorkspaceDrawerColors.current?.disabledButtonContent ?: colors.onSurfaceVariant
     Box(
         modifier = Modifier
             .size(32.dp)
-            .clickable(enabled = enabled, onClick = onClick),
+            .clip(CircleShape)
+            .background(if (enabled) colors.surfaceContainerHigh else colors.surfaceContainerLow)
+            .clickable(enabled = enabled, onClick = { UiSoundPlayer.runWithFallbackClick(actionBlock = onClick) }),
         contentAlignment = Alignment.Center
     ) {
         Text(
             text = label,
-            color = if (enabled) contentColor else disabledColor.copy(alpha = 0.38f),
+            color = if (enabled) colors.onSurface else disabledContent,
             fontSize = 20.sp,
             fontWeight = FontWeight.Bold
         )
-    }
-}
-
-@Composable
-private fun SmallIconCircle(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    description: String,
-    enabled: Boolean,
-    contentColor: Color,
-    disabledColor: Color,
-    containerColor: Color,
-    iconSize: androidx.compose.ui.unit.Dp,
-    onClick: () -> Unit
-) {
-    Surface(
-        modifier = Modifier
-            .size(32.dp)
-            .clickable(enabled = enabled, onClick = onClick),
-        color = if (enabled) containerColor else containerColor.copy(alpha = 0.45f),
-        shape = CircleShape
-    ) {
-        Box(contentAlignment = Alignment.Center) {
-            Icon(
-                icon,
-                contentDescription = description,
-                tint = if (enabled) contentColor else disabledColor,
-                modifier = Modifier.size(iconSize.coerceIn(15.dp, 20.dp))
-            )
-        }
     }
 }
 
@@ -2193,10 +2146,11 @@ private fun PdfToolChip(label: String, icon: ImageVector, selected: Boolean, sty
     val container = if (selected) style.selectedContainer else style.idleContainer
     val content = if (selected) style.selectedContent else style.idleContent
     Surface(
-        modifier = Modifier.clickable(onClick = onClick),
+        modifier = Modifier.clickable(onClick = { UiSoundPlayer.runWithFallbackClick(actionBlock = onClick) }),
         color = container,
         contentColor = content,
-        shape = RoundedCornerShape(style.radius)
+        shape = RoundedCornerShape(style.radius),
+        border = style.selectedOutline?.takeIf { selected }?.let { BorderStroke(2.dp, it) }
     ) {
         Row(
             modifier = Modifier.padding(horizontal = 9.dp, vertical = 6.dp),
@@ -2233,8 +2187,9 @@ private fun ToolChoiceButton(
 @Composable
 private fun ToolChoiceButton(label: String, selected: Boolean, style: PdfToolStyle, onClick: () -> Unit) {
     Button(
-        onClick = onClick,
+        onClick = { UiSoundPlayer.runWithFallbackClick(actionBlock = onClick) },
         shape = RoundedCornerShape(style.radius),
+        border = style.selectedOutline?.takeIf { selected }?.let { BorderStroke(2.dp, it) },
         colors = ButtonDefaults.buttonColors(
             containerColor = if (selected) style.selectedContainer else style.idleContainer,
             contentColor = if (selected) style.selectedContent else style.idleContent

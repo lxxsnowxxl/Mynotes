@@ -1,11 +1,14 @@
 package com.example.mynotes.data
 
 import com.example.mynotes.settings.AppSettings
+import com.example.mynotes.settings.MotionStylePolicy
+import com.example.mynotes.settings.SettingsSectionPreferencePolicy
 import org.json.JSONArray
 import org.json.JSONObject
 
 internal fun noteToJson(note: Note) = JSONObject().apply {
             put("id", note.id)
+            put("libraryId",note.libraryId)
             put("title", note.title)
             put("content", note.content)
             put("createdAt", note.createdAt)
@@ -14,6 +17,13 @@ internal fun noteToJson(note: Note) = JSONObject().apply {
             put("category", note.category)
             put("isFavorite", note.isFavorite)
             put("isPinned", note.isPinned)
+            put("folderId", note.folderId ?: JSONObject.NULL)
+            put("isArchived", note.isArchived)
+            put("isDeleted", note.isDeleted)
+            put("formattingEnabled", note.formattingEnabled)
+            put("coverIcon", note.coverIcon ?: JSONObject.NULL)
+            put("coverX", note.coverX.toDouble())
+            put("coverY", note.coverY.toDouble())
         }
 internal fun attachmentToJson(attachment: Attachment, fileEntry: String) = JSONObject().apply {
             put("id", attachment.id)
@@ -26,10 +36,16 @@ internal fun attachmentToJson(attachment: Attachment, fileEntry: String) = JSONO
 internal fun jsonToNotes(array: JSONArray): List<Note> = buildList {
             for (index in 0 until array.length()) {
                 val item = array.getJSONObject(index)
-                add(Note(id = item.getInt("id"), title = item.optString("title", ""), content = item.optString("content", ""),
+                add(Note(libraryId=item.optString("libraryId","default").takeIf{it.matches(Regex("[a-zA-Z0-9-]{1,80}"))}?:"default", id = item.getInt("id"), title = item.optString("title", ""), content = item.optString("content", ""),
                         createdAt = item.optLong("createdAt", System.currentTimeMillis()), color = item.optString("color", "default"),
                         priority = item.optInt("priority", 0), category = item.optString("category", "personal"),
-                        isFavorite = item.optBoolean("isFavorite", false), isPinned = item.optBoolean("isPinned", false)))
+                        isFavorite = item.optBoolean("isFavorite", false), isPinned = item.optBoolean("isPinned", false),
+                        folderId = if (item.isNull("folderId")) null else item.optString("folderId").takeIf { it.isNotBlank() },
+                        isArchived = item.optBoolean("isArchived", false),isDeleted=item.optBoolean("isDeleted",false),
+                        formattingEnabled = item.optBoolean("formattingEnabled", false),
+                        coverIcon = CollectionPolicy.icon(if (item.isNull("coverIcon")) null else item.optString("coverIcon")),
+                        coverX = CollectionPolicy.crop(item.optDouble("coverX", 0.5).toFloat()),
+                        coverY = CollectionPolicy.crop(item.optDouble("coverY", 0.5).toFloat())))
             }
         }
 internal data class AttachmentRecord(val id: Int, val noteId: Int, val type: String, val name: String?, val createdAt: Long,
@@ -45,6 +61,12 @@ internal fun jsonToAttachmentRecords(array: JSONArray): List<AttachmentRecord> =
         }
 internal fun settingsToJson(settings: AppSettings, profileEntry: String?) = JSONObject().apply {
         put("configurationMode", settings.configurationMode)
+        put("designPreset", settings.designPreset)
+        put("oledMode", settings.oledMode)
+        put("cardDensity", settings.cardDensity)
+        put("editorFocusMode", settings.editorFocusMode)
+        put("readerWidth", settings.readerWidth.toDouble())
+        put("readerLineSpacing", settings.readerLineSpacing.toDouble())
         put("darkMode", settings.darkMode)
         put("backgroundColor", settings.backgroundColor)
         put("backgroundToneIndex", settings.backgroundToneIndex)
@@ -95,14 +117,21 @@ internal fun settingsToJson(settings: AppSettings, profileEntry: String?) = JSON
         put("colorMenuHiddenItems", settings.colorMenuHiddenItems)
         put("performanceMode", settings.performanceMode)
         put("animationsEnabled", settings.animationsEnabled)
-        put("animationStyle", settings.animationStyle)
+        put("animationStyle", MotionStylePolicy.normalize(settings.animationStyle))
         put("animationEasing", settings.animationEasing)
         put("animationSpeed", settings.animationSpeed.toDouble())
         put("animationIntensity", settings.animationIntensity.toDouble())
+        put("collapsedSettingsSections", SettingsSectionPreferencePolicy.normalize(settings.collapsedSettingsSections))
     }
 internal fun jsonToSettings(json: JSONObject): AppSettings {
         val defaults = AppSettings()
         return AppSettings(configurationMode = json.optString("configurationMode", "advanced"),
+            designPreset = com.example.mynotes.settings.DesignPreferencePolicy.preset(json.optString("designPreset", defaults.designPreset)),
+            oledMode = json.optBoolean("oledMode", defaults.oledMode),
+            cardDensity = com.example.mynotes.settings.DesignPreferencePolicy.density(json.optString("cardDensity", defaults.cardDensity)),
+            editorFocusMode = json.optBoolean("editorFocusMode", defaults.editorFocusMode),
+            readerWidth = com.example.mynotes.settings.ReaderPreferencePolicy.width(json.optDouble("readerWidth", defaults.readerWidth.toDouble()).toFloat()),
+            readerLineSpacing = com.example.mynotes.settings.ReaderPreferencePolicy.spacing(json.optDouble("readerLineSpacing", defaults.readerLineSpacing.toDouble()).toFloat()),
             darkMode = json.optBoolean("darkMode", defaults.darkMode),
             backgroundColor = json.optString("backgroundColor", defaults.backgroundColor),
             backgroundToneIndex = json.optInt("backgroundToneIndex", defaults.backgroundToneIndex),
@@ -154,8 +183,31 @@ internal fun jsonToSettings(json: JSONObject): AppSettings {
             colorMenuHiddenItems = json.optString("colorMenuHiddenItems", defaults.colorMenuHiddenItems),
             performanceMode = json.optString("performanceMode", defaults.performanceMode),
             animationsEnabled = json.optBoolean("animationsEnabled", defaults.animationsEnabled),
-            animationStyle = json.optString("animationStyle", defaults.animationStyle),
+            animationStyle = MotionStylePolicy.normalize(json.optString("animationStyle", defaults.animationStyle)),
             animationEasing = json.optString("animationEasing", defaults.animationEasing),
             animationSpeed = json.optDouble("animationSpeed", defaults.animationSpeed.toDouble()).toFloat(),
-            animationIntensity = json.optDouble("animationIntensity", defaults.animationIntensity.toDouble()).toFloat())
+            animationIntensity = json.optDouble("animationIntensity", defaults.animationIntensity.toDouble()).toFloat(),
+            collapsedSettingsSections = SettingsSectionPreferencePolicy.normalize(json.optString("collapsedSettingsSections", defaults.collapsedSettingsSections)))
     }
+
+internal fun folderToJson(folder: NoteFolder) = JSONObject().apply {
+    put("id", folder.id);put("libraryId",folder.libraryId); put("name", folder.name); put("icon", folder.icon); put("color", folder.color)
+}
+internal fun jsonToFolders(array: JSONArray): List<NoteFolder> = buildList {
+    for (index in 0 until array.length()) {
+        val item = array.getJSONObject(index)
+        val id = item.getString("id").trim()
+        val name = CollectionPolicy.name(item.getString("name"))
+        require(id.isNotBlank() && id.length <= 128 && name.isNotBlank()) { "Invalid folder in backup" }
+        add(NoteFolder(id, name, CollectionPolicy.icon(item.optString("icon")) ?: "folder", CollectionPolicy.color(item.optString("color")),libraryId=item.optString("libraryId","default").also{require(it.matches(Regex("[a-zA-Z0-9-]{1,80}")))}))
+    }
+    require(map { it.id }.toSet().size == size) { "Duplicate folder identifiers" }
+}
+
+internal fun restoredNotePresentation(notes: List<Note>, folders: List<NoteFolder>, attachments: List<Attachment>): List<Note> {
+    val folderIds = folders.map { it.id }.toSet()
+    val covers = attachments.filter { it.type == "cover" }.groupBy { it.noteId }
+    require(covers.values.all { it.size == 1 }) { "Duplicate note covers" }
+    return notes.map { note -> note.copy(folderId = note.folderId?.takeIf { id -> folders.any{it.id==id&&it.libraryId==note.libraryId} },
+        coverUri = covers[note.id]?.single()?.uri, coverIcon = if (covers[note.id] != null) null else note.coverIcon) }
+}

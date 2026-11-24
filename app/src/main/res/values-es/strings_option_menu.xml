@@ -9,10 +9,7 @@
     <string name="option_menu_text_white">Blanco</string>
     <string name="option_menu_change">Cambiar</string>
     <string name="option_menu_opacity">Opacidad del menú</string>
-    <string name="option_menu_main_actions">Acciones principales</string>
-    <string name="option_menu_main_actions_hint">Usa las flechas para cambiar el orden y el interruptor para mostrar u ocultar cada acción.</string>
-    <string name="option_menu_priority_submenu">Submenú de prioridad</string>
-    <string name="option_menu_color_submenu">Submenú de color</string>
+
     <string name="option_menu_move_up">Mover arriba</string>
     <string name="option_menu_move_down">Mover abajo</string>
 </resources>

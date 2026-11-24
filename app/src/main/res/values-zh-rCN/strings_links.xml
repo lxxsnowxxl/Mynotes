@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="add_link">添加链接</string>
+    <string name="link_dialog_description">粘贴歌曲、视频、文章或网页的链接。MyNotes 将尝试获取封面、标题和说明。</string>
+    <string name="link_url">链接</string>
+    <string name="invalid_link">请输入有效的链接。</string>
+    <string name="add">添加</string>
+    <string name="link">链接</string>
+</resources>

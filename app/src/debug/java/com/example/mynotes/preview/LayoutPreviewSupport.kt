@@ -20,6 +20,7 @@ import androidx.lifecycle.compose.LocalLifecycleOwner
 import com.example.mynotes.R
 import com.example.mynotes.data.Attachment
 import com.example.mynotes.data.Note
+import com.example.mynotes.data.NoteFolder
 import com.example.mynotes.reminders.Reminder
 import com.example.mynotes.settings.AppSettings
 import com.example.mynotes.ui.preview.LayoutPreviewData
@@ -46,7 +47,21 @@ private class PreviewOwners : OnBackPressedDispatcherOwner, ActivityResultRegist
     }
 }
 
-internal class PreviewNotes(attachments: List<Attachment>) : NoteActions {
+internal class PreviewNotes(attachments: List<Attachment>, initialFolders: List<NoteFolder> = emptyList()) : NoteActions {
+    override val noteCatalog = MutableStateFlow<List<Note>>(emptyList())
+    override val folders = MutableStateFlow(initialFolders)
+    override val pendingUndo = MutableStateFlow<com.example.mynotes.ui.state.NoteUndo?>(null)
+    override fun createFolder(name: String, icon: String, color: String) { }
+    override fun editFolder(folder: NoteFolder) { }
+    override fun deleteFolder(folder: NoteFolder) { }
+    override fun moveNotes(ids: Set<Int>, folderId: String?) { }
+    override fun colorNotes(ids: Set<Int>, color: String) { }
+    override fun archiveNotes(ids: Set<Int>, archived: Boolean) { }
+    override fun pinNotes(ids: Set<Int>, pinned: Boolean) { }
+    override fun deleteNotes(ids: Set<Int>) { }
+    override fun undo(token: Long) { }
+    override fun dismissUndo(token: Long) { }
+    override fun toggleTask(noteId: Int, line: Int) { }
     override fun toggleFavorite(note: Note) { }
     override fun togglePinned(note: Note) { }
     override fun changePriority(note: Note, priority: Int) { }
@@ -66,7 +81,13 @@ internal class PreviewReminders(items: List<Reminder>) : ReminderActions {
 }
 
 internal val PreviewSettingsActions = object : SettingsActions {
+    override fun applyAppearance(value: AppSettings) { }
+    override fun setReaderPreferences(width: Float, lineSpacing: Float) { }
     override fun setConfigurationMode(value: String) { }
+    override fun setSettingsSectionExpanded(sectionKey: String, expanded: Boolean) { }
+    override fun applyDesignPreset(key: String) { }
+    override fun setCardDensity(value: String) { }
+    override fun setEditorFocusMode(value: Boolean) { }
     override fun setDarkMode(value: Boolean) { }
     override fun setBackgroundSelection(paletteKey: String, toneIndex: Int) { }
     override fun setSettingsBackgroundStyle(value: String) { }

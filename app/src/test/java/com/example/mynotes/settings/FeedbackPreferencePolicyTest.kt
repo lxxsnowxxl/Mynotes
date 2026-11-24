@@ -10,22 +10,22 @@ class FeedbackPreferencePolicyTest {
             listOf("classic", "soft", "digital", "glass", "retro", "pop", "mechanical", "bubble", "arcade", "wood", "synth",
                 "minimal", "camera", "typewriter", "metal", "pixel", "space", "chime", "paper", "neon", "material",
                 "expressive", "prism", "aurora", "fluid", "pulse"),
-            FeedbackPreferencePolicy.soundThemes
+            FeedbackPreferencePolicy.soundThemeResources.map { it.key }
         )
         assertEquals(
             listOf("soft", "crisp", "deep", "double", "pulse", "stepped", "mechanical", "minimal", "triple", "ripple",
                 "heartbeat", "snap", "wave", "heavy", "spring", "echo"),
-            FeedbackPreferencePolicy.hapticStyles
+            FeedbackPreferencePolicy.hapticStyles.map { it.key }
         )
     }
 
     @Test
     fun validKeysStillAcceptWhitespaceAndUppercase() {
-        for (key in FeedbackPreferencePolicy.soundThemes) {
+        for (key in FeedbackPreferencePolicy.soundThemeResources.map { it.key }) {
             assertEquals(key, FeedbackPreferencePolicy.normalizeSoundTheme(key))
             assertEquals(key, FeedbackPreferencePolicy.normalizeSoundTheme(" \t${key.uppercase()}\n"))
         }
-        for (key in FeedbackPreferencePolicy.hapticStyles) {
+        for (key in FeedbackPreferencePolicy.hapticStyles.map { it.key }) {
             assertEquals(key, FeedbackPreferencePolicy.normalizeHapticStyle(key))
             assertEquals(key, FeedbackPreferencePolicy.normalizeHapticStyle(" \t${key.uppercase()}\n"))
         }

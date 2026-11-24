@@ -31,6 +31,18 @@ class SettingsViewModel(application: Application) : AndroidViewModel(application
 
     override fun setConfigurationMode(value: String) = updateSetting { repository.setConfigurationMode(value) }
 
+    override fun setSettingsSectionExpanded(sectionKey: String, expanded: Boolean) = updateSetting { repository.setSettingsSectionExpanded(sectionKey, expanded) }
+
+    override fun applyAppearance(value: AppSettings) = updateSetting(refreshWidgets = true) { repository.applyAppearance(value) }
+
+    override fun setReaderPreferences(width: Float, lineSpacing: Float) = updateSetting { repository.setReaderPreferences(width, lineSpacing) }
+
+    override fun applyDesignPreset(key: String) = updateSetting(refreshWidgets = true) { repository.applyDesignPreset(key) }
+
+    override fun setCardDensity(value: String) = updateSetting { repository.setCardDensity(value) }
+
+    override fun setEditorFocusMode(value: Boolean) = updateSetting { repository.setEditorFocusMode(value) }
+
     override fun setDarkMode(value: Boolean) = updateSetting(refreshWidgets = true) { repository.setDarkMode(value) }
 
     override fun setBackgroundSelection(paletteKey: String, toneIndex: Int) = updateSetting(refreshWidgets = true) { repository.setBackgroundSelection(paletteKey, toneIndex) }

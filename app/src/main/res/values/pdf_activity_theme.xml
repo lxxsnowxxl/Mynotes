@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Solo navegación interna PDF: conservar la pantalla anterior hasta el primer dibujo preparado. -->
+    <style name="Theme.MyNotes.Pdf" parent="@style/Theme.MyNotes">
+        <item name="android:windowDisablePreview">true</item>
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:windowAnimationStyle">@null</item>
+    </style>
+</resources>

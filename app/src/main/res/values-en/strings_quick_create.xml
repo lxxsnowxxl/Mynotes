@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="quick_create_title">Create</string>
+    <string name="quick_create_subtitle">Choose what you want to make</string>
+    <string name="quick_create_reminder_hint">Schedule your alerts</string>
+    <string name="quick_create_note_hint">Write ideas and lists</string>
+    <string name="quick_create_pdf_hint">Work with PDF documents</string>
+    <string name="quick_create_drawing_hint">Sketch on a blank canvas</string>
+    <string name="quick_create_open">Open quick actions</string>
+    <string name="quick_create_close">Close quick actions</string>
+</resources>

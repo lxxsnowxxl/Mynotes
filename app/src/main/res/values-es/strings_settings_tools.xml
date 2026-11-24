@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_tools_title">Herramientas de configuración</string>
+    <string name="settings_tools_description">Encuentra opciones, restaura una sección o compara el diseño.</string>
+    <string name="settings_tools_search">Buscar ajustes</string>
+    <string name="settings_tools_search_description">Encuentra una opción y ve directamente a ella</string>
+    <string name="settings_tools_reset">Restablecer sección</string>
+    <string name="settings_tools_reset_description">Recupera los ajustes predeterminados de un grupo</string>
+    <string name="settings_tools_compare">Comparar apariencia</string>
+    <string name="settings_tools_compare_description">Previsualiza los cambios antes de aplicarlos</string>
+    <string name="settings_tools_search_hint">Nombre del ajuste o categoría</string>
+    <string name="settings_tools_no_results">No se encontraron ajustes</string>
+    <string name="settings_tools_close">Cerrar</string>
+    <string name="settings_tools_cancel">Cancelar</string>
+    <string name="settings_tools_reset_pick">Selecciona qué grupo deseas restaurar. Las notas no se borrarán.</string>
+    <string name="settings_tools_reset_confirm_title">Confirmar restablecimiento</string>
+    <string name="settings_tools_reset_confirm">¿Restablecer «%1$s»? Solo se cambiarán las preferencias de ese grupo. Las notas y los demás ajustes se conservarán.</string>
+    <string name="settings_tools_reset_action">Restablecer</string>
+    <string name="settings_tools_reset_error">No se pudieron restablecer los ajustes. Inténtalo de nuevo.</string>
+    <string name="settings_tools_reset_appearance">Aspecto y colores</string>
+    <string name="settings_tools_reset_cards">Tarjetas de notas</string>
+    <string name="settings_tools_reset_controls">Controles, iconos y perfil</string>
+    <string name="settings_tools_reset_feedback">Sonido y vibración</string>
+    <string name="settings_tools_reset_editor">Editor</string>
+    <string name="settings_tools_reset_motion">Animaciones y rendimiento</string>
+    <string name="settings_tools_profile">Perfil y modo de configuración</string>
+    <string name="settings_tools_accent">Color de acento</string>
+    <string name="settings_tools_text_color">Color de texto</string>
+    <string name="settings_tools_text_outline">Contorno de texto</string>
+    <string name="settings_tools_font">Tipografía y tamaño de texto</string>
+    <string name="settings_tools_icons">Estilo y tamaño de iconos</string>
+    <string name="settings_tools_sliders">Diseño de deslizadores</string>
+    <string name="settings_tools_cards">Apariencia de tarjetas</string>
+    <string name="settings_tools_columns">Columnas</string>
+    <string name="settings_tools_new_button">Botón para crear notas</string>
+    <string name="settings_tools_menu_style">Apariencia del menú</string>
+    <string name="settings_tools_menu_actions">Acciones del menú</string>
+    <string name="settings_tools_menu_priority">Opciones prioritarias</string>
+    <string name="settings_tools_menu_colors">Colores del menú</string>
+    <string name="settings_tools_motion">Animaciones</string>
+    <string name="settings_tools_performance">Rendimiento</string>
+    <string name="settings_tools_backups">Copia de seguridad y restauración</string>
+    <string name="settings_tools_updates">Actualizaciones</string>
+    <string name="settings_tools_current">Actual</string>
+    <string name="settings_tools_proposed">Propuesta</string>
+</resources>

@@ -19,7 +19,7 @@
         android:paddingStart="10dp"
         android:paddingEnd="10dp"
         android:id="@+id/preview_05g_attachment_generic_linearlayout_1">
-        <ImageView
+        <android.widget.ImageView
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:src="@drawable/preview_ic_arrow_back"
@@ -57,7 +57,7 @@
         android:orientation="vertical"
         android:padding="28dp"
         android:id="@+id/preview_05g_attachment_generic_linearlayout_5">
-        <ImageView
+        <android.widget.ImageView
             android:layout_width="74dp"
             android:layout_height="74dp"
             android:src="@drawable/preview_ic_file"

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="card_motion_entry_summary">Subtle movement for idle notes.</string>
+    <string name="card_motion_selected_effect">Selected effect</string>
+    <string name="card_motion_entry_paused">Paused</string>
+    <string name="card_motion_entry_enabled">Enabled</string>
+    <string name="card_motion_entry_intensity">Intensity %1$d/5</string>
+    <string name="card_motion_entry_frequency">Frequency: %1$s</string>
+    <string name="card_motion_frequency_low">Occasional</string>
+    <string name="card_motion_frequency_normal">Balanced</string>
+    <string name="card_motion_frequency_high">Frequent</string>
+    <string name="card_motion_entry_preview">Preview</string>
+    <string name="card_motion_entry_customize">Customize</string>
+    <string name="card_motion_entry_disabled_hint">Turn on idle card animations to try this effect.</string>
+    <string name="card_motion_entry_behavior">After a pause, one visible note moves at a time. Touch or scroll the list to stop it.</string>
+</resources>

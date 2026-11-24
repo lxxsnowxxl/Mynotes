@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- v314: editable structural reference. Runtime behavior is implemented in Compose. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:background="@drawable/layout_xml_app_background" android:theme="@style/LayoutXmlPreviewTheme" android:padding="12dp" tools:context="com.example.mynotes.MainActivity" android:id="@+id/preview_14_note_editor_attachments_workspace_0">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:id="@+id/preview_14_note_editor_attachments_workspace_1">
+        <android.widget.ImageButton android:layout_width="48dp" android:layout_height="48dp" android:src="@drawable/preview_ic_arrow_back" android:contentDescription="@string/drawing_back" android:background="@android:color/transparent" android:padding="12dp" android:id="@+id/preview_14_note_editor_attachments_workspace_2" />
+        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:text="@string/new_note" android:textSize="22sp" android:textColor="@color/layout_xml_text" android:padding="6dp" android:textStyle="bold" android:layout_weight="1" android:id="@+id/preview_14_note_editor_attachments_workspace_3" />
+        <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/save" android:minHeight="48dp" android:id="@+id/preview_14_note_editor_attachments_workspace_4" />
+    </LinearLayout>
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/workspace_saved" android:textSize="12sp" android:textColor="@color/layout_xml_text" android:padding="6dp" android:id="@+id/preview_14_note_editor_attachments_workspace_5" />
+    <LinearLayout android:layout_width="match_parent" android:layout_height="0dp" android:orientation="horizontal" android:gravity="center_vertical" android:layout_weight="1" android:id="@+id/preview_14_note_editor_attachments_workspace_6">
+        <ScrollView android:layout_width="0dp" android:layout_height="match_parent" android:fillViewport="true" android:layout_weight="1" android:id="@+id/preview_14_note_editor_attachments_workspace_7">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="18dp" android:id="@+id/preview_14_note_editor_attachments_workspace_8">
+                <EditText android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="@string/title" android:textSize="18sp" android:minHeight="56dp" android:gravity="top|start" android:inputType="textCapSentences" android:minLines="1" android:textColor="@color/layout_xml_text" android:padding="14dp" android:background="@drawable/layout_xml_tone" android:id="@+id/preview_14_note_editor_attachments_workspace_9" />
+                <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/organize_unfiled" android:minHeight="48dp" android:id="@+id/preview_14_note_editor_attachments_workspace_10" />
+                <EditText android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="@string/write_your_note" android:textSize="18sp" android:minHeight="56dp" android:gravity="top|start" android:inputType="textCapSentences|textMultiLine" android:minLines="12" android:textColor="@color/layout_xml_text" android:padding="14dp" android:background="@drawable/layout_xml_tone" android:id="@+id/preview_14_note_editor_attachments_workspace_11" />
+            </LinearLayout>
+        </ScrollView>
+        <ScrollView android:layout_width="320dp" android:layout_height="match_parent" android:fillViewport="true" android:layout_marginStart="12dp" android:id="@+id/preview_14_note_editor_attachments_workspace_12">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="12dp" android:background="@drawable/layout_xml_workspace_tool_panel" android:id="@+id/preview_14_note_editor_attachments_workspace_13">
+
+                <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/workspace_link_note" android:minHeight="48dp" android:id="@+id/preview_14_note_editor_attachments_workspace_15" />
+                <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/workspace_history" android:minHeight="48dp" android:id="@+id/preview_14_note_editor_attachments_workspace_16" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/workspace_saved" android:textSize="12sp" android:textColor="@color/layout_xml_text" android:padding="6dp" android:id="@+id/preview_14_note_editor_attachments_workspace_17" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/mock_color_palette" android:textSize="16sp" android:textColor="@color/layout_xml_text" android:padding="6dp" android:id="@+id/preview_14_note_editor_attachments_workspace_18" />
+                <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Default" android:minHeight="48dp" android:id="@+id/preview_14_note_editor_attachments_workspace_19" />
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/attachments" android:textSize="16sp" android:textColor="@color/layout_xml_text" android:padding="6dp" android:id="@+id/preview_14_note_editor_attachments_workspace_20" />
+                <HorizontalScrollView android:layout_width="match_parent" android:layout_height="wrap_content" android:fillViewport="true" android:id="@+id/preview_14_note_editor_attachments_workspace_21">
+                    <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:id="@+id/preview_14_note_editor_attachments_workspace_22">
+                        <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/image" android:minHeight="48dp" android:id="@+id/preview_14_note_editor_attachments_workspace_23" />
+                        <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/video" android:minHeight="48dp" android:id="@+id/preview_14_note_editor_attachments_workspace_24" />
+                        <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/audio" android:minHeight="48dp" android:id="@+id/preview_14_note_editor_attachments_workspace_25" />
+                        <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/file" android:minHeight="48dp" android:id="@+id/preview_14_note_editor_attachments_workspace_26" />
+                    </LinearLayout>
+                </HorizontalScrollView>
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
+</LinearLayout>

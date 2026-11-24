@@ -26,4 +26,6 @@
     <string name="drawing_tool_eraser">Borrador</string>
     <string name="drawing_expand_canvas">Ampliar lienzo</string>
     <string name="drawing_restore_canvas">Restaurar lienzo</string>
+    <string name="drawing_compact_more">Más</string>
+    <string name="drawing_compact_back">Volver</string>
 </resources>

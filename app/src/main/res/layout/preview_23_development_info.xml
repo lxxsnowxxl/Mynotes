@@ -23,13 +23,13 @@
             android:paddingEnd="12dp"
             android:gravity="center_vertical"
             android:id="@+id/preview_23_development_info_linearlayout_2">
-            <ImageButton
+            <android.widget.ImageButton
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:id="@+id/preview_23_development_info_back"
                 android:src="@drawable/preview_ic_arrow_back"
                 android:tint="@color/layout_xml_text"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:background="@android:color/transparent"
                 android:contentDescription="@string/mock_back"
                 android:padding="12dp" />
             <TextView
@@ -128,7 +128,7 @@
                             <TextView
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:text="v1.7.0"
+                                android:text="v3.6.1"
                                 android:textSize="13sp"
                                 android:textColor="@color/layout_xml_text"
                                 android:fontFamily="sans-serif"

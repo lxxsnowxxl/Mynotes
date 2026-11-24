@@ -6,16 +6,10 @@ import org.junit.Test
 
 class PaletteCatalogRegressionTest {
     @Test
-    fun settingsShowsHalfThePaletteFamiliesAndKeepsExistingSelections() {
-        assertEquals(23, PaletteCatalog.settingsPalettes.size)
-        assertEquals(PaletteCatalog.palettes.size / 2, PaletteCatalog.settingsPalettes.size)
-        PaletteCatalog.palettes.forEach { savedPalette ->
-            val visible = PaletteCatalog.palettesForSettings(savedPalette.key)
-            assertEquals(23, visible.size)
-            assertEquals(visible.size, visible.map { it.key }.toSet().size)
-            assertTrue(visible.any { it.key == "neutral" })
-            assertEquals(savedPalette.tones, visible.single { it.key == savedPalette.key }.tones)
-        }
+    fun settingsShowsEveryPaletteFamilyInCatalogOrder() {
+        assertEquals(46, PaletteCatalog.settingsPalettes.size)
+        assertEquals(PaletteCatalog.palettes, PaletteCatalog.settingsPalettes)
+        assertEquals(PaletteCatalog.palettes.map { it.key }, PaletteCatalog.settingsPaletteKeys)
     }
 
     @Test

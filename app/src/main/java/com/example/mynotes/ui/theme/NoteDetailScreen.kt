@@ -2,6 +2,7 @@ package com.example.mynotes.ui
 
 import com.example.mynotes.ui.components.appScreenBackground
 import com.example.mynotes.ui.components.appScreenContainerColor
+import com.example.mynotes.ui.theme.noteUsesGlobalBackground
 import com.example.mynotes.ui.preview.LocalLayoutPreview
 import com.example.mynotes.ui.theme.rememberUiContentColors
 import com.example.mynotes.ui.theme.rememberAppFontFamily
@@ -25,7 +26,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
@@ -34,6 +34,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CalendarMonth
 import androidx.compose.material.icons.filled.Delete
@@ -41,13 +42,11 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Folder
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Palette
-import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PriorityHigh
 import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material.icons.filled.StarBorder
-import androidx.compose.material.icons.filled.Work
 import androidx.compose.material3.AssistChip
 import androidx.compose.material3.AssistChipDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -89,7 +88,7 @@ import com.example.mynotes.ui.components.LinkPreviewCard
 import com.example.mynotes.ui.components.extractLinkUrls
 import com.example.mynotes.ui.components.noteTextForDisplay
 import com.example.mynotes.ui.components.CategoryPill
-import com.example.mynotes.ui.components.ColorMenuItem
+import com.example.mynotes.ui.components.NotePaletteDialog
 import com.example.mynotes.ui.components.ConfigurableDropdownMenuItem
 import com.example.mynotes.ui.components.PriorityMenuItem
 import com.example.mynotes.ui.motion.AnimatedScreenEntry
@@ -102,6 +101,14 @@ import com.example.mynotes.ui.theme.compositeUiColor
 import com.example.mynotes.ui.theme.ensureUiContrast
 import com.example.mynotes.ui.theme.noteBackgroundColor
 import com.example.mynotes.ui.state.NoteActions
+import com.example.mynotes.ui.state.SettingsActions
+import com.example.mynotes.ui.notes.*
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.material.icons.filled.AutoStories
+import androidx.compose.material.icons.filled.TextFields
+import androidx.compose.material3.TextButton
+import com.example.mynotes.ui.components.StyledSettingsSlider
+import androidx.activity.compose.BackHandler
 import java.text.DateFormat
 import java.util.Date
 
@@ -111,27 +118,60 @@ private val DetailMenuKeys = listOf("edit", "priority", "color")
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalLayoutApi::class)
 @Composable
-fun NoteDetailScreen(note: Note, noteViewModel: NoteActions, settings: AppSettings, onBack: () -> Unit, onEdit: (Note) -> Unit) {
+fun NoteDetailScreen(
+    note: Note, noteViewModel: NoteActions, settings: AppSettings, onBack: () -> Unit, onEdit: (Note) -> Unit,
+    embedded: Boolean = false, settingsActions: SettingsActions? = null,
+    backgroundMotionPaused: androidx.compose.runtime.State<Boolean>? = null
+) {
     val layoutPreview = LocalLayoutPreview.current
     val attachmentsFlow = remember(note.id) {
             noteViewModel.getAttachments(note.id)
         }
-    val attachments by
-        attachmentsFlow.collectAsStateWithLifecycle(initialValue = emptyList())
+    val allAttachments by attachmentsFlow.collectAsStateWithLifecycle(initialValue = emptyList())
+    val attachments = allAttachments.filter { it.type != "cover" }
+    val folders by noteViewModel.folders.collectAsStateWithLifecycle()
+    val noteCatalog by noteViewModel.noteCatalog.collectAsStateWithLifecycle()
+    var reading by rememberSaveable(note.id) { mutableStateOf(layoutPreview?.reading == true) }
+    var readerSettings by remember { mutableStateOf(false) }
+    var readerWidth by rememberSaveable { mutableStateOf(settings.readerWidth) }
+    var readerSpacing by rememberSaveable { mutableStateOf(settings.readerLineSpacing) }
+    BackHandler(enabled = reading) { reading = false }
+    if (readerSettings) AppAlertDialog(onDismissRequest = { readerSettings = false },
+        title = { Text(stringResource(R.string.organize_reader_settings)) },
+        text = { Column {
+            Text(stringResource(R.string.organize_reader_width))
+            StyledSettingsSlider(
+                value = readerWidth,
+                onValueChange = { readerWidth = it },
+                valueRange = 320f..900f,
+                valueLabel = "${readerWidth.toInt()} dp"
+            )
+            Text(stringResource(R.string.organize_reader_spacing))
+            StyledSettingsSlider(
+                value = readerSpacing,
+                onValueChange = { readerSpacing = it },
+                valueRange = 1.2f..2.2f,
+                valueLabel = "%.2fx".format(readerSpacing)
+            )
+        } }, confirmButton = { TextButton(onClick = {
+            settingsActions?.setReaderPreferences(readerWidth, readerSpacing); readerSettings = false
+        ; UiSoundPlayer.playFallbackClick()}) { Text(stringResource(R.string.organize_done)) } })
     val context = LocalContext.current
-    val noteLinks = remember(note.content) {
-            extractLinkUrls(note.content)
+    val noteLinks = remember(note.content, note.formattingEnabled) {
+            extractLinkUrls(if (note.formattingEnabled) NoteMarkup.render(note.content).text else note.content)
         }
-    val displayContent = remember(note.content, noteLinks) {
-            noteTextForDisplay(content = note.content, links = noteLinks)
+    val displayContent = remember(note.content, noteLinks, note.formattingEnabled) {
+            if (note.formattingEnabled) NoteMarkup.visibleSource(note.content) else noteTextForDisplay(note.content, noteLinks)
         }
     val fontFamily = rememberAppFontFamily(settings.font)
     val detailBackground = noteBackgroundColor(note.color)
+    val useGlobalBackground = noteUsesGlobalBackground(note.color)
     val (noteTextColor, noteSecondaryTextColor, noteGraphicColor) = rememberUiContentColors(settings.textColor, detailBackground)
     val favoriteIconColor = ensureUiContrast(preferred = FavoriteGold, background = detailBackground, minimumContrast = 3f)
     val attachmentAddButtonContainerColor = MaterialTheme.colorScheme.surfaceContainerHigh
-    val attachmentAddButtonContentColor = resolveUiTextColor(value = settings.textColor,
-            background = attachmentAddButtonContainerColor)
+    val attachmentAddButtonContentColor = ensureUiContrast(
+        resolveUiTextColor(value = settings.textColor, background = attachmentAddButtonContainerColor),
+        attachmentAddButtonContainerColor, 4.5f)
     val useDarkDateChip = noteTextColor.luminance() > 0.7f
     val dateChipContainerColor = if (useDarkDateChip) {
             compositeUiColor(foreground = Color.Black.copy(alpha = 0.26f), background = detailBackground)
@@ -170,7 +210,13 @@ fun NoteDetailScreen(note: Note, noteViewModel: NoteActions, settings: AppSettin
     val popupAlpha = (settings.optionMenuOpacity / 100f).coerceIn(0.35f, 1f)
     val popupBackground = popupBaseColor.copy(alpha = popupAlpha)
     val popupVisualBackground = compositeUiColor(foreground = popupBackground, background = detailBackground)
-    val optionMenuTextColor = resolveUiTextColor(value = effectiveOptionMenuTextColorMode, background = popupVisualBackground)
+    val optionMenuTextColor = ensureUiContrast(
+        resolveUiTextColor(value = effectiveOptionMenuTextColorMode, background = popupVisualBackground),
+        popupVisualBackground, 4.5f)
+    val deleteMenuTextColor = ensureUiContrast(
+        preferred = if (popupVisualBackground.luminance() < 0.5f) Color(0xFFFF8A80) else Color(0xFFB3261E),
+        background = popupVisualBackground, minimumContrast = 4.5f
+    )
     val hiddenMainMenuItems = remember(settings.optionMenuHiddenItems) {
             MenuPreferencePolicy.hiddenKeys(settings.optionMenuHiddenItems, MenuPreferencePolicy.mainKeySet)
         }
@@ -194,11 +240,13 @@ fun NoteDetailScreen(note: Note, noteViewModel: NoteActions, settings: AppSettin
     val detailScrollState = rememberScrollState()
     AnimatedScreenEntry(animationsEnabled = settings.animationsEnabled,
         animationSpeed = settings.animationSpeed) {
-        Scaffold(modifier = Modifier.appScreenBackground(detailBackground, noteTextColor), containerColor = Color.Transparent,
+        Scaffold(modifier = Modifier.appScreenBackground(detailBackground, noteTextColor, useGlobalStyle = useGlobalBackground,
+            paused = backgroundMotionPaused), containerColor = Color.Transparent,
         contentColor = noteTextColor,
         topBar = {
-            TopAppBar(colors = TopAppBarDefaults.topAppBarColors(containerColor = appScreenContainerColor(detailBackground),
-                            scrolledContainerColor = appScreenContainerColor(detailBackground),
+            if (!reading) {
+            TopAppBar(colors = TopAppBarDefaults.topAppBarColors(containerColor = appScreenContainerColor(detailBackground, useGlobalStyle = useGlobalBackground),
+                            scrolledContainerColor = appScreenContainerColor(detailBackground, useGlobalStyle = useGlobalBackground),
                             titleContentColor = noteTextColor,
                             navigationIconContentColor = noteTextColor,
                             actionIconContentColor = noteTextColor),
@@ -206,10 +254,12 @@ fun NoteDetailScreen(note: Note, noteViewModel: NoteActions, settings: AppSettin
                     Text(text = "")
                 },
                 navigationIcon = {
-                    AppIconButton(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.mock_back),
+                    AppIconButton(if (embedded) Icons.Default.Close else Icons.AutoMirrored.Filled.ArrowBack,
+                        stringResource(if (embedded) R.string.design_close_preview else R.string.mock_back),
                         onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Back, onBack))
                 },
                 actions = {
+                    IconButton(onClick = { reading = true ; UiSoundPlayer.playFallbackClick()}) { Icon(Icons.Default.AutoStories, stringResource(R.string.organize_reader)) }
                     IconButton(onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Favorite) {
                             noteViewModel.toggleFavorite(note)
                         }) {
@@ -229,11 +279,11 @@ fun NoteDetailScreen(note: Note, noteViewModel: NoteActions, settings: AppSettin
                         }
                     }
                     Box {
-                        AppIconButton(Icons.Default.MoreVert, null,
+                        AppIconButton(Icons.Default.MoreVert, stringResource(R.string.mock_settings),
                             onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Menu) {
                                 mainMenuExpanded = true
                             })
-                        AppDropdownMenu(modifier = Modifier.heightIn(max = 300.dp).widthIn(min = 156.dp, max = 224.dp),
+                        AppDropdownMenu(modifier = Modifier.heightIn(max = 420.dp).widthIn(min = 156.dp, max = 224.dp),
                             expanded = mainMenuExpanded,
                             onDismissRequest = {
                                 mainMenuExpanded = false
@@ -269,6 +319,37 @@ fun NoteDetailScreen(note: Note, noteViewModel: NoteActions, settings: AppSettin
                                         }
                                     }
                                 }
+                            // Estas acciones siguen disponibles como lo estaban en la barra inferior.
+                            HorizontalDivider(color = optionMenuTextColor.copy(alpha = 0.18f))
+                            ConfigurableDropdownMenuItem(
+                                label = stringResource(R.string.mock_share), icon = Icons.Default.Share,
+                                showIcon = settings.optionMenuShowIcons, textColor = optionMenuTextColor,
+                                fontFamily = fontFamily, onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Share) {
+                                    mainMenuExpanded = false
+                                    shareNote(context = context, note = note)
+                                })
+                            ConfigurableDropdownMenuItem(
+                                label = stringResource(if (note.isPinned) R.string.mock_unpin else R.string.mock_pin),
+                                icon = Icons.Default.PushPin, showIcon = settings.optionMenuShowIcons,
+                                textColor = optionMenuTextColor, fontFamily = fontFamily,
+                                onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Pin) {
+                                    mainMenuExpanded = false
+                                    noteViewModel.togglePinned(note)
+                                })
+                            ConfigurableDropdownMenuItem(
+                                label = stringResource(R.string.mock_move), icon = Icons.Default.Folder,
+                                showIcon = settings.optionMenuShowIcons, textColor = optionMenuTextColor,
+                                fontFamily = fontFamily, onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Move) {
+                                    mainMenuExpanded = false
+                                    moveMenuExpanded = true
+                                })
+                            ConfigurableDropdownMenuItem(
+                                label = stringResource(R.string.mock_delete), icon = Icons.Default.Delete,
+                                showIcon = settings.optionMenuShowIcons, textColor = deleteMenuTextColor,
+                                fontFamily = fontFamily, onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Menu) {
+                                    mainMenuExpanded = false
+                                    deleteDialogVisible = true
+                                })
                         }
                         AppDropdownMenu(modifier = Modifier.heightIn(max = 300.dp).widthIn(min = 156.dp, max = 224.dp),
                             expanded = priorityMenuExpanded,
@@ -288,93 +369,40 @@ fun NoteDetailScreen(note: Note, noteViewModel: NoteActions, settings: AppSettin
                                         })
                                 }
                         }
-                        AppDropdownMenu(modifier = Modifier.heightIn(max = 300.dp).widthIn(min = 156.dp, max = 224.dp),
-                            expanded = colorMenuExpanded,
-                            onDismissRequest = {
-                                colorMenuExpanded = false
-                            },
-                            containerColor = popupBackground) {
-                            MenuPreferencePolicy.colorOptions.filterNot { it.key in hiddenColorMenuItems }
-                                .ifEmpty { MenuPreferencePolicy.colorOptions.take(1) }.forEach { option ->
-                                    ColorMenuItem(
-                                        label = stringResource(option.labelRes),
-                                        color = option.argb?.let { Color(it) } ?: MaterialTheme.colorScheme.surfaceContainerLow,
-                                        textColor = optionMenuTextColor, showSwatch = false, fontFamily = fontFamily,
-                                        onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Color) {
-                                            colorMenuExpanded = false
-                                            noteViewModel.changeNoteColor(note = note, color = option.key)
-                                        })
+                        if (colorMenuExpanded) {
+                            NotePaletteDialog(
+                                selectedColor = note.color,
+                                hiddenColorItems = hiddenColorMenuItems,
+                                containerColor = popupBackground,
+                                contentColor = optionMenuTextColor,
+                                onDismiss = { colorMenuExpanded = false },
+                                onColorSelected = { color ->
+                                    noteViewModel.changeNoteColor(note = note, color = color)
                                 }
+                            )
                         }
+                        if (moveMenuExpanded) FolderPickerDialog(folders,
+                            onSelect = { folder -> noteViewModel.moveNotes(setOf(note.id), folder); moveMenuExpanded = false },
+                            onDismiss = { moveMenuExpanded = false })
                     }
                 })
-        },
-        bottomBar = {
-            Surface(modifier = Modifier.fillMaxWidth(),
-                color = appScreenContainerColor(detailBackground), contentColor = noteTextColor,
-                tonalElevation = 0.dp, shadowElevation = 0.dp) {
-                Row(modifier = Modifier.fillMaxWidth().navigationBarsPadding().padding(horizontal = 12.dp, vertical = 4.dp),
-                    horizontalArrangement = Arrangement.SpaceAround,
-                    verticalAlignment = Alignment.CenterVertically) {
-                    DetailBottomAction(modifier = Modifier.weight(1f), icon = Icons.Default.Share,
-                        label = stringResource(R.string.mock_share),
-                        color = noteTextColor,
-                        fontFamily = fontFamily,
-                        onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Share) {
-                            shareNote(context = context, note = note)
-                        })
-                    DetailBottomAction(modifier = Modifier.weight(1f), icon = Icons.Default.PushPin,
-                        label = if (note.isPinned) {
-                                stringResource(R.string.mock_unpin)
-                            } else {
-                                stringResource(R.string.mock_pin)
-                            },
-                        color = noteTextColor,
-                        fontFamily = fontFamily,
-                        onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Pin) {
-                            noteViewModel.togglePinned(note)
-                        })
-                    Box(modifier = Modifier.weight(1f)) {
-                        DetailBottomAction(modifier = Modifier.fillMaxWidth(), icon = Icons.Default.Folder,
-                            label = stringResource(R.string.mock_move),
-                            color = noteTextColor,
-                            fontFamily = fontFamily,
-                            onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Move) {
-                                moveMenuExpanded = true
-                            })
-                        AppDropdownMenu(modifier = Modifier.heightIn(max = 300.dp).widthIn(min = 156.dp, max = 224.dp),
-                            expanded = moveMenuExpanded,
-                            onDismissRequest = {
-                                moveMenuExpanded = false
-                            },
-                            containerColor = popupBackground) {
-                            ConfigurableDropdownMenuItem(label = stringResource(R.string.mock_work), icon = Icons.Default.Work, showIcon =
-                                    settings.optionMenuShowIcons, textColor = optionMenuTextColor, fontFamily = fontFamily, onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Category) {
-                                    moveMenuExpanded = false
-                                    noteViewModel.changeCategory(note = note, category = "work")
-                                })
-                            ConfigurableDropdownMenuItem(label = stringResource(R.string.mock_personal), icon = Icons.Default.Person,
-                                showIcon = settings.optionMenuShowIcons, textColor = optionMenuTextColor, fontFamily = fontFamily,
-                                onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Category) {
-                                    moveMenuExpanded = false
-                                    noteViewModel.changeCategory(note = note, category = "personal")
-                                })
-                        }
-                    }
-                    DetailBottomAction(modifier = Modifier.weight(1f), icon = Icons.Default.Delete,
-                        label = stringResource(R.string.mock_delete),
-                        color = Color(0xFFD32F2F),
-                        fontFamily = fontFamily,
-                        onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Menu) {
-                            deleteDialogVisible = true
-                        })
+            }
+        }, floatingActionButton = {
+            if (reading) Surface(shape = RoundedCornerShape(24.dp), color = MaterialTheme.colorScheme.surfaceContainerHigh) {
+                Row {
+                    IconButton(onClick = { readerSettings = true ; UiSoundPlayer.playFallbackClick()}) { Icon(Icons.Default.TextFields, stringResource(R.string.organize_reader_settings)) }
+                    IconButton(onClick = { reading = false ; UiSoundPlayer.playFallbackClick()}) { Icon(Icons.Default.Close, stringResource(R.string.organize_exit_reader)) }
                 }
             }
         }) {
             paddingValues ->
         Box(modifier = Modifier.fillMaxSize().padding(paddingValues), contentAlignment = Alignment.TopCenter) {
-            Column(modifier = Modifier.widthIn(max = 900.dp).fillMaxWidth().verticalScroll(detailScrollState).padding(start = 22.dp,
+            Column(modifier = Modifier.widthIn(max = if (reading) readerWidth.dp else 900.dp).fillMaxWidth().verticalScroll(detailScrollState).padding(start = 22.dp,
                             end = 22.dp, bottom = 28.dp)) {
+            if (note.coverUri != null || note.coverIcon != null) {
+                NoteCover(note, Modifier.fillMaxWidth().height(220.dp), settings.performanceMode)
+                Spacer(Modifier.height(16.dp))
+            }
             Text(text = note.title.ifBlank {
                             stringResource(R.string.mock_untitled)
                         },
@@ -383,6 +411,7 @@ fun NoteDetailScreen(note: Note, noteViewModel: NoteActions, settings: AppSettin
                 fontWeight = FontWeight.Bold,
                 fontSize = (settings.fontSize + 13f).sp,
                 lineHeight = (settings.fontSize + 17f).sp)
+            if (!reading) {
             Spacer(modifier = Modifier.height(11.dp))
             FlowRow(modifier = Modifier.fillMaxWidth(),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -392,7 +421,7 @@ fun NoteDetailScreen(note: Note, noteViewModel: NoteActions, settings: AppSettin
                         dateChipContainerColor, neutralBorder = dateChipBorderColor)
                 CategoryPill(category = note.category, fontFamily = fontFamily)
                 AssistChip(onClick = {
-                    },
+                    ; UiSoundPlayer.playFallbackClick()},
                     colors = AssistChipDefaults.assistChipColors(containerColor = dateChipContainerColor, labelColor = dateChipTextColor,
                             leadingIconContentColor = dateChipIconColor),
                     border = AssistChipDefaults.assistChipBorder(enabled = true, borderColor = dateChipBorderColor),
@@ -409,13 +438,19 @@ fun NoteDetailScreen(note: Note, noteViewModel: NoteActions, settings: AppSettin
                             modifier = Modifier.size(16.dp))
                     })
             }
+            folders.firstOrNull { it.id == note.folderId }?.let { Text(it.name, style = MaterialTheme.typography.labelLarge) }
+            }
+            com.example.mynotes.studio.PlusReadingTools(note, detailScrollState)
             if (displayContent.isNotBlank()) {
                 Spacer(modifier = Modifier.height(24.dp))
-                Text(text = displayContent,
+                com.example.mynotes.ui.workspace.LinkedNotesSection(note.content, noteCatalog)
+                if (note.formattingEnabled) RichNoteBody(displayContent,
+                    style = MaterialTheme.typography.bodyLarge.copy(fontFamily = fontFamily, fontSize = settings.fontSize.sp,
+                        lineHeight = (if (reading) settings.fontSize * readerSpacing else settings.fontSize + 7f).sp),
                     color = noteSecondaryTextColor,
-                    fontFamily = fontFamily,
-                    fontSize = settings.fontSize.sp,
-                    lineHeight = (settings.fontSize + 7f).sp)
+                    onToggleTask = { line -> noteViewModel.toggleTask(note.id, line) })
+                else Text(displayContent, color = noteSecondaryTextColor, fontFamily = fontFamily, fontSize = settings.fontSize.sp,
+                    lineHeight = (if (reading) settings.fontSize * readerSpacing else settings.fontSize + 7f).sp)
             }
             if (noteLinks.isNotEmpty()) {
                 Spacer(modifier = Modifier.height(18.dp))
@@ -434,7 +469,7 @@ fun NoteDetailScreen(note: Note, noteViewModel: NoteActions, settings: AppSettin
                     fontFamily = fontFamily,
                     fontWeight = FontWeight.Bold,
                     fontSize = 18.sp)
-                Surface(shape = RoundedCornerShape(12.dp),
+                if (!reading) Surface(shape = RoundedCornerShape(12.dp),
                     color = attachmentAddButtonContainerColor) {
                     AppIconButton(Icons.Default.Add, stringResource(R.string.mock_edit),
                         onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Add) {
@@ -443,7 +478,7 @@ fun NoteDetailScreen(note: Note, noteViewModel: NoteActions, settings: AppSettin
                 }
             }
             if (attachments.isEmpty()) {
-                Text(text = stringResource(R.string.mock_no_attachments),
+                if (!reading) Text(text = stringResource(R.string.mock_no_attachments),
                     color = noteSecondaryTextColor,
                     fontFamily = fontFamily,
                     fontSize = 13.sp)
@@ -525,27 +560,13 @@ private fun PriorityPill(priority: Int, fontFamily: FontFamily = FontFamily.Defa
     }
 }
 
-@Composable
-private fun DetailBottomAction(modifier: Modifier = Modifier, icon:
-        androidx.compose.ui.graphics.vector.ImageVector, label: String, color: Color, fontFamily: FontFamily = FontFamily.Default,
-    onClick: () -> Unit) {
-    Column(modifier = modifier, horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.spacedBy(2.dp)) {
-        AppIconButton(icon, label, onClick = onClick, modifier = Modifier.size(38.dp), tint = color, iconModifier = Modifier.size(19.dp))
-        Text(text = label,
-            color = color,
-            fontFamily = fontFamily,
-            fontSize = 9.sp,
-            maxLines = 1)
-    }
-}
-
 private fun shareNote(context: Context, note: Note) {
     val text = buildString {
             if (note.title.isNotBlank()) {
                 append(note.title)
                 append("\n\n")
             }
-            append(noteTextForDisplay(note.content, extractLinkUrls(note.content)))
+            append(NoteMarkup.shareText(note.content, note.formattingEnabled))
         }
     val intent = Intent(Intent.ACTION_SEND).setType("text/plain").putExtra(Intent.EXTRA_TEXT, text)
     context.startActivity(Intent.createChooser(intent, null))

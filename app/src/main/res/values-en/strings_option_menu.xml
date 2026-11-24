@@ -9,10 +9,7 @@
     <string name="option_menu_text_white">White</string>
     <string name="option_menu_change">Change</string>
     <string name="option_menu_opacity">Menu opacity</string>
-    <string name="option_menu_main_actions">Main actions</string>
-    <string name="option_menu_main_actions_hint">Use the arrows to change the order and the switch to show or hide each action.</string>
-    <string name="option_menu_priority_submenu">Priority submenu</string>
-    <string name="option_menu_color_submenu">Color submenu</string>
+
     <string name="option_menu_move_up">Move up</string>
     <string name="option_menu_move_down">Move down</string>
 </resources>

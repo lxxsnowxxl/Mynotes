@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android Studio reference for the runtime Compose Studio screen. -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:fillViewport="true" android:background="#F7F4EE">
+ <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_gravity="center_horizontal" android:orientation="vertical" android:padding="24dp">
+  <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Study cards" android:textSize="28sp" android:textStyle="bold" android:textColor="#242424" />
+  <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Due today · Review your notes" android:layout_marginTop="12dp" android:textColor="#62605A" android:textSize="16sp" />
+  <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Question" android:layout_marginTop="28dp" android:textStyle="bold" android:textSize="20sp" android:textColor="#242424" />
+  <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="What should we review next?" android:background="#FFFFFF" android:padding="24dp" android:layout_marginTop="12dp" android:textSize="16sp" android:textColor="#242424" />
+  <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Answer" android:layout_marginTop="28dp" android:textStyle="bold" android:textSize="20sp" android:textColor="#242424" />
+  <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Reveal the answer before rating recall" android:background="#FFFFFF" android:padding="24dp" android:layout_marginTop="12dp" android:textSize="16sp" android:textColor="#242424" />
+  <Button android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="48dp" android:layout_marginTop="24dp" android:text="Reveal answer" />
+ </LinearLayout>
+</ScrollView>

@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- v319.10: Single scrolling container matching the Compose reminder editor. -->
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:background="@drawable/layout_xml_app_background" android:theme="@style/LayoutXmlPreviewTheme" android:padding="12dp" tools:context="com.example.mynotes.MainActivity" android:id="@+id/preview_30_reminder_editor_workspace_0">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:id="@+id/preview_30_reminder_editor_workspace_1">
+        <android.widget.ImageButton android:layout_width="48dp" android:layout_height="48dp" android:src="@drawable/preview_ic_arrow_back" android:contentDescription="@string/drawing_back" android:background="@android:color/transparent" android:padding="12dp" android:id="@+id/preview_30_reminder_editor_workspace_2" />
+        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:text="@string/reminder_create_title" android:textSize="22sp" android:textColor="@color/layout_xml_text" android:padding="6dp" android:textStyle="bold" android:layout_weight="1" android:id="@+id/preview_30_reminder_editor_workspace_3" />
+        <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/save" android:minHeight="48dp" android:id="@+id/preview_30_reminder_editor_workspace_4" />
+    </LinearLayout>
+    <ScrollView android:layout_width="match_parent" android:layout_height="0dp" android:fillViewport="true" android:layout_weight="1" android:id="@+id/preview_30_reminder_editor_workspace_6">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="12dp" android:id="@+id/preview_30_reminder_editor_workspace_7" android:background="@drawable/layout_xml_tone">
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Date and time" android:textSize="14sp" android:textColor="@color/layout_xml_text" android:padding="6dp" android:id="@+id/preview_30_reminder_editor_workspace_8" />
+            <EditText android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="@string/reminder_title" android:textSize="18sp" android:minHeight="56dp" android:gravity="top|start" android:inputType="textCapSentences" android:minLines="1" android:textColor="@color/layout_xml_text" android:padding="14dp" android:background="@drawable/layout_xml_tone" android:id="@+id/preview_30_reminder_editor_workspace_9" />
+            <EditText android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="@string/reminder_description" android:textSize="18sp" android:minHeight="56dp" android:gravity="top|start" android:inputType="textCapSentences|textMultiLine" android:minLines="4" android:textColor="@color/layout_xml_text" android:padding="14dp" android:background="@drawable/layout_xml_tone" android:id="@+id/preview_30_reminder_editor_workspace_10" />
+            <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/workspace_link_note" android:minHeight="48dp" android:id="@+id/preview_30_reminder_editor_workspace_11" />
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/workspace_upcoming" android:textSize="18sp" android:textColor="@color/layout_xml_text" android:padding="6dp" android:id="@+id/preview_30_reminder_editor_workspace_12" />
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/reminder_title" android:textSize="14sp" android:textColor="@color/layout_xml_text" android:padding="6dp" android:id="@+id/preview_30_reminder_editor_workspace_13" />
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Date and time" android:textSize="14sp" android:textColor="@color/layout_xml_text" android:padding="6dp" android:id="@+id/preview_30_reminder_editor_workspace_14" />
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/reminder_tools" android:textSize="18sp" android:textStyle="bold" android:textColor="@color/layout_xml_text" android:padding="6dp" />
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/workspace_calendar" android:textSize="18sp" android:textColor="@color/layout_xml_text" android:padding="6dp" android:id="@+id/preview_30_reminder_editor_workspace_17" />
+            <CalendarView android:layout_width="match_parent" android:layout_height="300dp" android:id="@+id/preview_30_reminder_editor_workspace_18" />
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Date and time" android:textSize="18sp" android:textColor="@color/layout_xml_text" android:padding="6dp" android:id="@+id/preview_30_reminder_editor_workspace_19" />
+            <HorizontalScrollView android:layout_width="match_parent" android:layout_height="wrap_content" android:fillViewport="true" android:id="@+id/preview_30_reminder_editor_workspace_20">
+                <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:id="@+id/preview_30_reminder_editor_workspace_21">
+                    <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Fri, 6 Nov 2026" android:minHeight="48dp" android:id="@+id/preview_30_reminder_editor_workspace_22" />
+                    <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="19:32" android:minHeight="48dp" android:id="@+id/preview_30_reminder_editor_workspace_23" />
+                </LinearLayout>
+            </HorizontalScrollView>
+            <HorizontalScrollView android:layout_width="match_parent" android:layout_height="wrap_content" android:fillViewport="true" android:id="@+id/preview_30_reminder_editor_workspace_24">
+                <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:id="@+id/preview_30_reminder_editor_workspace_25">
+                    <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+5 min" android:minHeight="48dp" android:id="@+id/preview_30_reminder_editor_workspace_26" />
+                    <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+10 min" android:minHeight="48dp" android:id="@+id/preview_30_reminder_editor_workspace_27" />
+                    <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+15 min" android:minHeight="48dp" android:id="@+id/preview_30_reminder_editor_workspace_28" />
+                </LinearLayout>
+            </HorizontalScrollView>
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/reminder_repeat" android:textSize="16sp" android:textColor="@color/layout_xml_text" android:padding="6dp" android:id="@+id/preview_30_reminder_editor_workspace_29" />
+            <HorizontalScrollView android:layout_width="match_parent" android:layout_height="wrap_content" android:fillViewport="true" android:id="@+id/preview_30_reminder_editor_workspace_30">
+                <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:id="@+id/preview_30_reminder_editor_workspace_31">
+                    <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/reminder_repeat_none" android:minHeight="48dp" android:id="@+id/preview_30_reminder_editor_workspace_32" />
+                    <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/reminder_repeat_daily" android:minHeight="48dp" android:id="@+id/preview_30_reminder_editor_workspace_33" />
+                    <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/reminder_repeat_weekdays" android:minHeight="48dp" android:id="@+id/preview_30_reminder_editor_workspace_34" />
+                    <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/workspace_custom_days" android:minHeight="48dp" android:id="@+id/preview_30_reminder_editor_workspace_35" />
+                </LinearLayout>
+            </HorizontalScrollView>
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/workspace_end_repeat" android:textSize="14sp" android:textColor="@color/layout_xml_text" android:padding="6dp" android:id="@+id/preview_30_reminder_editor_workspace_36" />
+            <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/workspace_never" android:minHeight="48dp" android:id="@+id/preview_30_reminder_editor_workspace_37" />
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/reminder_priority" android:textSize="14sp" android:textColor="@color/layout_xml_text" android:padding="6dp" android:id="@+id/preview_30_reminder_editor_workspace_38" />
+            <HorizontalScrollView android:layout_width="match_parent" android:layout_height="wrap_content" android:fillViewport="true" android:id="@+id/preview_30_reminder_editor_workspace_39">
+                <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:id="@+id/preview_30_reminder_editor_workspace_40">
+                    <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/reminder_priority_low" android:minHeight="48dp" android:id="@+id/preview_30_reminder_editor_workspace_41" />
+                    <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/reminder_priority_normal" android:minHeight="48dp" android:id="@+id/preview_30_reminder_editor_workspace_42" />
+                    <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/reminder_priority_high" android:minHeight="48dp" android:id="@+id/preview_30_reminder_editor_workspace_43" />
+                </LinearLayout>
+            </HorizontalScrollView>
+            <!-- Vista XML de referencia: mismo panel vertical que Jetpack Compose. -->
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/reminder_advance_heading" android:textSize="18sp" android:textStyle="bold" android:padding="6dp" android:textColor="@color/layout_xml_text" />
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/reminder_advance_at_time" android:textSize="15sp" android:padding="6dp" android:textColor="@color/layout_xml_text" />
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/reminder_advance_description" android:textSize="14sp" android:padding="6dp" android:textColor="@color/layout_xml_text" />
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/reminder_advance_quick_options" android:textStyle="bold" android:textColor="@color/layout_xml_text" android:padding="6dp" />
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+                <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="5 min" android:minHeight="48dp" />
+                <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="10 min" android:minHeight="48dp" />
+                <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="30 min" android:minHeight="48dp" />
+            </LinearLayout>
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+                <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="1 h" android:minHeight="48dp" />
+                <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="1 d" android:minHeight="48dp" />
+            </LinearLayout>
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/reminder_advance_selected" android:textSize="14sp" android:textColor="@color/layout_xml_text" android:padding="6dp" />
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/reminder_advance_custom" android:textSize="16sp" android:textStyle="bold" android:textColor="@color/layout_xml_text" android:padding="6dp" />
+            <EditText android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="48dp" android:inputType="number" android:text="15" android:hint="@string/reminder_advance_amount" android:textColor="@color/layout_xml_text" />
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+                <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/reminder_advance_unit_minutes" android:minHeight="48dp" />
+                <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/reminder_advance_unit_hours" android:minHeight="48dp" />
+                <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/reminder_advance_unit_days" android:minHeight="48dp" />
+            </LinearLayout>
+            <Button android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/reminder_advance_add" android:minHeight="48dp" />
+        </LinearLayout>
+    </ScrollView>
+</LinearLayout>

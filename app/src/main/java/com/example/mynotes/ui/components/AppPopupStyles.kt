@@ -1,8 +1,10 @@
 package com.example.mynotes.ui.components
 
+import android.os.Build
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.ScrollState
 import androidx.compose.foundation.layout.ColumnScope
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
@@ -24,7 +26,9 @@ private val DefaultMenuProperties = PopupProperties(
     focusable = false, dismissOnBackPress = true, dismissOnClickOutside = true
 )
 private val DefaultDialogProperties = DialogProperties(
-    dismissOnBackPress = true, dismissOnClickOutside = true
+    dismissOnBackPress = true,
+    dismissOnClickOutside = true,
+    decorFitsSystemWindows = false
 )
 
 /**
@@ -111,16 +115,20 @@ fun AppAlertDialog(
     onDismissRequest: () -> Unit,
     modifier: Modifier = Modifier,
     properties: DialogProperties = DefaultDialogProperties,
+    containerColor: Color = MaterialTheme.colorScheme.surfaceContainerHigh,
     title: @Composable (() -> Unit)? = null,
     text: @Composable (() -> Unit)? = null,
     confirmButton: @Composable () -> Unit,
     dismissButton: @Composable (() -> Unit)? = null,
     icon: @Composable (() -> Unit)? = null
 ) {
-    val containerColor = MaterialTheme.colorScheme.surfaceContainerHigh
+    // Edge-to-edge dialogs use ADJUST_NOTHING on Android 12 and newer.
+    val dialogModifier = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !properties.decorFitsSystemWindows) {
+        Modifier.imePadding().then(modifier)
+    } else modifier
     AlertDialog(
         onDismissRequest = onDismissRequest,
-        modifier = modifier,
+        modifier = dialogModifier,
         properties = properties,
         shape = RoundedCornerShape(24.dp),
         containerColor = containerColor,
@@ -128,7 +136,10 @@ fun AppAlertDialog(
         icon = icon,
         title = title,
         text = text,
-        confirmButton = confirmButton,
+        confirmButton = {
+            HideDialogNavigationBar(preventFocusFlash = true)
+            confirmButton()
+        },
         dismissButton = dismissButton,
         iconContentColor = MaterialTheme.colorScheme.onSurface,
         titleContentColor = MaterialTheme.colorScheme.onSurface,

@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="reminder_advanced_schedule">高级日程设置</string>
+    <string name="reminder_repeat_interval">重复间隔（1–365）</string>
+    <string name="reminder_repeat_interval_hint">例如，2 表示每两天、两周或两个月重复一次，具体取决于重复方式。</string>
+    <string name="reminder_repeat_limit">最多重复次数</string>
+    <string name="reminder_repeat_limit_hint">留空表示不限次数。</string>
+    <string name="reminder_monthly_pattern">每月的哪一天？</string>
+    <string name="reminder_month_same_day">相同日期</string>
+    <string name="reminder_month_first">第一个</string>
+    <string name="reminder_month_second">第二个</string>
+    <string name="reminder_month_third">第三个</string>
+    <string name="reminder_month_fourth">第四个</string>
+    <string name="reminder_month_fifth">第五个</string>
+    <string name="reminder_month_last">最后一个</string>
+    <string name="reminder_advance_heading">提前提醒</string>
+    <string name="reminder_advance_at_time">事件发生时也提醒（始终开启）</string>
+    <string name="reminder_advance_description">选择在事件开始前何时收到额外提醒。可以多选。</string>
+    <string name="reminder_advance_quick_options">快捷选项</string>
+    <string name="reminder_advance_none">未设置提前提醒。仍会在事件发生时通知。</string>
+    <string name="reminder_advance_selected">已选提醒 · 点击 × 移除</string>
+    <string name="reminder_advance_past_selected">部分提前提醒时间已过，不会安排通知。请移除或修改事件日期。</string>
+    <string name="reminder_advance_custom">自定义提前提醒</string>
+    <string name="reminder_advance_amount">数量</string>
+    <string name="reminder_advance_unit_minutes">分钟</string>
+    <string name="reminder_advance_unit_hours">小时</string>
+    <string name="reminder_advance_unit_days">天</string>
+    <string name="reminder_advance_add">添加提醒</string>
+    <string name="reminder_advance_invalid">请输入 1 分钟到 7 天之间的数值。</string>
+    <string name="reminder_advance_duplicate">该提醒已被选择。</string>
+    <string name="reminder_advance_limit">最多可添加 12 个提前提醒。</string>
+    <string name="reminder_advance_past">该提醒时间已过。请缩短提前时间或修改事件日期。</string>
+    <string name="reminder_advance_help">这些提醒会与日程一起保存。可选择分钟、小时或天。</string>
+    <string name="reminder_advance_remove">移除提前提醒</string>
+    <string name="reminder_advance_one_day">提前 1 天</string>
+    <string name="reminder_advance_days">提前 %1$d 天</string>
+    <string name="reminder_advance_one_hour">提前 1 小时</string>
+    <string name="reminder_advance_hours">提前 %1$d 小时</string>
+    <string name="reminder_advance_one_minute">提前 1 分钟</string>
+    <string name="reminder_advance_minutes">提前 %1$d 分钟</string>
+
+    <string name="reminder_advanced_schedule_description">可在此设置重复规则和额外提醒。主提醒始终会在事件时间触发。</string>
+    <string name="reminder_advanced_event_summary">事件：%1$s</string>
+    <string name="reminder_repeat_unlock_hint">请先在上方选择重复方式，以显示高级频率和次数设置。</string>
+    <string name="reminder_repeat_rules_heading">重复规则</string>
+    <string name="reminder_repeat_rules_description">设置重复频率，并可选择限制总发生次数。</string>
+    <string name="reminder_main_alert_label">主提醒</string>
+    <string name="reminder_always_on">始终开启</string>
+    <string name="reminder_advance_availability_hint">事件约在 %1$d 分钟后开始。已早于当前时间的选项会被禁用。</string>
+    <string name="reminder_notification_plan">即将到来的通知</string>
+    <string name="reminder_required">必需</string>
+</resources>

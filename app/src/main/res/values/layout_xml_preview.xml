@@ -72,31 +72,13 @@
         <item>@string/motion_easing_emphasized_decel</item>
     </string-array>
     <string-array name="layout_xml_motion_style_options">
-        <item>@string/motion_style_zoom</item>
-        <item>@string/motion_style_zoom_fade</item>
-        <item>@string/motion_style_fade</item>
-        <item>@string/motion_style_slide_left</item>
-        <item>@string/motion_style_slide_right</item>
-        <item>@string/motion_style_slide_up</item>
-        <item>@string/motion_style_slide_down</item>
-        <item>@string/motion_style_slide_zoom_left</item>
-        <item>@string/motion_style_slide_zoom_up</item>
-        <item>@string/motion_style_axis_x</item>
-        <item>@string/motion_style_axis_y</item>
-        <item>@string/motion_style_axis_z</item>
-        <item>@string/motion_style_expand</item>
-        <item>@string/motion_style_expand_horizontal</item>
-        <item>@string/motion_style_expand_vertical</item>
-        <item>@string/motion_style_bounce</item>
-        <item>@string/motion_style_elastic</item>
-        <item>@string/motion_style_pop</item>
-        <item>@string/motion_style_subtle</item>
-        <item>@string/motion_style_expressive_spring</item>
-        <item>@string/motion_style_container_transform</item>
-        <item>@string/motion_style_soft_reveal</item>
-        <item>@string/motion_style_elastic_slide</item>
-        <item>@string/motion_style_predictive</item>
-        <item>@string/motion_style_tonal_pop</item>
+        <item>@string/motion_style_cross_dissolve</item>
+        <item>@string/motion_style_lift_card</item>
+        <item>@string/motion_style_lateral_stack</item>
+        <item>@string/motion_style_depth_pull</item>
+        <item>@string/motion_style_diagonal_flow</item>
+        <item>@string/motion_style_corner_unfold</item>
+        <item>@string/motion_style_focus_swap</item>
         <item>@string/motion_style_random</item>
     </string-array>
     <string-array name="layout_xml_performance_options">

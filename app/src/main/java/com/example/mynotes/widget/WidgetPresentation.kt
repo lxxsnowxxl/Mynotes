@@ -11,6 +11,7 @@ import com.example.mynotes.data.Attachment
 import com.example.mynotes.data.Note
 import com.example.mynotes.settings.WidgetSettings
 import com.example.mynotes.ui.theme.PaletteCatalog
+import com.example.mynotes.ui.theme.NoteColorSelection
 import java.text.SimpleDateFormat
 import java.util.Date
 
@@ -24,11 +25,11 @@ object WidgetPresentation {
     private val WidgetBlankLinesRegex = Regex("""\n{3,}""")
     private val WidgetPaletteKeyRegex = Regex("[^a-z0-9_]")
 
-    private fun visibleNoteContent(raw: String): String = raw
+    private fun visibleNoteContent(raw: String, formatted: Boolean): String = raw
         .replace(WidgetEmbeddedLinkMarkerRegex, "")
         .replace(WidgetUrlRegex, "")
         .replace(WidgetBlankLinesRegex, "\n\n")
-        .trim()
+        .trim().let { if (formatted) com.example.mynotes.ui.notes.NoteMarkup.render(it).text else it }
 
     data class WidgetThemeSpec(
         val rootBackgroundRes: Int,
@@ -178,7 +179,11 @@ object WidgetPresentation {
         }
     }
 
-    fun noteAccentColor(note: Note, fallback: Int): Int = when (note.color) {
+    fun noteAccentColor(note: Note, fallback: Int): Int {
+        NoteColorSelection.decode(note.color)?.let { selected ->
+            return PaletteCatalog.find(selected.paletteKey).toneAt(selected.toneIndex).toArgb()
+        }
+        return when (note.color) {
         "purple" -> 0xFFB388FF.toInt()
         "yellow" -> 0xFFE8B64D.toInt()
         "pink" -> 0xFFFF8FB1.toInt()
@@ -193,17 +198,18 @@ object WidgetPresentation {
         "brown" -> 0xFFC89F7A.toInt()
         "gray" -> 0xFFAAB3BD.toInt()
         else -> fallback
+        }
     }
 
     fun title(context: Context, note: Note): String {
         return note.title.trim().takeIf { it.isNotEmpty() }
-            ?: visibleNoteContent(note.content).lineSequence().firstOrNull { it.isNotBlank() }?.trim()
+            ?: visibleNoteContent(note.content, note.formattingEnabled).lineSequence().firstOrNull { it.isNotBlank() }?.trim()
             ?: context.getString(R.string.widget_untitled_note)
     }
 
     fun preview(context: Context, note: Note): String {
         val normalizedTitle = note.title.trim()
-        val contentLine = visibleNoteContent(note.content)
+        val contentLine = visibleNoteContent(note.content, note.formattingEnabled)
             .lineSequence()
             .map { it.trim() }
             .firstOrNull { it.isNotEmpty() }
@@ -219,7 +225,7 @@ object WidgetPresentation {
 
     fun contentPreview(note: Note, maxLength: Int = 170): String {
         val limit = maxLength.coerceAtLeast(1)
-        val merged = visibleNoteContent(note.content)
+        val merged = visibleNoteContent(note.content, note.formattingEnabled)
             .lineSequence()
             .map { it.trim() }
             .filter { it.isNotEmpty() }

@@ -36,7 +36,7 @@
                     android:layout_height="42dp"
                     android:background="@drawable/preview_circle_base"
                     android:id="@+id/preview_31_pdf_library_framelayout_4">
-                    <ImageView
+                    <android.widget.ImageView
                         android:layout_width="24dp"
                         android:layout_height="24dp"
                         android:layout_gravity="center"
@@ -220,7 +220,7 @@
                     android:layout_height="42dp"
                     android:background="@drawable/preview_circle_base"
                     android:id="@+id/preview_31_pdf_library_framelayout_25">
-                    <ImageView
+                    <android.widget.ImageView
                         android:layout_width="26dp"
                         android:layout_height="26dp"
                         android:layout_gravity="center"
@@ -335,7 +335,7 @@
                     android:layout_height="42dp"
                     android:background="@drawable/preview_circle_base"
                     android:id="@+id/preview_31_pdf_library_framelayout_39">
-                    <ImageView
+                    <android.widget.ImageView
                         android:layout_width="26dp"
                         android:layout_height="26dp"
                         android:layout_gravity="center"
@@ -358,7 +358,7 @@
         android:paddingStart="17dp"
         android:paddingEnd="17dp"
         android:id="@+id/preview_31_pdf_library_linearlayout_41">
-        <ImageView
+        <android.widget.ImageView
             android:layout_width="21dp"
             android:layout_height="21dp"
             android:src="@drawable/preview_ic_add"

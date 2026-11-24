@@ -1,308 +1,72 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Vistas Android editables. Referencia de diseño: Compose; mapa en doc/layout_compose_previews.json. -->
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/layout_xml_app_background"
-    android:orientation="vertical"
-    tools:ignore="HardcodedText,ContentDescription"
-    android:theme="@style/LayoutXmlPreviewTheme"
-    tools:context="com.example.mynotes.MainActivity"
-    android:id="@+id/preview_30_reminder_editor_linearlayout_0">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="74dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingStart="16dp"
-        android:paddingEnd="16dp"
-        android:id="@+id/preview_30_reminder_editor_linearlayout_1">
-        <ImageView
-            android:layout_width="42dp"
-            android:layout_height="42dp"
-            android:padding="9dp"
-            android:src="@drawable/preview_ic_arrow_back"
-            android:tint="@color/layout_xml_text"
-            android:id="@+id/preview_30_reminder_editor_imageview_2" />
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:id="@+id/preview_30_reminder_editor_linearlayout_3">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif"
-                android:text="@string/reminder_create_title"
-                android:textColor="@color/layout_xml_text"
-                android:textSize="23sp"
-                android:includeFontPadding="true"
-                android:id="@+id/preview_30_reminder_editor_textview_4" />
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif"
-                android:text="@string/reminder_editor_subtitle"
-                android:textColor="@color/layout_xml_text"
-                android:textSize="11sp"
-                android:includeFontPadding="true"
-                android:id="@+id/preview_30_reminder_editor_textview_5" />
-        </LinearLayout>
-        <FrameLayout
-            android:layout_width="46dp"
-            android:layout_height="46dp"
-            android:background="@drawable/preview_button_light"
-            android:id="@+id/preview_30_reminder_editor_framelayout_6">
-            <ImageView
-                android:layout_width="24dp"
-                android:layout_height="24dp"
-                android:layout_gravity="center"
-                android:src="@drawable/preview_ic_check"
-                android:tint="@color/layout_xml_text"
-                android:id="@+id/preview_30_reminder_editor_imageview_7" />
-        </FrameLayout>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:background="@drawable/layout_xml_app_background" android:theme="@style/LayoutXmlPreviewTheme" android:padding="12dp" tools:context="com.example.mynotes.MainActivity" android:id="@+id/preview_30_reminder_editor_workspace_0">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:id="@+id/preview_30_reminder_editor_workspace_1">
+        <android.widget.ImageButton android:layout_width="48dp" android:layout_height="48dp" android:src="@drawable/preview_ic_arrow_back" android:contentDescription="@string/drawing_back" android:background="@android:color/transparent" android:padding="12dp" android:id="@+id/preview_30_reminder_editor_workspace_2" />
+        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:text="@string/reminder_create_title" android:textSize="22sp" android:textColor="@color/layout_xml_text" android:padding="6dp" android:textStyle="bold" android:layout_weight="1" android:id="@+id/preview_30_reminder_editor_workspace_3" />
+        <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/save" android:minHeight="48dp" android:id="@+id/preview_30_reminder_editor_workspace_4" android:background="@drawable/layout_xml_palette_workspace_action" android:textColor="@color/layout_xml_on_primary" />
     </LinearLayout>
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:id="@+id/preview_30_reminder_editor_scrollview_8">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="vertical"
-            android:padding="16dp"
-            android:id="@+id/preview_30_reminder_editor_linearlayout_9">
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:background="@drawable/preview_light_group"
-                android:orientation="vertical"
-                android:padding="16dp"
-                android:id="@+id/preview_30_reminder_editor_linearlayout_10">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif"
-                    android:text="@string/reminder_content_section"
-                    android:textColor="@color/layout_xml_text"
-                    android:textSize="17sp"
-                    android:includeFontPadding="true"
-                    android:id="@+id/preview_30_reminder_editor_textview_11" />
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="58dp"
-                    android:layout_marginTop="10dp"
-                    android:background="@drawable/preview_field"
-                    android:fontFamily="sans-serif"
-                    android:hint="@string/reminder_title"
-                    android:paddingStart="14dp"
-                    android:paddingEnd="14dp"
-                    android:textColor="@color/layout_xml_text"
-                    android:textColorHint="@color/layout_xml_secondary"
-                    android:includeFontPadding="true"
-                    android:id="@+id/preview_30_reminder_editor_edittext_12" />
-                <EditText
-                    android:layout_width="match_parent"
-                    android:layout_height="92dp"
-                    android:layout_marginTop="10dp"
-                    android:background="@drawable/preview_field"
-                    android:fontFamily="sans-serif"
-                    android:gravity="top|start"
-                    android:hint="@string/reminder_description"
-                    android:padding="14dp"
-                    android:textColor="@color/layout_xml_text"
-                    android:textColorHint="@color/layout_xml_secondary"
-                    android:includeFontPadding="true"
-                    android:id="@+id/preview_30_reminder_editor_edittext_13" />
+    <ScrollView android:layout_width="match_parent" android:layout_height="0dp" android:fillViewport="true" android:layout_weight="1" android:id="@+id/preview_30_reminder_editor_workspace_5" android:background="@drawable/layout_xml_palette_workspace_panel" android:clipToOutline="true" android:layout_marginStart="4dp" android:layout_marginEnd="4dp" android:layout_marginTop="8dp" android:layout_marginBottom="8dp">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="16dp" android:id="@+id/preview_30_reminder_editor_workspace_6" android:background="@android:color/transparent">
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Date and time" android:textSize="14sp" android:textColor="@color/layout_xml_text" android:padding="6dp" android:id="@+id/preview_30_reminder_editor_workspace_7" />
+            <EditText android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="@string/reminder_title" android:textSize="18sp" android:minHeight="56dp" android:gravity="top|start" android:inputType="textCapSentences" android:minLines="1" android:textColor="@color/layout_xml_text" android:padding="14dp" android:background="@drawable/layout_xml_palette_workspace_field" android:id="@+id/preview_30_reminder_editor_workspace_8" />
+            <EditText android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="@string/reminder_description" android:textSize="18sp" android:minHeight="56dp" android:gravity="top|start" android:inputType="textCapSentences|textMultiLine" android:minLines="4" android:textColor="@color/layout_xml_text" android:padding="14dp" android:background="@drawable/layout_xml_palette_workspace_field" android:id="@+id/preview_30_reminder_editor_workspace_9" />
+            <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/workspace_link_note" android:minHeight="48dp" android:id="@+id/preview_30_reminder_editor_workspace_10" />
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/reminder_tools" android:textSize="18sp" android:textStyle="bold" android:textColor="@color/layout_xml_text" android:padding="6dp" />
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Date and time" android:textSize="18sp" android:textColor="@color/layout_xml_text" android:padding="6dp" android:id="@+id/preview_30_reminder_editor_workspace_14" />
+            <HorizontalScrollView android:layout_width="match_parent" android:layout_height="wrap_content" android:fillViewport="true" android:id="@+id/preview_30_reminder_editor_workspace_15">
+                <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:id="@+id/preview_30_reminder_editor_workspace_16">
+                    <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Fri, 6 Nov 2026" android:minHeight="48dp" android:id="@+id/preview_30_reminder_editor_workspace_17" />
+                    <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="19:32" android:minHeight="48dp" android:id="@+id/preview_30_reminder_editor_workspace_18" />
+                </LinearLayout>
+            </HorizontalScrollView>
+            <HorizontalScrollView android:layout_width="match_parent" android:layout_height="wrap_content" android:fillViewport="true" android:id="@+id/preview_30_reminder_editor_workspace_19">
+                <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:id="@+id/preview_30_reminder_editor_workspace_20">
+                    <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+5 min" android:minHeight="48dp" android:id="@+id/preview_30_reminder_editor_workspace_21" />
+                    <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+10 min" android:minHeight="48dp" android:id="@+id/preview_30_reminder_editor_workspace_22" />
+                    <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="+15 min" android:minHeight="48dp" android:id="@+id/preview_30_reminder_editor_workspace_23" />
+                </LinearLayout>
+            </HorizontalScrollView>
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/reminder_repeat" android:textSize="16sp" android:textColor="@color/layout_xml_text" android:padding="6dp" android:id="@+id/preview_30_reminder_editor_workspace_24" />
+            <HorizontalScrollView android:layout_width="match_parent" android:layout_height="wrap_content" android:fillViewport="true" android:id="@+id/preview_30_reminder_editor_workspace_25">
+                <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:id="@+id/preview_30_reminder_editor_workspace_26">
+                    <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/reminder_repeat_none" android:minHeight="48dp" android:id="@+id/preview_30_reminder_editor_workspace_27" />
+                    <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/reminder_repeat_daily" android:minHeight="48dp" android:id="@+id/preview_30_reminder_editor_workspace_28" />
+                    <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/reminder_repeat_weekdays" android:minHeight="48dp" android:id="@+id/preview_30_reminder_editor_workspace_29" />
+                    <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/workspace_custom_days" android:minHeight="48dp" android:id="@+id/preview_30_reminder_editor_workspace_30" />
+                </LinearLayout>
+            </HorizontalScrollView>
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/workspace_end_repeat" android:textSize="14sp" android:textColor="@color/layout_xml_text" android:padding="6dp" android:id="@+id/preview_30_reminder_editor_workspace_31" />
+            <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/workspace_never" android:minHeight="48dp" android:id="@+id/preview_30_reminder_editor_workspace_32" />
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/reminder_priority" android:textSize="14sp" android:textColor="@color/layout_xml_text" android:padding="6dp" android:id="@+id/preview_30_reminder_editor_workspace_33" />
+            <HorizontalScrollView android:layout_width="match_parent" android:layout_height="wrap_content" android:fillViewport="true" android:id="@+id/preview_30_reminder_editor_workspace_34">
+                <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:id="@+id/preview_30_reminder_editor_workspace_35">
+                    <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/reminder_priority_low" android:minHeight="48dp" android:id="@+id/preview_30_reminder_editor_workspace_36" />
+                    <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/reminder_priority_normal" android:minHeight="48dp" android:id="@+id/preview_30_reminder_editor_workspace_37" />
+                    <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/reminder_priority_high" android:minHeight="48dp" android:id="@+id/preview_30_reminder_editor_workspace_38" />
+                </LinearLayout>
+            </HorizontalScrollView>
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/reminder_advance_heading" android:textSize="18sp" android:textStyle="bold" android:padding="6dp" android:textColor="@color/layout_xml_text" />
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/reminder_advance_at_time" android:textSize="15sp" android:padding="6dp" android:textColor="@color/layout_xml_text" />
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/reminder_advance_description" android:textSize="14sp" android:padding="6dp" android:textColor="@color/layout_xml_text" />
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/reminder_advance_quick_options" android:textStyle="bold" android:textColor="@color/layout_xml_text" android:padding="6dp" />
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+                <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="5 min" android:minHeight="48dp" />
+                <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="10 min" android:minHeight="48dp" />
+                <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="30 min" android:minHeight="48dp" />
             </LinearLayout>
-            <LinearLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="12dp"
-                android:background="@drawable/preview_light_group"
-                android:orientation="vertical"
-                android:padding="16dp"
-                android:id="@+id/preview_30_reminder_editor_linearlayout_14">
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:fontFamily="sans-serif"
-                    android:text="@string/reminder_tools"
-                    android:textColor="@color/layout_xml_text"
-                    android:textSize="17sp"
-                    android:includeFontPadding="true"
-                    android:id="@+id/preview_30_reminder_editor_textview_15" />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="52dp"
-                    android:layout_marginTop="9dp"
-                    android:background="@drawable/preview_button_outline"
-                    android:gravity="center_vertical"
-                    android:paddingStart="14dp"
-                    android:fontFamily="sans-serif"
-                    android:text="@string/reminder_when"
-                    tools:text="Fecha y hora   ·   23/09/2026 08:30"
-                    android:textColor="@color/layout_xml_text"
-                    android:includeFontPadding="true"
-                    android:id="@+id/preview_30_reminder_editor_textview_16" />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="52dp"
-                    android:layout_marginTop="8dp"
-                    android:background="@drawable/preview_button_outline"
-                    android:gravity="center_vertical"
-                    android:paddingStart="14dp"
-                    android:fontFamily="sans-serif"
-                    android:text="@string/reminder_repeat"
-                    tools:text="Repetición   ·   No repetir"
-                    android:textColor="@color/layout_xml_text"
-                    android:includeFontPadding="true"
-                    android:id="@+id/preview_30_reminder_editor_textview_17" />
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:fontFamily="sans-serif"
-                    android:text="@string/reminder_priority"
-                    android:textColor="@color/layout_xml_text"
-                    android:includeFontPadding="true"
-                    android:id="@+id/preview_30_reminder_editor_textview_18" />
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="42dp"
-                    android:layout_marginTop="7dp"
-                    android:orientation="horizontal"
-                    android:id="@+id/preview_30_reminder_editor_linearlayout_19">
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_weight="1"
-                        android:background="@drawable/preview_small_unselected"
-                        android:gravity="center"
-                        android:fontFamily="sans-serif"
-                        android:text="@string/reminder_priority_low"
-                        android:textColor="@color/layout_xml_text"
-                        android:includeFontPadding="true"
-                        android:id="@+id/preview_30_reminder_editor_textview_20" />
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="6dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/preview_small_selected"
-                        android:gravity="center"
-                        android:fontFamily="sans-serif"
-                        android:text="@string/reminder_priority_normal"
-                        android:textColor="@color/layout_xml_text"
-                        android:includeFontPadding="true"
-                        android:id="@+id/preview_30_reminder_editor_textview_21" />
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="match_parent"
-                        android:layout_marginStart="6dp"
-                        android:layout_weight="1"
-                        android:background="@drawable/preview_small_unselected"
-                        android:gravity="center"
-                        android:fontFamily="sans-serif"
-                        android:text="@string/reminder_priority_high"
-                        android:textColor="@color/layout_xml_text"
-                        android:includeFontPadding="true"
-                        android:id="@+id/preview_30_reminder_editor_textview_22" />
-                </LinearLayout>
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:layout_marginTop="12dp"
-                    android:fontFamily="sans-serif"
-                    android:text="@string/reminder_color"
-                    android:textColor="@color/layout_xml_text"
-                    android:includeFontPadding="true"
-                    android:id="@+id/preview_30_reminder_editor_textview_23" />
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="40dp"
-                    android:layout_marginTop="6dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:id="@+id/preview_30_reminder_editor_linearlayout_24">
-                    <View
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:background="@drawable/preview_dot_cyan"
-                        android:id="@+id/preview_30_reminder_editor_view_25" />
-                    <View
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_marginStart="8dp"
-                        android:background="@drawable/preview_dot_lav2"
-                        android:id="@+id/preview_30_reminder_editor_view_26" />
-                    <View
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_marginStart="8dp"
-                        android:background="@drawable/preview_dot_neon_pink"
-                        android:id="@+id/preview_30_reminder_editor_view_27" />
-                    <View
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_marginStart="8dp"
-                        android:background="@drawable/preview_dot_orange"
-                        android:id="@+id/preview_30_reminder_editor_view_28" />
-                    <View
-                        android:layout_width="30dp"
-                        android:layout_height="30dp"
-                        android:layout_marginStart="8dp"
-                        android:background="@drawable/preview_dot_lime"
-                        android:id="@+id/preview_30_reminder_editor_view_29" />
-                </LinearLayout>
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="58dp"
-                    android:layout_marginTop="8dp"
-                    android:gravity="center_vertical"
-                    android:orientation="horizontal"
-                    android:id="@+id/preview_30_reminder_editor_linearlayout_30">
-                    <LinearLayout
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:orientation="vertical"
-                        android:id="@+id/preview_30_reminder_editor_linearlayout_31">
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:fontFamily="sans-serif"
-                            android:text="@string/reminder_enabled"
-                            android:textColor="@color/layout_xml_text"
-                            android:includeFontPadding="true"
-                            android:id="@+id/preview_30_reminder_editor_textview_32" />
-                        <TextView
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_marginTop="2dp"
-                            android:fontFamily="sans-serif"
-                            android:text="@string/reminder_enabled_description"
-                            android:textColor="@color/layout_xml_text"
-                            android:textSize="11sp"
-                            android:includeFontPadding="true"
-                            android:id="@+id/preview_30_reminder_editor_textview_33" />
-                    </LinearLayout>
-                    <Switch
-                        android:layout_width="52dp"
-                        android:layout_height="32dp"
-                        android:checked="true"
-                        android:switchMinWidth="52dp"
-                        android:thumb="@drawable/layout_xml_switch_thumb"
-                        android:track="@drawable/layout_xml_switch_track"
-                        android:splitTrack="false"
-                        android:id="@+id/preview_30_reminder_editor_switch_34" />
-                </LinearLayout>
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+                <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="1 h" android:minHeight="48dp" />
+                <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="1 d" android:minHeight="48dp" />
             </LinearLayout>
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/reminder_advance_selected" android:textSize="14sp" android:textColor="@color/layout_xml_text" android:padding="6dp" />
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/reminder_advance_custom" android:textSize="16sp" android:textStyle="bold" android:textColor="@color/layout_xml_text" android:padding="6dp" />
+            <EditText android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="48dp" android:inputType="number" android:text="15" android:hint="@string/reminder_advance_amount" android:textColor="@color/layout_xml_text" android:background="@drawable/layout_xml_palette_workspace_field" />
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+                <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/reminder_advance_unit_minutes" android:minHeight="48dp" />
+                <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/reminder_advance_unit_hours" android:minHeight="48dp" />
+                <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/reminder_advance_unit_days" android:minHeight="48dp" />
+            </LinearLayout>
+            <Button android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/reminder_advance_add" android:minHeight="48dp" />
         </LinearLayout>
     </ScrollView>
 </LinearLayout>

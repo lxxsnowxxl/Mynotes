@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="card_motion_settings_title">Animaciones de tarjetas</string>
+    <string name="card_motion_settings_subtitle">Elige el movimiento de las notas en reposo</string>
+    <string name="card_motion_toggle">Animar tarjetas cuando no se usan</string>
+    <string name="card_motion_global_disabled">Las animaciones generales están desactivadas. Actívalas para ver este efecto.</string>
+    <string name="card_motion_style_label">Tipo de animación</string>
+    <string name="card_motion_angular">Vaivén lateral</string>
+    <string name="card_motion_angular_desc">Se desliza de lado a lado con pequeños giros</string>
+    <string name="card_motion_sway">Inclinación 3D</string>
+    <string name="card_motion_sway_desc">Se inclina hacia ambos lados con profundidad</string>
+    <string name="card_motion_breathe">Flotación</string>
+    <string name="card_motion_breathe_desc">Sube en arco y baja suavemente</string>
+    <string name="card_motion_heartbeat">Pulso doble</string>
+    <string name="card_motion_heartbeat_desc">Se contrae y da dos pulsos de distinta fuerza</string>
+    <string name="card_motion_spring">Rebote elástico</string>
+    <string name="card_motion_spring_desc">Se comprime, se estira y rebota dos veces</string>
+    <string name="card_motion_random">Aleatorio</string>
+    <string name="card_motion_random_desc">Elige un efecto distinto cada vez</string>
+    <string name="card_motion_intensity_label">Intensidad</string>
+    <string name="card_motion_frequency_label">Frecuencia</string>
+    <string name="card_motion_preview">Vista previa</string>
+    <string name="card_motion_replay">Reproducir</string>
+    <string name="card_motion_safety_hint">Tras una pausa, se anima una nota visible a la vez. El movimiento se detiene al tocar o desplazar la lista.</string>
+    <string name="card_motion_off">Desactivadas</string>
+</resources>

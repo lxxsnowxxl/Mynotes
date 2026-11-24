@@ -7,6 +7,7 @@ import com.example.mynotes.ui.theme.rememberUiTextColors
 import com.example.mynotes.ui.components.AppCircularIconButton
 import com.example.mynotes.ui.components.AppIconLabel
 import com.example.mynotes.ui.components.AppTextButton
+import com.example.mynotes.ui.components.HideDialogNavigationBar
 
 import android.content.Intent
 import android.os.Bundle
@@ -74,16 +75,16 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.DialogProperties
 import com.example.mynotes.R
 import com.example.mynotes.settings.AppSettings
 import com.example.mynotes.ui.components.AppDropdownMenu
 import com.example.mynotes.ui.sound.UiActionSound
-import com.example.mynotes.ui.sound.UiSound
+import com.example.mynotes.ui.sound.UiHapticPlayer
 import com.example.mynotes.ui.sound.UiSoundPlayer
 import com.example.mynotes.ui.theme.rememberAppFontFamily
 import com.example.mynotes.ui.theme.compositeUiColor
 import com.example.mynotes.ui.theme.ensureUiContrast
-import com.example.mynotes.ui.theme.resolveSecondaryUiTextColor
 import com.example.mynotes.ui.theme.rememberAdaptiveUiButtonColors
 import com.example.mynotes.ui.theme.resolveUiTextColor
 import kotlinx.coroutines.launch
@@ -133,6 +134,8 @@ internal fun PdfLibraryScreen(
     onNew: () -> Unit,
     onOpen: (String) -> Unit
 ) {
+    val composeResources = androidx.compose.ui.platform.LocalResources.current
+
     val context = LocalContext.current
     val scope = rememberCoroutineScope()
     val fontFamily = rememberAppFontFamily(settings.font)
@@ -156,8 +159,9 @@ internal fun PdfLibraryScreen(
     } else {
         baseProjectCardColor
     }
-    val projectCardText = automaticProjectText ?: resolveUiTextColor(settings.textColor, projectCardColor)
-    val projectCardSecondaryText = resolveSecondaryUiTextColor(settings.textColor, projectCardColor)
+    val projectCardText = ensureUiContrast(automaticProjectText ?: resolveUiTextColor(settings.textColor, projectCardColor),
+        projectCardColor, 4.5f)
+    val projectCardSecondaryText = com.example.mynotes.ui.theme.softenUiColorToContrast(projectCardText, projectCardColor, 4.5f, 0.58f)
 
     val blackTextBadgeEnabled = projectCardText.luminance() < 0.18f
     val blackTextBadgeBackground = if (blackTextBadgeEnabled) {
@@ -201,7 +205,7 @@ internal fun PdfLibraryScreen(
         MaterialTheme.colorScheme.primary.copy(alpha = if (screenBackground.luminance() > 0.5f) 0.13f else 0.21f),
         screenBackground
     )
-    val infoChipText = resolveUiTextColor(settings.textColor, infoChipColor)
+    val infoChipText = ensureUiContrast(resolveUiTextColor(settings.textColor, infoChipColor), infoChipColor, 4.5f)
 
     val effectivePopupTextColorMode = if (settings.optionMenuTextColor == "note") settings.textColor else settings.optionMenuTextColor
     val defaultPopupSurface = MaterialTheme.colorScheme.surfaceContainerHigh
@@ -214,7 +218,7 @@ internal fun PdfLibraryScreen(
     val popupAlpha = (settings.optionMenuOpacity / 100f).coerceIn(0.35f, 1f)
     val popupColor = popupBaseColor.copy(alpha = popupAlpha)
     val popupVisualBackground = compositeUiColor(popupColor, projectCardColor)
-    val popupTextColor = resolveUiTextColor(effectivePopupTextColorMode, popupVisualBackground)
+    val popupTextColor = ensureUiContrast(resolveUiTextColor(effectivePopupTextColorMode, popupVisualBackground), popupVisualBackground, 4.5f)
     val layoutPreview = LocalLayoutPreview.current
     var projects by remember { mutableStateOf(layoutPreview?.pdfProjects ?: emptyList<PdfProjectRepository.Summary>()) }
     var deleteTarget by remember { mutableStateOf<PdfProjectRepository.Summary?>(null) }
@@ -228,9 +232,11 @@ internal fun PdfLibraryScreen(
     }
 
     renameTarget?.let { target ->
-        AlertDialog(
+        PreparedPdfAlertDialog(
             onDismissRequest = { renameTarget = null },
-            title = { Text(stringResource(R.string.pdf_library_rename_title), fontFamily = fontFamily) },
+            title = {
+                Text(stringResource(R.string.pdf_library_rename_title), fontFamily = fontFamily)
+            },
             text = {
                 OutlinedTextField(
                     value = renameText,
@@ -245,10 +251,12 @@ internal fun PdfLibraryScreen(
             confirmButton = {
                 AppTextButton(stringResource(R.string.pdf_library_rename),
                     onClick = {
+                        UiSoundPlayer.playActionAudioOnly(context, UiActionSound.Confirm)
+                        val name = renameText
                         scope.launch {
-                            PdfProjectRepository.renameProject(context, target.id, renameText)
+                            PdfProjectRepository.renameProject(context, target.id, name)
                             projects = PdfProjectRepository.listProjects(context)
-                            UiSoundPlayer.playAction(context, UiActionSound.Confirm)
+                            UiHapticPlayer.playForAction(context, UiActionSound.Confirm)
                         }
                         renameTarget = null
                     }, fontFamily = fontFamily)
@@ -262,7 +270,9 @@ internal fun PdfLibraryScreen(
     deleteTarget?.let { target ->
         AlertDialog(
             onDismissRequest = { deleteTarget = null },
+            properties = DialogProperties(decorFitsSystemWindows = false),
             title = {
+                HideDialogNavigationBar(preventFocusFlash = true)
                 Text(
                     stringResource(R.string.pdf_library_delete_title),
                     fontFamily = fontFamily
@@ -277,10 +287,11 @@ internal fun PdfLibraryScreen(
             confirmButton = {
                 AppTextButton(stringResource(R.string.pdf_delete),
                     onClick = {
+                        UiSoundPlayer.playActionAudioOnly(context, UiActionSound.Delete)
                         scope.launch {
                             PdfProjectRepository.deleteProject(context, target.id)
                             projects = PdfProjectRepository.listProjects(context)
-                            UiSoundPlayer.play(context, UiSound.Delete)
+                            UiHapticPlayer.playForAction(context, UiActionSound.Delete)
                         }
                         deleteTarget = null
                     }, fontFamily = fontFamily)
@@ -383,7 +394,7 @@ internal fun PdfLibraryScreen(
                                 .clickable(
                                     interactionSource = cardInteractionSource,
                                     indication = null
-                                ) { onOpen(project.id) },
+                                ) { UiSoundPlayer.runWithFallbackClick(UiActionSound.Open) { onOpen(project.id) } },
                             shape = RoundedCornerShape(settings.noteCardCornerRadius.coerceIn(16f, 30f).dp),
                             color = projectCardColor,
                             tonalElevation = settings.noteCardElevation.coerceIn(0f, 8f).dp,
@@ -478,7 +489,6 @@ internal fun PdfLibraryScreen(
                                             textColor = popupTextColor
                                         ) {
                                             menuProjectId = null
-                                            UiSoundPlayer.playAction(context, UiActionSound.Open)
                                             onOpen(project.id)
                                         }
                                         PdfOptionMenuItem(
@@ -499,11 +509,12 @@ internal fun PdfLibraryScreen(
                                             textColor = popupTextColor
                                         ) {
                                             menuProjectId = null
+                                            UiSoundPlayer.playActionAudioOnly(context, UiActionSound.Add)
                                             scope.launch {
-                                                val copyName = context.getString(R.string.pdf_library_copy_name, project.name)
+                                                val copyName = composeResources.getString(R.string.pdf_library_copy_name, project.name)
                                                 PdfProjectRepository.duplicateProject(context, project.id, copyName)
                                                 projects = PdfProjectRepository.listProjects(context)
-                                                UiSoundPlayer.playAction(context, UiActionSound.Add)
+                                                UiHapticPlayer.playForAction(context, UiActionSound.Add)
                                             }
                                         }
 
@@ -534,7 +545,7 @@ internal fun PdfLibraryScreen(
         }
 
         Button(
-            onClick = onNew,
+            onClick = { UiSoundPlayer.runWithFallbackClick(UiActionSound.Add, onNew) },
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .padding(22.dp),
@@ -653,6 +664,6 @@ private fun PdfOptionMenuItem(
         } else {
             null
         },
-        onClick = onClick
+        onClick = { UiSoundPlayer.runWithFallbackClick(actionBlock = onClick) }
     )
 }

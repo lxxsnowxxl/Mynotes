@@ -51,7 +51,7 @@
                     android:layout_marginTop="1dp"
                     android:id="@+id/preview_12_note_card_attachments_textview_5" />
             </LinearLayout>
-            <ImageView
+            <android.widget.ImageView
                 android:layout_width="46dp"
                 android:layout_height="46dp"
                 android:src="@drawable/preview_ic_person"
@@ -59,11 +59,11 @@
                 android:background="@drawable/layout_xml_tone"
                 android:padding="12dp"
                 android:id="@+id/preview_12_note_card_attachments_imageview_6" />
-            <ImageButton
+            <android.widget.ImageButton
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:src="@drawable/preview_ic_settings"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:background="@android:color/transparent"
                 android:padding="12dp"
                 android:id="@+id/preview_12_note_card_attachments_open_settings"
                 android:contentDescription="@string/mock_settings"
@@ -81,7 +81,7 @@
             android:paddingEnd="14dp"
             android:gravity="center_vertical"
             android:id="@+id/preview_12_note_card_attachments_linearlayout_9">
-            <ImageView
+            <android.widget.ImageView
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:src="@drawable/preview_ic_search"
@@ -103,142 +103,7 @@
                 android:paddingStart="12dp"
                 android:inputType="text" />
         </LinearLayout>
-        <Space
-            android:layout_width="1dp"
-            android:layout_height="10dp" />
-        <HorizontalScrollView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:scrollbars="none"
-            android:id="@+id/preview_12_note_card_attachments_horizontalscrollview_13">
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:id="@+id/preview_12_note_card_attachments_linearlayout_14">
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="36dp"
-                    android:id="@+id/preview_12_note_card_attachments_filter_0"
-                    android:text="@string/mock_filter_all"
-                    android:textAllCaps="false"
-                    android:textColor="@color/layout_xml_on_primary"
-                    android:textSize="14sp"
-                    android:fontFamily="sans-serif"
-                    android:minHeight="44dp"
-                    android:minWidth="0dp"
-                    android:background="@drawable/layout_xml_button_filled"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:layout_marginEnd="7dp" />
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="36dp"
-                    android:id="@+id/preview_12_note_card_attachments_filter_1"
-                    android:text="@string/mock_favorites"
-                    android:textAllCaps="false"
-                    android:textColor="@color/layout_xml_text"
-                    android:textSize="14sp"
-                    android:fontFamily="sans-serif"
-                    android:minHeight="44dp"
-                    android:minWidth="0dp"
-                    android:background="@drawable/layout_xml_button_outline"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:layout_marginEnd="7dp" />
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="36dp"
-                    android:id="@+id/preview_12_note_card_attachments_filter_2"
-                    android:text="@string/widget_pinned_collection"
-                    android:textAllCaps="false"
-                    android:textColor="@color/layout_xml_text"
-                    android:textSize="14sp"
-                    android:fontFamily="sans-serif"
-                    android:minHeight="44dp"
-                    android:minWidth="0dp"
-                    android:background="@drawable/layout_xml_button_outline"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:layout_marginEnd="7dp" />
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="36dp"
-                    android:id="@+id/preview_12_note_card_attachments_filter_3"
-                    android:text="@string/widget_high_priority"
-                    android:textAllCaps="false"
-                    android:textColor="@color/layout_xml_text"
-                    android:textSize="14sp"
-                    android:fontFamily="sans-serif"
-                    android:minHeight="44dp"
-                    android:minWidth="0dp"
-                    android:background="@drawable/layout_xml_button_outline"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:layout_marginEnd="7dp" />
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="36dp"
-                    android:id="@+id/preview_12_note_card_attachments_filter_4"
-                    android:text="@string/mock_work"
-                    android:textAllCaps="false"
-                    android:textColor="@color/layout_xml_text"
-                    android:textSize="14sp"
-                    android:fontFamily="sans-serif"
-                    android:minHeight="44dp"
-                    android:minWidth="0dp"
-                    android:background="@drawable/layout_xml_button_outline"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:layout_marginEnd="7dp" />
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="36dp"
-                    android:id="@+id/preview_12_note_card_attachments_filter_5"
-                    android:text="@string/mock_personal"
-                    android:textAllCaps="false"
-                    android:textColor="@color/layout_xml_text"
-                    android:textSize="14sp"
-                    android:fontFamily="sans-serif"
-                    android:minHeight="44dp"
-                    android:minWidth="0dp"
-                    android:background="@drawable/layout_xml_button_outline"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:layout_marginEnd="7dp" />
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="36dp"
-                    android:id="@+id/preview_12_note_card_attachments_filter_6"
-                    android:text="@string/mock_images"
-                    android:textAllCaps="false"
-                    android:textColor="@color/layout_xml_text"
-                    android:textSize="14sp"
-                    android:fontFamily="sans-serif"
-                    android:minHeight="44dp"
-                    android:minWidth="0dp"
-                    android:background="@drawable/layout_xml_button_outline"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:layout_marginEnd="7dp" />
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="36dp"
-                    android:id="@+id/preview_12_note_card_attachments_filter_7"
-                    android:text="@string/mock_files"
-                    android:textAllCaps="false"
-                    android:textColor="@color/layout_xml_text"
-                    android:textSize="14sp"
-                    android:fontFamily="sans-serif"
-                    android:minHeight="44dp"
-                    android:minWidth="0dp"
-                    android:background="@drawable/layout_xml_button_outline"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:layout_marginEnd="7dp" />
-            </LinearLayout>
-        </HorizontalScrollView>
+        
         <Space
             android:layout_width="1dp"
             android:layout_height="10dp" />
@@ -281,7 +146,7 @@
                                 android:background="@drawable/preview_media_photo"
                                 android:layout_marginBottom="8dp"
                                 android:id="@+id/preview_12_note_card_attachments_framelayout_29">
-                                <ImageView
+                                <android.widget.ImageView
                                     android:layout_width="32dp"
                                     android:layout_height="32dp"
                                     android:src="@drawable/preview_ic_image"
@@ -296,7 +161,7 @@
                                 android:background="@drawable/preview_media_photo"
                                 android:layout_marginBottom="8dp"
                                 android:id="@+id/preview_12_note_card_attachments_framelayout_31">
-                                <ImageView
+                                <android.widget.ImageView
                                     android:layout_width="32dp"
                                     android:layout_height="32dp"
                                     android:src="@drawable/preview_ic_video"
@@ -326,7 +191,7 @@
                                 android:layout_marginBottom="8dp"
                                 android:gravity="center_vertical"
                                 android:id="@+id/preview_12_note_card_attachments_linearlayout_34">
-                                <ImageView
+                                <android.widget.ImageView
                                     android:layout_width="24dp"
                                     android:layout_height="24dp"
                                     android:src="@drawable/preview_ic_music"
@@ -355,7 +220,7 @@
                                 android:layout_marginBottom="8dp"
                                 android:gravity="center_vertical"
                                 android:id="@+id/preview_12_note_card_attachments_linearlayout_37">
-                                <ImageView
+                                <android.widget.ImageView
                                     android:layout_width="24dp"
                                     android:layout_height="24dp"
                                     android:src="@drawable/preview_ic_file"
@@ -391,11 +256,11 @@
                                     android:textStyle="normal"
                                     android:layout_weight="1"
                                     android:id="@+id/preview_12_note_card_attachments_textview_41" />
-                                <ImageButton
+                                <android.widget.ImageButton
                                     android:layout_width="24dp"
                                     android:layout_height="24dp"
                                     android:src="@drawable/preview_ic_more"
-                                    android:background="?android:attr/selectableItemBackgroundBorderless"
+                                    android:background="@android:color/transparent"
                                     android:id="@+id/preview_12_note_card_attachments_note_1_menu"
                                     android:contentDescription="@string/option_menu_customization_title"
                                     android:tint="@color/layout_xml_text" />
@@ -456,7 +321,7 @@
                 android:id="@+id/preview_12_note_card_attachments_view_47" />
         </FrameLayout>
     </LinearLayout>
-    <ImageButton
+    <android.widget.ImageButton
         android:layout_width="58dp"
         android:layout_height="58dp"
         android:layout_gravity="bottom|end"

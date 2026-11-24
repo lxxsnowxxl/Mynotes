@@ -23,6 +23,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithCache
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.onSizeChanged
@@ -120,11 +124,8 @@ fun ScrollPositionCapsule(
 }
 
 /**
- * Variante para LazyVerticalStaggeredGrid. Como las tarjetas pueden tener
- * alturas diferentes y ocupar varias columnas, no existe una distancia lineal
- * perfecta equivalente a ScrollState. Se usa el menor índice visible como
- * referencia estable y el número de elementos visibles para dimensionar la
- * cápsula. Esto evita cálculos costosos durante flings rápidos.
+ * El indicador lee la cuadrícula durante el dibujo. La posición y el color pueden
+ * cambiar sin volver a componer ni medir la cuadrícula o el indicador.
  */
 @Composable
 fun ScrollPositionCapsule(
@@ -132,25 +133,51 @@ fun ScrollPositionCapsule(
     modifier: Modifier = Modifier,
     backgroundColor: Color = MaterialTheme.colorScheme.background,
     preferredColor: Color = MaterialTheme.colorScheme.onBackground,
-    fixedThumbHeight: Dp? = null,
-    smoothMovement: Boolean = false
+    fixedThumbHeight: Dp? = null
 ) {
-    val layoutInfo = state.layoutInfo
-    val visibleItems = layoutInfo.visibleItemsInfo
-    val totalItems = layoutInfo.totalItemsCount
-
-    if (totalItems <= 0 || visibleItems.isEmpty() || (!state.canScrollBackward && !state.canScrollForward)) return
-
-    val viewportStart = layoutInfo.viewportStartOffset
-    val anchorItem = visibleItems.minByOrNull { abs(it.offset.y - viewportStart) } ?: return
-    val itemHeight = anchorItem.size.height.coerceAtLeast(1)
-    val hiddenPart = (viewportStart - anchorItem.offset.y).coerceAtLeast(0).coerceAtMost(itemHeight)
-    val fractionalOffset = hiddenPart.toFloat() / itemHeight.toFloat()
-
-    val stableRange = (totalItems - 1).coerceAtLeast(1)
-    val estimatedProgress = ((anchorItem.index + fractionalOffset) / stableRange.toFloat()).coerceIn(0f, 1f)
-    LazyCapsuleThumb(estimatedProgress, visibleItems.size, totalItems, state.canScrollBackward, state.canScrollForward,
-        state.isScrollInProgress, backgroundColor, preferredColor, modifier, fixedThumbHeight, smoothMovement)
+    val activeColor = remember(backgroundColor, preferredColor) {
+        adaptiveScrollCapsuleColor(backgroundColor, preferredColor, active = true)
+    }
+    val idleColor = remember(backgroundColor, preferredColor) {
+        adaptiveScrollCapsuleColor(backgroundColor, preferredColor, active = false)
+    }
+    Box(modifier.fillMaxHeight().width(10.dp).padding(top = 10.dp, bottom = 10.dp, end = 2.dp)
+        .graphicsLayer()
+        .drawWithCache {
+            val width = 4.dp.toPx()
+            val left = (size.width - width) / 2f
+            val corner = CornerRadius(width / 2f)
+            val minimumHeight = 36.dp.toPx()
+            val fixedHeight = fixedThumbHeight?.toPx()
+            onDrawBehind {
+                val backward = state.canScrollBackward
+                val forward = state.canScrollForward
+                if (!backward && !forward) return@onDrawBehind
+                val info = state.layoutInfo
+                val total = info.totalItemsCount
+                val visible = info.visibleItemsInfo
+                if (total == 0 || visible.isEmpty() || size.height <= 0f) return@onDrawBehind
+                val progress = when {
+                    !backward -> 0f
+                    !forward -> 1f
+                    else -> {
+                        val start = info.viewportStartOffset
+                        val first = visible.minByOrNull { abs(it.offset.y - start) } ?: return@onDrawBehind
+                        val height = first.size.height.coerceAtLeast(1)
+                        val fraction = (start - first.offset.y).coerceIn(0, height).toFloat() / height
+                        ((first.index + fraction) / (total - 1).coerceAtLeast(1)).coerceIn(0f, 1f)
+                    }
+                }
+                val height = (fixedHeight ?: (size.height * (visible.size.toFloat() / total)
+                    .coerceIn(0.08f, 0.65f)).coerceAtLeast(minimumHeight)).coerceAtMost(size.height)
+                drawRoundRect(
+                    color = if (state.isScrollInProgress) activeColor else idleColor,
+                    topLeft = Offset(left, (size.height - height) * progress),
+                    size = Size(width, height),
+                    cornerRadius = corner
+                )
+            }
+        })
 }
 
 @Composable

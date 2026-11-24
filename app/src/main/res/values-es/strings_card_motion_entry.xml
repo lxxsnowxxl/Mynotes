@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="card_motion_entry_summary">Movimiento sutil para las notas en reposo.</string>
+    <string name="card_motion_selected_effect">Efecto seleccionado</string>
+    <string name="card_motion_entry_paused">En pausa</string>
+    <string name="card_motion_entry_enabled">Activadas</string>
+    <string name="card_motion_entry_intensity">Intensidad %1$d/5</string>
+    <string name="card_motion_entry_frequency">Frecuencia: %1$s</string>
+    <string name="card_motion_frequency_low">Esporádica</string>
+    <string name="card_motion_frequency_normal">Moderada</string>
+    <string name="card_motion_frequency_high">Frecuente</string>
+    <string name="card_motion_entry_preview">Probar</string>
+    <string name="card_motion_entry_customize">Personalizar</string>
+    <string name="card_motion_entry_disabled_hint">Activa las animaciones en reposo para probar este efecto.</string>
+    <string name="card_motion_entry_behavior">Tras una pausa, se mueve una nota visible a la vez. Se detiene al tocar o desplazar la lista.</string>
+</resources>

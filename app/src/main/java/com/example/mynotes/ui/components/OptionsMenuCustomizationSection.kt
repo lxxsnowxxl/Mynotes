@@ -11,11 +11,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ExpandMore
-import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.KeyboardArrowUp
 import androidx.compose.material3.Icon
-import androidx.compose.material3.Slider
-import androidx.compose.material3.Switch
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -27,7 +24,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontFamily
@@ -36,22 +32,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.example.mynotes.R
 import com.example.mynotes.settings.AppSettings
-import com.example.mynotes.settings.MenuPreferencePolicy
 import com.example.mynotes.ui.sound.UiActionSound
-import com.example.mynotes.ui.sound.UiSound
 import com.example.mynotes.ui.sound.UiSoundPlayer
 import kotlin.math.roundToInt
-import java.util.Collections
-
-private data class MenuOptionDescriptor(val key: String, val labelRes: Int)
-
-private val MainMenuOptions = listOf(MenuOptionDescriptor("edit", R.string.mock_edit), MenuOptionDescriptor("favorite",
-            R.string.mock_favorites), MenuOptionDescriptor("pin", R.string.mock_pin), MenuOptionDescriptor("priority",
-            R.string.mock_priority), MenuOptionDescriptor("color", R.string.mock_color), MenuOptionDescriptor("move", R.string.mock_move),
-        MenuOptionDescriptor("delete", R.string.mock_delete))
-private val PriorityOptions = MenuPreferencePolicy.priorityOptions.map { MenuOptionDescriptor(it.key, it.labelRes) }
-private val ColorOptions = MenuPreferencePolicy.colorOptions.map { MenuOptionDescriptor(it.key, it.labelRes) }
-private val MainMenuOptionsByKey = MainMenuOptions.associateBy { it.key }
 
 /**
  * Variante por bloques para SettingsScreen. Cada bloque puede ser un item
@@ -82,11 +65,13 @@ fun OptionsMenuAppearanceSettingsSection(
     var opacity by remember(settings.optionMenuOpacity) { mutableFloatStateOf(settings.optionMenuOpacity) }
     var textColorMenuExpanded by remember { mutableStateOf(false) }
 
-    SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(12.dp)) { panelColors ->
+    SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(14.dp)) { panelColors ->
+        OptionsMenuHeader(fontFamily, panelColors.text, panelColors.secondaryText)
+        Spacer(modifier = Modifier.height(12.dp))
         SettingsToggleRow(
             title = stringResource(R.string.option_menu_show_icons),
             checked = settings.optionMenuShowIcons,
-            onCheckedChange = onShowIconsChange,
+            onCheckedChange = { checked -> onShowIconsChange(checked); UiSoundPlayer.playFallbackClick() },
             fontFamily = fontFamily,
             textColor = panelColors.text
         )
@@ -117,7 +102,8 @@ fun OptionsMenuAppearanceSettingsSection(
                 AppDropdownMenu(
                     modifier = Modifier.width(164.dp),
                     expanded = textColorMenuExpanded,
-                    onDismissRequest = { textColorMenuExpanded = false }) {
+                    onDismissRequest = { textColorMenuExpanded = false },
+                    containerColor = MaterialTheme.colorScheme.surfaceContainerLow) {
                     val options = remember {
                         listOf(
                             "note" to R.string.option_menu_text_follow_note,
@@ -149,149 +135,14 @@ fun OptionsMenuAppearanceSettingsSection(
                 fontWeight = FontWeight.SemiBold, fontSize = 14.sp)
             SettingsSecondaryText("${opacity.roundToInt()}%", panelColors.secondaryText, fontFamily)
         }
-        Slider(
+        StyledSettingsSlider(
             value = opacity,
-            onValueChange = {
-                opacity = it
-                UiSoundPlayer.playThrottled(context = context, sound = UiSound.SliderTick, minimumIntervalMs = 48L)
-            },
+            onValueChange = { opacity = it },
             onValueChangeFinished = { onOpacityChange(opacity) },
-            valueRange = 35f..100f
+            valueRange = 35f..100f,
+            valueLabel = "${opacity.roundToInt()}%",
+            playTick = true
         )
-    }
-}
-
-@Composable
-fun OptionsMenuMainActionsSettingsSection(
-    settings: AppSettings,
-    fontFamily: FontFamily,
-    onOrderChange: (String) -> Unit,
-    onHiddenItemsChange: (String) -> Unit
-) {
-    val orderedKeys = remember(settings.optionMenuOrder) { MenuPreferencePolicy.orderedKeys(settings.optionMenuOrder) }
-    val hiddenMain = remember(settings.optionMenuHiddenItems) {
-        MenuPreferencePolicy.hiddenKeys(settings.optionMenuHiddenItems, MenuPreferencePolicy.mainKeySet)
-    }
-    SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(12.dp)) { panelColors ->
-        SettingsTitle(stringResource(R.string.option_menu_main_actions), panelColors.text, fontFamily)
-        SettingsSecondaryText(stringResource(R.string.option_menu_main_actions_hint), panelColors.secondaryText, fontFamily,
-            Modifier.padding(top = 2.dp, bottom = 4.dp))
-        val enabledCount = orderedKeys.count { it !in hiddenMain }
-        orderedKeys.forEachIndexed { index, key ->
-            val descriptor = MainMenuOptionsByKey.getValue(key)
-            val isVisible = key !in hiddenMain
-            MenuOrderRow(
-                label = stringResource(descriptor.labelRes),
-                visible = isVisible,
-                canHide = !isVisible || enabledCount > 1,
-                canMoveUp = index > 0,
-                canMoveDown = index < orderedKeys.lastIndex,
-                onVisibleChange = { visible ->
-                    val next = hiddenMain.toMutableSet()
-                    if (visible) next.remove(key) else next.add(key)
-                    onHiddenItemsChange(next.joinToString(","))
-                },
-                onMoveUp = { onOrderChange(swappedMenuOrder(orderedKeys, index, index - 1)) },
-                onMoveDown = { onOrderChange(swappedMenuOrder(orderedKeys, index, index + 1)) },
-                fontFamily = fontFamily,
-                textColor = panelColors.text
-            )
-        }
-    }
-}
-
-@Composable
-fun OptionsMenuPrioritySettingsSection(
-    settings: AppSettings,
-    fontFamily: FontFamily,
-    onPriorityHiddenItemsChange: (String) -> Unit
-) {
-    MenuVisibilitySection(settings, fontFamily, R.string.option_menu_priority_submenu,
-        settings.priorityMenuHiddenItems, MenuPreferencePolicy.priorityKeys, PriorityOptions, onPriorityHiddenItemsChange)
-}
-
-@Composable
-fun OptionsMenuColorSettingsSection(
-    settings: AppSettings,
-    fontFamily: FontFamily,
-    onColorHiddenItemsChange: (String) -> Unit
-) {
-    MenuVisibilitySection(settings, fontFamily, R.string.option_menu_color_submenu,
-        settings.colorMenuHiddenItems, MenuPreferencePolicy.colorKeys, ColorOptions, onColorHiddenItemsChange)
-}
-
-@Composable
-private fun MenuVisibilitySection(
-    settings: AppSettings, fontFamily: FontFamily, titleRes: Int, rawHiddenItems: String,
-    validKeys: Set<String>, options: List<MenuOptionDescriptor>, onHiddenItemsChange: (String) -> Unit
-) {
-    val hiddenItems = remember(rawHiddenItems) {
-        MenuPreferencePolicy.hiddenKeys(rawHiddenItems, validKeys)
-    }
-    SettingsSectionPanel(textColorMode = settings.textColor, contentPadding = PaddingValues(12.dp)) { panelColors ->
-        SettingsTitle(stringResource(titleRes), panelColors.text, fontFamily)
-        val visibleCount = options.count { it.key !in hiddenItems }
-        CompactToggleGrid(options = options, hiddenItems = hiddenItems, visibleCount = visibleCount,
-            onHiddenItemsChange = onHiddenItemsChange, fontFamily = fontFamily, textColor = panelColors.text)
-    }
-}
-
-@Composable
-private fun MenuOrderRow(label: String, visible: Boolean, canHide: Boolean, canMoveUp: Boolean, canMoveDown: Boolean,
-    onVisibleChange: (Boolean) -> Unit, onMoveUp: () -> Unit, onMoveDown: () -> Unit, fontFamily: FontFamily, textColor: Color) {
-    val context = LocalContext.current
-    Row(modifier = Modifier.fillMaxWidth().padding(vertical = 0.dp), verticalAlignment = Alignment.CenterVertically) {
-        Text(text = label, modifier = Modifier.weight(1f), color = textColor, fontFamily = fontFamily, fontSize = 14.sp)
-        MenuMoveButton(Icons.Default.KeyboardArrowUp, R.string.option_menu_move_up, canMoveUp, textColor, onMoveUp)
-        MenuMoveButton(Icons.Default.KeyboardArrowDown, R.string.option_menu_move_down, canMoveDown, textColor, onMoveDown)
-        Switch(checked = visible, onCheckedChange = UiSoundPlayer.toggleHandler(context, actionBlock = onVisibleChange), enabled = canHide)
-    }
-}
-
-private fun swappedMenuOrder(keys: List<String>, from: Int, to: Int): String =
-    keys.toMutableList().apply { Collections.swap(this, from, to) }.joinToString(",")
-
-@Composable
-private fun MenuMoveButton(icon: ImageVector, descriptionRes: Int, enabled: Boolean, textColor: Color, onClick: () -> Unit) {
-    val context = LocalContext.current
-    AppIconButton(icon, stringResource(descriptionRes),
-        onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Move, onClick),
-        enabled = enabled, modifier = Modifier.size(32.dp), tint = textColor.copy(alpha = if (enabled) 1f else 0.28f))
-}
-
-@Composable
-private fun CompactToggleGrid(options: List<MenuOptionDescriptor>, hiddenItems: Set<String>, visibleCount: Int,
-    onHiddenItemsChange: (String) -> Unit, fontFamily: FontFamily, textColor: Color) {
-    val rows = remember(options) { options.chunked(2) }
-    rows.forEach { rowOptions ->
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            rowOptions.forEach { option ->
-                val visible = option.key !in hiddenItems
-                SettingsToggleRow(
-                    title = stringResource(option.labelRes),
-                    checked = visible,
-                    onCheckedChange = { checked ->
-                        val next = hiddenItems.toMutableSet()
-                        if (checked) {
-                            next.remove(option.key)
-                        } else if (visibleCount > 1) {
-                            next.add(option.key)
-                        }
-                        onHiddenItemsChange(next.joinToString(","))
-                    },
-                    enabled = !visible || visibleCount > 1,
-                    fontFamily = fontFamily,
-                    textColor = textColor,
-                    modifier = Modifier.weight(1f),
-                    compact = true
-                )
-            }
-            if (rowOptions.size == 1) Spacer(modifier = Modifier.weight(1f))
-        }
     }
 }
 

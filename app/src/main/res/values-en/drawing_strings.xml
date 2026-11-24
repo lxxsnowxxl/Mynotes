@@ -26,4 +26,6 @@
     <string name="drawing_tool_eraser">Eraser</string>
     <string name="drawing_expand_canvas">Expand canvas</string>
     <string name="drawing_restore_canvas">Restore canvas</string>
+    <string name="drawing_compact_more">More</string>
+    <string name="drawing_compact_back">Back</string>
 </resources>

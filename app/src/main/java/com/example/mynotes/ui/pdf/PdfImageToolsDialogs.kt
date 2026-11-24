@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -43,9 +42,11 @@ internal fun PdfImageCropDialog(
 ) {
     var crop by remember(image) { mutableStateOf(PdfImageCrop()) }
     val turns = PdfImageEdits.quarterTurns(image)
-    AlertDialog(
+    PreparedPdfAlertDialog(
         onDismissRequest = onDismiss,
-        title = { Text(stringResource(R.string.pdf_crop), fontFamily = fontFamily) },
+        title = {
+            Text(stringResource(R.string.pdf_crop), fontFamily = fontFamily)
+        },
         text = {
             Column(verticalArrangement = Arrangement.spacedBy(12.dp)) {
                 Text(stringResource(R.string.pdf_crop_hint), fontFamily = fontFamily)

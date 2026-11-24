@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Android Studio reference for the runtime Compose Studio screen. -->
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android" android:layout_width="match_parent" android:layout_height="match_parent" android:fillViewport="true" android:background="#F7F4EE">
+ <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:layout_gravity="center_horizontal" android:orientation="vertical" android:padding="24dp">
+  <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Workspace" android:textSize="28sp" android:textStyle="bold" android:textColor="#242424" />
+  <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Search notes, PDFs and transcripts" android:layout_marginTop="12dp" android:textColor="#62605A" android:textSize="16sp" />
+  <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Upcoming reminders" android:layout_marginTop="28dp" android:textStyle="bold" android:textSize="20sp" android:textColor="#242424" />
+  <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Review project sketches · 10:30" android:background="#FFFFFF" android:padding="24dp" android:layout_marginTop="12dp" android:textSize="16sp" android:textColor="#242424" />
+  <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Recent notes" android:layout_marginTop="28dp" android:textStyle="bold" android:textSize="20sp" android:textColor="#242424" />
+  <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Project ideas
+Research and references" android:background="#FFFFFF" android:padding="24dp" android:layout_marginTop="12dp" android:textSize="16sp" android:textColor="#242424" />
+  <Button android:layout_width="match_parent" android:layout_height="wrap_content" android:minHeight="48dp" android:layout_marginTop="24dp" android:text="Open tools" />
+ </LinearLayout>
+</ScrollView>

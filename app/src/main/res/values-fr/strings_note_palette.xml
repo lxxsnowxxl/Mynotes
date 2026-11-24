@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="note_palette_close">Fermer</string>
+    <string name="note_palette_empty">Aucune palette disponible</string>
+    <string name="note_palette_tone">Ton %1$d</string>
+    <string name="note_palette_select_tone">Ton %1$d de %2$s</string>
+</resources>

@@ -1,5 +1,7 @@
 package com.example.mynotes.ui.components
 
+import com.example.mynotes.ui.sound.UiSoundPlayer
+
 import com.example.mynotes.util.moveReplacing
 import android.content.Context
 import android.graphics.Bitmap
@@ -171,7 +173,7 @@ fun ProfileImageEditorDialog(
                     enabled = !saving,
                     interactionSource = scrimInteraction,
                     indication = null,
-                    onClick = onDismissRequest
+                    onClick = { onDismissRequest(); UiSoundPlayer.playFallbackClick() }
                 ),
             contentAlignment = Alignment.Center
         ) {
@@ -267,7 +269,7 @@ fun ProfileImageEditorDialog(
                             valueRange = PROFILE_MIN_ZOOM..PROFILE_MAX_ZOOM,
                             activeColor = MaterialTheme.colorScheme.primary,
                             inactiveColor = MaterialTheme.colorScheme.outlineVariant,
-                            style = "capsule",
+                            playTick = true,
                             valueLabel = stringResource(
                                 R.string.extreme_profile_zoom,
                                 (zoom * 100f).roundToInt()
@@ -277,7 +279,7 @@ fun ProfileImageEditorDialog(
                             onClick = {
                                 zoom = PROFILE_MIN_ZOOM
                                 offset = Offset.Zero
-                            },
+                            ; UiSoundPlayer.playFallbackClick()},
                             enabled = !saving,
                             modifier = Modifier.fillMaxWidth(),
                             shape = editorButtonShape,
@@ -323,7 +325,7 @@ fun ProfileImageEditorDialog(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Button(
-                        onClick = onDismissRequest,
+                        onClick = { onDismissRequest(); UiSoundPlayer.playFallbackClick() },
                         enabled = !saving,
                         shape = editorButtonShape,
                         colors = editorButtonColors,
@@ -352,6 +354,8 @@ fun ProfileImageEditorDialog(
                                     )
                                 }
                                 saving = false
+                                // La pantalla de Configuración reproduce una sola confirmación
+                                // mediante onImageSaved cuando se ha guardado la foto.
                                 if (savedUri != null) onImageSaved(savedUri) else loadFailed = true
                             }
                         },

@@ -15,28 +15,52 @@ private val FixedNoteBackgroundColors = MenuPreferencePolicy.colorOptions.mapNot
     option.argb?.let { option.key to Color(it) }
 }.toMap()
 
+/** Usa el mismo catálogo que noteBackgroundColor, incluido su respaldo para claves antiguas. */
+internal fun noteUsesGlobalBackground(color: String): Boolean =
+    color !in FixedNoteBackgroundColors && NoteColorSelection.decode(color) == null
+
 /** El color predeterminado y las claves desconocidas siguen el fondo global del tema. */
 @Composable
 fun noteBackgroundColor(color: String): Color =
-    FixedNoteBackgroundColors[color] ?: MaterialTheme.colorScheme.background
+    FixedNoteBackgroundColors[color]
+        ?: NoteColorSelection.decode(color)?.let { selection ->
+            PaletteCatalog.find(selection.paletteKey).toneAt(selection.toneIndex)
+        }
+        ?: MaterialTheme.colorScheme.background
 
 @Immutable
 internal data class UiTextColors(val primary: Color, val secondary: Color)
+
+/**
+ * Los modos blanco/negro manuales se respetan mientras sean legibles.
+ * En superficies de la interfaz (incluido el editor) sólo se corrige el
+ * COLOR RENDERIZADO si el contraste baja de WCAG AA; nunca la preferencia.
+ * No se aplica sobre los píxeles de fotos, dibujos, PDFs ni tintas guardadas.
+ */
+private fun accessibleUiContent(value: String, background: Color): UiContentColors {
+    val foreground = ensureUiContrast(resolveUiTextColor(value, background), background, 4.5f)
+    return UiContentColors(
+        primary = foreground,
+        secondary = softenUiColorToContrast(foreground, background, 4.5f, 0.58f),
+        graphic = softenUiColorToContrast(foreground, background, 3f, 0.72f)
+    )
+}
 
 /** Recalcula ambos colores sólo cuando cambian el modo de texto o el fondo real. */
 @Composable
 internal fun rememberUiTextColors(value: String, background: Color): UiTextColors =
     remember(value, background) {
-        UiTextColors(resolveUiTextColor(value, background), resolveSecondaryUiTextColor(value, background))
+        val colors = accessibleUiContent(value, background)
+        UiTextColors(colors.primary, colors.secondary)
     }
 
 @Composable
 internal fun rememberUiTextColor(value: String, background: Color): Color =
-    remember(value, background) { resolveUiTextColor(value, background) }
+    remember(value, background) { accessibleUiContent(value, background).primary }
 
 @Composable
 internal fun rememberUiGraphicColor(value: String, background: Color): Color =
-    remember(value, background) { resolveUiGraphicColor(value, background) }
+    remember(value, background) { accessibleUiContent(value, background).graphic }
 
 @Immutable
 internal data class UiContentColors(val primary: Color, val secondary: Color, val graphic: Color)
@@ -44,10 +68,7 @@ internal data class UiContentColors(val primary: Color, val secondary: Color, va
 /** Agrupa texto principal/secundario y gráficos para pantallas que necesitan los tres. */
 @Composable
 internal fun rememberUiContentColors(value: String, background: Color): UiContentColors =
-    remember(value, background) {
-        UiContentColors(resolveUiTextColor(value, background), resolveSecondaryUiTextColor(value, background),
-            resolveUiGraphicColor(value, background))
-    }
+    remember(value, background) { accessibleUiContent(value, background) }
 
 /**
  * Compone [foreground] sobre [background] y devuelve un color opaco.
@@ -137,26 +158,6 @@ fun softenUiColorToContrast(foreground: Color, background: Color, minimumContras
         }
     }
     return best
-}
-
-/**
- * Texto secundario automático: visualmente más suave pero >= 4.5:1.
- * En modo manual NO altera negro/blanco: la elección del usuario prevalece.
- */
-fun resolveSecondaryUiTextColor(value: String, background: Color): Color =
-    resolveDerivedUiColor(value, background, minimumContrast = 4.5f, maximumSoftening = 0.58f)
-
-/**
- * Iconos/contornos automáticos: mantiene al menos 3:1, criterio WCAG para
- * elementos gráficos. Los modos manuales siguen siendo absolutos.
- */
-fun resolveUiGraphicColor(value: String, background: Color): Color =
-    resolveDerivedUiColor(value, background, minimumContrast = 3f, maximumSoftening = 0.72f)
-
-private fun resolveDerivedUiColor(value: String, background: Color, minimumContrast: Float, maximumSoftening: Float): Color {
-    val primary = resolveUiTextColor(value, background)
-    return if (value == "black" || value == "white") primary else
-        softenUiColorToContrast(primary, background, minimumContrast, maximumSoftening)
 }
 
 /**

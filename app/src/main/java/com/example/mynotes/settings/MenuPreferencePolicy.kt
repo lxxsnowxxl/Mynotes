@@ -1,6 +1,7 @@
 package com.example.mynotes.settings
 
 import com.example.mynotes.R
+import com.example.mynotes.ui.theme.PaletteCatalog
 
 /** Reglas de menús compartidas por DataStore y las secciones de configuración. */
 internal object MenuPreferencePolicy {
@@ -22,10 +23,18 @@ internal object MenuPreferencePolicy {
         ColorOption("mint", R.string.mock_color_mint, 0xFFDFF7EA), ColorOption("lime", R.string.mock_color_lime, 0xFFF1F8D7),
         ColorOption("brown", R.string.mock_color_brown, 0xFFEDE2D9), ColorOption("gray", R.string.mock_color_gray, 0xFFE9ECEF)
     )
+    // El selector de notas comparte las familias y sus nombres con Configuración.
+    // Conservamos colorOptions únicamente para leer los colores de notas antiguas.
+    val paletteColorOptions: List<ColorOption> =
+        listOf(ColorOption("default", R.string.mock_color_default)) +
+            PaletteCatalog.settingsPalettes.map { palette ->
+                ColorOption("palette:${palette.key}", palette.labelRes)
+            }
     val priorityKeyList: List<String> = priorityOptions.map(PriorityOption::key)
     val priorityKeys: Set<String> = priorityKeyList.toHashSet()
     val colorKeyList: List<String> = colorOptions.map(ColorOption::key)
-    val colorKeys: Set<String> = colorKeyList.toHashSet()
+    // Se aceptan claves antiguas en preferencias para no perder configuraciones previas.
+    val colorKeys: Set<String> = (colorKeyList + paletteColorOptions.map(ColorOption::key)).toHashSet()
     val defaultOrder: String = mainKeys.joinToString(",")
 
     fun orderedKeys(raw: String): List<String> {

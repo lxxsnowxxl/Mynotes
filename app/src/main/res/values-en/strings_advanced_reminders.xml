@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="reminder_advanced_schedule">Advanced scheduling</string>
+    <string name="reminder_repeat_interval">Repeat every (1–365)</string>
+    <string name="reminder_repeat_interval_hint">For example, 2 means every two days, weeks, or months, depending on the repeat mode.</string>
+    <string name="reminder_repeat_limit">Maximum number of occurrences</string>
+    <string name="reminder_repeat_limit_hint">Leave empty for no limit.</string>
+    <string name="reminder_monthly_pattern">Which day of the month?</string>
+    <string name="reminder_month_same_day">Same date</string>
+    <string name="reminder_month_first">First</string>
+    <string name="reminder_month_second">Second</string>
+    <string name="reminder_month_third">Third</string>
+    <string name="reminder_month_fourth">Fourth</string>
+    <string name="reminder_month_fifth">Fifth</string>
+    <string name="reminder_month_last">Last</string>
+    <string name="reminder_advance_heading">Early alerts</string>
+    <string name="reminder_advance_at_time">Also alert at event time (always on)</string>
+    <string name="reminder_advance_description">Choose when to receive extra alerts before the event. You can select several.</string>
+    <string name="reminder_advance_quick_options">Quick options</string>
+    <string name="reminder_advance_none">No early alerts. You will still be notified at the event time.</string>
+    <string name="reminder_advance_selected">Selected extra alerts · tap × to remove</string>
+    <string name="reminder_advance_past_selected">One or more early alert times have already passed and will not be scheduled. Remove them or change the date.</string>
+    <string name="reminder_advance_custom">Create another early alert</string>
+    <string name="reminder_advance_amount">Amount</string>
+    <string name="reminder_advance_unit_minutes">Min</string>
+    <string name="reminder_advance_unit_hours">Hours</string>
+    <string name="reminder_advance_unit_days">Days</string>
+    <string name="reminder_advance_add">Add early alert</string>
+    <string name="reminder_advance_invalid">Enter a value between 1 minute and 7 days.</string>
+    <string name="reminder_advance_duplicate">That early alert is already selected.</string>
+    <string name="reminder_advance_limit">You can add up to 12 early alerts.</string>
+    <string name="reminder_advance_past">That alert time has passed. Choose a shorter lead time or change the event date.</string>
+    <string name="reminder_advance_help">These alerts are saved with your reminder. Choose minutes, hours, or days.</string>
+    <string name="reminder_advance_remove">Remove early alert</string>
+    <string name="reminder_advance_one_day">1 day before</string>
+    <string name="reminder_advance_days">%1$d days before</string>
+    <string name="reminder_advance_one_hour">1 hour before</string>
+    <string name="reminder_advance_hours">%1$d hours before</string>
+    <string name="reminder_advance_one_minute">1 minute before</string>
+    <string name="reminder_advance_minutes">%1$d minutes before</string>
+
+    <string name="reminder_advanced_schedule_description">Adjust repeat rules and extra alerts here. The main alert always stays scheduled for the event time.</string>
+    <string name="reminder_advanced_event_summary">Event: %1$s</string>
+    <string name="reminder_repeat_unlock_hint">Choose a repeat mode above to unlock advanced frequency and occurrence controls.</string>
+    <string name="reminder_repeat_rules_heading">Repeat rules</string>
+    <string name="reminder_repeat_rules_description">Choose how often this repeats and, optionally, how many times it should occur.</string>
+    <string name="reminder_main_alert_label">Main alert</string>
+    <string name="reminder_always_on">Always on</string>
+    <string name="reminder_advance_availability_hint">The event is in about %1$d min. Options that would occur in the past are disabled.</string>
+    <string name="reminder_notification_plan">Upcoming notifications</string>
+    <string name="reminder_required">Required</string>
+</resources>

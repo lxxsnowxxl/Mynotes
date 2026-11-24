@@ -4,6 +4,13 @@ plugins {
     alias(libs.plugins.ksp)
 }
 
+// Optional local APK for a single device, for example -PtargetAbi=arm64-v8a.
+// Omitting this property preserves support for every architecture supplied by dependencies.
+val targetAbi = providers.gradleProperty("targetAbi").orNull
+require(targetAbi == null || targetAbi in setOf("armeabi-v7a", "arm64-v8a", "x86", "x86_64")) {
+    "targetAbi must be armeabi-v7a, arm64-v8a, x86 or x86_64"
+}
+
 android {
     namespace = "com.example.mynotes"
     compileSdk = 37
@@ -11,9 +18,10 @@ android {
         applicationId = "com.example.mynotes"
         minSdk = 24
         targetSdk = 36
-        versionCode = 1
-        versionName = "2.5.0"
+        versionCode = 30604
+        versionName = "7.1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        targetAbi?.let { selectedAbi -> ndk { abiFilters += selectedAbi } }
         // Compatibilidad consistente de recursos vectoriales en API 24/25.
         vectorDrawables {
             useSupportLibrary = true
@@ -28,6 +36,14 @@ android {
             isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
+        create("optimized") {
+            // Release optimizations with the local debug certificate, for on-device checks.
+            // This does not include src/debug, UI tooling or the Compose test activity.
+            initWith(getByName("release"))
+            signingConfig = signingConfigs.getByName("debug")
+            isDebuggable = false
+            matchingFallbacks += listOf("release")
+        }
     }
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -36,9 +52,21 @@ android {
     buildFeatures {
         compose = true
     }
+    testOptions {
+        unitTests.isIncludeAndroidResources = true
+    }
 }
 
 dependencies {
+    implementation("com.google.mlkit:text-recognition:16.0.1")
+    implementation("androidx.work:work-runtime-ktx:2.10.1")
+    implementation("com.google.android.gms:play-services-location:21.3.0")
+    implementation("com.google.android.gms:play-services-mlkit-document-scanner:16.0.0")
+    // Vosk y JNA se retiraron: ningún archivo Kotlin de la app utiliza sus APIs.
+    // Sus bibliotecas nativas para múltiples arquitecturas incrementaban notablemente el APK.
+    // La grabación de notas de voz usa android.media.MediaRecorder y sigue habilitada.
+    implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("com.tom-roush:pdfbox-android:2.0.27.0")
     implementation("androidx.datastore:datastore-preferences:1.1.7")
     implementation("androidx.appcompat:appcompat:1.7.1")
     implementation("io.coil-kt.coil3:coil-compose:3.3.0")
@@ -75,14 +103,20 @@ dependencies {
     // Fuente descargable oficial de Google Fonts; no se empaqueta el antiguo binario cerrado.
     implementation("androidx.compose.ui:ui-text-google-fonts")
     implementation(libs.androidx.compose.ui.graphics)
-    implementation(libs.androidx.compose.ui.tooling.preview)
     implementation("androidx.compose.material:material-icons-extended")
     implementation(libs.androidx.core.ktx)
     testImplementation(libs.junit)
+    // Execute JSON codec and drawing/transcription metadata tests on the JVM.
+    testImplementation("org.json:json:20240303")
+    testImplementation("org.robolectric:robolectric:4.16.1")
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.10.2")
+    testImplementation(platform(libs.androidx.compose.bom))
+    testImplementation(libs.androidx.compose.ui.test.junit4)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.androidx.compose.ui.test.junit4)
     androidTestImplementation(libs.androidx.espresso.core)
     androidTestImplementation(libs.androidx.junit)
     debugImplementation(libs.androidx.compose.ui.test.manifest)
     debugImplementation(libs.androidx.compose.ui.tooling)
+    debugImplementation(libs.androidx.compose.ui.tooling.preview)
 }

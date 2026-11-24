@@ -1,8 +1,5 @@
 package com.example.mynotes.ui.components
 
-import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.animation.core.tween
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
@@ -27,24 +24,32 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.setValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.luminance
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.role
+import androidx.compose.ui.semantics.selected
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.example.mynotes.ui.motion.AppMotion
 import com.example.mynotes.ui.sound.UiActionSound
 import com.example.mynotes.ui.sound.UiSoundPlayer
 import com.example.mynotes.ui.theme.MyNotesPalette
 import com.example.mynotes.ui.theme.PaletteCatalog
-import com.example.mynotes.ui.theme.resolveUiGraphicColor
-import com.example.mynotes.ui.theme.resolveUiTextColor
+import com.example.mynotes.ui.theme.settingsSectionColors
+import com.example.mynotes.ui.theme.ensureUiContrast
+import com.example.mynotes.ui.theme.automaticUiTextColor
 
 private val PaletteItemWidth = 132.dp
 private val ToneDiameter = 48.dp
@@ -67,8 +72,8 @@ private val TonePositions = listOf(
  * Todas las familias comparten la misma geometría: un tono arriba, dos al
  * centro y dos abajo, con solapamiento uniforme y fácil acceso táctil.
  *
- * La selección se indica únicamente con contorno y palomita, sin mover ni
- * elevar la tonalidad seleccionada sobre las demás.
+ * Las tonalidades se muestran sin contornos ni elevación.
+ * La palomita de alto contraste identifica el tono seleccionado.
  */
 @Composable
 internal fun PaletteSelectorRow(
@@ -85,12 +90,17 @@ internal fun PaletteSelectorRow(
         palettes.indexOfFirst { it.key == selectedPaletteKey }.coerceAtLeast(0)
     }
     val listState = rememberLazyListState(initialFirstVisibleItemIndex = initialIndex)
+    var alignedPalette by rememberSaveable { mutableStateOf(selectedPaletteKey) }
 
     LaunchedEffect(selectedPaletteKey, palettes) {
+        // Re-entering the vertical viewport restores the user's horizontal browsing position.
+        if (alignedPalette == selectedPaletteKey) return@LaunchedEffect
         val selectedIndex = palettes.indexOfFirst { it.key == selectedPaletteKey }
         if (selectedIndex >= 0 && listState.layoutInfo.visibleItemsInfo.none { it.index == selectedIndex }) {
-            listState.animateScrollToItem(selectedIndex)
+            if (animationsEnabled) listState.animateScrollToItem(selectedIndex)
+            else listState.scrollToItem(selectedIndex)
         }
+        alignedPalette = selectedPaletteKey
     }
 
     LazyRow(
@@ -118,7 +128,7 @@ internal fun PaletteSelectorRow(
 }
 
 @Composable
-private fun PaletteStackItem(
+internal fun PaletteStackItem(
     palette: MyNotesPalette,
     selected: Boolean,
     selectedToneIndex: Int,
@@ -126,21 +136,16 @@ private fun PaletteStackItem(
     animationsEnabled: Boolean,
     animationSpeed: Float,
     textColorMode: String,
-    fontFamily: FontFamily
+    fontFamily: FontFamily,
+    toneDescriptions: List<String>? = null,
+    playToneSound: Boolean = true,
+    automaticToneCheckColor: Boolean = false
 ) {
     val cardBackground = MaterialTheme.colorScheme.surfaceContainerLow
-    val cardTextColor = remember(textColorMode, cardBackground) {
-        resolveUiTextColor(value = textColorMode, background = cardBackground)
+    val labelInk = remember(textColorMode, cardBackground) {
+        settingsSectionColors(cardBackground, textColorMode)
     }
-    val cardGraphicColor = remember(textColorMode, cardBackground) {
-        resolveUiGraphicColor(value = textColorMode, background = cardBackground)
-    }
-    val motionDuration = AppMotion.duration(AppMotion.FAST, animationsEnabled, animationSpeed)
-    val selectionOutlineWidth by animateDpAsState(
-        targetValue = if (selected) 2.dp else 0.dp,
-        animationSpec = tween(durationMillis = motionDuration),
-        label = "paletteSelectionOutline"
-    )
+    val cardTextColor = labelInk.text
 
     Column(
         modifier = Modifier
@@ -153,13 +158,7 @@ private fun PaletteStackItem(
             shape = CircleShape,
             color = Color.Transparent,
             tonalElevation = 0.dp,
-            shadowElevation = 0.dp,
-            border = if (selected) {
-                BorderStroke(
-                    width = selectionOutlineWidth,
-                    color = cardGraphicColor
-                )
-            } else null
+            shadowElevation = 0.dp
         ) {
             Box(
                 modifier = Modifier.size(PaletteSelectionCircleSize),
@@ -177,10 +176,10 @@ private fun PaletteStackItem(
                             PaletteTone(
                                 color = toneColor,
                                 selected = selected && selectedToneIndex == toneIndex,
-                                outlineColor = cardGraphicColor,
-                                onClick = {
-                                    onToneSelected(palette.key, toneIndex)
-                                }
+                                description = toneDescriptions?.getOrNull(toneIndex),
+                                playToneSound = playToneSound,
+                                automaticCheckColor = automaticToneCheckColor,
+                                onClick = { onToneSelected(palette.key, toneIndex) }
                             )
                         }
                     }
@@ -207,30 +206,36 @@ private fun PaletteStackItem(
 private fun PaletteTone(
     color: Color,
     selected: Boolean,
-    outlineColor: Color,
+    description: String? = null,
+    playToneSound: Boolean = true,
+    automaticCheckColor: Boolean = false,
     onClick: () -> Unit
 ) {
     val context = LocalContext.current
     val interactionSource = remember { MutableInteractionSource() }
-    val checkColor = remember(color) {
-        if (color.luminance() > 0.48f) Color.Black else Color.White
+    // El contraste depende del tono real; respeta el estilo anterior cuando es legible.
+    val checkColor = remember(color, automaticCheckColor) {
+        val preferred = if (automaticCheckColor) automaticUiTextColor(color)
+            else if (color.luminance() > 0.48f) Color.Black else Color.White
+        ensureUiContrast(preferred, color, minimumContrast = 4.5f)
     }
 
     Surface(
         modifier = Modifier.size(ToneDiameter)
+            .semantics {
+                if (description != null) contentDescription = description
+                this.selected = selected
+                role = Role.RadioButton
+            }
             .clickable(
                 interactionSource = interactionSource,
                 indication = null,
-                onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Color, onClick)
+                onClick = if (playToneSound) UiSoundPlayer.actionHandler(context, UiActionSound.Color, onClick) else UiSoundPlayer.actionHandler(context, UiActionSound.Select, onClick)
             ),
         shape = CircleShape,
         color = color,
         tonalElevation = 0.dp,
-        shadowElevation = if (selected) 2.dp else 0.dp,
-        border = BorderStroke(
-            width = if (selected) 2.dp else 1.dp,
-            color = if (selected) outlineColor else outlineColor.copy(alpha = 0.22f)
-        )
+        shadowElevation = 0.dp
     ) {
         if (selected) {
             Box(

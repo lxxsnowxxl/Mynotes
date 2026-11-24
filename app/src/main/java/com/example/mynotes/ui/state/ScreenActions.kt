@@ -2,13 +2,21 @@ package com.example.mynotes.ui.state
 
 import com.example.mynotes.data.Attachment
 import com.example.mynotes.data.Note
+import com.example.mynotes.settings.AppSettings
+import com.example.mynotes.data.NoteFolder
 import com.example.mynotes.reminders.Reminder
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.StateFlow
 
 /** Eventos de la pantalla. El ViewModel conserva la persistencia; el editor visual usa eventos vacíos. */
 interface SettingsActions {
+    fun applyAppearance(value: AppSettings)
+    fun setReaderPreferences(width: Float, lineSpacing: Float)
     fun setConfigurationMode(value: String)
+    fun setSettingsSectionExpanded(sectionKey: String, expanded: Boolean)
+    fun applyDesignPreset(key: String)
+    fun setCardDensity(value: String)
+    fun setEditorFocusMode(value: Boolean)
     fun setDarkMode(value: Boolean)
     fun setBackgroundSelection(paletteKey: String, toneIndex: Int)
     fun setSettingsBackgroundStyle(value: String)
@@ -64,6 +72,21 @@ interface SettingsActions {
 }
 
 interface NoteActions {
+    val noteCatalog: StateFlow<List<Note>>
+    val folders: StateFlow<List<NoteFolder>>
+    val pendingUndo: StateFlow<NoteUndo?>
+    fun createFolder(name: String, icon: String, color: String)
+    fun editFolder(folder: NoteFolder)
+    fun deleteFolder(folder: NoteFolder)
+    fun moveNotes(ids: Set<Int>, folderId: String?)
+    fun colorNotes(ids: Set<Int>, color: String)
+    fun archiveNotes(ids: Set<Int>, archived: Boolean)
+    fun pinNotes(ids: Set<Int>, pinned: Boolean)
+    fun deleteNotes(ids: Set<Int>)
+    fun undo(token: Long)
+    fun dismissUndo(token: Long)
+    fun toggleTask(noteId: Int, line: Int)
+
     val allAttachments: StateFlow<List<Attachment>>
     fun getAttachments(noteId: Int): Flow<List<Attachment>>
     fun toggleFavorite(note: Note)

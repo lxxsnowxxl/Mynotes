@@ -23,13 +23,13 @@
             android:paddingEnd="12dp"
             android:gravity="center_vertical"
             android:id="@+id/preview_07_settings_transition_dropdown_linearlayout_2">
-            <ImageButton
+            <android.widget.ImageButton
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:id="@+id/preview_07_settings_transition_dropdown_back"
                 android:src="@drawable/preview_ic_arrow_back"
                 android:tint="@color/layout_xml_text"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:background="@android:color/transparent"
                 android:contentDescription="@string/mock_back"
                 android:padding="12dp" />
             <TextView
@@ -43,52 +43,175 @@
                 android:layout_marginStart="8dp"
                 android:id="@+id/preview_07_settings_transition_dropdown_textview_4" />
         </LinearLayout>
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none"
+            android:layout_marginStart="22dp"
+            android:layout_marginEnd="22dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp">
+            <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="4dp"
+            android:background="@drawable/layout_xml_navigation_panel"
+            android:id="@+id/preview_07_settings_transition_dropdown_category_navigation"
+            android:gravity="center_vertical">
+        <TextView
+                android:layout_width="88dp"
+                android:layout_height="48dp"
+                android:text="@string/advanced_nav_appearance"
+                android:textSize="12sp"
+                android:textColor="@color/layout_xml_text"
+                android:fontFamily="sans-serif"
+                android:textStyle="normal"
+                android:id="@+id/preview_07_settings_transition_dropdown_nav_appearance"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/advanced_section_appearance" />
+        <TextView
+                android:layout_width="88dp"
+                android:layout_height="48dp"
+                android:text="@string/advanced_nav_typography"
+                android:textSize="12sp"
+                android:textColor="@color/layout_xml_text"
+                android:fontFamily="sans-serif"
+                android:textStyle="normal"
+                android:id="@+id/preview_07_settings_transition_dropdown_nav_typography"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/advanced_section_typography" />
+        <TextView
+                android:layout_width="88dp"
+                android:layout_height="48dp"
+                android:text="@string/advanced_nav_notes"
+                android:textSize="12sp"
+                android:textColor="@color/layout_xml_text"
+                android:fontFamily="sans-serif"
+                android:textStyle="normal"
+                android:id="@+id/preview_07_settings_transition_dropdown_nav_notes"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/advanced_section_notes" />
+        <TextView
+                android:layout_width="88dp"
+                android:layout_height="48dp"
+                android:text="@string/advanced_nav_menu"
+                android:textSize="12sp"
+                android:textColor="@color/layout_xml_text"
+                android:fontFamily="sans-serif"
+                android:textStyle="normal"
+                android:id="@+id/preview_07_settings_transition_dropdown_nav_menu"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/advanced_section_menu" />
+        <TextView
+                android:layout_width="88dp"
+                android:layout_height="48dp"
+                android:text="@string/advanced_nav_feedback"
+                android:textSize="12sp"
+                android:textColor="@color/layout_xml_text"
+                android:fontFamily="sans-serif"
+                android:textStyle="normal"
+                android:id="@+id/preview_07_settings_transition_dropdown_nav_feedback"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/advanced_section_feedback" />
+        <TextView
+                android:layout_width="88dp"
+                android:layout_height="48dp"
+                android:text="@string/advanced_nav_motion"
+                android:textSize="12sp"
+                android:textColor="@color/layout_xml_text"
+                android:fontFamily="sans-serif"
+                android:textStyle="bold"
+                android:id="@+id/preview_07_settings_transition_dropdown_nav_system"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="@drawable/layout_xml_nav_selected_neutral"
+                android:contentDescription="@string/advanced_section_motion" />
+        <TextView
+                android:layout_width="88dp"
+                android:layout_height="48dp"
+                android:text="@string/advanced_nav_application"
+                android:textSize="12sp"
+                android:textColor="@color/layout_xml_text"
+                android:fontFamily="sans-serif"
+                android:textStyle="normal"
+                android:id="@+id/preview_07_settings_transition_dropdown_nav_application"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/advanced_section_application" />
+        <TextView
+                android:layout_width="88dp"
+                android:layout_height="48dp"
+                android:text="@string/advanced_nav_data"
+                android:textSize="12sp"
+                android:textColor="@color/layout_xml_text"
+                android:fontFamily="sans-serif"
+                android:textStyle="normal"
+                android:id="@+id/preview_07_settings_transition_dropdown_nav_data"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/advanced_section_data" />
+            </LinearLayout>
+        </HorizontalScrollView>
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:id="@+id/preview_07_settings_transition_dropdown_framelayout_5">
+            android:id="@+id/preview_07_settings_transition_dropdown_framelayout_12">
             <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:fillViewport="true"
                 android:scrollbars="none"
-                android:id="@+id/preview_07_settings_transition_dropdown_scrollview_6">
+                android:id="@+id/preview_07_settings_transition_dropdown_scrollview_13">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:paddingStart="14dp"
-                    android:paddingEnd="14dp"
+                    android:paddingStart="22dp"
+                    android:paddingEnd="22dp"
                     android:paddingBottom="32dp"
-                    android:id="@+id/preview_07_settings_transition_dropdown_linearlayout_7">
+                    android:id="@+id/preview_07_settings_transition_dropdown_linearlayout_14">
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:id="@+id/preview_07_settings_transition_dropdown_panel_motion"
                         android:background="@drawable/layout_xml_panel"
-                        android:padding="14dp"
-                        android:layout_marginBottom="12dp">
+                        android:layout_marginBottom="12dp"
+                        android:paddingStart="22dp"
+                        android:paddingEnd="22dp"
+                        android:paddingTop="14dp"
+                        android:paddingBottom="14dp">
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/motion_title"
+                            android:text="@string/motion_transition_title"
                             android:textSize="16sp"
                             android:textColor="@color/layout_xml_text"
                             android:fontFamily="sans-serif"
                             android:textStyle="bold"
-                            android:id="@+id/preview_07_settings_transition_dropdown_textview_9" />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/motion_description"
-                            android:textSize="12sp"
-                            android:textColor="@color/layout_xml_secondary"
-                            android:fontFamily="sans-serif"
-                            android:textStyle="normal"
-                            android:layout_marginTop="4dp"
-                            android:id="@+id/preview_07_settings_transition_dropdown_textview_10" />
+                            android:id="@+id/preview_07_settings_transition_dropdown_textview_16" />
                         <Space
                             android:layout_width="1dp"
                             android:layout_height="8dp" />
@@ -98,7 +221,7 @@
                             android:orientation="horizontal"
                             android:minHeight="48dp"
                             android:gravity="center_vertical"
-                            android:id="@+id/preview_07_settings_transition_dropdown_linearlayout_12">
+                            android:id="@+id/preview_07_settings_transition_dropdown_linearlayout_19">
                             <TextView
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -109,7 +232,7 @@
                                 android:textStyle="normal"
                                 android:layout_weight="1"
                                 android:layout_marginEnd="10dp"
-                                android:id="@+id/preview_07_settings_transition_dropdown_textview_13" />
+                                android:id="@+id/preview_07_settings_transition_dropdown_textview_20" />
                             <Switch
                                 android:layout_width="52dp"
                                 android:layout_height="32dp"
@@ -128,7 +251,7 @@
                             android:orientation="horizontal"
                             android:minHeight="48dp"
                             android:gravity="center_vertical"
-                            android:id="@+id/preview_07_settings_transition_dropdown_linearlayout_15">
+                            android:id="@+id/preview_07_settings_transition_dropdown_linearlayout_22">
                             <TextView
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -138,7 +261,7 @@
                                 android:fontFamily="sans-serif"
                                 android:textStyle="bold"
                                 android:layout_weight="1"
-                                android:id="@+id/preview_07_settings_transition_dropdown_textview_16" />
+                                android:id="@+id/preview_07_settings_transition_dropdown_textview_23" />
                             <Spinner
                                 android:layout_width="wrap_content"
                                 android:layout_height="48dp"
@@ -153,7 +276,7 @@
                             android:orientation="horizontal"
                             android:minHeight="48dp"
                             android:gravity="center_vertical"
-                            android:id="@+id/preview_07_settings_transition_dropdown_linearlayout_18">
+                            android:id="@+id/preview_07_settings_transition_dropdown_linearlayout_25">
                             <TextView
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -163,7 +286,7 @@
                                 android:fontFamily="sans-serif"
                                 android:textStyle="bold"
                                 android:layout_weight="1"
-                                android:id="@+id/preview_07_settings_transition_dropdown_textview_19" />
+                                android:id="@+id/preview_07_settings_transition_dropdown_textview_26" />
                             <Spinner
                                 android:layout_width="wrap_content"
                                 android:layout_height="48dp"
@@ -178,7 +301,7 @@
                             android:orientation="horizontal"
                             android:minHeight="24dp"
                             android:gravity="center_vertical"
-                            android:id="@+id/preview_07_settings_transition_dropdown_linearlayout_21">
+                            android:id="@+id/preview_07_settings_transition_dropdown_linearlayout_28">
                             <TextView
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -188,7 +311,7 @@
                                 android:fontFamily="sans-serif"
                                 android:textStyle="bold"
                                 android:layout_weight="1"
-                                android:id="@+id/preview_07_settings_transition_dropdown_textview_22" />
+                                android:id="@+id/preview_07_settings_transition_dropdown_textview_29" />
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -208,7 +331,7 @@
                             android:progress="333"
                             android:progressDrawable="@drawable/layout_xml_slider_progress"
                             android:thumb="@drawable/layout_xml_slider_thumb"
-                            android:thumbOffset="9dp"
+                            android:thumbOffset="10dp"
                             android:paddingStart="14dp"
                             android:paddingEnd="14dp"
                             android:splitTrack="false"
@@ -219,7 +342,7 @@
                             android:orientation="horizontal"
                             android:minHeight="24dp"
                             android:gravity="center_vertical"
-                            android:id="@+id/preview_07_settings_transition_dropdown_linearlayout_25">
+                            android:id="@+id/preview_07_settings_transition_dropdown_linearlayout_32">
                             <TextView
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -229,7 +352,7 @@
                                 android:fontFamily="sans-serif"
                                 android:textStyle="bold"
                                 android:layout_weight="1"
-                                android:id="@+id/preview_07_settings_transition_dropdown_textview_26" />
+                                android:id="@+id/preview_07_settings_transition_dropdown_textview_33" />
                             <TextView
                                 android:layout_width="wrap_content"
                                 android:layout_height="wrap_content"
@@ -249,13 +372,39 @@
                             android:progress="500"
                             android:progressDrawable="@drawable/layout_xml_slider_progress"
                             android:thumb="@drawable/layout_xml_slider_thumb"
-                            android:thumbOffset="9dp"
+                            android:thumbOffset="10dp"
                             android:paddingStart="14dp"
                             android:paddingEnd="14dp"
                             android:splitTrack="false"
                             android:contentDescription="@string/motion_intensity" />
-                        <Button
+                        <LinearLayout
                             android:layout_width="match_parent"
+                            android:layout_height="108dp"
+                            android:orientation="vertical"
+                            android:layout_marginTop="10dp"
+                            android:gravity="center"
+                            android:background="@drawable/layout_xml_field"
+                            android:id="@+id/preview_07_settings_transition_dropdown_transition_illustration">
+                            <ImageView
+                                android:layout_width="104dp"
+                                android:layout_height="57dp"
+                                android:src="@drawable/motion_art_notes"
+                                android:tint="@color/layout_xml_primary"
+                                android:contentDescription="@null"
+                                android:id="@+id/preview_07_settings_transition_dropdown_transition_illustration_imageview_1" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/mock_my_notes"
+                                android:textSize="12sp"
+                                android:textColor="@color/layout_xml_secondary"
+                                android:fontFamily="sans-serif"
+                                android:textStyle="normal"
+                                android:layout_marginTop="4dp"
+                                android:id="@+id/preview_07_settings_transition_dropdown_transition_illustration_textview_2" />
+                        </LinearLayout>
+                        <Button
+                            android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:id="@+id/preview_07_settings_transition_dropdown_motion_preview"
                             android:text="@string/motion_preview_button"
@@ -267,7 +416,19 @@
                             android:minWidth="0dp"
                             android:background="@drawable/layout_xml_button_outline"
                             android:paddingStart="12dp"
-                            android:paddingEnd="12dp" />
+                            android:paddingEnd="12dp"
+                            android:layout_gravity="end"
+                            android:enabled="true" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/motion_description"
+                            android:textSize="12sp"
+                            android:textColor="@color/layout_xml_secondary"
+                            android:fontFamily="sans-serif"
+                            android:textStyle="normal"
+                            android:layout_marginTop="6dp"
+                            android:id="@+id/preview_07_settings_transition_dropdown_textview_17" />
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -275,13 +436,16 @@
                         android:orientation="vertical"
                         android:id="@+id/preview_07_settings_transition_dropdown_panel_motion_choices"
                         android:background="@drawable/layout_xml_panel"
-                        android:padding="14dp"
-                        android:layout_marginBottom="12dp">
+                        android:layout_marginBottom="12dp"
+                        android:paddingStart="22dp"
+                        android:paddingEnd="22dp"
+                        android:paddingTop="14dp"
+                        android:paddingBottom="14dp">
                         <Button
                             android:layout_width="match_parent"
                             android:layout_height="40dp"
                             android:id="@+id/preview_07_settings_transition_dropdown_motion_option_0"
-                            android:text="@string/motion_style_zoom"
+                            android:text="@string/motion_style_cross_dissolve"
                             android:textAllCaps="false"
                             android:textColor="@color/layout_xml_text"
                             android:textSize="14sp"
@@ -296,7 +460,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="40dp"
                             android:id="@+id/preview_07_settings_transition_dropdown_motion_option_1"
-                            android:text="@string/motion_style_zoom_fade"
+                            android:text="@string/motion_style_lift_card"
                             android:textAllCaps="false"
                             android:textColor="@color/layout_xml_text"
                             android:textSize="14sp"
@@ -311,7 +475,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="40dp"
                             android:id="@+id/preview_07_settings_transition_dropdown_motion_option_2"
-                            android:text="@string/motion_style_fade"
+                            android:text="@string/motion_style_lateral_stack"
                             android:textAllCaps="false"
                             android:textColor="@color/layout_xml_text"
                             android:textSize="14sp"
@@ -326,7 +490,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="40dp"
                             android:id="@+id/preview_07_settings_transition_dropdown_motion_option_3"
-                            android:text="@string/motion_style_slide_left"
+                            android:text="@string/motion_style_depth_pull"
                             android:textAllCaps="false"
                             android:textColor="@color/layout_xml_text"
                             android:textSize="14sp"
@@ -341,7 +505,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="40dp"
                             android:id="@+id/preview_07_settings_transition_dropdown_motion_option_4"
-                            android:text="@string/motion_style_slide_right"
+                            android:text="@string/motion_style_diagonal_flow"
                             android:textAllCaps="false"
                             android:textColor="@color/layout_xml_text"
                             android:textSize="14sp"
@@ -356,7 +520,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="40dp"
                             android:id="@+id/preview_07_settings_transition_dropdown_motion_option_5"
-                            android:text="@string/motion_style_slide_up"
+                            android:text="@string/motion_style_corner_unfold"
                             android:textAllCaps="false"
                             android:textColor="@color/layout_xml_text"
                             android:textSize="14sp"
@@ -371,7 +535,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="40dp"
                             android:id="@+id/preview_07_settings_transition_dropdown_motion_option_6"
-                            android:text="@string/motion_style_slide_down"
+                            android:text="@string/motion_style_focus_swap"
                             android:textAllCaps="false"
                             android:textColor="@color/layout_xml_text"
                             android:textSize="14sp"
@@ -386,276 +550,6 @@
                             android:layout_width="match_parent"
                             android:layout_height="40dp"
                             android:id="@+id/preview_07_settings_transition_dropdown_motion_option_7"
-                            android:text="@string/motion_style_slide_zoom_left"
-                            android:textAllCaps="false"
-                            android:textColor="@color/layout_xml_text"
-                            android:textSize="14sp"
-                            android:fontFamily="sans-serif"
-                            android:minHeight="44dp"
-                            android:minWidth="0dp"
-                            android:background="@drawable/layout_xml_button_outline"
-                            android:paddingStart="12dp"
-                            android:paddingEnd="12dp"
-                            android:layout_marginBottom="4dp" />
-                        <Button
-                            android:layout_width="match_parent"
-                            android:layout_height="40dp"
-                            android:id="@+id/preview_07_settings_transition_dropdown_motion_option_8"
-                            android:text="@string/motion_style_slide_zoom_up"
-                            android:textAllCaps="false"
-                            android:textColor="@color/layout_xml_text"
-                            android:textSize="14sp"
-                            android:fontFamily="sans-serif"
-                            android:minHeight="44dp"
-                            android:minWidth="0dp"
-                            android:background="@drawable/layout_xml_button_outline"
-                            android:paddingStart="12dp"
-                            android:paddingEnd="12dp"
-                            android:layout_marginBottom="4dp" />
-                        <Button
-                            android:layout_width="match_parent"
-                            android:layout_height="40dp"
-                            android:id="@+id/preview_07_settings_transition_dropdown_motion_option_9"
-                            android:text="@string/motion_style_axis_x"
-                            android:textAllCaps="false"
-                            android:textColor="@color/layout_xml_text"
-                            android:textSize="14sp"
-                            android:fontFamily="sans-serif"
-                            android:minHeight="44dp"
-                            android:minWidth="0dp"
-                            android:background="@drawable/layout_xml_button_outline"
-                            android:paddingStart="12dp"
-                            android:paddingEnd="12dp"
-                            android:layout_marginBottom="4dp" />
-                        <Button
-                            android:layout_width="match_parent"
-                            android:layout_height="40dp"
-                            android:id="@+id/preview_07_settings_transition_dropdown_motion_option_10"
-                            android:text="@string/motion_style_axis_y"
-                            android:textAllCaps="false"
-                            android:textColor="@color/layout_xml_text"
-                            android:textSize="14sp"
-                            android:fontFamily="sans-serif"
-                            android:minHeight="44dp"
-                            android:minWidth="0dp"
-                            android:background="@drawable/layout_xml_button_outline"
-                            android:paddingStart="12dp"
-                            android:paddingEnd="12dp"
-                            android:layout_marginBottom="4dp" />
-                        <Button
-                            android:layout_width="match_parent"
-                            android:layout_height="40dp"
-                            android:id="@+id/preview_07_settings_transition_dropdown_motion_option_11"
-                            android:text="@string/motion_style_axis_z"
-                            android:textAllCaps="false"
-                            android:textColor="@color/layout_xml_text"
-                            android:textSize="14sp"
-                            android:fontFamily="sans-serif"
-                            android:minHeight="44dp"
-                            android:minWidth="0dp"
-                            android:background="@drawable/layout_xml_button_outline"
-                            android:paddingStart="12dp"
-                            android:paddingEnd="12dp"
-                            android:layout_marginBottom="4dp" />
-                        <Button
-                            android:layout_width="match_parent"
-                            android:layout_height="40dp"
-                            android:id="@+id/preview_07_settings_transition_dropdown_motion_option_12"
-                            android:text="@string/motion_style_expand"
-                            android:textAllCaps="false"
-                            android:textColor="@color/layout_xml_text"
-                            android:textSize="14sp"
-                            android:fontFamily="sans-serif"
-                            android:minHeight="44dp"
-                            android:minWidth="0dp"
-                            android:background="@drawable/layout_xml_button_outline"
-                            android:paddingStart="12dp"
-                            android:paddingEnd="12dp"
-                            android:layout_marginBottom="4dp" />
-                        <Button
-                            android:layout_width="match_parent"
-                            android:layout_height="40dp"
-                            android:id="@+id/preview_07_settings_transition_dropdown_motion_option_13"
-                            android:text="@string/motion_style_expand_horizontal"
-                            android:textAllCaps="false"
-                            android:textColor="@color/layout_xml_text"
-                            android:textSize="14sp"
-                            android:fontFamily="sans-serif"
-                            android:minHeight="44dp"
-                            android:minWidth="0dp"
-                            android:background="@drawable/layout_xml_button_outline"
-                            android:paddingStart="12dp"
-                            android:paddingEnd="12dp"
-                            android:layout_marginBottom="4dp" />
-                        <Button
-                            android:layout_width="match_parent"
-                            android:layout_height="40dp"
-                            android:id="@+id/preview_07_settings_transition_dropdown_motion_option_14"
-                            android:text="@string/motion_style_expand_vertical"
-                            android:textAllCaps="false"
-                            android:textColor="@color/layout_xml_text"
-                            android:textSize="14sp"
-                            android:fontFamily="sans-serif"
-                            android:minHeight="44dp"
-                            android:minWidth="0dp"
-                            android:background="@drawable/layout_xml_button_outline"
-                            android:paddingStart="12dp"
-                            android:paddingEnd="12dp"
-                            android:layout_marginBottom="4dp" />
-                        <Button
-                            android:layout_width="match_parent"
-                            android:layout_height="40dp"
-                            android:id="@+id/preview_07_settings_transition_dropdown_motion_option_15"
-                            android:text="@string/motion_style_bounce"
-                            android:textAllCaps="false"
-                            android:textColor="@color/layout_xml_text"
-                            android:textSize="14sp"
-                            android:fontFamily="sans-serif"
-                            android:minHeight="44dp"
-                            android:minWidth="0dp"
-                            android:background="@drawable/layout_xml_button_outline"
-                            android:paddingStart="12dp"
-                            android:paddingEnd="12dp"
-                            android:layout_marginBottom="4dp" />
-                        <Button
-                            android:layout_width="match_parent"
-                            android:layout_height="40dp"
-                            android:id="@+id/preview_07_settings_transition_dropdown_motion_option_16"
-                            android:text="@string/motion_style_elastic"
-                            android:textAllCaps="false"
-                            android:textColor="@color/layout_xml_text"
-                            android:textSize="14sp"
-                            android:fontFamily="sans-serif"
-                            android:minHeight="44dp"
-                            android:minWidth="0dp"
-                            android:background="@drawable/layout_xml_button_outline"
-                            android:paddingStart="12dp"
-                            android:paddingEnd="12dp"
-                            android:layout_marginBottom="4dp" />
-                        <Button
-                            android:layout_width="match_parent"
-                            android:layout_height="40dp"
-                            android:id="@+id/preview_07_settings_transition_dropdown_motion_option_17"
-                            android:text="@string/motion_style_pop"
-                            android:textAllCaps="false"
-                            android:textColor="@color/layout_xml_text"
-                            android:textSize="14sp"
-                            android:fontFamily="sans-serif"
-                            android:minHeight="44dp"
-                            android:minWidth="0dp"
-                            android:background="@drawable/layout_xml_button_outline"
-                            android:paddingStart="12dp"
-                            android:paddingEnd="12dp"
-                            android:layout_marginBottom="4dp" />
-                        <Button
-                            android:layout_width="match_parent"
-                            android:layout_height="40dp"
-                            android:id="@+id/preview_07_settings_transition_dropdown_motion_option_18"
-                            android:text="@string/motion_style_subtle"
-                            android:textAllCaps="false"
-                            android:textColor="@color/layout_xml_text"
-                            android:textSize="14sp"
-                            android:fontFamily="sans-serif"
-                            android:minHeight="44dp"
-                            android:minWidth="0dp"
-                            android:background="@drawable/layout_xml_button_outline"
-                            android:paddingStart="12dp"
-                            android:paddingEnd="12dp"
-                            android:layout_marginBottom="4dp" />
-                        <Button
-                            android:layout_width="match_parent"
-                            android:layout_height="40dp"
-                            android:id="@+id/preview_07_settings_transition_dropdown_motion_option_19"
-                            android:text="@string/motion_style_expressive_spring"
-                            android:textAllCaps="false"
-                            android:textColor="@color/layout_xml_text"
-                            android:textSize="14sp"
-                            android:fontFamily="sans-serif"
-                            android:minHeight="44dp"
-                            android:minWidth="0dp"
-                            android:background="@drawable/layout_xml_button_outline"
-                            android:paddingStart="12dp"
-                            android:paddingEnd="12dp"
-                            android:layout_marginBottom="4dp" />
-                        <Button
-                            android:layout_width="match_parent"
-                            android:layout_height="40dp"
-                            android:id="@+id/preview_07_settings_transition_dropdown_motion_option_20"
-                            android:text="@string/motion_style_container_transform"
-                            android:textAllCaps="false"
-                            android:textColor="@color/layout_xml_text"
-                            android:textSize="14sp"
-                            android:fontFamily="sans-serif"
-                            android:minHeight="44dp"
-                            android:minWidth="0dp"
-                            android:background="@drawable/layout_xml_button_outline"
-                            android:paddingStart="12dp"
-                            android:paddingEnd="12dp"
-                            android:layout_marginBottom="4dp" />
-                        <Button
-                            android:layout_width="match_parent"
-                            android:layout_height="40dp"
-                            android:id="@+id/preview_07_settings_transition_dropdown_motion_option_21"
-                            android:text="@string/motion_style_soft_reveal"
-                            android:textAllCaps="false"
-                            android:textColor="@color/layout_xml_text"
-                            android:textSize="14sp"
-                            android:fontFamily="sans-serif"
-                            android:minHeight="44dp"
-                            android:minWidth="0dp"
-                            android:background="@drawable/layout_xml_button_outline"
-                            android:paddingStart="12dp"
-                            android:paddingEnd="12dp"
-                            android:layout_marginBottom="4dp" />
-                        <Button
-                            android:layout_width="match_parent"
-                            android:layout_height="40dp"
-                            android:id="@+id/preview_07_settings_transition_dropdown_motion_option_22"
-                            android:text="@string/motion_style_elastic_slide"
-                            android:textAllCaps="false"
-                            android:textColor="@color/layout_xml_text"
-                            android:textSize="14sp"
-                            android:fontFamily="sans-serif"
-                            android:minHeight="44dp"
-                            android:minWidth="0dp"
-                            android:background="@drawable/layout_xml_button_outline"
-                            android:paddingStart="12dp"
-                            android:paddingEnd="12dp"
-                            android:layout_marginBottom="4dp" />
-                        <Button
-                            android:layout_width="match_parent"
-                            android:layout_height="40dp"
-                            android:id="@+id/preview_07_settings_transition_dropdown_motion_option_23"
-                            android:text="@string/motion_style_predictive"
-                            android:textAllCaps="false"
-                            android:textColor="@color/layout_xml_text"
-                            android:textSize="14sp"
-                            android:fontFamily="sans-serif"
-                            android:minHeight="44dp"
-                            android:minWidth="0dp"
-                            android:background="@drawable/layout_xml_button_outline"
-                            android:paddingStart="12dp"
-                            android:paddingEnd="12dp"
-                            android:layout_marginBottom="4dp" />
-                        <Button
-                            android:layout_width="match_parent"
-                            android:layout_height="40dp"
-                            android:id="@+id/preview_07_settings_transition_dropdown_motion_option_24"
-                            android:text="@string/motion_style_tonal_pop"
-                            android:textAllCaps="false"
-                            android:textColor="@color/layout_xml_text"
-                            android:textSize="14sp"
-                            android:fontFamily="sans-serif"
-                            android:minHeight="44dp"
-                            android:minWidth="0dp"
-                            android:background="@drawable/layout_xml_button_outline"
-                            android:paddingStart="12dp"
-                            android:paddingEnd="12dp"
-                            android:layout_marginBottom="4dp" />
-                        <Button
-                            android:layout_width="match_parent"
-                            android:layout_height="40dp"
-                            android:id="@+id/preview_07_settings_transition_dropdown_motion_option_25"
                             android:text="@string/motion_style_random"
                             android:textAllCaps="false"
                             android:textColor="@color/layout_xml_text"
@@ -667,6 +561,275 @@
                             android:paddingStart="12dp"
                             android:paddingEnd="12dp"
                             android:layout_marginBottom="4dp" />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:id="@+id/preview_07_settings_transition_dropdown_panel_note_card_animation_styles"
+                        android:background="@drawable/layout_xml_panel"
+                        android:layout_marginBottom="12dp"
+                        android:paddingStart="14dp"
+                        android:paddingEnd="14dp"
+                        android:paddingTop="14dp"
+                        android:paddingBottom="14dp">
+                        <include layout="@layout/settings_card_motion_entry_content" android:layout_width="match_parent" android:layout_height="wrap_content" />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:id="@+id/preview_07_settings_transition_dropdown_panel_performance"
+                        android:background="@drawable/layout_xml_panel"
+                        android:padding="14dp"
+                        android:layout_marginBottom="12dp">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/performance_mode_title"
+                            android:textSize="16sp"
+                            android:textColor="@color/layout_xml_text"
+                            android:fontFamily="sans-serif"
+                            android:textStyle="bold"
+                            android:id="@+id/preview_07_settings_transition_dropdown_motion_performance_textview_1" />
+                        <Space
+                            android:layout_width="1dp"
+                            android:layout_height="8dp" />
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:minHeight="48dp"
+                            android:gravity="center_vertical"
+                            android:id="@+id/preview_07_settings_transition_dropdown_motion_performance_linearlayout_3">
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:text="@string/performance_mode_title"
+                                android:textSize="14sp"
+                                android:textColor="@color/layout_xml_text"
+                                android:fontFamily="sans-serif"
+                                android:textStyle="bold"
+                                android:layout_weight="1"
+                                android:id="@+id/preview_07_settings_transition_dropdown_motion_performance_textview_4" />
+                            <Spinner
+                                android:layout_width="wrap_content"
+                                android:layout_height="48dp"
+                                android:id="@+id/preview_07_settings_transition_dropdown_performance"
+                                android:entries="@array/layout_xml_performance_options"
+                                android:spinnerMode="dropdown"
+                                android:contentDescription="@string/performance_mode_title" />
+                        </LinearLayout>
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/performance_mode_description"
+                            android:textSize="12sp"
+                            android:textColor="@color/layout_xml_secondary"
+                            android:fontFamily="sans-serif"
+                            android:textStyle="normal"
+                            android:id="@+id/preview_07_settings_transition_dropdown_motion_performance_textview_6" />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:id="@+id/preview_07_settings_transition_dropdown_section_application_heading"
+                        android:paddingTop="18dp"
+                        android:paddingBottom="10dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:gravity="center_vertical">
+                        <View
+                            android:layout_width="3dp"
+                            android:layout_height="36dp"
+                            android:background="@drawable/layout_xml_category_marker"
+                            android:backgroundTint="#4B4743"
+                            android:id="@+id/preview_07_settings_transition_dropdown_view_47" />
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_weight="1"
+                            android:layout_marginStart="12dp"
+                            android:id="@+id/preview_07_settings_transition_dropdown_linearlayout_48">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/advanced_section_application"
+                                android:textSize="18sp"
+                                android:textColor="@color/layout_xml_text"
+                                android:fontFamily="sans-serif"
+                                android:textStyle="bold"
+                                android:id="@+id/preview_07_settings_transition_dropdown_textview_49" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/advanced_section_application_description"
+                                android:textSize="12sp"
+                                android:textColor="@color/layout_xml_secondary"
+                                android:fontFamily="sans-serif"
+                                android:textStyle="normal"
+                                android:layout_marginTop="2dp"
+                                android:id="@+id/preview_07_settings_transition_dropdown_textview_50" />
+                        </LinearLayout>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:id="@+id/preview_07_settings_transition_dropdown_panel_language"
+                        android:background="@drawable/layout_xml_panel"
+                        android:layout_marginBottom="12dp"
+                        android:paddingStart="22dp"
+                        android:paddingEnd="22dp"
+                        android:paddingTop="14dp"
+                        android:paddingBottom="14dp">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:minHeight="48dp"
+                            android:gravity="center_vertical"
+                            android:id="@+id/preview_07_settings_transition_dropdown_linearlayout_52">
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:text="@string/mock_language"
+                                android:textSize="14sp"
+                                android:textColor="@color/layout_xml_text"
+                                android:fontFamily="sans-serif"
+                                android:textStyle="bold"
+                                android:layout_weight="1"
+                                android:id="@+id/preview_07_settings_transition_dropdown_textview_53" />
+                            <Spinner
+                                android:layout_width="wrap_content"
+                                android:layout_height="48dp"
+                                android:id="@+id/preview_07_settings_transition_dropdown_language"
+                                android:entries="@array/layout_xml_language_options"
+                                android:spinnerMode="dropdown"
+                                android:contentDescription="@string/mock_language" />
+                        </LinearLayout>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:id="@+id/preview_07_settings_transition_dropdown_panel_backup"
+                        android:background="@drawable/layout_xml_panel"
+                        android:layout_marginBottom="12dp"
+                        android:paddingStart="22dp"
+                        android:paddingEnd="22dp"
+                        android:paddingTop="14dp"
+                        android:paddingBottom="14dp">
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/backup_restore_title"
+                            android:textSize="16sp"
+                            android:textColor="@color/layout_xml_text"
+                            android:fontFamily="sans-serif"
+                            android:textStyle="bold"
+                            android:id="@+id/preview_07_settings_transition_dropdown_textview_56" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/backup_restore_description"
+                            android:textSize="12sp"
+                            android:textColor="@color/layout_xml_secondary"
+                            android:fontFamily="sans-serif"
+                            android:textStyle="normal"
+                            android:layout_marginTop="4dp"
+                            android:id="@+id/preview_07_settings_transition_dropdown_textview_57" />
+                        <Space
+                            android:layout_width="1dp"
+                            android:layout_height="8dp" />
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:gravity="center_vertical"
+                            android:id="@+id/preview_07_settings_transition_dropdown_linearlayout_59">
+                            <Button
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/preview_07_settings_transition_dropdown_backup_export"
+                                android:text="@string/backup_export_button"
+                                android:textAllCaps="false"
+                                android:textColor="@color/layout_xml_text"
+                                android:textSize="14sp"
+                                android:fontFamily="sans-serif"
+                                android:minHeight="44dp"
+                                android:minWidth="0dp"
+                                android:background="@drawable/layout_xml_button_outline"
+                                android:paddingStart="12dp"
+                                android:paddingEnd="12dp"
+                                android:layout_weight="1"
+                                android:layout_marginEnd="8dp" />
+                            <Button
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/preview_07_settings_transition_dropdown_backup_import"
+                                android:text="@string/backup_import_button"
+                                android:textAllCaps="false"
+                                android:textColor="@color/layout_xml_on_primary"
+                                android:textSize="14sp"
+                                android:fontFamily="sans-serif"
+                                android:minHeight="44dp"
+                                android:minWidth="0dp"
+                                android:background="@drawable/layout_xml_button_filled"
+                                android:paddingStart="12dp"
+                                android:paddingEnd="12dp"
+                                android:layout_weight="1" />
+                        </LinearLayout>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:id="@+id/preview_07_settings_transition_dropdown_panel_development"
+                        android:background="@drawable/layout_xml_panel"
+                        android:layout_marginBottom="12dp"
+                        android:paddingStart="22dp"
+                        android:paddingEnd="22dp"
+                        android:paddingTop="14dp"
+                        android:paddingBottom="14dp">
+                        <Button
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/preview_07_settings_transition_dropdown_open_development"
+                            android:text="@string/development_info_settings_title"
+                            android:textAllCaps="false"
+                            android:textColor="@color/layout_xml_text"
+                            android:textSize="14sp"
+                            android:fontFamily="sans-serif"
+                            android:minHeight="44dp"
+                            android:minWidth="0dp"
+                            android:background="@drawable/layout_xml_button_outline"
+                            android:paddingStart="12dp"
+                            android:paddingEnd="12dp" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/development_info_settings_description"
+                            android:textSize="12sp"
+                            android:textColor="@color/layout_xml_secondary"
+                            android:fontFamily="sans-serif"
+                            android:textStyle="normal"
+                            android:id="@+id/preview_07_settings_transition_dropdown_textview_64" />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:id="@+id/preview_07_settings_transition_dropdown_panel_updates"
+                        android:background="@drawable/layout_xml_panel"
+                        android:layout_marginBottom="12dp"
+                        android:paddingStart="14dp"
+                        android:paddingEnd="14dp"
+                        android:paddingTop="14dp"
+                        android:paddingBottom="14dp">
+                        <include layout="@layout/settings_updates_content" android:layout_width="match_parent" android:layout_height="wrap_content" />
                     </LinearLayout>
                 </LinearLayout>
             </ScrollView>

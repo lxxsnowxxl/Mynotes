@@ -11,8 +11,9 @@ import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.material3.Slider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import com.example.mynotes.ui.sound.UiActionSound
 import com.example.mynotes.ui.sound.UiSoundPlayer
@@ -20,7 +21,14 @@ import androidx.media3.common.PlaybackException
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.LifecycleEventObserver
+import androidx.lifecycle.compose.LocalLifecycleOwner
+import androidx.lifecycle.repeatOnLifecycle
+import com.example.mynotes.ui.components.StyledSettingsSlider
+import com.example.mynotes.ui.theme.ensureUiContrast
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 
 @Stable
 class MediaPlaybackState internal constructor(initialBuffering: Boolean) {
@@ -132,18 +140,23 @@ class MediaPlaybackState internal constructor(initialBuffering: Boolean) {
 @Composable
 fun MediaSeekSlider(
     player: ExoPlayer?, state: MediaPlaybackState, modifier: Modifier = Modifier,
-    enabled: Boolean = state.prepared && !state.error, positionToInt: (Float) -> Int = { it.toInt() }
+    enabled: Boolean = state.prepared && !state.error, positionToInt: (Float) -> Int = { it.toInt() },
+    backgroundColor: Color = MaterialTheme.colorScheme.surfaceContainerLow
 ) {
     val context = LocalContext.current
-    Slider(
+    val colors = MaterialTheme.colorScheme
+    StyledSettingsSlider(
         value = state.position.coerceIn(0, state.duration.coerceAtLeast(1)).toFloat(),
         onValueChange = { position ->
             UiSoundPlayer.playActionThrottled(context, UiActionSound.Navigation, 60L)
             player?.let { state.seek(it, positionToInt(position)) }
         },
         valueRange = 0f..state.duration.coerceAtLeast(1).toFloat(),
+        valueLabel = formatMinuteSecondDuration(state.position.toLong()),
         enabled = enabled,
-        modifier = modifier
+        modifier = modifier,
+        activeColor = ensureUiContrast(colors.primary, backgroundColor),
+        inactiveColor = ensureUiContrast(colors.outlineVariant, backgroundColor)
     )
 }
 
@@ -164,6 +177,7 @@ fun BindMediaPlayer(
     onPlayerError: ((PlaybackException) -> Unit)? = null,
     onSetupError: (() -> Unit) = state::fail
 ) {
+    val lifecycleOwner = LocalLifecycleOwner.current
     DisposableEffect(player, textureView, uri) {
         if (player == null) {
             onDispose { }
@@ -202,10 +216,24 @@ fun BindMediaPlayer(
             }
         }
     }
-    LaunchedEffect(player, state.prepared) {
-        while (player != null) {
-            if (state.prepared) state.updateProgress(player)
-            delay(300)
+    DisposableEffect(player, lifecycleOwner) {
+        val observer = LifecycleEventObserver { _, event ->
+            if (event == Lifecycle.Event.ON_STOP && player != null) {
+                ignorePlaybackException { player.pause() }
+            }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose { lifecycleOwner.lifecycle.removeObserver(observer) }
+    }
+    LaunchedEffect(player, state, state.prepared, state.playing, lifecycleOwner) {
+        if (player != null && state.prepared) {
+            lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.STARTED) {
+                state.updateProgress(player)
+                while (isActive && state.playing) {
+                    delay(300)
+                    state.updateProgress(player)
+                }
+            }
         }
     }
 }

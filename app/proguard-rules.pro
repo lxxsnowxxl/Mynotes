@@ -6,8 +6,8 @@
 #     "proguard-rules.pro"
 # )
 #
-# Por ahora no se requieren reglas personalizadas adicionales.
-# Room, Compose, DataStore y AndroidX aportan sus propias reglas necesarias.
+# Las bibliotecas AndroidX aportan sus reglas. Las siguientes protegen además
+# los módulos cargados dinámicamente y las interfaces nativas de esta app.
 
 -keepattributes *Annotation*
 -keepattributes Signature
@@ -20,3 +20,8 @@
 -keep class com.google.mlkit.** { *; }
 -keep class com.google.android.gms.internal.mlkit_vision_subject_segmentation.** { *; }
 -keep class com.google.android.gms.common.moduleinstall.** { *; }
+
+# PDFBox text search does not install the optional JPEG 2000 decoder.
+# The port checks for this decoder at runtime; keep this warning narrow.
+-dontwarn com.gemalto.jp2.**
+

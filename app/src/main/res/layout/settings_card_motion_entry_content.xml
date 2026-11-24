@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent" android:layout_height="wrap_content"
+    android:orientation="vertical" tools:ignore="HardcodedText">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:orientation="horizontal" android:gravity="center_vertical">
+        <FrameLayout android:layout_width="104dp" android:layout_height="84dp"
+            android:background="@drawable/layout_xml_update_status">
+            <LinearLayout android:layout_width="78dp" android:layout_height="56dp"
+                android:layout_gravity="center" android:orientation="vertical" android:padding="9dp"
+                android:background="@drawable/layout_xml_field" android:importantForAccessibility="noHideDescendants">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="6dp"
+                    android:orientation="horizontal" android:gravity="center_vertical">
+                    <View android:layout_width="6dp" android:layout_height="6dp" android:background="@drawable/layout_xml_category_marker" />
+                    <View android:layout_width="31dp" android:layout_height="3dp" android:layout_marginStart="5dp" android:background="@color/layout_xml_primary" />
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="2dp" android:layout_marginTop="6dp"
+                    android:background="@color/layout_xml_primary" android:alpha="0.60" />
+                <View android:layout_width="34dp" android:layout_height="2dp" android:layout_marginTop="6dp"
+                    android:background="@color/layout_xml_primary" android:alpha="0.45" />
+            </LinearLayout>
+        </FrameLayout>
+        <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content"
+            android:orientation="vertical" android:layout_marginStart="12dp">
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:text="@string/card_motion_settings_title" android:textSize="16sp"
+                android:textStyle="bold" android:textColor="@color/layout_xml_text" />
+            <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                android:layout_marginTop="4dp" android:text="@string/card_motion_entry_summary"
+                android:textSize="12sp" android:lineSpacingExtra="3sp" android:textColor="@color/layout_xml_secondary" />
+        </LinearLayout>
+    </LinearLayout>
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="12dp" android:text="@string/card_motion_selected_effect"
+        android:textSize="11sp" android:textColor="@color/layout_xml_secondary" />
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="3dp" android:text="@string/card_motion_angular"
+        android:textSize="16sp" android:textStyle="bold" android:textColor="@color/layout_xml_text" />
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="3dp" android:text="@string/card_motion_angular_desc"
+        android:textSize="12sp" android:lineSpacingExtra="3sp" android:textColor="@color/layout_xml_secondary" />
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="12dp" android:orientation="horizontal" android:gravity="center_vertical">
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="@string/card_motion_entry_enabled" android:textSize="11sp" android:textStyle="bold"
+            android:textColor="@color/layout_xml_text" android:background="@drawable/layout_xml_update_status"
+            android:paddingStart="9dp" android:paddingEnd="9dp" android:paddingTop="6dp" android:paddingBottom="6dp" />
+        <LinearLayout android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content"
+            android:layout_marginStart="6dp" android:orientation="horizontal" android:gravity="center_vertical"
+            android:background="@drawable/layout_xml_update_status"
+            android:paddingStart="9dp" android:paddingEnd="9dp" android:paddingTop="6dp" android:paddingBottom="6dp">
+            <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content"
+                android:text="@string/card_motion_intensity_label" android:textSize="11sp" android:textColor="@color/layout_xml_text" />
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:layout_marginStart="4dp" android:text="3/5" android:textSize="11sp" android:textColor="@color/layout_xml_text" />
+        </LinearLayout>
+    </LinearLayout>
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="6dp" android:orientation="horizontal" android:gravity="center_vertical"
+        android:background="@drawable/layout_xml_update_status" android:paddingStart="9dp" android:paddingEnd="9dp"
+        android:paddingTop="6dp" android:paddingBottom="6dp">
+        <TextView android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content"
+            android:text="@string/card_motion_frequency_label" android:textSize="11sp" android:textColor="@color/layout_xml_text" />
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:layout_marginStart="6dp" android:text="@string/card_motion_frequency_normal"
+            android:textSize="11sp" android:textColor="@color/layout_xml_text" />
+    </LinearLayout>
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="12dp" android:text="@string/card_motion_entry_behavior"
+        android:textSize="12sp" android:lineSpacingExtra="3sp" android:textColor="@color/layout_xml_secondary" />
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:layout_marginTop="12dp" android:orientation="horizontal">
+        <Button android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content"
+            android:id="@+id/card_motion_entry_preview_button" android:text="@string/card_motion_entry_preview"
+            android:textColor="@color/layout_xml_primary" android:background="@android:color/transparent"
+            android:textSize="14sp" android:textAllCaps="false" android:minHeight="48dp"
+            android:paddingStart="8dp" android:paddingEnd="8dp" />
+        <Button android:layout_width="0dp" android:layout_weight="1" android:layout_height="wrap_content"
+            android:id="@+id/card_motion_entry_customize_button" android:text="@string/card_motion_entry_customize"
+            android:layout_marginStart="8dp" android:textColor="@color/layout_xml_text"
+            android:background="@drawable/layout_xml_button_outline" android:textSize="14sp" android:textAllCaps="false"
+            android:minHeight="48dp" android:paddingStart="10dp" android:paddingEnd="10dp" />
+    </LinearLayout>
+</LinearLayout>

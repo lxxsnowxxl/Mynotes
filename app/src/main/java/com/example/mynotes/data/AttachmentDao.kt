@@ -17,6 +17,7 @@ interface AttachmentDao {
         """
         SELECT *
         FROM attachments
+        WHERE type != 'cover' AND noteId IN (SELECT id FROM notes WHERE isDeleted = 0)
         ORDER BY createdAt DESC
         """
     )
@@ -35,7 +36,7 @@ interface AttachmentDao {
         """
         SELECT *
         FROM attachments
-        WHERE noteId IN (:noteIds)
+        WHERE noteId IN (:noteIds) AND type != 'cover'
         ORDER BY id ASC
         """
     )
@@ -64,8 +65,6 @@ interface AttachmentDao {
     suspend fun getAttachmentsOnce(noteId: Int): List<Attachment>
     @Query("SELECT COUNT(*) FROM attachments WHERE noteId = :noteId")
     suspend fun countAttachmentsForNote(noteId: Int): Int
-    @Insert
-    suspend fun insertAttachment(attachment: Attachment)
     @Insert
     suspend fun insertAttachments(attachments: List<Attachment>)
     @Delete

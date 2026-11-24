@@ -1,301 +1,64 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Vistas Android editables. Referencia de diseño: Compose; mapa en doc/layout_compose_previews.json. -->
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/layout_xml_app_background"
-    android:orientation="vertical"
-    android:paddingStart="16dp"
-    android:paddingTop="18dp"
-    android:paddingEnd="16dp"
-    android:paddingBottom="12dp"
-    tools:ignore="HardcodedText,ContentDescription"
-    android:theme="@style/LayoutXmlPreviewTheme"
-    tools:context="com.example.mynotes.MainActivity"
-    android:id="@+id/preview_32_pdf_editor_empty_linearlayout_0">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="74dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:id="@+id/preview_32_pdf_editor_empty_linearlayout_1">
-        <ImageView
-            android:layout_width="42dp"
-            android:layout_height="42dp"
-            android:padding="9dp"
-            android:src="@drawable/preview_ic_arrow_back"
-            android:tint="@color/layout_xml_text"
-            android:id="@+id/preview_32_pdf_editor_empty_imageview_2" />
-        <LinearLayout
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="8dp"
-            android:layout_weight="1"
-            android:orientation="vertical"
-            android:id="@+id/preview_32_pdf_editor_empty_linearlayout_3">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif"
-                android:text="@string/pdf_studio"
-                android:textColor="@color/layout_xml_text"
-                android:textSize="27sp"
-                android:includeFontPadding="true"
-                android:id="@+id/preview_32_pdf_editor_empty_textview_4" />
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="2dp"
-                android:fontFamily="sans-serif"
-                android:text="@string/pdf_studio_subtitle"
-                android:textColor="@color/layout_xml_text"
-                android:textSize="13sp"
-                android:includeFontPadding="true"
-                android:id="@+id/preview_32_pdf_editor_empty_textview_5" />
-        </LinearLayout>
-        <TextView
-            android:layout_width="128dp"
-            android:layout_height="52dp"
-            android:background="@drawable/preview_button_dark"
-            android:gravity="center"
-            android:fontFamily="sans-serif"
-            android:text="@string/pdf_export"
-            android:textColor="@color/layout_xml_text"
-            android:textSize="14sp"
-            android:includeFontPadding="true"
-            android:id="@+id/preview_32_pdf_editor_empty_textview_6" />
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:background="@drawable/layout_xml_app_background" android:theme="@style/LayoutXmlPreviewTheme" android:padding="12dp" tools:context="com.example.mynotes.MainActivity" android:id="@+id/preview_32_pdf_editor_empty_workspace_0">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:id="@+id/preview_32_pdf_editor_empty_workspace_1">
+        <android.widget.ImageButton android:layout_width="48dp" android:layout_height="48dp" android:src="@drawable/preview_ic_arrow_back" android:contentDescription="@string/drawing_back" android:background="@android:color/transparent" android:padding="12dp" android:id="@+id/preview_32_pdf_editor_empty_workspace_2" />
+        <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:text="@string/pdf_studio" android:textSize="22sp" android:textColor="@color/layout_xml_text" android:padding="6dp" android:textStyle="bold" android:layout_weight="1" android:id="@+id/preview_32_pdf_editor_empty_workspace_3" />
+        <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/pdf_export" android:minHeight="48dp" android:id="@+id/preview_32_pdf_editor_empty_workspace_4" android:background="@drawable/layout_xml_palette_workspace_action" android:textColor="@color/layout_xml_on_primary" />
     </LinearLayout>
-    <LinearLayout
-        android:layout_width="290dp"
-        android:layout_height="50dp"
-        android:layout_gravity="center_horizontal"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/preview_light_group"
-        android:elevation="7dp"
-        android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:paddingStart="12dp"
-        android:paddingEnd="12dp"
-        android:id="@+id/preview_32_pdf_editor_empty_linearlayout_7">
-        <TextView
-            android:layout_width="40dp"
-            android:layout_height="36dp"
-            android:background="@drawable/preview_button_light"
-            android:gravity="center"
-            android:text="↶"
-            android:textColor="@color/layout_xml_text"
-            android:textSize="21sp"
-            android:fontFamily="sans-serif"
-            android:includeFontPadding="true"
-            android:id="@+id/preview_32_pdf_editor_empty_textview_8" />
-        <TextView
-            android:layout_width="40dp"
-            android:layout_height="36dp"
-            android:layout_marginStart="5dp"
-            android:background="@drawable/preview_button_light"
-            android:gravity="center"
-            android:text="↷"
-            android:textColor="@color/layout_xml_text"
-            android:textSize="21sp"
-            android:fontFamily="sans-serif"
-            android:includeFontPadding="true"
-            android:id="@+id/preview_32_pdf_editor_empty_textview_9" />
-        <TextView
-            android:layout_width="30dp"
-            android:layout_height="36dp"
-            android:gravity="center"
-            android:text="‹"
-            android:textColor="@color/layout_xml_text"
-            android:textSize="22sp"
-            android:fontFamily="sans-serif"
-            android:includeFontPadding="true"
-            android:id="@+id/preview_32_pdf_editor_empty_textview_10" />
-        <TextView
-            android:layout_width="0dp"
-            android:layout_height="36dp"
-            android:layout_weight="1"
-            android:background="@drawable/preview_chip_light_selected"
-            android:gravity="center"
-            android:fontFamily="sans-serif"
-            android:text="#  Página 1 de 1"
-            android:textColor="@color/layout_xml_text"
-            android:textSize="12sp"
-            android:includeFontPadding="true"
-            android:id="@+id/preview_32_pdf_editor_empty_textview_11" />
-        <TextView
-            android:layout_width="30dp"
-            android:layout_height="36dp"
-            android:gravity="center"
-            android:text="›"
-            android:textColor="@color/layout_xml_text"
-            android:textSize="22sp"
-            android:fontFamily="sans-serif"
-            android:includeFontPadding="true"
-            android:id="@+id/preview_32_pdf_editor_empty_textview_12" />
-    </LinearLayout>
-    <FrameLayout
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:layout_marginTop="18dp"
-        android:background="@drawable/preview_pdf_page"
-        android:id="@+id/preview_32_pdf_editor_empty_framelayout_13">
-        <LinearLayout
-            android:layout_width="150dp"
-            android:layout_height="52dp"
-            android:layout_gravity="center"
-            android:background="@drawable/preview_button_light"
-            android:gravity="center"
-            android:orientation="horizontal"
-            android:id="@+id/preview_32_pdf_editor_empty_linearlayout_14">
-            <ImageView
-                android:layout_width="22dp"
-                android:layout_height="22dp"
-                android:src="@drawable/preview_ic_file"
-                android:tint="@color/layout_xml_text"
-                android:id="@+id/preview_32_pdf_editor_empty_imageview_15" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginStart="8dp"
-                android:fontFamily="sans-serif"
-                android:text="@string/pdf_open_pdf"
-                android:textColor="@color/layout_xml_text"
-                android:textSize="14sp"
-                android:includeFontPadding="true"
-                android:id="@+id/preview_32_pdf_editor_empty_textview_16" />
-        </LinearLayout>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="200dp"
-            android:layout_gravity="center"
-            android:layout_marginStart="26dp"
-            android:layout_marginEnd="26dp"
-            android:background="@drawable/preview_light_group"
-            android:elevation="10dp"
-            android:orientation="vertical"
-            android:paddingStart="18dp"
-            android:paddingTop="15dp"
-            android:paddingEnd="52dp"
-            android:paddingBottom="15dp"
-            android:id="@+id/preview_32_pdf_editor_empty_linearlayout_17">
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:fontFamily="sans-serif"
-                android:text="@string/pdf_test_mode_title"
-                android:textColor="@color/layout_xml_text"
-                android:textSize="18sp"
-                android:includeFontPadding="true"
-                android:id="@+id/preview_32_pdf_editor_empty_textview_18" />
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="6dp"
-                android:fontFamily="sans-serif"
-                android:lineSpacingExtra="3dp"
-                android:text="@string/pdf_test_mode_description"
-                android:textColor="@color/layout_xml_text"
-                android:textSize="13sp"
-                android:includeFontPadding="true"
-                android:id="@+id/preview_32_pdf_editor_empty_textview_19" />
-        </LinearLayout>
-        <TextView
-            android:layout_width="42dp"
-            android:layout_height="42dp"
-            android:layout_gravity="center|end"
-            android:layout_marginEnd="34dp"
-            android:layout_marginBottom="154dp"
-            android:background="@drawable/preview_surface_dark"
-            android:gravity="center"
-            android:text="×"
-            android:textColor="@color/layout_xml_text"
-            android:textSize="28sp"
-            android:fontFamily="sans-serif"
-            android:includeFontPadding="true"
-            android:id="@+id/preview_32_pdf_editor_empty_textview_20" />
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/workspace_saved" android:textSize="12sp" android:textColor="@color/layout_xml_text" android:padding="6dp" android:id="@+id/preview_32_pdf_editor_empty_workspace_5" />
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/workspace_beta" android:textSize="12sp" android:textColor="@color/layout_xml_text" android:padding="6dp" android:id="@+id/preview_32_pdf_editor_empty_workspace_6" />
+    <FrameLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:id="@+id/preview_32_pdf_editor_empty_workspace_pdf_drawer_overlay">
+        <FrameLayout android:layout_width="match_parent" android:layout_height="match_parent" android:background="@drawable/layout_xml_palette_workspace_panel" android:layout_margin="8dp" android:id="@+id/preview_32_pdf_editor_empty_workspace_7" android:clipToOutline="true">
+            <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/pdf_open_pdf" android:minHeight="48dp" android:layout_gravity="center" android:id="@+id/preview_32_pdf_editor_empty_workspace_8" android:background="@drawable/layout_xml_palette_workspace_button" android:elevation="0dp" />
+        </FrameLayout>
+        <ScrollView android:layout_width="match_parent" android:layout_height="360dp" android:layout_marginEnd="48dp" android:layout_gravity="start|center_vertical" android:visibility="gone" android:fillViewport="true" android:id="@+id/preview_32_pdf_editor_empty_workspace_10">
+            <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="12dp" android:background="@drawable/layout_xml_workspace_tool_panel" android:id="@+id/preview_32_pdf_editor_empty_workspace_11" android:elevation="0dp">
+                <HorizontalScrollView android:layout_width="match_parent" android:layout_height="wrap_content" android:fillViewport="true" android:id="@+id/preview_32_pdf_editor_empty_workspace_12">
+                    <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:id="@+id/preview_32_pdf_editor_empty_workspace_13">
+                        <Button android:background="@drawable/layout_xml_workspace_tool_button" android:backgroundTint="@null" android:textColor="#000000" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/workspace_find" android:minHeight="48dp" android:id="@+id/preview_32_pdf_editor_empty_workspace_14" />
+                        <Button android:background="@drawable/layout_xml_workspace_tool_button" android:backgroundTint="@null" android:textColor="#000000" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/workspace_signature" android:minHeight="48dp" android:id="@+id/preview_32_pdf_editor_empty_workspace_15" />
+                        <Button android:background="@drawable/layout_xml_workspace_tool_button" android:backgroundTint="@null" android:textColor="#000000" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/workspace_bookmark" android:minHeight="48dp" android:id="@+id/preview_32_pdf_editor_empty_workspace_16" />
+                        <Button android:background="@drawable/layout_xml_workspace_tool_button" android:backgroundTint="@null" android:textColor="#000000" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/workspace_pages" android:minHeight="48dp" android:id="@+id/preview_32_pdf_editor_empty_workspace_17" />
+                    </LinearLayout>
+                </HorizontalScrollView>
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:padding="8dp" android:background="@drawable/layout_xml_workspace_tool_section">
+                    <HorizontalScrollView android:layout_width="match_parent" android:layout_height="wrap_content" android:fillViewport="true" android:id="@+id/preview_32_pdf_editor_empty_workspace_23">
+                        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:id="@+id/preview_32_pdf_editor_empty_workspace_24">
+                            <Button android:background="@drawable/layout_xml_workspace_tool_button" android:backgroundTint="@null" android:textColor="#000000" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/workspace_annotate" android:minHeight="48dp" android:id="@+id/preview_32_pdf_editor_empty_workspace_25" />
+                            <Button android:background="@drawable/layout_xml_workspace_tool_button" android:backgroundTint="@null" android:textColor="#000000" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/workspace_insert" android:minHeight="48dp" android:id="@+id/preview_32_pdf_editor_empty_workspace_26" />
+                            <Button android:background="@drawable/layout_xml_workspace_tool_button" android:backgroundTint="@null" android:textColor="#000000" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/workspace_pages" android:minHeight="48dp" android:id="@+id/preview_32_pdf_editor_empty_workspace_27" />
+                        </LinearLayout>
+                    </HorizontalScrollView>
+                    <HorizontalScrollView android:layout_width="match_parent" android:layout_height="wrap_content" android:fillViewport="true" android:id="@+id/preview_32_pdf_editor_empty_workspace_28">
+                        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:id="@+id/preview_32_pdf_editor_empty_workspace_29">
+                            <Button android:background="@drawable/layout_xml_workspace_tool_button" android:backgroundTint="@null" android:textColor="#000000" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/pdf_select" android:minHeight="48dp" android:id="@+id/preview_32_pdf_editor_empty_workspace_30" />
+                            <Button android:background="@drawable/layout_xml_workspace_tool_button" android:backgroundTint="@null" android:textColor="#000000" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/pdf_draw" android:minHeight="48dp" android:id="@+id/preview_32_pdf_editor_empty_workspace_31" />
+                            <Button android:background="@drawable/layout_xml_workspace_tool_button" android:backgroundTint="@null" android:textColor="#000000" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/pdf_highlighter" android:minHeight="48dp" android:id="@+id/preview_32_pdf_editor_empty_workspace_32" />
+                            <Button android:background="@drawable/layout_xml_workspace_tool_button" android:backgroundTint="@null" android:textColor="#000000" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/pdf_line" android:minHeight="48dp" android:id="@+id/preview_32_pdf_editor_empty_workspace_33" />
+                            <Button android:background="@drawable/layout_xml_workspace_tool_button" android:backgroundTint="@null" android:textColor="#000000" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/pdf_rectangle" android:minHeight="48dp" android:id="@+id/preview_32_pdf_editor_empty_workspace_34" />
+                            <Button android:background="@drawable/layout_xml_workspace_tool_button" android:backgroundTint="@null" android:textColor="#000000" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/pdf_ellipse" android:minHeight="48dp" android:id="@+id/preview_32_pdf_editor_empty_workspace_35" />
+                            <Button android:background="@drawable/layout_xml_workspace_tool_button" android:backgroundTint="@null" android:textColor="#000000" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/pdf_eraser" android:minHeight="48dp" android:id="@+id/preview_32_pdf_editor_empty_workspace_36" />
+                        </LinearLayout>
+                    </HorizontalScrollView>
+                    <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/workspace_properties" android:textSize="14sp" android:textColor="#000000" android:padding="6dp" android:id="@+id/preview_32_pdf_editor_empty_workspace_37" />
+                    <HorizontalScrollView android:layout_width="match_parent" android:layout_height="wrap_content" android:fillViewport="true" android:id="@+id/preview_32_pdf_editor_empty_workspace_38">
+                        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:id="@+id/preview_32_pdf_editor_empty_workspace_39">
+                            <Button android:background="@drawable/layout_xml_workspace_tool_button" android:backgroundTint="@null" android:textColor="#000000" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/pdf_thin" android:minHeight="48dp" android:id="@+id/preview_32_pdf_editor_empty_workspace_40" />
+                            <Button android:background="@drawable/layout_xml_workspace_tool_button" android:backgroundTint="@null" android:textColor="#000000" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/pdf_medium" android:minHeight="48dp" android:id="@+id/preview_32_pdf_editor_empty_workspace_41" />
+                            <Button android:background="@drawable/layout_xml_workspace_tool_button" android:backgroundTint="@null" android:textColor="#000000" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/pdf_thick" android:minHeight="48dp" android:id="@+id/preview_32_pdf_editor_empty_workspace_42" />
+                        </LinearLayout>
+                    </HorizontalScrollView>
+                    <HorizontalScrollView android:layout_width="match_parent" android:layout_height="wrap_content" android:fillViewport="true" android:id="@+id/preview_32_pdf_editor_empty_workspace_18">
+                        <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:id="@+id/preview_32_pdf_editor_empty_workspace_19">
+                            <Button android:background="@drawable/layout_xml_workspace_tool_button" android:backgroundTint="@null" android:textColor="#000000" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/pdf_undo" android:minHeight="48dp" android:id="@+id/preview_32_pdf_editor_empty_workspace_20" />
+                            <Button android:background="@drawable/layout_xml_workspace_tool_button" android:backgroundTint="@null" android:textColor="#000000" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/pdf_redo" android:minHeight="48dp" android:id="@+id/preview_32_pdf_editor_empty_workspace_21" />
+                            <Button android:background="@drawable/layout_xml_workspace_tool_button" android:backgroundTint="@null" android:textColor="#000000" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="1 / 1" android:minHeight="48dp" android:id="@+id/preview_32_pdf_editor_empty_workspace_22" />
+                        </LinearLayout>
+                    </HorizontalScrollView>
+                </LinearLayout>
+                <Switch android:layout_width="match_parent" android:layout_height="wrap_content" android:text="@string/workspace_stylus_only" android:minHeight="48dp" android:id="@+id/preview_32_pdf_editor_empty_workspace_43" />
+            </LinearLayout>
+        </ScrollView>
+        <TextView android:layout_width="48dp" android:layout_height="64dp" android:layout_gravity="start|center_vertical" android:gravity="center" android:text="›" android:textSize="24sp" android:textColor="#000000" android:background="@drawable/layout_xml_workspace_tool_tab" android:clickable="true" android:focusable="true" android:contentDescription="@string/note_tools_expand" android:id="@+id/preview_32_pdf_editor_empty_workspace_pdf_drawer_tab" android:minWidth="48dp" android:minHeight="64dp" android:backgroundTint="@null" android:padding="0dp" android:paddingTop="8dp" android:includeFontPadding="false" android:elevation="0dp" />
     </FrameLayout>
-    <HorizontalScrollView
-        android:layout_width="match_parent"
-        android:layout_height="62dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/preview_light_group"
-        android:scrollbars="none"
-        android:id="@+id/preview_32_pdf_editor_empty_horizontalscrollview_21">
-        <LinearLayout
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:gravity="center_vertical"
-            android:orientation="horizontal"
-            android:paddingStart="10dp"
-            android:paddingEnd="10dp"
-            android:id="@+id/preview_32_pdf_editor_empty_linearlayout_22">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="44dp"
-                android:background="@drawable/preview_small_selected"
-                android:gravity="center"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
-                android:fontFamily="sans-serif"
-                android:text="@string/pdf_select"
-                android:textColor="@color/layout_xml_text"
-                android:includeFontPadding="true"
-                android:id="@+id/preview_32_pdf_editor_empty_textview_23" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="44dp"
-                android:layout_marginStart="7dp"
-                android:background="@drawable/preview_small_unselected"
-                android:gravity="center"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
-                android:fontFamily="sans-serif"
-                android:text="@string/pdf_draw"
-                android:textColor="@color/layout_xml_text"
-                android:includeFontPadding="true"
-                android:id="@+id/preview_32_pdf_editor_empty_textview_24" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="44dp"
-                android:layout_marginStart="7dp"
-                android:background="@drawable/preview_small_unselected"
-                android:gravity="center"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
-                android:fontFamily="sans-serif"
-                android:text="@string/pdf_highlighter"
-                android:textColor="@color/layout_xml_text"
-                android:includeFontPadding="true"
-                android:id="@+id/preview_32_pdf_editor_empty_textview_25" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="44dp"
-                android:layout_marginStart="7dp"
-                android:background="@drawable/preview_small_unselected"
-                android:gravity="center"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
-                android:fontFamily="sans-serif"
-                android:text="@string/pdf_text"
-                android:textColor="@color/layout_xml_text"
-                android:includeFontPadding="true"
-                android:id="@+id/preview_32_pdf_editor_empty_textview_26" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="44dp"
-                android:layout_marginStart="7dp"
-                android:background="@drawable/preview_small_unselected"
-                android:gravity="center"
-                android:paddingStart="12dp"
-                android:paddingEnd="12dp"
-                android:fontFamily="sans-serif"
-                android:text="@string/pdf_add_image"
-                android:textColor="@color/layout_xml_text"
-                android:includeFontPadding="true"
-                android:id="@+id/preview_32_pdf_editor_empty_textview_27" />
-        </LinearLayout>
-    </HorizontalScrollView>
 </LinearLayout>

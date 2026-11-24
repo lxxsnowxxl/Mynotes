@@ -26,4 +26,6 @@
     <string name="drawing_tool_eraser">Gomme</string>
     <string name="drawing_expand_canvas">Agrandir la toile</string>
     <string name="drawing_restore_canvas">Restaurer la toile</string>
+    <string name="drawing_compact_more">Plus</string>
+    <string name="drawing_compact_back">Retour</string>
 </resources>

@@ -19,7 +19,7 @@
         android:paddingStart="10dp"
         android:paddingEnd="10dp"
         android:id="@+id/preview_05d_attachment_audio_linearlayout_1">
-        <ImageView
+        <android.widget.ImageView
             android:layout_width="24dp"
             android:layout_height="24dp"
             android:src="@drawable/preview_ic_arrow_back"
@@ -57,7 +57,7 @@
         android:orientation="vertical"
         android:padding="28dp"
         android:id="@+id/preview_05d_attachment_audio_linearlayout_5">
-        <ImageView
+        <android.widget.ImageView
             android:layout_width="72dp"
             android:layout_height="72dp"
             android:src="@drawable/preview_ic_music"
@@ -96,7 +96,9 @@
             android:thumb="@drawable/layout_xml_slider_thumb"
             android:paddingStart="14dp"
             android:paddingEnd="14dp"
-            android:id="@+id/preview_05d_attachment_audio_seekbar_10" />
+            android:id="@+id/preview_05d_attachment_audio_seekbar_10"
+            android:thumbOffset="10dp"
+            android:splitTrack="false"/>
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="54dp"

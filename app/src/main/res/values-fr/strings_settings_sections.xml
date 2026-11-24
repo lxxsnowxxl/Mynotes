@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_section_expand">Développer les réglages</string>
+    <string name="settings_section_collapse">Réduire les réglages</string>
+    <string name="settings_section_expanded">Développé</string>
+    <string name="settings_section_collapsed">Réduit</string>
+</resources>

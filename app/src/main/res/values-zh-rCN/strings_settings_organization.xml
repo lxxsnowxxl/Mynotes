@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_advanced_title">高级设置</string>
+    <string name="settings_advanced_description">所有设置，按类别清晰排列。</string>
+    <string name="advanced_nav_appearance">外观</string>
+    <string name="advanced_nav_notes">笔记</string>
+    <string name="advanced_nav_menu">菜单</string>
+    <string name="advanced_nav_feedback">声音</string>
+    <string name="advanced_nav_system">系统</string>
+    <string name="advanced_nav_application">应用</string>
+    <string name="advanced_section_appearance">外观与样式</string>
+    <string name="advanced_section_appearance_description">颜色、背景、透明度和深色模式。</string>
+    <string name="advanced_section_notes">卡片与排列</string>
+    <string name="advanced_section_notes_description">调整笔记卡片、列数和新建按钮。</string>
+    <string name="advanced_section_menu">笔记菜单</string>
+    <string name="advanced_section_menu_description">自定义菜单外观、顺序和可用选项。</string>
+    <string name="advanced_section_feedback">声音与振动</string>
+    <string name="advanced_section_feedback_description">音效、提醒和触觉反馈。</string>
+    <string name="advanced_section_system">性能与动画</string>
+    <string name="advanced_section_system_description">平衡流畅度与动画效果。</string>
+    <string name="advanced_section_application">应用</string>
+    <string name="advanced_section_application_description">语言及通用偏好。</string>
+    <string name="advanced_nav_typography">文字</string>
+    <string name="advanced_section_typography">文字和图标</string>
+    <string name="advanced_section_typography_description">字体、图标及控件。</string>
+    <string name="advanced_nav_motion">动效</string>
+    <string name="advanced_section_motion">动画与性能</string>
+    <string name="advanced_section_motion_description">过渡、动画与资源占用。</string>
+    <string name="advanced_nav_data">数据</string>
+    <string name="advanced_section_data">数据</string>
+    <string name="advanced_section_data_description">备份、开发信息和更新。</string>
+</resources>

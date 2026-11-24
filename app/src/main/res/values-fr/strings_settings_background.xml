@@ -5,4 +5,5 @@
     <string name="settings_background_solid">Uni</string>
     <string name="settings_background_gradient">Dégradé</string>
     <string name="settings_background_blur">Flou</string>
+    <string name="settings_background_animated_blur">Flou animé</string>
 </resources>

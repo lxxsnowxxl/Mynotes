@@ -8,90 +8,50 @@ import org.junit.Assert.assertTrue
 import org.junit.Test
 
 class NoteTextCacheTest {
-    private fun note(id: Int, title: String = "Title $id", content: String = "url-$id") =
+    private fun note(id: Int, title: String = "Title $id", content: String = "body-$id") =
         Note(id = id, title = title, content = content, createdAt = id.toLong())
 
     @Test
-    fun metadataChangesReuseSearchTextAndParsedLinks() {
-        var parses = 0
-        val cache = NoteTextCache { parses++; listOf(it) }
+    fun formattingModeInvalidatesSearchWithoutChangingStoredText() {
+        val cache = NoteTextCache()
+        val note = Note(1, "", "**Muy** importante")
+        assertTrue(cache.update(listOf(note)).getValue(1).contains("**muy**"))
+        assertEquals("\nmuy importante", cache.update(listOf(note.copy(formattingEnabled = true)))[1])
+    }
+
+    @Test
+    fun metadataChangesReuseSearchText() {
+        val cache = NoteTextCache()
         val note = note(1)
-        val initial = cache.update(listOf(note), true)
-        val updated = cache.update(listOf(note.copy(isFavorite = true, isPinned = true, priority = 3, color = "red")), true)
+        val initial = cache.update(listOf(note))
+        val updated = cache.update(listOf(note.copy(isFavorite = true, isPinned = true, priority = 3, color = "red")))
         assertEquals(initial, updated)
-        assertSame(initial.searchableTextByNote[1], updated.searchableTextByNote[1])
-        assertEquals(1, parses)
+        assertSame(initial[1], updated[1])
     }
 
     @Test
-    fun titleChangesRefreshSearchWithoutParsingContentAgain() {
-        var parses = 0
-        val cache = NoteTextCache { parses++; listOf(it) }
-        val note = note(1)
-        cache.update(listOf(note), true)
-        val updated = cache.update(listOf(note.copy(title = "ÁRBOL İ Σ")), true)
-        assertEquals("ÁRBOL İ Σ".lowercase() + "\n" + note.content.lowercase(), updated.searchableTextByNote[1])
-        assertEquals(listOf(note.content), updated.linkPreviewUrls)
-        assertEquals(1, parses)
-    }
-
-    @Test
-    fun contentChangesInvalidateOnlyTheEditedNote() {
-        var parses = 0
-        val cache = NoteTextCache { parses++; listOf(it) }
+    fun titleAndContentEditsInvalidateOnlyTheEditedNote() {
+        val cache = NoteTextCache()
         val first = note(1)
         val second = note(2)
-        val initial = cache.update(listOf(first, second), true)
-        val updated = cache.update(listOf(first.copy(content = "NEW LINK"), second), true)
-        assertEquals("title 1\nnew link", updated.searchableTextByNote[1])
-        assertEquals(listOf("NEW LINK", second.content), updated.linkPreviewUrls)
-        assertSame(initial.searchableTextByNote[2], updated.searchableTextByNote[2])
-        assertEquals(3, parses)
+        val initial = cache.update(listOf(first, second))
+        val titleEdit = cache.update(listOf(first.copy(title = "ÁRBOL İ Σ"), second))
+        assertEquals("ÁRBOL İ Σ".lowercase() + "\n" + first.content, titleEdit[1])
+        assertSame(initial[2], titleEdit[2])
+
+        val bodyEdit = cache.update(listOf(first.copy(content = "New body"), second))
+        assertEquals("title 1\nnew body", bodyEdit[1])
+        assertSame(initial[2], bodyEdit[2])
     }
 
     @Test
     fun removedNotesAreEvictedAndPreviousSnapshotsStayUnchanged() {
-        var parses = 0
-        val cache = NoteTextCache { parses++; listOf(it) }
+        val cache = NoteTextCache()
         val notes = listOf(note(1), note(2))
-        val initial = cache.update(notes, true)
-        val remaining = cache.update(notes.drop(1), true)
-        assertEquals(setOf(2), remaining.searchableTextByNote.keys)
-        assertEquals(setOf(1, 2), initial.searchableTextByNote.keys)
-        cache.update(notes, true)
-        assertEquals(3, parses)
-    }
-
-    @Test
-    fun preloadPreservesOrderingDeduplicationAndBothLimits() {
-        val extract: (String) -> List<String> = { it.split('|') }
-        val cache = NoteTextCache(extract)
-        val notes = (1..60).map { note(it, content = "shared|a-$it|b-$it|ignored-$it") }
-        for (ordered in listOf(notes, notes.reversed(), notes.drop(12))) {
-            val expected = ordered.asSequence().flatMap { extract(it.content).asSequence().take(3) }
-                .distinct().take(80).toList()
-            for (search in listOf(false, true)) {
-                val result = cache.update(ordered, search)
-                assertEquals(expected, result.linkPreviewUrls)
-                assertEquals(if (search) ordered.size else 0, result.searchableTextByNote.size)
-                assertTrue(result.linkPreviewUrls.none { it.startsWith("ignored-") })
-            }
-        }
-    }
-
-    @Test
-    fun clearingSearchDropsNormalizedCopiesAndEmptyListDropsAllEntries() {
-        var parses = 0
-        val cache = NoteTextCache { parses++; listOf(it) }
-        val notes = listOf(note(1))
-        val initial = cache.update(notes, true)
-        assertTrue(cache.update(notes, false).searchableTextByNote.isEmpty())
-        val resumed = cache.update(notes, true)
-        assertEquals(initial, resumed)
-        assertNotSame(initial.searchableTextByNote[1], resumed.searchableTextByNote[1])
-        assertEquals(1, parses)
-        assertEquals(NoteTextIndex(emptyMap(), emptyList()), cache.update(emptyList(), false))
-        cache.update(notes, false)
-        assertEquals(2, parses)
+        val initial = cache.update(notes)
+        assertEquals(setOf(2), cache.update(notes.drop(1)).keys)
+        assertEquals(setOf(1, 2), initial.keys)
+        assertNotSame(initial[1], cache.update(notes)[1])
+        assertTrue(cache.update(emptyList()).isEmpty())
     }
 }

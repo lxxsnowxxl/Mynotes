@@ -1,789 +1,289 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- Vistas Android editables. Referencia de diseño: Compose; mapa en doc/layout_compose_previews.json. -->
-<FrameLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:background="@drawable/layout_xml_app_background"
-    android:theme="@style/LayoutXmlPreviewTheme"
-    tools:context="com.example.mynotes.MainActivity"
-    tools:ignore="HardcodedText,ContentDescription"
-    android:id="@+id/preview_04b_settings_personalization_framelayout_0">
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:id="@+id/preview_04b_settings_personalization_linearlayout_1">
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="64dp"
-            android:orientation="horizontal"
-            android:paddingStart="4dp"
-            android:paddingEnd="12dp"
-            android:gravity="center_vertical"
-            android:id="@+id/preview_04b_settings_personalization_linearlayout_2">
-            <ImageButton
-                android:layout_width="48dp"
-                android:layout_height="48dp"
-                android:id="@+id/preview_04b_settings_personalization_back"
-                android:src="@drawable/preview_ic_arrow_back"
-                android:tint="@color/layout_xml_text"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:contentDescription="@string/mock_back"
-                android:padding="12dp" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="@string/mock_settings"
-                android:textSize="24sp"
-                android:textColor="@color/layout_xml_text"
-                android:fontFamily="sans-serif"
-                android:textStyle="bold"
-                android:layout_marginStart="8dp"
-                android:id="@+id/preview_04b_settings_personalization_textview_4" />
+<?xml version='1.0' encoding='UTF-8'?>
+<!-- Vistas Android editables. Referencia de diseño: Compose; mapa en doc/layout_compose_previews.json. --><FrameLayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent" android:layout_height="match_parent" android:background="@drawable/layout_xml_app_background" android:theme="@style/LayoutXmlPreviewTheme" tools:context="com.example.mynotes.MainActivity" tools:ignore="HardcodedText,ContentDescription" android:id="@+id/preview_04b_settings_personalization_framelayout_0">
+    <LinearLayout android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" android:id="@+id/preview_04b_settings_personalization_linearlayout_1">
+        <LinearLayout android:layout_width="match_parent" android:layout_height="64dp" android:orientation="horizontal" android:paddingStart="4dp" android:paddingEnd="12dp" android:gravity="center_vertical" android:id="@+id/preview_04b_settings_personalization_linearlayout_2">
+            <android.widget.ImageButton android:layout_width="48dp" android:layout_height="48dp" android:id="@+id/preview_04b_settings_personalization_back" android:src="@drawable/preview_ic_arrow_back" android:tint="@color/layout_xml_text" android:background="@android:color/transparent" android:contentDescription="@string/mock_back" android:padding="12dp"/>
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/mock_settings" android:textSize="24sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="bold" android:layout_marginStart="8dp" android:id="@+id/preview_04b_settings_personalization_textview_4"/>
         </LinearLayout>
-        <FrameLayout
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1"
-            android:id="@+id/preview_04b_settings_personalization_framelayout_5">
-            <ScrollView
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:fillViewport="true"
-                android:scrollbars="none"
-                android:id="@+id/preview_04b_settings_personalization_scrollview_6">
-                <LinearLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:orientation="vertical"
-                    android:paddingStart="14dp"
-                    android:paddingEnd="14dp"
-                    android:paddingBottom="32dp"
-                    android:id="@+id/preview_04b_settings_personalization_linearlayout_7">
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:id="@+id/preview_04b_settings_personalization_panel_icons"
-                        android:background="@drawable/layout_xml_panel"
-                        android:padding="14dp"
-                        android:layout_marginBottom="12dp">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/extreme_icons"
-                            android:textSize="16sp"
-                            android:textColor="@color/layout_xml_text"
-                            android:fontFamily="sans-serif"
-                            android:textStyle="bold"
-                            android:id="@+id/preview_04b_settings_personalization_textview_9" />
-                        <Space
-                            android:layout_width="1dp"
-                            android:layout_height="8dp" />
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:minHeight="48dp"
-                            android:gravity="center_vertical"
-                            android:id="@+id/preview_04b_settings_personalization_linearlayout_11">
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:text="@string/extreme_icons"
-                                android:textSize="14sp"
-                                android:textColor="@color/layout_xml_text"
-                                android:fontFamily="sans-serif"
-                                android:textStyle="bold"
-                                android:layout_weight="1"
-                                android:id="@+id/preview_04b_settings_personalization_textview_12" />
-                            <Spinner
-                                android:layout_width="wrap_content"
-                                android:layout_height="48dp"
-                                android:id="@+id/preview_04b_settings_personalization_icon_style"
-                                android:entries="@array/layout_xml_icon_style_options"
-                                android:spinnerMode="dropdown"
-                                android:contentDescription="@string/extreme_icons" />
+        <HorizontalScrollView android:layout_width="match_parent" android:layout_height="wrap_content" android:scrollbars="none" android:layout_marginStart="22dp" android:layout_marginEnd="22dp" android:layout_marginTop="6dp" android:layout_marginBottom="6dp">
+            <LinearLayout android:layout_width="wrap_content" android:layout_height="wrap_content" android:orientation="horizontal" android:padding="4dp" android:background="@drawable/layout_xml_navigation_panel" android:id="@+id/preview_04b_settings_personalization_category_navigation" android:gravity="center_vertical">
+        <TextView android:layout_width="88dp" android:layout_height="48dp" android:text="@string/advanced_nav_appearance" android:textSize="12sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="bold" android:id="@+id/preview_04b_settings_personalization_nav_appearance" android:gravity="center" android:clickable="true" android:focusable="true" android:background="@drawable/layout_xml_nav_selected_neutral" android:contentDescription="@string/advanced_section_appearance"/>
+        <TextView android:layout_width="88dp" android:layout_height="48dp" android:text="@string/advanced_nav_typography" android:textSize="12sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="normal" android:id="@+id/preview_04b_settings_personalization_nav_typography" android:gravity="center" android:clickable="true" android:focusable="true" android:background="@android:color/transparent" android:contentDescription="@string/advanced_section_typography"/>
+        <TextView android:layout_width="88dp" android:layout_height="48dp" android:text="@string/advanced_nav_notes" android:textSize="12sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="normal" android:id="@+id/preview_04b_settings_personalization_nav_notes" android:gravity="center" android:clickable="true" android:focusable="true" android:background="@android:color/transparent" android:contentDescription="@string/advanced_section_notes"/>
+        <TextView android:layout_width="88dp" android:layout_height="48dp" android:text="@string/advanced_nav_menu" android:textSize="12sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="normal" android:id="@+id/preview_04b_settings_personalization_nav_menu" android:gravity="center" android:clickable="true" android:focusable="true" android:background="@android:color/transparent" android:contentDescription="@string/advanced_section_menu"/>
+        <TextView android:layout_width="88dp" android:layout_height="48dp" android:text="@string/advanced_nav_feedback" android:textSize="12sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="normal" android:id="@+id/preview_04b_settings_personalization_nav_feedback" android:gravity="center" android:clickable="true" android:focusable="true" android:background="@android:color/transparent" android:contentDescription="@string/advanced_section_feedback"/>
+        <TextView android:layout_width="88dp" android:layout_height="48dp" android:text="@string/advanced_nav_motion" android:textSize="12sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="normal" android:id="@+id/preview_04b_settings_personalization_nav_system" android:gravity="center" android:clickable="true" android:focusable="true" android:background="@android:color/transparent" android:contentDescription="@string/advanced_section_motion"/>
+        <TextView android:layout_width="88dp" android:layout_height="48dp" android:text="@string/advanced_nav_application" android:textSize="12sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="normal" android:id="@+id/preview_04b_settings_personalization_nav_application" android:gravity="center" android:clickable="true" android:focusable="true" android:background="@android:color/transparent" android:contentDescription="@string/advanced_section_application"/>
+        <TextView android:layout_width="88dp" android:layout_height="48dp" android:text="@string/advanced_nav_data" android:textSize="12sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="normal" android:id="@+id/preview_04b_settings_personalization_nav_data" android:gravity="center" android:clickable="true" android:focusable="true" android:background="@android:color/transparent" android:contentDescription="@string/advanced_section_data"/>
+            </LinearLayout>
+        </HorizontalScrollView>
+        <FrameLayout android:layout_width="match_parent" android:layout_height="0dp" android:layout_weight="1" android:id="@+id/preview_04b_settings_personalization_framelayout_12">
+            <ScrollView android:layout_width="match_parent" android:layout_height="match_parent" android:fillViewport="true" android:scrollbars="none" android:id="@+id/preview_04b_settings_personalization_scrollview_13">
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:paddingStart="22dp" android:paddingEnd="22dp" android:paddingBottom="32dp" android:id="@+id/preview_04b_settings_personalization_linearlayout_14">
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:id="@+id/preview_04b_settings_personalization_panel_icons" android:background="@drawable/layout_xml_panel" android:layout_marginBottom="12dp" android:paddingStart="22dp" android:paddingEnd="22dp" android:paddingTop="14dp" android:paddingBottom="14dp">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/extreme_icons" android:textSize="16sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="bold" android:id="@+id/preview_04b_settings_personalization_textview_16"/>
+                        <Space android:layout_width="1dp" android:layout_height="8dp"/>
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:minHeight="48dp" android:gravity="center_vertical" android:id="@+id/preview_04b_settings_personalization_linearlayout_18">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:text="@string/extreme_icons" android:textSize="14sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="bold" android:layout_weight="1" android:id="@+id/preview_04b_settings_personalization_textview_19"/>
+                            <Spinner android:layout_width="wrap_content" android:layout_height="48dp" android:id="@+id/preview_04b_settings_personalization_icon_style" android:entries="@array/layout_xml_icon_style_options" android:spinnerMode="dropdown" android:contentDescription="@string/extreme_icons"/>
                         </LinearLayout>
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:minHeight="24dp"
-                            android:gravity="center_vertical"
-                            android:id="@+id/preview_04b_settings_personalization_linearlayout_14">
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:text="@string/extreme_icon_size"
-                                android:textSize="14sp"
-                                android:textColor="@color/layout_xml_text"
-                                android:fontFamily="sans-serif"
-                                android:textStyle="bold"
-                                android:layout_weight="1"
-                                android:id="@+id/preview_04b_settings_personalization_textview_15" />
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="22 dp"
-                                android:textSize="12sp"
-                                android:textColor="@color/layout_xml_text"
-                                android:fontFamily="sans-serif"
-                                android:textStyle="normal"
-                                android:id="@+id/preview_04b_settings_personalization_icon_size_value"
-                                android:layout_marginStart="10dp" />
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:minHeight="24dp" android:gravity="center_vertical" android:id="@+id/preview_04b_settings_personalization_linearlayout_21">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:text="@string/extreme_icon_size" android:textSize="14sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="bold" android:layout_weight="1" android:id="@+id/preview_04b_settings_personalization_textview_22"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="22 dp" android:textSize="12sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="normal" android:id="@+id/preview_04b_settings_personalization_icon_size_value" android:layout_marginStart="10dp"/>
                         </LinearLayout>
-                        <SeekBar
-                            android:layout_width="match_parent"
-                            android:layout_height="44dp"
-                            android:id="@+id/preview_04b_settings_personalization_icon_size"
-                            android:max="1000"
-                            android:progress="300"
-                            android:progressDrawable="@drawable/layout_xml_slider_progress"
-                            android:thumb="@drawable/layout_xml_slider_thumb"
-                            android:thumbOffset="9dp"
-                            android:paddingStart="14dp"
-                            android:paddingEnd="14dp"
-                            android:splitTrack="false"
-                            android:contentDescription="@string/extreme_icon_size" />
+                        <SeekBar android:layout_width="match_parent" android:layout_height="44dp" android:id="@+id/preview_04b_settings_personalization_icon_size" android:max="1000" android:progress="300" android:progressDrawable="@drawable/layout_xml_slider_progress" android:thumb="@drawable/layout_xml_slider_thumb" android:thumbOffset="10dp" android:paddingStart="14dp" android:paddingEnd="14dp" android:splitTrack="false" android:contentDescription="@string/extreme_icon_size"/>
                     </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:id="@+id/preview_04b_settings_personalization_panel_accent"
-                        android:background="@drawable/layout_xml_panel"
-                        android:padding="14dp"
-                        android:layout_marginBottom="12dp">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/extreme_accent"
-                            android:textSize="16sp"
-                            android:textColor="@color/layout_xml_text"
-                            android:fontFamily="sans-serif"
-                            android:textStyle="bold"
-                            android:id="@+id/preview_04b_settings_personalization_textview_19" />
-                        <Space
-                            android:layout_width="1dp"
-                            android:layout_height="8dp" />
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:gravity="center_vertical"
-                            android:id="@+id/preview_04b_settings_personalization_linearlayout_21">
-                            <RadioButton
-                                android:layout_width="0dp"
-                                android:layout_height="48dp"
-                                android:layout_weight="1"
-                                android:id="@+id/preview_04b_settings_personalization_accent_palette"
-                                android:buttonTint="#4B4743"
-                                android:checked="true"
-                                android:contentDescription="palette" />
-                            <RadioButton
-                                android:layout_width="0dp"
-                                android:layout_height="48dp"
-                                android:layout_weight="1"
-                                android:id="@+id/preview_04b_settings_personalization_accent_red"
-                                android:buttonTint="#E55757"
-                                android:checked="false"
-                                android:contentDescription="red" />
-                            <RadioButton
-                                android:layout_width="0dp"
-                                android:layout_height="48dp"
-                                android:layout_weight="1"
-                                android:id="@+id/preview_04b_settings_personalization_accent_green"
-                                android:buttonTint="#63A85C"
-                                android:checked="false"
-                                android:contentDescription="green" />
-                            <RadioButton
-                                android:layout_width="0dp"
-                                android:layout_height="48dp"
-                                android:layout_weight="1"
-                                android:id="@+id/preview_04b_settings_personalization_accent_blue"
-                                android:buttonTint="#4B8EDB"
-                                android:checked="false"
-                                android:contentDescription="blue" />
-                            <RadioButton
-                                android:layout_width="0dp"
-                                android:layout_height="48dp"
-                                android:layout_weight="1"
-                                android:id="@+id/preview_04b_settings_personalization_accent_purple"
-                                android:buttonTint="#A05BC1"
-                                android:checked="false"
-                                android:contentDescription="purple" />
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:id="@+id/preview_04b_settings_personalization_panel_slider_style" android:background="@drawable/layout_xml_panel" android:layout_marginBottom="12dp" android:paddingStart="22dp" android:paddingEnd="22dp" android:paddingTop="14dp" android:paddingBottom="14dp">
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:minHeight="48dp" android:gravity="center_vertical" android:id="@+id/preview_04b_settings_personalization_linearlayout_26">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:text="@string/mock_slider_style" android:textSize="14sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="bold" android:layout_weight="1" android:id="@+id/preview_04b_settings_personalization_textview_27"/>
+                            <Spinner android:layout_width="wrap_content" android:layout_height="48dp" android:id="@+id/preview_04b_settings_personalization_slider_style" android:entries="@array/layout_xml_slider_style_options" android:spinnerMode="dropdown" android:contentDescription="@string/mock_slider_style"/>
                         </LinearLayout>
                     </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:id="@+id/preview_04b_settings_personalization_panel_cards"
-                        android:background="@drawable/layout_xml_panel"
-                        android:padding="14dp"
-                        android:layout_marginBottom="12dp">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/extreme_note_cards"
-                            android:textSize="16sp"
-                            android:textColor="@color/layout_xml_text"
-                            android:fontFamily="sans-serif"
-                            android:textStyle="bold"
-                            android:id="@+id/preview_04b_settings_personalization_textview_28" />
-                        <Space
-                            android:layout_width="1dp"
-                            android:layout_height="8dp" />
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:minHeight="24dp"
-                            android:gravity="center_vertical"
-                            android:id="@+id/preview_04b_settings_personalization_linearlayout_30">
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:text="@string/extreme_card_radius"
-                                android:textSize="14sp"
-                                android:textColor="@color/layout_xml_text"
-                                android:fontFamily="sans-serif"
-                                android:textStyle="bold"
-                                android:layout_weight="1"
-                                android:id="@+id/preview_04b_settings_personalization_textview_31" />
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="18 dp"
-                                android:textSize="12sp"
-                                android:textColor="@color/layout_xml_text"
-                                android:fontFamily="sans-serif"
-                                android:textStyle="normal"
-                                android:id="@+id/preview_04b_settings_personalization_card_radius_value"
-                                android:layout_marginStart="10dp" />
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:id="@+id/preview_04b_settings_personalization_panel_dark_mode" android:background="@drawable/layout_xml_panel" android:layout_marginBottom="12dp" android:paddingStart="22dp" android:paddingEnd="22dp" android:paddingTop="14dp" android:paddingBottom="14dp">
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:minHeight="48dp" android:gravity="center_vertical" android:id="@+id/preview_04b_settings_personalization_linearlayout_30">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:text="@string/mock_dark_mode" android:textSize="14sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="normal" android:layout_weight="1" android:layout_marginEnd="10dp" android:id="@+id/preview_04b_settings_personalization_textview_31"/>
+                            <Switch android:layout_width="52dp" android:layout_height="32dp" android:id="@+id/preview_04b_settings_personalization_dark_mode_enabled" android:checked="false" android:switchMinWidth="52dp" android:thumb="@drawable/layout_xml_switch_thumb" android:track="@drawable/layout_xml_switch_track" android:splitTrack="false" android:contentDescription="@string/mock_dark_mode" android:showText="false"/>
                         </LinearLayout>
-                        <SeekBar
-                            android:layout_width="match_parent"
-                            android:layout_height="44dp"
-                            android:id="@+id/preview_04b_settings_personalization_card_radius"
-                            android:max="1000"
-                            android:progress="500"
-                            android:progressDrawable="@drawable/layout_xml_slider_progress"
-                            android:thumb="@drawable/layout_xml_slider_thumb"
-                            android:thumbOffset="9dp"
-                            android:paddingStart="14dp"
-                            android:paddingEnd="14dp"
-                            android:splitTrack="false"
-                            android:contentDescription="@string/extreme_card_radius" />
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:minHeight="24dp"
-                            android:gravity="center_vertical"
-                            android:id="@+id/preview_04b_settings_personalization_linearlayout_34">
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:text="@string/extreme_card_elevation"
-                                android:textSize="14sp"
-                                android:textColor="@color/layout_xml_text"
-                                android:fontFamily="sans-serif"
-                                android:textStyle="bold"
-                                android:layout_weight="1"
-                                android:id="@+id/preview_04b_settings_personalization_textview_35" />
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="1.5 dp"
-                                android:textSize="12sp"
-                                android:textColor="@color/layout_xml_text"
-                                android:fontFamily="sans-serif"
-                                android:textStyle="normal"
-                                android:id="@+id/preview_04b_settings_personalization_card_elevation_value"
-                                android:layout_marginStart="10dp" />
-                        </LinearLayout>
-                        <SeekBar
-                            android:layout_width="match_parent"
-                            android:layout_height="44dp"
-                            android:id="@+id/preview_04b_settings_personalization_card_elevation"
-                            android:max="1000"
-                            android:progress="125"
-                            android:progressDrawable="@drawable/layout_xml_slider_progress"
-                            android:thumb="@drawable/layout_xml_slider_thumb"
-                            android:thumbOffset="9dp"
-                            android:paddingStart="14dp"
-                            android:paddingEnd="14dp"
-                            android:splitTrack="false"
-                            android:contentDescription="@string/extreme_card_elevation" />
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:minHeight="24dp"
-                            android:gravity="center_vertical"
-                            android:id="@+id/preview_04b_settings_personalization_linearlayout_38">
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:text="@string/extreme_card_padding"
-                                android:textSize="14sp"
-                                android:textColor="@color/layout_xml_text"
-                                android:fontFamily="sans-serif"
-                                android:textStyle="bold"
-                                android:layout_weight="1"
-                                android:id="@+id/preview_04b_settings_personalization_textview_39" />
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="12 dp"
-                                android:textSize="12sp"
-                                android:textColor="@color/layout_xml_text"
-                                android:fontFamily="sans-serif"
-                                android:textStyle="normal"
-                                android:id="@+id/preview_04b_settings_personalization_card_padding_value"
-                                android:layout_marginStart="10dp" />
-                        </LinearLayout>
-                        <SeekBar
-                            android:layout_width="match_parent"
-                            android:layout_height="44dp"
-                            android:id="@+id/preview_04b_settings_personalization_card_padding"
-                            android:max="1000"
-                            android:progress="333"
-                            android:progressDrawable="@drawable/layout_xml_slider_progress"
-                            android:thumb="@drawable/layout_xml_slider_thumb"
-                            android:thumbOffset="9dp"
-                            android:paddingStart="14dp"
-                            android:paddingEnd="14dp"
-                            android:splitTrack="false"
-                            android:contentDescription="@string/extreme_card_padding" />
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:minHeight="24dp"
-                            android:gravity="center_vertical"
-                            android:id="@+id/preview_04b_settings_personalization_linearlayout_42">
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:text="@string/extreme_image_height"
-                                android:textSize="14sp"
-                                android:textColor="@color/layout_xml_text"
-                                android:fontFamily="sans-serif"
-                                android:textStyle="bold"
-                                android:layout_weight="1"
-                                android:id="@+id/preview_04b_settings_personalization_textview_43" />
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="112 dp"
-                                android:textSize="12sp"
-                                android:textColor="@color/layout_xml_text"
-                                android:fontFamily="sans-serif"
-                                android:textStyle="normal"
-                                android:id="@+id/preview_04b_settings_personalization_image_height_value"
-                                android:layout_marginStart="10dp" />
-                        </LinearLayout>
-                        <SeekBar
-                            android:layout_width="match_parent"
-                            android:layout_height="44dp"
-                            android:id="@+id/preview_04b_settings_personalization_image_height"
-                            android:max="1000"
-                            android:progress="270"
-                            android:progressDrawable="@drawable/layout_xml_slider_progress"
-                            android:thumb="@drawable/layout_xml_slider_thumb"
-                            android:thumbOffset="9dp"
-                            android:paddingStart="14dp"
-                            android:paddingEnd="14dp"
-                            android:splitTrack="false"
-                            android:contentDescription="@string/extreme_image_height" />
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:minHeight="24dp"
-                            android:gravity="center_vertical"
-                            android:id="@+id/preview_04b_settings_personalization_linearlayout_46">
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:text="@string/extreme_note_outline_width"
-                                android:textSize="14sp"
-                                android:textColor="@color/layout_xml_text"
-                                android:fontFamily="sans-serif"
-                                android:textStyle="bold"
-                                android:layout_weight="1"
-                                android:id="@+id/preview_04b_settings_personalization_textview_47" />
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="0 dp"
-                                android:textSize="12sp"
-                                android:textColor="@color/layout_xml_text"
-                                android:fontFamily="sans-serif"
-                                android:textStyle="normal"
-                                android:id="@+id/preview_04b_settings_personalization_outline_width_value"
-                                android:layout_marginStart="10dp" />
-                        </LinearLayout>
-                        <SeekBar
-                            android:layout_width="match_parent"
-                            android:layout_height="44dp"
-                            android:id="@+id/preview_04b_settings_personalization_outline_width"
-                            android:max="1000"
-                            android:progress="0"
-                            android:progressDrawable="@drawable/layout_xml_slider_progress"
-                            android:thumb="@drawable/layout_xml_slider_thumb"
-                            android:thumbOffset="9dp"
-                            android:paddingStart="14dp"
-                            android:paddingEnd="14dp"
-                            android:splitTrack="false"
-                            android:contentDescription="@string/extreme_note_outline_width" />
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:minHeight="24dp"
-                            android:gravity="center_vertical"
-                            android:id="@+id/preview_04b_settings_personalization_linearlayout_50">
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:text="@string/extreme_title_lines"
-                                android:textSize="14sp"
-                                android:textColor="@color/layout_xml_text"
-                                android:fontFamily="sans-serif"
-                                android:textStyle="bold"
-                                android:layout_weight="1"
-                                android:id="@+id/preview_04b_settings_personalization_textview_51" />
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="4"
-                                android:textSize="12sp"
-                                android:textColor="@color/layout_xml_text"
-                                android:fontFamily="sans-serif"
-                                android:textStyle="normal"
-                                android:id="@+id/preview_04b_settings_personalization_title_lines_value"
-                                android:layout_marginStart="10dp" />
-                        </LinearLayout>
-                        <SeekBar
-                            android:layout_width="match_parent"
-                            android:layout_height="44dp"
-                            android:id="@+id/preview_04b_settings_personalization_title_lines"
-                            android:max="1000"
-                            android:progress="429"
-                            android:progressDrawable="@drawable/layout_xml_slider_progress"
-                            android:thumb="@drawable/layout_xml_slider_thumb"
-                            android:thumbOffset="9dp"
-                            android:paddingStart="14dp"
-                            android:paddingEnd="14dp"
-                            android:splitTrack="false"
-                            android:contentDescription="@string/extreme_title_lines" />
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:minHeight="24dp"
-                            android:gravity="center_vertical"
-                            android:id="@+id/preview_04b_settings_personalization_linearlayout_54">
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:text="@string/extreme_content_lines"
-                                android:textSize="14sp"
-                                android:textColor="@color/layout_xml_text"
-                                android:fontFamily="sans-serif"
-                                android:textStyle="bold"
-                                android:layout_weight="1"
-                                android:id="@+id/preview_04b_settings_personalization_textview_55" />
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="6"
-                                android:textSize="12sp"
-                                android:textColor="@color/layout_xml_text"
-                                android:fontFamily="sans-serif"
-                                android:textStyle="normal"
-                                android:id="@+id/preview_04b_settings_personalization_content_lines_value"
-                                android:layout_marginStart="10dp" />
-                        </LinearLayout>
-                        <SeekBar
-                            android:layout_width="match_parent"
-                            android:layout_height="44dp"
-                            android:id="@+id/preview_04b_settings_personalization_content_lines"
-                            android:max="1000"
-                            android:progress="333"
-                            android:progressDrawable="@drawable/layout_xml_slider_progress"
-                            android:thumb="@drawable/layout_xml_slider_thumb"
-                            android:thumbOffset="9dp"
-                            android:paddingStart="14dp"
-                            android:paddingEnd="14dp"
-                            android:splitTrack="false"
-                            android:contentDescription="@string/extreme_content_lines" />
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:minHeight="24dp"
-                            android:gravity="center_vertical"
-                            android:id="@+id/preview_04b_settings_personalization_linearlayout_58">
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:text="@string/extreme_line_spacing"
-                                android:textSize="14sp"
-                                android:textColor="@color/layout_xml_text"
-                                android:fontFamily="sans-serif"
-                                android:textStyle="bold"
-                                android:layout_weight="1"
-                                android:id="@+id/preview_04b_settings_personalization_textview_59" />
-                            <TextView
-                                android:layout_width="wrap_content"
-                                android:layout_height="wrap_content"
-                                android:text="1.2x"
-                                android:textSize="12sp"
-                                android:textColor="@color/layout_xml_text"
-                                android:fontFamily="sans-serif"
-                                android:textStyle="normal"
-                                android:id="@+id/preview_04b_settings_personalization_line_spacing_value"
-                                android:layout_marginStart="10dp" />
-                        </LinearLayout>
-                        <SeekBar
-                            android:layout_width="match_parent"
-                            android:layout_height="44dp"
-                            android:id="@+id/preview_04b_settings_personalization_line_spacing"
-                            android:max="1000"
-                            android:progress="250"
-                            android:progressDrawable="@drawable/layout_xml_slider_progress"
-                            android:thumb="@drawable/layout_xml_slider_thumb"
-                            android:thumbOffset="9dp"
-                            android:paddingStart="14dp"
-                            android:paddingEnd="14dp"
-                            android:splitTrack="false"
-                            android:contentDescription="@string/extreme_line_spacing" />
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:minHeight="48dp"
-                            android:gravity="center_vertical"
-                            android:id="@+id/preview_04b_settings_personalization_linearlayout_62">
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:text="@string/extreme_show_date"
-                                android:textSize="14sp"
-                                android:textColor="@color/layout_xml_text"
-                                android:fontFamily="sans-serif"
-                                android:textStyle="normal"
-                                android:layout_weight="1"
-                                android:layout_marginEnd="10dp"
-                                android:id="@+id/preview_04b_settings_personalization_textview_63" />
-                            <Switch
-                                android:layout_width="52dp"
-                                android:layout_height="32dp"
-                                android:id="@+id/preview_04b_settings_personalization_show_date"
-                                android:checked="true"
-                                android:switchMinWidth="52dp"
-                                android:thumb="@drawable/layout_xml_switch_thumb"
-                                android:track="@drawable/layout_xml_switch_track"
-                                android:splitTrack="false"
-                                android:contentDescription="@string/extreme_show_date"
-                                android:showText="false" />
-                        </LinearLayout>
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:minHeight="48dp"
-                            android:gravity="center_vertical"
-                            android:id="@+id/preview_04b_settings_personalization_linearlayout_65">
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:text="@string/extreme_show_category"
-                                android:textSize="14sp"
-                                android:textColor="@color/layout_xml_text"
-                                android:fontFamily="sans-serif"
-                                android:textStyle="normal"
-                                android:layout_weight="1"
-                                android:layout_marginEnd="10dp"
-                                android:id="@+id/preview_04b_settings_personalization_textview_66" />
-                            <Switch
-                                android:layout_width="52dp"
-                                android:layout_height="32dp"
-                                android:id="@+id/preview_04b_settings_personalization_show_category"
-                                android:checked="true"
-                                android:switchMinWidth="52dp"
-                                android:thumb="@drawable/layout_xml_switch_thumb"
-                                android:track="@drawable/layout_xml_switch_track"
-                                android:splitTrack="false"
-                                android:contentDescription="@string/extreme_show_category"
-                                android:showText="false" />
-                        </LinearLayout>
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:minHeight="48dp"
-                            android:gravity="center_vertical"
-                            android:id="@+id/preview_04b_settings_personalization_linearlayout_68">
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:text="@string/extreme_show_favorite"
-                                android:textSize="14sp"
-                                android:textColor="@color/layout_xml_text"
-                                android:fontFamily="sans-serif"
-                                android:textStyle="normal"
-                                android:layout_weight="1"
-                                android:layout_marginEnd="10dp"
-                                android:id="@+id/preview_04b_settings_personalization_textview_69" />
-                            <Switch
-                                android:layout_width="52dp"
-                                android:layout_height="32dp"
-                                android:id="@+id/preview_04b_settings_personalization_show_favorite"
-                                android:checked="true"
-                                android:switchMinWidth="52dp"
-                                android:thumb="@drawable/layout_xml_switch_thumb"
-                                android:track="@drawable/layout_xml_switch_track"
-                                android:splitTrack="false"
-                                android:contentDescription="@string/extreme_show_favorite"
-                                android:showText="false" />
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/mock_dark_mode_description" android:textSize="12sp" android:textColor="@color/layout_xml_secondary" android:fontFamily="sans-serif" android:textStyle="normal" android:id="@+id/preview_04b_settings_personalization_textview_33"/>
+                    </LinearLayout>
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:id="@+id/preview_04b_settings_personalization_section_notes_heading" android:paddingTop="18dp" android:paddingBottom="10dp" android:layout_marginStart="8dp" android:layout_marginEnd="8dp" android:gravity="center_vertical">
+                        <View android:layout_width="3dp" android:layout_height="36dp" android:background="@drawable/layout_xml_category_marker" android:backgroundTint="#4B4743" android:id="@+id/preview_04b_settings_personalization_view_35"/>
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:orientation="vertical" android:layout_weight="1" android:layout_marginStart="12dp" android:id="@+id/preview_04b_settings_personalization_linearlayout_36">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/advanced_section_notes" android:textSize="18sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="bold" android:id="@+id/preview_04b_settings_personalization_textview_37"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/advanced_section_notes_description" android:textSize="12sp" android:textColor="@color/layout_xml_secondary" android:fontFamily="sans-serif" android:textStyle="normal" android:layout_marginTop="2dp" android:id="@+id/preview_04b_settings_personalization_textview_38"/>
                         </LinearLayout>
                     </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:id="@+id/preview_04b_settings_personalization_panel_performance"
-                        android:background="@drawable/layout_xml_panel"
-                        android:padding="14dp"
-                        android:layout_marginBottom="12dp">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/performance_mode_title"
-                            android:textSize="16sp"
-                            android:textColor="@color/layout_xml_text"
-                            android:fontFamily="sans-serif"
-                            android:textStyle="bold"
-                            android:id="@+id/preview_04b_settings_personalization_textview_72" />
-                        <Space
-                            android:layout_width="1dp"
-                            android:layout_height="8dp" />
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:minHeight="48dp"
-                            android:gravity="center_vertical"
-                            android:id="@+id/preview_04b_settings_personalization_linearlayout_74">
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:text="@string/performance_mode_title"
-                                android:textSize="14sp"
-                                android:textColor="@color/layout_xml_text"
-                                android:fontFamily="sans-serif"
-                                android:textStyle="bold"
-                                android:layout_weight="1"
-                                android:id="@+id/preview_04b_settings_personalization_textview_75" />
-                            <Spinner
-                                android:layout_width="wrap_content"
-                                android:layout_height="48dp"
-                                android:id="@+id/preview_04b_settings_personalization_performance"
-                                android:entries="@array/layout_xml_performance_options"
-                                android:spinnerMode="dropdown"
-                                android:contentDescription="@string/performance_mode_title" />
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:id="@+id/preview_04b_settings_personalization_panel_cards" android:background="@drawable/layout_xml_panel" android:layout_marginBottom="12dp" android:paddingStart="22dp" android:paddingEnd="22dp" android:paddingTop="14dp" android:paddingBottom="14dp">
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:minHeight="48dp" android:id="@+id/preview_04b_settings_personalization_cards_toggle" android:clickable="true" android:focusable="true" android:background="@drawable/layout_xml_section_header" android:paddingTop="4dp" android:paddingBottom="4dp" android:contentDescription="@string/settings_section_collapse" android:gravity="center_vertical">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:text="@string/extreme_note_cards" android:textSize="16sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="bold" android:layout_weight="1" android:id="@+id/preview_04b_settings_personalization_textview_41"/>
+                            <android.widget.ImageView android:layout_width="24dp" android:layout_height="24dp" android:src="@drawable/layout_xml_expand_less" android:contentDescription="@null" android:tint="@color/layout_xml_text" android:layout_marginStart="8dp" android:id="@+id/preview_04b_settings_personalization_imageview_42"/>
                         </LinearLayout>
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/performance_mode_description"
-                            android:textSize="12sp"
-                            android:textColor="@color/layout_xml_secondary"
-                            android:fontFamily="sans-serif"
-                            android:textStyle="normal"
-                            android:id="@+id/preview_04b_settings_personalization_textview_77" />
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:minHeight="24dp" android:gravity="center_vertical" android:id="@+id/preview_04b_settings_personalization_linearlayout_43">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:text="@string/extreme_card_radius" android:textSize="14sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="bold" android:layout_weight="1" android:id="@+id/preview_04b_settings_personalization_textview_44"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="18 dp" android:textSize="12sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="normal" android:id="@+id/preview_04b_settings_personalization_card_radius_value" android:layout_marginStart="10dp"/>
+                        </LinearLayout>
+                        <SeekBar android:layout_width="match_parent" android:layout_height="44dp" android:id="@+id/preview_04b_settings_personalization_card_radius" android:max="1000" android:progress="500" android:progressDrawable="@drawable/layout_xml_slider_progress" android:thumb="@drawable/layout_xml_slider_thumb" android:thumbOffset="10dp" android:paddingStart="14dp" android:paddingEnd="14dp" android:splitTrack="false" android:contentDescription="@string/extreme_card_radius"/>
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:minHeight="24dp" android:gravity="center_vertical" android:id="@+id/preview_04b_settings_personalization_linearlayout_47">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:text="@string/extreme_card_elevation" android:textSize="14sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="bold" android:layout_weight="1" android:id="@+id/preview_04b_settings_personalization_textview_48"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="1.5 dp" android:textSize="12sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="normal" android:id="@+id/preview_04b_settings_personalization_card_elevation_value" android:layout_marginStart="10dp"/>
+                        </LinearLayout>
+                        <SeekBar android:layout_width="match_parent" android:layout_height="44dp" android:id="@+id/preview_04b_settings_personalization_card_elevation" android:max="1000" android:progress="125" android:progressDrawable="@drawable/layout_xml_slider_progress" android:thumb="@drawable/layout_xml_slider_thumb" android:thumbOffset="10dp" android:paddingStart="14dp" android:paddingEnd="14dp" android:splitTrack="false" android:contentDescription="@string/extreme_card_elevation"/>
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:minHeight="24dp" android:gravity="center_vertical" android:id="@+id/preview_04b_settings_personalization_linearlayout_51">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:text="@string/extreme_card_padding" android:textSize="14sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="bold" android:layout_weight="1" android:id="@+id/preview_04b_settings_personalization_textview_52"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="12 dp" android:textSize="12sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="normal" android:id="@+id/preview_04b_settings_personalization_card_padding_value" android:layout_marginStart="10dp"/>
+                        </LinearLayout>
+                        <SeekBar android:layout_width="match_parent" android:layout_height="44dp" android:id="@+id/preview_04b_settings_personalization_card_padding" android:max="1000" android:progress="333" android:progressDrawable="@drawable/layout_xml_slider_progress" android:thumb="@drawable/layout_xml_slider_thumb" android:thumbOffset="10dp" android:paddingStart="14dp" android:paddingEnd="14dp" android:splitTrack="false" android:contentDescription="@string/extreme_card_padding"/>
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:minHeight="24dp" android:gravity="center_vertical" android:id="@+id/preview_04b_settings_personalization_linearlayout_55">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:text="@string/extreme_image_height" android:textSize="14sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="bold" android:layout_weight="1" android:id="@+id/preview_04b_settings_personalization_textview_56"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="112 dp" android:textSize="12sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="normal" android:id="@+id/preview_04b_settings_personalization_image_height_value" android:layout_marginStart="10dp"/>
+                        </LinearLayout>
+                        <SeekBar android:layout_width="match_parent" android:layout_height="44dp" android:id="@+id/preview_04b_settings_personalization_image_height" android:max="1000" android:progress="270" android:progressDrawable="@drawable/layout_xml_slider_progress" android:thumb="@drawable/layout_xml_slider_thumb" android:thumbOffset="10dp" android:paddingStart="14dp" android:paddingEnd="14dp" android:splitTrack="false" android:contentDescription="@string/extreme_image_height"/>
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:minHeight="24dp" android:gravity="center_vertical" android:id="@+id/preview_04b_settings_personalization_linearlayout_59">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:text="@string/extreme_note_outline_width" android:textSize="14sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="bold" android:layout_weight="1" android:id="@+id/preview_04b_settings_personalization_textview_60"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="0 dp" android:textSize="12sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="normal" android:id="@+id/preview_04b_settings_personalization_outline_width_value" android:layout_marginStart="10dp"/>
+                        </LinearLayout>
+                        <SeekBar android:layout_width="match_parent" android:layout_height="44dp" android:id="@+id/preview_04b_settings_personalization_outline_width" android:max="1000" android:progress="0" android:progressDrawable="@drawable/layout_xml_slider_progress" android:thumb="@drawable/layout_xml_slider_thumb" android:thumbOffset="10dp" android:paddingStart="14dp" android:paddingEnd="14dp" android:splitTrack="false" android:contentDescription="@string/extreme_note_outline_width"/>
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:minHeight="24dp" android:gravity="center_vertical" android:id="@+id/preview_04b_settings_personalization_linearlayout_63">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:text="@string/extreme_title_lines" android:textSize="14sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="bold" android:layout_weight="1" android:id="@+id/preview_04b_settings_personalization_textview_64"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="4" android:textSize="12sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="normal" android:id="@+id/preview_04b_settings_personalization_title_lines_value" android:layout_marginStart="10dp"/>
+                        </LinearLayout>
+                        <SeekBar android:layout_width="match_parent" android:layout_height="44dp" android:id="@+id/preview_04b_settings_personalization_title_lines" android:max="1000" android:progress="429" android:progressDrawable="@drawable/layout_xml_slider_progress" android:thumb="@drawable/layout_xml_slider_thumb" android:thumbOffset="10dp" android:paddingStart="14dp" android:paddingEnd="14dp" android:splitTrack="false" android:contentDescription="@string/extreme_title_lines"/>
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:minHeight="24dp" android:gravity="center_vertical" android:id="@+id/preview_04b_settings_personalization_linearlayout_67">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:text="@string/extreme_content_lines" android:textSize="14sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="bold" android:layout_weight="1" android:id="@+id/preview_04b_settings_personalization_textview_68"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="6" android:textSize="12sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="normal" android:id="@+id/preview_04b_settings_personalization_content_lines_value" android:layout_marginStart="10dp"/>
+                        </LinearLayout>
+                        <SeekBar android:layout_width="match_parent" android:layout_height="44dp" android:id="@+id/preview_04b_settings_personalization_content_lines" android:max="1000" android:progress="333" android:progressDrawable="@drawable/layout_xml_slider_progress" android:thumb="@drawable/layout_xml_slider_thumb" android:thumbOffset="10dp" android:paddingStart="14dp" android:paddingEnd="14dp" android:splitTrack="false" android:contentDescription="@string/extreme_content_lines"/>
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:minHeight="24dp" android:gravity="center_vertical" android:id="@+id/preview_04b_settings_personalization_linearlayout_71">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:text="@string/extreme_line_spacing" android:textSize="14sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="bold" android:layout_weight="1" android:id="@+id/preview_04b_settings_personalization_textview_72"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="1.2x" android:textSize="12sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="normal" android:id="@+id/preview_04b_settings_personalization_line_spacing_value" android:layout_marginStart="10dp"/>
+                        </LinearLayout>
+                        <SeekBar android:layout_width="match_parent" android:layout_height="44dp" android:id="@+id/preview_04b_settings_personalization_line_spacing" android:max="1000" android:progress="250" android:progressDrawable="@drawable/layout_xml_slider_progress" android:thumb="@drawable/layout_xml_slider_thumb" android:thumbOffset="10dp" android:paddingStart="14dp" android:paddingEnd="14dp" android:splitTrack="false" android:contentDescription="@string/extreme_line_spacing"/>
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:minHeight="48dp" android:gravity="center_vertical" android:id="@+id/preview_04b_settings_personalization_linearlayout_75">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:text="@string/extreme_show_date" android:textSize="14sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="normal" android:layout_weight="1" android:layout_marginEnd="10dp" android:id="@+id/preview_04b_settings_personalization_textview_76"/>
+                            <Switch android:layout_width="52dp" android:layout_height="32dp" android:id="@+id/preview_04b_settings_personalization_show_date" android:checked="true" android:switchMinWidth="52dp" android:thumb="@drawable/layout_xml_switch_thumb" android:track="@drawable/layout_xml_switch_track" android:splitTrack="false" android:contentDescription="@string/extreme_show_date" android:showText="false"/>
+                        </LinearLayout>
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:minHeight="48dp" android:gravity="center_vertical" android:id="@+id/preview_04b_settings_personalization_linearlayout_78">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:text="@string/extreme_show_category" android:textSize="14sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="normal" android:layout_weight="1" android:layout_marginEnd="10dp" android:id="@+id/preview_04b_settings_personalization_textview_79"/>
+                            <Switch android:layout_width="52dp" android:layout_height="32dp" android:id="@+id/preview_04b_settings_personalization_show_category" android:checked="true" android:switchMinWidth="52dp" android:thumb="@drawable/layout_xml_switch_thumb" android:track="@drawable/layout_xml_switch_track" android:splitTrack="false" android:contentDescription="@string/extreme_show_category" android:showText="false"/>
+                        </LinearLayout>
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:minHeight="48dp" android:gravity="center_vertical" android:id="@+id/preview_04b_settings_personalization_linearlayout_81">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:text="@string/extreme_show_favorite" android:textSize="14sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="normal" android:layout_weight="1" android:layout_marginEnd="10dp" android:id="@+id/preview_04b_settings_personalization_textview_82"/>
+                            <Switch android:layout_width="52dp" android:layout_height="32dp" android:id="@+id/preview_04b_settings_personalization_show_favorite" android:checked="true" android:switchMinWidth="52dp" android:thumb="@drawable/layout_xml_switch_thumb" android:track="@drawable/layout_xml_switch_track" android:splitTrack="false" android:contentDescription="@string/extreme_show_favorite" android:showText="false"/>
+                        </LinearLayout>
                     </LinearLayout>
-                    <LinearLayout
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:orientation="vertical"
-                        android:id="@+id/preview_04b_settings_personalization_panel_motion"
-                        android:background="@drawable/layout_xml_panel"
-                        android:padding="14dp"
-                        android:layout_marginBottom="12dp">
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/motion_title"
-                            android:textSize="16sp"
-                            android:textColor="@color/layout_xml_text"
-                            android:fontFamily="sans-serif"
-                            android:textStyle="bold"
-                            android:id="@+id/preview_04b_settings_personalization_textview_79" />
-                        <TextView
-                            android:layout_width="wrap_content"
-                            android:layout_height="wrap_content"
-                            android:text="@string/motion_description"
-                            android:textSize="12sp"
-                            android:textColor="@color/layout_xml_secondary"
-                            android:fontFamily="sans-serif"
-                            android:textStyle="normal"
-                            android:layout_marginTop="4dp"
-                            android:id="@+id/preview_04b_settings_personalization_textview_80" />
-                        <Space
-                            android:layout_width="1dp"
-                            android:layout_height="8dp" />
-                        <LinearLayout
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:orientation="horizontal"
-                            android:minHeight="48dp"
-                            android:gravity="center_vertical"
-                            android:id="@+id/preview_04b_settings_personalization_linearlayout_82">
-                            <TextView
-                                android:layout_width="0dp"
-                                android:layout_height="wrap_content"
-                                android:text="@string/motion_enabled"
-                                android:textSize="14sp"
-                                android:textColor="@color/layout_xml_text"
-                                android:fontFamily="sans-serif"
-                                android:textStyle="normal"
-                                android:layout_weight="1"
-                                android:layout_marginEnd="10dp"
-                                android:id="@+id/preview_04b_settings_personalization_textview_83" />
-                            <Switch
-                                android:layout_width="52dp"
-                                android:layout_height="32dp"
-                                android:id="@+id/preview_04b_settings_personalization_animations_enabled"
-                                android:checked="false"
-                                android:switchMinWidth="52dp"
-                                android:thumb="@drawable/layout_xml_switch_thumb"
-                                android:track="@drawable/layout_xml_switch_track"
-                                android:splitTrack="false"
-                                android:contentDescription="@string/motion_enabled"
-                                android:showText="false" />
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:id="@+id/preview_04b_settings_personalization_panel_columns" android:background="@drawable/layout_xml_panel" android:layout_marginBottom="12dp" android:paddingStart="22dp" android:paddingEnd="22dp" android:paddingTop="14dp" android:paddingBottom="14dp">
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:minHeight="48dp" android:gravity="center_vertical" android:id="@+id/preview_04b_settings_personalization_linearlayout_85">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:text="@string/mock_columns" android:textSize="14sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="bold" android:layout_weight="1" android:id="@+id/preview_04b_settings_personalization_textview_86"/>
+                            <Spinner android:layout_width="wrap_content" android:layout_height="48dp" android:id="@+id/preview_04b_settings_personalization_columns" android:entries="@array/layout_xml_columns_options" android:spinnerMode="dropdown" android:contentDescription="@string/mock_columns"/>
                         </LinearLayout>
+                    </LinearLayout>
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:id="@+id/preview_04b_settings_personalization_panel_fab" android:background="@drawable/layout_xml_panel" android:layout_marginBottom="12dp" android:paddingStart="22dp" android:paddingEnd="22dp" android:paddingTop="14dp" android:paddingBottom="14dp">
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:minHeight="24dp" android:gravity="center_vertical" android:id="@+id/preview_04b_settings_personalization_linearlayout_89">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:text="@string/extreme_fab_size" android:textSize="14sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="bold" android:layout_weight="1" android:id="@+id/preview_04b_settings_personalization_textview_90"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="58 dp" android:textSize="12sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="normal" android:id="@+id/preview_04b_settings_personalization_fab_size_value" android:layout_marginStart="10dp"/>
+                        </LinearLayout>
+                        <SeekBar android:layout_width="match_parent" android:layout_height="44dp" android:id="@+id/preview_04b_settings_personalization_fab_size" android:max="1000" android:progress="294" android:progressDrawable="@drawable/layout_xml_slider_progress" android:thumb="@drawable/layout_xml_slider_thumb" android:thumbOffset="10dp" android:paddingStart="14dp" android:paddingEnd="14dp" android:splitTrack="false" android:contentDescription="@string/extreme_fab_size"/>
+                    </LinearLayout>
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:id="@+id/preview_04b_settings_personalization_section_menu_heading" android:paddingTop="18dp" android:paddingBottom="10dp" android:layout_marginStart="8dp" android:layout_marginEnd="8dp" android:gravity="center_vertical">
+                        <View android:layout_width="3dp" android:layout_height="36dp" android:background="@drawable/layout_xml_category_marker" android:backgroundTint="#4B4743" android:id="@+id/preview_04b_settings_personalization_view_94"/>
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:orientation="vertical" android:layout_weight="1" android:layout_marginStart="12dp" android:id="@+id/preview_04b_settings_personalization_linearlayout_95">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/advanced_section_menu" android:textSize="18sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="bold" android:id="@+id/preview_04b_settings_personalization_textview_96"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/advanced_section_menu_description" android:textSize="12sp" android:textColor="@color/layout_xml_secondary" android:fontFamily="sans-serif" android:textStyle="normal" android:layout_marginTop="2dp" android:id="@+id/preview_04b_settings_personalization_textview_97"/>
+                        </LinearLayout>
+                    </LinearLayout>
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:id="@+id/preview_04b_settings_personalization_panel_menu_appearance" android:background="@drawable/layout_xml_panel" android:layout_marginBottom="12dp" android:paddingStart="22dp" android:paddingEnd="22dp" android:paddingTop="14dp" android:paddingBottom="14dp">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/option_menu_customization_title" android:textSize="20sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="bold" android:id="@+id/preview_04b_settings_personalization_textview_99"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/option_menu_customization_description" android:textSize="12sp" android:textColor="@color/layout_xml_secondary" android:fontFamily="sans-serif" android:textStyle="normal" android:layout_marginTop="2dp" android:id="@+id/preview_04b_settings_personalization_textview_100"/>
+                        <Space android:layout_width="1dp" android:layout_height="12dp"/>
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:minHeight="48dp" android:gravity="center_vertical" android:id="@+id/preview_04b_settings_personalization_linearlayout_102">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:text="@string/option_menu_show_icons" android:textSize="14sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="normal" android:layout_weight="1" android:layout_marginEnd="10dp" android:id="@+id/preview_04b_settings_personalization_textview_103"/>
+                            <Switch android:layout_width="52dp" android:layout_height="32dp" android:id="@+id/preview_04b_settings_personalization_menu_icons" android:checked="true" android:switchMinWidth="52dp" android:thumb="@drawable/layout_xml_switch_thumb" android:track="@drawable/layout_xml_switch_track" android:splitTrack="false" android:contentDescription="@string/option_menu_show_icons" android:showText="false"/>
+                        </LinearLayout>
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:minHeight="48dp" android:gravity="center_vertical" android:id="@+id/preview_04b_settings_personalization_linearlayout_105">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:text="@string/option_menu_text_color" android:textSize="14sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="bold" android:layout_weight="1" android:id="@+id/preview_04b_settings_personalization_textview_106"/>
+                            <Spinner android:layout_width="wrap_content" android:layout_height="48dp" android:id="@+id/preview_04b_settings_personalization_menu_text" android:entries="@array/layout_xml_menu_text_options" android:spinnerMode="dropdown" android:contentDescription="@string/option_menu_text_color"/>
+                        </LinearLayout>
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:minHeight="24dp" android:gravity="center_vertical" android:id="@+id/preview_04b_settings_personalization_linearlayout_108">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:text="@string/option_menu_opacity" android:textSize="14sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="bold" android:layout_weight="1" android:id="@+id/preview_04b_settings_personalization_textview_109"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="100%" android:textSize="12sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="normal" android:id="@+id/preview_04b_settings_personalization_menu_opacity_value" android:layout_marginStart="10dp"/>
+                        </LinearLayout>
+                        <SeekBar android:layout_width="match_parent" android:layout_height="44dp" android:id="@+id/preview_04b_settings_personalization_menu_opacity" android:max="1000" android:progress="1000" android:progressDrawable="@drawable/layout_xml_slider_progress" android:thumb="@drawable/layout_xml_slider_thumb" android:thumbOffset="10dp" android:paddingStart="14dp" android:paddingEnd="14dp" android:splitTrack="false" android:contentDescription="@string/option_menu_opacity"/>
+                    </LinearLayout>
+                    
+                    
+                    
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:id="@+id/preview_04b_settings_personalization_section_feedback_heading" android:paddingTop="18dp" android:paddingBottom="10dp" android:layout_marginStart="8dp" android:layout_marginEnd="8dp" android:gravity="center_vertical">
+                        <View android:layout_width="3dp" android:layout_height="36dp" android:background="@drawable/layout_xml_category_marker" android:backgroundTint="#4B4743" android:id="@+id/preview_04b_settings_personalization_view_242"/>
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:orientation="vertical" android:layout_weight="1" android:layout_marginStart="12dp" android:id="@+id/preview_04b_settings_personalization_linearlayout_243">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/advanced_section_feedback" android:textSize="18sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="bold" android:id="@+id/preview_04b_settings_personalization_textview_244"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/advanced_section_feedback_description" android:textSize="12sp" android:textColor="@color/layout_xml_secondary" android:fontFamily="sans-serif" android:textStyle="normal" android:layout_marginTop="2dp" android:id="@+id/preview_04b_settings_personalization_textview_245"/>
+                        </LinearLayout>
+                    </LinearLayout>
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:id="@+id/preview_04b_settings_personalization_panel_sound_effects" android:background="@drawable/layout_xml_panel" android:layout_marginBottom="12dp" android:paddingStart="22dp" android:paddingEnd="22dp" android:paddingTop="14dp" android:paddingBottom="18dp">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/sound_effects" android:textSize="16sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="bold" android:id="@+id/preview_04b_settings_personalization_textview_247"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/sound_effects_description" android:textSize="12sp" android:textColor="@color/layout_xml_secondary" android:fontFamily="sans-serif" android:textStyle="normal" android:layout_marginTop="4dp" android:id="@+id/preview_04b_settings_personalization_textview_248"/>
+                        <Space android:layout_width="1dp" android:layout_height="8dp"/>
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:minHeight="48dp" android:gravity="center_vertical" android:id="@+id/preview_04b_settings_personalization_linearlayout_250">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:text="@string/sound_effects_enabled" android:textSize="14sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="normal" android:layout_weight="1" android:layout_marginEnd="10dp" android:id="@+id/preview_04b_settings_personalization_textview_251"/>
+                            <Switch android:layout_width="52dp" android:layout_height="32dp" android:id="@+id/preview_04b_settings_personalization_sound_effects_enabled" android:checked="true" android:switchMinWidth="52dp" android:thumb="@drawable/layout_xml_switch_thumb" android:track="@drawable/layout_xml_switch_track" android:splitTrack="false" android:contentDescription="@string/sound_effects_enabled" android:showText="false"/>
+                        </LinearLayout>
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:minHeight="48dp" android:gravity="center_vertical" android:id="@+id/preview_04b_settings_personalization_linearlayout_253">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:text="@string/sound_effects_theme" android:textSize="14sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="bold" android:layout_weight="1" android:id="@+id/preview_04b_settings_personalization_textview_254"/>
+                            <Spinner android:layout_width="wrap_content" android:layout_height="48dp" android:id="@+id/preview_04b_settings_personalization_sound_effects_theme" android:entries="@array/layout_xml_sound_effects_theme_options" android:spinnerMode="dropdown" android:contentDescription="@string/sound_effects_theme"/>
+                        </LinearLayout>
+                        <Button android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/preview_04b_settings_personalization_sound_effects_preview" android:text="@string/sound_effects_preview" android:textAllCaps="false" android:textColor="@color/layout_xml_text" android:textSize="14sp" android:fontFamily="sans-serif" android:minHeight="44dp" android:minWidth="0dp" android:background="@drawable/layout_xml_button_outline" android:paddingStart="12dp" android:paddingEnd="12dp"/>
+                        <Space android:layout_width="1dp" android:layout_height="8dp"/>
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:minHeight="24dp" android:gravity="center_vertical" android:id="@+id/preview_04b_settings_personalization_linearlayout_258">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:text="@string/sound_effects_volume" android:textSize="14sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="bold" android:layout_weight="1" android:id="@+id/preview_04b_settings_personalization_textview_259"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="35%" android:textSize="12sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="normal" android:id="@+id/preview_04b_settings_personalization_sound_effects_volume_value" android:layout_marginStart="10dp"/>
+                        </LinearLayout>
+                        <SeekBar android:layout_width="match_parent" android:layout_height="44dp" android:id="@+id/preview_04b_settings_personalization_sound_effects_volume" android:max="1000" android:progress="350" android:progressDrawable="@drawable/layout_xml_slider_progress" android:thumb="@drawable/layout_xml_slider_thumb" android:thumbOffset="10dp" android:paddingStart="14dp" android:paddingEnd="14dp" android:splitTrack="false" android:contentDescription="@string/sound_effects_volume"/>
+                    </LinearLayout>
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:id="@+id/preview_04b_settings_personalization_panel_reminder_sound" android:background="@drawable/layout_xml_panel" android:layout_marginBottom="12dp" android:paddingStart="22dp" android:paddingEnd="22dp" android:paddingTop="14dp" android:paddingBottom="18dp">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/reminder_tones" android:textSize="16sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="bold" android:id="@+id/preview_04b_settings_personalization_textview_263"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/reminder_tones_description" android:textSize="12sp" android:textColor="@color/layout_xml_secondary" android:fontFamily="sans-serif" android:textStyle="normal" android:layout_marginTop="4dp" android:id="@+id/preview_04b_settings_personalization_textview_264"/>
+                        <Space android:layout_width="1dp" android:layout_height="8dp"/>
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:minHeight="48dp" android:gravity="center_vertical" android:id="@+id/preview_04b_settings_personalization_linearlayout_266">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:text="@string/reminder_sound_enabled" android:textSize="14sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="normal" android:layout_weight="1" android:layout_marginEnd="10dp" android:id="@+id/preview_04b_settings_personalization_textview_267"/>
+                            <Switch android:layout_width="52dp" android:layout_height="32dp" android:id="@+id/preview_04b_settings_personalization_reminder_sound_enabled" android:checked="true" android:switchMinWidth="52dp" android:thumb="@drawable/layout_xml_switch_thumb" android:track="@drawable/layout_xml_switch_track" android:splitTrack="false" android:contentDescription="@string/reminder_sound_enabled" android:showText="false"/>
+                        </LinearLayout>
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:minHeight="48dp" android:gravity="center_vertical" android:id="@+id/preview_04b_settings_personalization_linearlayout_269">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:text="@string/reminder_tone" android:textSize="14sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="bold" android:layout_weight="1" android:id="@+id/preview_04b_settings_personalization_textview_270"/>
+                            <Spinner android:layout_width="wrap_content" android:layout_height="48dp" android:id="@+id/preview_04b_settings_personalization_reminder_sound_theme" android:entries="@array/layout_xml_reminder_sound_theme_options" android:spinnerMode="dropdown" android:contentDescription="@string/reminder_tone"/>
+                        </LinearLayout>
+                        <Button android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/preview_04b_settings_personalization_reminder_sound_preview" android:text="@string/reminder_tone_preview" android:textAllCaps="false" android:textColor="@color/layout_xml_text" android:textSize="14sp" android:fontFamily="sans-serif" android:minHeight="44dp" android:minWidth="0dp" android:background="@drawable/layout_xml_button_outline" android:paddingStart="12dp" android:paddingEnd="12dp"/>
+                        <Space android:layout_width="1dp" android:layout_height="8dp"/>
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:minHeight="24dp" android:gravity="center_vertical" android:id="@+id/preview_04b_settings_personalization_linearlayout_274">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:text="@string/reminder_sound_volume" android:textSize="14sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="bold" android:layout_weight="1" android:id="@+id/preview_04b_settings_personalization_textview_275"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="80%" android:textSize="12sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="normal" android:id="@+id/preview_04b_settings_personalization_reminder_sound_volume_value" android:layout_marginStart="10dp"/>
+                        </LinearLayout>
+                        <SeekBar android:layout_width="match_parent" android:layout_height="44dp" android:id="@+id/preview_04b_settings_personalization_reminder_sound_volume" android:max="1000" android:progress="800" android:progressDrawable="@drawable/layout_xml_slider_progress" android:thumb="@drawable/layout_xml_slider_thumb" android:thumbOffset="10dp" android:paddingStart="14dp" android:paddingEnd="14dp" android:splitTrack="false" android:contentDescription="@string/reminder_sound_volume"/>
+                    </LinearLayout>
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:id="@+id/preview_04b_settings_personalization_panel_haptic_effects" android:background="@drawable/layout_xml_panel" android:layout_marginBottom="12dp" android:paddingStart="22dp" android:paddingEnd="22dp" android:paddingTop="14dp" android:paddingBottom="18dp">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/haptic_effects" android:textSize="16sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="bold" android:id="@+id/preview_04b_settings_personalization_textview_279"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/haptic_effects_description" android:textSize="12sp" android:textColor="@color/layout_xml_secondary" android:fontFamily="sans-serif" android:textStyle="normal" android:layout_marginTop="4dp" android:id="@+id/preview_04b_settings_personalization_textview_280"/>
+                        <Space android:layout_width="1dp" android:layout_height="8dp"/>
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:minHeight="48dp" android:gravity="center_vertical" android:id="@+id/preview_04b_settings_personalization_linearlayout_282">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:text="@string/haptic_effects_enabled" android:textSize="14sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="normal" android:layout_weight="1" android:layout_marginEnd="10dp" android:id="@+id/preview_04b_settings_personalization_textview_283"/>
+                            <Switch android:layout_width="52dp" android:layout_height="32dp" android:id="@+id/preview_04b_settings_personalization_haptic_effects_enabled" android:checked="true" android:switchMinWidth="52dp" android:thumb="@drawable/layout_xml_switch_thumb" android:track="@drawable/layout_xml_switch_track" android:splitTrack="false" android:contentDescription="@string/haptic_effects_enabled" android:showText="false"/>
+                        </LinearLayout>
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:minHeight="48dp" android:gravity="center_vertical" android:id="@+id/preview_04b_settings_personalization_linearlayout_285">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:text="@string/haptic_effects_style" android:textSize="14sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="bold" android:layout_weight="1" android:id="@+id/preview_04b_settings_personalization_textview_286"/>
+                            <Spinner android:layout_width="wrap_content" android:layout_height="48dp" android:id="@+id/preview_04b_settings_personalization_haptic_effects_theme" android:entries="@array/layout_xml_haptic_effects_theme_options" android:spinnerMode="dropdown" android:contentDescription="@string/haptic_effects_style"/>
+                        </LinearLayout>
+                        <Button android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/preview_04b_settings_personalization_haptic_effects_preview" android:text="@string/haptic_effects_preview" android:textAllCaps="false" android:textColor="@color/layout_xml_text" android:textSize="14sp" android:fontFamily="sans-serif" android:minHeight="44dp" android:minWidth="0dp" android:background="@drawable/layout_xml_button_outline" android:paddingStart="12dp" android:paddingEnd="12dp"/>
+                        <Space android:layout_width="1dp" android:layout_height="8dp"/>
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:minHeight="24dp" android:gravity="center_vertical" android:id="@+id/preview_04b_settings_personalization_linearlayout_290">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:text="@string/haptic_effects_intensity" android:textSize="14sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="bold" android:layout_weight="1" android:id="@+id/preview_04b_settings_personalization_textview_291"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="55%" android:textSize="12sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="normal" android:id="@+id/preview_04b_settings_personalization_haptic_effects_volume_value" android:layout_marginStart="10dp"/>
+                        </LinearLayout>
+                        <SeekBar android:layout_width="match_parent" android:layout_height="44dp" android:id="@+id/preview_04b_settings_personalization_haptic_effects_volume" android:max="1000" android:progress="550" android:progressDrawable="@drawable/layout_xml_slider_progress" android:thumb="@drawable/layout_xml_slider_thumb" android:thumbOffset="10dp" android:paddingStart="14dp" android:paddingEnd="14dp" android:splitTrack="false" android:contentDescription="@string/haptic_effects_intensity"/>
+                    </LinearLayout>
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:id="@+id/preview_04b_settings_personalization_section_motion_heading" android:paddingTop="18dp" android:paddingBottom="10dp" android:layout_marginStart="8dp" android:layout_marginEnd="8dp" android:gravity="center_vertical">
+                        <View android:layout_width="3dp" android:layout_height="36dp" android:background="@drawable/layout_xml_category_marker" android:backgroundTint="#4B4743" android:id="@+id/preview_04b_settings_personalization_view_295"/>
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:orientation="vertical" android:layout_weight="1" android:layout_marginStart="12dp" android:id="@+id/preview_04b_settings_personalization_linearlayout_296">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/advanced_section_motion" android:textSize="18sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="bold" android:id="@+id/preview_04b_settings_personalization_textview_297"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/advanced_section_motion_description" android:textSize="12sp" android:textColor="@color/layout_xml_secondary" android:fontFamily="sans-serif" android:textStyle="normal" android:layout_marginTop="2dp" android:id="@+id/preview_04b_settings_personalization_textview_298"/>
+                        </LinearLayout>
+                    </LinearLayout>
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:id="@+id/preview_04b_settings_personalization_panel_motion" android:background="@drawable/layout_xml_panel" android:layout_marginBottom="12dp" android:paddingStart="22dp" android:paddingEnd="22dp" android:paddingTop="14dp" android:paddingBottom="14dp">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/motion_transition_title" android:textSize="16sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="bold" android:id="@+id/preview_04b_settings_personalization_textview_307"/>
+                        <Space android:layout_width="1dp" android:layout_height="8dp"/>
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:minHeight="48dp" android:gravity="center_vertical" android:id="@+id/preview_04b_settings_personalization_linearlayout_310">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:text="@string/motion_enabled" android:textSize="14sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="normal" android:layout_weight="1" android:layout_marginEnd="10dp" android:id="@+id/preview_04b_settings_personalization_textview_311"/>
+                            <Switch android:layout_width="52dp" android:layout_height="32dp" android:id="@+id/preview_04b_settings_personalization_animations_enabled" android:checked="false" android:switchMinWidth="52dp" android:thumb="@drawable/layout_xml_switch_thumb" android:track="@drawable/layout_xml_switch_track" android:splitTrack="false" android:contentDescription="@string/motion_enabled" android:showText="false"/>
+                        </LinearLayout>
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="108dp" android:orientation="vertical" android:layout_marginTop="10dp" android:gravity="center" android:background="@drawable/layout_xml_field" android:id="@+id/preview_04b_settings_personalization_transition_illustration">
+                            <ImageView android:layout_width="104dp" android:layout_height="57dp" android:src="@drawable/motion_art_notes" android:tint="@color/layout_xml_primary" android:contentDescription="@null" android:id="@+id/preview_04b_settings_personalization_transition_illustration_imageview_1"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/mock_my_notes" android:textSize="12sp" android:textColor="@color/layout_xml_secondary" android:fontFamily="sans-serif" android:textStyle="normal" android:layout_marginTop="4dp" android:id="@+id/preview_04b_settings_personalization_transition_illustration_textview_2"/>
+                        </LinearLayout>
+                        <Button android:layout_width="wrap_content" android:layout_height="wrap_content" android:id="@+id/preview_04b_settings_personalization_motion_preview" android:text="@string/motion_preview_button" android:textAllCaps="false" android:textColor="@color/layout_xml_text" android:textSize="14sp" android:fontFamily="sans-serif" android:minHeight="44dp" android:minWidth="0dp" android:background="@drawable/layout_xml_button_outline" android:paddingStart="12dp" android:paddingEnd="12dp" android:layout_gravity="end" android:enabled="false"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/motion_description" android:textSize="12sp" android:textColor="@color/layout_xml_secondary" android:fontFamily="sans-serif" android:textStyle="normal" android:layout_marginTop="6dp" android:id="@+id/preview_04b_settings_personalization_textview_308"/>
+                    </LinearLayout>
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:id="@+id/preview_04b_settings_personalization_panel_note_card_animation_styles" android:background="@drawable/layout_xml_panel" android:layout_marginBottom="12dp" android:paddingStart="14dp" android:paddingEnd="14dp" android:paddingTop="14dp" android:paddingBottom="14dp">
+                        <include layout="@layout/settings_card_motion_entry_content" android:layout_width="match_parent" android:layout_height="wrap_content" />
+                    </LinearLayout>
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:id="@+id/preview_04b_settings_personalization_panel_performance" android:background="@drawable/layout_xml_panel" android:layout_marginBottom="12dp" android:paddingStart="22dp" android:paddingEnd="22dp" android:paddingTop="14dp" android:paddingBottom="14dp">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/performance_mode_title" android:textSize="16sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="bold" android:id="@+id/preview_04b_settings_personalization_textview_300"/>
+                        <Space android:layout_width="1dp" android:layout_height="8dp"/>
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:minHeight="48dp" android:gravity="center_vertical" android:id="@+id/preview_04b_settings_personalization_linearlayout_302">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:text="@string/performance_mode_title" android:textSize="14sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="bold" android:layout_weight="1" android:id="@+id/preview_04b_settings_personalization_textview_303"/>
+                            <Spinner android:layout_width="wrap_content" android:layout_height="48dp" android:id="@+id/preview_04b_settings_personalization_performance" android:entries="@array/layout_xml_performance_options" android:spinnerMode="dropdown" android:contentDescription="@string/performance_mode_title"/>
+                        </LinearLayout>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/performance_mode_description" android:textSize="12sp" android:textColor="@color/layout_xml_secondary" android:fontFamily="sans-serif" android:textStyle="normal" android:id="@+id/preview_04b_settings_personalization_textview_305"/>
+                    </LinearLayout>
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:id="@+id/preview_04b_settings_personalization_section_application_heading" android:paddingTop="18dp" android:paddingBottom="10dp" android:layout_marginStart="8dp" android:layout_marginEnd="8dp" android:gravity="center_vertical">
+                        <View android:layout_width="3dp" android:layout_height="36dp" android:background="@drawable/layout_xml_category_marker" android:backgroundTint="#4B4743" android:id="@+id/preview_04b_settings_personalization_view_314"/>
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content" android:orientation="vertical" android:layout_weight="1" android:layout_marginStart="12dp" android:id="@+id/preview_04b_settings_personalization_linearlayout_315">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/advanced_section_application" android:textSize="18sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="bold" android:id="@+id/preview_04b_settings_personalization_textview_316"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/advanced_section_application_description" android:textSize="12sp" android:textColor="@color/layout_xml_secondary" android:fontFamily="sans-serif" android:textStyle="normal" android:layout_marginTop="2dp" android:id="@+id/preview_04b_settings_personalization_textview_317"/>
+                        </LinearLayout>
+                    </LinearLayout>
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:id="@+id/preview_04b_settings_personalization_panel_language" android:background="@drawable/layout_xml_panel" android:layout_marginBottom="12dp" android:paddingStart="22dp" android:paddingEnd="22dp" android:paddingTop="14dp" android:paddingBottom="14dp">
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:minHeight="48dp" android:gravity="center_vertical" android:id="@+id/preview_04b_settings_personalization_linearlayout_319">
+                            <TextView android:layout_width="0dp" android:layout_height="wrap_content" android:text="@string/mock_language" android:textSize="14sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="bold" android:layout_weight="1" android:id="@+id/preview_04b_settings_personalization_textview_320"/>
+                            <Spinner android:layout_width="wrap_content" android:layout_height="48dp" android:id="@+id/preview_04b_settings_personalization_language" android:entries="@array/layout_xml_language_options" android:spinnerMode="dropdown" android:contentDescription="@string/mock_language"/>
+                        </LinearLayout>
+                    </LinearLayout>
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:id="@+id/preview_04b_settings_personalization_panel_backup" android:background="@drawable/layout_xml_panel" android:layout_marginBottom="12dp" android:paddingStart="22dp" android:paddingEnd="22dp" android:paddingTop="14dp" android:paddingBottom="14dp">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/backup_restore_title" android:textSize="16sp" android:textColor="@color/layout_xml_text" android:fontFamily="sans-serif" android:textStyle="bold" android:id="@+id/preview_04b_settings_personalization_textview_323"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/backup_restore_description" android:textSize="12sp" android:textColor="@color/layout_xml_secondary" android:fontFamily="sans-serif" android:textStyle="normal" android:layout_marginTop="4dp" android:id="@+id/preview_04b_settings_personalization_textview_324"/>
+                        <Space android:layout_width="1dp" android:layout_height="8dp"/>
+                        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:gravity="center_vertical" android:id="@+id/preview_04b_settings_personalization_linearlayout_326">
+                            <Button android:layout_width="0dp" android:layout_height="wrap_content" android:id="@+id/preview_04b_settings_personalization_backup_export" android:text="@string/backup_export_button" android:textAllCaps="false" android:textColor="@color/layout_xml_text" android:textSize="14sp" android:fontFamily="sans-serif" android:minHeight="44dp" android:minWidth="0dp" android:background="@drawable/layout_xml_button_outline" android:paddingStart="12dp" android:paddingEnd="12dp" android:layout_weight="1" android:layout_marginEnd="8dp"/>
+                            <Button android:layout_width="0dp" android:layout_height="wrap_content" android:id="@+id/preview_04b_settings_personalization_backup_import" android:text="@string/backup_import_button" android:textAllCaps="false" android:textColor="@color/layout_xml_on_primary" android:textSize="14sp" android:fontFamily="sans-serif" android:minHeight="44dp" android:minWidth="0dp" android:background="@drawable/layout_xml_button_filled" android:paddingStart="12dp" android:paddingEnd="12dp" android:layout_weight="1"/>
+                        </LinearLayout>
+                    </LinearLayout>
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:id="@+id/preview_04b_settings_personalization_panel_development" android:background="@drawable/layout_xml_panel" android:layout_marginBottom="12dp" android:paddingStart="22dp" android:paddingEnd="22dp" android:paddingTop="14dp" android:paddingBottom="14dp">
+                        <Button android:layout_width="match_parent" android:layout_height="wrap_content" android:id="@+id/preview_04b_settings_personalization_open_development" android:text="@string/development_info_settings_title" android:textAllCaps="false" android:textColor="@color/layout_xml_text" android:textSize="14sp" android:fontFamily="sans-serif" android:minHeight="44dp" android:minWidth="0dp" android:background="@drawable/layout_xml_button_outline" android:paddingStart="12dp" android:paddingEnd="12dp"/>
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="@string/development_info_settings_description" android:textSize="12sp" android:textColor="@color/layout_xml_secondary" android:fontFamily="sans-serif" android:textStyle="normal" android:id="@+id/preview_04b_settings_personalization_textview_331"/>
+                    </LinearLayout>
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:id="@+id/preview_04b_settings_personalization_panel_updates" android:background="@drawable/layout_xml_panel" android:layout_marginBottom="12dp" android:paddingStart="14dp" android:paddingEnd="14dp" android:paddingTop="14dp" android:paddingBottom="14dp">
+                        <include layout="@layout/settings_updates_content" android:layout_width="match_parent" android:layout_height="wrap_content" />
                     </LinearLayout>
                 </LinearLayout>
             </ScrollView>
-            <View
-                android:layout_width="4dp"
-                android:layout_height="54dp"
-                android:id="@+id/preview_04b_settings_personalization_scroll_capsule"
-                android:layout_gravity="end|top"
-                android:layout_marginEnd="4dp"
-                android:layout_marginTop="10dp"
-                android:background="@drawable/layout_xml_scroll_capsule"
-                android:importantForAccessibility="no"
-                tools:visibility="visible" />
+            <View android:layout_width="4dp" android:layout_height="54dp" android:id="@+id/preview_04b_settings_personalization_scroll_capsule" android:layout_gravity="end|top" android:layout_marginEnd="4dp" android:layout_marginTop="10dp" android:background="@drawable/layout_xml_scroll_capsule" android:importantForAccessibility="no" tools:visibility="visible"/>
         </FrameLayout>
     </LinearLayout>
 </FrameLayout>

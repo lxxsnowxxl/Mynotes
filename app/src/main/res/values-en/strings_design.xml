@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="design_styles">Complete styles</string>
+    <string name="design_styles_description">Apply coordinated colors, typography and cards. Your notes keep their colors.</string>
+    <string name="design_preview">Preview</string>
+    <string name="design_preset_minimal">Minimalist</string>
+    <string name="design_preset_notebook">Notebook</string>
+    <string name="design_preset_oled">OLED</string>
+    <string name="design_preset_default">Default</string>
+    <string name="design_density">Card density</string>
+    <string name="design_compact">Compact</string>
+    <string name="design_comfortable">Comfortable</string>
+    <string name="design_focus">Focus mode</string>
+    <string name="design_focus_description">Open the editor with its lower tools panel hidden.</string>
+    <string name="design_enter_focus">Enter focus mode</string>
+    <string name="design_exit_focus">Exit focus mode</string>
+    <string name="design_editor_tools">Attachments and tools</string>
+    <string name="design_show_grid">Show grid</string>
+    <string name="design_show_list">Show list</string>
+    <string name="design_use_comfortable">Use comfortable cards</string>
+    <string name="design_use_compact">Use compact cards</string>
+    <string name="design_sort_by">Sort notes</string>
+    <string name="design_sort_newest">Newest first</string>
+    <string name="design_sort_oldest">Oldest first</string>
+    <string name="design_sort_title">Title, A–Z</string>
+    <string name="design_sort_priority">Highest priority</string>
+    <string name="design_section_pinned">Pinned</string>
+    <string name="design_section_today">Today</string>
+    <string name="design_section_week">This week</string>
+    <string name="design_section_earlier">Earlier</string>
+    <string name="design_section_notes">Notes</string>
+    <string name="design_select_note">Choose a note</string>
+    <string name="design_select_note_description">Read it here while keeping your collection in view.</string>
+    <string name="design_close_preview">Close note preview</string>
+    <string name="design_clear_filters">Clear search and filters</string>
+    <string name="design_create_first">Create first note</string>
+    <string name="design_more_attachments">+%1$d more</string>
+    <string name="design_pdf_pages">PDF · %1$d pages</string>
+    <string name="design_play_audio">Play audio</string>
+    <string name="design_pause_audio">Pause audio</string>
+    <plurals name="design_note_count">
+        <item quantity="one">%1$d note</item>
+        <item quantity="other">%1$d notes</item>
+    </plurals>
+</resources>

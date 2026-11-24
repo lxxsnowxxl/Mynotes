@@ -5,7 +5,7 @@ import com.example.mynotes.ui.theme.PaletteCatalog
 internal object SettingsValuePolicy {
     private val configurationModes = setOf("basic", "advanced", "unset")
     private val uiTextColors = setOf("auto", "black", "white")
-    private val settingsBackgroundStyles = setOf("solid", "gradient", "blur")
+    private val settingsBackgroundStyles = setOf("solid", "gradient", "blur", "animated_blur")
     private val iconStyles = setOf("material", "rounded", "outlined", "minimal")
     private val optionMenuTextColors = setOf("note", "black", "white")
     private val sliderStyles = setOf("minimal", "capsule", "glow", "glass", "segmented", "dots", "gradient", "neumorphic", "line_pill", "floating")
@@ -18,7 +18,11 @@ internal object SettingsValuePolicy {
 
     fun configurationMode(value: String) = value.validOr(configurationModes, "unset")
     fun uiTextColor(value: String) = value.validOr(uiTextColors, "auto")
-    fun settingsBackgroundStyle(value: String) = value.validOr(settingsBackgroundStyles, "solid")
+    fun settingsBackgroundStyle(value: String) = when (value) {
+        // Al retirar Fluid Liquid / Liquid Glass, mantener una selección válida.
+        "fluid_liquid", "liquid_glass" -> "gradient"
+        else -> value.validOr(settingsBackgroundStyles, "solid")
+    }
     fun iconStyle(value: String) = value.validOr(iconStyles, "rounded")
     fun optionMenuTextColor(value: String) = value.validOr(optionMenuTextColors, "note")
     fun sliderStyle(value: String) = value.validOr(sliderStyles, "capsule")

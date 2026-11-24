@@ -3,7 +3,7 @@ package com.example.mynotes.ui.pdf
 import android.graphics.Bitmap
 
 /** Coordenada normalizada dentro de una página PDF (0f..1f). */
-data class PdfPoint(val x: Float, val y: Float)
+data class PdfPoint(val x: Float, val y: Float, val pressure: Float = 1f)
 
 data class PdfStroke(
     /** Identificador estable para seleccionar y editar el trazo después de guardarlo. */
@@ -40,7 +40,8 @@ data class PdfPageModel(
     val sourcePdfPageIndex: Int? = null,
     val strokes: List<PdfStroke> = emptyList(),
     val texts: List<PdfTextElement> = emptyList(),
-    val images: List<PdfImageElement> = emptyList()
+    val images: List<PdfImageElement> = emptyList(),
+    val bookmarked: Boolean = false
 ) {
     companion object {
         fun blank(): PdfPageModel = PdfPageModel()

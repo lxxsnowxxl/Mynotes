@@ -20,4 +20,5 @@
         name="pdf_projects"
         path="pdf_projects/" />
 
+    <files-path name="studio_audio" path="studio_audio/" />
 </paths>

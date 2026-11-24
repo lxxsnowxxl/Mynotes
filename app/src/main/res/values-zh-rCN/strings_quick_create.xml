@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="quick_create_title">新建</string>
+    <string name="quick_create_subtitle">选择要创建的内容</string>
+    <string name="quick_create_reminder_hint">安排提醒</string>
+    <string name="quick_create_note_hint">记录想法和清单</string>
+    <string name="quick_create_pdf_hint">处理 PDF 文档</string>
+    <string name="quick_create_drawing_hint">在空白画布上绘画</string>
+    <string name="quick_create_open">打开快捷操作</string>
+    <string name="quick_create_close">关闭快捷操作</string>
+</resources>

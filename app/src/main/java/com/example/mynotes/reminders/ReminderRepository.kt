@@ -5,8 +5,12 @@ import android.content.Context
 import android.content.SharedPreferences
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import java.util.Calendar
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.stateIn
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.SupervisorJob
+import kotlinx.coroutines.Dispatchers
 
 private val ReminderOrder = compareByDescending<Reminder> { it.enabled }.thenBy { it.triggerAtMillis }
 
@@ -16,13 +20,13 @@ private val ReminderOrder = compareByDescending<Reminder> { it.enabled }.thenBy 
  * ninguna migración que pueda poner en riesgo datos existentes.
  */
 class ReminderRepository private constructor(context: Context) : ReminderActions {
-    private val appContext = context.applicationContext
+    private val appContext = context.applicationContext.also{com.example.mynotes.studio.PlusProfiles.initialize(it)}
     private val preferences = appContext.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE)
     @Volatile
     private var lastKnownEncoded: String? = preferences.getString(KEY_REMINDERS, null)
 
     private val _reminders = MutableStateFlow(loadReminders(lastKnownEncoded))
-    override val reminders: StateFlow<List<Reminder>> = _reminders.asStateFlow()
+    override val reminders: StateFlow<List<Reminder>> = combine(_reminders,com.example.mynotes.studio.PlusProfiles.active){rows,library->rows.filter{it.libraryId==library}}.stateIn(CoroutineScope(SupervisorJob()+Dispatchers.Default),SharingStarted.Eagerly,_reminders.value.filter{it.libraryId==com.example.mynotes.studio.PlusProfiles.currentId})
 
     private val preferenceListener = SharedPreferences.OnSharedPreferenceChangeListener { _, key ->
         if (key == KEY_REMINDERS) {
@@ -43,9 +47,10 @@ class ReminderRepository private constructor(context: Context) : ReminderActions
      * evita volver a parsear todo el JSON de SharedPreferences en cada toque,
      * edición, activación o eliminación de un recordatorio.
      */
+    internal fun allReminders():List<Reminder> = _reminders.value
     fun getReminder(id: Long): Reminder? = _reminders.value.firstOrNull { it.id == id }
 
-    override fun upsert(reminder: Reminder) {
+    @Synchronized override fun upsert(reminder: Reminder) {
         val current = _reminders.value
         val index = current.indexOfFirst { it.id == reminder.id }
         val changed = index < 0 || current[index] != reminder
@@ -59,14 +64,14 @@ class ReminderRepository private constructor(context: Context) : ReminderActions
         // La programación del AlarmManager se conserva aunque el contenido no
         // haya cambiado; así una llamada explícita a upsert sigue revalidando
         // el estado real de la alarma sin forzar una escritura de preferencias.
-        if (reminder.enabled) {
+        if (reminder.enabled || reminder.snoozedUntil != null) {
             ReminderAlarmScheduler.schedule(appContext, reminder)
         } else {
             ReminderAlarmScheduler.cancel(appContext, reminder.id)
         }
     }
 
-    override fun delete(id: Long) {
+    @Synchronized override fun delete(id: Long) {
         ReminderAlarmScheduler.cancel(appContext, id)
         val current = _reminders.value
         val index = current.indexOfFirst { it.id == id }
@@ -76,41 +81,51 @@ class ReminderRepository private constructor(context: Context) : ReminderActions
         save(updated)
     }
 
-    override fun setEnabled(id: Long, enabled: Boolean) {
+    @Synchronized override fun setEnabled(id: Long, enabled: Boolean) {
         val reminder = getReminder(id) ?: return
-        if (reminder.enabled == enabled) return
-        upsert(reminder.copy(enabled = enabled))
+        if (reminder.enabled == enabled && reminder.snoozedUntil == null) return
+        val now = System.currentTimeMillis()
+        val trigger = if (enabled) ReminderSchedule.enableAt(reminder, now) ?: return else reminder.triggerAtMillis
+        upsert(reminder.copy(enabled = enabled, triggerAtMillis = trigger, snoozedUntil = null))
     }
 
-    /** Llamado después de disparar la notificación. */
-    fun advanceAfterTrigger(id: Long) {
+    /** Snoozing is a separate occurrence and does not shift the repeating schedule. */
+    fun snooze(id: Long, minutes: Int = 10) {
         val reminder = getReminder(id) ?: return
-        if (reminder.repeatMode == Reminder.REPEAT_NONE) {
-            upsert(reminder.copy(enabled = false))
+        recordEvent(reminder,"snoozed")
+        upsert(reminder.copy(snoozedUntil = System.currentTimeMillis() + minutes.coerceIn(1, 1440) * 60_000L))
+    }
+
+    fun recordEvent(reminder:Reminder,action:String){com.example.mynotes.studio.StudioStore.get(appContext).putInLibrary("reminder_events",java.util.UUID.randomUUID().toString(),reminder.libraryId){it.put("reminderId",reminder.id).put("title",reminder.title).put("action",action).put("at",System.currentTimeMillis())}}
+    fun complete(id:Long,occurrenceAlreadyFired:Boolean=false){getReminder(id)?.let{recordEvent(it,"completed");clearSnooze(id);if(it.repeatMode==Reminder.REPEAT_NONE)setEnabled(id,false)else if(!occurrenceAlreadyFired)advanceAfterTrigger(id)}}
+    fun clearSnooze(id: Long) {
+        getReminder(id)?.let { upsert(it.copy(snoozedUntil = null)) }
+    }
+
+    @Synchronized fun advanceAfterTrigger(id: Long, wasSnoozed: Boolean = false) {
+        val reminder = getReminder(id) ?: return
+        if (wasSnoozed) {
+            upsert(reminder.copy(snoozedUntil = null))
             return
         }
-        val next = nextTrigger(reminder.triggerAtMillis, reminder.repeatMode, System.currentTimeMillis())
-        upsert(reminder.copy(triggerAtMillis = next, enabled = true))
+        val next = ReminderSchedule.next(reminder, System.currentTimeMillis())
+        upsert(reminder.copy(triggerAtMillis = next ?: reminder.triggerAtMillis, enabled = next != null,occurrencesDone=reminder.occurrencesDone+1+ReminderSchedule.skippedBetween(reminder,reminder.triggerAtMillis,next?:Long.MAX_VALUE),recurrenceAnchorMillis=reminder.recurrenceAnchorMillis?:reminder.triggerAtMillis))
     }
 
-    fun rescheduleAll() {
+    @Synchronized fun rescheduleAll() {
         val now = System.currentTimeMillis()
         val current = _reminders.value
         if (current.isEmpty()) return
 
         var normalized: MutableList<Reminder>? = null
         current.forEachIndexed { index, reminder ->
-            val updated = when {
-                !reminder.enabled || reminder.triggerAtMillis > now -> reminder
-                reminder.repeatMode == Reminder.REPEAT_NONE -> reminder.copy(enabled = false)
-                else -> reminder.copy(
-                    triggerAtMillis = nextTrigger(
-                        reminder.triggerAtMillis,
-                        reminder.repeatMode,
-                        now
-                    )
-                )
-            }
+            val pending = reminder.snoozedUntil?.let { if (it <= now) now + 1_000L else it }
+            val next = if (reminder.enabled && !reminder.locationOnly && reminder.triggerAtMillis <= now) ReminderSchedule.next(reminder, now) else reminder.triggerAtMillis
+            val updated = reminder.copy(
+                triggerAtMillis = next ?: reminder.triggerAtMillis,
+                enabled = reminder.enabled && next != null && (reminder.repeatEndAtMillis == null || (next ?: reminder.triggerAtMillis) <= reminder.repeatEndAtMillis),
+                snoozedUntil = pending
+            )
             if (updated != reminder) {
                 val target = normalized ?: current.toMutableList().also { normalized = it }
                 target[index] = updated
@@ -123,7 +138,7 @@ class ReminderRepository private constructor(context: Context) : ReminderActions
         }
 
         for (reminder in effective) {
-            if (reminder.enabled) ReminderAlarmScheduler.schedule(appContext, reminder)
+            if (reminder.enabled || reminder.snoozedUntil != null) ReminderAlarmScheduler.schedule(appContext, reminder)
         }
     }
 
@@ -136,6 +151,7 @@ class ReminderRepository private constructor(context: Context) : ReminderActions
 
         val encoded = sorted.toJsonString()
         _reminders.value = sorted
+        com.example.mynotes.widget.MyNotesWidgetUpdater.requestUpdate(appContext)
 
         // SharedPreferences no necesita recibir otra escritura si el JSON final
         // ya es idéntico. Esto reduce trabajo del listener y fsync diferido.
@@ -176,25 +192,5 @@ class ReminderRepository private constructor(context: Context) : ReminderActions
                 instance ?: ReminderRepository(context.applicationContext).also { instance = it }
             }
 
-        fun nextTrigger(previous: Long, repeatMode: String, now: Long): Long {
-            var candidate = previous
-            val calendar = Calendar.getInstance().apply { timeInMillis = previous }
-            do {
-                when (repeatMode) {
-                    Reminder.REPEAT_DAILY -> calendar.add(Calendar.DAY_OF_YEAR, 1)
-                    Reminder.REPEAT_WEEKLY -> calendar.add(Calendar.WEEK_OF_YEAR, 1)
-                    Reminder.REPEAT_MONTHLY -> calendar.add(Calendar.MONTH, 1)
-                    Reminder.REPEAT_WEEKDAYS -> {
-                        do {
-                            calendar.add(Calendar.DAY_OF_YEAR, 1)
-                        } while (calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SATURDAY ||
-                            calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY)
-                    }
-                    else -> return previous
-                }
-                candidate = calendar.timeInMillis
-            } while (candidate <= now)
-            return candidate
-        }
     }
 }

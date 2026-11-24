@@ -6,6 +6,12 @@ import androidx.compose.runtime.Immutable
 @Immutable
 data class AppSettings(
     val configurationMode: String = "unset",
+    val designPreset: String = "default",
+    val oledMode: Boolean = false,
+    val cardDensity: String = "comfortable",
+    val editorFocusMode: Boolean = true,
+    val readerWidth: Float = 680f,
+    val readerLineSpacing: Float = 1.6f,
     val darkMode: Boolean = false,
     val backgroundColor: String = "neutral",
     val backgroundToneIndex: Int = 0,
@@ -56,8 +62,9 @@ data class AppSettings(
     val colorMenuHiddenItems: String = "",
     val performanceMode: String = "balanced",
     val animationsEnabled: Boolean = true,
-    val animationStyle: String = "zoom",
+    val animationStyle: String = MotionStylePolicy.DEFAULT_STYLE,
     val animationEasing: String = "standard",
     val animationSpeed: Float = 1f,
-    val animationIntensity: Float = 1f
+    val animationIntensity: Float = 1f,
+    val collapsedSettingsSections: String = ""
 )

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="note_tools_panel_title">Herramientas de notas</string>
+    <string name="note_tools_collapse">Ocultar herramientas</string>
+    <string name="note_tools_expand">Mostrar herramientas</string>
+    <string name="note_tools_drag_vertical">Mover herramientas arriba o abajo</string>
+    <string name="drawing_tools_panel_title">Herramientas de dibujo</string>
+    <string name="pdf_tools_panel_title">Herramientas PDF</string>
+    <string name="drawing_layout_split">Vista dividida</string>
+    <string name="drawing_layout_floating">Panel flotante</string>
+</resources>

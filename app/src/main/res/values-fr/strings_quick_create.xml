@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="quick_create_title">Créer</string>
+    <string name="quick_create_subtitle">Choisissez ce que vous souhaitez créer</string>
+    <string name="quick_create_reminder_hint">Programmez vos alertes</string>
+    <string name="quick_create_note_hint">Écrivez des idées et des listes</string>
+    <string name="quick_create_pdf_hint">Travaillez sur des documents PDF</string>
+    <string name="quick_create_drawing_hint">Dessinez sur une page vierge</string>
+    <string name="quick_create_open">Ouvrir les actions rapides</string>
+    <string name="quick_create_close">Fermer les actions rapides</string>
+</resources>

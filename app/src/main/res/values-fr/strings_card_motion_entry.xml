@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="card_motion_entry_summary">Un mouvement discret pour les notes au repos.</string>
+    <string name="card_motion_selected_effect">Effet sélectionné</string>
+    <string name="card_motion_entry_paused">En pause</string>
+    <string name="card_motion_entry_enabled">Activées</string>
+    <string name="card_motion_entry_intensity">Intensité %1$d/5</string>
+    <string name="card_motion_entry_frequency">Fréquence : %1$s</string>
+    <string name="card_motion_frequency_low">Occasionnelle</string>
+    <string name="card_motion_frequency_normal">Équilibrée</string>
+    <string name="card_motion_frequency_high">Fréquente</string>
+    <string name="card_motion_entry_preview">Aperçu</string>
+    <string name="card_motion_entry_customize">Réglages</string>
+    <string name="card_motion_entry_disabled_hint">Activez les animations au repos pour essayer cet effet.</string>
+    <string name="card_motion_entry_behavior">Après une pause, une seule note visible bouge à la fois. Touchez ou faites défiler la liste pour arrêter.</string>
+</resources>

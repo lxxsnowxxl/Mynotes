@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="note_tools_panel_title">笔记工具</string>
+    <string name="note_tools_collapse">收起工具</string>
+    <string name="note_tools_expand">展开工具</string>
+    <string name="note_tools_drag_vertical">上下移动工具</string>
+    <string name="drawing_tools_panel_title">绘图工具</string>
+    <string name="pdf_tools_panel_title">PDF 工具</string>
+    <string name="drawing_layout_split">分屏模式</string>
+    <string name="drawing_layout_floating">浮动面板</string>
+</resources>

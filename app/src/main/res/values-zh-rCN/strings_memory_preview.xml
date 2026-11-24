@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="attachment_preview_memory_limit">已限制预览内容以减少内存占用。原始文件保持完整。</string>
+</resources>

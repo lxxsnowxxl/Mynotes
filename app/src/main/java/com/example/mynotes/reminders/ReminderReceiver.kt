@@ -19,6 +19,7 @@ import androidx.core.content.ContextCompat
 import androidx.core.graphics.ColorUtils
 import com.example.mynotes.MainActivity
 import com.example.mynotes.R
+import com.example.mynotes.widget.WidgetActions
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -27,6 +28,16 @@ class ReminderReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent?) {
         if (intent?.action == Intent.ACTION_BOOT_COMPLETED || intent?.action == Intent.ACTION_MY_PACKAGE_REPLACED) {
             ReminderRepository.getInstance(context).rescheduleAll()
+            val pending=goAsync();com.example.mynotes.studio.StudioGeofences.restore(context){pending.finish()}
+            return
+        }
+        if (intent?.action == ACTION_SNOOZE || intent?.action == ACTION_COMPLETE) {
+            val id = intent.getLongExtra(ReminderAlarmScheduler.EXTRA_REMINDER_ID, -1L)
+            if (id > 0L) {
+                val repository = ReminderRepository.getInstance(context)
+                if (intent.action == ACTION_SNOOZE) repository.snooze(id) else {val expected=intent.getLongExtra(ReminderAlarmScheduler.EXTRA_SCHEDULED_AT,0);repository.complete(id,occurrenceAlreadyFired=expected==0L||repository.getReminder(id)?.triggerAtMillis!=expected)}
+                NotificationManagerCompat.from(context).cancel(id.toInt())
+            }
             return
         }
         if (intent?.action != ReminderAlarmScheduler.ACTION_FIRE_REMINDER) return
@@ -34,12 +45,18 @@ class ReminderReceiver : BroadcastReceiver() {
         if (id <= 0L) return
         val repository = ReminderRepository.getInstance(context)
         val reminder = repository.getReminder(id) ?: return
-        if (!reminder.enabled) return
-        showNotification(context, reminder)
-        repository.advanceAfterTrigger(id)
+        val snoozed = intent.getBooleanExtra(ReminderAlarmScheduler.EXTRA_IS_SNOOZE, false)
+        val expected = intent.getLongExtra(ReminderAlarmScheduler.EXTRA_SCHEDULED_AT, 0L)
+        if (snoozed) {
+            if (reminder.snoozedUntil == null || (expected != 0L && expected != reminder.snoozedUntil)) return
+        } else if (!reminder.enabled || (expected != 0L && expected != reminder.triggerAtMillis)) return
+        val early=intent.getIntExtra(ReminderAlarmScheduler.EXTRA_EARLY_MINUTES,0)
+        if(early>0&&(early !in reminder.alertMinutes||reminder.locationOnly))return
+        if(showNotification(context,reminder))repository.recordEvent(reminder,if(early>0)"early_alert"else"notified")
+        if(early==0)repository.advanceAfterTrigger(id,snoozed)
     }
 
-    private fun showNotification(context: Context, reminder: Reminder) {
+    private fun showNotification(context: Context, reminder: Reminder):Boolean {
         val textContext = localizedContext(context)
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -60,14 +77,18 @@ class ReminderReceiver : BroadcastReceiver() {
         }
         if (Build.VERSION.SDK_INT >= 33 &&
             ContextCompat.checkSelfPermission(context, Manifest.permission.POST_NOTIFICATIONS) != PackageManager.PERMISSION_GRANTED
-        ) return
+        ) return false
+        if(!NotificationManagerCompat.from(context).areNotificationsEnabled())return false
 
         val contentIntent = PendingIntent.getActivity(
             context,
             reminder.id.toInt(),
             Intent(context, MainActivity::class.java).apply {
                 flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
-                putExtra(EXTRA_OPEN_REMINDERS, true)
+                if (reminder.linkedNoteId != null) {
+                    action = WidgetActions.ACTION_OPEN_NOTE
+                    putExtra(WidgetActions.EXTRA_NOTE_ID, reminder.linkedNoteId)
+                } else putExtra(EXTRA_OPEN_REMINDERS, true)
             },
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
@@ -125,12 +146,15 @@ class ReminderReceiver : BroadcastReceiver() {
             .setShowWhen(true)
             .setSound(null)
             .setVibrate(longArrayOf(0L))
+            .addAction(0, textContext.getString(R.string.workspace_snooze10), actionIntent(context, reminder.id, ACTION_SNOOZE))
+            .addAction(0, textContext.getString(R.string.workspace_done), actionIntent(context, reminder.id, ACTION_COMPLETE,reminder.triggerAtMillis))
             .setAutoCancel(true)
             .setContentIntent(contentIntent)
             .build()
 
         NotificationManagerCompat.from(context).notify(reminder.id.toInt(), notification)
         ReminderFeedbackPreferences.playReminderAlert(context)
+        return true
     }
 
     private fun buildCustomView(
@@ -199,6 +223,7 @@ class ReminderReceiver : BroadcastReceiver() {
             Reminder.REPEAT_WEEKDAYS -> context.getString(R.string.reminder_repeat_weekdays)
             Reminder.REPEAT_WEEKLY -> context.getString(R.string.reminder_repeat_weekly)
             Reminder.REPEAT_MONTHLY -> context.getString(R.string.reminder_repeat_monthly)
+            Reminder.REPEAT_CUSTOM -> context.getString(R.string.workspace_custom_days)
             else -> context.getString(R.string.reminder_repeat_none)
         }
         val priority = when (reminder.priority) {
@@ -242,7 +267,17 @@ class ReminderReceiver : BroadcastReceiver() {
         return context.createConfigurationContext(configuration)
     }
 
+    private fun actionIntent(context: Context, id: Long, actionName: String,occurrenceAt:Long=0): PendingIntent =
+        PendingIntent.getBroadcast(context, (id xor (id ushr 32)).toInt(),
+            Intent(context, ReminderReceiver::class.java).apply {
+                action = actionName
+                putExtra(ReminderAlarmScheduler.EXTRA_REMINDER_ID, id)
+                putExtra(ReminderAlarmScheduler.EXTRA_SCHEDULED_AT,occurrenceAt)
+            }, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
+
     companion object {
+        private const val ACTION_SNOOZE = "com.example.mynotes.action.SNOOZE_REMINDER"
+        private const val ACTION_COMPLETE = "com.example.mynotes.action.COMPLETE_REMINDER"
         private const val OLD_CHANNEL_ID = "mynotes_reminders"
         const val CHANNEL_ID = "mynotes_reminders_v2"
         const val EXTRA_OPEN_REMINDERS = "open_reminders"

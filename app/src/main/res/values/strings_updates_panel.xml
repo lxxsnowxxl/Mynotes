@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="update_panel_subtitle">Novedades, correcciones y mejoras.</string>
+    <string name="update_installed_label">Versión instalada</string>
+    <string name="update_latest_label">Nueva versión</string>
+    <string name="update_status_attention">Se necesita tu atención</string>
+    <string name="update_status_checking">Buscando actualizaciones</string>
+    <string name="update_status_available">Actualización disponible</string>
+    <string name="update_status_current">Todo al día</string>
+    <string name="update_status_no_release">Aún no hay versiones</string>
+    <string name="update_status_ready">Listo para buscar</string>
+    <string name="update_status_checking_detail">Consultando la última versión publicada en GitHub.</string>
+    <string name="update_status_downloading_detail">El instalador de Android se abrirá cuando termine la descarga.</string>
+    <string name="update_status_available_detail">Hay una nueva versión de MyNotes lista para descargar.</string>
+    <string name="update_status_ready_detail">Consulta GitHub para descubrir las últimas mejoras.</string>
+    <string name="update_retry">Volver a intentar</string>
+    <string name="update_check_again">Buscar de nuevo</string>
+</resources>

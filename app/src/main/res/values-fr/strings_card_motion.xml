@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="card_motion_settings_title">Animations des cartes</string>
+    <string name="card_motion_settings_subtitle">Choisissez le mouvement des notes au repos</string>
+    <string name="card_motion_toggle">Animer les cartes au repos</string>
+    <string name="card_motion_global_disabled">Les animations générales sont désactivées.</string>
+    <string name="card_motion_style_label">Style d’animation</string>
+    <string name="card_motion_angular">Glissement latéral</string>
+    <string name="card_motion_angular_desc">Glisse de gauche à droite avec de petites rotations</string>
+    <string name="card_motion_sway">Inclinaison 3D</string>
+    <string name="card_motion_sway_desc">Se penche de chaque côté avec un effet de profondeur</string>
+    <string name="card_motion_breathe">Flottement</string>
+    <string name="card_motion_breathe_desc">Monte en arc puis redescend en douceur</string>
+    <string name="card_motion_heartbeat">Double pulsation</string>
+    <string name="card_motion_heartbeat_desc">Se contracte puis pulse deux fois avec des intensités différentes</string>
+    <string name="card_motion_spring">Rebond élastique</string>
+    <string name="card_motion_spring_desc">Se comprime, s’étire et rebondit deux fois</string>
+    <string name="card_motion_random">Aléatoire</string>
+    <string name="card_motion_random_desc">Choisit un effet différent à chaque fois</string>
+    <string name="card_motion_intensity_label">Intensité</string>
+    <string name="card_motion_frequency_label">Fréquence</string>
+    <string name="card_motion_preview">Aperçu</string>
+    <string name="card_motion_replay">Rejouer</string>
+    <string name="card_motion_safety_hint">Après une pause, une seule note visible bouge à la fois. Le mouvement s’arrête quand vous touchez ou faites défiler la liste.</string>
+    <string name="card_motion_off">Désactivées</string>
+</resources>

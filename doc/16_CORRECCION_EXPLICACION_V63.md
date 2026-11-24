@@ -1,5 +1,7 @@
 # Corrección de la explicación del código — v63
 
+> Mantenimiento v289: este documento describe la revisión histórica v63. Las cifras no representan la cobertura actual. La explicación se conserva en Markdown en [archivos/](archivos/); se retiraron los TXT equivalentes y el agregado repetido. Consulta el [índice actual](00_INDICE.md).
+
 La documentación v62 cubría todos los archivos Kotlin/KTS, pero varios documentos sólo enumeraban imports, declaraciones y métricas. Eso daba cobertura de archivos, no una explicación completa del comportamiento.
 
 v63 regenera la documentación para explicar el código en texto:

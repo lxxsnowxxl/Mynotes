@@ -2,11 +2,14 @@ package com.example.mynotes.ui
 
 import com.example.mynotes.ui.preview.LocalLayoutPreview
 import com.example.mynotes.ui.components.SettingsTitle
+import com.example.mynotes.ui.components.AppUpdatesSection
 import com.example.mynotes.ui.components.AppHeading
-import com.example.mynotes.ui.theme.rememberUiTextColors
-import com.example.mynotes.ui.theme.rememberUiTextColor
-import com.example.mynotes.ui.theme.rememberUiContentColors
-import com.example.mynotes.ui.components.AppTextButton
+import com.example.mynotes.ui.notes.NoteCardAnimationSettingsDialog
+import com.example.mynotes.ui.notes.IdleMotionPreferences
+import com.example.mynotes.ui.notes.CardMotionSettingsEntry
+import com.example.mynotes.ui.components.AdvancedSettingsCategory
+import com.example.mynotes.ui.components.AdvancedSettingsNavigation
+import com.example.mynotes.ui.components.AdvancedSettingsSectionHeading
 
 import android.content.Intent
 import android.net.Uri
@@ -43,7 +46,6 @@ import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material.icons.filled.Code
-import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Person
 import androidx.compose.material.icons.filled.PhotoCamera
@@ -51,12 +53,10 @@ import androidx.compose.material.icons.filled.Crop
 import androidx.compose.material.icons.filled.DeleteOutline
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Switch
@@ -68,6 +68,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.MutableFloatState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -96,23 +97,19 @@ import coil3.request.ImageRequest
 import com.example.mynotes.R
 import com.example.mynotes.reminders.ReminderFeedbackPreferences
 import com.example.mynotes.settings.AppSettings
+import com.example.mynotes.settings.SettingsSectionPreferencePolicy
 import com.example.mynotes.settings.DeveloperFeatures
 import com.example.mynotes.settings.FeedbackPreferencePolicy
 import com.example.mynotes.settings.FontPreferencePolicy
 import com.example.mynotes.ui.components.AppDropdownMenu
 import com.example.mynotes.ui.components.BackupRestoreSection
 import com.example.mynotes.ui.components.ExtremeAccentSettingsSection
-import com.example.mynotes.ui.components.ExtremeCustomizationHeader
 import com.example.mynotes.ui.components.ExtremeFabSettingsSection
 import com.example.mynotes.ui.components.ExtremeIconsSettingsSection
 import com.example.mynotes.ui.components.ExtremeMotionSettingsSection
 import com.example.mynotes.ui.components.ExtremeNoteCardsSettingsSection
 import com.example.mynotes.ui.components.ExtremePerformanceSettingsSection
 import com.example.mynotes.ui.components.OptionsMenuAppearanceSettingsSection
-import com.example.mynotes.ui.components.OptionsMenuColorSettingsSection
-import com.example.mynotes.ui.components.OptionsMenuHeader
-import com.example.mynotes.ui.components.OptionsMenuMainActionsSettingsSection
-import com.example.mynotes.ui.components.OptionsMenuPrioritySettingsSection
 import com.example.mynotes.ui.components.PaletteSelectorRow
 import com.example.mynotes.ui.components.ProfileImageEditorDialog
 import com.example.mynotes.ui.components.ScrollPositionCapsule
@@ -136,10 +133,11 @@ import com.example.mynotes.ui.theme.SettingsSectionColors
 import com.example.mynotes.ui.theme.appFontFamily
 import com.example.mynotes.ui.theme.rememberAppFontFamily
 import com.example.mynotes.ui.theme.ensureUiContrast
-import com.example.mynotes.ui.theme.resolveUiGraphicColor
 import com.example.mynotes.ui.theme.rememberAdaptiveUiButtonColors
 import com.example.mynotes.ui.theme.resolveUiTextColor
 import com.example.mynotes.update.GitHubUpdateManager
+import com.example.mynotes.ui.components.DesignSettingsPanel
+import com.example.mynotes.ui.notes.AppearancePreviewDialog
 import com.example.mynotes.ui.state.SettingsActions
 import kotlin.math.roundToInt
 import kotlinx.coroutines.launch
@@ -150,8 +148,8 @@ private data class SliderStyleOption(val key: String, val labelRes: Int)
 private val PreviewButtonVerticalGap = 4.dp
 private val PreviewToSliderGap = 10.dp
 private val SoundHapticPanelBottomPadding = 18.dp
-private val StandardSettingsPanelPadding = PaddingValues(start = 6.dp, top = 14.dp, end = 0.dp, bottom = 14.dp)
-private val FeedbackSettingsPanelPadding = PaddingValues(start = 6.dp, top = 10.dp, end = 0.dp, bottom = SoundHapticPanelBottomPadding)
+private val StandardSettingsPanelPadding = PaddingValues(14.dp)
+private val FeedbackSettingsPanelPadding = PaddingValues(start = 14.dp, top = 14.dp, end = 14.dp, bottom = SoundHapticPanelBottomPadding)
 
 private val SliderStyleOptions = listOf(SliderStyleOption("minimal", R.string.mock_slider_minimal), SliderStyleOption("capsule",
             R.string.mock_slider_capsule), SliderStyleOption("glow", R.string.mock_slider_glow), SliderStyleOption("glass",
@@ -165,8 +163,26 @@ fun SettingsScreen(
     settings: AppSettings, viewModel: SettingsActions, onLanguageChange: (String) -> Unit,
     onOpenDevelopmentInfo: () -> Unit, onBack: () -> Unit
 ) {
+    val composeResources = androidx.compose.ui.platform.LocalResources.current
+
     val context = LocalContext.current
+    val isAdvancedMode = settings.configurationMode == "advanced"
+    var cardAnimationDialogOpen by remember { mutableStateOf(false) }
+    var cardAnimationOptions by remember(context) { mutableStateOf(IdleMotionPreferences.get(context)) }
+    if (isAdvancedMode && cardAnimationDialogOpen) {
+        NoteCardAnimationSettingsDialog(
+            options = cardAnimationOptions,
+            globalAnimationsEnabled = settings.animationsEnabled,
+            panelIntensity = settings.surfacePanelIntensity,
+            onChange = { updated ->
+                cardAnimationOptions = updated
+                IdleMotionPreferences.save(context, updated)
+            },
+            onDismiss = { cardAnimationDialogOpen = false }
+        )
+    }
     val layoutPreview = LocalLayoutPreview.current
+    var designPreviewOpen by remember { mutableStateOf(layoutPreview?.livePreview == true) }
     val developerGoogleSansFlexUnlocked = if (layoutPreview != null) false else DeveloperFeatures.isGoogleSansFlexUnlocked(context)
     val fontFamily = rememberAppFontFamily(settings.font)
     var localSettingsPanelTone by rememberSyncedFloatState(settings.settingsPanelTone)
@@ -184,32 +200,46 @@ fun SettingsScreen(
     val settingsPanelColor = remember(settingsPanelBase, selectedPaletteTone, localSettingsPanelTone) {
         lerp(settingsPanelBase, selectedPaletteTone, (localSettingsPanelTone / 100f).coerceIn(0f, 1f))
     }
+    val panelInk = remember(settings.textColor, settingsPanelColor) {
+        com.example.mynotes.ui.theme.settingsSectionColors(settingsPanelColor, settings.textColor)
+    }
     val (settingsTextColor, settingsSecondaryTextColor, settingsGraphicColor) =
-        rememberUiContentColors(settings.textColor, settingsPanelColor)
+        Triple(panelInk.text, panelInk.secondaryText, panelInk.graphic)
     val screenBackground = MaterialTheme.colorScheme.background
-    val (settingsScreenTextColor, settingsScreenSecondaryTextColor) = rememberUiTextColors(settings.textColor, screenBackground)
+    val screenInk = remember(settings.textColor, screenBackground) {
+        com.example.mynotes.ui.theme.settingsSectionColors(screenBackground, settings.textColor)
+    }
+    val (settingsScreenTextColor, settingsScreenSecondaryTextColor) =
+        screenInk.text to screenInk.secondaryText
     val backgroundColors = remember(selectedPalette, settings.backgroundToneIndex, screenBackground, settingsScreenTextColor) {
         settingsBackgroundColors(selectedPalette, settings.backgroundToneIndex, screenBackground, settingsScreenTextColor)
     }
-    val settingsContentBackground = if (settings.settingsBackgroundStyle == "solid") settingsPanelColor else Color.Transparent
+    // Each section draws its own rounded panel. An opaque item wrapper would fill
+    // the corner cutouts and gaps, making basic-mode sections look square and wider.
+    val settingsContentBackground = Color.Transparent
     val settingsHeaderBackground = if (settings.settingsBackgroundStyle == "solid") screenBackground else Color.Transparent
+    val appearancePanelPadding = StandardSettingsPanelPadding
     val baseColorScheme = MaterialTheme.colorScheme
-    val settingsColorScheme = remember(baseColorScheme, settingsPanelColor, settings.settingsBackgroundStyle) {
-        if (settings.settingsBackgroundStyle == "solid") baseColorScheme
-        else baseColorScheme.copy(surfaceContainerLow = settingsPanelColor)
+    val settingsColorScheme = remember(baseColorScheme, settingsPanelColor) {
+        // Las tarjetas de Ajustes usan surfaceContainerLow en TODOS los estilos.
+        // El color medido para el contraste debe ser el mismo que se dibuja.
+        baseColorScheme.copy(surfaceContainerLow = settingsPanelColor)
     }
-    val settingsPalettes = remember(settings.backgroundColor) { PaletteCatalog.palettesForSettings(settings.backgroundColor) }
-    val menuBackground = when (settings.textColor) {
-            "white" -> MaterialTheme.colorScheme.inverseSurface
-            else -> MaterialTheme.colorScheme.surfaceContainerHigh
-        }
-    val settingsMenuTextColor = rememberUiTextColor(settings.textColor, menuBackground)
+    val settingsPalettes = PaletteCatalog.settingsPalettes
+    // El menú usa una superficie estable, no una superficie forzada por el color manual.
+    val menuBackground = MaterialTheme.colorScheme.surfaceContainerHigh
+    val settingsMenuTextColor = remember(menuBackground, settings.textColor) {
+        com.example.mynotes.ui.theme.settingsSectionColors(menuBackground, settings.textColor).text
+    }
     val settingsListState = rememberLazyListState(initialFirstVisibleItemIndex = layoutPreview?.settingsItemIndex ?: 0)
-    val isAdvancedMode = settings.configurationMode == "advanced"
+    val settingsScrolling = remember(settingsListState) { derivedStateOf { settingsListState.isScrollInProgress } }
+    val activeSettingsCategory by remember(settingsListState) {
+        derivedStateOf { AdvancedSettingsCategory.forItem(settingsListState.firstVisibleItemIndex) }
+    }
 
     val updateScope = rememberCoroutineScope()
     val installedVersion = remember(context) {
-        if (layoutPreview != null) "1.7.0" else GitHubUpdateManager.currentVersionName(context)
+        if (layoutPreview != null) "3.6.4" else GitHubUpdateManager.currentVersionName(context)
     }
     var updateResult by remember { mutableStateOf<GitHubUpdateManager.CheckResult?>(null) }
     var checkingForUpdate by remember { mutableStateOf(false) }
@@ -219,21 +249,23 @@ fun SettingsScreen(
 
     val downloadAndOpenInstaller: (GitHubUpdateManager.Release) -> Unit = { release ->
         updateScope.launch {
+            if (checkingForUpdate || downloadingUpdate) return@launch
             downloadingUpdate = true
             updateActionMessage = null
-            runCatching { GitHubUpdateManager.downloadApk(context, release) }
-                .onSuccess { apk ->
-                    if (!GitHubUpdateManager.launchSystemInstaller(context, apk)) {
-                        updateActionMessage = context.getString(R.string.update_install_error)
-                    }
+            try {
+                val apk = GitHubUpdateManager.downloadApk(context, release)
+                if (!GitHubUpdateManager.launchSystemInstaller(context, apk)) {
+                    updateActionMessage = composeResources.getString(R.string.update_install_error)
                 }
-                .onFailure { error ->
-                    updateActionMessage = context.getString(
-                        R.string.update_download_error,
-                        error.message ?: error.javaClass.simpleName
-                    )
-                }
-            downloadingUpdate = false
+            } catch (cancelled: kotlinx.coroutines.CancellationException) {
+                throw cancelled
+            } catch (error: Exception) {
+                updateActionMessage = composeResources.getString(
+                    R.string.update_download_error, error.message ?: error.javaClass.simpleName
+                )
+            } finally {
+                downloadingUpdate = false
+            }
         }
     }
 
@@ -246,63 +278,92 @@ fun SettingsScreen(
             if (GitHubUpdateManager.canInstallDownloadedPackages(context)) {
                 downloadAndOpenInstaller(pendingRelease)
             } else {
-                updateActionMessage = context.getString(R.string.update_permission_required)
+                updateActionMessage = composeResources.getString(R.string.update_permission_required)
             }
         }
     }
 
     val requestDownloadAndInstall: (GitHubUpdateManager.Release) -> Unit = { release ->
-        if (GitHubUpdateManager.canInstallDownloadedPackages(context)) {
-            downloadAndOpenInstaller(release)
-        } else {
-            pendingReleasePermission = release
-            unknownSourcesLauncher.launch(GitHubUpdateManager.unknownSourcesSettingsIntent(context))
+        if (!checkingForUpdate && !downloadingUpdate && pendingReleasePermission == null) {
+            if (GitHubUpdateManager.canInstallDownloadedPackages(context)) {
+                downloadAndOpenInstaller(release)
+            } else {
+                pendingReleasePermission = release
+                unknownSourcesLauncher.launch(GitHubUpdateManager.unknownSourcesSettingsIntent(context))
+            }
         }
     }
     AnimatedScreenEntry(animationsEnabled = settings.animationsEnabled,
         animationSpeed = settings.animationSpeed) {
         MaterialTheme(colorScheme = settingsColorScheme) {
-        Box(Modifier.fillMaxSize().appScreenBackground(screenBackground, settingsScreenTextColor)) {
+        if (designPreviewOpen) {
+            AppearancePreviewDialog(
+                settings = settings,
+                onApply = { appearance ->
+                    viewModel.applyAppearance(appearance)
+                    designPreviewOpen = false
+                },
+                onDismiss = { designPreviewOpen = false }
+            )
+        }
+        Box(Modifier.fillMaxSize().appScreenBackground(screenBackground, settingsScreenTextColor, paused = settingsScrolling)) {
         Scaffold(containerColor = Color.Transparent, contentColor = settingsScreenTextColor,
         topBar = {
-            TopAppBar(
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = settingsHeaderBackground,
-                    scrolledContainerColor = settingsHeaderBackground,
-                    titleContentColor = settingsScreenTextColor,
-                    navigationIconContentColor = settingsScreenTextColor,
-                    actionIconContentColor = settingsScreenTextColor
-                ),
-                title = {
-                    SettingsTitle(stringResource(R.string.mock_settings), settingsScreenTextColor, fontFamily,
-                        fontSize = 25.sp)
-                },
-                navigationIcon = {
-                    TextButton(onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Back, onBack),
-                        colors = ButtonDefaults.textButtonColors(contentColor = settingsScreenTextColor)) {
-                        Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                            contentDescription = stringResource(R.string.mock_back),
-                            modifier = Modifier.size(25.dp))
+            Column {
+                TopAppBar(
+                    colors = TopAppBarDefaults.topAppBarColors(
+                        containerColor = settingsHeaderBackground,
+                        scrolledContainerColor = settingsHeaderBackground,
+                        titleContentColor = settingsScreenTextColor,
+                        navigationIconContentColor = settingsScreenTextColor,
+                        actionIconContentColor = settingsScreenTextColor
+                    ),
+                    title = {
+                        SettingsTitle(stringResource(R.string.mock_settings), settingsScreenTextColor, fontFamily,
+                            fontSize = 25.sp)
+                    },
+                    navigationIcon = {
+                        TextButton(onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Back, onBack),
+                            colors = ButtonDefaults.textButtonColors(contentColor = settingsScreenTextColor)) {
+                            Icon(imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                                contentDescription = stringResource(R.string.mock_back),
+                                modifier = Modifier.size(25.dp))
+                        }
                     }
+                )
+                if (isAdvancedMode) {
+                    AdvancedSettingsNavigation(
+                        activeCategory = activeSettingsCategory, textColorMode = settings.textColor, fontFamily = fontFamily,
+                        onCategorySelected = { category ->
+                            updateScope.launch {
+                                if (settings.animationsEnabled) settingsListState.animateScrollToItem(category.firstItemIndex)
+                                else settingsListState.scrollToItem(category.firstItemIndex)
+                            }
+                        },
+                        modifier = Modifier.widthIn(max = 840.dp).fillMaxWidth().align(Alignment.CenterHorizontally)
+                            .padding(horizontal = 22.dp, vertical = 6.dp)
+                    )
                 }
-            )
+            }
         }) {
             paddingValues ->
         Box(modifier = Modifier.fillMaxSize().padding(paddingValues), contentAlignment = Alignment.TopCenter) {
             LazyColumn(
                 state = settingsListState,
+                contentPadding = PaddingValues(bottom = 32.dp),
                 modifier = Modifier
                     .widthIn(max = 840.dp)
                     .fillMaxWidth()
                     .fillMaxHeight()
-                    .padding(start = 14.dp, end = 14.dp, bottom = 32.dp)
+                    .padding(horizontal = 14.dp)
             ) {
                 item(key = "appearance_profile") {
                     SettingsContentSurface(backgroundColor = settingsContentBackground,
                         shape = RoundedCornerShape(topStart = 22.dp, topEnd = 22.dp),
                         contentPadding = PaddingValues(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 0.dp)) {
                             AppHeading(
-                                title = stringResource(R.string.mock_appearance), subtitle = stringResource(R.string.mock_appearance_description),
+                                title = stringResource(if (isAdvancedMode) R.string.settings_advanced_title else R.string.mock_appearance),
+                                subtitle = stringResource(if (isAdvancedMode) R.string.settings_advanced_description else R.string.mock_appearance_description),
                                 fontFamily = fontFamily, titleColor = settingsTextColor, subtitleColor = settingsSecondaryTextColor,
                                 titleSize = 21.sp,
                                 subtitleModifier = Modifier.padding(top = 2.dp)
@@ -318,88 +379,22 @@ fun SettingsScreen(
                                 onProfileImageUriChange = viewModel::setProfileImageUri,
                                 onProfileImageSizeChange = { viewModel.setProfileImageSize(localProfileSize) }
                             )
-                            Spacer(modifier = Modifier.height(if (isAdvancedMode) 10.dp else 16.dp))
+                            Spacer(modifier = Modifier.height(12.dp))
                     }
                 }
                 if (isAdvancedMode) {
-                    settingsSurfaceItem(key = "extreme_header", contentType = "settings_header", backgroundColor = settingsContentBackground, bottomSpacing = 10.dp) {
-                        Spacer(modifier = Modifier.height(8.dp))
-                        ExtremeCustomizationHeader(
-                            fontFamily = fontFamily,
-                            textColor = settingsScreenTextColor
-                        )
-                    }
-                    settingsSurfaceItem(key = "extreme_icons", contentType = "settings_panel", backgroundColor = settingsContentBackground, bottomSpacing = 12.dp) {
-                        ExtremeIconsSettingsSection(settings, fontFamily, viewModel::setIconStyle, viewModel::setIconSize)
-                    }
-                    settingsSurfaceItem(key = "extreme_accent", contentType = "settings_panel", backgroundColor = settingsContentBackground, bottomSpacing = 12.dp) {
-                        ExtremeAccentSettingsSection(settings, fontFamily, viewModel::setAccentColor)
-                    }
-                    settingsSurfaceItem(key = "extreme_note_cards", contentType = "settings_panel", backgroundColor = settingsContentBackground, bottomSpacing = 12.dp) {
-                        ExtremeNoteCardsSettingsSection(
-                            settings = settings,
-                            fontFamily = fontFamily,
-                            onNoteCardCornerRadiusChange = viewModel::setNoteCardCornerRadius,
-                            onNoteCardElevationChange = viewModel::setNoteCardElevation,
-                            onNoteCardPaddingChange = viewModel::setNoteCardPadding,
-                            onNoteCardImageHeightChange = viewModel::setNoteCardImageHeight,
-                            onNoteCardOutlineWidthChange = viewModel::setNoteCardOutlineWidth,
-                            onNoteTitleMaxLinesChange = viewModel::setNoteTitleMaxLines,
-                            onNoteContentMaxLinesChange = viewModel::setNoteContentMaxLines,
-                            onNoteLineSpacingChange = viewModel::setNoteLineSpacing,
-                            onShowNoteDateChange = viewModel::setShowNoteDate,
-                            onShowCategoryChipChange = viewModel::setShowCategoryChip,
-                            onShowFavoriteIconChange = viewModel::setShowFavoriteIcon
-                        )
-                    }
-                    settingsSurfaceItem(key = "extreme_fab", contentType = "settings_panel", backgroundColor = settingsContentBackground, bottomSpacing = 12.dp) {
-                        ExtremeFabSettingsSection(settings, fontFamily, viewModel::setFabSize)
-                    }
-                    settingsSurfaceItem(key = "extreme_performance", contentType = "settings_panel", backgroundColor = settingsContentBackground, bottomSpacing = 12.dp) {
-                        ExtremePerformanceSettingsSection(settings, fontFamily, viewModel::setPerformanceMode)
-                    }
-                    settingsSurfaceItem(key = "extreme_motion", contentType = "settings_panel", backgroundColor = settingsContentBackground, bottomSpacing = 18.dp) {
-                        ExtremeMotionSettingsSection(
-                            settings = settings,
-                            fontFamily = fontFamily,
-                            onAnimationsEnabledChange = viewModel::setAnimationsEnabled,
-                            onAnimationStyleChange = viewModel::setAnimationStyle,
-                            onAnimationEasingChange = viewModel::setAnimationEasing,
-                            onAnimationSpeedChange = viewModel::setAnimationSpeed,
-                            onAnimationIntensityChange = viewModel::setAnimationIntensity
-                        )
-                    }
-                    settingsSurfaceItem(key = "options_header", contentType = "settings_header", backgroundColor = settingsContentBackground, bottomSpacing = 10.dp) {
-                        OptionsMenuHeader(fontFamily, settingsScreenTextColor, settingsScreenSecondaryTextColor)
-                    }
-                    settingsSurfaceItem(key = "options_appearance", contentType = "settings_panel", backgroundColor = settingsContentBackground, bottomSpacing = 8.dp) {
-                        OptionsMenuAppearanceSettingsSection(
-                            settings,
-                            fontFamily,
-                            viewModel::setOptionMenuShowIcons,
-                            viewModel::setOptionMenuTextColor,
-                            viewModel::setOptionMenuOpacity
-                        )
-                    }
-                    settingsSurfaceItem(key = "options_main_actions", contentType = "settings_panel", backgroundColor = settingsContentBackground, bottomSpacing = 8.dp) {
-                        OptionsMenuMainActionsSettingsSection(
-                            settings,
-                            fontFamily,
-                            viewModel::setOptionMenuOrder,
-                            viewModel::setOptionMenuHiddenItems
-                        )
-                    }
-                    settingsSurfaceItem(key = "options_priority", contentType = "settings_panel", backgroundColor = settingsContentBackground, bottomSpacing = 8.dp) {
-                        OptionsMenuPrioritySettingsSection(settings, fontFamily, viewModel::setPriorityMenuHiddenItems)
-                    }
-                    settingsSurfaceItem(key = "options_color", contentType = "settings_panel", backgroundColor = settingsContentBackground, bottomSpacing = 8.dp) {
-                        OptionsMenuColorSettingsSection(settings, fontFamily, viewModel::setColorMenuHiddenItems)
+                    settingsSurfaceItem(key = "section_appearance", contentType = "settings_header", backgroundColor = Color.Transparent) {
+                        AdvancedSettingsSectionHeading(AdvancedSettingsCategory.APPEARANCE, fontFamily, settingsScreenTextColor, settingsScreenSecondaryTextColor)
                     }
                 }
-                settingsSurfaceItem(key = "palette_background", contentType = "palette_background", backgroundColor = settingsContentBackground, bottomSpacing = 12.dp) {
+                settingsSurfaceItem(key = "palette_background",
+                    contentType = "palette_background",
+                    backgroundColor = Color.Transparent,
+                    bottomSpacing = 12.dp
+                ) {
                     SettingsSectionPanel(
                         textColorMode = settings.textColor,
-                        contentPadding = PaddingValues(start = 6.dp, top = 14.dp, end = 6.dp, bottom = 14.dp),
+                        contentPadding = appearancePanelPadding,
                         horizontalOutset = 8.dp
                     ) { panelColors ->
                         SettingTitle(
@@ -424,25 +419,47 @@ fun SettingsScreen(
                             colors = backgroundColors,
                             panel = panelColors,
                             fontFamily = fontFamily,
-                            onStyleSelected = viewModel::setSettingsBackgroundStyle
+                            onStyleSelected = viewModel::setSettingsBackgroundStyle,
+                            scrolling = settingsScrolling
                         )
                     }
                 }
+                settingsSurfaceItem(key = "design_styles", backgroundColor = Color.Transparent, bottomSpacing = 12.dp) {
+                    DesignSettingsPanel(
+                        settings, viewModel, fontFamily,
+                        contentPadding = appearancePanelPadding,
+                        onPreview = { designPreviewOpen = true }
+                    )
+                }
                 if (isAdvancedMode) {
+                    settingsSurfaceItem(key = "extreme_accent", contentType = "settings_panel", backgroundColor = settingsContentBackground, bottomSpacing = 12.dp) {
+                        ExtremeAccentSettingsSection(settings, fontFamily, viewModel::setAccentColor)
+                    }
                     percentSliderItem("appearance_panel_tone", R.string.settings_panel_tone, localSettingsPanelTone, settings,
                         settingsContentBackground, fontFamily, { localSettingsPanelTone = it }, { viewModel.setSettingsPanelTone(localSettingsPanelTone) })
                     percentSliderItem("appearance_translucent_panels", R.string.surface_panels_intensity, localSurfacePanelIntensity, settings,
                         settingsContentBackground, fontFamily, { localSurfacePanelIntensity = it }, { viewModel.setSurfacePanelIntensity(localSurfacePanelIntensity) },
                         descriptionRes = R.string.surface_panels_intensity_description)
-
+                    settingsPanelItem("layout_dark_mode", settings, settingsContentBackground, topSpacing = 0.dp) { panelColors ->
+                        SettingsToggleRow(
+                            title = stringResource(R.string.mock_dark_mode),
+                            description = stringResource(R.string.mock_dark_mode_description),
+                            checked = settings.darkMode,
+                            colors = panelColors,
+                            fontFamily = fontFamily,
+                            onCheckedChange = UiSoundPlayer.toggleHandler(context, actionBlock = viewModel::setDarkMode)
+                        )
+                    }
+                    settingsSurfaceItem(key = "section_typography", contentType = "settings_header", backgroundColor = Color.Transparent) {
+                        AdvancedSettingsSectionHeading(AdvancedSettingsCategory.TYPOGRAPHY, fontFamily, settingsScreenTextColor, settingsScreenSecondaryTextColor)
+                    }
                     settingsPanelItem("appearance_text_color", settings, settingsContentBackground) { panelColors ->
                         SettingTitle(stringResource(R.string.mock_text_color), panelColors.text, fontFamily)
                         Spacer(Modifier.height(8.dp))
                         TextColorSelector(settings.textColor, viewModel::setTextColor, settings.font)
                     }
-
                     settingsPanelItem(
-                        "appearance_text_outline", settings, settingsContentBackground, topSpacing = 12.dp,
+                        "appearance_text_outline", settings, settingsContentBackground, topSpacing = 0.dp,
                         contentPadding = PaddingValues(vertical = 0.dp)
                     ) { panelColors ->
                         SettingsToggleRow(
@@ -456,7 +473,7 @@ fun SettingsScreen(
                         )
                     }
                 }
-                settingsPanelItem("font", settings, settingsContentBackground, topSpacing = 20.dp, contentType = null) { panelColors ->
+                settingsPanelItem("font", settings, settingsContentBackground, contentType = null) { panelColors ->
                     if (isAdvancedMode) {
                         val systemFontLabel = stringResource(R.string.mock_font_default)
                         val googleSansFlexLabel = stringResource(R.string.mock_font_google_sans_flex)
@@ -487,10 +504,69 @@ fun SettingsScreen(
                         title = stringResource(R.string.mock_font_size), value = localFontSize,
                         valueLabel = "${localFontSize.roundToInt()} sp", textColor = panelColors.text, fontFamily = fontFamily,
                         onValueChange = { localFontSize = it }, onValueChangeFinished = { viewModel.setFontSize(localFontSize) },
-                        valueRange = 12f..28f, style = if (isAdvancedMode) settings.sliderStyle else "capsule"
+                        valueRange = 12f..28f
                     )
                 }
                 if (isAdvancedMode) {
+                    settingsSurfaceItem(key = "extreme_icons", contentType = "settings_panel", backgroundColor = settingsContentBackground, bottomSpacing = 12.dp) {
+                        ExtremeIconsSettingsSection(settings, fontFamily, viewModel::setIconStyle, viewModel::setIconSize)
+                    }
+                    settingsPanelItem("layout_slider_design", settings, settingsContentBackground) { panelColors ->
+                        KeyedSettingDropdown(
+                            title = stringResource(R.string.mock_slider_style), selectedKey = settings.sliderStyle,
+                            options = SliderStyleOptions.map { it.key to stringResource(it.labelRes) }, textColor = panelColors.text,
+                            textColorMode = settings.textColor, menuBackground = menuBackground, menuTextColor = settingsMenuTextColor,
+                            fontFamily = fontFamily, onSelected = viewModel::setSliderStyle
+                        )
+                    }
+                    settingsSurfaceItem(key = "section_notes", contentType = "settings_header", backgroundColor = Color.Transparent) {
+                        AdvancedSettingsSectionHeading(AdvancedSettingsCategory.NOTES, fontFamily, settingsScreenTextColor, settingsScreenSecondaryTextColor)
+                    }
+                    settingsSurfaceItem(key = "extreme_note_cards", contentType = "settings_panel", backgroundColor = settingsContentBackground, bottomSpacing = 12.dp) {
+                        ExtremeNoteCardsSettingsSection(
+                            settings = settings,
+                            fontFamily = fontFamily,
+                            onNoteCardCornerRadiusChange = viewModel::setNoteCardCornerRadius,
+                            onNoteCardElevationChange = viewModel::setNoteCardElevation,
+                            onNoteCardPaddingChange = viewModel::setNoteCardPadding,
+                            onNoteCardImageHeightChange = viewModel::setNoteCardImageHeight,
+                            onNoteCardOutlineWidthChange = viewModel::setNoteCardOutlineWidth,
+                            onNoteTitleMaxLinesChange = viewModel::setNoteTitleMaxLines,
+                            onNoteContentMaxLinesChange = viewModel::setNoteContentMaxLines,
+                            onNoteLineSpacingChange = viewModel::setNoteLineSpacing,
+                            onShowNoteDateChange = viewModel::setShowNoteDate,
+                            onShowCategoryChipChange = viewModel::setShowCategoryChip,
+                            onShowFavoriteIconChange = viewModel::setShowFavoriteIcon,
+                            onExpandedChange = { viewModel.setSettingsSectionExpanded(SettingsSectionPreferencePolicy.NOTE_CARDS, it) }
+                        )
+                    }
+                    settingsPanelItem("layout_columns", settings, settingsContentBackground) { panelColors ->
+                        SettingDropdown(
+                            title = stringResource(R.string.mock_columns), selectedLabel = settings.gridColumns.toString(),
+                            options = listOf("1" to "1", "2" to "2", "3" to "3"), textColor = panelColors.text,
+                            textColorMode = settings.textColor, menuBackground = menuBackground, menuTextColor = settingsMenuTextColor,
+                            fontFamily = fontFamily,
+                            onSelected = { viewModel.setGridColumns(it.toIntOrNull()?.coerceIn(1, 3) ?: 2) }
+                        )
+                    }
+                    settingsSurfaceItem(key = "extreme_fab", contentType = "settings_panel", backgroundColor = settingsContentBackground, bottomSpacing = 12.dp) {
+                        ExtremeFabSettingsSection(settings, fontFamily, viewModel::setFabSize)
+                    }
+                    settingsSurfaceItem(key = "section_menu", contentType = "settings_header", backgroundColor = Color.Transparent) {
+                        AdvancedSettingsSectionHeading(AdvancedSettingsCategory.MENU, fontFamily, settingsScreenTextColor, settingsScreenSecondaryTextColor)
+                    }
+                    settingsSurfaceItem(key = "options_appearance", contentType = "settings_panel", backgroundColor = settingsContentBackground, bottomSpacing = 12.dp) {
+                        OptionsMenuAppearanceSettingsSection(
+                            settings,
+                            fontFamily,
+                            viewModel::setOptionMenuShowIcons,
+                            viewModel::setOptionMenuTextColor,
+                            viewModel::setOptionMenuOpacity
+                        )
+                    }
+                    settingsSurfaceItem(key = "section_feedback", contentType = "settings_header", backgroundColor = Color.Transparent) {
+                        AdvancedSettingsSectionHeading(AdvancedSettingsCategory.FEEDBACK, fontFamily, settingsScreenTextColor, settingsScreenSecondaryTextColor)
+                    }
                     settingsPanelItem("feedback_sound_effects", settings, settingsContentBackground, contentPadding = FeedbackSettingsPanelPadding) { colors ->
                         FeedbackSettingsPanel(
                             title = stringResource(R.string.sound_effects),
@@ -540,11 +616,7 @@ fun SettingsScreen(
                             menuTextColor = settingsMenuTextColor,
                             fontFamily = fontFamily,
                             showControls = true,
-                            onCheckedChange = { checked ->
-                                UiSoundPlayer.playToggleAudioOnly(context = context, checked = checked)
-                                UiHapticPlayer.playToggle(context = context, checked = checked)
-                                viewModel.setReminderSoundEnabled(checked)
-                            },
+                            onCheckedChange = UiSoundPlayer.toggleHandler(context, actionBlock = viewModel::setReminderSoundEnabled),
                             onSelected = { selectedRingtone ->
                                 UiHapticPlayer.play(context = context, haptic = UiHaptic.Selection)
                                 viewModel.setReminderRingtone(selectedRingtone)
@@ -557,7 +629,7 @@ fun SettingsScreen(
                             onSliderValueChangeFinished = { viewModel.setReminderSoundVolume(localReminderSoundVolume) }
                         )
                     }
-                    settingsPanelItem("feedback_vibration", settings, settingsContentBackground, topSpacing = 16.dp,
+                    settingsPanelItem("feedback_vibration", settings, settingsContentBackground, topSpacing = 0.dp,
                         contentPadding = FeedbackSettingsPanelPadding) { colors ->
                         FeedbackSettingsPanel(
                             title = stringResource(R.string.haptic_effects),
@@ -597,7 +669,45 @@ fun SettingsScreen(
                         )
                     }
                 }
-                settingsPanelItem("language", settings, settingsContentBackground, topSpacing = 18.dp, contentType = null) { panelColors ->
+                if (isAdvancedMode) {
+                    settingsSurfaceItem(key = "section_motion", contentType = "settings_header", backgroundColor = Color.Transparent) {
+                        AdvancedSettingsSectionHeading(
+                            AdvancedSettingsCategory.MOTION, fontFamily, settingsScreenTextColor, settingsScreenSecondaryTextColor
+                        )
+                    }
+                    settingsSurfaceItem(key = "extreme_motion", contentType = "settings_panel", backgroundColor = settingsContentBackground, bottomSpacing = 12.dp) {
+                        ExtremeMotionSettingsSection(
+                            settings = settings,
+                            fontFamily = fontFamily,
+                            onAnimationsEnabledChange = viewModel::setAnimationsEnabled,
+                            onAnimationStyleChange = viewModel::setAnimationStyle,
+                            onAnimationEasingChange = viewModel::setAnimationEasing,
+                            onAnimationSpeedChange = viewModel::setAnimationSpeed,
+                            onAnimationIntensityChange = viewModel::setAnimationIntensity
+                        )
+                    }
+                    settingsPanelItem("note_card_animation_styles", settings, settingsContentBackground,
+                        topSpacing = 0.dp, contentPadding = PaddingValues(0.dp)) { panelColors ->
+                        CardMotionSettingsEntry(
+                            options = cardAnimationOptions,
+                            animationsEnabled = settings.animationsEnabled,
+                            panelIntensity = localSurfacePanelIntensity,
+                            textColor = panelColors.text,
+                            secondaryColor = panelColors.secondaryText,
+                            fontFamily = fontFamily,
+                            onOpen = UiSoundPlayer.actionHandler(context, UiActionSound.Menu) {
+                                cardAnimationDialogOpen = true
+                            }
+                        )
+                    }
+                    settingsSurfaceItem(key = "extreme_performance", contentType = "settings_panel", backgroundColor = settingsContentBackground, bottomSpacing = 12.dp) {
+                        ExtremePerformanceSettingsSection(settings, fontFamily, viewModel::setPerformanceMode)
+                    }
+                    settingsSurfaceItem(key = "section_application", contentType = "settings_header", backgroundColor = Color.Transparent) {
+                        AdvancedSettingsSectionHeading(AdvancedSettingsCategory.APPLICATION, fontFamily, settingsScreenTextColor, settingsScreenSecondaryTextColor)
+                    }
+                }
+                settingsPanelItem("language", settings, settingsContentBackground, contentType = null) { panelColors ->
                     SettingDropdown(
                         title = stringResource(R.string.mock_language),
                         selectedLabel = when (settings.language) {
@@ -616,44 +726,17 @@ fun SettingsScreen(
                     )
                 }
                 if (isAdvancedMode) {
-                    settingsPanelItem("layout_columns", settings, settingsContentBackground) { panelColors ->
-                        SettingDropdown(
-                            title = stringResource(R.string.mock_columns), selectedLabel = settings.gridColumns.toString(),
-                            options = listOf("1" to "1", "2" to "2", "3" to "3"), textColor = panelColors.text,
-                            textColorMode = settings.textColor, menuBackground = menuBackground, menuTextColor = settingsMenuTextColor,
-                            fontFamily = fontFamily,
-                            onSelected = { viewModel.setGridColumns(it.toIntOrNull()?.coerceIn(1, 3) ?: 2) }
-                        )
+                    settingsSurfaceItem(key = "section_data", contentType = "settings_header", backgroundColor = Color.Transparent) {
+                        AdvancedSettingsSectionHeading(AdvancedSettingsCategory.DATA, fontFamily, settingsScreenTextColor, settingsScreenSecondaryTextColor)
                     }
-
-                    settingsPanelItem("layout_slider_design", settings, settingsContentBackground) { panelColors ->
-                        KeyedSettingDropdown(
-                            title = stringResource(R.string.mock_slider_style), selectedKey = settings.sliderStyle,
-                            options = SliderStyleOptions.map { it.key to stringResource(it.labelRes) }, textColor = panelColors.text,
-                            textColorMode = settings.textColor, menuBackground = menuBackground, menuTextColor = settingsMenuTextColor,
-                            fontFamily = fontFamily, onSelected = viewModel::setSliderStyle
-                        )
-                    }
-
-                    settingsPanelItem("layout_dark_mode", settings, settingsContentBackground, topSpacing = 17.dp) { panelColors ->
-                        SettingsToggleRow(
-                            title = stringResource(R.string.mock_dark_mode),
-                            description = stringResource(R.string.mock_dark_mode_description),
-                            checked = settings.darkMode,
-                            colors = panelColors,
-                            fontFamily = fontFamily,
-                            onCheckedChange = UiSoundPlayer.toggleHandler(context, actionBlock = viewModel::setDarkMode)
-                        )
-                    }
-
-                    settingsSurfaceItem(key = "layout_backup_restore", contentType = "settings_panel", backgroundColor = settingsContentBackground) {
-                            Spacer(modifier = Modifier.height(18.dp))
+                    settingsSurfaceItem(key = "layout_backup_restore", contentType = "settings_panel", backgroundColor = settingsContentBackground, bottomSpacing = 12.dp) {
+                            Spacer(modifier = Modifier.height(0.dp))
                             BackupRestoreSection(settings = settings, fontFamily = fontFamily, textColor = settingsTextColor,
                                 secondaryTextColor = settingsSecondaryTextColor, graphicColor = settingsGraphicColor)
                         }
                 }
                 settingsPanelItem(
-                    "development", settings, settingsContentBackground, topSpacing = 22.dp, contentType = null,
+                    "development", settings, settingsContentBackground, contentType = null,
                     contentPadding = PaddingValues(0.dp)
                 ) { panelColors ->
                     Row(
@@ -676,97 +759,41 @@ fun SettingsScreen(
                     SettingsContentSurface(backgroundColor = settingsContentBackground,
                         shape = RoundedCornerShape(bottomStart = 22.dp, bottomEnd = 22.dp),
                         contentPadding = PaddingValues(start = 16.dp, top = 0.dp, end = 16.dp, bottom = 16.dp)) {
-                            Spacer(modifier = Modifier.height(14.dp))
                             SettingsSectionPanel(
                                 textColorMode = settings.textColor,
                                 contentPadding = PaddingValues(horizontal = 14.dp, vertical = 14.dp),
                                 horizontalOutset = 8.dp
                             ) { panelColors ->
-                                Column(modifier = Modifier.fillMaxWidth()) {
-                                    Row(verticalAlignment = Alignment.CenterVertically) {
-                                        Icon(
-                                            imageVector = Icons.Default.Download,
-                                            contentDescription = null,
-                                            tint = panelColors.graphic,
-                                            modifier = Modifier.size(23.dp)
-                                        )
-                                        Column(modifier = Modifier.weight(1f).padding(start = 12.dp)) {
-                                            SettingsTitle(stringResource(R.string.update_settings_title), panelColors.text, fontFamily,
-                                                fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
-                                            SettingsSecondaryText(stringResource(R.string.update_settings_description), panelColors.secondaryText, fontFamily, Modifier.padding(top = 2.dp))
-                                        }
-                                    }
-
-                                    SettingsSecondaryText(stringResource(R.string.update_current_version, installedVersion), panelColors.secondaryText, fontFamily, Modifier.padding(top = 10.dp))
-
-                                    Button(
-                                        onClick = UiSoundPlayer.actionHandler(context, UiActionSound.Menu) {
-                                            updateScope.launch {
-                                                checkingForUpdate = true
-                                                updateActionMessage = null
+                                AppUpdatesSection(
+                                    installedVersion = installedVersion,
+                                    result = updateResult,
+                                    checking = checkingForUpdate,
+                                    downloading = downloadingUpdate,
+                                    actionMessage = updateActionMessage,
+                                    colors = panelColors,
+                                    textColorMode = settings.textColor,
+                                    fontFamily = fontFamily,
+                                    onCheck = {
+                                        updateScope.launch {
+                                            if (checkingForUpdate || downloadingUpdate) return@launch
+                                            checkingForUpdate = true
+                                            updateActionMessage = null
+                                            try {
                                                 updateResult = GitHubUpdateManager.checkForUpdate(context)
+                                            } catch (cancelled: kotlinx.coroutines.CancellationException) {
+                                                throw cancelled
+                                            } catch (error: Exception) {
+                                                updateResult = GitHubUpdateManager.CheckResult.Failure(error.message ?: error.javaClass.simpleName)
+                                            } finally {
                                                 checkingForUpdate = false
                                             }
-                                        },
-                                        enabled = !checkingForUpdate && !downloadingUpdate,
-                                        modifier = Modifier.fillMaxWidth().padding(top = 12.dp),
-                                        shape = RoundedCornerShape(14.dp)
-                                    ) {
-                                        UpdateActionContent(
-                                            checkingForUpdate,
-                                            stringResource(if (checkingForUpdate) R.string.update_checking else R.string.update_check),
-                                            fontFamily
-                                        )
-                                    }
-
-                                    when (val result = updateResult) {
-                                        is GitHubUpdateManager.CheckResult.UpdateAvailable -> {
-                                            SettingsTitle(stringResource(R.string.update_available, result.release.version), panelColors.text, fontFamily,
-                                                modifier = Modifier.padding(top = 12.dp), fontWeight = FontWeight.SemiBold, fontSize = 13.sp)
-                                            if (result.release.title.isNotBlank() && result.release.title != result.release.version) {
-                                                SettingsSecondaryText(result.release.title, panelColors.secondaryText, fontFamily, Modifier.padding(top = 2.dp))
-                                            }
-                                            if (result.release.apkDownloadUrl != null) {
-                                                Button(
-                                                    onClick = { requestDownloadAndInstall(result.release) },
-                                                    enabled = !downloadingUpdate,
-                                                    modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
-                                                    shape = RoundedCornerShape(14.dp)
-                                                ) {
-                                                    UpdateActionContent(
-                                                        downloadingUpdate,
-                                                        stringResource(if (downloadingUpdate) R.string.update_downloading else R.string.update_download_install),
-                                                        fontFamily
-                                                    )
-                                                }
-                                            } else {
-                                                SettingsSecondaryText(stringResource(R.string.update_release_without_apk), panelColors.secondaryText, fontFamily, Modifier.padding(top = 6.dp))
-                                            }
-                                            AppTextButton(stringResource(R.string.update_open_release),
-                                                onClick = { GitHubUpdateManager.openReleasePage(context, result.release.htmlUrl) },
-                                                modifier = Modifier.fillMaxWidth(), fontFamily = fontFamily)
                                         }
-
-                                        is GitHubUpdateManager.CheckResult.UpToDate -> SettingsSecondaryText(
-                                            stringResource(R.string.update_up_to_date, result.latestVersion), panelColors.secondaryText, fontFamily, Modifier.padding(top = 10.dp)
-                                        )
-
-                                        is GitHubUpdateManager.CheckResult.NoPublishedRelease -> {
-                                            SettingsSecondaryText(stringResource(R.string.update_no_release), panelColors.secondaryText, fontFamily, Modifier.padding(top = 10.dp))
-                                            AppTextButton(stringResource(R.string.update_open_release),
-                                                onClick = { GitHubUpdateManager.openReleasePage(context) }, modifier = Modifier.fillMaxWidth(),
-                                                fontFamily = fontFamily)
-                                        }
-
-                                        is GitHubUpdateManager.CheckResult.Failure -> SettingsSecondaryText(stringResource(R.string.update_error, result.reason), MaterialTheme.colorScheme.error, fontFamily, modifier = Modifier.padding(top = 10.dp))
-
-                                        null -> Unit
+                                    },
+                                    onDownload = requestDownloadAndInstall,
+                                    onOpenRelease = { url ->
+                                        GitHubUpdateManager.openReleasePage(context, url ?: GitHubUpdateManager.RELEASES_URL)
                                     }
-
-                                    updateActionMessage?.let { message ->
-                                        SettingsSecondaryText(message, MaterialTheme.colorScheme.error, fontFamily, modifier = Modifier.padding(top = 8.dp))
-                                    }
-                                }
+                                )
                             }
                     }
                 }
@@ -850,21 +877,8 @@ private fun FeedbackSettingsPanel(
     LabeledSettingsSlider(
         title = sliderTitle, value = sliderValue, valueLabel = "${sliderValue.roundToInt()}%", textColor = colors.text,
         fontFamily = fontFamily, onValueChange = onSliderValueChange, onValueChangeFinished = onSliderValueChangeFinished,
-        valueRange = 0f..100f, steps = 19, style = settings.sliderStyle
+        valueRange = 0f..100f, steps = 19
     )
-}
-
-@Composable
-private fun UpdateActionContent(loading: Boolean, label: String, fontFamily: FontFamily) {
-    if (loading) {
-        CircularProgressIndicator(
-            modifier = Modifier.size(17.dp),
-            strokeWidth = 2.dp,
-            color = MaterialTheme.colorScheme.onPrimary
-        )
-        Spacer(modifier = Modifier.width(8.dp))
-    }
-    Text(label, fontFamily = fontFamily, fontWeight = FontWeight.SemiBold)
 }
 
 @Composable
@@ -883,7 +897,9 @@ private fun SettingsToggleRow(
                 fontWeight = FontWeight.SemiBold, fontSize = 15.sp)
             SettingsSecondaryText(description, colors.secondaryText, fontFamily, Modifier.padding(top = 2.dp))
         }
-        Switch(checked = checked, onCheckedChange = onCheckedChange)
+        Switch(checked = checked, onCheckedChange = { checked ->
+            UiSoundPlayer.runWithFallbackClick { onCheckedChange(checked) }
+        })
     }
 }
 
@@ -894,7 +910,7 @@ private fun SettingsContentSurface(
     contentPadding: PaddingValues = PaddingValues(horizontal = 16.dp),
     content: @Composable androidx.compose.foundation.layout.ColumnScope.() -> Unit
 ) {
-    Surface(modifier = Modifier.fillMaxWidth(), shape = shape, color = backgroundColor, tonalElevation = 1.dp) {
+    Surface(modifier = Modifier.fillMaxWidth(), shape = shape, color = backgroundColor, tonalElevation = 0.dp) {
         Column(modifier = Modifier.fillMaxWidth().padding(contentPadding), content = content)
     }
 }
@@ -916,12 +932,13 @@ private fun LazyListScope.settingsPanelItem(
     key: String,
     settings: AppSettings,
     backgroundColor: Color,
-    topSpacing: androidx.compose.ui.unit.Dp = 14.dp,
+    topSpacing: androidx.compose.ui.unit.Dp = 0.dp,
     contentType: Any? = "settings_panel",
     contentPadding: PaddingValues = StandardSettingsPanelPadding,
     content: @Composable androidx.compose.foundation.layout.ColumnScope.(SettingsSectionColors) -> Unit
 ) {
-    settingsSurfaceItem(key = key, contentType = contentType, backgroundColor = backgroundColor) {
+    settingsSurfaceItem(key = key, contentType = contentType, backgroundColor = backgroundColor,
+        bottomSpacing = 12.dp) {
         Spacer(Modifier.height(topSpacing))
         SettingsSectionPanel(
             textColorMode = settings.textColor,
@@ -936,17 +953,16 @@ private fun LazyListScope.percentSliderItem(
     key: String, titleRes: Int, value: Float, settings: AppSettings, backgroundColor: Color, fontFamily: FontFamily,
     onValueChange: (Float) -> Unit, onValueChangeFinished: () -> Unit, descriptionRes: Int? = null
 ) {
-    settingsSurfaceItem(key = key, contentType = "settings_panel", backgroundColor = backgroundColor) {
-        Spacer(modifier = Modifier.height(8.dp))
+    settingsSurfaceItem(key = key, contentType = "settings_panel", backgroundColor = backgroundColor, bottomSpacing = 12.dp) {
         SettingsSectionPanel(
             textColorMode = settings.textColor,
-            contentPadding = PaddingValues(start = 6.dp, top = 14.dp, end = 0.dp, bottom = 14.dp),
+            contentPadding = PaddingValues(14.dp),
             horizontalOutset = 8.dp
         ) { colors ->
             LabeledSettingsSlider(
                 title = stringResource(titleRes), value = value, valueLabel = "${value.roundToInt()}%", textColor = colors.text,
                 fontFamily = fontFamily, onValueChange = onValueChange, onValueChangeFinished = onValueChangeFinished,
-                valueRange = 0f..100f, style = settings.sliderStyle
+                valueRange = 0f..100f
             )
             if (descriptionRes != null) {
                 SettingsSecondaryText(stringResource(descriptionRes), colors.secondaryText, fontFamily, Modifier.padding(top = 2.dp))
@@ -960,12 +976,15 @@ private fun LabeledSettingsSlider(
     title: String, value: Float, valueLabel: String, textColor: Color,
     fontFamily: androidx.compose.ui.text.font.FontFamily,
     onValueChange: (Float) -> Unit, onValueChangeFinished: () -> Unit,
-    valueRange: ClosedFloatingPointRange<Float>, style: String, steps: Int = 0
+    valueRange: ClosedFloatingPointRange<Float>, steps: Int = 0
 ) {
     SettingTitleRow(title = title, value = valueLabel, color = textColor, fontFamily = fontFamily)
     StyledSettingsSlider(value = value, onValueChange = onValueChange, onValueChangeFinished = onValueChangeFinished,
-        valueRange = valueRange, steps = steps, activeColor = MaterialTheme.colorScheme.primary,
-        inactiveColor = MaterialTheme.colorScheme.outline.copy(alpha = 0.35f), style = style, valueLabel = valueLabel)
+        valueRange = valueRange, steps = steps,
+        activeColor = ensureUiContrast(MaterialTheme.colorScheme.primary,
+            MaterialTheme.colorScheme.surfaceContainerLow, 3f),
+        inactiveColor = ensureUiContrast(MaterialTheme.colorScheme.outline,
+            MaterialTheme.colorScheme.surfaceContainerLow, 3f), valueLabel = valueLabel, playTick = true)
 }
 
 @Composable
@@ -1047,7 +1066,7 @@ private fun ProfileAvatarPreview(
 
 @Composable
 private fun ProfileAvatarSizeControl(
-    profileSize: () -> Float, textColor: Color, fontFamily: FontFamily, style: String,
+    profileSize: () -> Float, textColor: Color, fontFamily: FontFamily,
     onValueChange: (Float) -> Unit, onValueChangeFinished: () -> Unit
 ) {
     val size = profileSize()
@@ -1055,7 +1074,7 @@ private fun ProfileAvatarSizeControl(
         title = stringResource(R.string.extreme_profile_size), value = size,
         valueLabel = "${size.roundToInt()} dp", textColor = textColor, fontFamily = fontFamily,
         onValueChange = onValueChange, onValueChangeFinished = onValueChangeFinished,
-        valueRange = 36f..84f, steps = 23, style = style
+        valueRange = 36f..84f, steps = 23
     )
 }
 
@@ -1194,7 +1213,6 @@ private fun ProfileAndModePanel(
             Spacer(modifier = Modifier.height(16.dp))
             ProfileAvatarSizeControl(
                 profileSize = profileSize, textColor = panelColors.text, fontFamily = fontFamily,
-                style = settings.sliderStyle,
                 onValueChange = onProfileSizeValueChange,
                 onValueChangeFinished = onProfileImageSizeChange
             )
@@ -1338,7 +1356,7 @@ private fun TextColorButton(modifier: Modifier, label: String, sampleColor: Colo
             Surface(modifier = Modifier.size(18.dp),
                 shape = CircleShape,
                 color = sampleColor,
-                border = BorderStroke(1.dp, Color.Gray.copy(alpha = 0.45f))) {
+                border = BorderStroke(1.dp, ensureUiContrast(Color.Gray, sampleColor, 3f))) {
             }
             Text(text = label,
                 modifier = Modifier.padding(start = 5.dp),
@@ -1385,9 +1403,10 @@ private fun SettingDropdown(title: String, selectedLabel: String, options: List<
     val dropdownButtonBackground = MaterialTheme.colorScheme.surfaceContainerLow
     val dropdownOutline = MaterialTheme.colorScheme.outline
     val dropdownColors = remember(textColorMode, dropdownButtonBackground, dropdownOutline) {
+        val dropdownInk = com.example.mynotes.ui.theme.settingsSectionColors(dropdownButtonBackground, textColorMode)
         Triple(
-            resolveUiTextColor(value = textColorMode, background = dropdownButtonBackground),
-            com.example.mynotes.ui.theme.resolveUiGraphicColor(value = textColorMode, background = dropdownButtonBackground),
+            dropdownInk.text,
+            dropdownInk.graphic,
             ensureUiContrast(preferred = dropdownOutline, background = dropdownButtonBackground, minimumContrast = 3f)
         )
     }

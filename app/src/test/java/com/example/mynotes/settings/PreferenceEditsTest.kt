@@ -5,6 +5,8 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.PreferenceDataStoreFactory
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.intPreferencesKey
+import androidx.datastore.preferences.core.mutablePreferencesOf
+import androidx.datastore.preferences.core.stringPreferencesKey
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -59,6 +61,25 @@ class PreferenceEditsTest {
     }
 
     @Test
+    fun restoresCapsuleOnceAndKeepsOtherPreferencesAndLaterStyleChoices() = runBlocking {
+        val style = stringPreferencesKey("slider_style")
+        val columns = intPreferencesKey("grid_columns")
+        val migration = SettingsRepository.capsuleSliderMigration
+        val oldSettings = mutablePreferencesOf(style to "glass", columns to 3)
+
+        assertTrue(migration.shouldMigrate(oldSettings))
+        val restored = migration.migrate(oldSettings)
+        assertEquals("capsule", restored[style])
+        assertEquals(3, restored[columns])
+        assertFalse(migration.shouldMigrate(restored))
+
+        val laterChoice = restored.toMutablePreferences().apply { this[style] = "glass" }
+        assertFalse(migration.shouldMigrate(laterChoice))
+        assertEquals("glass", laterChoice[style])
+        assertEquals("minimal", migration.migrate(mutablePreferencesOf(style to "minimal"))[style])
+    }
+
+    @Test
     fun independentConcurrentSettingsAreNotLost() = runBlocking {
         val keys = (0 until 50).map { intPreferencesKey("setting_$it") }
         coroutineScope {
@@ -83,5 +104,52 @@ class PreferenceEditsTest {
         assertTrue(failure.isFailure)
         assertEquals(1, store.data.first()[key])
         assertTrue(store.editIfChanged { setIfChanged(key, 2) })
+    }
+
+    @Test
+    fun collapsedSectionsSurviveDataStoreRecreation() = runBlocking {
+        val unrelated = intPreferencesKey("grid_columns")
+        store.editIfChanged { setIfChanged(unrelated, 3) }
+        store.editIfChanged {
+            SettingsRepository.writeSettingsSectionExpanded(this, SettingsSectionPreferencePolicy.NOTE_CARDS, false)
+        }
+        val saved = SettingsRepository.readCollapsedSettingsSections(store.data.first())
+        storeJob.cancelAndJoin()
+        storeJob = SupervisorJob()
+        store = PreferenceDataStoreFactory.create(scope = CoroutineScope(storeJob + Dispatchers.IO)) {
+            File(temporaryFolder.root, "settings.preferences_pb")
+        }
+        val restored = store.data.first()
+        assertEquals(saved, SettingsRepository.readCollapsedSettingsSections(restored))
+        assertEquals(3, restored[unrelated])
+        assertFalse(SettingsSectionPreferencePolicy.isExpanded(saved, SettingsSectionPreferencePolicy.NOTE_CARDS))
+    }
+
+    @Test
+    fun repeatedConcurrentSectionChangesDoNotLoseState() = runBlocking {
+        coroutineScope {
+            repeat(10) {
+                launch { store.editIfChanged {
+                    SettingsRepository.writeSettingsSectionExpanded(this, SettingsSectionPreferencePolicy.NOTE_CARDS, false)
+                } }
+            }
+        }
+        val saved = SettingsRepository.readCollapsedSettingsSections(store.data.first())
+        assertEquals("note_cards", saved)
+        assertFalse(SettingsSectionPreferencePolicy.isExpanded(saved, SettingsSectionPreferencePolicy.NOTE_CARDS))
+    }
+
+    @Test
+    fun repeatedSectionStateAndUnknownSectionsDoNotWriteAgain() = runBlocking {
+        assertTrue(store.editIfChanged {
+            SettingsRepository.writeSettingsSectionExpanded(this, SettingsSectionPreferencePolicy.NOTE_CARDS, false)
+        })
+        assertFalse(store.editIfChanged {
+            SettingsRepository.writeSettingsSectionExpanded(this, SettingsSectionPreferencePolicy.NOTE_CARDS, false)
+        })
+        assertFalse(store.editIfChanged {
+            SettingsRepository.writeSettingsSectionExpanded(this, "unknown", false)
+        })
+        assertEquals("note_cards", SettingsRepository.readCollapsedSettingsSections(store.data.first()))
     }
 }

@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="design_styles">完整样式</string>
+    <string name="design_styles_description">统一应用颜色、字体和卡片样式。笔记保留原有颜色。</string>
+    <string name="design_preview">预览</string>
+    <string name="design_preset_minimal">简约</string>
+    <string name="design_preset_notebook">笔记本</string>
+    <string name="design_preset_oled">OLED</string>
+    <string name="design_preset_default">默认</string>
+    <string name="design_density">卡片密度</string>
+    <string name="design_compact">紧凑</string>
+    <string name="design_comfortable">宽松</string>
+    <string name="design_focus">专注模式</string>
+    <string name="design_focus_description">打开编辑器时隐藏底部工具面板。</string>
+    <string name="design_enter_focus">开启专注模式</string>
+    <string name="design_exit_focus">退出专注模式</string>
+    <string name="design_editor_tools">附件和工具</string>
+    <string name="design_show_grid">网格视图</string>
+    <string name="design_show_list">列表视图</string>
+    <string name="design_use_comfortable">使用宽松卡片</string>
+    <string name="design_use_compact">使用紧凑卡片</string>
+    <string name="design_sort_by">排序笔记</string>
+    <string name="design_sort_newest">最新优先</string>
+    <string name="design_sort_oldest">最早优先</string>
+    <string name="design_sort_title">标题，A–Z</string>
+    <string name="design_sort_priority">优先级最高</string>
+    <string name="design_section_pinned">置顶</string>
+    <string name="design_section_today">今天</string>
+    <string name="design_section_week">本周</string>
+    <string name="design_section_earlier">更早</string>
+    <string name="design_section_notes">笔记</string>
+    <string name="design_select_note">选择笔记</string>
+    <string name="design_select_note_description">在此阅读，同时保持笔记列表可见。</string>
+    <string name="design_close_preview">关闭笔记预览</string>
+    <string name="design_clear_filters">清除搜索和筛选</string>
+    <string name="design_create_first">创建第一条笔记</string>
+    <string name="design_more_attachments">另有 %1$d 个</string>
+    <string name="design_pdf_pages">PDF · %1$d 页</string>
+    <string name="design_play_audio">播放音频</string>
+    <string name="design_pause_audio">暂停音频</string>
+    <plurals name="design_note_count">
+        <item quantity="one">%1$d 条笔记</item>
+        <item quantity="other">%1$d 条笔记</item>
+    </plurals>
+</resources>

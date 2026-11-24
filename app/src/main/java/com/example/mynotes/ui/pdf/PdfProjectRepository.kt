@@ -57,7 +57,7 @@ object PdfProjectRepository {
     fun newProjectId(): String = UUID.randomUUID().toString()
 
     private fun root(context: Context): File = File(context.filesDir, ROOT).apply { mkdirs() }
-    private fun directory(context: Context, id: String): File = File(root(context), id).apply { mkdirs() }
+    private fun directory(context: Context, id: String): File {require(id.matches(Regex("[a-zA-Z0-9-]{1,80}")));return File(root(context),id).apply{mkdirs()}}
     private fun sourceFile(context: Context, id: String): File = File(directory(context, id), SOURCE_PDF)
 
     fun internalSourceUri(context: Context, id: String): Uri? {
@@ -67,9 +67,10 @@ object PdfProjectRepository {
     }
 
     suspend fun listProjects(context: Context): List<Summary> = withContext(Dispatchers.IO) {
+        com.example.mynotes.studio.StudioStore.get(context).load()
         root(context).listFiles()
             .orEmpty()
-            .filter { it.isDirectory }
+            .filter { it.isDirectory && com.example.mynotes.studio.PlusProfiles.ownsFile(context,"pdf",it.name) }
             .mapNotNull { dir ->
                 runCatching { readPdfProjectSummary(File(dir, PROJECT_JSON)) }.getOrNull()
             }
@@ -117,7 +118,8 @@ object PdfProjectRepository {
         return bitmap
     }
 
-    suspend fun loadProject(context: Context, id: String): Project = withContext(Dispatchers.IO) {
+    suspend fun loadProject(context: Context, id: String, selectedPages:Set<Int>?=null): Project = withContext(Dispatchers.IO) {
+        com.example.mynotes.studio.StudioStore.get(context).load();require(com.example.mynotes.studio.PlusProfiles.ownsFile(context,"pdf",id)){"Project belongs to another local library"}
         val dir = directory(context, id)
         val jsonFile = File(dir, PROJECT_JSON)
         require(jsonFile.exists()) { "Proyecto PDF inexistente" }
@@ -125,6 +127,7 @@ object PdfProjectRepository {
         val pagesArray = json.optJSONArray("pages") ?: JSONArray()
         val pages = buildList {
             for (pageIndex in 0 until pagesArray.length()) {
+                if(selectedPages!=null&&pageIndex !in selectedPages)continue
                 val pageJson = pagesArray.getJSONObject(pageIndex)
                 val background = pageJson.optString("backgroundFile")
                     .takeIf { it.isNotBlank() }
@@ -138,7 +141,7 @@ object PdfProjectRepository {
                         val points = buildList {
                             for (j in 0 until pointsJson.length()) {
                                 val point = pointsJson.getJSONObject(j)
-                                add(PdfPoint(point.optDouble("x").toFloat(), point.optDouble("y").toFloat()))
+                                add(PdfPoint(point.optDouble("x").toFloat(), point.optDouble("y").toFloat(), point.optDouble("pressure", 1.0).toFloat().coerceIn(.15f, 2f)))
                             }
                         }
                         add(
@@ -202,7 +205,8 @@ object PdfProjectRepository {
                         sourcePdfPageIndex = if (pageJson.isNull("sourcePdfPageIndex")) null else pageJson.optInt("sourcePdfPageIndex"),
                         strokes = strokes,
                         texts = texts,
-                        images = images
+                        images = images,
+                        bookmarked = pageJson.optBoolean("bookmarked", false)
                     )
                 )
             }
@@ -224,7 +228,8 @@ object PdfProjectRepository {
         pages: List<PdfPageModel>,
         sourcePdfUri: Uri?
     ): Project = saveMutex.withLock {
-        withContext(Dispatchers.IO + NonCancellable) {
+        withContext(Dispatchers.IO + NonCancellable) {com.example.mynotes.studio.StudioFiles.write {
+        com.example.mynotes.studio.PlusProfiles.claimFile(context,"pdf",id)
         val dir = directory(context, id)
         val source = sourceFile(context, id)
         val expectedInternalUri = runCatching {
@@ -250,6 +255,7 @@ object PdfProjectRepository {
             val pageJson = JSONObject()
                 .put("widthPt", page.widthPt)
                 .put("heightPt", page.heightPt)
+                .put("bookmarked", page.bookmarked)
                 .put("sourcePdfPageIndex", page.sourcePdfPageIndex ?: JSONObject.NULL)
 
             if (page.sourcePdfPageIndex == null && page.background != null) {
@@ -263,7 +269,7 @@ object PdfProjectRepository {
             page.strokes.forEach { stroke ->
                 val points = JSONArray()
                 stroke.points.forEach { point ->
-                    points.put(JSONObject().put("x", point.x.toDouble()).put("y", point.y.toDouble()))
+                    points.put(JSONObject().put("x", point.x.toDouble()).put("y", point.y.toDouble()).put("pressure", point.pressure.toDouble()))
                 }
                 strokesJson.put(
                     JSONObject()
@@ -347,7 +353,7 @@ object PdfProjectRepository {
         // El PDF plano sólo se genera cuando el usuario pulsa Exportar.
 
         Project(id, name, modifiedAt, pages, internalSourceUri(context, id))
-        }
+        }}
     }
 
     /**
@@ -362,27 +368,38 @@ object PdfProjectRepository {
     suspend fun registerExportedPdf(context: Context, uri: Uri, projectId: String) = withContext(Dispatchers.IO) {
         val prefs = context.getSharedPreferences(EXPORT_LINK_PREFS, Context.MODE_PRIVATE)
         val hash = runCatching { sha256(context, uri) }.getOrNull()
-        val editor = prefs.edit().putString("uri:${uri}", projectId)
+        val editor = prefs.edit().putString("uri:${uri}", projectId).remove("flat:${uri}")
+        if (hash != null) editor.putString("uri_sha256:${uri}", hash) else editor.remove("uri_sha256:${uri}")
         if (!hash.isNullOrBlank()) editor.putString("sha256:$hash", projectId)
         editor.apply()
     }
 
-    /** Devuelve el proyecto editable asociado a un PDF exportado por MyNotes, si existe. */
+    /** A partial export must open as its selected pages, even when overwriting a linked full export. */
+    suspend fun registerFlatExport(context: Context, uri: Uri) = withContext(Dispatchers.IO) {
+        val hash = runCatching { sha256(context, uri) }.getOrNull()
+        val editor = context.getSharedPreferences(EXPORT_LINK_PREFS, Context.MODE_PRIVATE).edit()
+            .remove("uri:${uri}").remove("uri_sha256:${uri}")
+        if (hash != null) editor.putString("flat:${uri}", hash) else editor.remove("flat:${uri}")
+        editor.apply()
+    }
+
+    /** Restore editable content only when the file still matches its registered fingerprint. */
     suspend fun loadProjectForExportedPdf(context: Context, uri: Uri): Project? = withContext(Dispatchers.IO) {
         val prefs = context.getSharedPreferences(EXPORT_LINK_PREFS, Context.MODE_PRIVATE)
         val uriKey = "uri:${uri}"
+        val hash = runCatching { sha256(context, uri) }.getOrNull() ?: return@withContext null
+        if (prefs.getString("flat:${uri}", null) == hash) return@withContext null
+        val hashProject = prefs.getString("sha256:$hash", null)
         var projectId = prefs.getString(uriKey, null)
-
-        if (projectId == null) {
-            val hash = runCatching { sha256(context, uri) }.getOrNull()
-            if (!hash.isNullOrBlank()) projectId = prefs.getString("sha256:$hash", null)
+        val recordedHash = prefs.getString("uri_sha256:${uri}", null)
+        if (projectId != null && (if (recordedHash != null) recordedHash != hash else hashProject != projectId)) {
+            prefs.edit().remove(uriKey).remove("uri_sha256:${uri}").apply()
+            projectId = null
         }
-
-        val id = projectId ?: return@withContext null
+        val id = projectId ?: hashProject ?: return@withContext null
         val projectDir = File(root(context), id)
         if (!File(projectDir, PROJECT_JSON).exists()) {
-            // Evita conservar vínculos rotos si el proyecto original fue eliminado.
-            prefs.edit().remove(uriKey).apply()
+            prefs.edit().remove(uriKey).remove("uri_sha256:${uri}").apply()
             return@withContext null
         }
         runCatching { loadProject(context, id) }.getOrNull()
@@ -433,7 +450,7 @@ object PdfProjectRepository {
         Summary(newId, copyName, modifiedAt, json.optJSONArray("pages")?.length() ?: 1)
     }
 
-    suspend fun deleteProject(context: Context, id: String) = withContext(Dispatchers.IO) {
+    suspend fun deleteProject(context: Context, id: String) = withContext(Dispatchers.IO) {com.example.mynotes.studio.StudioFiles.write {
         File(root(context), id).deleteRecursively()
-    }
+    }}
 }

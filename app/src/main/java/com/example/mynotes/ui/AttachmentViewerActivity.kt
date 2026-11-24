@@ -14,7 +14,6 @@ import android.graphics.Canvas
 import android.graphics.Color as AndroidColor
 import android.graphics.pdf.PdfRenderer
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.os.ParcelFileDescriptor
 import android.text.Html
@@ -105,6 +104,7 @@ import com.example.mynotes.ui.media.MediaSeekSlider
 import com.example.mynotes.ui.media.rememberMediaPlaybackState
 import com.example.mynotes.SyncDisplayPerformance
 import com.example.mynotes.applyAndroidNavigationBarPolicy
+import com.example.mynotes.installKeyboardAwareNavigationBarPolicy
 import com.example.mynotes.applySystemBarAppearance
 import com.example.mynotes.performance.DisplayPerformanceController
 import com.example.mynotes.ui.sound.UiActionSound
@@ -145,17 +145,17 @@ class AttachmentViewerActivity : ComponentActivity() {
     override fun onWindowFocusChanged(hasFocus: Boolean) {
         super.onWindowFocusChanged(hasFocus)
         if (hasFocus) {
-            applyAndroidNavigationBarPolicy()
+            window.applyAndroidNavigationBarPolicy()
         }
     }
     override fun onResume() {
         super.onResume()
         DisplayPerformanceController.reapplyLastRequest(window)
-        applyAndroidNavigationBarPolicy()
+        window.applyAndroidNavigationBarPolicy()
     }
     override fun onMultiWindowModeChanged(isInMultiWindowMode: Boolean) {
         super.onMultiWindowModeChanged(isInMultiWindowMode)
-        applyAndroidNavigationBarPolicy()
+        window.applyAndroidNavigationBarPolicy()
     }
     override fun onDestroy() {
         DisplayPerformanceController.release(window)
@@ -170,7 +170,8 @@ class AttachmentViewerActivity : ComponentActivity() {
          * entregue performanceMode.
          */
         enableEdgeToEdge()
-        applyAndroidNavigationBarPolicy()
+        installKeyboardAwareNavigationBarPolicy()
+        window.applyAndroidNavigationBarPolicy()
         val uriString = intent.getStringExtra(EXTRA_URI).orEmpty()
         val type = intent.getStringExtra(EXTRA_TYPE).orEmpty()
         val name = intent.getStringExtra(EXTRA_NAME)
@@ -186,8 +187,9 @@ class AttachmentViewerActivity : ComponentActivity() {
             /* Igual que la Activity principal: Básico = tema claro;
              * Avanzado = preferencia manual guardada. */
             val effectiveDarkTheme = settings.effectiveDarkTheme()
-            LaunchedEffect(effectiveDarkTheme) {
-                applySystemBarAppearance(effectiveDarkTheme)
+            LaunchedEffect(settings.backgroundColor, settings.backgroundToneIndex,
+                settings.darkMode, settings.oledMode, settings.configurationMode) {
+                applySystemBarAppearance(settings)
             }
             MyNotesTheme(settings = settings, darkTheme = effectiveDarkTheme) {
                 AttachmentViewerScreen(uriString = uriString, type = type, name = name, explicitMimeType = mimeType, onBack = { finish() })
@@ -271,13 +273,13 @@ private fun ImageViewer(uri: Uri, name: String?) {
     val layoutPreview = LocalLayoutPreview.current
     val bitmapLimit = remember(context) {
         if (layoutPreview != null) return@remember Size.ORIGINAL
-            val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as? ActivityManager
-            when {
-                activityManager?.isLowRamDevice == true -> Size(3072, 3072)
-                (activityManager?.memoryClass ?: 256) < 192 -> Size(4096, 4096)
-                else -> Size.ORIGINAL
-            }
+        val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as? ActivityManager
+        when {
+            activityManager?.isLowRamDevice == true -> Size(3072, 3072)
+            (activityManager?.memoryClass ?: 256) < 192 -> Size(4096, 4096)
+            else -> Size.ORIGINAL
         }
+    }
     val request = remember(context, uri, bitmapLimit) {
             ImageRequest.Builder(context).data(layoutPreview?.mediaBitmap ?: uri).size(Size.ORIGINAL).maxBitmapSize(bitmapLimit).precision(Precision.EXACT).scale(
                     Scale.FIT).allowHardware(true).memoryCachePolicy(CachePolicy.DISABLED).build()
@@ -288,7 +290,7 @@ private fun ImageViewer(uri: Uri, name: String?) {
         }
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
         if (!failed) {
-            AsyncImage(model = request, contentDescription = name, modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Fit,
+            AsyncImage(model = request, contentDescription = com.example.mynotes.studio.plusImageDescription(uri.toString(), name), modifier = Modifier.fillMaxSize(), contentScale = ContentScale.Fit,
                 onSuccess = {
                     failed = false
                 }, onError = {
@@ -361,6 +363,7 @@ private fun rememberViewerPlayback(
 }
 
 @Composable
+@androidx.annotation.OptIn(markerClass = [androidx.media3.common.util.UnstableApi::class])
 private fun VideoViewer(uri: Uri, name: String, mimeType: String) {
     val context = LocalContext.current
     val (player, playback) = rememberViewerPlayback(uri, playWhenReady = true, copyFallback = ::copyVideoToPlaybackCache)
@@ -394,7 +397,7 @@ private fun VideoViewer(uri: Uri, name: String, mimeType: String) {
         }
         Surface(color = Color.Black, contentColor = Color.White) {
             Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 14.dp, vertical = 10.dp)) {
-                MediaSeekSlider(player, playback, positionToInt = { it.roundToInt() })
+                MediaSeekSlider(player, playback, positionToInt = { it.roundToInt() }, backgroundColor = Color.Black)
                 Row(modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically) {
                     IconButton(enabled = playback.prepared && !playback.error, onClick = UiSoundPlayer.actionHandler(context, UiActionSound.PlayPause) {
                         player?.let { playback.toggle(it) }
@@ -772,6 +775,8 @@ private fun extractOfficeText(context: Context, uri: Uri, extension: String): St
         val fragments = mutableListOf<String>()
         val sharedStrings = mutableListOf<String>()
         val worksheetXml = mutableListOf<String>()
+        var remainingXmlBytes = MAX_TEXT_BYTES
+        var previewLimited = false
         ZipInputStream(openInputStream(context, uri).buffered()).use { zip -> var entry = zip.nextEntry
             while (entry != null) {
                 val entryName = entry.name
@@ -783,7 +788,9 @@ private fun extractOfficeText(context: Context, uri: Uri, extension: String): St
                     else -> false
                 }
                 if (wanted) {
-                    val xml = zip.readBytes().toString(Charsets.UTF_8)
+                    val bytes = zip.readUpTo(remainingXmlBytes)
+                    remainingXmlBytes -= bytes.size
+                    val xml = bytes.toString(Charsets.UTF_8)
                     when {
                         extension == "xlsx" && entryName == "xl/sharedStrings.xml" -> {
                             Regex("<t(?:\\s[^>]*)?>(.*?)</t>", RegexOption.DOT_MATCHES_ALL).findAll(xml).forEach { match ->
@@ -806,20 +813,27 @@ private fun extractOfficeText(context: Context, uri: Uri, extension: String): St
                         }
                     }
                 }
+                if (remainingXmlBytes == 0) {
+                    previewLimited = true
+                    break
+                }
+                if (extension == "docx" && wanted) break
                 zip.closeEntry()
                 entry = zip.nextEntry
             }
         }
         if (extension == "xlsx") {
+            val cellRegex = Regex("<c([^>]*)>(.*?)</c>", setOf(RegexOption.DOT_MATCHES_ALL))
+            val referenceRegex = Regex("r=\"([^\"]+)\"")
+            val valueRegex = Regex("<v>(.*?)</v>", RegexOption.DOT_MATCHES_ALL)
             worksheetXml.forEachIndexed { sheetIndex, xml -> fragments += "Hoja ${sheetIndex + 1}"
-                val cellRegex = Regex("<c([^>]*)>(.*?)</c>", setOf(RegexOption.DOT_MATCHES_ALL))
                 cellRegex.findAll(xml).forEach { cellMatch -> val attrs = cellMatch.groupValues[1]
                     val body = cellMatch.groupValues[2]
-                    val reference = Regex("r=\"([^\"]+)\"").find(attrs)?.groupValues?.getOrNull(1).orEmpty()
-                    val rawValue = Regex("<v>(.*?)</v>", RegexOption.DOT_MATCHES_ALL).find(body)?.groupValues?.getOrNull(1).orEmpty()
+                    val reference = referenceRegex.find(attrs)?.groupValues?.getOrNull(1).orEmpty()
+                    val rawValue = valueRegex.find(body)?.groupValues?.getOrNull(1).orEmpty()
                     val isShared = attrs.contains("t=\"s\"")
                     val value = if (isShared) {
-                        rawValue.toIntOrNull()?.let { sharedStrings.getOrNull(it) }?: rawValue
+                        rawValue.toIntOrNull()?.let { sharedStrings.getOrNull(it) } ?: if (previewLimited) "…" else rawValue
                     } else {
                         decodeXml(rawValue)
                     }
@@ -830,20 +844,15 @@ private fun extractOfficeText(context: Context, uri: Uri, extension: String): St
                 fragments += "\n"
             }
         }
-        fragments.joinToString("\n").replace(Regex("\n{3,}"), "\n\n").trim()
+        val preview = fragments.joinToString("\n").replace(Regex("\n{3,}"), "\n\n").trim()
+        if (previewLimited) preview + "\n\n" + context.getString(R.string.attachment_preview_memory_limit) else preview
     } catch (_: Exception) {
         ""
     }
 }
 
-private fun decodeXml(value: String): String {
-    return if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.N) {
-        Html.fromHtml(value, Html.FROM_HTML_MODE_LEGACY).toString()
-    } else {
-        @Suppress("DEPRECATION")
-        Html.fromHtml(value).toString()
-    }
-}
+private fun decodeXml(value: String): String =
+    Html.fromHtml(value, Html.FROM_HTML_MODE_LEGACY).toString()
 
 private fun InputStream.readUpTo(maxBytes: Int): ByteArray {
     val output = java.io.ByteArrayOutputStream()

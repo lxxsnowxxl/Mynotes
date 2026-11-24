@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<!-- Vistas Android editables. Referencia de diseño: Compose; mapa en doc/layout_compose_previews.json. -->
+<!-- v312: editable design reference; production screen is implemented in Compose. -->
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
@@ -14,8 +14,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:paddingStart="14dp"
-        android:paddingEnd="14dp"
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
         android:paddingTop="8dp"
         android:id="@+id/preview_08_notes_empty_linearlayout_1">
         <LinearLayout
@@ -51,7 +51,7 @@
                     android:layout_marginTop="1dp"
                     android:id="@+id/preview_08_notes_empty_textview_5" />
             </LinearLayout>
-            <ImageView
+            <android.widget.ImageView
                 android:layout_width="46dp"
                 android:layout_height="46dp"
                 android:src="@drawable/preview_ic_person"
@@ -59,11 +59,11 @@
                 android:background="@drawable/layout_xml_tone"
                 android:padding="12dp"
                 android:id="@+id/preview_08_notes_empty_imageview_6" />
-            <ImageButton
+            <android.widget.ImageButton
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:src="@drawable/preview_ic_settings"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:background="@android:color/transparent"
                 android:padding="12dp"
                 android:id="@+id/preview_08_notes_empty_open_settings"
                 android:contentDescription="@string/mock_settings"
@@ -81,7 +81,7 @@
             android:paddingEnd="14dp"
             android:gravity="center_vertical"
             android:id="@+id/preview_08_notes_empty_linearlayout_9">
-            <ImageView
+            <android.widget.ImageView
                 android:layout_width="20dp"
                 android:layout_height="20dp"
                 android:src="@drawable/preview_ic_search"
@@ -103,145 +103,86 @@
                 android:paddingStart="12dp"
                 android:inputType="text" />
         </LinearLayout>
+        
         <Space
             android:layout_width="1dp"
             android:layout_height="10dp" />
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:gravity="center_vertical"
+            android:id="@+id/preview_08_notes_empty_view_controls">
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:text="@string/design_section_notes"
+                android:textSize="14sp"
+                android:textColor="@color/layout_xml_text"
+                android:layout_weight="1" />
+            <android.widget.ImageButton
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/layout_xml_design_list"
+                android:contentDescription="@string/design_show_list"
+                android:padding="12dp"
+                android:tint="@color/layout_xml_text"
+                android:background="@android:color/transparent" />
+            <android.widget.ImageButton
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/layout_xml_design_density"
+                android:contentDescription="@string/design_use_compact"
+                android:padding="12dp"
+                android:tint="@color/layout_xml_text"
+                android:background="@android:color/transparent" />
+            <android.widget.ImageButton
+                android:layout_width="48dp"
+                android:layout_height="48dp"
+                android:src="@drawable/layout_xml_design_sort"
+                android:contentDescription="@string/design_sort_by"
+                android:padding="12dp"
+                android:tint="@color/layout_xml_text"
+                android:background="@android:color/transparent" />
+        </LinearLayout>
         <HorizontalScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:scrollbars="none"
-            android:id="@+id/preview_08_notes_empty_horizontalscrollview_13">
+            android:fillViewport="true">
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
-                android:gravity="center_vertical"
-                android:id="@+id/preview_08_notes_empty_linearlayout_14">
+                android:orientation="horizontal">
                 <Button
                     android:layout_width="wrap_content"
-                    android:layout_height="36dp"
-                    android:id="@+id/preview_08_notes_empty_filter_0"
-                    android:text="@string/mock_filter_all"
-                    android:textAllCaps="false"
-                    android:textColor="@color/layout_xml_on_primary"
-                    android:textSize="14sp"
-                    android:fontFamily="sans-serif"
-                    android:minHeight="44dp"
-                    android:minWidth="0dp"
-                    android:background="@drawable/layout_xml_button_filled"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:layout_marginEnd="7dp" />
+                    android:layout_height="wrap_content"
+                    android:text="@string/organize_all_folders"
+                    android:minHeight="48dp" />
                 <Button
                     android:layout_width="wrap_content"
-                    android:layout_height="36dp"
-                    android:id="@+id/preview_08_notes_empty_filter_1"
-                    android:text="@string/mock_favorites"
-                    android:textAllCaps="false"
-                    android:textColor="@color/layout_xml_text"
-                    android:textSize="14sp"
-                    android:fontFamily="sans-serif"
-                    android:minHeight="44dp"
-                    android:minWidth="0dp"
-                    android:background="@drawable/layout_xml_button_outline"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:layout_marginEnd="7dp" />
+                    android:layout_height="wrap_content"
+                    android:text="Ideas"
+                    android:minHeight="48dp" />
                 <Button
                     android:layout_width="wrap_content"
-                    android:layout_height="36dp"
-                    android:id="@+id/preview_08_notes_empty_filter_2"
-                    android:text="@string/widget_pinned_collection"
-                    android:textAllCaps="false"
-                    android:textColor="@color/layout_xml_text"
-                    android:textSize="14sp"
-                    android:fontFamily="sans-serif"
-                    android:minHeight="44dp"
-                    android:minWidth="0dp"
-                    android:background="@drawable/layout_xml_button_outline"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:layout_marginEnd="7dp" />
+                    android:layout_height="wrap_content"
+                    android:text="Estudios"
+                    android:minHeight="48dp" />
                 <Button
                     android:layout_width="wrap_content"
-                    android:layout_height="36dp"
-                    android:id="@+id/preview_08_notes_empty_filter_3"
-                    android:text="@string/widget_high_priority"
-                    android:textAllCaps="false"
-                    android:textColor="@color/layout_xml_text"
-                    android:textSize="14sp"
-                    android:fontFamily="sans-serif"
-                    android:minHeight="44dp"
-                    android:minWidth="0dp"
-                    android:background="@drawable/layout_xml_button_outline"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:layout_marginEnd="7dp" />
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="36dp"
-                    android:id="@+id/preview_08_notes_empty_filter_4"
-                    android:text="@string/mock_work"
-                    android:textAllCaps="false"
-                    android:textColor="@color/layout_xml_text"
-                    android:textSize="14sp"
-                    android:fontFamily="sans-serif"
-                    android:minHeight="44dp"
-                    android:minWidth="0dp"
-                    android:background="@drawable/layout_xml_button_outline"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:layout_marginEnd="7dp" />
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="36dp"
-                    android:id="@+id/preview_08_notes_empty_filter_5"
-                    android:text="@string/mock_personal"
-                    android:textAllCaps="false"
-                    android:textColor="@color/layout_xml_text"
-                    android:textSize="14sp"
-                    android:fontFamily="sans-serif"
-                    android:minHeight="44dp"
-                    android:minWidth="0dp"
-                    android:background="@drawable/layout_xml_button_outline"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:layout_marginEnd="7dp" />
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="36dp"
-                    android:id="@+id/preview_08_notes_empty_filter_6"
-                    android:text="@string/mock_images"
-                    android:textAllCaps="false"
-                    android:textColor="@color/layout_xml_text"
-                    android:textSize="14sp"
-                    android:fontFamily="sans-serif"
-                    android:minHeight="44dp"
-                    android:minWidth="0dp"
-                    android:background="@drawable/layout_xml_button_outline"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:layout_marginEnd="7dp" />
-                <Button
-                    android:layout_width="wrap_content"
-                    android:layout_height="36dp"
-                    android:id="@+id/preview_08_notes_empty_filter_7"
-                    android:text="@string/mock_files"
-                    android:textAllCaps="false"
-                    android:textColor="@color/layout_xml_text"
-                    android:textSize="14sp"
-                    android:fontFamily="sans-serif"
-                    android:minHeight="44dp"
-                    android:minWidth="0dp"
-                    android:background="@drawable/layout_xml_button_outline"
-                    android:paddingStart="12dp"
-                    android:paddingEnd="12dp"
-                    android:layout_marginEnd="7dp" />
+                    android:layout_height="wrap_content"
+                    android:text="@string/organize_archived"
+                    android:minHeight="48dp" />
+                <android.widget.ImageButton
+                    android:layout_width="48dp"
+                    android:layout_height="48dp"
+                    android:src="@drawable/layout_xml_design_note"
+                    android:contentDescription="@string/organize_manage_folders"
+                    android:tint="@color/layout_xml_text"
+                    android:padding="12dp"
+                    android:background="@android:color/transparent" />
             </LinearLayout>
         </HorizontalScrollView>
-        <Space
-            android:layout_width="1dp"
-            android:layout_height="10dp" />
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
@@ -252,45 +193,45 @@
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
                 android:layout_gravity="center"
-                android:gravity="center_horizontal"
-                android:id="@+id/preview_08_notes_empty_linearlayout_25">
+                android:gravity="center"
+                android:padding="24dp">
+                <android.widget.ImageView
+                    android:layout_width="96dp"
+                    android:layout_height="96dp"
+                    android:src="@drawable/layout_xml_design_note"
+                    android:padding="24dp"
+                    android:tint="@color/layout_xml_text"
+                    android:contentDescription="@null"
+                    android:background="@drawable/layout_xml_tone" />
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="📝"
-                    android:textSize="38sp"
+                    android:text="@string/mock_no_notes"
+                    android:textSize="22sp"
                     android:textColor="@color/layout_xml_text"
-                    android:fontFamily="sans-serif"
-                    android:textStyle="normal"
-                    android:id="@+id/preview_08_notes_empty_textview_26" />
+                    android:layout_marginTop="16dp"
+                    android:textStyle="bold"
+                    android:gravity="center" />
                 <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="No notes yet"
+                    android:text="@string/mock_create_first_note"
                     android:textSize="14sp"
                     android:textColor="@color/layout_xml_text"
-                    android:fontFamily="sans-serif"
-                    android:textStyle="normal"
-                    android:gravity="center"
-                    android:layout_marginTop="10dp"
-                    android:id="@+id/preview_08_notes_empty_textview_27" />
-                <TextView
-                    android:layout_width="wrap_content"
+                    android:layout_marginTop="16dp"
+                    android:gravity="center" />
+                <Button
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Create your first note with the + button."
-                    android:textSize="14sp"
-                    android:textColor="@color/layout_xml_text"
-                    android:fontFamily="sans-serif"
-                    android:textStyle="normal"
-                    android:gravity="center"
-                    android:layout_marginTop="10dp"
-                    android:id="@+id/preview_08_notes_empty_textview_28" />
+                    android:text="@string/design_create_first"
+                    android:minHeight="48dp"
+                    android:layout_marginTop="16dp" />
             </LinearLayout>
         </FrameLayout>
     </LinearLayout>
-    <ImageButton
-        android:layout_width="58dp"
-        android:layout_height="58dp"
+    <android.widget.ImageButton
+        android:layout_width="48dp"
+        android:layout_height="48dp"
         android:layout_gravity="bottom|end"
         android:layout_marginEnd="16dp"
         android:layout_marginBottom="16dp"

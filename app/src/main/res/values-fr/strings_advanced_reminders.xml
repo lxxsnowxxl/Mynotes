@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="reminder_advanced_schedule">Programmation avancée</string>
+    <string name="reminder_repeat_interval">Répéter tous les (1 à 365)</string>
+    <string name="reminder_repeat_interval_hint">Par exemple, 2 signifie tous les deux jours, semaines ou mois selon la répétition choisie.</string>
+    <string name="reminder_repeat_limit">Nombre maximal de répétitions</string>
+    <string name="reminder_repeat_limit_hint">Laisser vide pour ne pas fixer de limite.</string>
+    <string name="reminder_monthly_pattern">Quel jour du mois ?</string>
+    <string name="reminder_month_same_day">Même date</string>
+    <string name="reminder_month_first">Premier</string>
+    <string name="reminder_month_second">Deuxième</string>
+    <string name="reminder_month_third">Troisième</string>
+    <string name="reminder_month_fourth">Quatrième</string>
+    <string name="reminder_month_fifth">Cinquième</string>
+    <string name="reminder_month_last">Dernier</string>
+    <string name="reminder_advance_heading">Alertes anticipées</string>
+    <string name="reminder_advance_at_time">Alerte également à l’heure de l’événement (toujours active)</string>
+    <string name="reminder_advance_description">Choisissez quand recevoir d’autres alertes avant l’événement. Plusieurs choix possibles.</string>
+    <string name="reminder_advance_quick_options">Options rapides</string>
+    <string name="reminder_advance_none">Aucune alerte anticipée. Vous serez averti à l’heure prévue.</string>
+    <string name="reminder_advance_selected">Alertes sélectionnées · touchez × pour supprimer</string>
+    <string name="reminder_advance_past_selected">Certaines alertes sont déjà dépassées et ne seront pas programmées. Supprimez-les ou modifiez la date.</string>
+    <string name="reminder_advance_custom">Créer une autre alerte</string>
+    <string name="reminder_advance_amount">Quantité</string>
+    <string name="reminder_advance_unit_minutes">Min</string>
+    <string name="reminder_advance_unit_hours">Heures</string>
+    <string name="reminder_advance_unit_days">Jours</string>
+    <string name="reminder_advance_add">Ajouter une alerte</string>
+    <string name="reminder_advance_invalid">Saisissez une valeur entre 1 minute et 7 jours.</string>
+    <string name="reminder_advance_duplicate">Cette alerte est déjà sélectionnée.</string>
+    <string name="reminder_advance_limit">Vous pouvez ajouter jusqu’à 12 alertes.</string>
+    <string name="reminder_advance_past">Cette heure est passée. Réduisez le délai ou modifiez la date.</string>
+    <string name="reminder_advance_help">Les alertes sont enregistrées avec le rappel. Choisissez les minutes, heures ou jours.</string>
+    <string name="reminder_advance_remove">Supprimer l’alerte</string>
+    <string name="reminder_advance_one_day">1 jour avant</string>
+    <string name="reminder_advance_days">%1$d jours avant</string>
+    <string name="reminder_advance_one_hour">1 heure avant</string>
+    <string name="reminder_advance_hours">%1$d heures avant</string>
+    <string name="reminder_advance_one_minute">1 minute avant</string>
+    <string name="reminder_advance_minutes">%1$d minutes avant</string>
+
+    <string name="reminder_advanced_schedule_description">Réglez ici la répétition et les alertes supplémentaires. L’alerte principale reste toujours prévue à l’heure de l’événement.</string>
+    <string name="reminder_advanced_event_summary">Événement : %1$s</string>
+    <string name="reminder_repeat_unlock_hint">Choisissez un mode de répétition ci-dessus pour afficher les réglages avancés de fréquence et de limite.</string>
+    <string name="reminder_repeat_rules_heading">Règles de répétition</string>
+    <string name="reminder_repeat_rules_description">Choisissez la fréquence et, si besoin, le nombre maximal d’occurrences.</string>
+    <string name="reminder_main_alert_label">Alerte principale</string>
+    <string name="reminder_always_on">Toujours active</string>
+    <string name="reminder_advance_availability_hint">L’événement est dans environ %1$d min. Les options déjà passées sont désactivées.</string>
+    <string name="reminder_notification_plan">Notifications à venir</string>
+    <string name="reminder_required">Obligatoire</string>
+</resources>

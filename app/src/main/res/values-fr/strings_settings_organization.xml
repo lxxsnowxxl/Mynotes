@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_advanced_title">Réglages avancés</string>
+    <string name="settings_advanced_description">Vos réglages, organisés par section.</string>
+    <string name="advanced_nav_appearance">Style</string>
+    <string name="advanced_nav_notes">Notes</string>
+    <string name="advanced_nav_menu">Menu</string>
+    <string name="advanced_nav_feedback">Sons</string>
+    <string name="advanced_nav_system">Système</string>
+    <string name="advanced_nav_application">App</string>
+    <string name="advanced_section_appearance">Apparence et style</string>
+    <string name="advanced_section_appearance_description">Couleurs, fonds, intensité et mode sombre.</string>
+    <string name="advanced_section_notes">Cartes et organisation</string>
+    <string name="advanced_section_notes_description">Ajustez les cartes, les colonnes et le bouton de création.</string>
+    <string name="advanced_section_menu">Menu des notes</string>
+    <string name="advanced_section_menu_description">Personnalisez son apparence, son ordre et ses options.</string>
+    <string name="advanced_section_feedback">Sons et vibrations</string>
+    <string name="advanced_section_feedback_description">Effets, rappels et retour tactile.</string>
+    <string name="advanced_section_system">Performances et animations</string>
+    <string name="advanced_section_system_description">Équilibrez la fluidité et les animations.</string>
+    <string name="advanced_section_application">Application</string>
+    <string name="advanced_section_application_description">Langue et préférences générales.</string>
+    <string name="advanced_nav_typography">Texte</string>
+    <string name="advanced_section_typography">Texte et icônes</string>
+    <string name="advanced_section_typography_description">Police, icônes et commandes.</string>
+    <string name="advanced_nav_motion">Animation</string>
+    <string name="advanced_section_motion">Animations et performances</string>
+    <string name="advanced_section_motion_description">Transitions, animations et consommation des ressources.</string>
+    <string name="advanced_nav_data">Données</string>
+    <string name="advanced_section_data">Données</string>
+    <string name="advanced_section_data_description">Sauvegardes, développement et mises à jour.</string>
+</resources>

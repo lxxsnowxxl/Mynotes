@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- v311: editable XML reference for the matching Compose screen. -->
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    tools:layout_width="1100dp"
+    tools:layout_height="800dp"
+    android:background="@drawable/layout_xml_app_background"
+    android:theme="@style/LayoutXmlPreviewTheme">
+    <include
+        layout="@layout/preview_01_notes"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.44" />
+    <include
+        layout="@layout/preview_03_note_detail"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_weight="0.56" />
+</LinearLayout>

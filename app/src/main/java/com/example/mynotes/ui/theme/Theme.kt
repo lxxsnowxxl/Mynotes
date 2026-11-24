@@ -1,9 +1,16 @@
 package com.example.mynotes.ui.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.LocalIndication
+import androidx.compose.material3.LocalRippleConfiguration
+import androidx.compose.material3.ExperimentalMaterial3Api
+import com.example.mynotes.ui.components.NoShadeIndication
 import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Shapes
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.unit.dp
 import androidx.compose.material3.Typography as MaterialTypography
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
@@ -17,7 +24,9 @@ import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import com.example.mynotes.settings.AppSettings
+import com.example.mynotes.settings.SettingsValuePolicy
 import com.example.mynotes.ui.components.AppBackgroundProvider
+import com.example.mynotes.ui.components.LocalSliderStyle
 
 private const val FIXED_HEADER_DARKEN_AMOUNT = 0.054f
 private fun mixColor(first: Color, second: Color, amount: Float): Color {
@@ -35,28 +44,79 @@ fun AppSettings.effectiveDarkTheme(): Boolean =
     configurationMode == "advanced" && darkMode
 
 /**
- * Regla de color solicitada para el modo Automático de la paleta global:
- * la mitad más clara de la paleta usa negro y la mitad más oscura usa blanco.
- * Negro/Blanco manuales siguen teniendo prioridad absoluta.
+ * En el modo automático se respeta la intención de cada tono si cumple contraste.
+ * Negro y blanco manuales son preferencias, pero la INTERFAZ nunca dibuja un
+ * texto ilegible: sólo el color mostrado puede cambiar, no el valor guardado.
+ * El contenido elegido expresamente dentro de una nota sigue siendo independiente.
  */
 private fun usesDarkTextForTone(palette: MyNotesPalette, toneIndex: Int): Boolean =
     palette.normalizeToneIndex(toneIndex) < palette.darkToneStartIndex
 
 private fun resolvedPaletteTextColor(textColor: String, palette: MyNotesPalette, toneIndex: Int, background: Color): Color {
-    if (textColor == "black" || textColor == "white") {
-        return resolveUiTextColor(value = textColor, background = background)
+    val preferred = when (textColor) {
+        "black" -> Color.Black
+        "white" -> Color.White
+        else -> if (usesDarkTextForTone(palette, toneIndex)) Color.Black else Color.White
     }
-    val preferred = if (usesDarkTextForTone(palette, toneIndex)) Color.Black else Color.White
-    return if (uiContrastRatio(preferred, background) >= 4.5f) preferred else automaticUiTextColor(background)
+    return ensureUiContrast(preferred, background, minimumContrast = 4.5f)
 }
 private fun resolvedPaletteSecondaryTextColor(textColor: String, palette: MyNotesPalette, toneIndex: Int, background: Color): Color {
     val primary = resolvedPaletteTextColor(textColor, palette, toneIndex, background)
-    return if (textColor == "black" || textColor == "white") {
-        primary
-    } else {
-        softenUiColorToContrast(foreground = primary, background = background, minimumContrast = 4.5f, maximumSoftening = 0.42f)
-    }
+    return softenUiColorToContrast(
+        foreground = primary, background = background,
+        minimumContrast = 4.5f, maximumSoftening = 0.42f
+    )
 }
+
+/** Ajusta un acento en su misma dirección cromática hasta que sea visible. */
+private fun readablePaletteAccent(preferred: Color, background: Color): Color {
+    if (uiContrastRatio(preferred, background) >= 3f) return preferred
+    val target = automaticUiTextColor(background)
+    var low = 0f
+    var high = 1f
+    repeat(18) {
+        val middle = (low + high) / 2f
+        if (uiContrastRatio(mixColor(preferred, target, middle), background) >= 3.05f) {
+            high = middle
+        } else {
+            low = middle
+        }
+    }
+    return ensureUiContrast(mixColor(preferred, target, high), background, 3f)
+}
+
+/** Papeles, tarjetas, ventanas y toolbars usan la misma tonalidad como origen. */
+private fun schemeWithCompleteSurfaces(
+    background: Color,
+    content: Color,
+    panelTarget: Color,
+    lowAmount: Float,
+    containerAmount: Float,
+    highAmount: Float,
+    variantAmount: Float,
+    accent: Color
+): PaletteSurfaces {
+    // No usar colores de contenedor predeterminados de Material (grises fijos).
+    val lowest = mixColor(background, panelTarget, lowAmount * 0.55f)
+    val low = mixColor(background, panelTarget, lowAmount)
+    val middle = mixColor(background, panelTarget, containerAmount)
+    val high = mixColor(background, panelTarget, highAmount)
+    val highest = mixColor(background, panelTarget, maxOf(highAmount, containerAmount) * 1.16f)
+    val variant = mixColor(background, panelTarget, variantAmount)
+    val inverted = mixColor(background, content, 0.78f)
+    return PaletteSurfaces(
+        lowest = lowest, low = low, middle = middle, high = high,
+        highest = highest, variant = variant, inverted = inverted,
+        inverseInk = automaticUiTextColor(inverted),
+        inverseAccent = readablePaletteAccent(accent, inverted)
+    )
+}
+
+private data class PaletteSurfaces(
+    val lowest: Color, val low: Color, val middle: Color, val high: Color,
+    val highest: Color, val variant: Color, val inverted: Color,
+    val inverseInk: Color, val inverseAccent: Color
+)
 
 private fun resolveAccentColor(value: String, palette: MyNotesPalette): Color {
     return when (value) {
@@ -141,83 +201,83 @@ private fun typographyWithBlackOutline(base: MaterialTypography, enabled: Boolea
             base.labelSmall.withBlackOutline(true))
 }
 
-internal fun lightScheme(palette:
-        MyNotesPalette, toneIndex: Int, surfacePanelIntensity: Float, textColor: String,
-    accentColor: String): ColorScheme {
-    val baseTone = palette.toneAt(toneIndex)
-    val body = baseTone
-    val header = mixColor(baseTone, Color.Black, FIXED_HEADER_DARKEN_AMOUNT)
+internal fun lightScheme(palette: MyNotesPalette, toneIndex: Int, surfacePanelIntensity: Float,
+    textColor: String, accentColor: String): ColorScheme {
+    val body = palette.toneAt(toneIndex)
+    val header = mixColor(body, Color.Black, FIXED_HEADER_DARKEN_AMOUNT)
+    val bodyContent = resolvedPaletteTextColor(textColor, palette, toneIndex, body)
+    val surfaceContent = resolvedPaletteTextColor(textColor, palette, toneIndex, header)
+    val panelTarget = if (bodyContent == Color.Black) Color.White else Color.Black
     val panelMix = (surfacePanelIntensity.coerceIn(0f, 100f) / 100f)
-    val accent = resolveAccentColor(accentColor, palette)
-    val automaticDarkTone = textColor == "auto" && !usesDarkTextForTone(palette, toneIndex)
-    val panelTarget = if (automaticDarkTone) Color.Black else Color.White
-    val surfaceVariantColor = mixColor(body, panelTarget, (panelMix * 0.625f).coerceIn(0f, 1f))
-    val surfaceContainerColor = mixColor(body, panelTarget, (panelMix * 0.8055556f).coerceIn(0f, 1f))
-    val bodyContent = resolvedPaletteTextColor(textColor = textColor, palette = palette, toneIndex = toneIndex, background = body)
-    val surfaceContent = resolvedPaletteTextColor(textColor = textColor, palette = palette, toneIndex = toneIndex, background = header)
-    val variantContent = resolvedPaletteSecondaryTextColor(textColor = textColor, palette = palette, toneIndex = toneIndex, background = surfaceVariantColor)
+    val accent = readablePaletteAccent(resolveAccentColor(accentColor, palette), body)
+    val surfaces = schemeWithCompleteSurfaces(body, surfaceContent, panelTarget,
+        lowAmount = panelMix, containerAmount = (panelMix * 0.8055556f),
+        highAmount = (panelMix * 0.5833333f), variantAmount = (panelMix * 0.625f), accent = accent)
+    val primaryContainer = mixColor(accent, panelTarget, 0.80f)
+    val secondaryContainer = mixColor(accent, panelTarget, 0.88f)
     return lightColorScheme(
-        primary = accent,
-        onPrimary = readableContentColor(accent),
-        primaryContainer = mixColor(accent, Color.White, 0.80f),
-        onPrimaryContainer = readableContentColor(mixColor(accent, Color.White, 0.80f)),
-        secondary = accent,
-        onSecondary = readableContentColor(accent),
-        secondaryContainer = mixColor(accent, Color.White, 0.88f),
-        onSecondaryContainer = readableContentColor(mixColor(accent, Color.White, 0.88f)),
-        background = body,
-        onBackground = bodyContent,
-        surface = header,
-        onSurface = surfaceContent,
-        surfaceVariant = surfaceVariantColor,
-        onSurfaceVariant = variantContent,
-        surfaceContainerLow = mixColor(body, panelTarget, panelMix),
-        surfaceContainer = surfaceContainerColor,
-        surfaceContainerHigh = mixColor(body, panelTarget, (panelMix * 0.5833333f).coerceIn(0f, 1f)),
-        outline = ensureUiContrast(preferred = mixColor(accent, Color.Black, 0.22f), background = body, minimumContrast = 3f))
+        primary = accent, onPrimary = readableContentColor(accent),
+        primaryContainer = primaryContainer, onPrimaryContainer = readableContentColor(primaryContainer),
+        secondary = accent, onSecondary = readableContentColor(accent),
+        secondaryContainer = secondaryContainer, onSecondaryContainer = readableContentColor(secondaryContainer),
+        tertiary = accent, onTertiary = readableContentColor(accent),
+        tertiaryContainer = secondaryContainer, onTertiaryContainer = readableContentColor(secondaryContainer),
+        background = body, onBackground = bodyContent,
+        surface = header, onSurface = surfaceContent,
+        surfaceVariant = surfaces.variant,
+        onSurfaceVariant = resolvedPaletteSecondaryTextColor(textColor, palette, toneIndex, surfaces.variant),
+        surfaceContainerLowest = surfaces.lowest, surfaceContainerLow = surfaces.low,
+        surfaceContainer = surfaces.middle, surfaceContainerHigh = surfaces.high,
+        surfaceContainerHighest = surfaces.highest,
+        surfaceBright = surfaces.highest, surfaceDim = surfaces.lowest,
+        inverseSurface = surfaces.inverted, inverseOnSurface = surfaces.inverseInk,
+        inversePrimary = surfaces.inverseAccent,
+        surfaceTint = accent,
+        outline = paletteMatchedOutlineColor(body, minimumContrast = 3f),
+        outlineVariant = paletteMatchedOutlineColor(surfaces.variant, minimumContrast = 3f)
+    )
 }
 
-internal fun darkScheme(palette:
-        MyNotesPalette, toneIndex: Int, surfacePanelIntensity: Float, textColor: String,
-    accentColor: String): ColorScheme {
-    val selected = palette.toneAt(toneIndex)
-    val automaticPaletteMode = textColor != "black" && textColor != "white"
-    val automaticDarkTone = automaticPaletteMode && !usesDarkTextForTone(palette, toneIndex)
-    val base = if (automaticPaletteMode) {
-            selected
-        } else {
-            mixColor(selected, Color.Black, 0.84f)
-        }
-    val body = base
-    val header = mixColor(base, Color.Black, FIXED_HEADER_DARKEN_AMOUNT)
+internal fun darkScheme(palette: MyNotesPalette, toneIndex: Int, surfacePanelIntensity: Float,
+    textColor: String, accentColor: String): ColorScheme {
+    // La elección manual del color de texto no puede volver negros los cinco tonos.
+    // La tonalidad seleccionada es siempre el color real de la pantalla.
+    val body = palette.toneAt(toneIndex)
+    val header = mixColor(body, Color.Black, FIXED_HEADER_DARKEN_AMOUNT)
+    val bodyContent = resolvedPaletteTextColor(textColor, palette, toneIndex, body)
+    val surfaceContent = resolvedPaletteTextColor(textColor, palette, toneIndex, header)
+    val panelTarget = if (bodyContent == Color.Black) Color.White else Color.Black
     val panelScale = (surfacePanelIntensity.coerceIn(0f, 100f) / 72f).coerceIn(0f, 1.3888889f)
     val rawAccent = resolveAccentColor(accentColor, palette)
-    val accent = mixColor(rawAccent, Color.White, 0.14f)
-    val panelTarget = if (automaticDarkTone) Color.Black else Color.White
-    val surfaceVariantColor = mixColor(body, panelTarget, (0.08f * panelScale).coerceIn(0f, 1f))
-    val surfaceContainerColor = mixColor(body, panelTarget, (0.08f * panelScale).coerceIn(0f, 1f))
-    val bodyContent = resolvedPaletteTextColor(textColor = textColor, palette = palette, toneIndex = toneIndex, background = body)
-    val surfaceContent = resolvedPaletteTextColor(textColor = textColor, palette = palette, toneIndex = toneIndex, background = header)
-    val variantContent = resolvedPaletteSecondaryTextColor(textColor = textColor, palette = palette, toneIndex = toneIndex, background = surfaceVariantColor)
+    val accent = readablePaletteAccent(mixColor(rawAccent, Color.White, 0.14f), body)
+    val surfaces = schemeWithCompleteSurfaces(body, surfaceContent, panelTarget,
+        lowAmount = (0.05f * panelScale).coerceIn(0f, 1f),
+        containerAmount = (0.08f * panelScale).coerceIn(0f, 1f),
+        highAmount = (0.12f * panelScale).coerceIn(0f, 1f),
+        variantAmount = (0.08f * panelScale).coerceIn(0f, 1f), accent = accent)
+    val primaryContainer = mixColor(rawAccent, panelTarget, 0.50f)
+    val secondaryContainer = mixColor(rawAccent, panelTarget, 0.60f)
     return darkColorScheme(
-        primary = accent,
-        onPrimary = readableContentColor(accent),
-        primaryContainer = mixColor(rawAccent, Color.Black, 0.50f),
-        onPrimaryContainer = readableContentColor(mixColor(rawAccent, Color.Black, 0.50f)),
-        secondary = accent,
-        onSecondary = readableContentColor(accent),
-        secondaryContainer = mixColor(rawAccent, Color.Black, 0.60f),
-        onSecondaryContainer = readableContentColor(mixColor(rawAccent, Color.Black, 0.60f)),
-        background = body,
-        onBackground = bodyContent,
-        surface = header,
-        onSurface = surfaceContent,
-        surfaceVariant = surfaceVariantColor,
-        onSurfaceVariant = variantContent,
-        surfaceContainerLow = mixColor(body, panelTarget, (0.05f * panelScale).coerceIn(0f, 1f)),
-        surfaceContainer = surfaceContainerColor,
-        surfaceContainerHigh = mixColor(body, panelTarget, (0.12f * panelScale).coerceIn(0f, 1f)),
-        outline = ensureUiContrast(preferred = mixColor(accent, Color.White, 0.18f), background = body, minimumContrast = 3f))
+        primary = accent, onPrimary = readableContentColor(accent),
+        primaryContainer = primaryContainer, onPrimaryContainer = readableContentColor(primaryContainer),
+        secondary = accent, onSecondary = readableContentColor(accent),
+        secondaryContainer = secondaryContainer, onSecondaryContainer = readableContentColor(secondaryContainer),
+        tertiary = accent, onTertiary = readableContentColor(accent),
+        tertiaryContainer = secondaryContainer, onTertiaryContainer = readableContentColor(secondaryContainer),
+        background = body, onBackground = bodyContent,
+        surface = header, onSurface = surfaceContent,
+        surfaceVariant = surfaces.variant,
+        onSurfaceVariant = resolvedPaletteSecondaryTextColor(textColor, palette, toneIndex, surfaces.variant),
+        surfaceContainerLowest = surfaces.lowest, surfaceContainerLow = surfaces.low,
+        surfaceContainer = surfaces.middle, surfaceContainerHigh = surfaces.high,
+        surfaceContainerHighest = surfaces.highest,
+        surfaceBright = surfaces.highest, surfaceDim = surfaces.lowest,
+        inverseSurface = surfaces.inverted, inverseOnSurface = surfaces.inverseInk,
+        inversePrimary = surfaces.inverseAccent,
+        surfaceTint = accent,
+        outline = paletteMatchedOutlineColor(body, minimumContrast = 3f),
+        outlineVariant = paletteMatchedOutlineColor(surfaces.variant, minimumContrast = 3f)
+    )
 }
 
 internal fun resolveAppColorScheme(
@@ -233,15 +293,34 @@ internal fun resolveAppColorScheme(
     lightScheme(palette, toneIndex, surfacePanelIntensity, textColor, accentColor)
 }
 
+/** OLED is explicitly black. Foregrounds stay accessible even for manual black/white. */
+internal fun oledColorScheme(base:ColorScheme, @Suppress("UNUSED_PARAMETER") textColor:String):ColorScheme {
+    return base.copy(background = Color.Black, surface = Color.Black,
+        surfaceContainerLowest = Color.Black, surfaceContainerLow = Color(0xFF101010),
+        surfaceContainer = Color(0xFF171717), surfaceContainerHigh = Color(0xFF202020),
+        surfaceContainerHighest = Color(0xFF292929), surfaceVariant = Color(0xFF202020),
+        surfaceBright = Color(0xFF292929), surfaceDim = Color.Black,
+        onBackground = Color.White, onSurface = Color.White,
+        onSurfaceVariant = Color(0xFFD5D5D5),
+        outline = ensureUiContrast(base.outline, Color.Black, 3f),
+        outlineVariant = paletteMatchedOutlineColor(Color(0xFF202020), 3f))
+}
+
 @Composable
 fun MyNotesTheme(settings: AppSettings, darkTheme: Boolean, fontFamily: FontFamily = FontFamily.Default,
     content: @Composable () -> Unit) = MyNotesTheme(darkTheme = darkTheme,
     backgroundColor = settings.backgroundColor, backgroundToneIndex = settings.backgroundToneIndex,
     surfacePanelIntensity = settings.surfacePanelIntensity, textColor = settings.textColor,
     textOutlineEnabled = settings.textOutlineEnabled, accentColor = settings.accentColor,
-    fontFamily = fontFamily, content = { AppBackgroundProvider(settings, content) })
+    fontFamily = fontFamily, oled = settings.oledMode,
+    content = {
+        CompositionLocalProvider(LocalSliderStyle provides SettingsValuePolicy.sliderStyle(settings.sliderStyle)) {
+            AppBackgroundProvider(settings, content)
+        }
+    })
 
 @Composable
+@OptIn(ExperimentalMaterial3Api::class)
 fun MyNotesTheme(darkTheme: Boolean = isSystemInDarkTheme(),
     backgroundColor: String = "neutral",
     backgroundToneIndex: Int = 0,
@@ -250,14 +329,16 @@ fun MyNotesTheme(darkTheme: Boolean = isSystemInDarkTheme(),
     textOutlineEnabled: Boolean = false,
     accentColor: String = "palette",
     fontFamily: FontFamily = FontFamily.Default,
+    oled: Boolean = false,
     content:
         @Composable () -> Unit) {
     val palette = remember(backgroundColor) {
             PaletteCatalog.find(backgroundColor)
         }
     val scheme = remember(darkTheme, palette.key, backgroundToneIndex, surfacePanelIntensity,
-            textColor, textOutlineEnabled, accentColor) {
-            resolveAppColorScheme(darkTheme, palette, backgroundToneIndex, surfacePanelIntensity, textColor, accentColor)
+            textColor, textOutlineEnabled, accentColor, oled) {
+            val base = resolveAppColorScheme(darkTheme, palette, backgroundToneIndex, surfacePanelIntensity, textColor, accentColor)
+            if (oled && darkTheme) oledColorScheme(base,textColor) else base
         }
     val resolvedTypography = remember(textOutlineEnabled, fontFamily) {
             val fontAwareTypography = typographyWithFontFamily(base = Typography, fontFamily = fontFamily)
@@ -265,13 +346,18 @@ fun MyNotesTheme(darkTheme: Boolean = isSystemInDarkTheme(),
                 enabled = textOutlineEnabled)
         }
     MaterialTheme(colorScheme = scheme,
-        typography = resolvedTypography) {
+        typography = resolvedTypography, shapes = Shapes(extraSmall = RoundedCornerShape(8.dp), small = RoundedCornerShape(12.dp), medium = RoundedCornerShape(16.dp), large = RoundedCornerShape(22.dp), extraLarge = RoundedCornerShape(28.dp))) {
         val inheritedTextStyle = LocalTextStyle.current.withAppFontMetrics(fontFamily).let { baseStyle ->
             if (textOutlineEnabled) baseStyle.copy(shadow = BlackTextOutlineShadow) else baseStyle
         }
-        CompositionLocalProvider(LocalTextStyle provides
-                inheritedTextStyle) {
-            content()
+        // Disable press overlays throughout the application, including Material3 buttons
+        // and Foundation clickable surfaces. Keep disabled/selected colors unchanged.
+        CompositionLocalProvider(
+            LocalTextStyle provides inheritedTextStyle,
+            LocalRippleConfiguration provides null,
+            LocalIndication provides NoShadeIndication
+        ) {
+            com.example.mynotes.studio.PlusStyle(content)
         }
     }
 }

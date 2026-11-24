@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- v312: editable design reference; production screen is implemented in Compose. -->
+<FrameLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/layout_xml_app_background"
+    android:theme="@style/LayoutXmlPreviewTheme"
+    android:padding="16dp">
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="22dp">
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Proyecto de diseño"
+                android:textSize="29sp"
+                android:textColor="@color/layout_xml_text"
+                android:layout_marginBottom="20dp" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Prioridades"
+                android:textSize="22sp"
+                android:textColor="@color/layout_xml_text"
+                android:layout_marginBottom="20dp" />
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Revisar el proyecto y preparar materiales."
+                android:textSize="18sp"
+                android:textColor="@color/layout_xml_text"
+                android:layout_marginBottom="20dp" />
+            <CheckBox
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Revisar medidas"
+                android:minHeight="48dp"
+                android:checked="false" />
+            <CheckBox
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="Guardar referencias"
+                android:minHeight="48dp"
+                android:checked="true" />
+        </LinearLayout>
+    </ScrollView>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_gravity="bottom|end"
+        android:background="@drawable/layout_xml_tone">
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Aa"
+            android:minHeight="48dp" />
+        <android.widget.ImageButton
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/layout_xml_design_close"
+            android:contentDescription="@string/organize_exit_reader"
+            android:tint="@color/layout_xml_text"
+            android:padding="12dp"
+            android:background="@android:color/transparent" />
+    </LinearLayout>
+</FrameLayout>

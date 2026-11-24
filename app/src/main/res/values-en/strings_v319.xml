@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="v319_read_later">Read later</string>
+    <string name="v319_remove_read_later">Remove from Read later</string>
+    <string name="v319_old_notes">Older</string>
+    <string name="v319_duplicates">Duplicates</string>
+    <string name="v319_reading_filter">Read later</string>
+
+    <string name="v319_tasks_progress">Tasks completed: %1$d/%2$d</string>
+    <string name="v319_idle_motion">Angular note tremble after inactivity</string>
+    <string name="v319_motion_strength">Tilt intensity (1–5): %1$d</string>
+    <string name="v319_motion_frequency">Motion frequency: %1$d</string>
+    <string name="v319_show_all_notes">Show all notes</string>
+</resources>

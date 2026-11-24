@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="settings_tools_title">Settings tools</string>
+    <string name="settings_tools_description">Find options, reset a section, or compare styles.</string>
+    <string name="settings_tools_search">Find settings</string>
+    <string name="settings_tools_search_description">Find an option and jump directly to it</string>
+    <string name="settings_tools_reset">Reset a section</string>
+    <string name="settings_tools_reset_description">Restore the defaults for one group</string>
+    <string name="settings_tools_compare">Compare appearance</string>
+    <string name="settings_tools_compare_description">Preview changes before applying them</string>
+    <string name="settings_tools_search_hint">Setting name or category</string>
+    <string name="settings_tools_no_results">No matching settings</string>
+    <string name="settings_tools_close">Close</string>
+    <string name="settings_tools_cancel">Cancel</string>
+    <string name="settings_tools_reset_pick">Choose the group to reset. Your notes will not be deleted.</string>
+    <string name="settings_tools_reset_confirm_title">Confirm reset</string>
+    <string name="settings_tools_reset_confirm">Reset “%1$s”? Only preferences in this group will change. Your notes and other settings will be kept.</string>
+    <string name="settings_tools_reset_action">Reset</string>
+    <string name="settings_tools_reset_error">Could not reset settings. Please try again.</string>
+    <string name="settings_tools_reset_appearance">Appearance and colors</string>
+    <string name="settings_tools_reset_cards">Note cards</string>
+    <string name="settings_tools_reset_controls">Controls, icons and profile</string>
+    <string name="settings_tools_reset_feedback">Sound and vibration</string>
+    <string name="settings_tools_reset_editor">Editor</string>
+    <string name="settings_tools_reset_motion">Motion and performance</string>
+    <string name="settings_tools_profile">Profile and settings mode</string>
+    <string name="settings_tools_accent">Accent color</string>
+    <string name="settings_tools_text_color">Text color</string>
+    <string name="settings_tools_text_outline">Text outline</string>
+    <string name="settings_tools_font">Font and text size</string>
+    <string name="settings_tools_icons">Icon style and size</string>
+    <string name="settings_tools_sliders">Slider style</string>
+    <string name="settings_tools_cards">Card appearance</string>
+    <string name="settings_tools_columns">Columns</string>
+    <string name="settings_tools_new_button">New note button</string>
+    <string name="settings_tools_menu_style">Menu appearance</string>
+    <string name="settings_tools_menu_actions">Menu actions</string>
+    <string name="settings_tools_menu_priority">Priority options</string>
+    <string name="settings_tools_menu_colors">Menu colors</string>
+    <string name="settings_tools_motion">Animations</string>
+    <string name="settings_tools_performance">Performance</string>
+    <string name="settings_tools_backups">Backup and restore</string>
+    <string name="settings_tools_updates">Updates</string>
+    <string name="settings_tools_current">Current</string>
+    <string name="settings_tools_proposed">Proposed</string>
+</resources>

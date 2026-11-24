@@ -87,13 +87,15 @@ private const val MYNOTES_JAVA_COMPATIBILITY = 11
 
 @Composable
 fun DevelopmentInfoScreen(settings: AppSettings, onOpenSourceCode: () -> Unit, onBack: () -> Unit) {
+    val composeResources = androidx.compose.ui.platform.LocalResources.current
+
     val context = LocalContext.current
     val layoutPreview = LocalLayoutPreview.current
     val packageInfo = remember(context.packageName) {
         @Suppress("DEPRECATION")
         if (layoutPreview != null) null else context.packageManager.getPackageInfo(context.packageName, 0)
     }
-    val versionName = packageInfo?.versionName.orEmpty().ifBlank { "v2.5.0" }
+    val versionName = packageInfo?.versionName.orEmpty().ifBlank { "7.1.0" }
     val applicationInfo = if (layoutPreview != null) null else context.applicationInfo
     val buildType = stringResource(R.string.development_build_release)
     val minSdk = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) applicationInfo?.minSdkVersion ?: 24 else 24
@@ -134,7 +136,7 @@ fun DevelopmentInfoScreen(settings: AppSettings, onOpenSourceCode: () -> Unit, o
                         developerFontUnlocked = true
                         R.string.development_font_unlocked
                     }
-                    Toast.makeText(context, context.getString(messageRes), Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, composeResources.getString(messageRes), Toast.LENGTH_SHORT).show()
                 }
             }
         ) {
@@ -322,7 +324,7 @@ internal fun DevelopmentSection(
     // Surface recorta su indicación de pulsación con la misma forma del recuadro.
     Box(modifier = modifier.fillMaxWidth().padding(bottom = 12.dp)) {
         if (onClick != null) {
-            Surface(onClick = onClick, modifier = Modifier.fillMaxWidth(), shape = shape,
+            Surface(onClick = { UiSoundPlayer.runWithFallbackClick(actionBlock = onClick) }, modifier = Modifier.fillMaxWidth(), shape = shape,
                 color = background, border = BorderStroke(1.dp, border), tonalElevation = 0.dp,
                 shadowElevation = 0.dp, content = sectionContent)
         } else {

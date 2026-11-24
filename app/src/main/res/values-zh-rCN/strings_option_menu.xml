@@ -9,10 +9,7 @@
     <string name="option_menu_text_white">白色</string>
     <string name="option_menu_change">更改</string>
     <string name="option_menu_opacity">菜单不透明度</string>
-    <string name="option_menu_main_actions">主要操作</string>
-    <string name="option_menu_main_actions_hint">使用箭头调整顺序，并使用开关显示或隐藏各项操作。</string>
-    <string name="option_menu_priority_submenu">优先级子菜单</string>
-    <string name="option_menu_color_submenu">颜色子菜单</string>
+
     <string name="option_menu_move_up">上移</string>
     <string name="option_menu_move_down">下移</string>
 </resources>

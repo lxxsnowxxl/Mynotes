@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="card_motion_settings_title">Card animations</string>
+    <string name="card_motion_settings_subtitle">Choose how idle note cards move</string>
+    <string name="card_motion_toggle">Animate idle note cards</string>
+    <string name="card_motion_global_disabled">General animations are off. Enable them to see this effect.</string>
+    <string name="card_motion_style_label">Animation style</string>
+    <string name="card_motion_angular">Side shuffle</string>
+    <string name="card_motion_angular_desc">Glides side to side with small turns</string>
+    <string name="card_motion_sway">3D tilt</string>
+    <string name="card_motion_sway_desc">Leans to each side with a sense of depth</string>
+    <string name="card_motion_breathe">Float &amp; settle</string>
+    <string name="card_motion_breathe_desc">Floats up in an arc and settles softly</string>
+    <string name="card_motion_heartbeat">Double pulse</string>
+    <string name="card_motion_heartbeat_desc">Contracts, then pulses twice at different strengths</string>
+    <string name="card_motion_spring">Elastic bounce</string>
+    <string name="card_motion_spring_desc">Squashes, stretches and rebounds twice</string>
+    <string name="card_motion_random">Random</string>
+    <string name="card_motion_random_desc">Picks a different effect each time</string>
+    <string name="card_motion_intensity_label">Intensity</string>
+    <string name="card_motion_frequency_label">Frequency</string>
+    <string name="card_motion_preview">Preview</string>
+    <string name="card_motion_replay">Replay</string>
+    <string name="card_motion_safety_hint">After a pause, one visible note moves at a time. Motion stops when you touch or scroll the list.</string>
+    <string name="card_motion_off">Off</string>
+</resources>

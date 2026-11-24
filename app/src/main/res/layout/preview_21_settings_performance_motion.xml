@@ -23,13 +23,13 @@
             android:paddingEnd="12dp"
             android:gravity="center_vertical"
             android:id="@+id/preview_21_settings_performance_motion_linearlayout_2">
-            <ImageButton
+            <android.widget.ImageButton
                 android:layout_width="48dp"
                 android:layout_height="48dp"
                 android:id="@+id/preview_21_settings_performance_motion_back"
                 android:src="@drawable/preview_ic_arrow_back"
                 android:tint="@color/layout_xml_text"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:background="@android:color/transparent"
                 android:contentDescription="@string/mock_back"
                 android:padding="12dp" />
             <TextView
@@ -43,33 +43,179 @@
                 android:layout_marginStart="8dp"
                 android:id="@+id/preview_21_settings_performance_motion_textview_4" />
         </LinearLayout>
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:scrollbars="none"
+            android:layout_marginStart="22dp"
+            android:layout_marginEnd="22dp"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="6dp">
+            <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="4dp"
+            android:background="@drawable/layout_xml_navigation_panel"
+            android:id="@+id/preview_21_settings_performance_motion_category_navigation"
+            android:gravity="center_vertical">
+        <TextView
+                android:layout_width="88dp"
+                android:layout_height="48dp"
+                android:text="@string/advanced_nav_appearance"
+                android:textSize="12sp"
+                android:textColor="@color/layout_xml_text"
+                android:fontFamily="sans-serif"
+                android:textStyle="normal"
+                android:id="@+id/preview_21_settings_performance_motion_nav_appearance"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/advanced_section_appearance" />
+        <TextView
+                android:layout_width="88dp"
+                android:layout_height="48dp"
+                android:text="@string/advanced_nav_typography"
+                android:textSize="12sp"
+                android:textColor="@color/layout_xml_text"
+                android:fontFamily="sans-serif"
+                android:textStyle="normal"
+                android:id="@+id/preview_21_settings_performance_motion_nav_typography"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/advanced_section_typography" />
+        <TextView
+                android:layout_width="88dp"
+                android:layout_height="48dp"
+                android:text="@string/advanced_nav_notes"
+                android:textSize="12sp"
+                android:textColor="@color/layout_xml_text"
+                android:fontFamily="sans-serif"
+                android:textStyle="normal"
+                android:id="@+id/preview_21_settings_performance_motion_nav_notes"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/advanced_section_notes" />
+        <TextView
+                android:layout_width="88dp"
+                android:layout_height="48dp"
+                android:text="@string/advanced_nav_menu"
+                android:textSize="12sp"
+                android:textColor="@color/layout_xml_text"
+                android:fontFamily="sans-serif"
+                android:textStyle="normal"
+                android:id="@+id/preview_21_settings_performance_motion_nav_menu"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/advanced_section_menu" />
+        <TextView
+                android:layout_width="88dp"
+                android:layout_height="48dp"
+                android:text="@string/advanced_nav_feedback"
+                android:textSize="12sp"
+                android:textColor="@color/layout_xml_text"
+                android:fontFamily="sans-serif"
+                android:textStyle="normal"
+                android:id="@+id/preview_21_settings_performance_motion_nav_feedback"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/advanced_section_feedback" />
+        <TextView
+                android:layout_width="88dp"
+                android:layout_height="48dp"
+                android:text="@string/advanced_nav_motion"
+                android:textSize="12sp"
+                android:textColor="@color/layout_xml_text"
+                android:fontFamily="sans-serif"
+                android:textStyle="bold"
+                android:id="@+id/preview_21_settings_performance_motion_nav_system"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="@drawable/layout_xml_nav_selected_neutral"
+                android:contentDescription="@string/advanced_section_motion" />
+        <TextView
+                android:layout_width="88dp"
+                android:layout_height="48dp"
+                android:text="@string/advanced_nav_application"
+                android:textSize="12sp"
+                android:textColor="@color/layout_xml_text"
+                android:fontFamily="sans-serif"
+                android:textStyle="normal"
+                android:id="@+id/preview_21_settings_performance_motion_nav_application"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/advanced_section_application" />
+        <TextView
+                android:layout_width="88dp"
+                android:layout_height="48dp"
+                android:text="@string/advanced_nav_data"
+                android:textSize="12sp"
+                android:textColor="@color/layout_xml_text"
+                android:fontFamily="sans-serif"
+                android:textStyle="normal"
+                android:id="@+id/preview_21_settings_performance_motion_nav_data"
+                android:gravity="center"
+                android:clickable="true"
+                android:focusable="true"
+                android:background="@android:color/transparent"
+                android:contentDescription="@string/advanced_section_data" />
+            </LinearLayout>
+        </HorizontalScrollView>
         <FrameLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
-            android:id="@+id/preview_21_settings_performance_motion_framelayout_5">
+            android:id="@+id/preview_21_settings_performance_motion_framelayout_12">
             <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:fillViewport="true"
                 android:scrollbars="none"
-                android:id="@+id/preview_21_settings_performance_motion_scrollview_6">
+                android:id="@+id/preview_21_settings_performance_motion_scrollview_13">
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical"
-                    android:paddingStart="14dp"
-                    android:paddingEnd="14dp"
+                    android:paddingStart="22dp"
+                    android:paddingEnd="22dp"
                     android:paddingBottom="32dp"
-                    android:id="@+id/preview_21_settings_performance_motion_linearlayout_7">
+                    android:id="@+id/preview_21_settings_performance_motion_linearlayout_14">
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:id="@+id/preview_21_settings_performance_motion_panel_note_card_animation_styles"
+                        android:background="@drawable/layout_xml_panel"
+                        android:layout_marginBottom="12dp"
+                        android:paddingStart="14dp"
+                        android:paddingEnd="14dp"
+                        android:paddingTop="14dp"
+                        android:paddingBottom="14dp">
+                        <include layout="@layout/settings_card_motion_entry_content" android:layout_width="match_parent" android:layout_height="wrap_content" />
+                    </LinearLayout>
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
                         android:id="@+id/preview_21_settings_performance_motion_panel_performance"
                         android:background="@drawable/layout_xml_panel"
-                        android:padding="14dp"
-                        android:layout_marginBottom="12dp">
+                        android:layout_marginBottom="12dp"
+                        android:paddingStart="22dp"
+                        android:paddingEnd="22dp"
+                        android:paddingTop="14dp"
+                        android:paddingBottom="14dp">
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
@@ -78,7 +224,7 @@
                             android:textColor="@color/layout_xml_text"
                             android:fontFamily="sans-serif"
                             android:textStyle="bold"
-                            android:id="@+id/preview_21_settings_performance_motion_textview_9" />
+                            android:id="@+id/preview_21_settings_performance_motion_textview_16" />
                         <Space
                             android:layout_width="1dp"
                             android:layout_height="8dp" />
@@ -88,7 +234,7 @@
                             android:orientation="horizontal"
                             android:minHeight="48dp"
                             android:gravity="center_vertical"
-                            android:id="@+id/preview_21_settings_performance_motion_linearlayout_11">
+                            android:id="@+id/preview_21_settings_performance_motion_linearlayout_18">
                             <TextView
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
@@ -98,7 +244,7 @@
                                 android:fontFamily="sans-serif"
                                 android:textStyle="bold"
                                 android:layout_weight="1"
-                                android:id="@+id/preview_21_settings_performance_motion_textview_12" />
+                                android:id="@+id/preview_21_settings_performance_motion_textview_19" />
                             <Spinner
                                 android:layout_width="wrap_content"
                                 android:layout_height="48dp"
@@ -115,35 +261,119 @@
                             android:textColor="@color/layout_xml_secondary"
                             android:fontFamily="sans-serif"
                             android:textStyle="normal"
-                            android:id="@+id/preview_21_settings_performance_motion_textview_14" />
+                            android:id="@+id/preview_21_settings_performance_motion_textview_21" />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:id="@+id/preview_21_settings_performance_motion_section_application_heading"
+                        android:paddingTop="18dp"
+                        android:paddingBottom="10dp"
+                        android:layout_marginStart="8dp"
+                        android:layout_marginEnd="8dp"
+                        android:gravity="center_vertical">
+                        <View
+                            android:layout_width="3dp"
+                            android:layout_height="36dp"
+                            android:background="@drawable/layout_xml_category_marker"
+                            android:backgroundTint="#4B4743"
+                            android:id="@+id/preview_21_settings_performance_motion_view_30" />
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:orientation="vertical"
+                            android:layout_weight="1"
+                            android:layout_marginStart="12dp"
+                            android:id="@+id/preview_21_settings_performance_motion_linearlayout_31">
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/advanced_section_application"
+                                android:textSize="18sp"
+                                android:textColor="@color/layout_xml_text"
+                                android:fontFamily="sans-serif"
+                                android:textStyle="bold"
+                                android:id="@+id/preview_21_settings_performance_motion_textview_32" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/advanced_section_application_description"
+                                android:textSize="12sp"
+                                android:textColor="@color/layout_xml_secondary"
+                                android:fontFamily="sans-serif"
+                                android:textStyle="normal"
+                                android:layout_marginTop="2dp"
+                                android:id="@+id/preview_21_settings_performance_motion_textview_33" />
+                        </LinearLayout>
                     </LinearLayout>
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:id="@+id/preview_21_settings_performance_motion_panel_motion"
+                        android:id="@+id/preview_21_settings_performance_motion_panel_language"
                         android:background="@drawable/layout_xml_panel"
-                        android:padding="14dp"
-                        android:layout_marginBottom="12dp">
+                        android:layout_marginBottom="12dp"
+                        android:paddingStart="22dp"
+                        android:paddingEnd="22dp"
+                        android:paddingTop="14dp"
+                        android:paddingBottom="14dp">
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:orientation="horizontal"
+                            android:minHeight="48dp"
+                            android:gravity="center_vertical"
+                            android:id="@+id/preview_21_settings_performance_motion_linearlayout_35">
+                            <TextView
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:text="@string/mock_language"
+                                android:textSize="14sp"
+                                android:textColor="@color/layout_xml_text"
+                                android:fontFamily="sans-serif"
+                                android:textStyle="bold"
+                                android:layout_weight="1"
+                                android:id="@+id/preview_21_settings_performance_motion_textview_36" />
+                            <Spinner
+                                android:layout_width="wrap_content"
+                                android:layout_height="48dp"
+                                android:id="@+id/preview_21_settings_performance_motion_language"
+                                android:entries="@array/layout_xml_language_options"
+                                android:spinnerMode="dropdown"
+                                android:contentDescription="@string/mock_language" />
+                        </LinearLayout>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:id="@+id/preview_21_settings_performance_motion_panel_backup"
+                        android:background="@drawable/layout_xml_panel"
+                        android:layout_marginBottom="12dp"
+                        android:paddingStart="22dp"
+                        android:paddingEnd="22dp"
+                        android:paddingTop="14dp"
+                        android:paddingBottom="14dp">
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/motion_title"
+                            android:text="@string/backup_restore_title"
                             android:textSize="16sp"
                             android:textColor="@color/layout_xml_text"
                             android:fontFamily="sans-serif"
                             android:textStyle="bold"
-                            android:id="@+id/preview_21_settings_performance_motion_textview_16" />
+                            android:id="@+id/preview_21_settings_performance_motion_textview_39" />
                         <TextView
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="@string/motion_description"
+                            android:text="@string/backup_restore_description"
                             android:textSize="12sp"
                             android:textColor="@color/layout_xml_secondary"
                             android:fontFamily="sans-serif"
                             android:textStyle="normal"
                             android:layout_marginTop="4dp"
-                            android:id="@+id/preview_21_settings_performance_motion_textview_17" />
+                            android:id="@+id/preview_21_settings_performance_motion_textview_40" />
                         <Space
                             android:layout_width="1dp"
                             android:layout_height="8dp" />
@@ -151,32 +381,88 @@
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:orientation="horizontal"
-                            android:minHeight="48dp"
                             android:gravity="center_vertical"
-                            android:id="@+id/preview_21_settings_performance_motion_linearlayout_19">
-                            <TextView
+                            android:id="@+id/preview_21_settings_performance_motion_linearlayout_42">
+                            <Button
                                 android:layout_width="0dp"
                                 android:layout_height="wrap_content"
-                                android:text="@string/motion_enabled"
-                                android:textSize="14sp"
+                                android:id="@+id/preview_21_settings_performance_motion_backup_export"
+                                android:text="@string/backup_export_button"
+                                android:textAllCaps="false"
                                 android:textColor="@color/layout_xml_text"
+                                android:textSize="14sp"
                                 android:fontFamily="sans-serif"
-                                android:textStyle="normal"
+                                android:minHeight="44dp"
+                                android:minWidth="0dp"
+                                android:background="@drawable/layout_xml_button_outline"
+                                android:paddingStart="12dp"
+                                android:paddingEnd="12dp"
                                 android:layout_weight="1"
-                                android:layout_marginEnd="10dp"
-                                android:id="@+id/preview_21_settings_performance_motion_textview_20" />
-                            <Switch
-                                android:layout_width="52dp"
-                                android:layout_height="32dp"
-                                android:id="@+id/preview_21_settings_performance_motion_animations_enabled"
-                                android:checked="false"
-                                android:switchMinWidth="52dp"
-                                android:thumb="@drawable/layout_xml_switch_thumb"
-                                android:track="@drawable/layout_xml_switch_track"
-                                android:splitTrack="false"
-                                android:contentDescription="@string/motion_enabled"
-                                android:showText="false" />
+                                android:layout_marginEnd="8dp" />
+                            <Button
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:id="@+id/preview_21_settings_performance_motion_backup_import"
+                                android:text="@string/backup_import_button"
+                                android:textAllCaps="false"
+                                android:textColor="@color/layout_xml_on_primary"
+                                android:textSize="14sp"
+                                android:fontFamily="sans-serif"
+                                android:minHeight="44dp"
+                                android:minWidth="0dp"
+                                android:background="@drawable/layout_xml_button_filled"
+                                android:paddingStart="12dp"
+                                android:paddingEnd="12dp"
+                                android:layout_weight="1" />
                         </LinearLayout>
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:id="@+id/preview_21_settings_performance_motion_panel_development"
+                        android:background="@drawable/layout_xml_panel"
+                        android:layout_marginBottom="12dp"
+                        android:paddingStart="22dp"
+                        android:paddingEnd="22dp"
+                        android:paddingTop="14dp"
+                        android:paddingBottom="14dp">
+                        <Button
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/preview_21_settings_performance_motion_open_development"
+                            android:text="@string/development_info_settings_title"
+                            android:textAllCaps="false"
+                            android:textColor="@color/layout_xml_text"
+                            android:textSize="14sp"
+                            android:fontFamily="sans-serif"
+                            android:minHeight="44dp"
+                            android:minWidth="0dp"
+                            android:background="@drawable/layout_xml_button_outline"
+                            android:paddingStart="12dp"
+                            android:paddingEnd="12dp" />
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/development_info_settings_description"
+                            android:textSize="12sp"
+                            android:textColor="@color/layout_xml_secondary"
+                            android:fontFamily="sans-serif"
+                            android:textStyle="normal"
+                            android:id="@+id/preview_21_settings_performance_motion_textview_47" />
+                    </LinearLayout>
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:id="@+id/preview_21_settings_performance_motion_panel_updates"
+                        android:background="@drawable/layout_xml_panel"
+                        android:layout_marginBottom="12dp"
+                        android:paddingStart="14dp"
+                        android:paddingEnd="14dp"
+                        android:paddingTop="14dp"
+                        android:paddingBottom="14dp">
+                        <include layout="@layout/settings_updates_content" android:layout_width="match_parent" android:layout_height="wrap_content" />
                     </LinearLayout>
                 </LinearLayout>
             </ScrollView>

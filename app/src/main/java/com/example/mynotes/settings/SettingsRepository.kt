@@ -1,7 +1,9 @@
 package com.example.mynotes.settings
 
 import android.content.Context
+import androidx.datastore.core.DataMigration
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.MutablePreferences
 import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.floatPreferencesKey
@@ -14,8 +16,11 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 
-private val Context.dataStore by
-    preferencesDataStore(name = "app_settings")
+private val Context.dataStore by preferencesDataStore(
+    name = "app_settings",
+    produceMigrations = { listOf(SettingsRepository.capsuleSliderMigration) }
+)
+
 class SettingsRepository(private val context: Context) {
     companion object {
         private const val LEGACY_TONE_MAX_INDEX = 3
@@ -29,6 +34,7 @@ class SettingsRepository(private val context: Context) {
         private val TEXT_COLOR = stringPreferencesKey("text_color")
         private val TEXT_OUTLINE_ENABLED = booleanPreferencesKey("text_outline_enabled")
         private val SLIDER_STYLE = stringPreferencesKey("slider_style")
+        private val CAPSULE_SLIDER_RESTORED = booleanPreferencesKey("capsule_slider_restored")
         private val FONT = stringPreferencesKey("font")
         private val FONT_SIZE = floatPreferencesKey("font_size")
         private val SOUND_EFFECTS_ENABLED = booleanPreferencesKey("sound_effects_enabled")
@@ -74,6 +80,88 @@ class SettingsRepository(private val context: Context) {
         private val ANIMATION_STYLE = stringPreferencesKey("animation_style")
         private val ANIMATION_EASING = stringPreferencesKey("animation_easing")
         private val ANIMATION_INTENSITY = floatPreferencesKey("animation_intensity")
+        private val DESIGN_PRESET = stringPreferencesKey("design_preset")
+        private val OLED_MODE = booleanPreferencesKey("oled_mode")
+        private val CARD_DENSITY = stringPreferencesKey("card_density")
+        private val READER_WIDTH = floatPreferencesKey("reader_width")
+        private val READER_LINE_SPACING = floatPreferencesKey("reader_line_spacing")
+        private val EDITOR_FOCUS_MODE = booleanPreferencesKey("editor_focus_mode")
+        private val VISUAL_KEYS = setOf("dark_mode", "background_color", "background_tone_index",
+            "settings_background_style", "surface_panel_intensity", "text_color", "text_outline_enabled",
+            "font", "font_size", "accent_color", "note_card_corner_radius", "note_card_elevation",
+            "note_card_padding", "note_card_image_height", "note_card_outline_width", "note_title_max_lines",
+            "note_content_max_lines", "note_line_spacing", "card_density")
+
+        // Restaura Capsule una vez para que Glass se pueda volver a elegir desde Ajustes.
+        internal val capsuleSliderMigration: DataMigration<Preferences> = object : DataMigration<Preferences> {
+            override suspend fun shouldMigrate(currentData: Preferences): Boolean =
+                currentData[CAPSULE_SLIDER_RESTORED] != true
+
+            override suspend fun migrate(currentData: Preferences): Preferences =
+                currentData.toMutablePreferences().apply {
+                    if (this[SLIDER_STYLE] == "glass") this[SLIDER_STYLE] = "capsule"
+                    this[CAPSULE_SLIDER_RESTORED] = true
+                }
+
+            override suspend fun cleanUp() = Unit
+        }
+
+        @Suppress("UNCHECKED_CAST")
+        internal fun writeResetSection(preferences:MutablePreferences,section:String){
+            val keys=PlusSettingsPolicy.keys(section)
+            preferences.asMap().keys.filter{it.name in keys}.forEach{preferences.remove(it as Preferences.Key<Any>)}
+        }
+        /** One transaction avoids intermediate themes and preserves unrelated preferences. */
+        internal fun writeDesignPreset(preferences: MutablePreferences, key: String): Boolean {
+            if (key !in DesignPreferencePolicy.presets) return false
+            return writeAppearance(preferences, DesignPreferencePolicy.applyPreset(AppSettings(), key))
+        }
+        internal fun writeAppearance(preferences: MutablePreferences, style: AppSettings): Boolean {
+            return with(preferences) {
+                listOf(
+                    setIfChanged(DESIGN_PRESET, style.designPreset),
+                    setIfChanged(OLED_MODE, style.oledMode),
+                    setIfChanged(DARK_MODE, style.darkMode),
+                    setIfChanged(BACKGROUND_COLOR, style.backgroundColor),
+                    setIfChanged(BACKGROUND_TONE_INDEX, style.backgroundToneIndex),
+                    setIfChanged(SETTINGS_BACKGROUND_STYLE, style.settingsBackgroundStyle),
+                    setIfChanged(SURFACE_PANEL_INTENSITY, style.surfacePanelIntensity),
+                    setIfChanged(TEXT_COLOR, style.textColor),
+                    setIfChanged(TEXT_OUTLINE_ENABLED, style.textOutlineEnabled),
+                    setIfChanged(FONT, style.font), setIfChanged(FONT_SIZE, style.fontSize),
+                    setIfChanged(ACCENT_COLOR, style.accentColor),
+                    setIfChanged(NOTE_CARD_CORNER_RADIUS, style.noteCardCornerRadius),
+                    setIfChanged(NOTE_CARD_ELEVATION, style.noteCardElevation),
+                    setIfChanged(NOTE_CARD_PADDING, style.noteCardPadding),
+                    setIfChanged(NOTE_CARD_IMAGE_HEIGHT, style.noteCardImageHeight),
+                    setIfChanged(NOTE_CARD_OUTLINE_ENABLED, style.noteCardOutlineEnabled),
+                    setIfChanged(NOTE_CARD_OUTLINE_WIDTH, style.noteCardOutlineWidth),
+                    setIfChanged(NOTE_TITLE_MAX_LINES, style.noteTitleMaxLines),
+                    setIfChanged(NOTE_CONTENT_MAX_LINES, style.noteContentMaxLines),
+                    setIfChanged(NOTE_LINE_SPACING, style.noteLineSpacing),
+                    setIfChanged(CARD_DENSITY, style.cardDensity)
+                ).any { it }
+            }
+        }
+
+        private val COLLAPSED_SETTINGS_SECTIONS = stringPreferencesKey("collapsed_settings_sections")
+
+        internal fun readCollapsedSettingsSections(preferences: Preferences): String =
+            SettingsSectionPreferencePolicy.normalize(preferences[COLLAPSED_SETTINGS_SECTIONS] ?: "")
+
+        internal fun writeSettingsSectionExpanded(preferences: MutablePreferences, sectionKey: String, expanded: Boolean): Boolean {
+            if (sectionKey !in SettingsSectionPreferencePolicy.keys) return false
+            val next = SettingsSectionPreferencePolicy.withExpanded(readCollapsedSettingsSections(preferences), sectionKey, expanded)
+            return preferences.setIfChanged(COLLAPSED_SETTINGS_SECTIONS, next)
+        }
+
+        /** Elegir explícitamente un fondo animado también activa su movimiento en la misma escritura. */
+        internal fun writeSettingsBackgroundStyle(preferences: MutablePreferences, value: String): Boolean {
+            val style = SettingsValuePolicy.settingsBackgroundStyle(value)
+            val styleChanged = preferences.setIfChanged(SETTINGS_BACKGROUND_STYLE, style)
+            val motionChanged = if (style == "animated_blur") preferences.setIfChanged(ANIMATIONS_ENABLED, true) else false
+            return styleChanged || motionChanged
+        }
 
         internal fun readWidgetSettings(preferences: Preferences): WidgetSettings {
             val rawPalette = preferences[BACKGROUND_COLOR] ?: "neutral"
@@ -105,6 +193,12 @@ class SettingsRepository(private val context: Context) {
                 val outlineEnabledPreference = preferences[NOTE_CARD_OUTLINE_ENABLED]
                 val outlineWidthPreference = preferences[NOTE_CARD_OUTLINE_WIDTH] ?: 1f
                 AppSettings(configurationMode = SettingsValuePolicy.configurationMode(preferences[CONFIGURATION_MODE] ?: "unset"),
+                    designPreset = DesignPreferencePolicy.preset(preferences[DESIGN_PRESET] ?: "default"),
+                    oledMode = preferences[OLED_MODE] ?: false,
+                    cardDensity = DesignPreferencePolicy.density(preferences[CARD_DENSITY] ?: "comfortable"),
+                    editorFocusMode = preferences[EDITOR_FOCUS_MODE] ?: true,
+                    readerWidth = ReaderPreferencePolicy.width(preferences[READER_WIDTH] ?: 680f),
+                    readerLineSpacing = ReaderPreferencePolicy.spacing(preferences[READER_LINE_SPACING] ?: 1.6f),
                     darkMode = appearance.darkMode,
                     backgroundColor = appearance.backgroundColor,
                     backgroundToneIndex = appearance.backgroundToneIndex,
@@ -130,7 +224,7 @@ class SettingsRepository(private val context: Context) {
                     hapticEffectsStyle = FeedbackPreferencePolicy.normalizeHapticStyle(preferences[HAPTIC_EFFECTS_STYLE]?: "soft"),
                     language = appearance.language,
                     gridColumns = (preferences[GRID_COLUMNS]?: 2).coerceIn(1, 3),
-                    sortOrder = preferences[SORT_ORDER]?: "newest",
+                    sortOrder = DesignPreferencePolicy.sortOrder(preferences[SORT_ORDER] ?: "newest"),
                     profileImageUri = preferences[PROFILE_IMAGE_URI]?: "",
                     profileImageSize = (preferences[PROFILE_IMAGE_SIZE]?: 46f).coerceIn(36f, 84f),
                     iconStyle = SettingsValuePolicy.iconStyle(preferences[ICON_STYLE]?: "rounded"),
@@ -161,15 +255,58 @@ class SettingsRepository(private val context: Context) {
                                 MenuPreferencePolicy.colorKeys),
                     performanceMode = AppMotion.normalizePerformanceMode(preferences[PERFORMANCE_MODE]?: "balanced"),
                     animationsEnabled = preferences[ANIMATIONS_ENABLED]?: true,
-                    animationStyle = AppMotion.normalizeStyle(preferences[ANIMATION_STYLE]?: "zoom"),
+                    animationStyle = AppMotion.normalizeStyle(preferences[ANIMATION_STYLE]?: MotionStylePolicy.DEFAULT_STYLE),
                     animationEasing = AppMotion.normalizeEasing(preferences[ANIMATION_EASING]?: "standard"),
                     animationSpeed = (preferences[ANIMATION_SPEED]?: 1f).coerceIn(0.5f, 2f),
-                    animationIntensity = (preferences[ANIMATION_INTENSITY]?: 1f).coerceIn(0.5f, 1.5f))
+                    animationIntensity = (preferences[ANIMATION_INTENSITY]?: 1f).coerceIn(0.5f, 1.5f),
+                    collapsedSettingsSections = readCollapsedSettingsSections(preferences))
             }.distinctUntilChanged()
     private suspend fun <T> writePreference(key: Preferences.Key<T>, value: T): Boolean =
-        context.dataStore.editIfChanged { setIfChanged(key, value) }
+        context.dataStore.editIfChanged {
+            val changed = setIfChanged(key, value)
+            if (changed && key.name in VISUAL_KEYS) setIfChanged(DESIGN_PRESET, "custom")
+            if (changed && key.name == "dark_mode") setIfChanged(OLED_MODE, false)
+            changed
+        }
+
+    suspend fun applyAppearance(value: AppSettings): Boolean {
+      val changed=context.dataStore.editIfChanged {
+        val normalized = value.copy(
+            designPreset = DesignPreferencePolicy.preset(value.designPreset),
+            backgroundColor = SettingsValuePolicy.paletteKey(value.backgroundColor),
+            font = FontPreferencePolicy.normalize(value.font, DeveloperFeatures.isGoogleSansFlexUnlocked(context)),
+            fontSize = value.fontSize.coerceIn(12f, 28f),
+            noteCardCornerRadius = value.noteCardCornerRadius.coerceIn(0f, 36f)
+        )
+        writeAppearance(this, normalized)
+      }
+      honorSelectedBackground(value.settingsBackgroundStyle)
+      return changed
+    }
+    private suspend fun honorSelectedBackground(style:String){
+        if(SettingsValuePolicy.settingsBackgroundStyle(style)!="solid")
+            com.example.mynotes.studio.StudioStore.get(context).edit("preferences","polish"){it.put("clean",false)}
+    }
+    suspend fun setReaderPreferences(width: Float, lineSpacing: Float): Boolean = context.dataStore.editIfChanged {
+        val a = setIfChanged(READER_WIDTH, ReaderPreferencePolicy.width(width))
+        val b = setIfChanged(READER_LINE_SPACING, ReaderPreferencePolicy.spacing(lineSpacing))
+        a || b
+    }
+
+    suspend fun applyDesignPreset(key: String): Boolean {
+        val changed=context.dataStore.editIfChanged { writeDesignPreset(this, key) }
+        if(key in DesignPreferencePolicy.presets)honorSelectedBackground(DesignPreferencePolicy.applyPreset(AppSettings(),key).settingsBackgroundStyle)
+        return changed
+    }
+
+    suspend fun setCardDensity(value: String) = writePreference(CARD_DENSITY, DesignPreferencePolicy.density(value))
+
+    suspend fun setEditorFocusMode(value: Boolean) = writePreference(EDITOR_FOCUS_MODE, value)
 
     suspend fun setConfigurationMode(value: String) = writePreference(CONFIGURATION_MODE, SettingsValuePolicy.configurationMode(value))
+
+    suspend fun setSettingsSectionExpanded(sectionKey: String, expanded: Boolean): Boolean =
+        context.dataStore.editIfChanged { writeSettingsSectionExpanded(this, sectionKey, expanded) }
 
     suspend fun setDarkMode(value: Boolean) = writePreference(DARK_MODE, value)
 
@@ -179,13 +316,27 @@ class SettingsRepository(private val context: Context) {
         return context.dataStore.editIfChanged {
             val paletteChanged = setIfChanged(BACKGROUND_COLOR, normalizedPaletteKey)
             val toneChanged = setIfChanged(BACKGROUND_TONE_INDEX, normalizedToneIndex)
+            if (paletteChanged || toneChanged) {
+                setIfChanged(DESIGN_PRESET, "custom")
+                setIfChanged(OLED_MODE, false)
+            }
             paletteChanged || toneChanged
         }
     }
     suspend fun setSettingsPanelTone(value: Float) = writePreference(SETTINGS_PANEL_TONE, value.coerceIn(0f, 100f))
 
-    suspend fun setSettingsBackgroundStyle(value: String) =
-        writePreference(SETTINGS_BACKGROUND_STYLE, SettingsValuePolicy.settingsBackgroundStyle(value))
+    suspend fun setSettingsBackgroundStyle(value: String): Boolean {
+        com.example.mynotes.studio.StudioStore.get(context).edit("preferences","polish"){it.put("clean", false)}
+        return context.dataStore.editIfChanged {
+            val changed = writeSettingsBackgroundStyle(this, value)
+            if (changed) {
+                setIfChanged(DESIGN_PRESET, "custom")
+                setIfChanged(OLED_MODE, false)
+            }
+            changed
+        }
+
+    }
 
     suspend fun setSurfacePanelIntensity(value: Float) = writePreference(SURFACE_PANEL_INTENSITY, value.coerceIn(0f, 100f))
 
@@ -226,7 +377,7 @@ class SettingsRepository(private val context: Context) {
 
     suspend fun setGridColumns(value: Int) = writePreference(GRID_COLUMNS, value.coerceIn(1, 3))
 
-    suspend fun setSortOrder(value: String) = writePreference(SORT_ORDER, value)
+    suspend fun setSortOrder(value: String) = writePreference(SORT_ORDER, DesignPreferencePolicy.sortOrder(value))
 
     suspend fun setProfileImageUri(value: String) = writePreference(PROFILE_IMAGE_URI, value)
 
@@ -253,6 +404,7 @@ class SettingsRepository(private val context: Context) {
             // v38 removes the visible switch. Zero thickness is now the
             // disabled state, while any positive width enables the outline.
             val enabledChanged = setIfChanged(NOTE_CARD_OUTLINE_ENABLED, normalized > 0.01f)
+            if (widthChanged || enabledChanged) setIfChanged(DESIGN_PRESET, "custom")
             widthChanged || enabledChanged
         }
     }
@@ -303,6 +455,12 @@ class SettingsRepository(private val context: Context) {
      */
     suspend fun restoreFromBackup(value: AppSettings) {
         context.dataStore.edit { preferences -> preferences[CONFIGURATION_MODE] = SettingsValuePolicy.configurationMode(value.configurationMode)
+            preferences[DESIGN_PRESET] = DesignPreferencePolicy.preset(value.designPreset)
+            preferences[OLED_MODE] = value.oledMode
+            preferences[CARD_DENSITY] = DesignPreferencePolicy.density(value.cardDensity)
+            preferences[EDITOR_FOCUS_MODE] = value.editorFocusMode
+            preferences[READER_WIDTH] = ReaderPreferencePolicy.width(value.readerWidth)
+            preferences[READER_LINE_SPACING] = ReaderPreferencePolicy.spacing(value.readerLineSpacing)
             preferences[DARK_MODE] = value.darkMode
             val normalizedPaletteKey = SettingsValuePolicy.paletteKey(value.backgroundColor)
             preferences[BACKGROUND_COLOR] = normalizedPaletteKey
@@ -362,6 +520,7 @@ class SettingsRepository(private val context: Context) {
             preferences[ANIMATION_STYLE] = AppMotion.normalizeStyle(value.animationStyle)
             preferences[ANIMATION_EASING] = AppMotion.normalizeEasing(value.animationEasing)
             preferences[ANIMATION_INTENSITY] = value.animationIntensity.coerceIn(0.5f, 1.5f)
+            preferences[COLLAPSED_SETTINGS_SECTIONS] = SettingsSectionPreferencePolicy.normalize(value.collapsedSettingsSections)
         }
     }
 }
